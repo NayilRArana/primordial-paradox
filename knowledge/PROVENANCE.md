@@ -1989,3 +1989,30 @@ order, four role separation plus per set step distinctness) live in `tools/check
 control per way of cheating them in `tests/test_runtime_palette.py`, so a later edit that quietly maps `paper` onto
 `ink` fails the suite instead of shipping a HUD with no outline.
 Copied expression: none
+
+## MOVE-HOLD, 2026-10-26: hold to walk is a control rule, not a studied mechanic (card `t_771e78ef`)
+
+Studied: this repository's own files, read only, and nothing outside it. `game/scripts/pp_overworld/pp_overworld.gml`
+(the press-only free walk block at the end of `pp_overworld_step`, `pp_world_start_move` and its steps-per-tile total),
+`game/scripts/pp_input/pp_input.gml` (the action table, `pp_input_sample`'s held and pressed derivation, and
+`pp_input_update_vector`'s left stick read), `game/scripts/pp_config/pp_config.gml` (the two walk macros and the 20 step
+trigger lock), `specs/04-overworld-rails-and-triggers.md`, `specs/02-input.md` rule 1, `specs/17-action-movement.md`
+rule 6, `tests/test_overworld_world.py` and `tests/test_project.py` (the rules the module already has to keep), and
+`tools/capture_title.py` (the proven window and key primitives this card's capture borrows rather than rewrites).
+No decompiled material was opened for this card and its dossier was not needed: the change is a control rule over a
+walker this project wrote, not a subsystem of anybody else's game.
+Mechanics learned: three. One, a tile walker starts a tile from an EDGE and then ignores input until the tile lands, so
+"hold to walk" is not a new mode at all: it is reading a level instead of an edge at the moment the walker is standing.
+Two, the level read has to be ordered, or two held directions fight: a press has to win its own step (so a tap still
+turns and moves one tile), the direction already being walked has to win next (so two keys down cannot alternate tile by
+tile), and only then may any other held direction start a walk. Three, a wall must be a refusal to start rather than a
+state, because a refusal has no animation or counter to keep ticking, which is what makes a held key into a wall boring
+instead of a bump loop.
+Our implementation differs by: the direction rule is one function (`pp_world_walk_dir`) with the order written into it
+rather than four if/else tests inlined at the call site; the pad's left stick is turned into one of the four walk
+directions inside `pp_input` and published as `stick_dir`, so the overworld never reads an axis (spec 02 rule 1) and the
+dodge vector keeps its full angle untouched; the debug wall line is gated on the press rather than on the frame, so a
+held key costs one line instead of one per step; and the numbers are macros in `pp_config.gml` (free walk 8 steps a tile
+where it was 12, rail walk left at 8) with a frame simulation in `tests/test_move_hold.py` that drives the shipped input
+table rather than a copy of it.
+Copied expression: none

@@ -79,13 +79,18 @@ function pp_map_tile_kind(_map, _tx, _ty) {
 }
 
 /// Colour for a legend kind. Three kinds only in the slice; anything unknown draws as wall, which is visible.
+///
+/// Card t_769b545d: door and hatch used to be drawn in accent, which only the ui set declares, so a build without the
+/// tile sheet drew every doorway on the ship's deck as PP_COLOUR_MISSING magenta. They now take text, one of the four
+/// roles every set in data\room_palettes.json carries, which is also the brightest, so a way through still reads as a way
+/// through against the dim wall it sits in.
 function pp_map_kind_colour(_kind) {
     switch (_kind) {
         case "floor": return pp_role_colour("paper");
-        case "door":  return pp_role_colour("accent");
+        case "door":  return pp_role_colour("text");
         // Card SFX-WIRE: a hatch is the ship's way between decks, so it draws in the door's colour and the walker
         // reads it as a way through rather than as a wall.
-        case "hatch": return pp_role_colour("accent");
+        case "hatch": return pp_role_colour("text");
         default:      return pp_role_colour("dim");
     }
 }

@@ -36,6 +36,13 @@ Geometry
   was the line the player had just confirmed.
 - Optional name plate 64x12 over the left of the top border.
 - Indicator 6x6 triangle at (236, 222), 15 steps on, 15 off.
+- Palette roles: the box and its chrome spend three roles and no others, `ink`, `paper` and `text`, and all three are
+  roles every set in `data\room_palettes.json` declares. The choice cursor and the page arrow are drawn in `text`, the
+  brightest role the sets share, and the name plate and the drawn fallback frame in `paper` and `ink`. Amendment,
+  2026-10-26, card t_769b545d: this bullet did not exist, and the cursor and the arrow were drawn in `accent`, a role
+  only the `ui` set declares, so the first box opened on `ship_small` (set `deck_day`) drew both as
+  PP_COLOUR_MISSING magenta (`build\demo-game.log:163`). A role a set does not carry is not a colour the room's
+  palette holds, the same rule card R48 applied to the battle field.
 
 Text rules
 1. 2 steps per character (30 per second); fast forward 3x, floor 1 step per character.
@@ -48,6 +55,12 @@ Text rules
 5. Two control codes only: `{pause:N}` and `{speed:N}`. A line that cannot fit within the box is a checker error, not a
    runtime truncation.
 6. Only two inks: text and highlight. No rich colour tags.
+7. Amendment, 2026-10-26 (card t_ee178652, spec 21): one window in the game takes text the player writes. The battle's
+   message window shows the live TALK entry box, and that box draws only characters from the sheet's 77 glyph alphabet
+   (`pp_font_glyphs`, measured by `tools/check_font_coverage.py`). A character outside it is filtered before it can
+   reach the line, so a box can never draw a hole where a glyph should be, and a reply line the model wrote is checked
+   against the same alphabet before it is shown. The 28 column rule above is the box's row count too: two rows of 28
+   plus the four columns the window leaves are the 60 characters on screen at once.
 
 Choices: 1 to 3, carried by the entry and shown after its last page, in the rows' place (a choice page replaces its
 three text rows, one row per choice); 6 pixel arrow cursor in column 0, moves one per press and wraps. A choice is

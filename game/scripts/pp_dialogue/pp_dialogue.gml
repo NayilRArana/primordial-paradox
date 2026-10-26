@@ -342,6 +342,12 @@ function pp_dialogue_closed(_d) {
 /// title marks a disabled row with a rule instead of a grey label). The set_colour calls below therefore colour the
 /// rectangles only, and pp_font_draw draws the letters exactly as the art lane authored them.
 function pp_dialogue_draw(_d) {
+    // Card t_769b545d: the box spends three roles and no others, ink, paper and text, and those three are roles every
+    // set in data\room_palettes.json declares. The choice cursor and the page arrow used to ask for accent, and deck_day
+    // (the set the small ship's deck draws in, the one room the demo talks in) declares no accent, so both drew as
+    // PP_COLOUR_MISSING magenta the first time a box opened there. A role the room's set does not carry is not a colour
+    // the room's palette holds, which is the same rule card R48 applied to the battle field, so the chrome takes the
+    // brightest shared role instead of a role only the ui set happens to own.
     // The classic NES window frame from the art lane, nine sliced on the 8x8 tile grid. Drawn rectangles
     // remain as the fallback for a build without spr_pp_window.
     if (!pp_window_draw(PP_BOX_X, PP_BOX_Y, 30, 8, 1)) {
@@ -393,7 +399,7 @@ function pp_dialogue_draw(_d) {
         while (_c < array_length(_d.choices)) {
             var _choice_y = PP_TEXT_Y + _c * PP_TEXT_LINE_H;
             if (_c == _d.cursor) {
-                draw_set_colour(pp_role_colour("accent"));
+                draw_set_colour(pp_role_colour("text"));
                 draw_rectangle(PP_CHOICE_ARROW_X, _choice_y + 1,
                     PP_CHOICE_ARROW_X + PP_CHOICE_ARROW_W - 1, _choice_y + PP_CHOICE_ARROW_W, false);
             }
@@ -416,7 +422,10 @@ function pp_dialogue_draw(_d) {
 
     var _phase = _d.reveal.steps mod (PP_ARROW_ON + PP_ARROW_OFF);
     if (_phase < PP_ARROW_ON) {
-        draw_set_colour(pp_role_colour("accent"));
+        // The page arrow, in the same shared role as the choice cursor (card t_769b545d): a box that asked for accent
+        // here drew the arrow as PP_COLOUR_MISSING on the ship's deck, which is the room the demo's dialogue beat
+        // happens in.
+        draw_set_colour(pp_role_colour("text"));
         draw_rectangle(236, 222, 241, 227, false);
         if (_page + 1 < array_length(_d.pages)) {
             draw_rectangle(230, 222, 235, 227, false);
