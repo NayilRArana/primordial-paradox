@@ -128,6 +128,21 @@ function _f_src_x(_name, _frame) {
     return _f * _info.frame_w;
 }
 
+/// Tile one frame of an animation from (_x, _y) across the rest of the room, tinted to one colour. This is how a dither
+/// is drawn without a blend (card t_06ef8607): spr_pp_dither is a 16x16 mask of a one pixel checker, so tiling it over
+/// the 256x240 frame is 240 quads in a single call, where the same pattern built from GML rectangles would be 30,720
+/// draw calls a frame. The sprite's drawn pixels are white, so the tint IS the colour the screen spends: ask for a role
+/// and the frame shows exactly that declared colour. Returns false when the sheet is not in the art index, so the caller
+/// draws nothing rather than a wrong colour.
+/// draw_sprite_tiled fills from (x, y) to the room edge; the room is 256x240 and the tile divides both, so no partial
+/// tile lands at the frame edge.
+function pp_art_draw_tiled(_name, _x, _y, _colour, _alpha) {
+    var _info = pp_art_info(_name);
+    if (is_undefined(_info)) return false;
+    draw_sprite_tiled_ext(_info.sprite, 0, _x, _y, 1, 1, _colour, _alpha);
+    return true;
+}
+
 /// Draw the nine slice window from the art lane's spr_pp_window, whose top left corner is (_x, _y) and whose
 /// size is given in whole 8x8 tiles. The size is in tiles and never in pixels, because the window is nine 8x8
 /// tiles: stretching one would tear its right and bottom edge. The corners keep the transparent pixels the art

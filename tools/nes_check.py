@@ -240,6 +240,48 @@ def check_background_areas(image: Image.Image, backdrop) -> list:
     return problems
 
 
+def check_mask(image: Image.Image) -> list:
+    """A mask is a tint source, not art (card t_06ef8607).
+
+    A mask carries no colour of its own: every drawn pixel is pure white so the runtime can tint it to exactly the role
+    colour that asks for it (the dodge arena tints it with ink), and every other pixel is transparent. That is why the
+    palette rule cannot apply here: #ffffff is the tint's identity, not a colour the frame shows, and the drawn colour
+    is whatever data/palette.json says the role is. What the rule CAN ask of a mask is that it holds nothing else, and
+    that it is the 50 percent checker spec 13 allows, because a mask is how a dither is drawn without a blend.
+    """
+    pixels = image.load()
+    problems = []
+    drawn = 0
+    off_checker = 0
+    not_white = Counter()
+    partial = 0
+    for y in range(image.height):
+        for x in range(image.width):
+            r, g, b, a = pixels[x, y]
+            if a == 0:
+                continue
+            drawn += 1
+            if a != 255:
+                partial += 1
+            if (r, g, b) != (255, 255, 255):
+                not_white[(r, g, b)] += 1
+            if (x + y) % 2:
+                off_checker += 1
+    if partial:
+        problems.append({"rule": "mask", "detail": "%d pixel(s) are partly transparent, a mask is opaque or a hole"
+                                                  % partial})
+    for rgb, count in not_white.most_common():
+        problems.append({"rule": "mask", "colour": rgb_hex(rgb),
+                         "detail": "not the tint identity #ffffff at %d pixels" % count})
+    if off_checker:
+        problems.append({"rule": "mask", "detail": "%d drawn pixel(s) are not on the 50 percent checker" % off_checker})
+    total = image.width * image.height
+    if drawn * 2 != total:
+        problems.append({"rule": "mask", "detail": "%d of %d pixels are drawn, a 50 percent checker draws half"
+                                                  % (drawn, total)})
+    return problems
+
+
 def screen_colours(image: Image.Image) -> set:
     return {rgb for _, _, rgb, alpha in visible_pixels(image) if alpha}
 
@@ -261,11 +303,16 @@ def check_screen_colours(image: Image.Image, limit: int = MAX_COLOURS_ON_SCREEN)
 def check(image: Image.Image, kind: str, palette: dict, backdrop=None, limit: int = MAX_COLOURS_ON_SCREEN) -> dict:
     problems = []
     problems += check_grid(image)
-    problems += check_palette(image, palette)
-    if kind == "sprite":
+    if kind == "mask":
+        # A mask is a tint source, so it is judged by its own rule and not by the palette (card t_06ef8607).
+        problems += check_mask(image)
+        shade, how = None, "not used for masks"
+    elif kind == "sprite":
+        problems += check_palette(image, palette)
         problems += check_sprite_tiles(image)
         shade, how = None, "not used for sprites"
     else:
+        problems += check_palette(image, palette)
         shade, how = backdrop_of(image, backdrop)
         problems += check_background_areas(image, shade)
     problems += check_screen_colours(image, limit)
@@ -305,8 +352,9 @@ def describe(report: dict, path: str) -> list:
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description="Check a PNG against the NES drawing rules.")
     parser.add_argument("png", help="the image to check")
-    parser.add_argument("--type", required=True, choices=("sprite", "background"),
-                        help="sprite: 8x8 tiles, 3 colours plus transparent. background: 16x16 areas plus a backdrop")
+    parser.add_argument("--type", required=True, choices=("sprite", "background", "mask"),
+                        help=("sprite: 8x8 tiles, 3 colours plus transparent. background: 16x16 areas plus a backdrop. "
+                              "mask: a tint source, one white 50 percent checker and holes, palette rule not applied"))
     parser.add_argument("--palette", default=None, help="palette file; default data\\nes_palette.json, or the art bible")
     parser.add_argument("--backdrop", default=None, help="background backdrop, #RRGGBB or $0F or 15")
     parser.add_argument("--max-colours", type=int, default=MAX_COLOURS_ON_SCREEN,

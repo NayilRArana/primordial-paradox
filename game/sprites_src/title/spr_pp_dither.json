@@ -1,0 +1,13 @@
+{
+  "colours": {
+    "mask": "#ffffff"
+  },
+  "fps": 0.0,
+  "frame_h": 16,
+  "frame_w": 16,
+  "frames": 1,
+  "kind": "mask",
+  "layer": true,
+  "name": "spr_pp_dither",
+  "rule": "a mask, not art: the drawn pixels are pure white so draw_sprite_tiled_ext tints them to exactly the role colour that asks for them (the dodge arena asks for ink), and the other pixels are transparent. One pixel 50 percent checker, spec 13's allowed dither, tiled from the frame origin: 256 / 16 and 240 / 16 are whole, so the tile lands on the frame with no partial cell at the edge."
+}

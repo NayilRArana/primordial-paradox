@@ -537,6 +537,15 @@
     },
     {
       "$GMIncludedFile": "",
+      "%Name": "spr_pp_dither.png",
+      "CopyToMask": -1,
+      "filePath": "datafiles/art",
+      "name": "spr_pp_dither.png",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
       "%Name": "spr_pp_font8.png",
       "CopyToMask": -1,
       "filePath": "datafiles/art",

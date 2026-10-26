@@ -198,21 +198,36 @@ function pp_arena_check_hit(_arena) {
 function pp_arena_draw(_arena) {
     var _g = _arena.geometry;
 
-    draw_set_alpha(0.6);
-    draw_set_colour(pp_role_colour("ink"));
-    draw_rectangle(0, 0, PP_FRAME_W, PP_FRAME_H, false);
-    draw_set_alpha(1);
+    // Card t_06ef8607: the dim is the 50 percent checker spec 13 allows, in the room's own ink role, and not a band of
+    // alpha. Spec 08 line 11's "60 percent black rectangle" was drawn as draw_rectangle at alpha 0.6, which is a blended
+    // ramp: it turned every pixel under it into a colour the 54 master entries do not name (a real dodge frame measured
+    // 0.6702 against the capture's 0.90 floor, measured in knowledge\BATTLE-DIM-OFF-PALETTE-2026-10-26.md). Spec 13
+    // line 21 allows two dithers and says "A gradient is a stack of those, never a blended ramp", and ART-BIBLE RULE 0
+    // point 1 says every scene's colours come from the master palette, so the dim is now a dither: the one pixel checker
+    // in spr_pp_dither, tinted to exactly the ink role, 240 quads in one draw call for the whole frame. A mask that is
+    // not in the art index leaves the field undimmed rather than spending a blend.
+    if (!pp_art_draw_tiled("spr_pp_dither", 0, 0, pp_role_colour("ink"), 1)) {
+        show_debug_message("PP arena: spr_pp_dither is not in the art index, the field is not dimmed this phase");
+    }
 
+    // Card t_06ef8607: the four roles below are the only four every set in data\room_palettes.json carries, ink, paper,
+    // dim and text. The arena used to ask for hazard, marker and marker_trail, and the deck the demo fights on
+    // (deck_day) declares none of the three, so the dodge phase drew its hazards and the player's marker in
+    // PP_COLOUR_MISSING magenta (build\first_fight_talk_game.log:88 to :90). A role a set does not carry is not a colour
+    // the screen may spend, which is card R48's finding for the battle field, so the arena spends what every set has:
+    // the marker in text, the brightest of the four and the brightest role in the master palette (luminance 0.5834, spec
+    // 08's "brightest palette colour"), the hazards in dim so they read as solid blocks against the dimmed field, and
+    // the trail in paper, the quietest of the four, so the marker stays the highest contrast thing on screen.
     var _frame_colour = pp_role_colour("ink");
-    if (_arena.warn_steps > 0 && (_arena.warn_steps div 3) mod 2 == 0) _frame_colour = pp_role_colour("warn");
-    if (_arena.hit_flash > 0 && (_arena.hit_flash div 2) mod 2 == 0) _frame_colour = pp_role_colour("hazard");
+    if (_arena.warn_steps > 0 && (_arena.warn_steps div 3) mod 2 == 0) _frame_colour = pp_role_colour("text");
+    if (_arena.hit_flash > 0 && (_arena.hit_flash div 2) mod 2 == 0) _frame_colour = pp_role_colour("text");
 
     draw_set_colour(pp_role_colour("dim"));
     draw_rectangle(_g.x1 - 2, _g.y1 - 2, _g.x2 + 2, _g.y2 + 2, true);
     draw_set_colour(_frame_colour);
     draw_rectangle(_g.x1 - 1, _g.y1 - 1, _g.x2 + 1, _g.y2 + 1, true);
 
-    var _hazard_colour = pp_role_colour("hazard");
+    var _hazard_colour = pp_role_colour("dim");
     for (var i = 0; i < array_length(_arena.hazards); i++) {
         var _hz = _arena.hazards[i];
         if (!_hz.alive) continue;
@@ -224,13 +239,13 @@ function pp_arena_draw(_arena) {
     // Trail first, then the marker, so the marker is always the brightest thing on screen (spec 08 goal).
     for (var t = array_length(_arena.marker.trail) - 1; t >= 1; t--) {
         var _tr = _arena.marker.trail[t];
-        draw_set_colour(pp_role_colour("marker_trail"));
+        draw_set_colour(pp_role_colour("paper"));
         draw_rectangle(_tr.x, _tr.y, _tr.x + PP_MARKER_SIZE - 1, _tr.y + PP_MARKER_SIZE - 1, false);
     }
 
     var _blink = (_arena.marker.inv > 0) && ((_arena.marker.inv div 4) mod 2 == 0);
     if (!_blink) {
-        draw_set_colour(pp_role_colour("marker"));
+        draw_set_colour(pp_role_colour("text"));
         var _mx = floor(_arena.marker.x);
         var _my = floor(_arena.marker.y);
         draw_rectangle(_mx, _my, _mx + PP_MARKER_SIZE - 1, _my + PP_MARKER_SIZE - 1, false);

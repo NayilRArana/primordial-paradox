@@ -8,8 +8,22 @@ costs one enemy attack's worth of health.
 
 Geometry
 - Box 160x100 centred at (128, 120); 2 pixel frame in the first ink, 1 pixel dark line outside; the rest of the field
-  is dimmed by a 60 percent black rectangle.
+  is dimmed to half brightness by a 50 percent checker of the ink role, one pixel cells, drawn from the 16x16 mask
+  `spr_pp_dither` tinted to that role.
+  Amendment, 2026-10-26, card t_06ef8607. This line read "the rest of the field is dimmed by a 60 percent black
+  rectangle" from 2026-10-19, and a rectangle at alpha 0.6 is a blended ramp: it turns every pixel under it into a
+  colour outside the 54 master entries, which spec 13 line 21 forbids and ART-BIBLE RULE 0 point 1 refuses. A real dodge
+  frame of the 2026-10-26 recording measured 0.6702 against the capture's 0.90 picture floor, and the dim was the whole
+  of the difference (knowledge\BATTLE-DIM-OFF-PALETTE-2026-10-26.md). The density is kept, the mechanism is not: a 50
+  percent checker halves the field's brightness, the closest legal statement to a 60 percent band, the same frame
+  measures 0.9582 with it, and every pixel on screen stays a colour the palette names. The field is dimmed, not
+  replaced, so the baked strips stay visible through the checker.
 - Marker 8x8 in the brightest palette colour, with a 4 step trail, starting at the box centre every phase.
+  Amendment, 2026-10-26, card t_06ef8607. The arena spends roles, not colours, and it may only ask for roles every set
+  in `data\room_palettes.json` carries, which are ink, paper, dim and text, the same four card R48 gave the battle
+  field. The marker is text, the brightest of the four and the brightest role in the master palette; the hazards are
+  dim, so they read as solid blocks against the dimmed field; the trail is paper, the quietest of the four, so the
+  marker stays the highest contrast thing on screen; the warning flash is text.
 - Hazards are 8x8 or 16x16 with a hitbox 2 pixels smaller per side, so near misses read as near misses.
 - Marker speed 2 pixels per step in 8 directions from the input vector (spec 02), clamped inside the box.
 

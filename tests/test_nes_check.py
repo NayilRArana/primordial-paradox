@@ -428,3 +428,57 @@ def test_the_ui_gate_refuses_a_sprite_off_the_8x8_grid(tmp_path):
     code, out = run_ui_gate(root)
     assert code == 1, out
     assert "menu.sprites[0]" in out and "not a multiple of 8" in out, out
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# The mask type (card t_06ef8607). A mask is a tint source, not art: white pixels the runtime tints to a role colour,
+# and holes everywhere else. The palette rule cannot apply to it, so it gets a rule of its own instead of an exemption.
+
+MASK = os.path.join(SPRITES, "spr_pp_dither.png")
+
+
+def mask_blocks(tile, rgb, cell=1):
+    return [(x, y, cell, cell, rgb) for y in range(tile) for x in range(tile) if (x // cell + y // cell) % 2 == 0]
+
+
+def test_the_committed_dither_mask_passes_as_a_mask():
+    code, out = run(MASK, "mask")
+    assert code == 0, out
+    assert "16x16" in out and "4 tiles" in out and "1 colours" in out
+    assert "PASS" in out
+
+
+def test_the_same_mask_fails_the_sprite_rule_it_is_exempt_from():
+    """The exemption is not a hole in the checker: the sprite rule still refuses this sheet, and says why."""
+    code, out = run(MASK, "sprite")
+    assert code == 1, out
+    assert "off palette" in out and "#ffffff" in out
+
+
+def test_a_solid_sheet_is_refused_as_a_mask(tmp_path):
+    png = tmp_path / "solid.png"
+    make_png(png, (16, 16), [(0, 0, 16, 16, (255, 255, 255))])
+    code, out = run(str(png), "mask")
+    assert code == 1, out
+    assert "not on the 50 percent checker" in out and "draws half" in out, out
+
+
+def test_a_mask_in_a_palette_colour_is_refused(tmp_path):
+    """$30 white is an entry, which is exactly why it cannot be the mask: tinting it would not land on the role."""
+    png = tmp_path / "almost.png"
+    make_png(png, (16, 16), mask_blocks(16, WHITE))
+    code, out = run(str(png), "mask")
+    assert code == 1, out
+    assert "not the tint identity #ffffff" in out and "#fcfcfc" in out, out
+
+
+def test_a_half_transparent_mask_is_refused(tmp_path):
+    png = tmp_path / "ghost.png"
+    make_png(png, (16, 16), mask_blocks(16, (255, 255, 255)))
+    image = Image.open(png).convert("RGBA")
+    pixels = image.load()
+    pixels[0, 0] = (255, 255, 255, 128)
+    image.save(png)
+    code, out = run(str(png), "mask")
+    assert code == 1, out
+    assert "partly transparent" in out, out
