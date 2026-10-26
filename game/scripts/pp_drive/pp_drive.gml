@@ -21,16 +21,28 @@
 /// map drive_m4_corridor, played by the spec 06 runner. This room exists so a capture run can write the twelve pictures
 /// from inside the game: it is reachable only when PP_DRIVE_ROOM is set, which no real launch sets. It is not on the
 /// route and it must not be wired into it.
+///
+/// The roles (card t_415541ee). The film spends four roles and no others: ink, paper, dim and text, the four every set in
+/// data/room_palettes.json declares. Before this card it spent eleven, seven of which drive_night does not carry
+/// (accent, window, window_edge, window_shadow, marker, marker_trail, hazard), so a draw in the set the drive map names
+/// asked the palette for colours that set cannot answer and pp_role_colour answered PP_COLOUR_MISSING magenta. The rule
+/// is the one card R48 settled for the battle field and t_769b545d for the dialogue box: a screen that can be drawn in
+/// any room spends only the roles every set carries, and a mark that has to read against a dark field takes text, the
+/// brightest of the four. The seven replaced roles map by their value onto the four: accent, marker, window_edge and
+/// hazard to text (a pool, lane paint, trim and a lamp all have to read), marker_trail to dim (a trail behind a pool does
+/// not), window to ink (sky, water and a caption plate are the darkest field) and window_shadow to paper (a silhouette
+/// one step off ink). tests/test_drive_roles.py holds every role call in this file inside the shared four.
 
 /// The two environment names this screen reads. Split the way every PP_ name in this project is split, so the macro
 /// definition is not itself a use of the name (the same pattern as PP_SLICE and PP_SCENE_SELFTEST_ENV).
 #macro PP_DRIVE_ROOM "PP_" + "DRIVE_ROOM"
 #macro PP_DRIVE_CAPTURE "PP_" + "DRIVE_CAPTURE"
 
-/// The room palette set the placeholders are drawn from. data/room_palettes.json is not this card's file (its owner
-/// writes it), so the room asks for a set that already exists rather than inventing one; a set of its own for the night
-/// drive is a palette card, not this one.
-#macro PP_DRIVE_PALETTE "ui"
+/// The room palette set the placeholders are drawn from. Card t_415541ee: this is the set the drive map names
+/// (data/maps/all.json, room drive_m4_corridor, "room_palette": "drive_night"), so the capture proves the picture the
+/// shipped scene will draw and not one from a set the drive never plays in. The module spends only the four roles every
+/// set declares (ink, paper, dim, text), so the film reads the same in this set as it would in any other.
+#macro PP_DRIVE_PALETTE "drive_night"
 /// A fade is 12 steps (spec 06, and section 1 of the shot list). Four of them: in on shot 1, out on shot 6, in on
 /// shot 7, out on shot 12.
 #macro PP_DRIVE_FADE 12
@@ -319,11 +331,11 @@ function pp_drive_hills(_base_y, _role, _scroll, _amplitude) {
 function pp_drive_road(_top, _scroll) {
     pp_drive_band(0, _top - 8, PP_FRAME_W - 1, _top - 1, "dim");
     pp_drive_band(0, _top, PP_FRAME_W - 1, PP_FRAME_H - 1, "paper");
-    pp_drive_band(0, _top, PP_FRAME_W - 1, _top + 1, "window_shadow");
+    pp_drive_band(0, _top, PP_FRAME_W - 1, _top + 1, "paper");
     var _phase = round(_scroll) mod 32;
     for (var i = 0; i < 9; i += 1) {
         var _x = i * 32 - _phase;
-        pp_drive_band(_x, _top + 22, _x + 15, _top + 24, "marker");
+        pp_drive_band(_x, _top + 22, _x + 15, _top + 24, "text");
     }
 }
 
@@ -332,11 +344,11 @@ function pp_drive_car(_x, _y, _steps) {
     var _bob = round((sin(_steps / 29 * 6.28318) > 0.5) ? 1 : 0);
     var _bx = round(_x);
     var _by = round(_y) + _bob;
-    pp_drive_band(_bx + 10, _by - 7, _bx + 52, _by - 1, "window_shadow");
-    pp_drive_band(_bx + 14, _by - 5, _bx + 30, _by - 2, "window");
+    pp_drive_band(_bx + 10, _by - 7, _bx + 52, _by - 1, "paper");
+    pp_drive_band(_bx + 14, _by - 5, _bx + 30, _by - 2, "ink");
     pp_drive_band(_bx, _by, _bx + 62, _by + 14, "dim");
-    pp_drive_band(_bx, _by + 7, _bx + 62, _by + 9, "window_edge");
-    pp_drive_band(_bx, _by + 9, _bx + 3, _by + 12, "hazard");
+    pp_drive_band(_bx, _by + 7, _bx + 62, _by + 9, "text");
+    pp_drive_band(_bx, _by + 9, _bx + 3, _by + 12, "text");
     pp_drive_band(_bx + 7, _by + 13, _bx + 19, _by + 18, "paper");
     pp_drive_band(_bx + 43, _by + 13, _bx + 55, _by + 18, "paper");
 }
@@ -344,9 +356,9 @@ function pp_drive_car(_x, _y, _steps) {
 /// The headlight pool and the beam that makes it. Drawn as whole steps rather than a gradient, because a gradient is
 /// more colours than one screen may hold.
 function pp_drive_headlight(_x, _y) {
-    pp_drive_band(_x + 62, _y + 6, _x + 66, _y + 9, "accent");
-    pp_drive_band(_x + 66, _y + 4, _x + 92, _y + 12, "marker_trail");
-    pp_drive_band(_x + 92, _y + 2, _x + 120, _y + 15, "accent");
+    pp_drive_band(_x + 62, _y + 6, _x + 66, _y + 9, "text");
+    pp_drive_band(_x + 66, _y + 4, _x + 92, _y + 12, "dim");
+    pp_drive_band(_x + 92, _y + 2, _x + 120, _y + 15, "text");
 }
 
 /// A gantry sign: the plate over the road, two posts down to the verge, SOUTHAMPTON in the 8x8 font and the miles as
@@ -398,7 +410,7 @@ function pp_drive_draw_caption(_shot, _page_index) {
     if (_count <= 0) return;
     if (_page_index < 0 || _page_index >= _count) return;
     var _page = _shot.pages[_page_index];
-    pp_drive_band(8, 184, PP_FRAME_W - 9, 231, "window");
+    pp_drive_band(8, 184, PP_FRAME_W - 9, 231, "ink");
     pp_drive_band(8, 184, PP_FRAME_W - 9, 185, "text");
     pp_drive_band(8, 230, PP_FRAME_W - 9, 231, "text");
     if (pp_art_has("spr_pp_font8")) {
@@ -415,14 +427,14 @@ function pp_drive_draw_caption(_shot, _page_index) {
 /// Shots 1 and 2: Big Ben panning down into the street, then the street and the Thames with the car pulling away.
 function pp_drive_draw_city(_st, _shot, _p, _scroll) {
     var _pan = (_shot.n == 1) ? round(48 * (1 - min(1, _p * 1.4))) : 0;
-    pp_drive_sky("window", _scroll, 196);
-    pp_drive_hills(120 + _pan, "window_shadow", _scroll, 12);
+    pp_drive_sky("ink", _scroll, 196);
+    pp_drive_hills(120 + _pan, "paper", _scroll, 12);
     // The Palace along the horizon, then the clock tower on top of it.
     pp_drive_band(0, 118 + _pan, PP_FRAME_W - 1, 141 + _pan, "paper");
     for (var i = 0; i < 9; i += 1) pp_drive_band(i * 28 + 6, 110 + _pan, i * 28 + 14, 118 + _pan, "paper");
     pp_drive_band(96, 46 + _pan, 143, 120 + _pan, "paper");
     pp_drive_band(100, 38 + _pan, 139, 46 + _pan, "dim");
-    pp_drive_band(104, 58 + _pan, 135, 86 + _pan, "accent");
+    pp_drive_band(104, 58 + _pan, 135, 86 + _pan, "text");
     pp_drive_band(118, 62 + _pan, 121, 80 + _pan, "text");
     pp_drive_band(108, 70 + _pan, 132, 73 + _pan, "text");
     pp_drive_road(176 + round(24 * (1 - _p)), _scroll);
@@ -432,10 +444,10 @@ function pp_drive_draw_city(_st, _shot, _p, _scroll) {
         return;
     }
     // The Thames, then the car pulling away from the kerb and shrinking.
-    pp_drive_band(0, 142, PP_FRAME_W - 1, 165, "window");
+    pp_drive_band(0, 142, PP_FRAME_W - 1, 165, "ink");
     for (var j = 0; j < 8; j += 1) {
         var _rx = (j * 34 + round(_scroll * 0.4)) mod PP_FRAME_W;
-        pp_drive_band(_rx, 148 + (j mod 3) * 4, _rx + 18, 149 + (j mod 3) * 4, "accent");
+        pp_drive_band(_rx, 148 + (j mod 3) * 4, _rx + 18, 149 + (j mod 3) * 4, "text");
     }
     var _car_x = 40 + round(150 * _p);
     pp_drive_car(_car_x, 168, _st.steps);
@@ -444,8 +456,8 @@ function pp_drive_draw_city(_st, _shot, _p, _scroll) {
 
 /// Shot 3: the gantry, the sign at 55 miles and the road under it.
 function pp_drive_draw_gantry(_st, _shot, _p, _scroll) {
-    pp_drive_sky("window", _scroll, 210);
-    pp_drive_hills(140, "window_shadow", _scroll, 10);
+    pp_drive_sky("ink", _scroll, 210);
+    pp_drive_hills(140, "paper", _scroll, 10);
     pp_drive_band(0, 132, PP_FRAME_W - 1, 147, "dim");
     pp_drive_road(160, _scroll);
     pp_drive_gantry_sign(24 + round(24 * _p), 55, 168);
@@ -456,13 +468,13 @@ function pp_drive_draw_gantry(_st, _shot, _p, _scroll) {
 /// Shots 4, 5, 6 and 9: open motorway. The rain, the wipers, the radio pages and the passing sign are what tell them
 /// apart, and each of those moves inside the shot.
 function pp_drive_draw_motorway(_st, _shot, _p, _scroll) {
-    pp_drive_sky("window", _scroll, 24);
-    pp_drive_hills(136, "window_shadow", _scroll, 8);
+    pp_drive_sky("ink", _scroll, 24);
+    pp_drive_hills(136, "paper", _scroll, 8);
     pp_drive_band(0, 128, PP_FRAME_W - 1, 150, "dim");
     pp_drive_road(158, _scroll);
 
     if (_shot.n == 4) {
-        pp_drive_band(0, 0, PP_FRAME_W - 1, 159, "window_shadow");
+        pp_drive_band(0, 0, PP_FRAME_W - 1, 159, "paper");
         pp_drive_road(158, _scroll);
         pp_drive_rain(_st.shot_steps);
         pp_drive_car(150, 168, _st.steps);
@@ -486,7 +498,7 @@ function pp_drive_draw_motorway(_st, _shot, _p, _scroll) {
 
 /// Shot 7: Twyford Down, the chalk cutting, one headlight pool and no sky worth the name.
 function pp_drive_draw_cutting(_st, _shot, _p, _scroll) {
-    pp_drive_band(0, 0, PP_FRAME_W - 1, 239, "window_shadow");
+    pp_drive_band(0, 0, PP_FRAME_W - 1, 239, "paper");
     pp_drive_band(0, 0, 47, 239, "text");
     pp_drive_band(208, 0, PP_FRAME_W - 1, 239, "text");
     pp_drive_band(47, 0, 58, 239, "dim");
@@ -503,14 +515,14 @@ function pp_drive_draw_cutting(_st, _shot, _p, _scroll) {
 
 /// Shot 8: Winchester Cathedral far off, one caption, the moon behind the tower.
 function pp_drive_draw_cathedral(_st, _shot, _p, _scroll) {
-    pp_drive_sky("window", _scroll, 214);
-    pp_drive_hills(150, "window_shadow", _scroll, 8);
+    pp_drive_sky("ink", _scroll, 214);
+    pp_drive_hills(150, "paper", _scroll, 8);
     pp_drive_band(0, 146, PP_FRAME_W - 1, 159, "dim");
     // The nave, long and low, and the square tower on it.
     pp_drive_band(70, 116, 186, 150, "paper");
     pp_drive_band(150, 84, 178, 150, "paper");
     pp_drive_band(152, 78, 176, 84, "dim");
-    pp_drive_band(158, 92, 170, 104, "accent");
+    pp_drive_band(158, 92, 170, 104, "text");
     pp_drive_road(162, _scroll);
     pp_drive_car(88, 180, _st.steps);
     pp_drive_headlight(88, 180);
@@ -520,9 +532,9 @@ function pp_drive_draw_cathedral(_st, _shot, _p, _scroll) {
 /// flash palette taught us to keep short.
 function pp_drive_draw_downland(_st, _shot, _p, _scroll) {
     var _flash = ((_st.shot_steps mod 480) < 2);
-    pp_drive_sky(_flash ? "text" : "window", _scroll, 40);
-    pp_drive_hills(126, _flash ? "paper" : "window_shadow", _scroll, 14);
-    pp_drive_band(0, 118, PP_FRAME_W - 1, 150, _flash ? "window_shadow" : "window");
+    pp_drive_sky(_flash ? "text" : "ink", _scroll, 40);
+    pp_drive_hills(126, _flash ? "dim" : "paper", _scroll, 14);
+    pp_drive_band(0, 118, PP_FRAME_W - 1, 150, _flash ? "paper" : "ink");
     pp_drive_band(0, 138, PP_FRAME_W - 1, 159, "dim");
     // The chalk horse on the hill, drawn in whole steps (spec 14: an original figure, not a photograph of one).
     pp_drive_band(52, 122, 84, 124, "text");
@@ -530,17 +542,17 @@ function pp_drive_draw_downland(_st, _shot, _p, _scroll) {
     pp_drive_band(72, 118, 78, 122, "text");
     pp_drive_road(160, _scroll);
     // The personal storm cloud, which follows the car and never the world.
-    pp_drive_band(120, 30, 176, 44, "window_shadow");
-    pp_drive_band(112, 38, 184, 50, "window_shadow");
-    if (_flash) pp_drive_band(140, 50, 143, 88, "marker");
+    pp_drive_band(120, 30, 176, 44, "paper");
+    pp_drive_band(112, 38, 184, 50, "paper");
+    if (_flash) pp_drive_band(140, 50, 143, 88, "text");
     pp_drive_car(96, 172, _st.steps);
     pp_drive_headlight(96, 172);
 }
 
 /// Shot 11: the slip road, the sign at 20 miles and the headlights turning off.
 function pp_drive_draw_slip(_st, _shot, _p, _scroll) {
-    pp_drive_sky("window", _scroll, 32);
-    pp_drive_hills(132, "window_shadow", _scroll, 8);
+    pp_drive_sky("ink", _scroll, 32);
+    pp_drive_hills(132, "paper", _scroll, 8);
     pp_drive_band(0, 126, PP_FRAME_W - 1, 150, "dim");
     // The road narrows: one lane instead of two, its edge running in from both sides.
     pp_drive_band(0, 150, PP_FRAME_W - 1, 159, "dim");
@@ -548,11 +560,11 @@ function pp_drive_draw_slip(_st, _shot, _p, _scroll) {
     var _narrow = round(40 * _p);
     pp_drive_band(0, 160, 26 + _narrow, 239, "dim");
     pp_drive_band(230 - _narrow, 160, PP_FRAME_W - 1, 239, "dim");
-    pp_drive_band(0, 160, PP_FRAME_W - 1, 161, "window_shadow");
+    pp_drive_band(0, 160, PP_FRAME_W - 1, 161, "paper");
     var _phase = round(_scroll) mod 32;
     for (var i = 0; i < 9; i += 1) {
         var _x = i * 32 - _phase;
-        pp_drive_band(_x, 182, _x + 15, 184, "marker");
+        pp_drive_band(_x, 182, _x + 15, 184, "text");
     }
     pp_drive_gantry_sign(20 + round(20 * _p), 20, 150);
     pp_drive_car(92, 190, _st.steps);
@@ -561,8 +573,8 @@ function pp_drive_draw_slip(_st, _shot, _p, _scroll) {
 
 /// Shot 12: the docks. Cranes, containers and the ship lit at the quay, then the fade to black the film ends on.
 function pp_drive_draw_docks(_st, _shot, _p, _scroll) {
-    pp_drive_band(0, 0, PP_FRAME_W - 1, 239, "window");
-    pp_drive_band(0, 108, PP_FRAME_W - 1, 239, "window_shadow");
+    pp_drive_band(0, 0, PP_FRAME_W - 1, 239, "ink");
+    pp_drive_band(0, 108, PP_FRAME_W - 1, 239, "paper");
     // Four cranes, each one stepping along the quay as the shot runs.
     for (var i = 0; i < 4; i += 1) {
         var _cx = 12 + i * 62 - round(_p * 12);
@@ -574,7 +586,7 @@ function pp_drive_draw_docks(_st, _shot, _p, _scroll) {
     // Containers in two rows on the quay.
     for (var j = 0; j < 7; j += 1) {
         var _kx = j * 38 - (round(_scroll * 0.6) mod 38);
-        var _role = ((j mod 3) == 0) ? "hazard" : (((j mod 3) == 1) ? "marker_trail" : "dim");
+        var _role = ((j mod 3) == 0) ? "text" : (((j mod 3) == 1) ? "dim" : "paper");
         pp_drive_band(_kx, 150, _kx + 34, 166, _role);
         pp_drive_band(_kx + 4, 138, _kx + 30, 150, _role);
     }
@@ -585,12 +597,12 @@ function pp_drive_draw_docks(_st, _shot, _p, _scroll) {
     for (var k = 0; k < 12; k += 1) {
         var _wx = 48 + k * 15;
         var _lit = (((k + floor(_st.shot_steps / 20)) mod 3) != 0);
-        if (_lit) pp_drive_band(_wx, 176, _wx + 5, 181, "marker");
+        if (_lit) pp_drive_band(_wx, 176, _wx + 5, 181, "text");
     }
-    pp_drive_band(0, 200, PP_FRAME_W - 1, 239, "window");
+    pp_drive_band(0, 200, PP_FRAME_W - 1, 239, "ink");
     for (var m = 0; m < 10; m += 1) {
         var _rx = (m * 29 + round(_scroll * 0.3)) mod PP_FRAME_W;
-        pp_drive_band(_rx, 206 + (m mod 4) * 6, _rx + 14, 207 + (m mod 4) * 6, "accent");
+        pp_drive_band(_rx, 206 + (m mod 4) * 6, _rx + 14, 207 + (m mod 4) * 6, "text");
     }
 }
 
