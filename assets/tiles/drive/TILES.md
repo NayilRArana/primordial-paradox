@@ -69,7 +69,7 @@ The art root here is the card's `assets/tiles/drive/`, not `game/sprites_src/env
 | 20 | `gantry_sign_back` | `u` | `bg2_sign` | no | n/a (light 6%, 15 rows no dark, 1 runs, 0 inner dark) | the rear of the sign, which is what the car sees after it has passed |
 | 21 | `barrier_rail` | `v` | `bg0_asphalt` | no | n/a (light 12%, 4 rows no dark, 21 runs, 131 inner dark) | the steel safety barrier in its two bands |
 | 22 | `barrier_post` | `w` | `bg0_asphalt` | no | n/a (light 1%, 0 rows no dark, 32 runs, 154 inner dark) | the post the barrier rail hangs on |
-| 23 | `barrier_end` | `x` | `bg0_asphalt` | no | PASS (light 1%, 0 rows no dark, 18 runs, 194 inner dark) | the terminal where a barrier run ramps down into the ground |
+| 23 | `barrier_end` | `x` | `bg0_asphalt` | no | PASS (light 12%, 0 rows no dark, 16 runs, 196 inner dark) | the terminal where a barrier run ramps down into the ground |
 
 ## Where each tile's shape comes from
 
