@@ -100,10 +100,12 @@ def test_the_launcher_idle_rule_is_two_minutes():
     assert pp_launch.D9_IDLE_S == 120.0
     assert pp_launch.Policy().min_idle == 120.0
     lines = []
-    quiet = pp_launch.Policy(idle_read=lambda: 120.0, say=lines.append)
+    # Card t_5d1a6ec4: a faked idle read must come with a faked automation list, or the gate consults this
+    # host's live process list and refuses because a desktop automation is running here right now.
+    quiet = pp_launch.Policy(idle_read=lambda: 120.0, say=lines.append, automation_read=lambda: ())
     assert quiet.gate("pin") is True
     assert "120 s" in " ".join(lines)
-    recent = pp_launch.Policy(idle_read=lambda: 119.0, say=lambda line: None)
+    recent = pp_launch.Policy(idle_read=lambda: 119.0, say=lambda line: None, automation_read=lambda: ())
     assert recent.gate("pin") is False
 
 

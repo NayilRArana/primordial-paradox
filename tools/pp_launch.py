@@ -347,7 +347,7 @@ class Policy(object):
     """What one run is allowed to do: muted or sound, gated or waiting, shown or off the primary screen."""
 
     def __init__(self, show=False, sound=False, wait_s=0.0, min_idle=D9_IDLE_S, force=False,
-                 idle_read=None, say=print):
+                 idle_read=None, say=print, automation_read=None):
         self.show = bool(show)
         self.sound = bool(sound)
         self.wait_s = float(wait_s)
@@ -355,11 +355,13 @@ class Policy(object):
         self.force = bool(force)
         self.idle_read = idle_read
         self.say = say
+        self.automation_read = automation_read
 
     def gate(self, label="launch"):
         """True when this run may open a window. A False answer is a skip, never a failure of the work."""
         allowed, idle = idle_check.verdict(idle_read=self.idle_read, min_idle=self.min_idle, wait_s=self.wait_s,
-                                           force=self.force, say=self.say)
+                                           force=self.force, say=self.say,
+                                           automation_read=self.automation_read)
         idle_check.log("%s: %s (idle %s)" % (label, "allowed" if allowed else "refused",
                                              "unreadable" if idle is None else "%.0f s" % idle))
         if allowed:

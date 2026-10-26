@@ -61,7 +61,8 @@ def source(name: str) -> str:
 def test_gate_refuses_while_input_is_recent():
     idle_check = load("idle_check")
     lines = []
-    allowed, idle = idle_check.check(idle_read=lambda: 5.0, min_idle=MIN_IDLE, say=lines.append)
+    allowed, idle = idle_check.check(idle_read=lambda: 5.0, min_idle=MIN_IDLE, say=lines.append,
+                                     automation_read=lambda: ())
     assert allowed is False
     assert idle == 5.0
     text = " ".join(lines)
@@ -72,7 +73,8 @@ def test_gate_refuses_while_input_is_recent():
 def test_gate_allows_after_three_quiet_minutes():
     idle_check = load("idle_check")
     lines = []
-    allowed, idle = idle_check.check(idle_read=lambda: 600.0, min_idle=MIN_IDLE, say=lines.append)
+    allowed, idle = idle_check.check(idle_read=lambda: 600.0, min_idle=MIN_IDLE, say=lines.append,
+                                     automation_read=lambda: ())
     assert allowed is True
     assert idle == 600.0
     assert "allows the launch" in " ".join(lines)
@@ -82,7 +84,8 @@ def test_gate_refuses_when_the_idle_time_cannot_be_read():
     """A host that cannot measure the idle time cannot promise nobody is at the keyboard, so it refuses."""
     idle_check = load("idle_check")
     lines = []
-    allowed, idle = idle_check.check(idle_read=lambda: None, min_idle=MIN_IDLE, say=lines.append)
+    allowed, idle = idle_check.check(idle_read=lambda: None, min_idle=MIN_IDLE, say=lines.append,
+                                     automation_read=lambda: ())
     assert allowed is False
     assert idle is None
     assert "REFUSED" in " ".join(lines)
@@ -90,7 +93,8 @@ def test_gate_refuses_when_the_idle_time_cannot_be_read():
 
 def test_gate_refuses_on_a_non_windows_host():
     idle_check = load("idle_check")
-    allowed, idle = idle_check.check(idle_read=None, min_idle=MIN_IDLE, say=lambda line: None)
+    allowed, idle = idle_check.check(idle_read=None, min_idle=MIN_IDLE, say=lambda line: None,
+                                     automation_read=lambda: ())
     if sys.platform == "win32":
         # On this PC the real read answers with a number; the point of this row is the None branch, tested above.
         assert idle is None or idle >= 0.0
@@ -104,7 +108,7 @@ def test_a_wait_that_runs_out_is_a_skip():
     allowed, _idle = idle_check.check(idle_read=lambda: 10.0, min_idle=MIN_IDLE, wait_s=60.0, poll_s=20.0,
                                       clock=lambda: ticks["t"],
                                       sleep=lambda seconds: ticks.__setitem__("t", ticks["t"] + seconds),
-                                      say=lambda line: None)
+                                      say=lambda line: None, automation_read=lambda: ())
     assert allowed is False
     assert ticks["t"] == pytest.approx(60.0)
 
@@ -122,7 +126,7 @@ def test_a_wait_takes_the_launch_when_the_user_goes_quiet():
     allowed, idle = idle_check.check(idle_read=idle_read, min_idle=MIN_IDLE, wait_s=60.0, poll_s=20.0,
                                      clock=lambda: ticks["t"],
                                      sleep=lambda seconds: ticks.__setitem__("t", ticks["t"] + seconds),
-                                     say=lambda line: None)
+                                     say=lambda line: None, automation_read=lambda: ())
     assert allowed is True
     assert idle == 200.0
 
@@ -179,10 +183,10 @@ def test_the_policy_carries_the_flags():
     assert quiet.env()["PP_MUTE"] == "1"
     assert "PP_MUTE" not in pp_launch.Policy(sound=True).env()
     lines = []
-    loud = pp_launch.Policy(sound=True, idle_read=lambda: 500.0, say=lines.append)
+    loud = pp_launch.Policy(sound=True, idle_read=lambda: 500.0, say=lines.append, automation_read=lambda: ())
     assert loud.gate("audio proof") is True
     assert "cleared for an audio proof" in " ".join(lines)
-    recent = pp_launch.Policy(idle_read=lambda: 1.0, say=lines.append)
+    recent = pp_launch.Policy(idle_read=lambda: 1.0, say=lines.append, automation_read=lambda: ())
     assert recent.gate("capture") is False
 
 

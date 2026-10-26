@@ -12,6 +12,13 @@ three minutes). With --wait the gate polls and launches the moment the user goes
 no wait (the default) it skips at once and says so, so a capture card can be retried later instead of fighting him for
 the screen.
 
+Card t_5d1a6ec4 (2026-10-26): the tick alone cannot say who typed. On this PC codex.exe and
+codex-computer-use-swift.exe drive the desktop themselves, taking focus and input every 90 to 110 s, so the gate kept
+reporting the automation's own typing as "input 9 s ago" and no capture could open a window for hours. The gate now
+asks the process list (tasklist, /FO CSV because its table form cuts long image names) and, when one of the images in
+AUTOMATION_IMAGES or PP_AUTOMATION_IMAGES is running, refuses with that process named, because a window opened under a
+desktop automation is covered mid recording. It never allows a launch on the strength of the automation's silence.
+
 Usage:
     python tools\\idle_check.py                    print the idle time and the verdict for 180 s
     python tools\\idle_check.py --min-idle 600     another threshold
@@ -32,9 +39,12 @@ shape as its other claims.
 from __future__ import annotations
 
 import argparse
+import csv
 import ctypes
+import io
 import json
 import os
+import subprocess
 import sys
 import time
 
@@ -47,6 +57,15 @@ POLL_S = 20.0
 # play_demo.py: "I did not open a window" must never read as "the run overran".
 EXIT_REFUSED = 4
 LOG_NAME = "idle_check.log"
+# Desktop automations that drive the keyboard and mouse on this PC themselves (card t_5d1a6ec4). Measured on
+# 2026-10-26: codex.exe and codex-computer-use-swift.exe were running all session, took focus and input every 90 to
+# 110 s, and reset GetLastInputInfo, so the three quiet minutes never arrived and four re-records were refused with
+# a line that blamed nobody: "input 9 s ago". That input is not Nayil at the keyboard. The gate cannot tell who
+# typed from the tick alone, so it names the process instead of guessing, and refuses while one runs: a window opened
+# now would be covered by that automation mid recording, which is exactly card t_5d1a6ec4's two foreign frames.
+# PP_AUTOMATION_IMAGES is a comma separated list, so the set is data and not a code change on the next host.
+AUTOMATION_IMAGES = ("codex.exe", "codex-computer-use-swift.exe")
+AUTOMATION_ENV = "PP_AUTOMATION_IMAGES"
 
 
 class LASTINPUTINFO(ctypes.Structure):
@@ -81,6 +100,66 @@ def idle_seconds():
         return None
 
 
+def normalise_image(name: str) -> str:
+    """A process image name as it is compared: lower case, and without the .exe suffix."""
+    name = os.path.basename((name or "").strip().lower())
+    return name[:-4] if name.endswith(".exe") else name
+
+
+def automation_images() -> tuple[str, ...]:
+    """The image names this gate treats as a desktop automation: the built in list plus PP_AUTOMATION_IMAGES."""
+    names: list[str] = list(AUTOMATION_IMAGES)
+    extra = os.environ.get(AUTOMATION_ENV, "")
+    for part in extra.split(","):
+        part = part.strip()
+        if part and part not in names:
+            names.append(part)
+    return tuple(names)
+
+
+def process_list(lister=None) -> list[str] | None:
+    """Every running image name on this host, lower case, or None when the list cannot be read.
+
+    tasklist with /FO CSV, because its default table cuts an image name at 25 characters and
+    codex-computer-use-swift.exe is longer than that. None is not an empty list: it means this host could not
+    answer, and the gate says so instead of pretending no automation is running.
+    """
+    if lister is not None:
+        return lister()
+    if sys.platform != "win32":
+        return None
+    try:
+        result = subprocess.run(["tasklist", "/NH", "/FO", "CSV"], capture_output=True, text=True, timeout=30,
+                                stdin=subprocess.DEVNULL)
+    except (OSError, subprocess.SubprocessError):  # gate: ok an unreadable process list is reported as unreadable
+        return None
+    if result.returncode != 0:
+        return None
+    names = []
+    for row in csv.reader(io.StringIO(result.stdout or "")):
+        if row and row[0].strip():
+            names.append(row[0].strip().lower())
+    return names
+
+
+def automation_running(images=None, lister=None):
+    """Which desktop automations are running: a list of names, [] when none, None when this host cannot say.
+
+    The empty list and None are different answers on purpose: "no automation is running" is a fact the gate
+    may act on, and "I cannot see the process list" is not.
+    """
+    running = process_list(lister)
+    if running is None:
+        return None
+    wanted = images if images is not None else automation_images()
+    wanted = {normalise_image(name) for name in wanted if name}
+    found = []
+    for name in running:
+        if normalise_image(name) in wanted and name not in found:
+            found.append(name)
+    return sorted(found)
+
+
 def log(msg: str, path: str | None = None) -> None:
     """Append one line beside this file, trimmed to the last 100 KB like the manager's guard does."""
     target = path or os.path.join(os.path.dirname(os.path.abspath(__file__)), LOG_NAME)
@@ -94,17 +173,48 @@ def log(msg: str, path: str | None = None) -> None:
 
 
 def check(idle_read=None, min_idle: float = MIN_IDLE_S, wait_s: float = 0.0, poll_s: float = POLL_S,
-          clock=time.monotonic, sleep=time.sleep, say=print):
+          clock=time.monotonic, sleep=time.sleep, say=print, automation_read=None):
     """May a window be opened now? Returns (allowed, idle_at_the_last_read).
 
     The wait is the whole difference between a capture card and a person: with wait_s = 0 the answer is given at once
     (skip this attempt, the next card run tries again), and with wait_s > 0 the gate holds the launch and takes it the
     moment the user has been quiet for min_idle seconds, or gives up when the wait runs out.
+
+    Card t_5d1a6ec4: a desktop automation is asked about before the tick is trusted. GetLastInputInfo cannot say who
+    typed, so an automation that presses keys every 90 s reads exactly like Nayil at the keyboard, and the gate used to
+    report that as "input 9 s ago" for hours. When automation_read() names a running automation the gate refuses, says
+    which process it is, and says that the input is not his; with a wait it keeps asking until the wait runs out. A
+    process list that cannot be read is one line, and the tick still decides.
     """
     reader = idle_read or idle_seconds
+    reader_automation = automation_read if automation_read is not None else automation_running
     started = clock()
+    said_unreadable = False
     while True:
         idle = reader()
+        automation = reader_automation()
+        if automation is None and not said_unreadable:
+            say("P: idle gate cannot read this host's process list, so it cannot say whether a desktop automation is "
+                "driving the keyboard; the idle time below is what decides")
+            log("process list unreadable")
+            said_unreadable = True
+        if automation:
+            names = ", ".join(automation)
+            waited = clock() - started
+            if wait_s > 0 and waited < wait_s:
+                say("P: idle gate waits: a desktop automation is driving the keyboard and mouse (%s), which keeps the "
+                    "input clock reset; %.0f s of %.0f s waited" % (names, waited, wait_s))
+                sleep(max(0.0, min(poll_s, wait_s - waited)))
+                continue
+            say("P: idle gate REFUSED: a desktop automation is running (%s) and it presses keys and moves the mouse "
+                "itself, so the %.0f s of quiet cannot happen while it runs. That input is not Nayil at the keyboard; "
+                "it is why this gate kept answering 'input %s ago'. A window opened now would be covered by that "
+                "automation mid recording. Stop it (%s), then run this again%s."
+                % (names, min_idle, "unreadable" if idle is None else "%.0f s" % idle, names,
+                   "" if wait_s <= 0 else ", or wait for it to exit"))
+            log("refused: desktop automation %s is running (idle %s)" % (names, "unreadable" if idle is None
+                                                                         else "%.0f s" % idle))
+            return False, idle
         if idle is None:
             say("P: idle gate REFUSED: this host cannot report the idle time, so no window was opened")
             log("refused: idle time unreadable")
@@ -124,7 +234,8 @@ def check(idle_read=None, min_idle: float = MIN_IDLE_S, wait_s: float = 0.0, pol
         sleep(max(0.0, min(poll_s, wait_s - waited)))
 
 
-def verdict(idle_read=None, min_idle: float = MIN_IDLE_S, wait_s: float = 0.0, force: bool = False, say=print):
+def verdict(idle_read=None, min_idle: float = MIN_IDLE_S, wait_s: float = 0.0, force: bool = False, say=print,
+            automation_read=None):
     """The gate with the one override a human may use on purpose. Returns (allowed, idle)."""
     if force:
         idle = (idle_read or idle_seconds)()
@@ -132,7 +243,7 @@ def verdict(idle_read=None, min_idle: float = MIN_IDLE_S, wait_s: float = 0.0, f
             % ("cannot be read" if idle is None else "was %.0f s ago" % idle))
         log("overridden by --force")
         return True, idle
-    return check(idle_read=idle_read, min_idle=min_idle, wait_s=wait_s, say=say)
+    return check(idle_read=idle_read, min_idle=min_idle, wait_s=wait_s, say=say, automation_read=automation_read)
 
 
 def selftest(say=print) -> int:
@@ -143,10 +254,11 @@ def selftest(say=print) -> int:
     """
     rows = []
 
-    def run(label, idle_read, expect_allowed, expect_reason, min_idle=MIN_IDLE_S, wait_s=0.0, force=False):
+    def run(label, idle_read, expect_allowed, expect_reason, min_idle=MIN_IDLE_S, wait_s=0.0, force=False,
+            automation_read=lambda: ()):
         lines = []
         allowed, idle = verdict(idle_read=idle_read, min_idle=min_idle, wait_s=wait_s, force=force,
-                               say=lines.append)
+                               say=lines.append, automation_read=automation_read)
         text = " ".join(lines)
         ok = allowed == expect_allowed and expect_reason in text
         rows.append((label, ok, text))
@@ -173,6 +285,12 @@ def selftest(say=print) -> int:
     ok &= run("recent input, a wait of 0 is still a skip", quiet(0.0), False, "SKIPPED", wait_s=0.0)
     ok &= run("idle time unreadable", lambda: None, False, "REFUSED")
     ok &= run("override at the keyboard", quiet(3.0), True, "OVERRIDDEN", force=True)
+    # Card t_5d1a6ec4: a desktop automation's own input reads exactly like Nayil at the keyboard, so the gate names it
+    # and refuses instead of reporting the automation's 90 s of typing as his.
+    ok &= run("a desktop automation is driving", quiet(600.0), False, "codex.exe",
+              automation_read=lambda: ["codex.exe"])
+    ok &= run("a process list that cannot be read still decides by the tick", quiet(600.0), True, "allows",
+              automation_read=lambda: None)
     # The wait: the clock is fake and each poll advances it, so the loop gives up at the deadline instead of sleeping.
     ticks = {"t": 0.0}
 
@@ -183,7 +301,7 @@ def selftest(say=print) -> int:
         ticks["t"] += seconds
 
     allowed, _idle = check(idle_read=counting([10.0, 20.0, 30.0, 40.0]), wait_s=60.0, poll_s=20.0,
-                           clock=clock, sleep=sleep, say=lambda line: None)
+                           clock=clock, sleep=sleep, say=lambda line: None, automation_read=lambda: ())
     waited_ok = allowed is False
     ok &= waited_ok
     rows.append(("a wait that runs out is a skip", waited_ok, "allowed=%r" % (allowed,)))
@@ -192,7 +310,7 @@ def selftest(say=print) -> int:
     # The wait that succeeds: the reader reports quiet on the third poll, so the gate takes the launch.
     ticks["t"] = 0.0
     allowed, idle = check(idle_read=counting([10.0, 20.0, 200.0]), wait_s=60.0, poll_s=20.0,
-                          clock=clock, sleep=sleep, say=lambda line: None)
+                          clock=clock, sleep=sleep, say=lambda line: None, automation_read=lambda: ())
     took_ok = allowed is True and idle == 200.0
     ok &= took_ok
     rows.append(("a wait that sees the user go quiet launches", took_ok, "allowed=%r idle=%r" % (allowed, idle)))
@@ -225,7 +343,8 @@ def main(argv=None) -> int:
                                 say=lines.append)
         print(json.dumps({"allowed": bool(allowed), "idle_seconds": idle, "min_idle_seconds": args.min_idle,
                           "wait_seconds": args.wait_s, "force": bool(args.force), "platform": sys.platform,
-                          "lines": lines}, sort_keys=True))
+                          "automations_running": automation_running(),
+                          "automation_images": list(automation_images()), "lines": lines}, sort_keys=True))
         return 0 if allowed else EXIT_REFUSED
 
     allowed, _idle = verdict(min_idle=args.min_idle, wait_s=args.wait_s, force=args.force)

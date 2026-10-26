@@ -25,6 +25,15 @@ same). When there is no loopback the video is recorded silent and a stand-in tra
 title theme that ships in the repo, then muxed in and labelled in the mp4's own metadata and in the verify
 file. It is never passed off as the game's live output.
 
+Pollution (card t_5d1a6ec4): the rectangle is asked who owns it every second while the recording runs, not
+only before and after, and its pixels are read once a second as well. A foreign window found there stops the
+run and marks the take POLLUTED, named by the process that owned the pixels; it is never reported as the art
+lane's finding. A take checked from disk alone (`--check`) has no run log, so there the verdict comes from the
+frames: a sampled frame with fewer than half its pixels on the 2C02 palette is not the game, because the game
+resolves every colour through data/palette_ppu.json, and a frame between that floor and the 0.90 palette floor
+is the art lane's. Measured on 2026-10-26: 33 frames of the game scored 0.9285 to 0.9939, the two covered
+frames of the demo-box take scored 0.0024 and 0.0025.
+
 Usage:
     python tools\\play_demo.py                        play data\\demo\\run_001.json and record output\\demo\\run_001.mp4
     python tools\\play_demo.py --script data\\demo\\x.json --out output\\demo\\x.mp4
@@ -40,15 +49,15 @@ Exit codes:
        or this host cannot draw at all, in which case the run is not measured and nothing is claimed about it
 
 Quiet by default (card CAPTURE-QUIET, Nayil 2026-10-22): the game is started with PP_MUTE=1 so nothing plays, no
-window opens unless the idle gate in tools\idle_check.py sees three quiet minutes, and the window is moved off the
+window opens unless the idle gate in tools\\idle_check.py sees three quiet minutes, and the window is moved off the
 primary screen. --sound is for an audio proof, --show leaves the window where it is, --force is a human override.
 
 Portable import (card PINE-HONEST, 2026-10-24): the two modules this tool draws and launches with,
-tools\capture_title.py and tools\pp_launch.py, import ctypes.wintypes at their own line 39 and line 41, which raises
+tools\\capture_title.py and tools\\pp_launch.py, import ctypes.wintypes at their own line 39 and line 41, which raises
 on a host without the Windows path. Imported at the top of this file they killed it before it could say anything, and
 that traceback, not a test result, is what 19 of the 21 Pine reds measured on 2026-10-24 were. Both are now imported
 inside the function that uses them, and a host that cannot import them prints one line, "play_demo: unavailable on
-this platform", and exits 4 (the harness's not-measured lane, tools\idle_check.py EXIT_REFUSED) instead of passing
+this platform", and exits 4 (the harness's not-measured lane, EXIT_REFUSED) instead of passing
 silently or going red.
 """
 
@@ -57,6 +66,7 @@ import json
 import os
 import subprocess
 import sys
+import threading
 import time
 
 TOOLS_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -144,6 +154,31 @@ SAMPLE_FRACTIONS = (0.02, 0.18, 0.34, 0.5, 0.66, 0.84, 0.95)
 # A frame of the game that is not a fade has a mean luma well above a black screen's. Measured on the
 # 2026-10-21 title recording: the darkest non-fade sample was about 30, a black frame is under 4.
 MIN_MEAN_LUMA = 8.0
+# The share below which an off-palette frame is not the game drawn wrongly but not the game at all (card
+# t_5d1a6ec4). The game resolves every colour it draws through data/palette_ppu.json (card RUNTIME-PALETTE), so
+# a misdrawn colour costs the pixels it covers and the rest of the screen stays on the palette. Measured on
+# 2026-10-26 over the seven sampled frames of the five takes on disk: the 33 frames of the game scored 0.9285
+# to 0.9939, and the two frames a window covered (demo-box t=36.8 and t=48.5) scored 0.0024 and 0.0025. Half
+# sits far from both populations, and it means what it says: if fewer than half the pixels are 2C02 colours,
+# the screen is not the game's picture. Under this floor the report says "not the game", above it and under
+# palette_share_min it stays the art lane's finding.
+OFF_PALETTE_ART_MIN = 0.50
+# The pollution watch that runs while the recording does (card t_5d1a6ec4). It asks Windows who owns the
+# rectangle once a second, which is the attribution a finished file cannot give, and it keeps a downsampled
+# signature of the pixels so a whole-screen jump is noticed even when the owner sample misses the cover.
+# The jump threshold is measured on real frames: the game's own scene change (title frame to the black-backed
+# room) read 0.896 and a window arriving over the game read 0.968, so a jump alone is never proof of a cover
+# and never fails a take by itself. The owner sample is what marks a take polluted.
+POLLUTION_POLL_S = 1.0
+SIGNATURE_CELLS = (48, 45)
+SIGNATURE_LEVEL = 24
+SIGNATURE_JUMP = 0.80
+# Two consecutive owner samples before the recording is stopped, so one poll during a focus handover does not
+# kill an otherwise clean take.
+POLLUTION_STOP_POLLS = 2
+# How close a covering sample has to be to a sampled frame for the report to name that frame's owner. The
+# watch polls once a second, so this is one poll either side of the frame's own timestamp.
+POLLUTION_SAMPLE_WINDOW_S = 1.5
 # A press this close to the previous one can land inside one game step, where the game reads it as the same
 # press (the reason capture_title.py spaces its keys). The runner refuses a script that asks for less.
 MIN_KEY_GAP_STEPS = 6
@@ -380,12 +415,19 @@ class Replay(object):
         seen = read_marker(self.log_path, needle)
         return fallback_step, seen
 
-    def run(self, end_step):
+    def run(self, end_step, should_stop=None):
         cap = capture_module()  # the key codes, imported here so this class can exist on any host
         self.started = time.monotonic()
         failures = []
+        stopped = False
         for event in self.script["events"]:
             if event["step"] > end_step:
+                break
+            if should_stop is not None and should_stop():
+                # Card t_5d1a6ec4: a window is over the rectangle, so the rest of this take is not the game.
+                # Stop rather than finish, and let the verdict say why.
+                self.record("pollution-stop", "stop", "a window covered the game, stopping", self.step_now())
+                stopped = True
                 break
             if event.get("marker"):
                 target, seen = self.wait_marker(event["marker"], event["step"],
@@ -410,8 +452,10 @@ class Replay(object):
                     failures.append("%s: %s" % (event["id"], error))
                     break
                 self.record(event["id"], "key", event["key"], self.step_now())
-        # The recording keeps running to the end step, so the last beat is held on screen.
-        self.wait_until(end_step + 30)
+        # The recording keeps running to the end step, so the last beat is held on screen. A run that was
+        # stopped because a window covered the game does not hold anything: the rest of it is not the game.
+        if not stopped:
+            self.wait_until(end_step + 30)
         return failures
 
 
@@ -526,7 +570,230 @@ def cut_and_scale(raw_path, viewport, script, out_path, audio_path):
 
 
 # ---------------------------------------------------------------------------------------------------------------------
+# The pollution watch, while the recording runs
+
+def screen_signature(rect, grab=None):
+    """A downsampled read of the screen rectangle, as a list of RGB triples, or None when the read fails.
+
+    This is the cheap BitBlt read the card asks for: one grab a second, box filtered down to 48x45 cells, so
+    the comparison between two samples is 2,160 subtractions and costs nothing next to the 60 fps capture.
+    The grab is injected so the watch can be tested with no screen at all.
+    """
+    if grab is None:
+        def default_grab(bbox):
+            from PIL import ImageGrab
+            return ImageGrab.grab(bbox=bbox, all_screens=True)
+        grab = default_grab
+    left, top, width, height = rect
+    try:
+        image = grab((left, top, left + width, top + height))
+    except Exception:  # gate: ok a screen that cannot be read is a sample this poll does not have; owners still decide
+        return None
+    if image is None:
+        return None
+    try:
+        small = image.convert("RGB").resize(SIGNATURE_CELLS, _signature_filter())
+        return rgb_cells(small)
+    except Exception:  # gate: ok the same, a sample that cannot be reduced is no evidence either way
+        return None
+
+
+def rgb_cells(image):
+    """An image's pixels as a flat list of (r, g, b), row by row.
+
+    Not getdata(): Pillow 12 deprecates it for removal in 14, and this list is the whole signature the watch compares.
+    """
+    pixels = image.load()
+    return [pixels[x, y] for y in range(image.height) for x in range(image.width)]
+
+
+def _signature_filter():
+    """PIL's box filter, which averages a block instead of sampling one pixel of it."""
+    from PIL import Image
+    return Image.BOX
+
+
+def signature_jump(before, after, level=SIGNATURE_LEVEL):
+    """The share of cells whose colour moved by more than level in some channel, 0 to 1.
+
+    Measured on real frames taken from the takes on disk (2026-10-26): the same window twelve seconds apart
+    reads 0.000, the game's own scene change reads 0.896, and a window arriving over the game reads 0.968. So
+    this number notices a whole-screen change and cannot, on its own, say who caused it.
+    """
+    if not before or not after or len(before) != len(after):
+        return None
+    changed = 0
+    for left, right in zip(before, after):
+        if max(abs(left[0] - right[0]), abs(left[1] - right[1]), abs(left[2] - right[2])) > level:
+            changed += 1
+    return changed / float(len(before))
+
+
+def game_log_lines(path):
+    """How many lines the game's own log carries right now, or 0 when it cannot be read yet."""
+    try:
+        with open(path, "r", encoding="utf-8", errors="replace") as handle:
+            return sum(1 for _line in handle)
+    except OSError:  # gate: ok a log that is not there yet has no lines, which is what the count says
+        return 0
+
+
+class PollutionWatch(object):
+    """Asks, once a second while the recording runs, who owns the rectangle and whether its pixels jumped.
+
+    Why it exists (card t_5d1a6ec4): play_demo used to ask the coverage question before and after a recording
+    and never during it, so a window raised over the game mid-run was recorded and then blamed on the art lane
+    as "the game drawn off the 2C02 palette". The owner sample is the attribution a finished file cannot give.
+
+    Two signals, and only one of them is a verdict:
+      - a covering window: Windows says another window owns a sampled point of the rectangle. That marks the
+        take polluted and names the process image, and after POLLUTION_STOP_POLLS consecutive samples the run
+        is stopped rather than finished, because a file that is wrong for 12 s of its 73 is not a take;
+      - a whole-screen jump: the signature moved by SIGNATURE_JUMP of its cells. This is recorded only when
+        the game's own log did not grow during that poll (the card's wording: a jump the run's log does not
+        explain), and it is evidence, never a failure, because the game's own scene change measures as a jump.
+    """
+
+    def __init__(self, hwnd, rect, owners_at, log_lines=None, grab=None,
+                 clock=time.monotonic, poll_s=POLLUTION_POLL_S, stop_polls=POLLUTION_STOP_POLLS,
+                 interval=None):
+        self.hwnd = hwnd
+        self.rect = rect
+        self.owners_at = owners_at
+        self.log_lines = log_lines or (lambda: 0)
+        self.grab = grab
+        self.clock = clock
+        self.poll_s = float(interval if interval is not None else poll_s)
+        self.stop_polls = int(stop_polls)
+        self.samples = []
+        self.started_at = None
+        self.cover_polls = 0
+        self.stop_requested = False
+        self._previous = None
+        self._previous_lines = None
+        self._thread = None
+        self._done = threading.Event()
+
+    # -- one sample ------------------------------------------------------------------------------------------------
+    def poll(self):
+        """Take one sample and return it. Never raises: a sample that cannot be taken is one it does not have."""
+        now = self.clock()
+        at = 0.0 if self.started_at is None else now - self.started_at
+        sample = {"at": round(at, 3)}
+        lines = self.log_lines()
+        try:
+            covered, owners = self.owners_at()
+        except Exception:  # gate: ok (a callable raised) an owner sample that cannot be taken is one it does not have
+            covered, owners = [], []
+        foreign = [row for row in covered if row[2]]
+        if covered:
+            who = sorted({"%s %r" % (image or "?", title) for _x, _y, image, title in covered})
+            sample["cover"] = {"points": len(covered), "who": who,
+                               "owners": sorted({image for _x, _y, image, _title in foreign})}
+            self.cover_polls += 1
+            if self.cover_polls >= self.stop_polls:
+                self.stop_requested = True
+        else:
+            self.cover_polls = 0
+        signature = screen_signature(self.rect, self.grab)
+        if signature is not None and self._previous is not None:
+            changed = signature_jump(self._previous, signature)
+            if changed is not None and changed >= SIGNATURE_JUMP:
+                sample["jump"] = {"changed": round(changed, 3),
+                                  "explained_by_log": lines != self._previous_lines}
+        if signature is not None:
+            self._previous = signature
+        self._previous_lines = lines
+        self.samples.append(sample)
+        return sample
+
+    # -- the loop --------------------------------------------------------------------------------------------------
+    def _loop(self):
+        while not self._done.wait(self.poll_s):
+            self.poll()
+
+    def start(self):
+        """Start sampling on its own thread, once a second, until stop() is called."""
+        self.started_at = self.clock()
+        self._previous = screen_signature(self.rect, self.grab)
+        self._previous_lines = self.log_lines()
+        self._thread = threading.Thread(target=self._loop, name="pollution-watch", daemon=True)
+        self._thread.start()
+        return self
+
+    def stop(self, timeout=10.0):
+        """Stop the thread and wait for it, so the evidence list is complete when it is read."""
+        self._done.set()
+        if self._thread is not None:
+            self._thread.join(timeout)
+            self._thread = None
+        return self.evidence()
+
+    # -- what it saw -----------------------------------------------------------------------------------------------
+    def evidence(self):
+        """The samples that are evidence: a covering window, or a jump the game's own log does not explain."""
+        rows = []
+        for sample in self.samples:
+            if "cover" in sample:
+                rows.append({"at": sample["at"], "kind": "cover", "points": sample["cover"]["points"],
+                             "who": sample["cover"]["who"]})
+            elif sample.get("jump") and not sample["jump"]["explained_by_log"]:
+                rows.append({"at": sample["at"], "kind": "jump", "changed": sample["jump"]["changed"]})
+        return rows
+
+    def polluted(self):
+        """True when a foreign window owned the rectangle at any sample: the one signal that is a verdict."""
+        return any("cover" in sample for sample in self.samples)
+
+    def cover_summary(self):
+        """The owner images seen over the rectangle, for the one line that says why a take was stopped."""
+        names = []
+        for sample in self.samples:
+            for name in sample.get("cover", {}).get("owners", []):
+                if name not in names:
+                    names.append(name)
+        return ", ".join(names) or "a window this tool could not name"
+
+    def first_cover_at(self):
+        """The second of the first covering sample, or None."""
+        for sample in self.samples:
+            if "cover" in sample:
+                return sample["at"]
+        return None
+
+
+# ---------------------------------------------------------------------------------------------------------------------
 # Checks on the finished file
+
+def cover_near(pollution, stamp, window=POLLUTION_SAMPLE_WINDOW_S):
+    """The covering samples within window seconds of a sampled frame's timestamp, earliest first."""
+    rows = []
+    for row in pollution or []:
+        if row.get("kind") != "cover":
+            continue
+        at = row.get("at")
+        if isinstance(at, (int, float)) and abs(at - stamp) <= window:
+            rows.append(row)
+    return sorted(rows, key=lambda row: row.get("at", 0.0))
+
+
+def frame_verdict(share, colours, min_colours, palette_min, art_min=OFF_PALETTE_ART_MIN):
+    """One word for a sampled frame: game, blank, art, not the game, or unjudged.
+
+    The split this card is about (t_5d1a6ec4). A frame is the game when enough of its pixels are 2C02 colours;
+    a frame with too few colours to be a picture is blank; a frame that is off the palette is "art" when most of
+    its pixels are still the game's own palette (a misdrawn colour costs what it covers), and "not the game"
+    when under art_min of its pixels are palette colours at all, which no drawing mistake produces. A share that
+    could not be measured is "unjudged": this tool does not guess, and the palette check fails on its own line.
+    """
+    if share is None:
+        return "unjudged"
+    if share >= palette_min and (colours or 0) >= min_colours:
+        return "game"
+    if (colours or 0) < min_colours:
+        return "blank"
+    return "not the game" if share < art_min else "art"
+
 
 def palette_share(path, allowed, tolerance=12):
     """The share of a frame's pixels that sit on a legal 2C02 colour, allowing for video compression.
@@ -623,7 +890,7 @@ def audio_stream(ffprobe, path):
     return bool(data.get("streams"))
 
 
-def verify_video(path, script, report_path=None):
+def verify_video(path, script, report_path=None, pollution=None):
     """Check a finished mp4 against the script. Returns (ok, report).
 
     The four checks the card asks for, in the order a wrong recording shows up:
@@ -633,6 +900,17 @@ def verify_video(path, script, report_path=None):
       4. sampled frames are the game and not a terminal: enough of them must sit on the legal 2C02 palette
          within the tolerance a compressed frame needs, and two samples must differ, so the scene moves.
 
+    And the two this card added (t_5d1a6ec4):
+      5. a frame that is off the palette is split by how far off it is. Under OFF_PALETTE_ART_MIN fewer than
+         half its pixels are 2C02 colours, which no drawing mistake produces, so it is "not the game" and the
+         take fails as polluted; between that floor and palette_share_min it stays the art lane's finding.
+         SUMMARY text no longer sends the art lane to look at a frame that is a terminal window.
+      6. `pollution` is what the run's pollution watch saw while recording (who owned the rectangle, and any
+         unexplained whole-screen jump). A covered sample fails the take by name and stops the recording, so a
+         window raised over the game mid-run is a polluted take and never an art finding. When the take is
+         checked from disk alone (`--check`) there is no run log, so the check says UNMEASURED rather than
+         pretending either way, and check 5 is what holds.
+
     The exact 3x viewport search (capture_title.viewport_box_and_score) is deliberately not run on these
     frames: it asks for exact palette colours, which is the right question on a PNG taken straight off the
     game's screen, and it is the pre-roll frame's job before the recording starts. On an h264 frame it
@@ -641,7 +919,8 @@ def verify_video(path, script, report_path=None):
     """
     cap = capture_module()
     FFMPEG = ffmpeg_path()
-    report = {"video": path, "checked_at": time.strftime("%Y-%m-%dT%H:%M:%S"), "checks": {}, "samples": []}
+    report = {"video": path, "checked_at": time.strftime("%Y-%m-%dT%H:%M:%S"), "checks": {}, "samples": [],
+              "pollution": list(pollution or []), "polluted": bool(pollution)}
     record = script["record"]
     min_seconds = float(record["min_seconds"])
     width, height = int(record.get("width", 768)), int(record.get("height", 720))
@@ -709,6 +988,7 @@ def verify_video(path, script, report_path=None):
     lit = 0
     on_palette = 0
     off_palette_rows = []
+    foreign_rows = []
     for index, fraction in enumerate(SAMPLE_FRACTIONS):
         stamp = max(0.5, min(duration - 0.5, duration * fraction))
         frame_path = os.path.join(work, "frame_%d.png" % index)
@@ -726,17 +1006,27 @@ def verify_video(path, script, report_path=None):
                     "palette_share": None if share is None else round(share, 4)})
         if luma is not None and luma >= luma_min:
             lit += 1
-        if share is not None and share >= palette_min and (colours or 0) >= min_colours:
+        # One word for this frame, from measurements only (card t_5d1a6ec4). See frame_verdict.
+        verdict = frame_verdict(share, colours, min_colours, palette_min)
+        if verdict == "game":
             on_palette += 1
         else:
             # Why this frame is not counted as the game's picture, written into the row itself.
+            row["verdict"] = verdict
             row["why"] = ("%s colours, under the %d a picture with content has"
                           % (colours, min_colours)) if (colours or 0) < min_colours else (
                 "palette share %s, under the %.2f a frame of the game needs"
                 % ("unmeasured" if share is None else "%.3f" % share, palette_min))
-            if colours and colours >= min_colours:
-                # Not a blank frame and not a foreign window: a scene of the game drawn with colours the
-                # 2C02 cannot output. That is a finding for the art lane, and it is named, never hidden.
+            if verdict == "not the game":
+                # Under the floor, most of the screen is not a 2C02 colour at all, which no drawing mistake
+                # produces: a window covered the rectangle. Named, and never the art lane's finding.
+                covered = cover_near(pollution, stamp)
+                if covered:
+                    row["covered_by"] = covered[0]["who"]
+                foreign_rows.append(row)
+            elif verdict == "art":
+                # Off the palette but mostly on it: the game's own picture with colors the NES cannot output.
+                # This one is the art lane's, and it is named, never hidden.
                 off_palette_rows.append(row)
         report["samples"].append(row)
         frames.append(frame_path)
@@ -766,14 +1056,67 @@ def verify_video(path, script, report_path=None):
                      if (row.get("palette_share") or 0) < palette_min) or "see the samples"))
     if off_palette_rows:
         report["findings"] = [
-            "FINDING %d of %d sampled frames are the game drawn off the 2C02 palette: %s. The frames are real "
-            "game frames (the run's log shows the walk and the dialogue in the room they come from), so this is "
-            "an art finding for the audit lane, not a capture failure. Palette share under %.2f means most "
-            "pixels are colours the NES cannot output."
+            "FINDING %d of %d sampled frames are the game drawn off the 2C02 palette: %s. These are the art "
+            "lane's to look at: the frames carry most of their pixels on the palette, so they are the game's "
+            "own picture with colours the NES cannot output, not a covering window. Palette share under %.2f "
+            "means some pixels are colours the NES cannot output; under %.2f it would not be the game at all."
             % (len(off_palette_rows), len(SAMPLE_FRACTIONS),
                ", ".join("t=%.1f share %.3f" % (row["t"], row.get("palette_share") or 0.0)
-                         for row in off_palette_rows), palette_min)
+                         for row in off_palette_rows), palette_min, OFF_PALETTE_ART_MIN)
         ]
+    if foreign_rows:
+        report.setdefault("findings", []).append(
+            "POLLUTED %d of %d sampled frames are not the game: %s. Fewer than %.2f of their pixels are 2C02 "
+            "colours, which no drawing mistake produces, so this is a window over the game rectangle and NOT an "
+            "art finding: the take has to be re-recorded.%s"
+            % (len(foreign_rows), len(SAMPLE_FRACTIONS),
+               ", ".join("t=%.1f share %.3f%s" % (row["t"], row.get("palette_share") or 0.0,
+                                                  "" if "covered_by" not in row
+                                                  else " (covered by %s)" % " and ".join(row["covered_by"]))
+                         for row in foreign_rows), OFF_PALETTE_ART_MIN,
+               "" if pollution else " The run log for this take is not here, so the frames are the evidence."))
+
+    # Who owned the rectangle while the recording ran (card t_5d1a6ec4). A cover is a verdict; a jump without
+    # a game log line to explain it is only evidence, which is why it is reported and not failed.
+    covers = [row for row in (pollution or []) if row.get("kind") == "cover"]
+    jumps = [row for row in (pollution or []) if row.get("kind") == "jump"]
+    if covers:
+        report["checks"]["not_polluted"] = (
+            "FAIL a window covered the game during the recording: %s. The take is polluted and is not an art "
+            "finding; re-record it with nothing raised over the rectangle."
+            % "; ".join("at t=%.1f %s owned a sampled point of the rectangle"
+                        % (row.get("at", 0.0), " and ".join(row.get("who") or ["a window"])) for row in covers[:5]))
+        ok_pollution = False
+    elif foreign_rows:
+        report["checks"]["not_polluted"] = (
+            "FAIL %d of %d sampled frames are not the game's picture (%s): fewer than %.2f of their pixels are "
+            "2C02 colours, which no drawing mistake produces, so the rectangle was not the game's own for the "
+            "whole recording.%s"
+            % (len(foreign_rows), len(SAMPLE_FRACTIONS),
+               ", ".join("t=%.1f share %.3f" % (row["t"], row.get("palette_share") or 0.0) for row in foreign_rows),
+               OFF_PALETTE_ART_MIN,
+               "" if pollution is None
+               else " The pollution watch did not catch the window, which is why the frames are the test."))
+        ok_pollution = False
+    elif pollution is None:
+        report["checks"]["not_polluted"] = (
+            "UNMEASURED no run log beside this take, so nothing here says who owned the rectangle while it was "
+            "recorded; every sampled frame is the game's own picture, which is what this check can say from the "
+            "file alone")
+        ok_pollution = True
+    else:
+        report["checks"]["not_polluted"] = (
+            "PASS the rectangle was the game's own for the whole recording: no covering window in any owner "
+            "sample")
+        ok_pollution = True
+    if jumps:
+        report["checks"]["jumps"] = (
+            "NOTE %d unexplained whole screen jump%s while recording (%s). A jump is not proof of a cover: the "
+            "game's own scene change measures the same way, so this line is evidence and the owner samples above "
+            "are the verdict"
+            % (len(jumps), "" if len(jumps) == 1 else "s",
+               ", ".join("t=%.1f moved %.2f of the screen" % (row.get("at", 0.0), row.get("changed") or 0.0)
+                         for row in jumps[:5])))
 
     differences = []
     for i in range(len(frames)):
@@ -789,8 +1132,11 @@ def verify_video(path, script, report_path=None):
                                  "the scene moves" % best) if ok_motion else (
         "FAIL the sampled frames do not differ (largest %s), so the recording is a still" % best)
 
-    ok = bool(ok_duration and ok_stream and ok_lit and ok_game and ok_motion)
+    ok = bool(ok_duration and ok_stream and ok_lit and ok_game and ok_motion and ok_pollution)
     report["ok"] = ok
+    # A jump is evidence and never a verdict (the game's own scene change measures as one), so only a cover or
+    # a frame that is not the game's picture makes a take polluted.
+    report["polluted"] = bool(covers) or bool(foreign_rows)
     if report_path:
         with open(report_path, "w", encoding="utf-8", newline="\n") as handle:
             handle.write(json.dumps(report, indent=2, sort_keys=True) + "\n")
@@ -798,7 +1144,7 @@ def verify_video(path, script, report_path=None):
 
 
 def print_report(report):
-    for name in ("file", "duration", "stream", "not_black", "not_a_terminal", "motion"):
+    for name in ("file", "duration", "stream", "not_black", "not_a_terminal", "not_polluted", "jumps", "motion"):
         line = report["checks"].get(name)
         if line:
             print("  %s" % line)
@@ -892,6 +1238,7 @@ def run_demo(script, keep_raw=False):
     failures = []
     recorder = None
     recorder_log = None
+    watch = None
     try:
         match = cap.find_window(
             lambda hwnd, pid, title, visible, rect: visible and title.lower().startswith(
@@ -956,8 +1303,24 @@ def run_demo(script, keep_raw=False):
         recorder, recorder_log, recorder_log_path = start_recorder(rect, raw_path, record_seconds, fps, loopback)
         print("recording %.1f s of the window to %s" % (record_seconds, raw_path))
 
+        # Card t_5d1a6ec4: ask who owns the rectangle while it is being recorded, not only before and after.
+        watch = PollutionWatch(hwnd, rect, owners_at=lambda: cap.cover_report(hwnd, rect),
+                               log_lines=lambda: game_log_lines(log_path))
+        watch.start()
+        print("pollution watch: who owns the rectangle, and whether its pixels jump, every %.1f s"
+              % POLLUTION_POLL_S)
+
         replay = Replay(script, hwnd, log_path, send_key)
-        failures += replay.run(end_step)
+        failures += replay.run(end_step, should_stop=lambda: watch.stop_requested)
+        stopped_by_cover = watch.stop_requested
+        pollution = watch.stop()
+        if stopped_by_cover:
+            failures.append("the recording was stopped at t=%.1f s because %s covered the game, so this take is "
+                            "polluted and has to be re-recorded"
+                            % (watch.first_cover_at() or 0.0, watch.cover_summary()))
+            print("polluted: stopping the recorder, %s owns the rectangle" % watch.cover_summary())
+            if recorder.poll() is None:
+                recorder.terminate()
 
         # ffmpeg stops itself on -t; give it a moment to finish writing and closing the container.
         try:
@@ -979,7 +1342,7 @@ def run_demo(script, keep_raw=False):
             failures.append("after the recording another window owns %d of the sampled points of the rectangle"
                             % len(covered))
 
-        if recorder.returncode not in (0, None):
+        if recorder.returncode not in (0, None) and not stopped_by_cover:
             failures.append("ffmpeg exited with code %s, its log is %s" % (recorder.returncode, recorder_log_path))
             with open(recorder_log_path, "r", encoding="utf-8", errors="replace") as handle:
                 print(handle.read()[-800:])
@@ -1019,7 +1382,7 @@ def run_demo(script, keep_raw=False):
             return 1
         print("wrote %s" % out_path)
 
-        ok, report = verify_video(out_path, script, verify_path)
+        ok, report = verify_video(out_path, script, verify_path, pollution=pollution)
         report["script"] = os.path.relpath(script_path_used, ROOT) if script_path_used else None
         report["audio"] = ("loopback %s" % loopback) if loopback else (
             "rendered stand-in from %s, not the game's live output" % os.path.basename(audio_path)
@@ -1032,6 +1395,10 @@ def run_demo(script, keep_raw=False):
         print_report(report)
         for failure in failures:
             print("  note: %s" % failure)
+        if report.get("polluted"):
+            print("POLLUTED %s: a window was over the game rectangle, so this take is not the game's own "
+                  "picture. It is a capture failure and not an art finding: re-record it." % out_path)
+            return 1
         if not ok:
             print("FAIL %s did not pass its checks" % out_path)
             return 1
@@ -1040,6 +1407,12 @@ def run_demo(script, keep_raw=False):
     finally:
         # The one exit line, and the game closed before the raw file is cleaned up (card CAPTURE-QUIET-IMPL).
         run.finish()
+        if watch is not None:
+            # A sampling thread is stopped before the run returns, whatever path it took, so no poll outlives it.
+            try:
+                watch.stop()
+            except Exception:  # gate: ok best effort stop of the sampling thread during cleanup.
+                pass
         if recorder is not None and recorder.poll() is None:
             recorder.kill()
         if recorder_log is not None:
