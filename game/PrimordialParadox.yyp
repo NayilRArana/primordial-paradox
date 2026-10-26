@@ -249,6 +249,24 @@
     },
     {
       "$GMIncludedFile": "",
+      "%Name": "talk_live.json",
+      "CopyToMask": -1,
+      "filePath": "datafiles",
+      "name": "talk_live.json",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "talk_live_tape.json",
+      "CopyToMask": -1,
+      "filePath": "datafiles",
+      "name": "talk_live_tape.json",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
       "%Name": "tile_classes_drive.json",
       "CopyToMask": -1,
       "filePath": "datafiles",
@@ -2713,6 +2731,12 @@
       "id": {
         "name": "pp_scene",
         "path": "scripts/pp_scene/pp_scene.yy"
+      }
+    },
+    {
+      "id": {
+        "name": "pp_talk_live",
+        "path": "scripts/pp_talk_live/pp_talk_live.yy"
       }
     },
     {
