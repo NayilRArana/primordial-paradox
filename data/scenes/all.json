@@ -1,0 +1,334 @@
+{
+  "format": 1,
+  "kind": "scenes",
+  "scenes": [
+    {
+      "id": "ship_boarding",
+      "name": "Ship boarding: the gangway, the horn, the deck, the door",
+      "map": "ship_small",
+      "start": { "x": 2, "y": 7 },
+      "commands": [
+        { "cmd": "music", "id": "PP-05" },
+        { "cmd": "shake", "steps": 40, "strength": 1 },
+        { "cmd": "wait", "steps": 120 },
+        { "cmd": "camera", "x": 18, "y": 7 },
+        { "cmd": "wait", "steps": 90 },
+        { "cmd": "say", "id": "ship_gangway" },
+        { "cmd": "camera", "actor": "hero" },
+        { "cmd": "move", "actor": "hero", "dir": "right", "tiles": 1 },
+        { "cmd": "wait", "steps": 60 },
+        { "cmd": "setflag", "name": "ship_deck_seen", "value": true },
+        { "cmd": "end" }
+      ]
+    },
+    {
+      "id": "ship_log",
+      "name": "Cabin: the ship's log and the first save",
+      "map": "ship_small",
+      "start": { "x": 3, "y": 7 },
+      "commands": [
+        { "cmd": "face", "actor": "hero", "dir": "up" },
+        { "cmd": "move", "actor": "hero", "dir": "up", "tiles": 5 },
+        { "cmd": "face", "actor": "hero", "dir": "right" },
+        { "cmd": "camera", "x": 4, "y": 2 },
+        { "cmd": "say", "id": "ship_log_open" },
+        { "cmd": "sfx", "id": "save_jingle" },
+        { "cmd": "wait", "steps": 60 },
+        { "cmd": "camera", "actor": "hero" },
+        { "cmd": "end" }
+      ]
+    },
+    {
+      "id": "percy_lore_stop",
+      "name": "Cabin: Percy",
+      "map": "ship_cabin",
+      "start": { "x": 7, "y": 3 },
+      "commands": [
+        { "cmd": "say", "id": "percy_lore_stop" },
+        { "cmd": "battle", "id": "percy" },
+        { "cmd": "end" }
+      ]
+    },
+    {
+      "id": "prometheus_interrupt",
+      "name": "Cabin: the interruption",
+      "map": "ship_cabin",
+      "start": { "x": 7, "y": 7 },
+      "commands": [
+        { "cmd": "say", "id": "percy_interrupt_line" },
+        { "cmd": "say", "id": "prometheus_veil_line" },
+        { "cmd": "setflag", "name": "met_prometheus", "value": true },
+        { "cmd": "setflag", "name": "percy_standing", "value": true },
+        { "cmd": "music", "id": "PP-07" },
+        { "cmd": "fade", "mode": "out" },
+        { "cmd": "fade", "mode": "in" },
+        { "cmd": "end" }
+      ]
+    },
+    {
+      "id": "percy_aftermath",
+      "name": "Cabin: after Percy",
+      "map": "ship_cabin",
+      "start": { "x": 7, "y": 7 },
+      "commands": [
+        { "cmd": "branch", "flag": "percy_killed", "scene": "percy_aftermath_kill" },
+        { "cmd": "say", "id": "percy_epilogue_spare" },
+        { "cmd": "end" }
+      ]
+    },
+    {
+      "id": "percy_aftermath_kill",
+      "name": "Cabin: Percy down",
+      "map": "ship_cabin",
+      "start": { "x": 7, "y": 7 },
+      "commands": [
+        { "cmd": "say", "id": "percy_epilogue_kill" },
+        { "cmd": "end" }
+      ]
+    },
+    {
+      "id": "quay_gate_checkpoint",
+      "name": "The gate checkpoint",
+      "map": "southampton_town_quay",
+      "start": {
+        "x": 8,
+        "y": 10
+      },
+      "commands": [
+        {
+          "cmd": "music",
+          "id": "PP-03"
+        },
+        {
+          "cmd": "say",
+          "id": "quay_gate_checkpoint"
+        },
+        {
+          "cmd": "say",
+          "id": "quay_gate_choice"
+        },
+        {
+          "cmd": "branch",
+          "flag": "gate_truth",
+          "scene": "quay_gate_truth"
+        },
+        {
+          "cmd": "branch",
+          "flag": "gate_bluff",
+          "scene": "quay_gate_bluff"
+        },
+        {
+          "cmd": "branch",
+          "flag": "gate_authority",
+          "scene": "quay_gate_authority"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "quay_gate_truth",
+      "name": "The gate checkpoint: truth",
+      "map": "southampton_town_quay",
+      "start": {
+        "x": 8,
+        "y": 10
+      },
+      "commands": [
+        {
+          "cmd": "wait",
+          "steps": 20
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "quay_gate_bluff",
+      "name": "The gate checkpoint: bluff",
+      "map": "southampton_town_quay",
+      "start": {
+        "x": 8,
+        "y": 10
+      },
+      "commands": [
+        {
+          "cmd": "wait",
+          "steps": 20
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "quay_gate_authority",
+      "name": "The gate checkpoint: authority",
+      "map": "southampton_town_quay",
+      "start": {
+        "x": 8,
+        "y": 10
+      },
+      "commands": [
+        {
+          "cmd": "wait",
+          "steps": 20
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "quay_yard_walk",
+      "name": "The yard walk",
+      "map": "southampton_town_quay",
+      "start": {
+        "x": 8,
+        "y": 10
+      },
+      "commands": [
+        {
+          "cmd": "move",
+          "actor": "hero",
+          "dir": "down",
+          "tiles": 2
+        },
+        {
+          "cmd": "wait",
+          "steps": 20
+        },
+        {
+          "cmd": "move",
+          "actor": "hero",
+          "dir": "right",
+          "tiles": 3
+        },
+        {
+          "cmd": "wait",
+          "steps": 20
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "quay_dock_office_play",
+      "name": "The dock office",
+      "map": "quay_dock_office",
+      "start": {
+        "x": 6,
+        "y": 12
+      },
+      "commands": [
+        {
+          "cmd": "say",
+          "id": "quay_dock_office"
+        },
+        {
+          "cmd": "say",
+          "id": "quay_dock_office_pass"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "navy_aftermath",
+      "name": "Deck: after the watch",
+      "map": "ship_small",
+      "start": { "x": 2, "y": 7 },
+      "commands": [
+        { "cmd": "branch", "flag": "sailor_killed", "scene": "navy_aftermath_kill" },
+        { "cmd": "say", "id": "navy_epilogue_spare" },
+        { "cmd": "end" }
+      ]
+    },
+    {
+      "id": "navy_aftermath_kill",
+      "name": "Deck: the watch is over",
+      "map": "ship_small",
+      "start": { "x": 2, "y": 7 },
+      "commands": [
+        { "cmd": "say", "id": "navy_epilogue_kill" },
+        { "cmd": "end" }
+      ]
+    },
+    {
+      "id": "drive_to_southampton",
+      "name": "The drive, London to Southampton",
+      "map": "drive_m4_corridor",
+      "start": { "x": 0, "y": 8 },
+      "commands": [
+        { "cmd": "music", "id": "PP-02" },
+        { "cmd": "fade", "mode": "in" },
+        { "cmd": "camera", "x": 0, "y": 8 },
+        { "cmd": "camera", "x": 0, "y": 8 },
+        { "cmd": "camera", "x": 0, "y": 8 },
+        { "cmd": "wait", "steps": 600 },
+        { "cmd": "wait", "steps": 2 },
+        { "cmd": "camera", "x": 0, "y": 8 },
+        { "cmd": "camera", "x": 0, "y": 8 },
+        { "cmd": "sfx", "id": "car_engine_loop" },
+        { "cmd": "wait", "steps": 600 },
+        { "cmd": "wait", "steps": 209 },
+        { "cmd": "camera", "x": 37, "y": 8 },
+        { "cmd": "say", "id": "drive_sign_55" },
+        { "cmd": "setflag", "name": "sign_55_seen", "value": true },
+        { "cmd": "wait", "steps": 576 },
+        { "cmd": "camera", "x": 37, "y": 8 },
+        { "cmd": "wait", "steps": 600 },
+        { "cmd": "wait", "steps": 147 },
+        { "cmd": "camera", "x": 37, "y": 8 },
+        { "cmd": "say", "id": "drive_radio_1" },
+        { "cmd": "say", "id": "drive_radio_2" },
+        { "cmd": "wait", "steps": 600 },
+        { "cmd": "wait", "steps": 405 },
+        { "cmd": "camera", "x": 37, "y": 8 },
+        { "cmd": "say", "id": "drive_radio_3" },
+        { "cmd": "say", "id": "drive_radio_4" },
+        { "cmd": "say", "id": "drive_sign_43" },
+        { "cmd": "setflag", "name": "sign_43_seen", "value": true },
+        { "cmd": "wait", "steps": 600 },
+        { "cmd": "wait", "steps": 478 },
+        { "cmd": "fade", "mode": "out" },
+        { "cmd": "fade", "mode": "in" },
+        { "cmd": "camera", "x": 83, "y": 8 },
+        { "cmd": "wait", "steps": 600 },
+        { "cmd": "wait", "steps": 221 },
+        { "cmd": "camera", "x": 141, "y": 8 },
+        { "cmd": "say", "id": "drive_cathedral" },
+        { "cmd": "wait", "steps": 600 },
+        { "cmd": "wait", "steps": 233 },
+        { "cmd": "camera", "x": 37, "y": 8 },
+        { "cmd": "say", "id": "drive_radio_5" },
+        { "cmd": "say", "id": "drive_radio_6" },
+        { "cmd": "say", "id": "drive_radio_7" },
+        { "cmd": "say", "id": "drive_sign_30" },
+        { "cmd": "setflag", "name": "sign_30_seen", "value": true },
+        { "cmd": "wait", "steps": 600 },
+        { "cmd": "wait", "steps": 491 },
+        { "cmd": "camera", "x": 25, "y": 8 },
+        { "cmd": "sfx", "id": "thunder_soft" },
+        { "cmd": "flash", "steps": 2 },
+        { "cmd": "wait", "steps": 600 },
+        { "cmd": "wait", "steps": 490 },
+        { "cmd": "camera", "x": 37, "y": 8 },
+        { "cmd": "say", "id": "drive_sign_20" },
+        { "cmd": "setflag", "name": "sign_20_seen", "value": true },
+        { "cmd": "wait", "steps": 600 },
+        { "cmd": "wait", "steps": 62 },
+        { "cmd": "camera", "x": 0, "y": 8 },
+        { "cmd": "camera", "x": 0, "y": 8 },
+        { "cmd": "wait", "steps": 600 },
+        { "cmd": "wait", "steps": 334 },
+        { "cmd": "fade", "mode": "out" },
+        { "cmd": "end" }
+      ]
+    }
+  ]
+}

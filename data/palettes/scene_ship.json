@@ -1,0 +1,145 @@
+{
+  "backdrop": 15,
+  "background": [
+    {
+      "colours": [
+        0,
+        16,
+        48
+      ],
+      "hex": [
+        "#7c7c7c",
+        "#bcbcbc",
+        "#fcfcfc"
+      ],
+      "name": "bg0"
+    },
+    {
+      "colours": [
+        0,
+        16,
+        40
+      ],
+      "hex": [
+        "#7c7c7c",
+        "#bcbcbc",
+        "#f8b800"
+      ],
+      "name": "bg1"
+    },
+    {
+      "colours": [
+        7,
+        23,
+        40
+      ],
+      "hex": [
+        "#881400",
+        "#e45c10",
+        "#f8b800"
+      ],
+      "name": "bg2"
+    },
+    {
+      "colours": [
+        2,
+        18,
+        33
+      ],
+      "hex": [
+        "#0000bc",
+        "#0058f8",
+        "#3cbcfc"
+      ],
+      "name": "bg3"
+    }
+  ],
+  "format": 1,
+  "judged": [
+    {
+      "at": [
+        64,
+        64
+      ],
+      "background": "game/sprites_src/env/ts_ship.png",
+      "note": "card t_1dc346b9 ruling 2026-10-25 named the ground: the ship tileset the room is built from is the authoritative ground for the ship cast, because a ground has to be something a tool can measure and a composed capture is not (output/ship_dialogue.png carries colours off the 2C02 palette, so the tool charges its failures to the sprite standing on it). ts_ship.png is authored inside the ship's four background palettes, so it measures clean and only the sprite's own pair rules can fail. Card t_a6a7a436 ruling section 17 recast the row and kept the placement card t_1dc346b9 gave it, [64, 64]: the cast is now the WALKING cast, the party's four walking sheets plus sailor_ow_v2.png, because a walking room draws walking sheets. Measured 2026-10-25 at --at 64,64 against the four rows this file now carries: hadrian_ow_v2, konrad_ow_v2, zander_ow_v2, percy_ow_v2 and sailor_ow_v2 each fit exactly one row and read 0 failing pairs and 0 uncovered 8x8 tiles (32 inked each), hadrian on sp0, percy on sp1, zander on sp2, konrad on sp3, and the sailor on sp1 beside percy. sailor_battle.png came off this row: it is a 168x32 seven frame BATTLE sheet, no encounter draws it (data/encounters/all.json tutorial_sailors is navy_sailor), pp_overworld draws exactly two sheets (zander_ow_v2 for the hero and sailor_ow_v2 for a sailor actor) and it is neither, and under the four walking rows 40 of its 72 inked 8x8 tiles are uncovered by any row, against 0 of 72 under the old rows. Its ground is card t_0b9c2faf. The capture stays what it is, the dialogue screen that ships; it is no longer named as a ground.",
+      "sprites": [
+        "game/sprites_src/chars/hadrian_ow_v2.png",
+        "game/sprites_src/chars/percy_ow_v2.png",
+        "game/sprites_src/chars/zander_ow_v2.png",
+        "game/sprites_src/chars/konrad_ow_v2.png",
+        "game/sprites_src/chars/sailor_ow_v2.png"
+      ]
+    },
+    {
+      "background": "output/nes_title_frame.png",
+      "note": "the ship scene's set against the title ground: what a shared ground costs a scene that did not design for it",
+      "sprites": [
+        "game/sprites_src/chars/sailor_ow_v2.png"
+      ]
+    }
+  ],
+  "kind": "scene_palette",
+  "notes": [
+    "backdrop $0F black is the hull shadow and the hatch void",
+    "background rows are the four groups the sheet is DRAWN in, one per tile (ruling section 21.7, card t_463bc8c1): bg0 steel and white paint, bg1 steel and brass fittings, bg2 rust and brass cargo and wood, bg3 the sea's three tones. The water family was redrawn on bg3's three colours (mid $12 body, crest $21 wave light and foam, deep $02 troughs) and the porthole glass on bg0's, so the scene palette pass now repaints 76 of 12288 pixels of the drawing where it used to repaint 762: the bunk's rust frame (60 px) and the lifebuoy's four rust bands (16 px), both repainted to a grey a row carries, and both another card's art. These four rows are the measured best fit among all 1929501 four-row sets of the nine non backdrop entries (exhaustive, 2026-10-25), and they are NOT what the solver proposes: `solve --scene ship` proposes bg1 $07 $28 $30 and bg2 $02 $12 $17, which repaints 646 pixels over 19 tiles, so solve_ship() measures the drawing, reports both numbers and refuses to write a proposal worse than the rows already here. That refusal is what replaced `background_pinned`, which this file no longer carries: the pin existed because the rows and the drawing disagreed, and the redraw plus a measured floor is what settled it.",
+    "sprites_pinned true: the sprite half is a cast decision shared by hand with the towns, so tools/art/scene_palette.py solve --scene ship --write keeps it and keeps this file's judged row instead of re-solving both"
+  ],
+  "rule": "NES: 1 backdrop shared by both layers, 4 background palettes of 3 entries on 16x16 areas, 4 sprite palettes of 3 entries plus transparency on 8x8 tiles; every entry is a data/nes_palette.json entry number",
+  "scene": "ship",
+  "sprites": [
+    {
+      "colours": [
+        0,
+        15,
+        48
+      ],
+      "hex": [
+        "#7c7c7c",
+        "#000000",
+        "#fcfcfc"
+      ],
+      "name": "sp0"
+    },
+    {
+      "colours": [
+        2,
+        18,
+        48
+      ],
+      "hex": [
+        "#0000bc",
+        "#0058f8",
+        "#fcfcfc"
+      ],
+      "name": "sp1"
+    },
+    {
+      "colours": [
+        1,
+        17,
+        49
+      ],
+      "hex": [
+        "#0000fc",
+        "#0078f8",
+        "#a4e4fc"
+      ],
+      "name": "sp2"
+    },
+    {
+      "colours": [
+        7,
+        23,
+        40
+      ],
+      "hex": [
+        "#881400",
+        "#e45c10",
+        "#f8b800"
+      ],
+      "name": "sp3"
+    }
+  ],
+  "sprites_pinned": true
+}

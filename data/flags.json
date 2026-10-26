@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "kind": "flags",
+  "flags": [
+    "met_prometheus",
+    "ship_door_open",
+    "ship_deck_seen",
+    "percy_spared",
+    "percy_killed",
+    "percy_standing",
+    "dc_gate_hacked",
+    "prison_entered",
+    "kronos_spared",
+    "gate_passed",
+    "gate_truth",
+    "gate_bluff",
+    "gate_authority",
+    "has_boarding_pass",
+    "sailor_spared",
+    "sailor_killed",
+    "sign_55_seen",
+    "sign_43_seen",
+    "sign_30_seen",
+    "sign_20_seen"
+  ]
+}

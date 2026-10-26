@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://primordial-paradox.local/schemas/enemies.schema.json",
+  "title": "Primordial Paradox enemies file",
+  "description": "Every enemy the battle director can start. Numbers here are the whole of the balance: no enemy stat lives in GML. Ranges mirror the constants in tools/check_data.py and tests/test_schemas.py compares the two.",
+  "type": "object",
+  "required": ["format", "kind", "enemies"],
+  "additionalProperties": false,
+  "properties": {
+    "format": { "const": 1 },
+    "kind": { "const": "enemies" },
+    "enemies": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/enemy" } }
+  },
+  "$defs": {
+    "attack": {
+      "type": "object",
+      "description": "Damage range of a plain hit, inclusive. min above max is refused by the checker.",
+      "required": ["min", "max"],
+      "additionalProperties": false,
+      "properties": {
+        "min": { "type": "integer", "minimum": 1, "maximum": 99 },
+        "max": { "type": "integer", "minimum": 1, "maximum": 99 }
+      }
+    },
+    "phase": {
+      "type": "object",
+      "description": "One enemy phase, read by the battle director when current hp first satisfies hp * 100 <= hp_at_or_below * max_hp. The director adds pattern_id to the enemy's pattern pool, switches the TALK set to talk_set, plays line_id once at the crossing and swaps in the attack range, all from this row and never from a code branch on the enemy name. A raised attack must stay inside the enemy's spec 07 band, which the checker pins with PHASE_ATTACK_BAND.",
+      "required": ["hp_at_or_below", "pattern_id", "talk_set", "line_id"],
+      "additionalProperties": false,
+      "properties": {
+        "hp_at_or_below": { "type": "integer", "minimum": 1, "maximum": 99, "description": "Percent of the enemy's max_hp, not absolute hp (spec 18 section 8 P3). Halving max_hp in data therefore keeps every band where it was. The checker refuses a row that is not strictly below the row above it in tools/check_data.py's PHASE_ROWS_MAX block." },
+        "pattern_id": { "type": "string", "minLength": 1, "description": "Pattern id to add to the pool at this crossing. The enemy's own patterns list is the pool above the first threshold." },
+        "talk_set": { "type": "string", "minLength": 1, "description": "Dialogue id that replaces talk_dialogue for the TALK command from this phase on, so the choice options shown in step 1 change with the phase. A dialogue id, never a talk card id." },
+        "talk_phase": { "type": "string", "minLength": 1, "description": "The phase value of the talk card that applies from this crossing on, copied verbatim from a card's phase field in data/talk_cards.json (spec 16 section 10). The director matches the card on enemy id plus this string, and the cache key uses it as phase_id, so it never derives a phase name from an enemy name or from a dialogue id. Absent only while a phase has no card yet; tools/check_data.py refuses a card that no phase row names and a talk_phase that resolves to no card." },
+        "line_id": { "type": "string", "minLength": 1, "description": "Dialogue id the director plays once when the crossing happens." },
+        "attack": { "$ref": "#/$defs/attack" }
+      }
+    },
+    "interrupt": {
+      "type": "object",
+      "description": "The fight stops with no victory and no defeat and a scene takes over (spec 18 section 4). It fires on a REFUSED SPARE press, not on an hp crossing (spec 18 section 8 A18-1): an hp trigger above 9 percent of a 120 hp bar makes the boss unkillable with the biggest legal blow. Do not copy this block onto an encounter row; the enemy row owns it (refusal 10).",
+      "required": ["on", "hp_at_or_below", "scene"],
+      "additionalProperties": false,
+      "properties": {
+        "on": { "enum": ["spare_refused"], "description": "The only trigger in the demo, and the set is closed." },
+        "hp_at_or_below": { "type": "integer", "minimum": 1, "maximum": 99, "description": "Percent of max_hp, the gate on the SPARE request rather than a crossing. The checker refuses a threshold at or below the enemy's spare_hp_percent, because there SPARE is accepted and the story exit can never fire (spec 18 section 7 refusal 8)." },
+        "unless_flag": { "type": "string", "minLength": 1, "description": "Optional flag name from data/flags.json. The trigger is disabled while this flag is true, so a story beat that has already happened does not repeat." },
+        "scene": {
+          "description": "The scene the fight hands over to. Either one scene id, or an object with all four route keys so the scene may differ per route (spec 18 section 8 A18-4). A partial object is an error, never a default.",
+          "oneOf": [
+            { "type": "string", "minLength": 1 },
+            {
+              "type": "object",
+              "required": ["undecided", "mercy", "blooded", "genocide"],
+              "additionalProperties": false,
+              "properties": {
+                "undecided": { "type": "string", "minLength": 1 },
+                "mercy": { "type": "string", "minLength": 1 },
+                "blooded": { "type": "string", "minLength": 1 },
+                "genocide": { "type": "string", "minLength": 1 }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "reward": {
+      "type": "object",
+      "description": "What the fight gives. kind item and power name an id in those tables; health gives a flat amount and names nothing.",
+      "required": ["kind"],
+      "properties": {
+        "kind": { "enum": ["item", "power", "health"] },
+        "id": { "type": "string", "minLength": 1 },
+        "count": { "type": "integer", "minimum": 1, "maximum": 99 }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": { "properties": { "kind": { "enum": ["item", "power"] } }, "required": ["kind"] },
+          "then": { "required": ["id", "count"] }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "health" } }, "required": ["kind"] },
+          "then": { "required": ["count"], "not": { "required": ["id"] } }
+        }
+      ]
+    },
+    "enemy": {
+      "type": "object",
+      "required": ["id", "name", "max_hp", "attack", "sprite", "element", "patterns", "trust_to_spare", "spare_hp_percent", "rewards"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+        "name": { "type": "string", "minLength": 1 },
+        "max_hp": { "type": "integer", "minimum": 1, "maximum": 9999 },
+        "attack": { "$ref": "#/$defs/attack" },
+        "sprite": { "type": "string", "minLength": 1, "description": "Sprite resource name. Placeholder until the 8 bit look pass." },
+        "element": { "type": "string", "minLength": 1, "description": "Free form damage element tag, sea, fire, veil and so on." },
+        "route_kind": { "enum": ["regular", "boss"], "description": "Boss fights count toward the route ledger differently. Defaults to regular when absent." },
+        "patterns": {
+          "type": "array",
+          "description": "The bullet patterns this enemy may use, by id in data/patterns/all.json.",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "talk_dialogue": { "type": "string", "minLength": 1, "description": "Dialogue id played by the TALK command." },
+        "trust_to_spare": { "type": "integer", "minimum": 1, "maximum": 10, "description": "TALK count that reaches the spare threshold." },
+        "spare_hp_percent": { "type": "integer", "minimum": 1, "maximum": 100, "description": "HP percentage at or below which SPARE is allowed." },
+        "phases": {
+          "type": "array",
+          "description": "Optional ordered phase crossings. The director applies the FIRST phase whose hp_at_or_below the enemy's current hp has reached, so thresholds must descend and each must be below max_hp; tools/check_data.py enforces the order and the band.",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/phase" }
+        },
+        "interrupt": { "$ref": "#/$defs/interrupt" },
+        "rewards": { "type": "array", "minItems": 0, "items": { "$ref": "#/$defs/reward" } }
+      }
+    }
+  }
+}

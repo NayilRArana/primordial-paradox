@@ -1,0 +1,138 @@
+{
+  "format": 1,
+  "kind": "scene_palette",
+  "scene": "battle_deck_night",
+  "backdrop": 15,
+  "rule": "NES: 1 backdrop shared by both layers, 4 background palettes of 3 entries on 16x16 areas, 4 sprite palettes of 3 entries plus transparency on 8x8 tiles; every entry is a data/nes_palette.json entry number",
+  "notes": [
+    "written by tools/art/make_battle_bg.py for the BG-BATTLE card (t_1c5a8599); no scene_battle_*.json existed before this card, so this file defines the set in the format scene_ship.json uses",
+    "backdrop $0F black is the shared backdrop of all four battle strips",
+    "background palettes cover the 16x7 attribute cells of the strip, one palette per cell",
+    "night sky with stars and a moon, a sea horizon, rigging and a railing, steel deck plates",
+    "bg0 the sky, bg1 the sea, bg2 the deck and railing, bg3 the rigging, which is why the rigging cells are black",
+    "the sea horizon is one flat row of tiles so the far water stays a straight band, as it must at 256 px",
+    "bg2 $00 $30 $02 is also the triple the enemy is drawn from: both enemy slots in data/ui_layouts.json (tile 3,8 and 12,11, 32x32) fall on bg2 cells, and the third entry is $30 rather than $10 so navy_sailor.png's own triple $02 $0F $30 fits whole, $0F coming from the shared backdrop (knowledge/PALETTE-RULINGS-2026-10-25.md section 15, card t_34b1d96a)",
+    "sprite palettes are declared for the battle cast the scene draws: solved 2026-10-24 (card t_cc0c5bd5, ruling knowledge/PALETTE-RULINGS-2026-10-24.md) against sailor_battle.png (168x32, seven 24x32 frames) and navy_sailor.png (96x32, three 32x32 frames), the strip's fight cast; the walking cast keeps its own grounds (ship sp1 for sailor and percy, sp1 of the other three battle strips and the three towns for konrad), so those 16x16 sheets are not carried here and are not judged here; since card t_0949bd4e this strip is party_cast, so these four rows are the declaration and not the spend (tools/scene_palette_set.py allowed_sprite_rows returns the four reserved hero triples for this scene, and the rows are spent on nothing but the scene's own 25 colour count), kept because they are the only set ever measured for this strip's own slots: a deck that stops being party_cast re-measures them rather than resurrects them (card t_8ebcb489)",
+    "sprite palettes are declared for the battle cast the scene draws; the strip itself draws no sprites"
+  ],
+  "judged": [
+    {
+      "background": "output/bg_battle_deck_night_frame.png",
+      "sprites": [
+        "game/sprites_src/chars/percy_battle.png",
+        "game/sprites_src/chars/hadrian_battle.png",
+        "game/sprites_src/chars/zander_battle.png",
+        "game/sprites_src/chars/konrad_battle.png"
+      ],
+      "note": "the deck strip is a battle screen, so it draws the same four 24x32 party slots at x=224 (data/ui_layouts.json) and its four sprite palettes are the four reserved hero triples; this row names the party's four battle sheets (card t_0949bd4e). The sailor fight cast this row named until 2026-10-25 is not drawn from a sprite palette on a strip that draws four heroes: ruling 7.5 makes the enemy background art, and sailor_battle.png and sailor_ow_v2.png stay judged where the ship draws them, on the ship row against ts_ship.png. The enemy that the tutorial fight does draw, navy_sailor.png, is now drawable as background art on this strip: its cells are bg2, and bg2 $00 $30 $02 plus the backdrop $0F carries its three colours whole (ruling section 15, card t_34b1d96a)"
+    }
+  ],
+  "background": [
+    {
+      "name": "bg0",
+      "colours": [
+        2,
+        1,
+        48
+      ],
+      "hex": [
+        "#0000bc",
+        "#0000fc",
+        "#fcfcfc"
+      ]
+    },
+    {
+      "name": "bg1",
+      "colours": [
+        1,
+        17,
+        33
+      ],
+      "hex": [
+        "#0000fc",
+        "#0078f8",
+        "#3cbcfc"
+      ]
+    },
+    {
+      "name": "bg2",
+      "colours": [
+        0,
+        48,
+        2
+      ],
+      "hex": [
+        "#7c7c7c",
+        "#fcfcfc",
+        "#0000bc"
+      ]
+    },
+    {
+      "name": "bg3",
+      "colours": [
+        15,
+        2,
+        0
+      ],
+      "hex": [
+        "#000000",
+        "#0000bc",
+        "#7c7c7c"
+      ]
+    }
+  ],
+  "sprites": [
+    {
+      "name": "sp0",
+      "colours": [
+        0,
+        15,
+        16
+      ],
+      "hex": [
+        "#7c7c7c",
+        "#000000",
+        "#bcbcbc"
+      ]
+    },
+    {
+      "name": "sp1",
+      "colours": [
+        2,
+        15,
+        48
+      ],
+      "hex": [
+        "#0000bc",
+        "#000000",
+        "#fcfcfc"
+      ]
+    },
+    {
+      "name": "sp2",
+      "colours": [
+        7,
+        23,
+        54
+      ],
+      "hex": [
+        "#881400",
+        "#e45c10",
+        "#f0d0b0"
+      ]
+    },
+    {
+      "name": "sp3",
+      "colours": [
+        8,
+        39,
+        40
+      ],
+      "hex": [
+        "#503000",
+        "#fca044",
+        "#f8b800"
+      ]
+    }
+  ]
+}

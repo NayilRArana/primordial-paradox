@@ -1,0 +1,86 @@
+# Study copies of decompiled projects. Read only. Never committed, never shipped, never read at runtime.
+knowledge/study/
+
+# Generated from data\ by tools\sync_data.py. The source of truth is data\, not this mirror.
+game/datafiles/
+
+# game\art retired on 2026-10-23 (card t_4e54cc9e). The sprite queue measures game\sprites_src, which
+# is the authored tree, and tools\sync_art.py rebuilds game\datafiles\art from it, which is what the
+# game reads. This line and the comment block above it are kept in git history, not here, because an
+# ignore rule for a folder that no longer exists is how a retired path keeps coming back.
+
+# Build output and per user IDE state.
+build/
+*.yyz
+*.resource_order
+game/.resource_order
+
+# Igor build products and its cache. Measured 2026-10-21: output/ held 17 untracked files
+# including PrimordialParadox.exe (7.9 MB) and PrimordialParadox.win, and the repo root
+# .gitignore did not cover them, so a build would have committed 8 MB of binary.
+#
+# The review previews below stay tracked. tests/test_make_env_ship.py,
+# tests/test_make_title_world.py and tests/test_sfx.py assert they exist and call them "the
+# picture the manager reviews", so a clean checkout must have them. Note the exclusion is
+# output/* and not output/: git never descends into an excluded directory, so a negation
+# under output/ would be a dead line, which is exactly how the title theme MIDI exceptions
+# silently did nothing earlier.
+output/*
+# tests/test_palette_synergy.py measures this frame through palette_synergy.py by path, so a
+# clean checkout must carry it: the test used to skip when it was absent, which is the silent
+# pass tests/test_test_inputs.py now forbids. Written by tools/art/scene_palette.py.
+!output/nes_title_frame.png
+!output/env_ship_preview.png
+!output/nes_ui_preview.png
+!output/title_ui_preview.png
+!output/ts2_world_preview.png
+!output/ts2_bigben_preview.png
+!output/sfx_preview_3x.png
+!output/render2_demo_preview.png
+!output/scene_palettes.json
+# Three frames that tracked tests read by path and three judged rows name as the ground they measure, and
+# that no commit carried. Card t_19b41ab7, measured 2026-10-25: a clean checkout of 5f290c5 reported
+# "3 failed, 33 passed" on tests/test_palette_synergy.py and tests/test_scene_palette_set.py while this
+# working tree reported 1529 passed, because output/* excluded all three and tests/test_test_inputs.py did
+# not name them. They are readings, not decoration, and each one is written by a tool, so none of them is a
+# pasted picture:
+#   output/cloud_sky_ground.png            tools/art/title_cloud_ground.py, the 48x16 crop of title_L1_sky
+#                                          frame 0 at y 80 (the composer's CLOUD_DY) that the cloud is read on
+#   output/bg_battle_corridor_frame.png    tools/art/make_battle_bg.py, the corridor strip in a 256x240 frame
+#   output/bg_battle_deck_night_frame.png  tools/art/make_battle_bg.py, the deck strip in the same frame
+# Per file, after output/*, for the reason above: the folder itself is excluded, so a rule for a folder
+# inside it would be a dead line. These three are also named in tools/check_test_inputs.py FIXTURES.
+!output/cloud_sky_ground.png
+!output/bg_battle_corridor_frame.png
+!output/bg_battle_deck_night_frame.png
+# The three exterior map frames, the ground the party's four walking sheets are judged on. Card t_dec4e92c,
+# 2026-10-25: the three towns' judged rows in data/palettes/scene_southampton.json, scene_westminster.json and
+# scene_winchester.json name these by path, and tools/palette_synergy.py --gate fails any row whose ground is not
+# on disk, so a clean checkout that lacks them is red with no art to blame. They are written by
+# tools/art/make_exterior_maps.py, one per place, and a rerun of that generator reproduces all three byte for
+# byte from the committed tileset and OSM drafts (measured on this card), so none of them is a pasted picture.
+# They are also named one by one in tools/check_test_inputs.py FIXTURES for the reason the block above gives.
+#   output/southampton_sample_frame.png   the 256x240 viewport at Town Quay, spawn tile 17,18
+#   output/westminster_sample_frame.png   the viewport at the street by Big Ben, spawn tile 16,20
+#   output/winchester_sample_frame.png    the viewport at Winchester High Street, spawn tile 16,19
+!output/southampton_sample_frame.png
+!output/westminster_sample_frame.png
+!output/winchester_sample_frame.png
+
+# The twelve drive captures tests/test_eye_drive.py samples. tools/eye_drive.py reads
+# output\drive\pp_drive_shot_01.png to _12.png, which the game writes from inside its own draw
+# (pp_drive.gml, PP_DRIVE_CAPTURE), and sample_frames() turns each into the native 256x240 copy
+# it measures. Nothing but a GameMaker run produces them, so a clean checkout that lacks them
+# reports twelve failed shots. Measured 2026-10-24, card t_d2c52f15: in a detached worktree at
+# 75161aa, tests/test_eye_drive.py reported "shots without a captured frame: [1, 2, ... 12]" and
+# three reds. These are the files the test measures, not decoration: eye_drive.measure() reads
+# each one's own pixels. The pattern is ?? so the derived _1x and _1x_crop files beside them stay
+# out, and output/drive/* keeps every other file in that folder out too.
+#
+# Order and shape matter here. output/* excludes output/drive ITSELF, and git never descends into
+# an excluded directory, so a negation for a file inside it would be a dead line. The directory is
+# re-included first, then re-excluded wholesale, then the twelve are named.
+!output/drive/
+output/drive/*
+!output/drive/pp_drive_shot_??.png
+cache/

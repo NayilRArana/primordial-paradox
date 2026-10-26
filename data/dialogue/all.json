@@ -1,0 +1,671 @@
+{
+  "format": 1,
+  "kind": "dialogues",
+  "dialogue": [
+    {
+      "id": "ship_rail_note",
+      "speaker": "narrator",
+      "lines": [
+        "* The deck tilts.",
+        "* A sailor blocks the hatch.",
+        "* He will not move."
+      ]
+    },
+    {
+      "id": "ship_gangway",
+      "speaker": "narrator",
+      "pages": [
+        {
+          "speaker": "narrator",
+          "lines": [
+            "* The horn shakes the deck.",
+            "* Salt, rope and wet paint.",
+            "* A wardroom hatch, shut."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ship_log_open",
+      "speaker": "narrator",
+      "pages": [
+        {
+          "speaker": "narrator",
+          "lines": [
+            "* A log book, chained down.",
+            "* The last hand is tight.",
+            "* Rain all night, no cargo."
+          ]
+        },
+        {
+          "speaker": "narrator",
+          "lines": [
+            "* You add a line and a date.",
+            "* The page takes the ink.",
+            "* Then the book is shut."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ship_aboard",
+      "speaker": "narrator",
+      "pages": [
+        {
+          "speaker": "narrator",
+          "lines": [
+            "* A plank, then a rail.",
+            "* The pier is behind you.",
+            "* Nobody asks your name."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "battle_intro_sailors",
+      "speaker": "narrator",
+      "lines": [
+        "* A Navy Sailor squares up.",
+        "* TALK can calm this.",
+        "* FIGHT can end it faster."
+      ]
+    },
+    {
+      "id": "talk_navy_sailor",
+      "speaker": "sailor",
+      "lines": [
+        "* \"You are not on the list.\"",
+        "* \"The bridge sees all.\"",
+        "* \"Go on. I hate the watch.\""
+      ]
+    },
+    {
+      "id": "navy_win_kill",
+      "speaker": "narrator",
+      "lines": [
+        "* The sailor does not get up.",
+        "* The deck is very quiet."
+      ]
+    },
+    {
+      "id": "navy_win_spare",
+      "speaker": "narrator",
+      "lines": [
+        "* He steps aside.",
+        "* His eyes stay on the sea.",
+        "* \"Bridge is that way.\""
+      ]
+    },
+    {
+      "id": "navy_spare_refused",
+      "speaker": "narrator",
+      "lines": [
+        "* You lower your hands.",
+        "* The sailor does not.",
+        "* \"Not this time. Not for you.\""
+      ]
+    },
+    {
+      "id": "navy_epilogue_spare",
+      "speaker": "narrator",
+      "lines": [
+        "* He keeps the watch alone.",
+        "* The hatch stays open behind him.",
+        "* Nobody counts the spared."
+      ]
+    },
+    {
+      "id": "navy_epilogue_kill",
+      "speaker": "narrator",
+      "lines": [
+        "* The watch is over.",
+        "* The hatch is open to anyone.",
+        "* The sea does not turn round."
+      ]
+    },
+    {
+      "id": "percy_lore_stop",
+      "speaker": "narrator",
+      "lines": [
+        "* Percy fills the doorway.",
+        "* \"The sea hears you.\"",
+        "* \"Show me the veil.\""
+      ]
+    },
+    {
+      "id": "percy_entry",
+      "speaker": "percy",
+      "portrait": "percy",
+      "lines": [
+        "* \"A stowaway with a god.\"",
+        "* \"The sea does not care.\"",
+        "* Percy lifts the trident."
+      ]
+    },
+    {
+      "id": "talk_percy",
+      "speaker": "percy",
+      "portrait": "percy",
+      "lines": [
+        "* \"You still talk. How dull.\"",
+        "* \"Ask what the veil is.\"",
+        "* \"Ask it plainly.\""
+      ]
+    },
+    {
+      "id": "talk_percy_phase2",
+      "speaker": "percy",
+      "portrait": "percy",
+      "lines": [
+        "* \"The tide turns anyway.\"",
+        "* \"You asked about the veil.\"",
+        "* \"That is the veil.\""
+      ]
+    },
+    {
+      "id": "percy_phase2_line",
+      "speaker": "percy",
+      "portrait": "percy",
+      "lines": [
+        "* Percy plants the trident.",
+        "* \"So. You have hurt me.\"",
+        "* The water answers him."
+      ]
+    },
+    {
+      "id": "talk_percy_phase3",
+      "speaker": "percy",
+      "portrait": "percy",
+      "lines": [
+        "* \"Rain. Wall. Now the fan.\"",
+        "* \"Last of the three.\"",
+        "* \"Name me, or drown.\""
+      ]
+    },
+    {
+      "id": "percy_phase3_line",
+      "speaker": "percy",
+      "portrait": "percy",
+      "lines": [
+        "* Percy opens the sea wide.",
+        "* \"Everything at once, then.\"",
+        "* The whole sea comes with it."
+      ]
+    },
+    {
+      "id": "percy_interrupt_line",
+      "speaker": "percy",
+      "portrait": "percy",
+      "lines": [
+        "* \"Wait. Who says my name?\"",
+        "* The trident dips an inch."
+      ]
+    },
+    {
+      "id": "prometheus_veil_line",
+      "speaker": "prometheus",
+      "portrait": "prometheus",
+      "lines": [
+        "* \"Peace, tide-bitten.\"",
+        "* \"I am the fire's name.\"",
+        "* \"Mortals walk behind a veil\"",
+        "* \"It hides gods, not knives.\"",
+        "* \"End this here.\"",
+        "* \"The dead rise in London.\"",
+        "* \"They rise for its sleep.\""
+      ]
+    },
+    {
+      "id": "percy_epilogue_spare",
+      "speaker": "narrator",
+      "lines": [
+        "* Percy sits against the mast.",
+        "* \"The fire-carrier took you.\"",
+        "* \"The hatch is yours.\""
+      ]
+    },
+    {
+      "id": "percy_epilogue_kill",
+      "speaker": "narrator",
+      "lines": [
+        "* The trident lies in two.",
+        "* Percy does not move.",
+        "* \"The veil thins tonight.\""
+      ]
+    },
+    {
+      "id": "percy_win_kill",
+      "speaker": "narrator",
+      "lines": [
+        "* The trident falls first.",
+        "* Then the man.",
+        "* The sea goes flat."
+      ]
+    },
+    {
+      "id": "percy_win_spare",
+      "speaker": "percy",
+      "portrait": "percy",
+      "lines": [
+        "* \"Keep your fire, then.\"",
+        "* \"Do not ask me for water.\""
+      ]
+    },
+    {
+      "id": "battle_lose",
+      "speaker": "narrator",
+      "lines": [
+        "* The deck rises to meet you.",
+        "* Your last save still stands."
+      ]
+    },
+    {
+      "id": "battle_intro_hound",
+      "speaker": "narrator",
+      "lines": [
+        "* Something moves by the rope.",
+        "* A hound on the deck. It is thin.",
+        "* FIGHT ends this in one blow."
+      ]
+    },
+    {
+      "id": "talk_deck_hound",
+      "speaker": "hound",
+      "lines": [
+        "* A low growl. Then a thump.",
+        "* It sniffs the salt on your hands.",
+        "* It waits for you to move first."
+      ]
+    },
+    {
+      "id": "hound_win_kill",
+      "speaker": "narrator",
+      "lines": [
+        "* One blow. The hound is still.",
+        "* You step over the rope."
+      ]
+    },
+    {
+      "id": "hound_win_spare",
+      "speaker": "narrator",
+      "lines": [
+        "* The hound rolls over.",
+        "* It lets you pass the rope.",
+        "* Its eyes follow the water."
+      ]
+    },
+    {
+      "id": "quay_gate_checkpoint",
+      "speaker": "narrator",
+      "pages": [
+        {
+          "speaker": "narrator",
+          "lines": [
+            "* Rain on the barrier arm.",
+            "* A hut. One lit window.",
+            "* The man inside stands up."
+          ]
+        },
+        {
+          "speaker": "guard",
+          "portrait": "guard",
+          "lines": [
+            "* \"That is far enough.\"",
+            "* \"Name and business.\"",
+            "* He holds a clipboard."
+          ]
+        },
+        {
+          "speaker": "narrator",
+          "lines": [
+            "* Past him the yard is dark.",
+            "* Past that, a grey hull.",
+            "* One lamp on the water."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "quay_gate_choice",
+      "speaker": "guard",
+      "portrait": "guard",
+      "pages": [
+        {
+          "speaker": "guard",
+          "portrait": "guard",
+          "lines": [
+            "* \"No pass, no gate.\"",
+            "* \"So. What is it?\"",
+            "* He waits, pen ready."
+          ]
+        }
+      ],
+      "choices": [
+        {
+          "label": "No pass.",
+          "sets": ["gate_passed", "gate_truth"],
+          "goto": "quay_gate_truth"
+        },
+        {
+          "label": "Crew list.",
+          "sets": ["gate_passed", "gate_bluff"],
+          "goto": "quay_gate_bluff"
+        },
+        {
+          "label": "Ask him.",
+          "sets": ["gate_passed", "gate_authority"],
+          "goto": "quay_gate_authority"
+        }
+      ]
+    },
+    {
+      "id": "quay_gate_truth",
+      "speaker": "guard",
+      "portrait": "guard",
+      "pages": [
+        {
+          "speaker": "guard",
+          "portrait": "guard",
+          "lines": [
+            "* \"Honest. That is new.\"",
+            "* \"Office. Sign in.\""
+          ]
+        },
+        {
+          "speaker": "narrator",
+          "lines": [
+            "* He lifts the arm himself."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "quay_gate_bluff",
+      "speaker": "guard",
+      "portrait": "guard",
+      "pages": [
+        {
+          "speaker": "guard",
+          "portrait": "guard",
+          "lines": [
+            "* \"The list is full.\"",
+            "* \"Office, then. Sign.\""
+          ]
+        },
+        {
+          "speaker": "narrator",
+          "lines": [
+            "* He does not look down."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "quay_gate_authority",
+      "speaker": "guard",
+      "portrait": "guard",
+      "pages": [
+        {
+          "speaker": "guard",
+          "portrait": "guard",
+          "lines": [
+            "* \"My officer is asleep.\"",
+            "* \"Office. Now.\""
+          ]
+        },
+        {
+          "speaker": "narrator",
+          "lines": [
+            "* He does not believe it."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "quay_dock_office",
+      "speaker": "narrator",
+      "pages": [
+        {
+          "speaker": "narrator",
+          "lines": [
+            "* Counter. A lamp. A ledger.",
+            "* Two men. One is Navy.",
+            "* The other is not."
+          ]
+        },
+        {
+          "speaker": "clerk",
+          "lines": [
+            "* \"You are the last one.\"",
+            "* \"Name, then. Slowly.\"",
+            "* The pen is already wet."
+          ]
+        },
+        {
+          "speaker": "narrator",
+          "lines": [
+            "* A line left in the ledger.",
+            "* The ink on it is dry.",
+            "* Not the clerk's hand."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "quay_dock_office_pass",
+      "speaker": "clerk",
+      "pages": [
+        {
+          "speaker": "clerk",
+          "lines": [
+            "* \"Berth nine. Deck two.\"",
+            "* \"Do not leave the cabin.\"",
+            "* He tears a pink slip."
+          ]
+        },
+        {
+          "speaker": "sailor",
+          "lines": [
+            "* \"Sign it and come on.\"",
+            "* \"I have a ladder to hold.\"",
+            "* He does not look up."
+          ]
+        },
+        {
+          "speaker": "narrator",
+          "lines": [
+            "* The slip changes hands.",
+            "* It is warm from a pocket.",
+            "* Behind them the gate shut."
+          ]
+        }
+      ],
+      "sets": ["has_boarding_pass"]
+    },
+    {
+      "id": "say_door_register",
+      "speaker": "narrator",
+      "pages": [
+        {
+          "lines": [
+            "* Registry office. Shut."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "say_door_dancing_man",
+      "speaker": "narrator",
+      "pages": [
+        {
+          "lines": [
+            "* A pub. Warm and loud."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "say_door_oceana",
+      "speaker": "narrator",
+      "pages": [
+        {
+          "lines": [
+            "* Flats. Every bell dead."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "say_door_telephone",
+      "speaker": "narrator",
+      "pages": [
+        {
+          "lines": [
+            "* Telephone House. No call."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "say_door_kuti",
+      "speaker": "narrator",
+      "pages": [
+        {
+          "lines": [
+            "* A kitchen, still open."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "say_door_red_funnel",
+      "speaker": "narrator",
+      "pages": [
+        {
+          "lines": [
+            "* Ferries. Not your ship."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "say_door_playhouse",
+      "speaker": "narrator",
+      "pages": [
+        {
+          "lines": [
+            "* A door with no light."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "drive_sign_55",
+      "speaker": "narrator",
+      "lines": [
+        "* SOUTHAMPTON 55.",
+        "* BASINGSTOKE 20.",
+        "* The countdown starts."
+      ]
+    },
+    {
+      "id": "drive_sign_43",
+      "speaker": "narrator",
+      "lines": [
+        "* SOUTHAMPTON 43.",
+        "* BASINGSTOKE 8.",
+        "* Twelve miles gone."
+      ]
+    },
+    {
+      "id": "drive_sign_30",
+      "speaker": "narrator",
+      "lines": [
+        "* SOUTHAMPTON 30.",
+        "* WINCHESTER 12.",
+        "* The sea is on the radio."
+      ]
+    },
+    {
+      "id": "drive_sign_20",
+      "speaker": "narrator",
+      "lines": [
+        "* SOUTHAMPTON 20.",
+        "* WINCHESTER 2.",
+        "* One lane now."
+      ]
+    },
+    {
+      "id": "drive_radio_1",
+      "speaker": "narrator",
+      "lines": [
+        "* The radio finds a station.",
+        "* A weather bulletin.",
+        "* Rain from the west."
+      ]
+    },
+    {
+      "id": "drive_radio_2",
+      "speaker": "narrator",
+      "lines": [
+        "* A traffic report.",
+        "* A lane shut at Winchester.",
+        "* The car does not slow."
+      ]
+    },
+    {
+      "id": "drive_radio_3",
+      "speaker": "narrator",
+      "lines": [
+        "* A phone in, on the storm.",
+        "* He says it is not natural.",
+        "* The signal drifts."
+      ]
+    },
+    {
+      "id": "drive_radio_4",
+      "speaker": "narrator",
+      "lines": [
+        "* The news. A power cut.",
+        "* Two streets, dark.",
+        "* Nobody gives a cause."
+      ]
+    },
+    {
+      "id": "drive_radio_5",
+      "speaker": "narrator",
+      "lines": [
+        "* The shipping forecast.",
+        "* Wight. Portland. Force 8.",
+        "* The reader says it twice."
+      ]
+    },
+    {
+      "id": "drive_radio_6",
+      "speaker": "narrator",
+      "lines": [
+        "* Portsmouth. Sailings held.",
+        "* Nothing sails before dawn.",
+        "* The wipers keep time."
+      ]
+    },
+    {
+      "id": "drive_radio_7",
+      "speaker": "narrator",
+      "lines": [
+        "* Static. Then a voice.",
+        "* It says the road is clear.",
+        "* The car keeps its speed."
+      ]
+    },
+    {
+      "id": "drive_cathedral",
+      "speaker": "narrator",
+      "lines": [
+        "* A long nave on the hill.",
+        "* A square tower. No lights.",
+        "* Winchester is asleep."
+      ]
+    }
+  ]
+}

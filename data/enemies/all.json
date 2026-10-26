@@ -1,0 +1,77 @@
+{
+  "format": 1,
+  "kind": "enemies",
+  "enemies": [
+    {
+      "id": "navy_sailor",
+      "name": "Navy Sailor",
+      "max_hp": 15,
+      "attack": { "min": 2, "max": 2 },
+      "sprite": "spr_pp_sailor",
+      "element": "sea",
+      "route_kind": "regular",
+      "patterns": ["tutorial_slow_rain"],
+      "talk_dialogue": "talk_navy_sailor",
+      "trust_to_spare": 3,
+      "spare_hp_percent": 25,
+      "rewards": [
+        { "kind": "item", "id": "salve", "count": 1 }
+      ]
+    },
+    {
+      "id": "percy",
+      "name": "Percy",
+      "max_hp": 120,
+      "attack": { "min": 3, "max": 5 },
+      "sprite": "spr_pp_percy",
+      "element": "sea",
+      "route_kind": "boss",
+      "patterns": ["percy_rain"],
+      "talk_dialogue": "talk_percy",
+      "trust_to_spare": 3,
+      "spare_hp_percent": 25,
+      "rewards": [
+        { "kind": "power", "id": "tide_step", "count": 1 }
+      ],
+      "phases": [
+        {
+          "hp_at_or_below": 70,
+          "pattern_id": "percy_wall",
+          "talk_set": "talk_percy_phase2",
+          "talk_phase": "percy_phase2",
+          "line_id": "percy_phase2_line",
+          "attack": { "min": 4, "max": 5 }
+        },
+        {
+          "hp_at_or_below": 40,
+          "pattern_id": "percy_fan",
+          "talk_set": "talk_percy_phase3",
+          "line_id": "percy_phase3_line",
+          "attack": { "min": 4, "max": 6 }
+        }
+      ],
+      "interrupt": {
+        "on": "spare_refused",
+        "hp_at_or_below": 40,
+        "unless_flag": "met_prometheus",
+        "scene": "prometheus_interrupt"
+      }
+    },
+    {
+      "id": "deck_hound",
+      "name": "Deck Hound",
+      "max_hp": 2,
+      "attack": { "min": 2, "max": 2 },
+      "sprite": "spr_pp_hound",
+      "element": "earth",
+      "route_kind": "regular",
+      "patterns": ["tutorial_slow_rain"],
+      "talk_dialogue": "talk_deck_hound",
+      "trust_to_spare": 3,
+      "spare_hp_percent": 25,
+      "rewards": [
+        { "kind": "item", "id": "salve", "count": 1 }
+      ]
+    }
+  ]
+}

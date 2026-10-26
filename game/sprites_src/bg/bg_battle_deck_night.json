@@ -1,0 +1,324 @@
+{
+  "format": 1,
+  "kind": "battle_background",
+  "name": "bg_battle_deck_night",
+  "title": "open deck at night",
+  "png": "bg_battle_deck_night.png",
+  "width": 256,
+  "height": 112,
+  "tile_size": 8,
+  "attribute_area": 16,
+  "grid": {
+    "columns": 16,
+    "rows": 7
+  },
+  "frame": {
+    "width": 256,
+    "height": 240,
+    "strip_y": 0,
+    "note": "strip sits at the top of the 256x240 frame; the command window draws below it on black"
+  },
+  "palette_source": "data/nes_palette.json",
+  "scene_palette": "data/palettes/scene_battle_deck_night.json",
+  "backdrop": {
+    "index": 15,
+    "hex": "#000000"
+  },
+  "background_palettes": [
+    {
+      "name": "bg0",
+      "colours": [
+        2,
+        1,
+        48
+      ],
+      "hex": [
+        "#0000bc",
+        "#0000fc",
+        "#fcfcfc"
+      ],
+      "areas": 28
+    },
+    {
+      "name": "bg1",
+      "colours": [
+        1,
+        17,
+        33
+      ],
+      "hex": [
+        "#0000fc",
+        "#0078f8",
+        "#3cbcfc"
+      ],
+      "areas": 32
+    },
+    {
+      "name": "bg2",
+      "colours": [
+        0,
+        48,
+        2
+      ],
+      "hex": [
+        "#7c7c7c",
+        "#fcfcfc",
+        "#0000bc"
+      ],
+      "areas": 48
+    },
+    {
+      "name": "bg3",
+      "colours": [
+        15,
+        2,
+        0
+      ],
+      "hex": [
+        "#000000",
+        "#0000bc",
+        "#7c7c7c"
+      ],
+      "areas": 4
+    }
+  ],
+  "sprite_palettes": [
+    {
+      "name": "sp0",
+      "colours": [
+        0,
+        15,
+        16
+      ],
+      "hex": [
+        "#7c7c7c",
+        "#000000",
+        "#bcbcbc"
+      ]
+    },
+    {
+      "name": "sp1",
+      "colours": [
+        2,
+        15,
+        48
+      ],
+      "hex": [
+        "#0000bc",
+        "#000000",
+        "#fcfcfc"
+      ]
+    },
+    {
+      "name": "sp2",
+      "colours": [
+        7,
+        23,
+        54
+      ],
+      "hex": [
+        "#881400",
+        "#e45c10",
+        "#f0d0b0"
+      ]
+    },
+    {
+      "name": "sp3",
+      "colours": [
+        8,
+        39,
+        40
+      ],
+      "hex": [
+        "#503000",
+        "#fca044",
+        "#f8b800"
+      ]
+    }
+  ],
+  "unique_tiles": 30,
+  "unique_tile_budget": 128,
+  "tiles_used_once": 4,
+  "tile_reuse": {
+    "max_times_a_tile_repeats": 30,
+    "total_tile_slots": 448
+  },
+  "colours_used": [
+    "#000000",
+    "#0000bc",
+    "#0000fc",
+    "#0078f8",
+    "#3cbcfc",
+    "#7c7c7c",
+    "#fcfcfc"
+  ],
+  "colour_count": 7,
+  "colour_budget": 25,
+  "attributes": {
+    "rule": "one background palette per 16x16 area, 3 colours plus the shared backdrop",
+    "grid": [
+      [
+        "s/bg0",
+        "s/bg0",
+        "s/bg0",
+        "s/bg0",
+        "s/bg0",
+        "s/bg0",
+        "s/bg0",
+        "s/bg0",
+        "s/bg0",
+        "s/bg0",
+        "s/bg0",
+        "s/bg0",
+        "s/bg0",
+        "m/bg0",
+        "s/bg0",
+        "s/bg0"
+      ],
+      [
+        "y/bg0",
+        "S/bg3",
+        "y/bg0",
+        "y/bg0",
+        "y/bg0",
+        "S/bg3",
+        "y/bg0",
+        "y/bg0",
+        "y/bg0",
+        "y/bg0",
+        "y/bg0",
+        "S/bg3",
+        "y/bg0",
+        "y/bg0",
+        "S/bg3",
+        "y/bg0"
+      ],
+      [
+        "h/bg1",
+        "h/bg1",
+        "h/bg1",
+        "h/bg1",
+        "h/bg1",
+        "h/bg1",
+        "h/bg1",
+        "h/bg1",
+        "h/bg1",
+        "h/bg1",
+        "h/bg1",
+        "h/bg1",
+        "h/bg1",
+        "h/bg1",
+        "h/bg1",
+        "h/bg1"
+      ],
+      [
+        "e/bg1",
+        "e/bg1",
+        "e/bg1",
+        "e/bg1",
+        "e/bg1",
+        "e/bg1",
+        "e/bg1",
+        "e/bg1",
+        "e/bg1",
+        "e/bg1",
+        "e/bg1",
+        "e/bg1",
+        "e/bg1",
+        "e/bg1",
+        "e/bg1",
+        "e/bg1"
+      ],
+      [
+        "R/bg2",
+        "R/bg2",
+        "R/bg2",
+        "R/bg2",
+        "R/bg2",
+        "R/bg2",
+        "R/bg2",
+        "R/bg2",
+        "R/bg2",
+        "R/bg2",
+        "R/bg2",
+        "R/bg2",
+        "R/bg2",
+        "R/bg2",
+        "R/bg2",
+        "R/bg2"
+      ],
+      [
+        "D/bg2",
+        "D/bg2",
+        "D/bg2",
+        "D/bg2",
+        "D/bg2",
+        "D/bg2",
+        "D/bg2",
+        "D/bg2",
+        "D/bg2",
+        "D/bg2",
+        "D/bg2",
+        "D/bg2",
+        "D/bg2",
+        "D/bg2",
+        "D/bg2",
+        "D/bg2"
+      ],
+      [
+        "D/bg2",
+        "D/bg2",
+        "D/bg2",
+        "D/bg2",
+        "D/bg2",
+        "D/bg2",
+        "D/bg2",
+        "D/bg2",
+        "D/bg2",
+        "D/bg2",
+        "D/bg2",
+        "D/bg2",
+        "D/bg2",
+        "D/bg2",
+        "D/bg2",
+        "D/bg2"
+      ]
+    ]
+  },
+  "dithering": "2x2 checker only, at palette band edges; no gradients, no rescaling, no anti aliasing",
+  "generator": "tools/art/make_battle_bg.py",
+  "notes": [
+    "night sky with stars and a moon, a sea horizon, rigging and a railing, steel deck plates",
+    "bg0 the sky, bg1 the sea, bg2 the deck and railing, bg3 the rigging, which is why the rigging cells are black",
+    "the sea horizon is one flat row of tiles so the far water stays a straight band, as it must at 256 px",
+    "bg2 $00 $30 $02 is also the triple the enemy is drawn from: both enemy slots in data/ui_layouts.json (tile 3,8 and 12,11, 32x32) fall on bg2 cells, and the third entry is $30 rather than $10 so navy_sailor.png's own triple $02 $0F $30 fits whole, $0F coming from the shared backdrop (knowledge/PALETTE-RULINGS-2026-10-25.md section 15, card t_34b1d96a)",
+    "sprite palettes are declared for the battle cast the scene draws: solved 2026-10-24 (card t_cc0c5bd5, ruling knowledge/PALETTE-RULINGS-2026-10-24.md) against sailor_battle.png (168x32, seven 24x32 frames) and navy_sailor.png (96x32, three 32x32 frames), the strip's fight cast; the walking cast keeps its own grounds (ship sp1 for sailor and percy, sp1 of the other three battle strips and the three towns for konrad), so those 16x16 sheets are not carried here and are not judged here; since card t_0949bd4e this strip is party_cast, so these four rows are the declaration and not the spend (tools/scene_palette_set.py allowed_sprite_rows returns the four reserved hero triples for this scene, and the rows are spent on nothing but the scene's own 25 colour count), kept because they are the only set ever measured for this strip's own slots: a deck that stops being party_cast re-measures them rather than resurrects them (card t_8ebcb489)"
+  ],
+  "party_floor": {
+    "role": "3 (the shared backdrop)",
+    "hex": "#000000",
+    "source": "data/ui_layouts.json, the battle screen's sprites with role party",
+    "rects": [
+      [
+        224,
+        32,
+        24,
+        32
+      ],
+      [
+        224,
+        64,
+        24,
+        32
+      ],
+      [
+        224,
+        96,
+        24,
+        16
+      ]
+    ],
+    "pixels": 1920,
+    "reason": "the four party bodies are the light entry of each hero triple and clear RULE 0 point 2 on the backdrop and not on this strip's mixed floor; PALETTE-RULINGS-2026-10-25.md section 7.4 point 2, card t_d64eb2a9; this strip was scoped out of card t_d64eb2a9 and its block floor measured as not $0F under the hero four; card t_0949bd4e ruled it in with the corridor and the wardroom so the four strips cannot disagree, and card t_12c9b18f drew it"
+  }
+}
