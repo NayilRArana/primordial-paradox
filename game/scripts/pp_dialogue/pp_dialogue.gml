@@ -364,7 +364,12 @@ function pp_dialogue_draw(_d) {
     var _page_data = _d.pages[_page];
     var _rows = _page_data.rows;
     var _plate = _page_data.speaker;
-    var _bust = _page_data.portrait;
+    var _bust = "";
+    // Guarded like every other portrait read in this file (lines 101 and 234): a page that names no bust is a page
+    // with no portrait, not an error. Unguarded here it threw "portrait not set before reading it" from the draw
+    // event seconds after the title screen and the crash handler ended the game (2026-10-26 13:17), measured by
+    // rebuilding HEAD a51fac8e in a clean worktree and reading build/last-igor.log line 233.
+    if (variable_struct_exists(_page_data, "portrait")) _bust = _page_data.portrait;
 
     // The portrait (spec 05 Geometry, card t_4d6b0f4b): a 48x48 bust standing on the box's top edge at (16, 120), so
     // it ends one pixel above the box and covers none of it, and the text area keeps all 28 of its columns. The sheet
