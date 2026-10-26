@@ -65,15 +65,3 @@ def test_missing_run_script_fails_rather_than_skips(monkeypatch, tmp_path):
     assert code == 1
     assert "BUILD FAIL" in buf.getvalue()
 
-
-def test_the_gate_config_declares_three_as_unmeasured():
-    """The exit code only means something because the gate config declares it."""
-    import json
-    import os
-
-    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    config = os.path.join(root, "..", "arananet", "manager", "guard", "suite_config.json")
-    with open(config, encoding="utf-8") as fh:
-        data = json.load(fh)
-    step = next(s for s in data["integration"] if s["name"] == "primordial-paradox-build")
-    assert step["unmeasured_exit_codes"] == [3]

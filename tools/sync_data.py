@@ -48,6 +48,12 @@ NOT_RUNTIME = frozenset({
     # no reader; under D5 the game's only talk input is data/meta_bake.json, and spec 19 section 12.5
     # forbids the list travelling in the bundle next to the bake it already guards).
     "talk_profanity.json",
+    # audio_cues_source.json is the cue table's source rows, copied inside the game so the audio tests
+    # read only files inside the project (card t_a6fb94f8, manager decision A on t_41553cc5). No GML
+    # module names it and no loader opens it: the runtime table is data\audio.json, which pp_data loads
+    # and pp_audio reads. It is a test input, so mirroring it would only add an Included File that the
+    # engine never opens and the .yyp would then have to carry.
+    "audio_cues_source.json",
 })
 
 # Directories under data\ that are not mirrored for the same reason, matched on the relative prefix.

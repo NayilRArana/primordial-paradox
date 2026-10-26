@@ -24,7 +24,10 @@ Defects this file still records rather than hides:
   3. Focus is polled once per step from pp_audio_step, not delivered as an event, because the
      engine documents no Windows focus event. Recorded in the focus tests and on the card.
 The seventeen ids the musician's round 1 note carries are all in the table now, so the shortfall
-the review returned on card t_8de1aca9 is closed and pinned by a test instead of documented.
+the review returned on card t_8de1aca9 is closed and pinned by a test instead of documented. They are
+compared against data\\audio_cues_source.json, a rows-only copy of that note's cue table that lives
+inside the game with its own provenance and VC-9b scan line (card t_a6fb94f8, decision A on
+t_41553cc5), so no row here depends on a file outside this repository.
 """
 
 from __future__ import annotations
@@ -36,13 +39,16 @@ import re
 import check_data
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SHARED = os.path.dirname(os.path.dirname(ROOT))
 DATA = os.path.join(ROOT, "data")
 MODULE = os.path.join(ROOT, "game", "scripts", "pp_audio", "pp_audio.gml")
 STEP_EVENT = os.path.join(ROOT, "game", "objects", "obj_pp_game", "Step_0.gml")
 SPEC = os.path.join(ROOT, "specs", "12-audio.md")
 TEXT_MODULE = os.path.join(ROOT, "game", "scripts", "pp_text", "pp_text.gml")
-MUSICIAN = os.path.join(SHARED, "notes", "notebook-2026-10-19", "round1", "musician.md")
+# The cue table's source rows live inside the game since card t_a6fb94f8 (manager decision A on
+# t_41553cc5). They used to be read from a note outside the project prefix, which meant this file
+# measured a document no reader of this repository can see and the published copy of the repo could
+# not run its own audio tests. Nothing in this file names a path outside ROOT.
+CUES_SOURCE = os.path.join(DATA, "audio_cues_source.json")
 
 # The musician's seventeen ids, in the order his note lists them and the table holds them. The
 # card's own list had fourteen; the gate card (t_8de1aca9 item 2) asks for his ids exactly, so
@@ -78,8 +84,8 @@ CUE_IDS = [
 #   PP-10  not composed. Boss row with no folder; falls back to PP-06 so the fight keeps priority 12.
 #   PP-11  not composed. No folder; falls back to PP-02.
 #   PP-12  not composed. No folder; falls back to PP-03.
-#   PP-13  not composed. No folder; falls back to PP-03. The row exists so the musician's own id in
-#          notes\\notebook-2026-10-19\\round1\\musician.md has a home in the table.
+#   PP-13  not composed. No folder; falls back to PP-03. The row exists so the musician's own id
+#          PP-13 in his round 1 cue table (data\\audio_cues_source.json) has a home in the table.
 #   PP-14  not composed. Boss row with no folder; falls back to PP-06.
 #   PP-15a not composed. The genocide ending; falls back to PP-01.
 #   PP-15b not composed. The mercy ending; falls back to PP-01.
@@ -145,13 +151,24 @@ def _cue_ids():
 
 
 def _musician_ids():
-    """The cue ids the musician's note carries, read from its own tables (rows that start "| PP-")."""
-    ids = set()
-    for line in _text(MUSICIAN).splitlines():
-        match = re.match(r"^\|\s*(PP-[0-9]{2}[ab]?)\b", line)
-        if match:
-            ids.add(match.group(1))
-    return ids
+    """The cue ids the musician's round 1 cue table carries, read from the copy inside the game.
+
+    Card t_a6fb94f8 (manager decision A on t_41553cc5) moved the comparison inside the project:
+    data\\audio_cues_source.json is a rows-only copy of that table, with its provenance and its
+    VC-9b scan line on it. The reading is guarded here, not only in the tests that call it, so a
+    copy that was truncated, emptied or stripped of its ids is a red instead of a vacuous pass:
+    a comparison against nothing agrees with anything.
+    """
+    data = _read(CUES_SOURCE)
+    rows = data["cues"]
+    assert len(rows) == 17, "the copied cue table must stay the note's seventeen rows, found %d" % len(rows)
+    for row in rows:
+        assert isinstance(row.get("id"), str) and CUE_ID_RE.match(row["id"]), row
+        assert isinstance(row.get("cue"), str) and row["cue"].strip(), "no cue label on %s" % row["id"]
+        assert isinstance(row.get("key"), str) and row["key"].strip(), "no key on %s" % row["id"]
+    assert isinstance(data.get("_scan"), str) and "VC-9b" in data["_scan"], \
+        "the copied table must carry the VC-9b scan line t_41553cc5 asks for"
+    return {row["id"] for row in rows}
 
 
 def _music_references():
@@ -230,6 +247,31 @@ def test_no_cue_id_was_invented_against_the_musicians_note():
     point of using his labels: a code side name would be a name he never chose."""
     invented = sorted(set(_cue_ids()) - _musician_ids())
     assert invented == [], "cue ids the musician never wrote: %s" % invented
+
+
+def test_the_copied_cue_table_lives_in_the_game_and_stays_out_of_the_build_bundle():
+    """The copy has to be inside the project and out of the shipped bundle, and both halves are pinned.
+
+    Inside: data\\audio_cues_source.json is under this repository, which is the whole point of card
+    t_a6fb94f8. Out: no GML module names it and the runtime table is data\\audio.json, so mirroring it
+    through tools\\sync_data.py would hand the .yyp an Included File the engine never opens. If a module
+    ever starts reading it, this test is the place that says so, in the same words
+    tests\\test_project.py::test_build_time_data_is_kept_out_of_the_bundle uses.
+    """
+    import sync_data
+
+    assert os.path.isfile(CUES_SOURCE), "the copied cue table is missing from the game"
+    assert os.path.dirname(os.path.abspath(CUES_SOURCE)) == DATA, \
+        "the cue table's source rows must live under this project's data\\"
+    assert "audio_cues_source.json" in sync_data.NOT_RUNTIME, (
+        "sync_data would mirror a test input into the build bundle; add it to NOT_RUNTIME")
+    assert "audio_cues_source.json" not in sync_data.source_files(), \
+        "sync_data still mirrors the cue table's source rows into the bundle"
+    for base, _dirs, files in os.walk(os.path.join(ROOT, "game")):
+        for name in files:
+            if name.endswith(".gml"):
+                assert "audio_cues_source" not in _text(os.path.join(base, name)), (
+                    "%s names the test input: the engine reads data\\audio.json, not this file" % name)
 
 
 def test_the_placeholder_stand_in_cannot_reach_a_playable_effect():
