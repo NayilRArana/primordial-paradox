@@ -33,7 +33,6 @@ hermes kanban edit t_16417018 --priority 79      # title v7/v8 ruling
 hermes kanban edit t_9275989a --priority 78      # PP-BOARDING ruling
 hermes kanban edit t_030a89e5 --priority 78      # R32 route test
 hermes kanban edit t_6d66f32d --priority 77      # DECISIONS-SWEEP
-hermes kanban edit t_c024f8bc --priority 77      # ARRIVAL-MAP S4
 hermes kanban edit t_769b545d --priority 76      # SHIP-BOX-FRAME
 hermes kanban edit t_b50612ab --priority 75      # INTRO-POLISH
 hermes kanban edit t_2a743083 --priority 74      # DRIVE-STILLS-LEGAL
@@ -73,6 +72,7 @@ hermes kanban edit t_ae018527 --priority 8      # VC-11 worktrees
 hermes kanban edit t_1778cf9a --priority 7      # VC-10 repo hygiene
 hermes kanban edit t_13e25e31 --priority 5      # AUTO-SPRITE-NEXT (duplicate)
 hermes kanban edit t_bd32a72e --priority 5      # AUTO-SPRITE-NEXT (duplicate)
+hermes kanban edit t_c024f8bc --priority 2      # ARRIVAL-MAP S4 (superseded)
 hermes kanban edit t_00f5a63f --priority 0      # Meta API measured (knowledge)
 ```
 

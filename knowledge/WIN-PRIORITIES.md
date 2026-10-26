@@ -54,9 +54,13 @@ from 88 to 90: the submission cannot be filed without them.
 
 Everything here lands on a screen a judge sees (the demo route, the ship dialogue box, the drive stills,
 the arena, art) or in the tree a judge clones (the public repo, the licences, the build inputs).
-`t_c024f8bc` ARRIVAL-MAP comes down from 97 to 77: the Town Quay map is a real demo route step and the
-map does not exist yet, so it is the biggest screen gap after the talk fight, but it is a 53 by 56 tile
-map and the 3 minute cut is built on the fight. It stays in this band, not in the paused one.
+
+One correction, measured after the first draft. `t_c024f8bc` ARRIVAL-MAP was ranked at 77 on the
+assumption that the Town Quay map did not exist. It does: `data/maps/all.json` line 133 defines
+`southampton_town_quay` at 53 by 56 tiles, because the work was re-issued as ARRIVAL-MAP-2
+(`t_db2995d7`) and that card is done. `t_c024f8bc` is the superseded original, so it is parked at 2 and
+the only work left on it is closing it. The lesson is on the page rather than quietly fixed: a card's
+status is not the state of the tree, and the tree is what a judge sees.
 
 | Card | Status | Was | Now | Visible in video, README or repo | Judging axis | Effort | What it is |
 |---|---|---|---|---|---|---|---|
@@ -73,7 +77,6 @@ map and the 3 minute cut is built on the fight. It stays in this band, not in th
 | `t_9275989a` | blocked | 70 | 78 | video | Demo | S | PP-BOARDING is cut to the authored 32 s beat while the scene row asks for 208 steps: a one line ruling |
 | `t_030a89e5` | blocked | 79 | 78 | repo | Technical depth | M | a test that proves every step of the demo route exists and ends before anything is recorded |
 | `t_6d66f32d` | blocked | 85 | 77 | video | Demo | S | one rulings file that frees the four decision cards above: the cheapest unblock on the board |
-| `t_c024f8bc` | blocked | 97 | 77 | video+repo | Impact | L | the Town Quay arrival map is a demo route step and the map does not exist yet: the biggest screen gap after the talk fight |
 | `t_769b545d` | running | 20 | 76 | video | Demo | S | the dialogue box frame on the ship draws in PP_COLOUR_MISSING; it is on screen in every ship line of the video |
 | `t_b50612ab` | blocked | 60 | 75 | video | Demo | S | the first five seconds after NEW GAME: the star pan, the twinkle and the fade a judge sees before anything else |
 | `t_2a743083` | blocked | 80 | 74 | video | Demo | M | all 12 drive stills outside the 2C02 set: the S3 shot in the cut is a frame the hardware could not draw |
@@ -127,6 +130,7 @@ Nothing is deleted. Every card keeps its body, its comments and its assignee.
 | `t_1778cf9a` | todo | 70 | 7 | no | none | M | repo hygiene report and LFS assessment: a report about the repo, not the repo |
 | `t_13e25e31` | blocked | 85 | 5 | video | Demo | S | a third copy of AUTO-SPRITE-NEXT; t_2c518ec8 is the live one |
 | `t_bd32a72e` | blocked | 85 | 5 | video | Demo | S | a second copy of AUTO-SPRITE-NEXT; t_2c518ec8 is the live one |
+| `t_c024f8bc` | blocked | 97 | 2 | repo (already landed) | none, no work left | S (close it) | superseded by ARRIVAL-MAP-2 (`t_db2995d7`, done): the 53 by 56 Town Quay map is in data/maps/all.json at line 133, so the only work left here is closing a stale duplicate |
 | `t_00f5a63f` | blocked | 0 | 0 | README (reference) | Meta tooling (reference) | none | the Meta Model API facts the META cards are built on: a knowledge note, never dispatched |
 
 ## 4. The 64 open cards that are not this project
@@ -212,8 +216,8 @@ rule: video, then README, then repo.
 
 1. Dispatch order is now the order of the table. The two cards that can move the demo score most, W1 and
    W2, hold 97 and 96 and nothing invisible can be picked ahead of them.
-2. The music rulings (83, 82, 81, 80) are four one line decisions that free `t_6d66f32d` at 79. They are
-   the cheapest visible wins on the board.
+2. The music rulings (83, 82, 81, 80, 79, 78) are six mostly one line decisions that free
+   `t_6d66f32d` at 77. They are the cheapest visible wins on the board.
 3. The repo cards (89 to 60) are what a judge who does not watch the video will read. They are ranked
    under the video on purpose: the video is 25 points and the repo supports Impact and Technical depth.
 4. The eight `pause` cards cannot come back before 2026-11-04 unless someone edits this page.
