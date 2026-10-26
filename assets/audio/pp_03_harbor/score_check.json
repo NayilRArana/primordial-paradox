@@ -113,7 +113,7 @@
   "lead_bars": 64,
   "longest_identical_drum_run": 1,
   "loop_seconds": 225.882368,
-  "midi": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\pp_03_harbor\\pp_03_harbor.mid",
+  "midi": "<repo>\\assets\\audio\\pp_03_harbor\\pp_03_harbor.mid",
   "note_counts": {
     "dpcm": 134,
     "noise": 136,

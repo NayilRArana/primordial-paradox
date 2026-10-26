@@ -122,7 +122,7 @@
       "C#5"
     ]
   },
-  "midi": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\title_theme_v3\\title_theme_v3_126.mid",
+  "midi": "<repo>\\assets\\audio\\title_theme_v3\\title_theme_v3_126.mid",
   "midi_bpm": 126.0,
   "midi_bytes": 13218,
   "midi_division": 480,
@@ -153,7 +153,7 @@
   },
   "out_of_range": [],
   "schema": "v3",
-  "score": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\title_theme_v3\\score_v3.yaml",
+  "score": "<repo>\\assets\\audio\\title_theme_v3\\score_v3.yaml",
   "section_bars": {
     "A": 8,
     "A_prime": 8,

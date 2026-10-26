@@ -29,7 +29,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if not os.path.isdir(os.path.join(ROOT, "data")):
-    ROOT = r"D:/AI Agent Automations/Shared/projects/primordial-paradox"
+    ROOT = r"<repo>"
 sys.path.insert(0, os.path.join(ROOT, "tools"))
 import check_data  # noqa: E402
 

@@ -112,7 +112,7 @@
       "weight": 6
     }
   ],
-  "grammar": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\knowledge\\MUSIC-HOOK-GRAMMAR.md",
+  "grammar": "<repo>\\knowledge\\MUSIC-HOOK-GRAMMAR.md",
   "grid": "sixteenth",
   "melody_track": "vrc6 pulse a",
   "midi_tracks": [
@@ -137,7 +137,7 @@
   "notes": 38,
   "points": 66.63,
   "score": 67,
-  "source": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\pp_fight\\pp_fight_calm.mid",
+  "source": "<repo>\\assets\\audio\\pp_fight\\pp_fight_calm.mid",
   "suggestions": [
     "the phrase wanders; shape it as an arch (rise to one peak then fall) or hold a pedal pitch",
     "the motif leaves too many notes outside it; move material into the 2 bar phrase or drop the notes that do not belong",

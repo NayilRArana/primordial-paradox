@@ -15,7 +15,7 @@
     "F5",
     "E5"
   ],
-  "midi": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\title_theme_v2\\title_theme_v2.mid",
+  "midi": "<repo>\\assets\\audio\\title_theme_v2\\title_theme_v2.mid",
   "midi_bar_ticks": 1440,
   "midi_bpm": 104.0,
   "midi_bytes": 12825,
@@ -46,7 +46,7 @@
     "vrc6 saw": 196
   },
   "out_of_range": [],
-  "score": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\title_theme_v2\\score.yaml",
+  "score": "<repo>\\assets\\audio\\title_theme_v2\\score.yaml",
   "tempo_meta_matches_score": true,
   "tracks": [
     "vrc6 pulse a",

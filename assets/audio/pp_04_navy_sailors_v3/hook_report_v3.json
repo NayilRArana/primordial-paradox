@@ -112,7 +112,7 @@
       "weight": 6
     }
   ],
-  "grammar": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\knowledge\\MUSIC-HOOK-GRAMMAR.md",
+  "grammar": "<repo>\\knowledge\\MUSIC-HOOK-GRAMMAR.md",
   "grid": "sixteenth",
   "melody_track": "vrc6 pulse a",
   "midi_tracks": [
@@ -148,7 +148,7 @@
   "notes": 166,
   "points": 100.0,
   "score": 100,
-  "source": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\pp_04_navy_sailors_v3\\pp_04_navy_sailors_v3.mid",
+  "source": "<repo>\\assets\\audio\\pp_04_navy_sailors_v3\\pp_04_navy_sailors_v3.mid",
   "suggestions": [],
   "tempo_us": 340909,
   "weakest": {

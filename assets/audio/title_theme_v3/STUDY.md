@@ -379,7 +379,7 @@ Files written by this card:
   citations; the `scores` block holds the 20 item checklist table and, under
   `scores.hook_score`, the tool scores and the reconciled picks.
 - `assets/audio/title_theme_v3/STUDY.md`: this file.
-- `C:/Users/naran/AppData/Local/hermes/skills/musician-hooks/SKILL.md`: the skill that
+- `<agent-runtime>/skills/musician-hooks/SKILL.md`: the skill that
   puts the grammar and this checklist in front of the musician lane on every motif task.
 
 Scripts live in the card workspace, not in the repo: `score_motifs.py` (the checklist
@@ -415,7 +415,7 @@ Checks that ran (all assert failures abort the run, so a green run is the proof)
 8. No em dash or en dash in any of the three written files; `verify_mus_study.py` checks
    the bytes for that and for stray carriage returns.
 
-To reproduce, from `D:/AI Agent Automations/Shared/projects/primordial-paradox`:
+To reproduce, from `<repo>`:
 
     python <card workspace>/hook_all.py          # rewrites hook_scores_all.json
     python <card workspace>/hook_stats.py        # the family means and hook cell counts

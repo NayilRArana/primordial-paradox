@@ -112,7 +112,7 @@
       "budget": 7,
       "no": 5
     },
-    "rules_source": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\data\\dissonance_rules.json"
+    "rules_source": "<repo>\\data\\dissonance_rules.json"
   },
   "dissonance_strength": 1,
   "division": 480,
@@ -833,7 +833,7 @@
       "WZ-29": 8
     },
     "silent_bars": [],
-    "source": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\data\\drum_patterns.json",
+    "source": "<repo>\\data\\drum_patterns.json",
     "steps_in": 152,
     "steps_out": 198
   },
@@ -880,8 +880,8 @@
     "notes": 124,
     "passed": true
   },
-  "midi_in": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\title_theme_v3\\title_theme_v3_126.mid",
-  "midi_out": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\title_theme_v3\\spice\\title_theme_v3_126_spice_d1.mid",
+  "midi_in": "<repo>\\assets\\audio\\title_theme_v3\\title_theme_v3_126.mid",
+  "midi_out": "<repo>\\assets\\audio\\title_theme_v3\\spice\\title_theme_v3_126_spice_d1.mid",
   "peak_simultaneous_in": 8,
   "score": null,
   "sections": [

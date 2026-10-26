@@ -197,7 +197,7 @@
     "C_trio_bar_1": [],
     "C_trio_bar_5": []
   },
-  "midi": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\pp_drive\\pp_drive.mid",
+  "midi": "<repo>\\assets\\audio\\pp_drive\\pp_drive.mid",
   "midi_bpm": 126.0,
   "midi_bytes": 30221,
   "midi_division": 480,
@@ -228,7 +228,7 @@
   },
   "out_of_range": [],
   "schema": "v3",
-  "score": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\pp_drive\\score_pp_drive.yaml",
+  "score": "<repo>\\assets\\audio\\pp_drive\\score_pp_drive.yaml",
   "section_bars": {
     "A": 25,
     "A_return": 66,

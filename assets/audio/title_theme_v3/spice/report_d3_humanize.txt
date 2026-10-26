@@ -1,5 +1,5 @@
-spice: D:\AI Agent Automations\Shared\projects\primordial-paradox\assets\audio\title_theme_v3\title_theme_v3_126.mid
-  out D:\AI Agent Automations\Shared\projects\primordial-paradox\assets\audio\title_theme_v3\spice\title_theme_v3_126_spice_d3_humanized.mid
+spice: <repo>\assets\audio\title_theme_v3\title_theme_v3_126.mid
+  out <repo>\assets\audio\title_theme_v3\spice\title_theme_v3_126_spice_d3_humanized.mid
   seed 20261022 | drums 3 | dissonance 3 | 52 bars | 3/4 | 1440 ticks per bar
   drums: 8 pattern(s) over 48 bar(s), 266 drum steps changed (input 152 steps, output 268)
     fills 6 | crashes 6 | ghost notes 12 | displaced accents 3 | kicks dropped 6 | hemiola bars 7,8,15,16,23,24,31,32,39,40,47,48
@@ -77,4 +77,4 @@ spice: D:\AI Agent Automations\Shared\projects\primordial-paradox\assets\audio\t
   hook_score: 65 before, 68 after, drop -3 (allowed 5)
   notes sounding at once: 8 (the arrangement peaks at 8, the chip declares 8)
   humanize rerun: seed 20261022, 1144 notes changed, 20 fills, sha bde8c2f221256120
-  json: D:\AI Agent Automations\Shared\projects\primordial-paradox\assets\audio\title_theme_v3\spice\report_d3_humanize.json
+  json: <repo>\assets\audio\title_theme_v3\spice\report_d3_humanize.json

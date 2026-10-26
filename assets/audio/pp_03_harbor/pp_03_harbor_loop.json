@@ -1,5 +1,5 @@
 {
-  "source_midi": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\pp_03_harbor\\pp_03_harbor.mid",
+  "source_midi": "<repo>\\assets\\audio\\pp_03_harbor\\pp_03_harbor.mid",
   "sample_rate": 44100,
   "channels": 1,
   "bit_depth": 16,
@@ -51,7 +51,7 @@
   "loop_edge_peak_head": 694,
   "loop_edge_peak_tail": 0,
   "loop_edge_max_jump": 191,
-  "wav": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\pp_03_harbor\\pp_03_harbor.wav",
-  "mp3": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\pp_03_harbor\\pp_03_harbor.mp3",
+  "wav": "<repo>\\assets\\audio\\pp_03_harbor\\pp_03_harbor.wav",
+  "mp3": "<repo>\\assets\\audio\\pp_03_harbor\\pp_03_harbor.mp3",
   "mp3_bitrate": "192k"
 }

@@ -55,7 +55,7 @@ python tools/arrange.py assets/audio/pp_05_small_ship/score_pp_05.yaml \
      notes: lead 43, pulse b 8, hum 384, saw 24, triangle 24, hats 80, kick 48, pulse 1 0
 
 python tools/melody_guard.py assets/audio/pp_05_small_ship/pp_05_small_ship.mid \
-    "D:/AI Agent Automations/Shared/projects/musikage" \
+    "<workspace>/Shared/projects/musikage" \
     --json assets/audio/pp_05_small_ship/melody_guard.json
   -> PASS. 43 melody notes, 42 intervals, 29 reference melodies, highest 5-gram Jaccard 0.0000,
      longest identical (interval, rhythm) run 0, longest identical interval run 6 (limit 8)

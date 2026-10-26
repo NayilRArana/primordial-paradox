@@ -1,5 +1,5 @@
 {
-  "source_midi": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\title_theme_v4\\title_theme_v4_spicy.mid",
+  "source_midi": "<repo>\\assets\\audio\\title_theme_v4\\title_theme_v4_spicy.mid",
   "sample_rate": 44100,
   "channels": 1,
   "bit_depth": 16,
@@ -50,8 +50,8 @@
   "loop_edge_peak_head": 68,
   "loop_edge_peak_tail": 1,
   "loop_edge_max_jump": 23,
-  "wav": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\title_theme_v4\\title_theme_v4_spicy.wav",
-  "mp3": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\title_theme_v4\\title_theme_v4_spicy.mp3",
+  "wav": "<repo>\\assets\\audio\\title_theme_v4\\title_theme_v4_spicy.wav",
+  "mp3": "<repo>\\assets\\audio\\title_theme_v4\\title_theme_v4_spicy.mp3",
   "mp3_bitrate": "192k",
   "loop": {
     "loop_start_section": "A",
@@ -558,5 +558,5 @@
       }
     }
   },
-  "ogg": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\title_theme_v4\\title_theme_v4_spicy.ogg"
+  "ogg": "<repo>\\assets\\audio\\title_theme_v4\\title_theme_v4_spicy.ogg"
 }

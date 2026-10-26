@@ -9,8 +9,8 @@
   "fills": 23,
   "grace_notes": 1,
   "loop_period_bars": 8,
-  "midi_in": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\title_theme_v4\\title_theme_v4_spicy_spice.mid",
-  "midi_out": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\title_theme_v4\\title_theme_v4_spicy.mid",
+  "midi_in": "<repo>\\assets\\audio\\title_theme_v4\\title_theme_v4_spicy_spice.mid",
+  "midi_out": "<repo>\\assets\\audio\\title_theme_v4\\title_theme_v4_spicy.mid",
   "mordents": 1,
   "motif": {
     "bars": 2,

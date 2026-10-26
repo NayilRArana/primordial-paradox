@@ -36,7 +36,7 @@ writes those words. Search of the whole project for the ids returns only knowled
 The scene row was reverted rather than committed. Committing it would trade 2 failing checks for 29
 data-gate failures and would ship a cutscene that references nothing. A copy of the generated row is
 preserved at:
-  C:/Users/naran/AppData/Local/hermes/profiles/gamedev/cache/scratch/staging/all.json.with_drive_scene
+  <agent-runtime>/profiles/gamedev/cache/scratch/staging/all.json.with_drive_scene
 
 ## What unblocks it, in order
 

@@ -59,7 +59,7 @@
     "A4"
   ],
   "melody_bar_9": [],
-  "midi": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\pp_05_small_ship\\pp_05_small_ship.mid",
+  "midi": "<repo>\\assets\\audio\\pp_05_small_ship\\pp_05_small_ship.mid",
   "midi_bpm": 96.0,
   "midi_bytes": 6670,
   "midi_division": 480,
@@ -92,7 +92,7 @@
   "profile": "hadrian",
   "pulse_1_notes": 0,
   "schema": "v3",
-  "score": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\pp_05_small_ship\\score_pp_05.yaml",
+  "score": "<repo>\\assets\\audio\\pp_05_small_ship\\score_pp_05.yaml",
   "second_voice_bars": [
     10,
     14

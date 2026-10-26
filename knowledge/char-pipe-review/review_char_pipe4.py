@@ -11,8 +11,8 @@ import subprocess
 
 from PIL import Image
 
-REPO = r"D:\AI Agent Automations\Shared\projects\primordial-paradox"
-PY = r"C:/Users/naran/AppData/Local/Python/bin/python.exe"
+REPO = r"<repo>"
+PY = r"<home>/AppData/Local/Python/bin/python.exe"
 import tempfile
 
 WORK = os.path.join(tempfile.gettempdir(), "char_pipe_review")  # scratch, never inside the repo

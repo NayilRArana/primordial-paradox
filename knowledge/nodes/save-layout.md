@@ -111,7 +111,7 @@ missing field is not a default, it is a file this build did not write.
 ## 3. The file on disk
 
 Two files in the game's save area, under the `default` folder:
-`C:\Users\naran\AppData\Local\PrimordialParadox\default\pp_save_01.json` and the same name plus `.bak`.
+`<home>\AppData\Local\PrimordialParadox\default\pp_save_01.json` and the same name plus `.bak`.
 Both names are macros in `pp_config.gml` (`PP_SAVE_SLOT`, `PP_SAVE_BACKUP`) and are reached through
 `pp_save_name_main()` and `pp_save_name_backup()`.
 
@@ -170,7 +170,7 @@ runtime still holds, which is section 5.
 ## 5. The first frame crash, and what fixed it
 
 On 2026-10-20 at 18:32 the first real run wrote
-`C:\Users\naran\AppData\Local\PrimordialParadox\pp_crash.log` and ended. The trace, quoted in `DEVLOG.md`:
+`<home>\AppData\Local\PrimordialParadox\pp_crash.log` and ended. The trace, quoted in `DEVLOG.md`:
 
 ```
 message: Cannot delete buffer, it's in use by 1 others

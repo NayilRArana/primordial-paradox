@@ -43,7 +43,7 @@ python pine_offload.py --shards 1 --name autochecks-v11a --cmd '( cd ~/repo/proj
 python pine_offload.py --shards 1 --name autochecks-v11b --cmd '( cd ~/repo/projects/primordial-paradox || cd ~/shared/projects/primordial-paradox; python tools/nes_audit_all.py --no-write > ~/audit.txt 2>&1; echo AUDIT_EXIT=$?; grep -c "FAIL" ~/audit.txt; grep "FAIL" ~/audit.txt | tail -20; tail -3 ~/audit.txt )'
 ```
 
-Both were called with `C:/Users/naran/AppData/Local/Python/bin/python` (3.14.7), the interpreter that imports the
+Both were called with `<home>/AppData/Local/Python/bin/python` (3.14.7), the interpreter that imports the
 pinesandbox SDK; `probe_sdk.py` printed `sdk ok 0.3.2` and `KEY_PRESENT True` against it before either job started,
 and nothing else about the key. The palette job shipped a zip of 14,646,647 bytes (34 tracked output files) and the
 audit job one of 14,664,965, both first attempt, no connection reset, against run 10's six attempts for the palette

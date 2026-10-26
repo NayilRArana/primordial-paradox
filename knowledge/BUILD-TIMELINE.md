@@ -15,7 +15,7 @@ rules land). Two mechanisms, both mechanical:
 
 | Item | Value |
 | --- | --- |
-| Repository | one shared git index at `D:\AI Agent Automations\Shared`; this project lives at `projects/primordial-paradox` |
+| Repository | one shared git index at `<workspace>\Shared`; this project lives at `projects/primordial-paradox` |
 | First commit naming this project | `2fb4158`, 2026-10-19, "Primordial Paradox: study allowed, copying forbidden; handoff for Claude" |
 | HEAD when this file was written | `dd9fe93`, 2026-10-22 19:01, SPEC-19-LLM-TALK |
 | Commits touching this project, `2fb4158` to `dd9fe93` | 104 |

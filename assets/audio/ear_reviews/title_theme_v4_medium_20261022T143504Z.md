@@ -1,7 +1,7 @@
 # Ear review: title_theme_v4_medium.ogg
 
 - model: gemini-3.5-flash
-- file: D:\AI Agent Automations\Shared\projects\primordial-paradox\assets\audio\title_theme_v4\title_theme_v4_medium.ogg
+- file: <repo>\assets\audio\title_theme_v4\title_theme_v4_medium.ogg
 - reviewed: 2026-10-22 14:35 UTC
 - size_mb: 0.99
 - tokens: 2334 in / 1585 out

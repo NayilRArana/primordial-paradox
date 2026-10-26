@@ -260,10 +260,10 @@
       "hits": 23
     }
   },
-  "out_midi": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\title_theme_v4\\title_theme_v4_medium_spice.mid",
-  "score": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\title_theme_v4\\score_v4.yaml",
+  "out_midi": "<repo>\\assets\\audio\\title_theme_v4\\title_theme_v4_medium_spice.mid",
+  "score": "<repo>\\assets\\audio\\title_theme_v4\\score_v4.yaml",
   "seed": 20261021,
-  "source_midi": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\title_theme_v4\\title_theme_v4_base.mid",
+  "source_midi": "<repo>\\assets\\audio\\title_theme_v4\\title_theme_v4_base.mid",
   "timing_feel_ticks": {
     "g": [
       -1,

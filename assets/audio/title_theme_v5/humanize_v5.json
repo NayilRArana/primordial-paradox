@@ -10,8 +10,8 @@
   "floor_misses": 2,
   "grace_notes": 1,
   "loop_period_bars": 8,
-  "midi_in": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\title_theme_v5\\title_theme_v5_pre.mid",
-  "midi_out": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\title_theme_v5\\title_theme_v5.mid",
+  "midi_in": "<repo>\\assets\\audio\\title_theme_v5\\title_theme_v5_pre.mid",
+  "midi_out": "<repo>\\assets\\audio\\title_theme_v5\\title_theme_v5.mid",
   "mordents": 1,
   "motif": {
     "bars": 2,

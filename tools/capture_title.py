@@ -911,8 +911,8 @@ def start_watchdog(process, seconds):
 # Video capture
 
 FFMPEG_GLOBS = (
-    r"C:\Users\naran\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_*\ffmpeg-*\bin\ffmpeg.exe",
-    r"C:\Users\naran\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg.*\ffmpeg-*\bin\ffmpeg.exe",
+    r"<home>\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_*\ffmpeg-*\bin\ffmpeg.exe",
+    r"<home>\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg.*\ffmpeg-*\bin\ffmpeg.exe",
 )
 
 

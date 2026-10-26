@@ -1,5 +1,5 @@
-spice: D:\AI Agent Automations\Shared\projects\primordial-paradox\assets\audio\title_theme_v3\title_theme_v3_126.mid
-  out D:\AI Agent Automations\Shared\projects\primordial-paradox\assets\audio\title_theme_v3\spice\title_theme_v3_126_spice_d1.mid
+spice: <repo>\assets\audio\title_theme_v3\title_theme_v3_126.mid
+  out <repo>\assets\audio\title_theme_v3\spice\title_theme_v3_126_spice_d1.mid
   seed 20261022 | drums 1 | dissonance 1 | 52 bars | 3/4 | 1440 ticks per bar
   drums: 5 pattern(s) over 48 bar(s), 206 drum steps changed (input 152 steps, output 198)
     fills 0 | crashes 6 | ghost notes 0 | displaced accents 0 | kicks dropped 0 | hemiola bars none
@@ -69,4 +69,4 @@ spice: D:\AI Agent Automations\Shared\projects\primordial-paradox\assets\audio\t
     melody outside the device bars unchanged: yes (124 notes)
   hook_score: 65 before, 68 after, drop -3 (allowed 5)
   notes sounding at once: 8 (the arrangement peaks at 8, the chip declares 8)
-  json: D:\AI Agent Automations\Shared\projects\primordial-paradox\assets\audio\title_theme_v3\spice\report_d1.json
+  json: <repo>\assets\audio\title_theme_v3\spice\report_d1.json

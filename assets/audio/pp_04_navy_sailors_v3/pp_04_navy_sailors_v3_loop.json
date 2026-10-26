@@ -1,5 +1,5 @@
 {
-  "source_midi": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\pp_04_navy_sailors_v3\\pp_04_navy_sailors_v3_humanized.mid",
+  "source_midi": "<repo>\\assets\\audio\\pp_04_navy_sailors_v3\\pp_04_navy_sailors_v3_humanized.mid",
   "sample_rate": 44100,
   "channels": 1,
   "bit_depth": 16,
@@ -50,7 +50,7 @@
   "loop_edge_peak_head": 2029,
   "loop_edge_peak_tail": 734,
   "loop_edge_max_jump": 214,
-  "wav": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\pp_04_navy_sailors_v3\\pp_04_navy_sailors_v3.wav",
-  "mp3": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\pp_04_navy_sailors_v3\\pp_04_navy_sailors_v3.mp3",
+  "wav": "<repo>\\assets\\audio\\pp_04_navy_sailors_v3\\pp_04_navy_sailors_v3.wav",
+  "mp3": "<repo>\\assets\\audio\\pp_04_navy_sailors_v3\\pp_04_navy_sailors_v3.mp3",
   "mp3_bitrate": "192k"
 }

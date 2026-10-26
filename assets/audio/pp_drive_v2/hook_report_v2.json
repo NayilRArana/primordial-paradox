@@ -112,7 +112,7 @@
       "weight": 6
     }
   ],
-  "grammar": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\knowledge\\MUSIC-HOOK-GRAMMAR.md",
+  "grammar": "<repo>\\knowledge\\MUSIC-HOOK-GRAMMAR.md",
   "grid": "sixteenth",
   "melody_track": "vrc6 pulse a",
   "midi_tracks": [
@@ -159,7 +159,7 @@
   "notes": 420,
   "points": 73.44,
   "score": 73,
-  "source": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\pp_drive_v2\\pp_drive_v2.mid",
+  "source": "<repo>\\assets\\audio\\pp_drive_v2\\pp_drive_v2.mid",
   "suggestions": [
     "the motif leaves too many notes outside it; move material into the 2 bar phrase or drop the notes that do not belong",
     "125 bars does not loop cleanly; write 8, 16 or 32 bars so the cue can repeat without a seam",

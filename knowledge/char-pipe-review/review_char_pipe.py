@@ -12,7 +12,7 @@ import sys
 
 from PIL import Image
 
-REPO = r"D:\AI Agent Automations\Shared\projects\primordial-paradox"
+REPO = r"<repo>"
 PALETTE = os.path.join(REPO, "data", "nes_palette.json")
 TILE = 8
 import tempfile  # noqa: E402

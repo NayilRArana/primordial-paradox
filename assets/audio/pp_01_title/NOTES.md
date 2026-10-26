@@ -124,7 +124,7 @@ files committed:
     UNCOMMITTED SOURCE projects/primordial-paradox/assets/audio/pp_01_title/pp_01_title_alt_v4_medium.ogg
 
 The commit was attempted three times and refused every time because another git process in the
-shared repository holds `D:/AI Agent Automations/Shared/.git/index.lock` (present at 19:14 and
+shared repository holds `<workspace>/Shared/.git/index.lock` (present at 19:14 and
 still present at 19:20 local, while HEAD moved under it). That lock was not removed, because
 deleting another lane's lock is how a shared index gets corrupted. So the files are on disk and
 tracked by nothing yet: the next run, or any lane with the lock free, should commit

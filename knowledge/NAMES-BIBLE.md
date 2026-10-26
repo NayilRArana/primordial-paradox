@@ -277,5 +277,5 @@ Myth and place sources:
   programme.openhouse.org.uk listing (One North Quay, Canary Wharf E14 5GJ)
 - asset publishing.service.gov.uk prison contact list and prisonadvice.org.uk London flyer (real London prison
   names: Belmarsh, Brixton, Feltham, Isis, Pentonville, Thameside, Wandsworth, Wormwood Scrubs)
-- Notebook transcript, D:\AI Agent Automations\Shared\notes\notebook-2026-10-19\TRANSCRIPT.md, page 4 (Nayil's
+- Notebook transcript, <workspace>\Shared\notes\notebook-2026-10-19\TRANSCRIPT.md, page 4 (Nayil's
   own list of names still to decide)

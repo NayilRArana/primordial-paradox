@@ -29,8 +29,8 @@
     "v5": {
       "name": "v5",
       "label": "v5, fills on the 4 and 8 bar lines, section levels, hole at bar 44",
-      "source_midi": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\title_theme_v5\\title_theme_v5.mid",
-      "ogg": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\title_theme_v5\\title_theme_v5.ogg",
+      "source_midi": "<repo>\\assets\\audio\\title_theme_v5\\title_theme_v5.mid",
+      "ogg": "<repo>\\assets\\audio\\title_theme_v5\\title_theme_v5.ogg",
       "bpm": 126.0,
       "beats_per_bar": 3,
       "bars": 52,
@@ -313,8 +313,8 @@
     "v4_medium": {
       "name": "v4_medium",
       "label": "v4 medium, the build the ear scored 7/5/6/4/7/6",
-      "source_midi": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\title_theme_v4\\title_theme_v4_medium.mid",
-      "ogg": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\title_theme_v4\\title_theme_v4_medium.ogg",
+      "source_midi": "<repo>\\assets\\audio\\title_theme_v4\\title_theme_v4_medium.mid",
+      "ogg": "<repo>\\assets\\audio\\title_theme_v4\\title_theme_v4_medium.ogg",
       "bpm": 126.0,
       "beats_per_bar": 3,
       "bars": 52,

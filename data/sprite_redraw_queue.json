@@ -5499,7 +5499,7 @@
           "file": "output/_eye_r12_sheet_a.png",
           "tiles": 9,
           "about": "four sprite redraws before and after (wordmark, car, traffic cone, speech bubble) plus the redrawn cone drawn on its own ground, integer scales, 9 tiles",
-          "review_file": "D:/AI Agent Automations/Shared/projects/primordial-paradox/output/eye_reviews/_eye_r12_sheet_a_20261025T112514Z.md",
+          "review_file": "<repo>/output/eye_reviews/_eye_r12_sheet_a_20261025T112514Z.md",
           "model": "gemini-3.5-flash",
           "seconds": 41.33,
           "scores": {
@@ -5518,7 +5518,7 @@
           "file": "output/_eye_r12_sheet_b.png",
           "tiles": 9,
           "about": "the NES fade ladder: sky band steps 1 and 2, road band steps 1 to 3, car steps 1 to 3, and the star strip, 9 tiles",
-          "review_file": "D:/AI Agent Automations/Shared/projects/primordial-paradox/output/eye_reviews/_eye_r12_sheet_b_20261025T112604Z.md",
+          "review_file": "<repo>/output/eye_reviews/_eye_r12_sheet_b_20261025T112604Z.md",
           "model": "gemini-3.6-flash",
           "seconds": 49.28,
           "scores": {
@@ -5537,7 +5537,7 @@
           "file": "output/_eye_r12_sheet_c.png",
           "tiles": 6,
           "about": "the title screen three times (the reference frame and two moments of the 21:20 run) plus the cloud, star and exhaust strips at game scale, 6 tiles",
-          "review_file": "D:/AI Agent Automations/Shared/projects/primordial-paradox/output/eye_reviews/_eye_r12_sheet_c_20261025T112958Z.md",
+          "review_file": "<repo>/output/eye_reviews/_eye_r12_sheet_c_20261025T112958Z.md",
           "model": "gemini-3.5-flash-lite",
           "seconds": 7.15,
           "scores": {

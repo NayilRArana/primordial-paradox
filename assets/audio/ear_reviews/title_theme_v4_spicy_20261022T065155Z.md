@@ -1,7 +1,7 @@
 # Ear review: title_theme_v4_spicy.mp3
 
 - model: gemini-3.5-flash
-- file: D:\AI Agent Automations\Shared\projects\primordial-paradox\assets\audio\title_theme_v4\title_theme_v4_spicy.mp3
+- file: <repo>\assets\audio\title_theme_v4\title_theme_v4_spicy.mp3
 - reviewed: 2026-10-22 06:51 UTC
 - size_mb: 1.7
 - tokens: 2334 in / 2120 out

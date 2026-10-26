@@ -15,7 +15,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\chars\\hadrian_battle.png",
+      "abs_path": "<repo>\\game\\sprites_src\\chars\\hadrian_battle.png",
       "method": "nes_check.py",
       "kind": "sprite",
       "size": [
@@ -37,7 +37,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\chars\\hadrian_god_battle.png",
+      "abs_path": "<repo>\\game\\sprites_src\\chars\\hadrian_god_battle.png",
       "method": "nes_check.py",
       "kind": "sprite",
       "size": [
@@ -59,7 +59,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\chars\\hadrian_ow.png",
+      "abs_path": "<repo>\\game\\sprites_src\\chars\\hadrian_ow.png",
       "method": "nes_check.py",
       "kind": "sprite",
       "size": [
@@ -81,7 +81,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\chars\\konrad_battle.png",
+      "abs_path": "<repo>\\game\\sprites_src\\chars\\konrad_battle.png",
       "method": "nes_check.py",
       "kind": "sprite",
       "size": [
@@ -103,7 +103,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\chars\\konrad_god_battle.png",
+      "abs_path": "<repo>\\game\\sprites_src\\chars\\konrad_god_battle.png",
       "method": "nes_check.py",
       "kind": "sprite",
       "size": [
@@ -125,7 +125,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\chars\\konrad_ow.png",
+      "abs_path": "<repo>\\game\\sprites_src\\chars\\konrad_ow.png",
       "method": "nes_check.py",
       "kind": "sprite",
       "size": [
@@ -147,7 +147,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\chars\\percy_battle.png",
+      "abs_path": "<repo>\\game\\sprites_src\\chars\\percy_battle.png",
       "method": "nes_check.py",
       "kind": "sprite",
       "size": [
@@ -169,7 +169,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\chars\\percy_god_battle.png",
+      "abs_path": "<repo>\\game\\sprites_src\\chars\\percy_god_battle.png",
       "method": "nes_check.py",
       "kind": "sprite",
       "size": [
@@ -191,7 +191,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\chars\\percy_ow.png",
+      "abs_path": "<repo>\\game\\sprites_src\\chars\\percy_ow.png",
       "method": "nes_check.py",
       "kind": "sprite",
       "size": [
@@ -213,7 +213,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\chars\\sailor_battle.png",
+      "abs_path": "<repo>\\game\\sprites_src\\chars\\sailor_battle.png",
       "method": "nes_check.py",
       "kind": "sprite",
       "size": [
@@ -235,7 +235,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\chars\\sailor_ow.png",
+      "abs_path": "<repo>\\game\\sprites_src\\chars\\sailor_ow.png",
       "method": "nes_check.py",
       "kind": "sprite",
       "size": [
@@ -257,7 +257,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\chars\\zander_battle.png",
+      "abs_path": "<repo>\\game\\sprites_src\\chars\\zander_battle.png",
       "method": "nes_check.py",
       "kind": "sprite",
       "size": [
@@ -279,7 +279,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\chars\\zander_god_battle.png",
+      "abs_path": "<repo>\\game\\sprites_src\\chars\\zander_god_battle.png",
       "method": "nes_check.py",
       "kind": "sprite",
       "size": [
@@ -301,7 +301,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\chars\\zander_ow.png",
+      "abs_path": "<repo>\\game\\sprites_src\\chars\\zander_ow.png",
       "method": "nes_check.py",
       "kind": "sprite",
       "size": [
@@ -323,7 +323,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\env\\ts_exterior.png",
+      "abs_path": "<repo>\\game\\sprites_src\\env\\ts_exterior.png",
       "method": "nes_check.py",
       "kind": "background",
       "size": [
@@ -705,7 +705,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\env\\ts_ship.png",
+      "abs_path": "<repo>\\game\\sprites_src\\env\\ts_ship.png",
       "method": "nes_check.py",
       "kind": "background",
       "size": [
@@ -727,7 +727,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\title\\spr_pp_font8.png",
+      "abs_path": "<repo>\\game\\sprites_src\\title\\spr_pp_font8.png",
       "method": "nes_check.py",
       "kind": "sprite",
       "size": [
@@ -749,7 +749,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\title\\spr_pp_menu_cursor.png",
+      "abs_path": "<repo>\\game\\sprites_src\\title\\spr_pp_menu_cursor.png",
       "method": "nes_check.py",
       "kind": "sprite",
       "size": [
@@ -811,7 +811,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\title\\spr_pp_title_logo.png",
+      "abs_path": "<repo>\\game\\sprites_src\\title\\spr_pp_title_logo.png",
       "method": "nes_check.py",
       "kind": "sprite",
       "size": [
@@ -833,7 +833,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\title\\spr_pp_window.png",
+      "abs_path": "<repo>\\game\\sprites_src\\title\\spr_pp_window.png",
       "method": "nes_check.py",
       "kind": "sprite",
       "size": [
@@ -855,7 +855,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\title\\spr_title_bubble.png",
+      "abs_path": "<repo>\\game\\sprites_src\\title\\spr_title_bubble.png",
       "method": "nes_check.py",
       "kind": "sprite",
       "size": [
@@ -928,7 +928,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\title\\spr_title_car.png",
+      "abs_path": "<repo>\\game\\sprites_src\\title\\spr_title_car.png",
       "method": "nes_check.py",
       "kind": "sprite",
       "size": [
@@ -1479,7 +1479,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\title\\spr_title_cloud.png",
+      "abs_path": "<repo>\\game\\sprites_src\\title\\spr_title_cloud.png",
       "method": "nes_check.py",
       "kind": "sprite",
       "size": [
@@ -1589,7 +1589,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\title\\spr_title_cone.png",
+      "abs_path": "<repo>\\game\\sprites_src\\title\\spr_title_cone.png",
       "method": "nes_check.py",
       "kind": "sprite",
       "size": [
@@ -1611,7 +1611,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\title\\spr_title_cone_flash.png",
+      "abs_path": "<repo>\\game\\sprites_src\\title\\spr_title_cone_flash.png",
       "method": "nes_check.py",
       "kind": "sprite",
       "size": [
@@ -1633,7 +1633,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\title\\spr_title_exhaust.png",
+      "abs_path": "<repo>\\game\\sprites_src\\title\\spr_title_exhaust.png",
       "method": "nes_check.py",
       "kind": "sprite",
       "size": [
@@ -1755,7 +1755,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\title\\spr_title_ronan.png",
+      "abs_path": "<repo>\\game\\sprites_src\\title\\spr_title_ronan.png",
       "method": "nes_check.py",
       "kind": "sprite",
       "size": [
@@ -2087,7 +2087,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\title\\spr_title_sign.png",
+      "abs_path": "<repo>\\game\\sprites_src\\title\\spr_title_sign.png",
       "method": "nes_check.py",
       "kind": "sprite",
       "size": [
@@ -2109,7 +2109,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\title\\spr_title_sign_flash.png",
+      "abs_path": "<repo>\\game\\sprites_src\\title\\spr_title_sign_flash.png",
       "method": "nes_check.py",
       "kind": "sprite",
       "size": [
@@ -2131,7 +2131,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\title\\spr_title_theo.png",
+      "abs_path": "<repo>\\game\\sprites_src\\title\\spr_title_theo.png",
       "method": "nes_check.py",
       "kind": "sprite",
       "size": [
@@ -2401,7 +2401,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\title\\spr_title_wheel.png",
+      "abs_path": "<repo>\\game\\sprites_src\\title\\spr_title_wheel.png",
       "method": "nes_check.py",
       "kind": "sprite",
       "size": [
@@ -2475,7 +2475,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\title\\title_BG_bigben.png",
+      "abs_path": "<repo>\\game\\sprites_src\\title\\title_BG_bigben.png",
       "method": "nes_check.py",
       "kind": "background",
       "size": [
@@ -2497,7 +2497,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\title\\title_BG_bigben_flash.png",
+      "abs_path": "<repo>\\game\\sprites_src\\title\\title_BG_bigben_flash.png",
       "method": "nes_check.py",
       "kind": "background",
       "size": [
@@ -2519,7 +2519,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\title\\title_L1_sky.png",
+      "abs_path": "<repo>\\game\\sprites_src\\title\\title_L1_sky.png",
       "method": "nes_check.py",
       "kind": "background",
       "size": [
@@ -2541,7 +2541,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\title\\title_L1_sky_flash.png",
+      "abs_path": "<repo>\\game\\sprites_src\\title\\title_L1_sky_flash.png",
       "method": "nes_check.py",
       "kind": "background",
       "size": [
@@ -2563,7 +2563,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\title\\title_L2_clouds.png",
+      "abs_path": "<repo>\\game\\sprites_src\\title\\title_L2_clouds.png",
       "method": "nes_check.py",
       "kind": "background",
       "size": [
@@ -2585,7 +2585,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\title\\title_L2_clouds_flash.png",
+      "abs_path": "<repo>\\game\\sprites_src\\title\\title_L2_clouds_flash.png",
       "method": "nes_check.py",
       "kind": "background",
       "size": [
@@ -2607,7 +2607,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\title\\title_L3_downs.png",
+      "abs_path": "<repo>\\game\\sprites_src\\title\\title_L3_downs.png",
       "method": "nes_check.py",
       "kind": "background",
       "size": [
@@ -2629,7 +2629,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\title\\title_L3_downs_flash.png",
+      "abs_path": "<repo>\\game\\sprites_src\\title\\title_L3_downs_flash.png",
       "method": "nes_check.py",
       "kind": "background",
       "size": [
@@ -2651,7 +2651,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\title\\title_L4_fields.png",
+      "abs_path": "<repo>\\game\\sprites_src\\title\\title_L4_fields.png",
       "method": "nes_check.py",
       "kind": "background",
       "size": [
@@ -2673,7 +2673,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\title\\title_L4_fields_flash.png",
+      "abs_path": "<repo>\\game\\sprites_src\\title\\title_L4_fields_flash.png",
       "method": "nes_check.py",
       "kind": "background",
       "size": [
@@ -2695,7 +2695,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\title\\title_L5_verge.png",
+      "abs_path": "<repo>\\game\\sprites_src\\title\\title_L5_verge.png",
       "method": "nes_check.py",
       "kind": "background",
       "size": [
@@ -2961,7 +2961,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\title\\title_L5_verge_flash.png",
+      "abs_path": "<repo>\\game\\sprites_src\\title\\title_L5_verge_flash.png",
       "method": "nes_check.py",
       "kind": "background",
       "size": [
@@ -2983,7 +2983,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\title\\title_L6_road.png",
+      "abs_path": "<repo>\\game\\sprites_src\\title\\title_L6_road.png",
       "method": "nes_check.py",
       "kind": "background",
       "size": [
@@ -3659,7 +3659,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\title\\title_L6_road_flash.png",
+      "abs_path": "<repo>\\game\\sprites_src\\title\\title_L6_road_flash.png",
       "method": "nes_check.py",
       "kind": "background",
       "size": [
@@ -3681,7 +3681,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\title\\title_L7_fg.png",
+      "abs_path": "<repo>\\game\\sprites_src\\title\\title_L7_fg.png",
       "method": "nes_check.py",
       "kind": "background",
       "size": [
@@ -3703,7 +3703,7 @@
     {
       "scope": "asset",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\title\\title_L7_fg_flash.png",
+      "abs_path": "<repo>\\game\\sprites_src\\title\\title_L7_fg_flash.png",
       "method": "nes_check.py",
       "kind": "background",
       "size": [
@@ -3725,7 +3725,7 @@
     {
       "scope": "sheet",
       "gated": false,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\output\\chars_preview_3x.png",
+      "abs_path": "<repo>\\output\\chars_preview_3x.png",
       "method": "nes_check.py on the 3x preview downsampled with NEAREST",
       "kind": "background",
       "size": [
@@ -5721,7 +5721,7 @@
     {
       "scope": "frame",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\output\\env_ship_preview.png",
+      "abs_path": "<repo>\\output\\env_ship_preview.png",
       "method": "nes_composite_check.py",
       "kind": "frame",
       "size": [
@@ -5731,7 +5731,7 @@
       "colours": 10,
       "backdrop": "#000000",
       "frame": {
-        "path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\output\\env_ship_preview.png",
+        "path": "<repo>\\output\\env_ship_preview.png",
         "source_size": [
           996,
           1092
@@ -7338,7 +7338,7 @@
     {
       "scope": "sheet",
       "gated": false,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\output\\music_style_bible_preview.png",
+      "abs_path": "<repo>\\output\\music_style_bible_preview.png",
       "method": "nes_check.py on the 3x preview downsampled with NEAREST",
       "kind": "background",
       "size": [
@@ -56288,7 +56288,7 @@
     {
       "scope": "frame",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\output\\nes_ui_preview.png",
+      "abs_path": "<repo>\\output\\nes_ui_preview.png",
       "method": "nes_composite_check.py",
       "kind": "frame",
       "size": [
@@ -56298,7 +56298,7 @@
       "colours": 4,
       "backdrop": "#000000",
       "frame": {
-        "path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\output\\nes_ui_preview.png",
+        "path": "<repo>\\output\\nes_ui_preview.png",
         "source_size": [
           1184,
           760
@@ -56331,7 +56331,7 @@
       "gated": false,
       "method": "none",
       "kind": null,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\output\\render2_demo_preview.png",
+      "abs_path": "<repo>\\output\\render2_demo_preview.png",
       "size": [
         0,
         0
@@ -56352,7 +56352,7 @@
     {
       "scope": "sheet",
       "gated": false,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\output\\sfx_preview_3x.png",
+      "abs_path": "<repo>\\output\\sfx_preview_3x.png",
       "method": "nes_check.py on the 3x preview downsampled with NEAREST",
       "kind": "background",
       "size": [
@@ -64463,7 +64463,7 @@
       "gated": false,
       "method": "none",
       "kind": null,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\output\\title_car_preview.png",
+      "abs_path": "<repo>\\output\\title_car_preview.png",
       "size": [
         0,
         0
@@ -64484,7 +64484,7 @@
     {
       "scope": "sheet",
       "gated": false,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\output\\title_preview_3x.png",
+      "abs_path": "<repo>\\output\\title_preview_3x.png",
       "method": "nes_check.py on the 3x preview downsampled with NEAREST",
       "kind": "background",
       "size": [
@@ -69138,7 +69138,7 @@
       "gated": false,
       "method": "none",
       "kind": null,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\output\\title_run_preview.png",
+      "abs_path": "<repo>\\output\\title_run_preview.png",
       "size": [
         0,
         0
@@ -69159,7 +69159,7 @@
     {
       "scope": "sheet",
       "gated": false,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\output\\title_theme_v2_preview_3x.png",
+      "abs_path": "<repo>\\output\\title_theme_v2_preview_3x.png",
       "method": "nes_check.py on the 3x preview downsampled with NEAREST",
       "kind": "background",
       "size": [
@@ -72112,7 +72112,7 @@
       "gated": false,
       "method": "none",
       "kind": null,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\output\\title_ui_preview.png",
+      "abs_path": "<repo>\\output\\title_ui_preview.png",
       "size": [
         0,
         0
@@ -72133,7 +72133,7 @@
     {
       "scope": "frame",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\output\\title_world_preview.png",
+      "abs_path": "<repo>\\output\\title_world_preview.png",
       "method": "nes_composite_check.py",
       "kind": "frame",
       "size": [
@@ -72143,7 +72143,7 @@
       "colours": 16,
       "backdrop": "#081420",
       "frame": {
-        "path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\output\\title_world_preview.png",
+        "path": "<repo>\\output\\title_world_preview.png",
         "source_size": [
           768,
           720
@@ -73995,7 +73995,7 @@
     {
       "scope": "sheet",
       "gated": false,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\output\\ts2_art_a_preview.png",
+      "abs_path": "<repo>\\output\\ts2_art_a_preview.png",
       "method": "nes_check.py on the 3x preview downsampled with NEAREST",
       "kind": "background",
       "size": [
@@ -74244,7 +74244,7 @@
     {
       "scope": "frame",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\output\\ts2_bigben_preview.png",
+      "abs_path": "<repo>\\output\\ts2_bigben_preview.png",
       "method": "nes_composite_check.py",
       "kind": "frame",
       "size": [
@@ -74254,7 +74254,7 @@
       "colours": 8,
       "backdrop": "#0078f8",
       "frame": {
-        "path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\output\\ts2_bigben_preview.png",
+        "path": "<repo>\\output\\ts2_bigben_preview.png",
         "source_size": [
           768,
           720
@@ -74382,7 +74382,7 @@
     {
       "scope": "frame",
       "gated": true,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\output\\ts2_world_preview.png",
+      "abs_path": "<repo>\\output\\ts2_world_preview.png",
       "method": "nes_composite_check.py",
       "kind": "frame",
       "size": [
@@ -74392,7 +74392,7 @@
       "colours": 11,
       "backdrop": "#006800",
       "frame": {
-        "path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\output\\ts2_world_preview.png",
+        "path": "<repo>\\output\\ts2_world_preview.png",
         "source_size": [
           768,
           720
@@ -75412,7 +75412,7 @@
     {
       "scope": "sheet",
       "gated": false,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\output\\ts_exterior_preview_3x.png",
+      "abs_path": "<repo>\\output\\ts_exterior_preview_3x.png",
       "method": "nes_check.py on the 3x preview downsampled with NEAREST",
       "kind": "background",
       "size": [
@@ -75799,7 +75799,7 @@
     {
       "scope": "capture",
       "gated": false,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\output\\title_run_1.png",
+      "abs_path": "<repo>\\output\\title_run_1.png",
       "method": "nes_composite_check.py",
       "kind": "frame",
       "size": [
@@ -75809,7 +75809,7 @@
       "colours": 35,
       "backdrop": "#7c7c7c",
       "frame": {
-        "path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\output\\title_run_1.png",
+        "path": "<repo>\\output\\title_run_1.png",
         "source_size": [
           784,
           759
@@ -77618,7 +77618,7 @@
     {
       "scope": "capture",
       "gated": false,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\output\\title_run_1_nes.png",
+      "abs_path": "<repo>\\output\\title_run_1_nes.png",
       "method": "nes_composite_check.py",
       "kind": "frame",
       "size": [
@@ -77628,7 +77628,7 @@
       "colours": 9,
       "backdrop": "#000000",
       "frame": {
-        "path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\output\\title_run_1_nes.png",
+        "path": "<repo>\\output\\title_run_1_nes.png",
         "source_size": [
           256,
           240
@@ -77659,7 +77659,7 @@
     {
       "scope": "capture",
       "gated": false,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\output\\title_run_1_nes_3x.png",
+      "abs_path": "<repo>\\output\\title_run_1_nes_3x.png",
       "method": "nes_composite_check.py",
       "kind": "frame",
       "size": [
@@ -77669,7 +77669,7 @@
       "colours": 9,
       "backdrop": "#000000",
       "frame": {
-        "path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\output\\title_run_1_nes_3x.png",
+        "path": "<repo>\\output\\title_run_1_nes_3x.png",
         "source_size": [
           768,
           720
@@ -77700,7 +77700,7 @@
     {
       "scope": "capture",
       "gated": false,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\output\\title_run_1_nes_diff.png",
+      "abs_path": "<repo>\\output\\title_run_1_nes_diff.png",
       "method": "nes_composite_check.py",
       "kind": "frame",
       "size": [
@@ -77710,7 +77710,7 @@
       "colours": 9,
       "backdrop": "#000000",
       "frame": {
-        "path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\output\\title_run_1_nes_diff.png",
+        "path": "<repo>\\output\\title_run_1_nes_diff.png",
         "source_size": [
           2336,
           736
@@ -77742,7 +77742,7 @@
     {
       "scope": "capture",
       "gated": false,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\output\\title_run_2.png",
+      "abs_path": "<repo>\\output\\title_run_2.png",
       "method": "nes_composite_check.py",
       "kind": "frame",
       "size": [
@@ -77752,7 +77752,7 @@
       "colours": 23,
       "backdrop": "#7c7c7c",
       "frame": {
-        "path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\output\\title_run_2.png",
+        "path": "<repo>\\output\\title_run_2.png",
         "source_size": [
           784,
           759
@@ -79466,7 +79466,7 @@
       "gated": false,
       "method": "none",
       "kind": null,
-      "abs_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\output\\title_run_reference_3x.png",
+      "abs_path": "<repo>\\output\\title_run_reference_3x.png",
       "size": [
         0,
         0

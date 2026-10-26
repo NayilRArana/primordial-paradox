@@ -3,7 +3,7 @@
   Igor. Nothing it starts opens a console window of its own; the only window you see is the game.
 
   Usage, from anywhere:
-      powershell -NoProfile -ExecutionPolicy Bypass -File "D:\AI Agent Automations\Shared\projects\primordial-paradox\tools\run.ps1"
+      powershell -NoProfile -ExecutionPolicy Bypass -File "<repo>\tools\run.ps1"
   or double click tools\run.vbs, which runs this script with no console at all.
 
   Exit codes:

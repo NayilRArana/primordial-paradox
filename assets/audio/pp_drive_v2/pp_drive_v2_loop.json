@@ -1,5 +1,5 @@
 {
-  "source_midi": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\pp_drive_v2\\pp_drive_v2.mid",
+  "source_midi": "<repo>\\assets\\audio\\pp_drive_v2\\pp_drive_v2.mid",
   "sample_rate": 44100,
   "channels": 1,
   "bit_depth": 16,
@@ -50,7 +50,7 @@
   "loop_edge_peak_head": 290,
   "loop_edge_peak_tail": 774,
   "loop_edge_max_jump": 158,
-  "wav": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\pp_drive_v2\\pp_drive_v2.wav",
-  "mp3": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\pp_drive_v2\\pp_drive_v2.mp3",
+  "wav": "<repo>\\assets\\audio\\pp_drive_v2\\pp_drive_v2.wav",
+  "mp3": "<repo>\\assets\\audio\\pp_drive_v2\\pp_drive_v2.mp3",
   "mp3_bitrate": "192k"
 }

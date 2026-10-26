@@ -185,7 +185,7 @@
     "intro": 7
   },
   "max_simultaneous_notes": 8,
-  "midi": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\percy_theme\\percy_theme.mid",
+  "midi": "<repo>\\assets\\audio\\percy_theme\\percy_theme.mid",
   "midi_bpm": 132.0,
   "midi_bytes": 8895,
   "midi_division": 480,
@@ -222,7 +222,7 @@
   ],
   "profile": "percy",
   "schema": "v3",
-  "score": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\percy_theme\\score_percy.yaml",
+  "score": "<repo>\\assets\\audio\\percy_theme\\score_percy.yaml",
   "section_bars": {
     "A": 8,
     "A_prime": 8,

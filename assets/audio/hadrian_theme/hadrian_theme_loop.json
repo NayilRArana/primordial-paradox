@@ -1,5 +1,5 @@
 {
-  "source_midi": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\hadrian_theme\\hadrian_theme.mid",
+  "source_midi": "<repo>\\assets\\audio\\hadrian_theme\\hadrian_theme.mid",
   "sample_rate": 44100,
   "channels": 1,
   "bit_depth": 16,
@@ -49,7 +49,7 @@
   "loop_edge_peak_head": 1410,
   "loop_edge_peak_tail": 0,
   "loop_edge_max_jump": 185,
-  "wav": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\hadrian_theme\\hadrian_theme.wav",
-  "mp3": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\hadrian_theme\\hadrian_theme.mp3",
+  "wav": "<repo>\\assets\\audio\\hadrian_theme\\hadrian_theme.wav",
+  "mp3": "<repo>\\assets\\audio\\hadrian_theme\\hadrian_theme.mp3",
   "mp3_bitrate": "192k"
 }

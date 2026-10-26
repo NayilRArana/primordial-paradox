@@ -72,7 +72,7 @@
     "A4",
     "G#4"
   ],
-  "midi": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\hadrian_theme\\hadrian_theme.mid",
+  "midi": "<repo>\\assets\\audio\\hadrian_theme\\hadrian_theme.mid",
   "midi_bpm": 92.0,
   "midi_bytes": 8672,
   "midi_division": 480,
@@ -105,7 +105,7 @@
   "profile": "hadrian",
   "pulse_1_notes": 0,
   "schema": "v3",
-  "score": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\hadrian_theme\\score_hadrian.yaml",
+  "score": "<repo>\\assets\\audio\\hadrian_theme\\score_hadrian.yaml",
   "second_voice_bars": [
     11,
     14,

@@ -693,8 +693,8 @@
     "from_slot": 3.0,
     "until_slot": 0.0
   },
-  "out_midi": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\title_theme_v5\\title_theme_v5_pre.mid",
-  "score": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\title_theme_v5\\score_v5.yaml",
+  "out_midi": "<repo>\\assets\\audio\\title_theme_v5\\title_theme_v5_pre.mid",
+  "score": "<repo>\\assets\\audio\\title_theme_v5\\score_v5.yaml",
   "section_level": {
     "A": -6,
     "A_prime": -2,
@@ -704,7 +704,7 @@
     "C_trio": -14
   },
   "seed": 20261022,
-  "source_midi": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\title_theme_v5\\title_theme_v5_base.mid",
+  "source_midi": "<repo>\\assets\\audio\\title_theme_v5\\title_theme_v5_base.mid",
   "timing_feel_ticks": {
     "1": [
       0,

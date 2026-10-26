@@ -59,7 +59,7 @@ with new invention:
 
 ```
 python tools/melody_guard.py assets/audio/pp_03_harbor/pp_03_harbor.mid \
-    "D:/AI Agent Automations/Shared/projects/musikage" \
+    "<workspace>/Shared/projects/musikage" \
     --json assets/audio/pp_03_harbor/melody_guard.json
   -> PASS, 29 references, longest identical (interval, rhythm) run 1,
      longest identical interval run 4, highest 5-gram Jaccard 0.0000

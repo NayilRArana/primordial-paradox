@@ -4,7 +4,7 @@ Card t_e92abcb0 (lane builder, node CitadelArana, measured on this PC). Every nu
 frames the testing lane kept from the 117.4 s resume recording of the same build. The commands and their output are in
 the card's comment; the probe is `build\_probe_battle_dim.py`, its log `build\_probe_battle_dim.log`, and the three
 frames are unmodified copies in `build\resume_frames\` whose sha256 is printed by the probe and matches
-`C:\Users\naran\AppData\Local\hermes\kanban\boards\nayil-ops\attachments\t_ecad67bd\`.
+`<agent-runtime>\kanban\boards\nayil-ops\attachments\t_ecad67bd\`.
 
 The card asked for one of two outputs: the backdrop's blue brought onto `data/palette.json`, or a written finding that
 the rule and the palette file disagree about this blue, with the entry that should exist and the audit output that says

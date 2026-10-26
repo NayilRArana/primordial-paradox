@@ -30,7 +30,7 @@ TODO slot; three documentation and labelling findings follow it.
 8. A supplied mask PNG is honoured in pixels, not just in the report string: a band mask changed
    the overworld sheet from 1132 to 384 opaque pixels, still within the tile rule.
 9. pytest tests/test_sprite_pipe.py: 15 passed in 1.52 s under the gate's pinned interpreter
-   C:/Users/naran/AppData/Local/Python/bin/python.exe.
+   <home>/AppData/Local/Python/bin/python.exe.
 10. No long dashes in the three added files.
 
 ## F1 (FAIL): a frame with no visible pixels passes as finished art
@@ -124,13 +124,13 @@ and git diff ecef6a1 both empty).
   F4 live: data\ai_ledger.csv still does not exist; ai_client exports segment.
 
 Probes for this pass: recheck_f1.py and recheck_f234.py in the review workspace
-(C:\Users\naran\AppData\Local\hermes\kanban\boards\nayil-ops\workspaces\t_d01614a1), writing only to
+(<agent-runtime>\kanban\boards\nayil-ops\workspaces\t_d01614a1), writing only to
 the Hermes profile scratch dir.
 
 ## How to rerun every check here
 
 Interpreter for all of it (the gate's pinned one):
-C:/Users/naran/AppData/Local/Python/bin/python.exe, run from the project root.
+<home>/AppData/Local/Python/bin/python.exe, run from the project root.
 
     python tools\nes_check.py output\char_pipe\with_poses\spr_pp_char_overworld.png --type sprite
     python tools\nes_check.py output\char_pipe\with_poses\spr_pp_char_battle.png    --type sprite
@@ -139,7 +139,7 @@ C:/Users/naran/AppData/Local/Python/bin/python.exe, run from the project root.
     python -m pytest -q -p no:cacheprovider tests\test_sprite_pipe.py
 
 The independent pixel probes sit in knowledge\char-pipe-review\ and write only to the system temp dir
-(C:\Users\naran\AppData\Local\Temp\char_pipe_review), never into the repo. Run them in order:
+(<home>\AppData\Local\Temp\char_pipe_review), never into the repo. Run them in order:
 review_char_pipe.py (own tile, palette, geometry, mirror and preview measurement),
 review_char_pipe2.py (load-bearing validator, clean-folder reproduction, mask honoured, error path),
 review_char_pipe3.py (black mask, corrupt concept, sidecar origins, duplicate direction frames),

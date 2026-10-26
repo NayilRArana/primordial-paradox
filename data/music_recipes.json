@@ -138,7 +138,7 @@
     {
       "id": "S16",
       "title": "Primordial Paradox, `assets\\audio\\title_theme_v2\\score.yaml` (internal, read 2026-10-21)",
-      "url": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\title_theme_v2\\score.yaml",
+      "url": "<repo>\\assets\\audio\\title_theme_v2\\score.yaml",
       "exact_url_in_bible": true,
       "supports": "The target chip list, the seven voices, the A minor waltz at 104 bpm and the existing voice roles that these recipes must fit"
     },

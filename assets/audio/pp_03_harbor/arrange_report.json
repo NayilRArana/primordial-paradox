@@ -2,7 +2,7 @@
   "bar_seconds": 3.5294117647058822,
   "bars": 64,
   "bpm": 68.0,
-  "drum_source": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\data\\drum_patterns.json",
+  "drum_source": "<repo>\\data\\drum_patterns.json",
   "drums": [
     {
       "home": "CLM-01",
@@ -120,7 +120,7 @@
   "first_bar_chord": "Am",
   "last_bar_chord": "Am",
   "loop_seconds": 225.882353,
-  "midi": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\pp_03_harbor\\pp_03_harbor.mid",
+  "midi": "<repo>\\assets\\audio\\pp_03_harbor\\pp_03_harbor.mid",
   "note_counts": {
     "dpcm": 134,
     "noise": 136,
@@ -132,7 +132,7 @@
     "vrc6 saw": 128
   },
   "ppq": 480,
-  "score": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\pp_03_harbor\\score_pp03.yaml",
+  "score": "<repo>\\assets\\audio\\pp_03_harbor\\score_pp03.yaml",
   "time_signature": "4/4",
   "total_notes": 1375,
   "tracks": [

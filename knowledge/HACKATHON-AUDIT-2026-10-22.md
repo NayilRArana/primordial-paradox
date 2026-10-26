@@ -4,7 +4,7 @@ Auditor: audit profile, task t_df448053 (run 2; run 1 timed out at 2713 s).
 Every number below was produced by this run on this PC between 18:41 and 19:24 PDT, or is cited to the file that holds it.
 Worker reports, DEVLOG claims and earlier logs were not accepted as evidence. Where I did not measure, the line says unverified.
 
-Read first, as the card ordered: `D:\AI Agent Automations\Shared\projects\arananet\meta-hackathon\PLAN-WIN-2026-10-22.md` (definition of done: title, intro crawl, drive, arrival, ship boarding, first fight, game over and save by Sunday) and `HACKATHON-BRIEF.md` (judging: creativity, technical ambition, whether it works).
+Read first, as the card ordered: `<workspace>\Shared\projects\arananet\meta-hackathon\PLAN-WIN-2026-10-22.md` (definition of done: title, intro crawl, drive, arrival, ship boarding, first fight, game over and save by Sunday) and `HACKATHON-BRIEF.md` (judging: creativity, technical ambition, whether it works).
 
 ## 0. What this run measured, in one place
 

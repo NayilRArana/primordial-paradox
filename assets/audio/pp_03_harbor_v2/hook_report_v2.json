@@ -112,7 +112,7 @@
       "weight": 6
     }
   ],
-  "grammar": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\knowledge\\MUSIC-HOOK-GRAMMAR.md",
+  "grammar": "<repo>\\knowledge\\MUSIC-HOOK-GRAMMAR.md",
   "grid": "sixteenth",
   "melody_track": "vrc6 pulse a",
   "midi_tracks": [
@@ -147,7 +147,7 @@
   "notes": 216,
   "points": 80.47,
   "score": 80,
-  "source": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\pp_03_harbor_v2\\pp_03_harbor_v2.mid",
+  "source": "<repo>\\assets\\audio\\pp_03_harbor_v2\\pp_03_harbor_v2.mid",
   "suggestions": [
     "the motif leaves too many notes outside it; move material into the 2 bar phrase or drop the notes that do not belong",
     "the third return is a copy (100% the same); change the ending, add a passing note or start it on a different chord tone",

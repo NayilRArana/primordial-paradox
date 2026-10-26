@@ -294,7 +294,7 @@ between this ruling and the art landing, and the exemption now names the card an
 **Answer: the second one. The release gate runs on Windows and the Pine audit is advisory by design. Do not
 grow `OUTPUT_KEEP` to the previews or to the contact sheet.**
 
-**What the zip actually does.** `D:\AI Agent Automations\Shared\projects\arananet\pine\pine_offload.py` lines 77
+**What the zip actually does.** `<workspace>\Shared\projects\arananet\pine\pine_offload.py` lines 77
 to 148 ship `output/` tracked files plus `OUTPUT_KEEP` (three prefixes, `output/drive/`, `output/drive_frames/`
 and `output/bg_`, plus 17 named files). The rule behind that list is written in the comment above it and it is
 the right rule: **ship what a test reads**. Measured on this tree (`zipgap10.py` in the parent card's workspace):
@@ -1642,7 +1642,7 @@ grey edge is also what the rim was written for; it used to light a black suit's 
 - `build --write` run in a **clean worktree of HEAD** (`git worktree add --detach HEAD`, 71f168d) with exactly this card's
   files applied changes `data/scene_palettes.json` by three lines: the three judged notes, and nothing else. No scene
   palette number moves, no row moves, no colour is bought. That file is in this commit for those three lines only.
-- **The clean worktree suite**: `C:/Users/naran/AppData/Local/Python/bin/python.exe -m pytest -q -p no:cacheprovider tests`
+- **The clean worktree suite**: `<home>/AppData/Local/Python/bin/python.exe -m pytest -q -p no:cacheprovider tests`
   in that worktree, after `tools/sync_data.py` and `tools/sync_art.py --no-project`, is **1622 passed, 0 failed, 479
   warnings in 270.74s**.
 - **The shared working tree cannot run the gate at all, and that is not this card.** Three tests fail in it,

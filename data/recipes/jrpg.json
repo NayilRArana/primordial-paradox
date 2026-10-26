@@ -89,7 +89,7 @@
     {
       "id": "S16",
       "title": "Primordial Paradox, assets/audio/title_theme_v2/score.yaml (internal)",
-      "url": "D:/AI Agent Automations/Shared/projects/primordial-paradox/assets/audio/title_theme_v2/score.yaml",
+      "url": "<repo>/assets/audio/title_theme_v2/score.yaml",
       "supports": "the seven voice target, the A minor waltz at 104 bpm, existing voice roles"
     },
     {

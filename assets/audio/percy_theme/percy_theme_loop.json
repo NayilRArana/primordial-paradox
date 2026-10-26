@@ -1,5 +1,5 @@
 {
-  "source_midi": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\percy_theme\\percy_theme.mid",
+  "source_midi": "<repo>\\assets\\audio\\percy_theme\\percy_theme.mid",
   "sample_rate": 44100,
   "channels": 1,
   "bit_depth": 16,
@@ -51,11 +51,11 @@
   "loop_edge_peak_head": 601,
   "loop_edge_peak_tail": 0,
   "loop_edge_max_jump": 37,
-  "wav": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\percy_theme\\percy_theme.wav",
-  "mp3": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\percy_theme\\percy_theme.mp3",
+  "wav": "<repo>\\assets\\audio\\percy_theme\\percy_theme.wav",
+  "mp3": "<repo>\\assets\\audio\\percy_theme\\percy_theme.mp3",
   "mp3_bitrate": "192k",
   "score_facts": {
-    "score": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\percy_theme\\score_percy.yaml",
+    "score": "<repo>\\assets\\audio\\percy_theme\\score_percy.yaml",
     "bars": 32,
     "bpm": 132.0,
     "beats_per_bar": 3,
@@ -331,10 +331,10 @@
     },
     "mix_chroma_note": "the raw energy chroma of the mix is reported, not checked: the G pedal dominates it and its window skirt lands in G# and F#"
   },
-  "ogg": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\audio\\percy_theme\\percy_theme.ogg",
+  "ogg": "<repo>\\assets\\audio\\percy_theme\\percy_theme.ogg",
   "ogg_bytes": 587914,
   "preview": {
-    "preview_png": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\output\\percy_theme_preview_3x.png",
+    "preview_png": "<repo>\\output\\percy_theme_preview_3x.png",
     "scale": 3,
     "size_px": [
       1536,
@@ -356,7 +356,7 @@
     "bars_drawn": 32,
     "bpm": 132.0,
     "beats_per_bar": 3,
-    "preview_json": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\output\\percy_theme_preview_3x.json"
+    "preview_json": "<repo>\\output\\percy_theme_preview_3x.json"
   },
   "checks": {
     "bars_is_32": true,

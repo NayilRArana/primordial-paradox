@@ -100,7 +100,7 @@ one card, not three.
 
 ## 4. What this run measured, with the command beside each number
 
-All runs on the desktop node, in `D:\AI Agent Automations\Shared\projects\primordial-paradox`.
+All runs on the desktop node, in `<repo>`.
 
 | Measurement | Command or source | Result |
 | --- | --- | --- |

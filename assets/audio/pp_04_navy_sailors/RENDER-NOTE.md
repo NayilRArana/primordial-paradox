@@ -44,7 +44,7 @@ Two things keep it clear, and both are measured:
 python assets/audio/pp_04_navy_sailors/build_pp04.py
     -> 43.636 s, 32 bars, 158 lead notes, hook cell end 2.727 s
 python tools/melody_guard.py assets/audio/pp_04_navy_sailors/melody_lead.json \
-    "D:/AI Agent Automations/Shared/projects/musikage" --json .../melody_guard.json
+    "<workspace>/Shared/projects/musikage" --json .../melody_guard.json
     -> PASS, longest identical interval run 5 of 8 allowed, best jaccard 0.0000
 python tools/render_chip.py .../pp_04_navy_sailors.mid .../pp_04_navy_sailors.wav --loop-bars 32
     -> peak -1.00 dBFS, rms -15.67 dBFS, seam sample difference 0

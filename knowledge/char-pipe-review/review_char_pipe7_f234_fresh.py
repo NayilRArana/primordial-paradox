@@ -10,8 +10,8 @@ import tempfile
 
 from PIL import Image
 
-REPO = r"D:\AI Agent Automations\Shared\projects\primordial-paradox"
-PY = r"C:/Users/naran/AppData/Local/Python/bin/python.exe"
+REPO = r"<repo>"
+PY = r"<home>/AppData/Local/Python/bin/python.exe"
 WORK = os.path.join(os.path.expanduser("~"), "AppData", "Local", "hermes", "profiles",
                     "code-review", "cache", "scratch", "charpipe_f234")
 os.makedirs(WORK, exist_ok=True)

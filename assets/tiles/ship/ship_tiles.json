@@ -986,7 +986,7 @@
     "args": "--type background --backdrop #000000",
     "exit": 0,
     "pass": true,
-    "output": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\assets\\tiles\\ship\\ship_tiles.png  128x48  96 tiles  10 colours  PASS\n  backdrop #000000 (declared)\n  palette: data\\nes_palette.json, the 2C02 palette (64 colours)"
+    "output": "<repo>\\assets\\tiles\\ship\\ship_tiles.png  128x48  96 tiles  10 colours  PASS\n  backdrop #000000 (declared)\n  palette: data\\nes_palette.json, the 2C02 palette (64 colours)"
   },
   "mocks": [
     "output/ship_tiles_3x.png",

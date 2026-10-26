@@ -37,7 +37,7 @@ Audio rendered 2026-10-22 02:30. Q1 is resolved; see below for the one musical q
 ```
 python tools/check_hadrian_score.py        -> 19 passed, 0 failed
 python tools/melody_guard.py assets/audio/hadrian_theme/melody_lead.json \
-    "D:/AI Agent Automations/Shared/projects/musikage" \
+    "<workspace>/Shared/projects/musikage" \
     --json assets/audio/hadrian_theme/melody_guard.json   -> PASS, run 3, max jaccard 0.0000
 python tools/arrange.py assets/audio/hadrian_theme/score_hadrian.yaml \
     --report assets/audio/hadrian_theme/arrange_report.json

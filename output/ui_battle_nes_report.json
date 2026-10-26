@@ -80,7 +80,7 @@
   "problems": [],
   "ok": true,
   "frame": {
-    "path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\game\\sprites_src\\ui\\screens\\ui_battle.png",
+    "path": "<repo>\\game\\sprites_src\\ui\\screens\\ui_battle.png",
     "source_size": [
       256,
       240
@@ -96,8 +96,8 @@
     ],
     "crop_how": "already 256x240"
   },
-  "palette_path": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\data\\nes_palette.json",
+  "palette_path": "<repo>\\data\\nes_palette.json",
   "palette_usable": 55,
   "palette_entries": 64,
-  "overlay": "D:\\AI Agent Automations\\Shared\\projects\\primordial-paradox\\output\\ui_checks\\_battle_overlay.png"
+  "overlay": "<repo>\\output\\ui_checks\\_battle_overlay.png"
 }

@@ -15,8 +15,8 @@ import tempfile
 
 from PIL import Image, ImageDraw
 
-REPO = r"D:\AI Agent Automations\Shared\projects\primordial-paradox"
-PY = r"C:/Users/naran/AppData/Local/Python/bin/python.exe"
+REPO = r"<repo>"
+PY = r"<home>/AppData/Local/Python/bin/python.exe"
 WORK = os.path.join(tempfile.gettempdir(), "char_pipe_recheck")
 NAMES = ("idle_0", "idle_1", "attack_0", "attack_1", "attack_2", "hurt_0", "down_0")
 
