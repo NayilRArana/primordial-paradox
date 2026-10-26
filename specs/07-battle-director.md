@@ -44,7 +44,7 @@ call draws it. The battle screen spends four roles and no others (ink, paper, di
 - The demo's row is 19 characters, 152 px, x 16 to x 167, which is what the game draws today.
 - The widest case the draw site's own comment claims is 22 characters, 176 px, x 16 to x 191, which that comment
   writes as x 16 to x 192: inside the 256 x 240 frame, and it leaves rows 164 to 167 clear above the menu band at
-  y 168 (PP_MENU_TOP, pp_config.gml:37).
+  y 168 (PP_MENU_TOP, pp_config.gml:38).
 - HP and WILL share the row and the one draw call, so a card that moves or reformats one of the two states what it
   does to the other instead of moving it alone, and any change that lengthens the row is measured against the
   widest case above.
