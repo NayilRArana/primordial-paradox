@@ -363,6 +363,21 @@ The check a stranger can run, which is what this file is for:
    three row files behind 5.2 and 5.3 are committed under `knowledge/open-weights/`, which is what
    lets a reader recompute every number in this file without a model on their desk.
 
+The page quotes these claims rest on, copied character for character today, so a reader can search
+them on the page:
+
+- https://dev.meta.ai/docs/muse-glimmer/quantization :
+  "K-Quant-17GB with the vision projector and a full 131,072-token context measures 19 GiB of VRAM"
+  and "Muse Glimmer ships pre-quantized GGUF checkpoints, so you can run it on a single GPU without
+  converting anything." and "At roughly 4-bit precision the language model fits under 20 GB, which
+  leaves room for the KV cache, the vision projector, and a speculative decoding drafter."
+- https://dev.meta.ai/docs/muse-spark-open :
+  "Serving still loads the full 816B weights into VRAM, which sets the hardware footprint." and
+  "Serves on a single 4-GPU NVIDIA Blackwell node."
+- https://dev.meta.ai/docs/open-weight-models :
+  "Meta also publishes open-weight models that you download and run on your own hardware, so you
+  own the weights, the runtime, and the data."
+
 What a judge would have to take on trust, and should not be asked to: that a hosted Glimmer endpoint
 behind an API key was Glimmer. If we ever use partner inference, the README must name the provider
 and the model string, and the bake header must carry both.
