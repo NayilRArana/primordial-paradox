@@ -12,9 +12,9 @@ a priority under 30 when it was already blocked and needed no status change.
 ## What was measured
 
     board nayil-ops, read at 2026-10-26 (the board sqlite, read only, and hermes kanban list --json)
-    130 open cards = 23 todo + 10 ready + 83 blocked + 14 running
-     65 of them are Primordial Paradox cards, listed below
-     64 are other projects (Musikage, job discovery, remote client, the fleet, a protected profile)
+    131 open cards = 23 todo + 11 ready + 83 blocked + 14 running
+     66 of them are Primordial Paradox cards, listed below
+     65 are other projects (Musikage, job discovery, remote client, the fleet, a protected profile)
 
 A few cards closed while this page was being written, so they no longer hold a priority. They are
 named here because the ranking was made on them, with the priority this page gave them:
@@ -42,6 +42,7 @@ from 88 to 90: the submission cannot be filed without them.
 | `t_771e78ef` | running | 98 | 98 | video | Demo | S | holding a direction walks the map; every map second of the video rides on it |
 | `t_c784d239` | running | 97 | 97 | README+repo | Meta tooling | M | the local bridge the talk fight calls: a bridge in the repo is an architecture a judge can read |
 | `t_ee178652` | ready | 96 | 96 | video | Impact + Meta tooling | M | speak an argument, the sailor answers and his WILL bar moves: the one clip that wins the video |
+| `t_4c8e4181` | todo | 96 | 96 | no (board state) | none, it applies the table | S | the follow-up that applies the 65 priorities and the 8 pauses from this page, because a worker run cannot mutate another card |
 | `t_5031b766` | blocked | 95 | 95 | README+repo | Meta tooling | M | real Meta calls in the game and a README that says which ones are live |
 | `t_29578bd8` | running | 95 | 95 | README+repo | Meta tooling (bonus) | M | a Meta open-weight model answering on this PC: the Open Weights bonus verification steps |
 | `t_70840bce` | running | 94 | 94 | no | Demo (it feeds the video) | S | nightly mock judging of the cut; it sees nothing a judge sees but it is what moves the demo score |
@@ -93,23 +94,32 @@ status is not the state of the tree, and the tree is what a judge sees.
 | `t_41553cc5` | ready | 0 | 61 | repo | Technical depth | S | four red rows in the public repo come from two files that cannot be published: pick the fix |
 | `t_4fca7154` | todo | 40 | 60 | repo | Technical depth | S | land the six R7 GPU lane paths so the work is in the tree a judge reads |
 
-## 3. Under 50: paused, parked, or waiting on Nayil
+## 3. Under 60: kept for the README, paused, parked, or waiting on Nayil
 
-The gate, audit and bookkeeping cards. None of them is visible in a video, a README or a repo, and
-every one of them was still competing for dispatch time with the talk fight. The action column says
-what was done: `pause` means the card was moved to blocked with the reason `after the submission`;
-`park` means it was already blocked, so only its priority moved; `lower` means it is already blocked and
-invisible but it protects a visible card, or it cannot move at all without Nayil.
+Most of this band is the gate, audit and bookkeeping work. None of it is visible in a video, a README
+or a repo, and every one of those cards was still competing for dispatch time with the talk fight. The
+action column says what was done: `pause` means the card was moved to blocked with the reason `after
+the submission`; `park` means it was already blocked, so only its priority moved; `lower` means it is
+already blocked and invisible but it protects a visible card, or it cannot move at all without Nayil.
 
-Three cards in this band are deliberately not paused. `t_9d9b5b1d` (the GameMaker build step that can
-only time out) stands between the tree and the public repo, so it keeps a working priority of 45.
-`t_916a2382` and `t_73e40064` are decisions that need Nayil, so they are parked where they will not be
-dispatched but will not be lost either.
+Six cards in this band are deliberately not paused.
+- `t_836dbb1a` (58), `t_944ef2b6` (57), `t_aa3ab04e` (56) and `t_0ed3bd3f` (55) are the counterpoint
+  checker, generator, gate and research. Nothing they do is on screen, but the calibrated thresholds and
+  the gate are a README section, so they keep a working priority: a judge who does not watch the video
+  can still read that the music is rules rather than taste.
+- `t_9d9b5b1d` (45) is the GameMaker build step that can only time out. It stands between the tree and
+  the public repo, so it stays live.
+- `t_916a2382` (31) and `t_73e40064` (30) are decisions that need Nayil, parked where they will not be
+  dispatched but will not be lost either.
 
 Nothing is deleted. Every card keeps its body, its comments and its assignee.
 
 | Card | Status | Was | Now | Visible in video, README or repo | Judging axis | Effort | What it is |
 |---|---|---|---|---|---|---|---|
+| `t_836dbb1a` | ready | 92 | 58 | README+repo | Technical depth | M | M1a: Baroque counterpoint rules as code, calibrated on Bach. The checker is not on screen, but the calibrated thresholds are a README section a judge can read |
+| `t_944ef2b6` | todo | 91 | 57 | README+repo | Technical depth | L | M1b: the counterpoint generator that writes the cues M3 picks from, so it is the machine behind the music a judge hears |
+| `t_aa3ab04e` | todo | 87 | 56 | repo | Technical depth | M | M4: the music gate that refuses a raw clash, so no cue regresses after M3 and the claim is enforced by a test |
+| `t_0ed3bd3f` | ready | 88 | 55 | repo | Technical depth | M | M2: models and corpus statistics behind the counterpoint thresholds: the numbers a README can cite |
 | `t_9d9b5b1d` | todo | 0 | 45 | repo (indirect) | Technical depth | M | the gate's GameMaker build step can only time out, so every push blocks for 900 s: it stands between the tree and the public repo |
 | `t_ba694028` | blocked | 0 | 40 | repo (marginal) | Demo (marginal) | S | the ear sweep table is written; landing the artifacts and the Gemini quota need a decision |
 | `t_916a2382` | blocked | 30 | 31 | no | none until decided | S (Nayil) | two spec numbers need Nayil (dialogue width, pattern angle); a spec number is not on screen |
@@ -133,7 +143,7 @@ Nothing is deleted. Every card keeps its body, its comments and its assignee.
 | `t_c024f8bc` | blocked | 97 | 2 | repo (already landed) | none, no work left | S (close it) | superseded by ARRIVAL-MAP-2 (`t_db2995d7`, done): the 53 by 56 Town Quay map is in data/maps/all.json at line 133, so the only work left here is closing a stale duplicate |
 | `t_00f5a63f` | blocked | 0 | 0 | README (reference) | Meta tooling (reference) | none | the Meta Model API facts the META cards are built on: a knowledge note, never dispatched |
 
-## 4. The 64 open cards that are not this project
+## 4. The 65 open cards that are not this project
 
 Listed here so the count is honest and so nobody re-derives it. They were not re-ranked and nothing was
 done to them: Musikage and the composition engine, the job and PhD lanes, remote-client, the fleet audit
@@ -158,6 +168,7 @@ and routing cards, social and publishing, the Xbox worker, and the two protected
 - `t_372d9694` Measure throughput, constraints, and optional ONNX/DirectML: Xbox worker
 - `t_3902f9fa` Deploy hello-world to console with Nayil and verify launch: Xbox worker
 - `t_3a51d247` RC9 follow-up: a steer is accepted and injected but does not change the answer: RC9 follow up
+- `t_3fe22527` SEC-COOKIES an agent pulled Google cookies from Chrome: who, what left, block it: security incident, cookies pulled from Chrome
 - `t_40b7cf6f` [handoff] musician: decide the Kaggle fine-tune upload and the Deltarune source: Kaggle fine tune upload
 - `t_440f7f4e` Prove USB NTFS read/write and measure staging throughput: Xbox worker
 - `t_4accccf9` Confirm Xbox Dev Mode activation with Nayil: Xbox dev mode
@@ -203,14 +214,6 @@ and routing cards, social and publishing, the Xbox worker, and the two protected
 - `t_fd0c5401` [handoff] musician: FLP reader needs one on-screen check in FL Studio: Musikage FLP reader
 - `t_fd9b9219` [spike] Xbox Series S UWP worker: prove the pull-worker loop and measure throughput: Xbox worker
 - `t_fdbdb18f` [knowledge] WA trade names are $5 and plural; the LLC already exists; Nayilinist domains are fre: business name facts
-
-## 5. Opened after this ranking was drafted, listed but not ranked
-
-The board was being written to while this page was built. These cards exist and are open, and they
-carry the priority their author gave them. The next reader of this page should rank them by the same
-rule: video, then README, then repo.
-
-- `t_4c8e4181` W0b APPLY WIN-PRIORITIES: 65 priorities and 8 pauses, from the committed table (needs a profile that may mutate the board)
 
 ## 6. What this changes for the next four days
 

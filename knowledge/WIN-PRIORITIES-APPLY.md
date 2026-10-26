@@ -6,13 +6,14 @@ manager), one shell, top to bottom. Every line names its card title after a `#` 
 visible. A worker run is refused every `kanban` verb, reads included, so all three blocks below run
 where the edits run.
 
-## 1. Priorities, 65 rows, highest first
+## 1. Priorities, 66 rows, highest first
 
 ```
 hermes kanban edit t_29dcf655 --priority 99      # W0 WIN-PRIORITIES
 hermes kanban edit t_771e78ef --priority 98      # MOVE-HOLD walk input
 hermes kanban edit t_c784d239 --priority 97      # W1 PP-BRIDGE
 hermes kanban edit t_ee178652 --priority 96      # W2 LIVE-TALK
+hermes kanban edit t_4c8e4181 --priority 96      # W0b APPLY WIN-PRIORITIES
 hermes kanban edit t_5031b766 --priority 95      # META-LIVE-1
 hermes kanban edit t_29578bd8 --priority 95      # W3 OPEN-WEIGHTS
 hermes kanban edit t_70840bce --priority 94      # W4 JUDGE-PANEL
