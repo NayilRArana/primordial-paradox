@@ -40,6 +40,8 @@ OVERWORLD_GML = os.path.join(ROOT, "game", "scripts", "pp_overworld", "pp_overwo
 MAPS_PATH = os.path.join(ROOT, "data", "maps", "all.json")
 ENCOUNTERS_PATH = os.path.join(ROOT, "data", "encounters", "all.json")
 ENEMIES_PATH = os.path.join(ROOT, "data", "enemies", "all.json")
+DIALOGUE_PATH = os.path.join(ROOT, "data", "dialogue", "all.json")
+TALK_CARDS_PATH = os.path.join(ROOT, "data", "talk_cards.json")
 
 MAP_ID = "ship_small"
 SPAWN_NAME = "start"
@@ -224,3 +226,61 @@ def test_starting_an_encounter_prints_one_line_naming_the_encounter(world):
     assert "PP_DEBUG" not in body, "the proof line is behind the debug switch, so a release build never prints it"
     # One line per fight: the guard above it is what keeps a second request from printing a second line.
     assert body.index('if (_world.battle_request != "") return false;') < body.index("show_debug_message(")
+
+
+# --------------------------------------------------------------------------- 4. the talk entity
+
+
+def test_the_sailor_stands_one_tile_ahead_of_the_eight_step_walk(ship):
+    """Card t_11f6a125: the demo's confirm has to land on a person, and the walk is pinned, so the tile is the walk's.
+
+    The demo script walks eight tiles east from `start` and presses confirm there (data/demo/run_001.json, e17 and e18),
+    and `pp_overworld_actor_ahead` reads the tile the hero faces, never the tile underfoot. So the only tile that makes
+    the press open a box is the ninth one east of the spawn, and it has to be standable floor: a person inside a wall is
+    a person nobody can reach.
+    """
+    spawn = ship["spawns"][SPAWN_NAME]
+    actors = ship.get("actors") or []
+    assert len(actors) == 1, "ship_small carries %d actors; this card places exactly one" % len(actors)
+    sailor = actors[0]
+    walk_end_x = spawn["x"] + 8
+    assert (sailor["x"], sailor["y"]) == (walk_end_x + 1, spawn["y"]), (
+        "the sailor stands at %d,%d and the walk's last tile is %d,%d"
+        % (sailor["x"], sailor["y"], walk_end_x, spawn["y"]))
+    assert sailor["facing"] == "left", "the sailor faces %r, away from a hero facing east" % sailor["facing"]
+    for x in range(spawn["x"], sailor["x"] + 1):
+        assert walkable(ship, x, sailor["y"]), "the walk to the sailor hits a wall at %d,%d" % (x, sailor["y"])
+
+
+def test_the_sailor_speaks_the_set_the_fight_and_the_talk_card_name(ship):
+    """One person, one set of words: the room's sailor, the fight's TALK and the talk card must agree (spec 16, s10).
+
+    The card in data/talk_cards.json is the fight's approved card for navy_sailor, and an actor whose id is not in that
+    table is a talk entity with no card at all, which is the shape spec 16 refuses.
+    """
+    sailor = (ship.get("actors") or [])[0]
+    dialogue = {row["id"]: row for row in _load(DIALOGUE_PATH)["dialogue"]}
+    assert sailor["dialogue"] in dialogue, "the sailor names dialogue %r, which no row defines" % sailor["dialogue"]
+    lines = dialogue[sailor["dialogue"]].get("lines") or []
+    assert lines, "the sailor's box holds no lines, so the confirm would open an empty box"
+
+    cards = {row["id"]: row for row in _load(TALK_CARDS_PATH)["cards"]}
+    assert sailor["id"] in cards, "no talk card %r in data/talk_cards.json" % sailor["id"]
+    enemy = [row for row in _load(ENEMIES_PATH)["enemies"] if row.get("id") == cards[sailor["id"]]["enemy"]]
+    assert len(enemy) == 1, "the card names enemy %r and there is %d row for it" % (
+        cards[sailor["id"]]["enemy"], len(enemy))
+    assert enemy[0]["talk_dialogue"] == sailor["dialogue"], (
+        "the fight talks from %r and the room's sailor from %r"
+        % (enemy[0]["talk_dialogue"], sailor["dialogue"]))
+
+
+def test_a_confirm_on_a_person_prints_one_line_naming_the_box(world):
+    """The proof line for this beat: one unconditional line, printed only when a box actually opened."""
+    step = function_body(world, "pp_overworld_step")
+    actor_branch = step[step.index("pp_overworld_actor_ahead(_world)"):]
+    actor_branch = actor_branch[:actor_branch.index('var _target = pp_overworld_confirm_target')]
+    assert '"PP dialogue: "' in actor_branch, actor_branch
+    assert "string(_world.dialogue.id)" in actor_branch, actor_branch
+    assert "PP_DEBUG" not in actor_branch, "the proof line is behind the debug switch, so a release build never prints it"
+    # Guarded, so a press on somebody with nothing to say prints nothing rather than naming an undefined box.
+    assert actor_branch.index("if (!is_undefined(_world.dialogue))") < actor_branch.index('"PP dialogue: "'), actor_branch

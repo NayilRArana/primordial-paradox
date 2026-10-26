@@ -175,14 +175,14 @@
       "kind": "key",
       "key": "confirm",
       "beat": 26,
-      "note": "confirm at the sailor's tile, the same press tools/capture_title.py --room ship makes. Measured on the 2026-10-26 take (card DEMO-WALK): no dialogue box opens, because data/maps/all.json places no talk entity on ship_small, so the room holds nothing to talk to yet. The press stays in the script because it is the beat's own action and the row the box will come from"
+      "note": "confirm facing the sailor's tile, the same press tools/capture_title.py --room ship makes. Card t_11f6a125: data/maps/all.json now places the navy_sailor actor at 11,7 of ship_small, one tile ahead of the tile this walk stops on, so the press opens his box (dialogue talk_navy_sailor) instead of nothing. Measured on the 2026-10-26 take (output/demo/demo-talk-2026-10-26.mp4): the game log carries 'PP dialogue: talk_navy_sailor with navy_sailor on ship_small 11,7' and seven 'PP audio: text_blip_b played' lines after the eight footstep lines, and the take's verify file holds failures []"
     },
     {
       "id": "e19",
       "step": 4200,
       "kind": "note",
       "beat": 26,
-      "note": "the room is held still for five seconds after the walk, so the recording ends on the whole room rather than on the last step. No dialogue box is up: measured on the 2026-10-26 take, the confirm at e18 opens nothing because ship_small carries no talk entity yet"
+      "note": "the room is held still for five seconds after the walk, so the recording ends on the whole room rather than on the last step. The box the confirm opened at e18 stays up for those five seconds: measured on the 2026-10-26 take, the first of the sailor's three lines is typing on screen from 65.1 s (the confirm's own step) to the last frame, which is what lets the video end on a held room with a line of dialogue in it"
     }
   ],
   "checks": {
