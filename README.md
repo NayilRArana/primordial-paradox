@@ -18,7 +18,8 @@ because 11 of its gated rows fail (`knowledge/NES-AUDIT.md`). No ROM is produced
 ## The window this is being built in
 
 This repository is the entry for the Meta Global AI Developer Hackathon, 2026-10-26 to 2026-11-04. The scaffold was
-frozen at the annotated tag `hackathon-baseline-2026-10-25` on commit `ae3a6cb`, so "what is new during the event" is
+frozen at the annotated tag `hackathon-baseline-2026-10-25` (the same tag name exists in the public repository and in the
+private monorepo the project is developed in, where it is commit `ae3a6cb`), so "what is new during the event" is
 answerable by diff. Every commit after that tag appears in [`EVENT-LOG.md`](EVENT-LOG.md), one line per commit, written
 by `tools/event_log.py` from git rather than by hand.
 
