@@ -10,13 +10,36 @@ What it does, in one launch (one window, muted, closed on request, ruling D9):
   1. starts the built game through tools/pp_launch.py, so PP_MUTE=1 is set and the idle gate in
      tools/idle_check.py refuses to open a window while Nayil is at the PC;
   2. drives the real title screen with key presses the game already reads (no debug key and no environment
-     flag): Enter to open the menu, Enter to start, Enter past the boarding dialogue, then walk down and right
-     from the spawn onto the encounter trigger at (4,7) of ship_small (data/maps/all.json);
+     flag): Enter to open the menu, Enter to start, Enter past the crawl, then the route a player takes.
   3. records the window with ffmpeg gdigrab, cuts the recording to the true 3x viewport, and cuts the frame
      sample out of that recording at one frame a second;
   4. checks its own output: the mp4 is the game's 3x viewport, and the frame sample contains the battle box,
-     the FIGHT command on the command row and the victory panel with its outcome word, each measured against
-     the role colours in data/palette.json and data/room_palettes.json, never against a guess.
+     the FIGHT command on the command row and the victory panel with its outcome word, each measured against the
+     role colours in data/palette.json and data/room_palettes.json, never against a guess.
+
+The route the presses walk (card t_009836b9). Before this card the schedule was written for a run that started on the
+ship's deck, and it never reached the fight: the crawl hands NEW GAME to the route's drive scene, and nothing advanced
+the route after a scene ended. Now the game follows the route (pp_route_* in pp_app.gml) and this tool walks the route
+the route itself names, in data/slice.json:
+
+    title -> crawl -> drive -> arrival -> gate -> boarding -> fight
+
+  - drive: the player's own skip. Hold cancel (X, the pp_input table's cancel action) for half a second and the
+    drive ends where it stands and hands to the arrival step. This is a key a player has and the game reads; it is
+    not PP_SLICE and not a debug key.
+  - arrival: southampton_town_quay's own start spawn (11,1) to the gate trigger tile (8,10), which is nine presses
+    down and three left, one tile a press (pp_overworld walks one tile per press). Every tile on that path is
+    walkable in data/maps/all.json's collision grid, and no trigger sits on it before the gate.
+  - gate: confirm on the gate tile opens quay_gate_checkpoint; the three pages, the three option choice and its own
+    branch scene are driven with confirm at a steady cadence, and the choice takes its first option (No pass).
+  - boarding: the route hands the gate's end to ship_boarding, which puts the hero at (3,7) on the deck and ends.
+  - fight: the route's fight step is the map's own battle trigger at (4,7), so one more confirm starts it and the
+    game prints `PP: battle start tutorial_sailors on ship_small ...`.
+
+A press that arrives early lands on a wall, an empty tile or a page that is still typing, and is swallowed, which is
+why the route presses sit at a fixed cadence instead of on exact frame numbers. The fight's presses keep the 2.4 s
+spacing card t_da94341c measured, so the result panel is on two sampled frames before the next press leaves it.
+
 
 The TALK leg the card's GOAL names is NOT in this run. tutorial_sailors, the deck's battle at ship_small (4,7),
 does carry talks_to_spare 3 with no condition, so a three TALK spare is walkable, but the trigger is
@@ -88,69 +111,108 @@ RECORD_TAIL_S = 6.0
 FRAME_EVERY_S = 1.0
 
 # The run, as key presses. These are the game's own bindings (game/scripts/pp_input/pp_input.gml): confirm is Z,
-# Enter is also confirm, the arrows are the walk. No debug key and no PP_SLICE flag is set: this is the path a
-# player takes. Times are seconds from the launch, chosen with room either side of each handoff, and every press
-# is one tile or one menu row, so an early press lands on a wall and is swallowed instead of skipping a beat.
+# Enter is also confirm, the arrows are the walk, and cancel is X. No debug key and no PP_SLICE flag is set: this is
+# the path a player takes. An entry is (seconds from the launch, action); an action ending in "*<seconds>" is a HOLD
+# of that key for that long, which is how a player skips a long cutscene.
+#
+# The route this walks is data/slice.json's own: title, crawl, drive, arrival, gate, boarding, fight. The two walk legs
+# are computed from the maps' own spawns and trigger tiles, not typed as a tile list, so a moved spawn or trigger
+# shows up here as a different set of presses.
+TITLE_MENU_S = 2.5          # Enter opens the title menu
+NEW_GAME_S = 4.0            # Enter chooses NEW GAME: the pan, the stars and the crawl
+CRAWL_SKIP_S = 18.0         # Enter skips the crawl's reveal, which starts the run and hands it to the drive
+DRIVE_SKIP_S = 22.0         # the player's own skip of the drive: a hold of cancel, half a second and then some
+
+# The arrival walk: from southampton_town_quay's start spawn to the gate trigger tile, one press a tile.
+ARRIVAL_WALK_S = 24.0
+WALK_GAP_S = 0.35
+ROUTE_Z_FIRST_S = 27.8      # the first confirm after the walk: it opens the gate scene on the tile it stands on
+ROUTE_Z_GAP_S = 0.6         # one page reveal or one page turn a press
+ROUTE_Z_LAST_S = 44.6       # the boarding scene has ended by here and the route's fight step is next on the deck
+FIGHT_FIRST_S = 45.4        # the confirm that starts the first fight through the deck's own battle trigger
+FIGHT_GAP_S = 2.4           # card t_da94341c's spacing: the result panel is on two sampled frames before a press
+FIGHT_LAST_S = 139.0
+
+
+def route_walk_events(first_s, gap_s):
+    """The arrival walk's presses, read from the two maps the route names.
+
+    data/slice.json's arrival step lands on southampton_town_quay at the spawn pp_slice_spawn picks, and the gate is the
+    scene trigger on that map. Both are read here, and the path between them is a breadth first walk over the map's own
+    collision grid, so a moved spawn, a moved trigger or a wall across the path changes these presses instead of being
+    discovered in a recording. Down and left are emitted in the order the path takes them, corner first.
+    """
+    def load(name):
+        """One data file, read here and not through the module's own reader: this runs while the module is still
+        being defined, before the readers below exist."""
+        with open(os.path.join(ROOT, "data", name), "r", encoding="utf-8") as handle:
+            return json.load(handle)
+
+    maps = {row["id"]: row for row in load("maps/all.json")["maps"]}
+    route = load("slice.json")["route"]["steps"]
+    arrival = next(step for step in route if step.get("id") == "arrival")
+    map_row = maps[arrival["map"]]
+    spawn_name = arrival.get("spawn") if arrival.get("spawn") in map_row.get("spawns", {}) else "start"
+    start = map_row["spawns"][spawn_name]
+    gate = next((trigger for trigger in map_row.get("triggers", [])
+                 if trigger.get("kind") == "scene" and trigger.get("id") == "quay_gate_checkpoint"), None)
+    if gate is None:
+        raise SystemExit("capture_first_fight: southampton_town_quay carries no quay_gate_checkpoint scene trigger, "
+                         "so the arrival walk has nowhere to end")
+    collision = map_row["collision"]
+    goal = (gate["x"], gate["y"])
+    origin = (start["x"], start["y"])
+
+    def walkable(point):
+        x, y = point
+        return 0 <= y < len(collision) and 0 <= x < len(collision[y]) and collision[y][x] == "0"
+
+    if not walkable(origin) or not walkable(goal):
+        raise SystemExit("capture_first_fight: the arrival walk starts or ends on a blocked tile of %s" % arrival["map"])
+    came_from = {origin: origin}
+    queue = [origin]
+    while queue:
+        point = queue.pop(0)
+        if point == goal:
+            break
+        for delta in ((0, 1), (0, -1), (-1, 0), (1, 0)):
+            nxt = (point[0] + delta[0], point[1] + delta[1])
+            if nxt not in came_from and walkable(nxt):
+                came_from[nxt] = point
+                queue.append(nxt)
+    if goal not in came_from:
+        raise SystemExit("capture_first_fight: no walkable path from %r to the gate at %r on %s"
+                         % (origin, goal, arrival["map"]))
+    path = []
+    node = goal
+    while node != origin:
+        path.append(node)
+        node = came_from[node]
+    path.append(origin)
+    path.reverse()
+    key_of = {(0, 1): "down", (0, -1): "up", (-1, 0): "left", (1, 0): "right"}
+    keys = [key_of[(path[index + 1][0] - path[index][0], path[index + 1][1] - path[index][1])]
+            for index in range(len(path) - 1)]
+    return [(first_s + index * gap_s, key) for index, key in enumerate(keys)]
+
+
 EVENTS = [
-    # Title: Enter opens the menu, Enter chooses NEW GAME, the crawl plays, Enter skips it for the ship.
-    (2.5, "enter"),
-    (4.0, "enter"),
-    (18.0, "enter"),
-    # The run starts the hero on ship_small at (2,7) (the game's own autosave line says so), and the encounter
-    # trigger is the battle row at (4,7): two steps east reach it. Nothing moves him first, so no other key is sent.
-    (20.0, "right"),
-    (20.7, "right"),
-    # From the trigger on: the intro dialogue's pages, the command menu with the cursor on FIGHT, the FIGHT itself, the
-    # hit message and the result panel, each one confirm. Spaced wide enough that the result panel is on two sampled
-    # frames before the next press leaves it, so the victory line is in the video and not only in the log.
-    #
-    # Card t_da94341c: the fight the data authors runs about 48 s of play (tests/test_first_fight.py pins that number),
-    # so the old schedule, which stopped at 39.6 s, always ended one turn short of the result panel and the run could
-    # never carry the victory word. The presses now run to 77.5 s in 2.4 s steps: a press during a drain is a no-op,
-    # a press during the timing bar only sets its power, and a press on the finished panel is what leaves it, so the
-    # panel is on screen for two frame samples when it appears.
-    (23.5, "z"),
-    (25.9, "z"),
-    (28.3, "z"),
-    (30.7, "z"),
-    (33.1, "z"),
-    (35.5, "z"),
-    (37.9, "z"),
-    (40.3, "z"),
-    (42.7, "z"),
-    (45.1, "z"),
-    (47.5, "z"),
-    (49.9, "z"),
-    (52.3, "z"),
-    (54.7, "z"),
-    (57.1, "z"),
-    (59.5, "z"),
-    (61.9, "z"),
-    (64.3, "z"),
-    (66.7, "z"),
-    (69.1, "z"),
-    (71.5, "z"),
-    (73.9, "z"),
-    (76.3, "z"),
-    (78.7, "z"),
-    (81.1, "z"),
-    (83.5, "z"),
-    (85.9, "z"),
-    (88.3, "z"),
-    (90.7, "z"),
-    (93.1, "z"),
-    (95.5, "z"),
-    (97.9, "z"),
-    (100.3, "z"),
-    (102.7, "z"),
-    (105.1, "z"),
-    (107.5, "z"),
-    (109.9, "z"),
-    (112.3, "z"),
-    (114.7, "z"),
-    (117.1, "z"),
+    # Title: Enter opens the menu, Enter chooses NEW GAME, Enter skips the crawl and starts the run.
+    (TITLE_MENU_S, "enter"),
+    (NEW_GAME_S, "enter"),
+    (CRAWL_SKIP_S, "enter"),
+    # The crawl hands to the route's drive step, which plays on drive_m4_corridor. The drive is a 10,680 step cutscene
+    # (178.00 s) with twelve press-gated captions, so it is skipped here exactly as a player skips it: hold cancel.
+    (DRIVE_SKIP_S, "cancel*1.0"),
 ]
+EVENTS += route_walk_events(ARRIVAL_WALK_S, WALK_GAP_S)
+EVENTS += [(ROUTE_Z_FIRST_S + index * ROUTE_Z_GAP_S, "z")
+           for index in range(int((ROUTE_Z_LAST_S - ROUTE_Z_FIRST_S) / ROUTE_Z_GAP_S) + 1)]
+EVENTS += [(FIGHT_FIRST_S + index * FIGHT_GAP_S, "z")
+           for index in range(int((FIGHT_LAST_S - FIGHT_FIRST_S) / FIGHT_GAP_S) + 1)]
+EVENTS.sort(key=lambda entry: entry[0])
 RECORD_SECONDS = EVENTS[-1][0] + RECORD_TAIL_S
+
 
 
 
@@ -270,6 +332,26 @@ def press(hwnd, key, code):
     return cap.send_vk_focused(code)
 
 
+def hold(hwnd, key, code, seconds):
+    """Press a key and keep it down for `seconds`, then let it go.
+
+    Card t_009836b9: the drive's skip is a HOLD of cancel, half a second and then some, and a press is 0.05 s of key
+    down (capture_title.send_vk_focused). The key state is what the game reads for a hold, so the down and the up are
+    sent here with the wait between them, through the same focused input queue a press uses.
+    """
+    if not cap.game_has_focus(hwnd):
+        ok, note = cap.ensure_key_focus(hwnd, attempts=4)
+        if not ok:
+            return "not sent (%s)" % note
+    if cap.user32 is None:
+        return "not sent (this host has no user32)"
+    flags = cap.KEYEVENTF_EXTENDEDKEY if code in cap.EXTENDED_KEYS else 0
+    cap.user32.keybd_event(code, 0, flags, 0)
+    time.sleep(seconds)
+    cap.user32.keybd_event(code, 0, flags | cap.KEYEVENTF_KEYUP, 0)
+    return "held %.2f s" % seconds
+
+
 def start_recorder(rect, out_path):
     x, y, w, h = rect
     os.makedirs(BUILD_DIR, exist_ok=True)
@@ -366,13 +448,17 @@ def run_capture(policy, show=False):
 
         recorder, recorder_handle, rec_log = start_recorder(rect, RAW_PATH)
         started = time.monotonic()
-        for at_s, key in EVENTS:
+        for at_s, action in EVENTS:
             now = time.monotonic() - started
             if now < at_s:
                 time.sleep(at_s - now)
+            key, star, seconds = action.partition("*")
             code = cap.KEY_CODES[key]
-            result = press(hwnd, key, code)
-            print("P: %.1f s %s %s" % (at_s, key, result))
+            if star:
+                result = hold(hwnd, key, code, float(seconds))
+            else:
+                result = press(hwnd, key, code)
+            print("P: %.1f s %s %s" % (at_s, action, result))
 
         # Hold the window open to the end of the recording, so the map after the fight is on video too. No screen copy
         # is taken while the run is driving the game: a copy raises the window and hands the focus back, which made

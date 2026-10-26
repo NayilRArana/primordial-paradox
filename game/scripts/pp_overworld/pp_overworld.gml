@@ -125,6 +125,14 @@ function pp_world_start_move(_world, _tx, _ty, _steps_per_tile) {
         _guard += 1;
     }
     _hero.moving = true;
+    // The hero faces the way he walks, for a scene's rail move as much as for a press: pp_scene's own `move` used to
+    // leave the facing where the last press put it, so a scene that walked him right left him looking left and the
+    // confirm on the tile ahead read the tile behind (card t_009836b9, the deck's fight trigger).
+    if (_sx != 0) {
+        _hero.facing = (_sx > 0) ? "right" : "left";
+    } else if (_sy != 0) {
+        _hero.facing = (_sy > 0) ? "down" : "up";
+    }
     // Card SFX-WIRE: a tile move shows two walk frames, so one footstep per move is one every second frame.
     pp_audio_play("footstep");
     _hero.from_x = _hero.px;
@@ -204,6 +212,8 @@ function pp_overworld_start_encounter(_world, _encounter_id) {
     // from the log alone. It is deliberately not behind PP_DEBUG, because the release build is where that proof is wanted.
     show_debug_message("PP: battle start " + string(_encounter_id) + " on " + string(_world.map.id)
         + " " + string(_world.hero.tx) + "," + string(_world.hero.ty));
+    // Card t_009836b9: a fight the route names puts the route on that row, whichever door started it.
+    pp_route_battle_started(_encounter_id);
     return true;
 }
 
@@ -232,6 +242,10 @@ function pp_overworld_battle_finished(_world, _encounter_id, _outcome, _handoff_
         }
     }
     _world.trigger_lock = PP_TRIGGER_LOCK_STEPS;
+    // Card t_009836b9: the route follows the fight out too, so the step after the demo's first fight is the save step
+    // the route authors. The call sits before the handoff branch because an interrupted fight hands a scene over and
+    // the route still has to move on from the fight row.
+    pp_route_battle_finished(_encounter_id);
 
     if (!is_string(_handoff_scene) || _handoff_scene == "") {
         _world.battle_done = _outcome;
@@ -397,8 +411,13 @@ function pp_overworld_step(_world) {
         }
 
         if (!pp_scene_running(_world.scene)) {
+            // Card t_009836b9: the runner is read before it is dropped, because the route hands to its row's `next`
+            // only for the scene it started. This is the one place a finished scene is let go, so every way a scene
+            // can end (its own `end`, a runout, the command cap) reaches the route through here.
+            var _ended_scene = _world.scene;
             _world.scene = undefined;
             _world.trigger_lock = PP_TRIGGER_LOCK_STEPS;
+            if (is_struct(_ended_scene)) pp_route_scene_finished(_ended_scene.id);
         }
         return;
     }
@@ -461,6 +480,14 @@ function pp_overworld_step(_world) {
             // pp_talk_actor_open, so the map data decides who speaks and this branch decides nothing by name.
             _world.dialogue = pp_talk_actor_open(_talk, _world);
             if (is_undefined(_world.dialogue)) _world.dialogue = undefined;
+            // Card t_11f6a125: one unconditional line whenever a confirm opens a conversation, naming the box, the
+            // person and the tile they stand on. It is the same kind of proof line as the battle start line above:
+            // a recording can be read as "the press reached a talk entity" from the game's own log, instead of from
+            // a frame somebody has to look at and guess about. Nothing is printed when no box opened.
+            if (!is_undefined(_world.dialogue)) {
+                show_debug_message("PP dialogue: " + string(_world.dialogue.id) + " with " + string(_talk.name)
+                    + " on " + string(_world.map.id) + " " + string(_talk.tx) + "," + string(_talk.ty));
+            }
             pp_overworld_clock_step(_world);
             return;
         }
@@ -573,6 +600,14 @@ function pp_overworld_draw(_world) {
                 pp_font_cols(PP_TEXT_RIGHT - PP_TEXT_X), 8, 1);
         }
         draw_set_halign(fa_left);
+    }
+
+    // Card t_009836b9: the skip a player can press on a long scene. One line in the sheet's own ink, only while the
+    // hold is still zero, so the words disappear the moment the player starts holding instead of sitting there through
+    // the count. A scene that does not ask to be skippable draws nothing.
+    if (pp_scene_running(_world.scene) && variable_struct_exists(_world.scene, "skippable")
+        && _world.scene.skippable == true && _world.scene.skip_hold == 0) {
+        pp_font_draw("hold X to skip", 8, 8, 1);
     }
 
     // A flash is the whole frame flooded in one role the room's own palette set declares (card t_531bc76c): a palette

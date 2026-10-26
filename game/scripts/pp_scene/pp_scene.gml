@@ -28,8 +28,14 @@ function pp_scene_commands() {
 #macro PP_SCENE_SELFTEST_CAP 1800
 
 /// Commands one scene may execute before the runner stops it. A branch cycle is a checker error, and this is the
-/// runtime's own dead man's handle on top of that.
+/// runtime's own dead man's handle on top of it.
 #macro PP_SCENE_RUN_CAP 1000
+
+/// Steps a player's hold of the cancel action costs a scene whose row says `"skippable": true` before the scene ends
+/// where it stands (card t_009836b9). Thirty steps is half a second at 60, which a player holds deliberately and cannot
+/// hit by tapping cancel. Only a row that asks for it reads this, so a scene with a choice in it can never be skipped
+/// out from under the player, and the drive is the only row that asks today.
+#macro PP_SCENE_SKIP_HOLD 30
 
 /// A new runner for a scene id. Returns undefined when the id or its commands are missing.
 function pp_scene_new(_scene_id, _world) {
@@ -53,7 +59,11 @@ function pp_scene_new(_scene_id, _world) {
         unknown: 0,
         autoplay: false,
         debug_step: false,
-        trace: false
+        trace: false,
+        // Card t_009836b9: a scene whose row asks for it can be ended by the player's hold of cancel, and the hold is
+        // counted per runner so a scene entered by a branch starts its own count.
+        skippable: false,
+        skip_hold: 0
     };
     // Card R23: a scene owns the room it plays in. The map and the start tile are the scene's own data, so the runner
     // asks for them here and the caller never has to know which map a scene happens on.
@@ -78,7 +88,14 @@ function pp_scene_take_scene(_sc, _world, _row) {
     _sc.start = undefined;
     if (variable_struct_exists(_row, "map")) _sc.map = _row.map;
     if (variable_struct_exists(_row, "start")) _sc.start = _row.start;
+    // Card t_009836b9: only a row that says so can be skipped, and a runner that adopts a new scene by `branch`
+    // starts its hold from zero rather than inheriting the scene it came from.
+    _sc.skippable = (variable_struct_exists(_row, "skippable") && _row.skippable == true);
+    _sc.skip_hold = 0;
     pp_scene_world_place(_world, _sc.map, _sc.start);
+    // Card t_009836b9: the route follows the scene it points at. The hook is here rather than in the two callers
+    // because a `branch` adopts a target scene through this same door, so a branch cannot lose the route.
+    pp_route_scene_started(_sc.id);
 }
 
 /// Put the world on the map a scene names and the walker on the tile it names. This is deliberately NOT
@@ -435,6 +452,24 @@ function pp_scene_step(_sc, _world) {
     if (is_undefined(_sc) || _sc.finished) return;
     // F2 stepping (spec 06 rule 7): once the debug step key has been used, the scene only moves on a press.
     if (_sc.debug_step) return;
+
+    // Card t_009836b9: the skip a player can press on a long scene. A HOLD of cancel for PP_SCENE_SKIP_HOLD steps
+    // ends the scene where it stands, through the same door a written `end` uses, so the route hands on to the next
+    // step exactly as it would if the scene had played out. Cancel is the action the table gives X, Escape and
+    // Backspace, and it is not the key confirm advances a caption with, so reading it during a `say` cannot mash the
+    // story. The scene holds still while the count climbs, which makes the half second a player spends holding it
+    // predictable instead of a race with whatever the scene was playing.
+    if (_sc.skippable) {
+        if (pp_action("cancel")) {
+            _sc.skip_hold += 1;
+            if (_sc.skip_hold < PP_SCENE_SKIP_HOLD) return;
+            show_debug_message("PP scene: " + string(_sc.id) + " skipped by the player after "
+                + string(_sc.skip_hold) + " steps of holding cancel");
+            pp_scene_end(_sc, _world);
+            return;
+        }
+        _sc.skip_hold = 0;
+    }
 
     switch (_sc.state) {
         case "dialogue":

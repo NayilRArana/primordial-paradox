@@ -251,7 +251,22 @@ def row():
             "start": {"x": 0, "y": ROAD_ROW},
             "arrive": {"x": WIDTH - 1, "y": ROAD_ROW},
         },
-        "triggers": [],
+        "triggers": [
+            # Card t_009836b9: the corridor's own way out. The drive hands to the quay by the route (the crawl takes
+            # the drive step, the drive ends, and the route's next step is the arrival), so a player is never left
+            # standing on this map. This trigger is the floor under that: if a run ever ends up on the corridor with no
+            # scene running, confirm on the start tile takes the hero to the quay's pier instead of leaving him on a
+            # road with two ends and no door. It is one row, on the tile the scene starts on, so nothing else moves.
+            {
+                "x": 0,
+                "y": ROAD_ROW,
+                "kind": "map",
+                "id": "southampton_town_quay",
+                "spawn": "from_pier",
+                "once": False,
+                "condition": "",
+            }
+        ],
         "rails": [],
     }
 

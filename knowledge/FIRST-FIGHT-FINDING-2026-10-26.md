@@ -160,3 +160,34 @@ The frames this finding rests on, all on the desktop node:
 
 The resume recording is 117.4 s at 768x720, 60/1 fps, and is a real run of the same build
 (`output/PrimordialParadox/PrimordialParadox.win`, written 2026-10-26 06:12).
+
+## Resolution, evening of 2026-10-26 (card t_009836b9)
+
+Finding 1 is closed for a player's run, and the opening's length is decided in favour of the drive as it is.
+
+What changed: the route's `next` edge is now taken by a player's run as well as by the PP_SLICE walk (a scene the route
+names arms its row, and the one place a finished runner is dropped tells the route), the corridor carries a `map`
+trigger on its own start tile as a floor under the route, the drive is skippable with a half second hold of cancel, and
+a scene's rail `move` turns the hero the way it walks him (which is what the deck's trigger needed). Decisions and rules:
+`specs/20-demo-route.md`, rules 9 and 10 of `specs/06-cutscene-runner.md`.
+
+Measured on the run that passed, a NEW GAME launch with the game's own keys and PP_MUTE=1:
+
+    drive skipped by the player after 30 steps of holding cancel      22.5 s
+    route hands drive to arrival, walk to the gate                    28.4 s
+    gate's three pages, its choice and its reply, then boarding       28.4 s to 44 s
+    route parks on the fight row, PP: battle start                    44.6 s
+    battle box on screen / FIGHT cell legible                         58 s / 62 s
+    victory panel, word 30 px, press 53 px                            134 s
+    8 turns of FIGHT, navy_sailor 15 HP to 0, party untouched, route hands fight to save
+
+The four checks the tool has always printed plus the muted line and the crash scan are green on that run. `look_rule`
+stays red, as finding 3 says it should until the art moves: 0.39, 0.40 and 0.40 of the fight frames are on the NES
+palette, and 0.20 at 123 s. One more off-palette source was named on the way: entering the quay prints `role hazard is
+not in the room palette set quay_night, drawing it as PP_COLOUR_MISSING`, and the quay frames measure 0.78, which is the
+missing role and not the battle backdrop. That is art, and it is not this card's.
+
+Finding 2 and finding 4 (the verifier's own measurements) are untouched by this card. The frames now on disk for a
+verifier to re-measure are `output/first_fight_frames/f_0058.png` (box), `f_0062.png` (FIGHT 121 px, 39 px span, 5 runs)
+and `f_0134.png` (victory word 30 px, press 53 px), from `output/first_fight_capture.mp4`, 145.00 s, 768x720, 60/1 fps,
+the build written 2026-10-26 08:51.

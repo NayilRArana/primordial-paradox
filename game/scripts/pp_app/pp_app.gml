@@ -83,7 +83,13 @@ function pp_app_boot() {
         slice_taken: false,
         slice_seen: false,
         slice_lose: false,
-        slice_walked: 0
+        slice_walked: 0,
+        // The route a player follows (card t_009836b9): the step the run stands on, the scene the route last started,
+        // and whether that scene was a scene the route armed. Kept apart from the walk's own cursor above, because a
+        // PP_SLICE run takes every handoff itself and must never be moved twice.
+        route_step: "",
+        route_scene: "",
+        route_armed: false
     };
     global.pp.app = _app;
 
@@ -747,6 +753,144 @@ function pp_slice_next_id(_row, _lost) {
 /// Is the walk switched on? Unset in every real launch, so this is one environment read at boot and nothing per frame.
 function pp_slice_walk_enabled() {
     return (environment_get_variable(PP_SLICE) != "");
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+// The route, followed by a player (card t_009836b9). Until this card the only reader of a row's `next` was
+// pp_slice_walk_step, which is dead unless PP_SLICE is set, so a real launch took the crawl's handoff to the drive and
+// then stopped: the drive played its 10,680 steps and handed control back on the corridor map, and no row's next was
+// ever taken again. A player stood on a map with no trigger and no exit, and the first fight was not reachable at all.
+//
+// These functions are the player's half of the same route file. A scene the route names hands to its row's `next` when
+// it ends; a fight the route names is followed by the step after it. The walk keeps its own cursor (`slice_*`), so the
+// two never share one, and every one of these functions returns immediately while the walk is on.
+
+/// One route row of one kind that names this value under this key, or undefined. The route is nine rows, so a scan is
+/// the whole lookup and there is no second index to keep in step with the file.
+function pp_route_row_for(_kind, _key, _value) {
+    var _route = pp_slice_route();
+    if (is_undefined(_route)) return undefined;
+    var _i = 0;
+    while (_i < array_length(_route.steps)) {
+        var _row = _route.steps[_i];
+        if (is_struct(_row) && pp_slice_kind(_row) == _kind && variable_struct_exists(_row, _key)
+            && string(_row[$ _key]) == string(_value)) return _row;
+        _i += 1;
+    }
+    return undefined;
+}
+
+/// One unconditional line per route move, the same way the walk says one per step: a run that took the route and a run
+/// that stopped at a row can be told apart from the log alone.
+function pp_route_note(_line) {
+    show_debug_message("PP route: " + string(_line));
+    return true;
+}
+
+/// Put a player's run on one route step. Called by the crawl's handoff, and by the two hooks below.
+function pp_route_set_step(_id) {
+    if (!is_struct(global.pp) || !is_struct(global.pp.app)) return "";
+    global.pp.app.route_step = string(_id);
+    return global.pp.app.route_step;
+}
+
+/// The step a player's run stands on, or "" when the run has not taken a route step.
+function pp_route_step_id() {
+    if (!is_struct(global.pp) || !is_struct(global.pp.app)) return "";
+    return string(global.pp.app.route_step);
+}
+
+/// A scene has taken the screen. When the route carries that scene as a step, the route follows it from now on, and
+/// only a runner this hook armed can hand the route on when it ends. A scene the route does not name (the ship's log,
+/// the deck after the watch) leaves the route where it is and arms nothing, so it cannot move a run it does not own.
+function pp_route_scene_started(_scene_id) {
+    if (!is_struct(global.pp) || !is_struct(global.pp.app)) return false;
+    if (pp_slice_walk_enabled()) return false;
+    var _app = global.pp.app;
+    _app.route_scene = string(_scene_id);
+    var _row = pp_route_row_for(PPSliceKind.scene, "scene", _scene_id);
+    if (is_undefined(_row)) {
+        // A `branch` adopts its target through this same door, and the route names the row the branch STARTED from, not
+        // the scene it lands on: the gate's three replies are three scenes and one route step. So a scene the route
+        // does not name leaves the step and the arm exactly as they were, and only its id is recorded, which is what the
+        // end hook compares against. While the route is armed no trigger can fire (the overworld returns before triggers
+        // while a scene runs), so the only way a scene it does not name can start here is a branch of the armed one.
+        return false;
+    }
+    _app.route_step = string(_row.id);
+    _app.route_armed = true;
+    return true;
+}
+
+/// The scene the route started has ended. Hand to the row's `next`, which is what makes the drive hand to the quay,
+/// the gate hand to the boarding and the boarding hand to the fight.
+function pp_route_scene_finished(_scene_id) {
+    if (!is_struct(global.pp) || !is_struct(global.pp.app)) return false;
+    if (pp_slice_walk_enabled()) return false;
+    var _app = global.pp.app;
+    if (!_app.route_armed) return false;
+    if (string(_app.route_scene) != string(_scene_id)) return false;
+    _app.route_armed = false;
+    var _row = pp_slice_route_row(_app.route_step);
+    if (!is_struct(_row) || pp_slice_kind(_row) != PPSliceKind.scene) return false;
+    return pp_route_take_next(_row);
+}
+
+/// A fight has started through the world's own trigger door. The route follows the row that names that encounter.
+function pp_route_battle_started(_encounter_id) {
+    if (!is_struct(global.pp) || !is_struct(global.pp.app)) return false;
+    if (pp_slice_walk_enabled()) return false;
+    var _row = pp_route_row_for(PPSliceKind.battle, "encounter", _encounter_id);
+    if (is_undefined(_row)) return false;
+    global.pp.app.route_step = string(_row.id);
+    return true;
+}
+
+/// The fight the route names has ended. Its row hands to the step after it, which is the demo's save step. The
+/// encounter is passed in so a fight the route does not name cannot move a run that names a different one.
+function pp_route_battle_finished(_encounter_id) {
+    if (!is_struct(global.pp) || !is_struct(global.pp.app)) return false;
+    if (pp_slice_walk_enabled()) return false;
+    var _app = global.pp.app;
+    var _row = pp_slice_route_row(_app.route_step);
+    if (!is_struct(_row) || pp_slice_kind(_row) != PPSliceKind.battle) return false;
+    if (!variable_struct_exists(_row, "encounter") || string(_row.encounter) != string(_encounter_id)) return false;
+    return pp_route_take_next(_row);
+}
+
+/// Take the step a route row's `next` names, through the same pp_slice_handoff the walk uses, so one door opens a
+/// scene, a map and a fight for both halves of the route. A row whose next step is the fight hands nothing to a mode:
+/// the player starts that fight on the map the route put them on, through the map's own battle trigger, which is what
+/// prints the `PP: battle start` line. The route parks on that row and waits for the trigger.
+function pp_route_take_next(_row) {
+    if (!is_struct(global.pp) || !is_struct(global.pp.app)) return false;
+    var _app = global.pp.app;
+    var _next_id = pp_slice_next_id(_row, false);
+    if (_next_id == "") {
+        pp_route_note("the route ends after step " + string(_row.id));
+        return true;
+    }
+    var _next = pp_slice_route_row(_next_id);
+    if (!is_struct(_next)) {
+        pp_route_note("stopped at step " + string(_row.id) + ": the route names " + _next_id
+            + ", which it does not carry");
+        return false;
+    }
+    _app.route_step = _next_id;
+    if (pp_slice_kind(_next) == PPSliceKind.battle) {
+        var _here = "the map";
+        if (is_struct(global.pp.world) && is_struct(global.pp.world.map)) _here = string(global.pp.world.map.id);
+        pp_route_note("step " + _next_id + " (" + pp_slice_label(_next) + ") is " + _here
+            + "'s own fight, and the map's battle trigger starts it");
+        return true;
+    }
+    var _why = pp_slice_handoff(_next);
+    if (_why != "") {
+        pp_route_note("stopped at step " + _next_id + ": " + _why);
+        return false;
+    }
+    pp_route_note("step " + string(_row.id) + " handed to step " + _next_id + " (" + pp_slice_label(_next) + ")");
+    return true;
 }
 
 /// Say one walk line twice: to the debug console, and to pp_slice_run.log beside the save, because a run started from

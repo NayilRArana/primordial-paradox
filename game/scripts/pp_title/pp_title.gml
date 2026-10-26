@@ -435,6 +435,9 @@ function pp_title_crawl_handoff() {
         return false;
     }
     show_debug_message("PP title: the crawl handed to the route's step " + _next_id);
+    // Card t_009836b9: a player's run follows the route from here. The cursor is set on the step the crawl handed to,
+    // so the scene that step starts is the one whose end moves the run on. A PP_SLICE run never reaches this line.
+    pp_route_set_step(_next_id);
     return true;
 }
 

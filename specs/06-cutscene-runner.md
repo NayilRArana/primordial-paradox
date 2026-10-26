@@ -36,6 +36,13 @@ Rules
 8. A `flash` spends no steps of its own. It is a palette change over steps the scene already spends, so it advances in
    the step it runs and the world counts its frames down. A flash priced as a wait would move every shot duration after
    it, and on the drive it would move the cue's cut grid with them.
+9. A scene row may carry `"skippable": true`, and a skippable scene ends where it stands when the player holds cancel
+   for PP_SCENE_SKIP_HOLD steps (30, half a second). It ends through the same pp_scene_end a written `end` uses, so the
+   demo route hands on to the row's `next` exactly as it would have. Only the drive asks today, and a scene with a
+   choice never sets it, because a skipped choice would answer for the player. See spec 20, decision 3.
+10. A scene's end is where the demo route moves: whichever way the runner finishes (its own `end`, a runout, the
+    command cap), the overworld drops it in one place and that place tells the route (pp_route_scene_finished). See
+    spec 20, decision 1.
 
 Numbers: camera move 24 steps, linear, floored; fade 12 steps when the argument is omitted; music crossfade 30 steps;
 shake 1 or 2 pixels changing every 2 steps, maximum 60 steps; a scene over 256 commands is a checker warning, because

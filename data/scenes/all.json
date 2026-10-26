@@ -263,6 +263,7 @@
       "name": "The drive, London to Southampton",
       "map": "drive_m4_corridor",
       "start": { "x": 0, "y": 8 },
+      "skippable": true,
       "commands": [
         { "cmd": "music", "id": "PP-02" },
         { "cmd": "fade", "mode": "in" },

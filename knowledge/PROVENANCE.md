@@ -1916,3 +1916,28 @@ second state machine, a scene row opts in to being skippable with one boolean in
 length, and the corridor gets a `map` trigger on its own start tile as a floor under the route rather than a portal the
 scene has to name. The decisions are written in `specs/20-demo-route.md` and rules 9 and 10 of `specs/06`.
 Copied expression: none
+
+## ARENA-DIM-AND-ROLES, 2026-10-26: a dim drawn as a dither, and an arena that spends only roles every room declares (card `t_06ef8607`)
+
+Studied: this repository's own files and one recorded frame, read only, no decompiled material and no expression from any
+game in it: `specs/08-dodge-arena.md`, `specs/13-8bit-look.md`, `knowledge/ART-BIBLE.md` RULE 0 points 1 and 2,
+`knowledge/PALETTE-SYNERGY.md` sections 14 to 17, `knowledge/BATTLE-DIM-OFF-PALETTE-2026-10-26.md`, `data/palette.json`,
+`data/room_palettes.json`, `data/palette_recipes.json` (the checker and dither recipes), `game/scripts/pp_dodge_arena/pp_dodge_arena.gml`,
+`game/scripts/pp_art/pp_art.gml`, `game/scripts/pp_look/pp_look.gml`, `game/scripts/pp_battle_director/pp_battle_director.gml`
+lines 1060 to 1068 (card R48), `game/scripts/pp_overworld/pp_overworld.gml` lines 596 to 604 (card `t_531bc76c`),
+`game/sprites_src/bg/bg_battle_deck_night.png` and its sidecar, `tools/nes_check.py`, `tools/sync_art.py`,
+`tools/play_demo.py`, and the three recorded frames in `build/resume_frames/`.
+Mechanics learned: three. One, an NES has no alpha, so a dim, a veil or a shadow over the world is always a dither, and
+the two patterns the art bible allows are the whole vocabulary: "60 percent black" can only mean "halve the field with a
+checker", and the density is a spec decision rather than a number in a draw call. Two, a full frame dither is cheap as a
+mask and expensive as geometry: one tiled 16x16 sheet is 240 quads, the same pattern from `draw_rectangle` at one pixel
+cells is 30,720 draw calls a frame, so the mask is what makes the legal look affordable at all. Three, a role name is an
+interface: a panel drawn over an arbitrary room may only ask for roles every room palette set declares, and the way to
+keep that true is a test over the intersection of the sets, not a fallback inside the lookup, because a fallback spends a
+colour the screen did not budget.
+Our implementation differs by: the checker is its own sheet and its own checker type (`nes_check.py --type mask`) rather
+than a shader, a prebuilt pattern table or a rectangle at partial alpha; the mask is raw white and takes its colour from
+the role that tints it, so no colour literal enters the code and a palette change repaints it for free; and the arena's
+four roles are pinned by a test on the sets rather than by a comment, so the defect this card fixed cannot come back
+through a later edit.
+Copied expression: none

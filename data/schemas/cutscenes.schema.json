@@ -203,7 +203,11 @@
             "y": { "type": "integer", "minimum": 0 }
           }
         },
-        "commands": { "type": "array", "minItems": 1, "maxItems": 256, "items": { "$ref": "#/$defs/command" } }
+        "commands": { "type": "array", "minItems": 1, "maxItems": 256, "items": { "$ref": "#/$defs/command" } },
+        "skippable": {
+          "type": "boolean",
+          "description": "Card t_009836b9. A long cutscene a player may end early by holding cancel for PP_SCENE_SKIP_HOLD steps. Only a scene without a choice of its own sets it; the drive is the one row that does."
+        }
       }
     }
   }
