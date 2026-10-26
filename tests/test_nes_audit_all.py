@@ -91,6 +91,36 @@ def test_sprite_sheet_and_layer_get_different_rules():
     assert kind == "background"
 
 
+def test_a_tint_mask_is_not_a_sprite_however_it_is_named():
+    """Card t_30746cd8: spr_pp_dither is a GameMaker sprite resource and is still not a sprite.
+
+    Its sidecar says kind mask, its drawn pixels are the tint identity #ffffff, and the runtime multiplies them by
+    the role colour it wants (tools/nes_check.py check_mask, card t_06ef8607). The `spr` prefix used to win, so the
+    audit charged 128 px of #ffffff against a sprite's palette and the asset class carried a red no fix could
+    clear: #fcfcfc instead of #ffffff would tint the frame to a colour nobody asked for.
+    """
+    kind, why = audit.classify_asset("game/sprites_src/title/spr_pp_dither.png", ROOT)
+    assert kind == "mask", "a mask named spr* is still read as a sprite, so its white is charged as off palette"
+    assert "tint" in why and "mask" in why
+    # The spr prefix still decides for a sprite that has no mask sidecar.
+    kind, _ = audit.classify_asset("game/sprites_src/title/spr_pp_title_logo.png", ROOT)
+    assert kind == "sprite"
+
+
+def test_a_mask_counts_no_off_palette_pixels_of_its_own(tmp_path):
+    """The measure must not charge the white that makes the tint work, and must not run the area rule on it."""
+    array = solid(16, 16, (0xFF, 0xFF, 0xFF))
+    array[1::2, :, 3] = 0
+    array[:, 1::2, 3] = 0
+    path = write_png(str(tmp_path / "mask.png"), array)
+    target = audit.Target("mask.png", "asset", "mask", True, 1, "test")
+    measurement = audit.measure(path, target, [(0x00, 0x00, 0x00), (0xFC, 0xFC, 0xFC)])
+    assert measurement["off_palette_pixels"] == 0
+    assert measurement["offending_pixels"] == 0
+    assert measurement["block_rule"] == "mask"
+    assert measurement["blocks"] == []
+
+
 @pytest.mark.parametrize("size,scale", [((256, 240), 1), ((768, 720), 3), ((512, 240), 0), ((256, 232), 0)])
 def test_frame_scale(size, scale):
     assert audit.frame_scale(*size) == scale

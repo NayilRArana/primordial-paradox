@@ -178,12 +178,23 @@ def classify_asset(rel: str, root: str) -> tuple:
     frame_w and frame_h: `game\\sprites_src\\env\\ts_exterior.json` says "kind": "tileset", and its pixels are
     background tiles drawn through 16x16 areas. Measuring them as sprites charged a 4-level stone ramp against a
     rule about transparent sprite pixels, which is a scope error and not an art defect.
+
+    A mask comes before the naming rules, because a mask is a GameMaker sprite resource with an `spr` name and is
+    still not a sprite: `game\\sprites_src\\title\\spr_pp_dither.json` says "kind": "mask", and its pixels are pure
+    white so the runtime can tint them to exactly the role colour that asks for them (tools/nes_check.py
+    check_mask, written by card t_06ef8607). #ffffff is the tint's identity, not a colour the frame shows, so the
+    palette rule cannot apply to it; the mask rule asks instead that the sheet hold nothing but the tint identity,
+    that every drawn pixel be on the 50 percent checker, and that it draw half its pixels.
     """
     stem = os.path.basename(rel)[:-4]
     lowered = stem.lower()
+    kind = sidecar_kind(rel, root)
+    if kind == "mask":
+        return "mask", ("a tint mask named in its own sidecar (%s.json): every drawn pixel is the tint identity "
+                        "#ffffff, so it carries no colour of its own and is measured by the mask rule, not the "
+                        "palette" % stem)
     if lowered.startswith("spr"):
         return "sprite", "named spr*, which is this project's prefix for a sprite sheet"
-    kind = sidecar_kind(rel, root)
     if kind in BACKGROUND_SIDECAR_KINDS:
         return "background", ("a %s named in its own sidecar (%s.json), drawn through 16x16 attribute areas with "
                               "one shared backdrop" % (kind.replace("_", " "), stem))
@@ -453,6 +464,13 @@ def measure(path: str, target: Target, allowed: list, limit: int = MAX_COLOURS_O
     if target.kind == "sprite":
         blocks = block_offenders(packed, opaque, TILE, 3, None)
         out["block_rule"] = "sprite_tile"
+    elif target.kind == "mask":
+        # A mask is the tint identity drawn where a role colour goes, so neither the palette count nor a block's
+        # colour count is a property of it: tools/nes_check.py check_mask judges it on the tint identity and the
+        # checker, and this measure must not charge the white that makes the tint work (card t_30746cd8).
+        blocks = []
+        out["block_rule"] = "mask"
+        out["off_palette_pixels"] = 0
     else:
         counts = Counter(packed[opaque].tolist())
         if target.backdrop is not None:

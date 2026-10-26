@@ -425,8 +425,12 @@ def t_barrier_end(c):
     for i in range(11):
         c.put(2 + i, 15 - i, "dim")
         c.put(3 + i, 15 - i, "dim")
-    c.put(13, 4, "bright")
-    c.put(14, 3, "bright")
+    # The tip of the diagonal is the barrier's own grey edge, not a lit cap (card t_30746cd8). It used to be two
+    # `bright` pixels here, and in GANTRY the end sits at x 232, so its 16x16 area at [240, 176] straddles the
+    # verge_shadow row: two greens from bg1 plus the tile's own dim and bright made four non backdrop colours in a
+    # block the PPU allows three. The diagonal already reaches (13, 4); carrying it on to (14, 3) in dim keeps the
+    # shape and spends the tile's own triple, so the area reads three.
+    c.put(14, 3, "dim")
     c.rect(1, 14, 6, 2, "dim")
 
 

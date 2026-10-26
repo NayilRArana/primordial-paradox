@@ -8,16 +8,16 @@ Ground rule this audit serves: every asset in this project is original work draw
 
 | class | files | pass | fail | unmeasured | gated | what a red here means |
 |---|---|---|---|---|---|---|
-| frame | 25 | 15 | 10 | 0 | 25 of 25 | a finished 256x240 screen, GATED |
-| asset | 130 | 129 | 1 | 0 | 130 of 130 | a shipped art source under game/sprites_src, GATED |
+| frame | 16 | 16 | 0 | 0 | 16 of 16 | a finished 256x240 screen, GATED |
+| asset | 130 | 130 | 0 | 0 | 130 of 130 | a shipped art source under game/sprites_src, GATED |
 | sheet | 21 | 1 | 20 | 0 | 0 of 21 | a contact sheet built to be looked at, advisory |
 | capture | 8 | 4 | 4 | 0 | 0 of 8 | a window capture of the running game, advisory |
 
-Verdict: **FAIL**. 184 file(s) checked, 35 failing, 0 the checker could not read, 11 gated failure(s).
+Verdict: **PASS**. 175 file(s) checked, 24 failing, 0 the checker could not read, 0 gated failure(s).
 
-Failures by class: **frame 10, asset 1, sheet 20, capture 4**. One red number is not one kind of red, so it is never printed as one: a `frame` or an `asset` red is shipped art and it gates, while a `sheet` or a `capture` red is a viewing aid and it is advisory. The table above is that split, and a class with no files in this run is left out rather than printed as a zero.
+Failures by class: **sheet 20, capture 4**. One red number is not one kind of red, so it is never printed as one: a `frame` or an `asset` red is shipped art and it gates, while a `sheet` or a `capture` red is a viewing aid and it is advisory. The table above is that split, and a class with no files in this run is left out rather than printed as a zero.
 
-Exit code from `tools/nes_audit_all.py`: 1. A gated row is a shipped asset or a finished 256x240 frame. A sheet or a window capture is ADVISORY: a 3x contact sheet and a window capture carrying the compositor's own scaling measure a viewing aid and the capture path before they measure the art, so their rows carry their own verdict and are never counted as a pass.
+Exit code from `tools/nes_audit_all.py`: 0. A gated row is a shipped asset or a finished 256x240 frame. A sheet or a window capture is ADVISORY: a 3x contact sheet and a window capture carrying the compositor's own scaling measure a viewing aid and the capture path before they measure the art, so their rows carry their own verdict and are never counted as a pass.
 
 Sorted by how visible each failure is. The count is the pixels a fix has to repaint: a block's pixels that are not among its three most common colours, an off-palette colour's pixels, or the excess beyond 25 colours; the percentage is that count over the visible image.
 
@@ -35,271 +35,8 @@ These are the shipped art sources and the finished frames: a failure here is a r
 
 | # | file | class | pixels to repaint | % of image | rules | worst block |
 |---|---|---|---|---|---|---|
-| 1 | `output/gameover_preview.png` | frame | 61,440 | 100.0% | palette x4 | - |
-| 2 | `output/bg_battle_corridor_text_preview.png` | frame | 47,791 | 77.8% | background_area x3, palette x4 | background_area at [176, 48] |
-| 3 | `output/bg_battle_deck_night_text_preview.png` | frame | 47,791 | 77.8% | background_area x5, palette x4 | background_area at [176, 64] |
-| 4 | `output/bg_battle_quay_dusk_text_preview.png` | frame | 47,791 | 77.8% | background_area x3, palette x4 | background_area at [224, 80] |
-| 5 | `output/bg_battle_wardroom_text_preview.png` | frame | 47,791 | 77.8% | background_area x4, palette x4 | background_area at [160, 48] |
-| 6 | `output/bg_battle_corridor_fight_preview.png` | frame | 35,503 | 57.8% | background_area x7, palette x4 | background_area at [48, 16] |
-| 7 | `output/bg_battle_deck_night_fight_preview.png` | frame | 35,503 | 57.8% | background_area x5, palette x4 | background_area at [176, 64] |
-| 8 | `output/bg_battle_quay_dusk_fight_preview.png` | frame | 35,503 | 57.8% | background_area x3, palette x4 | background_area at [224, 80] |
-| 9 | `output/bg_battle_wardroom_fight_preview.png` | frame | 35,503 | 57.8% | background_area x4, palette x4 | background_area at [160, 48] |
-| 10 | `game/sprites_src/title/spr_pp_dither.png` | asset | 128 | 100.0% | palette x1 | - |
-| 11 | `output/drive_gantry_preview.png` | frame | 2 | 0.0% | background_area x1 | background_area at [240, 176] |
 
 ## Gated failures, with their fix
-
-### 1. `output/gameover_preview.png` (frame, GATED, 256x240, 4 colours)
-
-Checker: `tools/nes_composite_check.py check_frame()`. a finished 256x240 frame (a 256x240 screen at 1x), so the composite checker judges it, background and sprites together
-
-- pixels to repaint: 61,440 of 61,440 visible (100.0%)
-- rules: palette x4
-- backdrop: #0b0b0f (guessed from the pixels, shared by every background area)
-- off-palette or semi-transparent pixels: 61,440
-
-Proposed fix:
-
-- merge colours: #0b0b0f is not a PPU output (#0b0b0f is not a usable PPU colour). Repaint it with #000000, the nearest of the 64, and this problem goes to zero.
-- merge colours: #1c1c24 is not a PPU output (#1c1c24 is not a usable PPU colour). Repaint it with #000000, the nearest of the 64, and this problem goes to zero.
-- merge colours: #c8c8d4 is not a PPU output (#c8c8d4 is not a usable PPU colour). Repaint it with #bcbcbc, the nearest of the 64, and this problem goes to zero.
-- merge colours: #4a4a58 is not a PPU output (#4a4a58 is not a usable PPU colour). Repaint it with #787878, the nearest of the 64, and this problem goes to zero.
-
-### 2. `output/bg_battle_corridor_text_preview.png` (frame, GATED, 256x240, 11 colours)
-
-Checker: `tools/nes_composite_check.py check_frame()`. a finished 256x240 frame (a 256x240 screen at 1x), so the composite checker judges it, background and sprites together
-
-- pixels to repaint: 47,791 of 61,440 visible (77.8%)
-- rules: background_area x3, palette x4
-- backdrop: #1c1c24 (guessed from the pixels, shared by every background area)
-- 13 block(s) over the limit; worst five:
-  - background_area at [176, 48] size 16x16 carries 4 colours besides the backdrop, 30 pixel(s) to repaint: #0b0b0f #a81000 #f83800 #f87858
-  - background_area at [160, 48] size 16x16 carries 4 colours besides the backdrop, 18 pixel(s) to repaint: #0b0b0f #a81000 #f83800 #f87858
-  - background_area at [192, 48] size 16x16 carries 4 colours besides the backdrop, 18 pixel(s) to repaint: #0000bc #0b0b0f #7c7c7c #bcbcbc
-  - background_area at [208, 48] size 16x16 carries 4 colours besides the backdrop, 18 pixel(s) to repaint: #0000bc #0b0b0f #7c7c7c #bcbcbc
-  - background_area at [224, 48] size 16x16 carries 4 colours besides the backdrop, 18 pixel(s) to repaint: #0000bc #0b0b0f #7c7c7c #bcbcbc
-- off-palette or semi-transparent pixels: 47,791
-
-Proposed fix:
-
-- merge colours: #1c1c24 is not a PPU output (#1c1c24 is not a usable PPU colour). Repaint it with #000000, the nearest of the 64, and this problem goes to zero.
-- merge colours: #4a4a58 is not a PPU output (#4a4a58 is not a usable PPU colour). Repaint it with #787878, the nearest of the 64, and this problem goes to zero.
-- merge colours: #0b0b0f is not a PPU output (#0b0b0f is not a usable PPU colour). Repaint it with #000000, the nearest of the 64, and this problem goes to zero.
-- merge colours: #c8c8d4 is not a PPU output (#c8c8d4 is not a usable PPU colour). Repaint it with #bcbcbc, the nearest of the 64, and this problem goes to zero.
-- merge colours inside the attribute area at [160, 48]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #a81000 #f87858 #0b0b0f #f83800, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [176, 48]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #a81000 #f87858 #0b0b0f #f83800, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [176, 64]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #c8c8d4 #a81000 #f87858 #f83800, or move the band so the colours fall into different areas.
-
-### 3. `output/bg_battle_deck_night_text_preview.png` (frame, GATED, 256x240, 10 colours)
-
-Checker: `tools/nes_composite_check.py check_frame()`. a finished 256x240 frame (a 256x240 screen at 1x), so the composite checker judges it, background and sprites together
-
-- pixels to repaint: 47,791 of 61,440 visible (77.8%)
-- rules: background_area x5, palette x4
-- backdrop: #1c1c24 (guessed from the pixels, shared by every background area)
-- 13 block(s) over the limit; worst five:
-  - background_area at [176, 64] size 16x16 carries 4 colours besides the backdrop, 28 pixel(s) to repaint: #0000bc #7c7c7c #bcbcbc #c8c8d4
-  - background_area at [192, 64] size 16x16 carries 4 colours besides the backdrop, 28 pixel(s) to repaint: #0000bc #7c7c7c #bcbcbc #c8c8d4
-  - background_area at [208, 64] size 16x16 carries 4 colours besides the backdrop, 28 pixel(s) to repaint: #0000bc #7c7c7c #bcbcbc #c8c8d4
-  - background_area at [224, 64] size 16x16 carries 4 colours besides the backdrop, 8 pixel(s) to repaint: #0000bc #7c7c7c #bcbcbc #c8c8d4
-  - background_area at [224, 48] size 16x16 carries 4 colours besides the backdrop, 5 pixel(s) to repaint: #0000fc #0078f8 #0b0b0f #3cbcfc
-- off-palette or semi-transparent pixels: 47,791
-
-Proposed fix:
-
-- merge colours: #1c1c24 is not a PPU output (#1c1c24 is not a usable PPU colour). Repaint it with #000000, the nearest of the 64, and this problem goes to zero.
-- merge colours: #4a4a58 is not a PPU output (#4a4a58 is not a usable PPU colour). Repaint it with #787878, the nearest of the 64, and this problem goes to zero.
-- merge colours: #0b0b0f is not a PPU output (#0b0b0f is not a usable PPU colour). Repaint it with #000000, the nearest of the 64, and this problem goes to zero.
-- merge colours: #c8c8d4 is not a PPU output (#c8c8d4 is not a usable PPU colour). Repaint it with #bcbcbc, the nearest of the 64, and this problem goes to zero.
-- merge colours inside the attribute area at [160, 48]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #0000fc #0b0b0f #0078f8 #3cbcfc, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [176, 48]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #0000fc #0b0b0f #0078f8 #3cbcfc, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [192, 48]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #0000fc #0b0b0f #0078f8 #3cbcfc, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [208, 48]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #0000fc #0b0b0f #0078f8 #3cbcfc, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [224, 48]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #0000fc #0b0b0f #0078f8 #3cbcfc, or move the band so the colours fall into different areas.
-
-### 4. `output/bg_battle_quay_dusk_text_preview.png` (frame, GATED, 256x240, 10 colours)
-
-Checker: `tools/nes_composite_check.py check_frame()`. a finished 256x240 frame (a 256x240 screen at 1x), so the composite checker judges it, background and sprites together
-
-- pixels to repaint: 47,791 of 61,440 visible (77.8%)
-- rules: background_area x3, palette x4
-- backdrop: #1c1c24 (guessed from the pixels, shared by every background area)
-- 10 block(s) over the limit; worst five:
-  - background_area at [224, 80] size 16x16 carries 4 colours besides the backdrop, 15 pixel(s) to repaint: #0000bc #7c7c7c #bcbcbc #c8c8d4
-  - background_area at [224, 96] size 16x16 carries 4 colours besides the backdrop, 15 pixel(s) to repaint: #0000bc #7c7c7c #bcbcbc #c8c8d4
-  - background_area at [32, 96] size 16x16 carries 4 colours besides the backdrop, 7 pixel(s) to repaint: #0000bc #0b0b0f #7c7c7c #bcbcbc
-  - background_area at [64, 96] size 16x16 carries 4 colours besides the backdrop, 7 pixel(s) to repaint: #0000bc #0b0b0f #7c7c7c #bcbcbc
-  - background_area at [192, 48] size 16x16 carries 4 colours besides the backdrop, 5 pixel(s) to repaint: #0000fc #0078f8 #0b0b0f #f87858
-- off-palette or semi-transparent pixels: 47,791
-
-Proposed fix:
-
-- merge colours: #1c1c24 is not a PPU output (#1c1c24 is not a usable PPU colour). Repaint it with #000000, the nearest of the 64, and this problem goes to zero.
-- merge colours: #4a4a58 is not a PPU output (#4a4a58 is not a usable PPU colour). Repaint it with #787878, the nearest of the 64, and this problem goes to zero.
-- merge colours: #0b0b0f is not a PPU output (#0b0b0f is not a usable PPU colour). Repaint it with #000000, the nearest of the 64, and this problem goes to zero.
-- merge colours: #c8c8d4 is not a PPU output (#c8c8d4 is not a usable PPU colour). Repaint it with #bcbcbc, the nearest of the 64, and this problem goes to zero.
-- merge colours inside the attribute area at [224, 64]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #0000fc #0078f8 #c8c8d4 #f87858, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [224, 80]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #7c7c7c #0000bc #c8c8d4 #bcbcbc, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [224, 96]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #7c7c7c #0000bc #c8c8d4 #bcbcbc, or move the band so the colours fall into different areas.
-
-### 5. `output/bg_battle_wardroom_text_preview.png` (frame, GATED, 256x240, 10 colours)
-
-Checker: `tools/nes_composite_check.py check_frame()`. a finished 256x240 frame (a 256x240 screen at 1x), so the composite checker judges it, background and sprites together
-
-- pixels to repaint: 47,791 of 61,440 visible (77.8%)
-- rules: background_area x4, palette x4
-- backdrop: #1c1c24 (guessed from the pixels, shared by every background area)
-- 13 block(s) over the limit; worst five:
-  - background_area at [160, 48] size 16x16 carries 4 colours besides the backdrop, 44 pixel(s) to repaint: #0b0b0f #bcbcbc #f8b800 #fcfcfc
-  - background_area at [176, 48] size 16x16 carries 4 colours besides the backdrop, 44 pixel(s) to repaint: #0b0b0f #bcbcbc #f8b800 #fcfcfc
-  - background_area at [208, 48] size 16x16 carries 4 colours besides the backdrop, 43 pixel(s) to repaint: #0b0b0f #bcbcbc #f8b800 #fcfcfc
-  - background_area at [192, 48] size 16x16 carries 4 colours besides the backdrop, 35 pixel(s) to repaint: #0b0b0f #bcbcbc #f8b800 #fcfcfc
-  - background_area at [224, 48] size 16x16 carries 4 colours besides the backdrop, 21 pixel(s) to repaint: #0b0b0f #881400 #e45c10 #f8b800
-- off-palette or semi-transparent pixels: 47,791
-
-Proposed fix:
-
-- merge colours: #1c1c24 is not a PPU output (#1c1c24 is not a usable PPU colour). Repaint it with #000000, the nearest of the 64, and this problem goes to zero.
-- merge colours: #4a4a58 is not a PPU output (#4a4a58 is not a usable PPU colour). Repaint it with #787878, the nearest of the 64, and this problem goes to zero.
-- merge colours: #0b0b0f is not a PPU output (#0b0b0f is not a usable PPU colour). Repaint it with #000000, the nearest of the 64, and this problem goes to zero.
-- merge colours: #c8c8d4 is not a PPU output (#c8c8d4 is not a usable PPU colour). Repaint it with #bcbcbc, the nearest of the 64, and this problem goes to zero.
-- merge colours inside the attribute area at [160, 48]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #fcfcfc #0b0b0f #bcbcbc #f8b800, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [176, 48]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #fcfcfc #bcbcbc #0b0b0f #f8b800, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [192, 48]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #fcfcfc #bcbcbc #f8b800 #0b0b0f, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [208, 48]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #fcfcfc #bcbcbc #0b0b0f #f8b800, or move the band so the colours fall into different areas.
-
-### 6. `output/bg_battle_corridor_fight_preview.png` (frame, GATED, 256x240, 13 colours)
-
-Checker: `tools/nes_composite_check.py check_frame()`. a finished 256x240 frame (a 256x240 screen at 1x), so the composite checker judges it, background and sprites together
-
-- pixels to repaint: 35,503 of 61,440 visible (57.8%)
-- rules: background_area x7, palette x4
-- backdrop: #1c1c24 (guessed from the pixels, shared by every background area)
-- 29 block(s) over the limit; worst five:
-  - background_area at [48, 16] size 16x16 carries 4 colours besides the backdrop, 36 pixel(s) to repaint: #000000 #0058f8 #bcbcbc #fcfcfc
-  - background_area at [192, 16] size 16x16 carries 4 colours besides the backdrop, 36 pixel(s) to repaint: #000000 #0058f8 #bcbcbc #fcfcfc
-  - background_area at [0, 16] size 16x16 carries 4 colours besides the backdrop, 30 pixel(s) to repaint: #000000 #0058f8 #bcbcbc #fcfcfc
-  - background_area at [16, 16] size 16x16 carries 4 colours besides the backdrop, 30 pixel(s) to repaint: #000000 #0058f8 #bcbcbc #fcfcfc
-  - background_area at [32, 16] size 16x16 carries 4 colours besides the backdrop, 30 pixel(s) to repaint: #000000 #0058f8 #bcbcbc #fcfcfc
-- off-palette or semi-transparent pixels: 35,503
-
-Proposed fix:
-
-- merge colours: #1c1c24 is not a PPU output (#1c1c24 is not a usable PPU colour). Repaint it with #000000, the nearest of the 64, and this problem goes to zero.
-- merge colours: #4a4a58 is not a PPU output (#4a4a58 is not a usable PPU colour). Repaint it with #787878, the nearest of the 64, and this problem goes to zero.
-- merge colours: #c8c8d4 is not a PPU output (#c8c8d4 is not a usable PPU colour). Repaint it with #bcbcbc, the nearest of the 64, and this problem goes to zero.
-- merge colours: #0b0b0f is not a PPU output (#0b0b0f is not a usable PPU colour). Repaint it with #000000, the nearest of the 64, and this problem goes to zero.
-- merge colours inside the attribute area at [32, 96]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #0b0b0f #0000bc #7c7c7c #0058f8, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [64, 96]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #0b0b0f #0000bc #7c7c7c #0058f8, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [160, 48]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #a81000 #f87858 #0b0b0f #f83800, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [176, 48]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #a81000 #f87858 #0b0b0f #f83800, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [176, 64]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #c8c8d4 #a81000 #f87858 #f83800, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [224, 80]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #0000bc #7c7c7c #c8c8d4 #0058f8, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [224, 96]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #0000bc #7c7c7c #0058f8 #c8c8d4, or move the band so the colours fall into different areas.
-
-### 7. `output/bg_battle_deck_night_fight_preview.png` (frame, GATED, 256x240, 12 colours)
-
-Checker: `tools/nes_composite_check.py check_frame()`. a finished 256x240 frame (a 256x240 screen at 1x), so the composite checker judges it, background and sprites together
-
-- pixels to repaint: 35,503 of 61,440 visible (57.8%)
-- rules: background_area x5, palette x4
-- backdrop: #1c1c24 (guessed from the pixels, shared by every background area)
-- 13 block(s) over the limit; worst five:
-  - background_area at [176, 64] size 16x16 carries 4 colours besides the backdrop, 28 pixel(s) to repaint: #0000bc #7c7c7c #bcbcbc #c8c8d4
-  - background_area at [192, 64] size 16x16 carries 4 colours besides the backdrop, 28 pixel(s) to repaint: #0000bc #7c7c7c #bcbcbc #c8c8d4
-  - background_area at [208, 64] size 16x16 carries 4 colours besides the backdrop, 28 pixel(s) to repaint: #0000bc #7c7c7c #bcbcbc #c8c8d4
-  - background_area at [224, 64] size 16x16 carries 4 colours besides the backdrop, 8 pixel(s) to repaint: #0000bc #7c7c7c #bcbcbc #c8c8d4
-  - background_area at [224, 48] size 16x16 carries 4 colours besides the backdrop, 5 pixel(s) to repaint: #0000fc #0078f8 #0b0b0f #3cbcfc
-- off-palette or semi-transparent pixels: 35,503
-
-Proposed fix:
-
-- merge colours: #1c1c24 is not a PPU output (#1c1c24 is not a usable PPU colour). Repaint it with #000000, the nearest of the 64, and this problem goes to zero.
-- merge colours: #4a4a58 is not a PPU output (#4a4a58 is not a usable PPU colour). Repaint it with #787878, the nearest of the 64, and this problem goes to zero.
-- merge colours: #c8c8d4 is not a PPU output (#c8c8d4 is not a usable PPU colour). Repaint it with #bcbcbc, the nearest of the 64, and this problem goes to zero.
-- merge colours: #0b0b0f is not a PPU output (#0b0b0f is not a usable PPU colour). Repaint it with #000000, the nearest of the 64, and this problem goes to zero.
-- merge colours inside the attribute area at [160, 48]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #0000fc #0b0b0f #0078f8 #3cbcfc, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [176, 48]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #0000fc #0b0b0f #0078f8 #3cbcfc, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [192, 48]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #0000fc #0b0b0f #0078f8 #3cbcfc, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [208, 48]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #0000fc #0b0b0f #0078f8 #3cbcfc, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [224, 48]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #0000fc #0b0b0f #0078f8 #3cbcfc, or move the band so the colours fall into different areas.
-
-### 8. `output/bg_battle_quay_dusk_fight_preview.png` (frame, GATED, 256x240, 13 colours)
-
-Checker: `tools/nes_composite_check.py check_frame()`. a finished 256x240 frame (a 256x240 screen at 1x), so the composite checker judges it, background and sprites together
-
-- pixels to repaint: 35,503 of 61,440 visible (57.8%)
-- rules: background_area x3, palette x4
-- backdrop: #1c1c24 (guessed from the pixels, shared by every background area)
-- 10 block(s) over the limit; worst five:
-  - background_area at [224, 80] size 16x16 carries 4 colours besides the backdrop, 15 pixel(s) to repaint: #0000bc #7c7c7c #bcbcbc #c8c8d4
-  - background_area at [224, 96] size 16x16 carries 4 colours besides the backdrop, 15 pixel(s) to repaint: #0000bc #7c7c7c #bcbcbc #c8c8d4
-  - background_area at [32, 96] size 16x16 carries 4 colours besides the backdrop, 7 pixel(s) to repaint: #0000bc #0b0b0f #7c7c7c #bcbcbc
-  - background_area at [64, 96] size 16x16 carries 4 colours besides the backdrop, 7 pixel(s) to repaint: #0000bc #0b0b0f #7c7c7c #bcbcbc
-  - background_area at [192, 48] size 16x16 carries 4 colours besides the backdrop, 5 pixel(s) to repaint: #0000fc #0078f8 #0b0b0f #f87858
-- off-palette or semi-transparent pixels: 35,503
-
-Proposed fix:
-
-- merge colours: #1c1c24 is not a PPU output (#1c1c24 is not a usable PPU colour). Repaint it with #000000, the nearest of the 64, and this problem goes to zero.
-- merge colours: #4a4a58 is not a PPU output (#4a4a58 is not a usable PPU colour). Repaint it with #787878, the nearest of the 64, and this problem goes to zero.
-- merge colours: #c8c8d4 is not a PPU output (#c8c8d4 is not a usable PPU colour). Repaint it with #bcbcbc, the nearest of the 64, and this problem goes to zero.
-- merge colours: #0b0b0f is not a PPU output (#0b0b0f is not a usable PPU colour). Repaint it with #000000, the nearest of the 64, and this problem goes to zero.
-- merge colours inside the attribute area at [224, 64]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #0000fc #0078f8 #c8c8d4 #f87858, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [224, 80]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #7c7c7c #0000bc #c8c8d4 #bcbcbc, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [224, 96]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #7c7c7c #0000bc #c8c8d4 #bcbcbc, or move the band so the colours fall into different areas.
-
-### 9. `output/bg_battle_wardroom_fight_preview.png` (frame, GATED, 256x240, 12 colours)
-
-Checker: `tools/nes_composite_check.py check_frame()`. a finished 256x240 frame (a 256x240 screen at 1x), so the composite checker judges it, background and sprites together
-
-- pixels to repaint: 35,503 of 61,440 visible (57.8%)
-- rules: background_area x4, palette x4
-- backdrop: #1c1c24 (guessed from the pixels, shared by every background area)
-- 13 block(s) over the limit; worst five:
-  - background_area at [160, 48] size 16x16 carries 4 colours besides the backdrop, 44 pixel(s) to repaint: #0b0b0f #bcbcbc #f8b800 #fcfcfc
-  - background_area at [176, 48] size 16x16 carries 4 colours besides the backdrop, 44 pixel(s) to repaint: #0b0b0f #bcbcbc #f8b800 #fcfcfc
-  - background_area at [208, 48] size 16x16 carries 4 colours besides the backdrop, 43 pixel(s) to repaint: #0b0b0f #bcbcbc #f8b800 #fcfcfc
-  - background_area at [192, 48] size 16x16 carries 4 colours besides the backdrop, 35 pixel(s) to repaint: #0b0b0f #bcbcbc #f8b800 #fcfcfc
-  - background_area at [224, 48] size 16x16 carries 4 colours besides the backdrop, 21 pixel(s) to repaint: #0b0b0f #881400 #e45c10 #f8b800
-- off-palette or semi-transparent pixels: 35,503
-
-Proposed fix:
-
-- merge colours: #1c1c24 is not a PPU output (#1c1c24 is not a usable PPU colour). Repaint it with #000000, the nearest of the 64, and this problem goes to zero.
-- merge colours: #4a4a58 is not a PPU output (#4a4a58 is not a usable PPU colour). Repaint it with #787878, the nearest of the 64, and this problem goes to zero.
-- merge colours: #c8c8d4 is not a PPU output (#c8c8d4 is not a usable PPU colour). Repaint it with #bcbcbc, the nearest of the 64, and this problem goes to zero.
-- merge colours: #0b0b0f is not a PPU output (#0b0b0f is not a usable PPU colour). Repaint it with #000000, the nearest of the 64, and this problem goes to zero.
-- merge colours inside the attribute area at [160, 48]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #fcfcfc #0b0b0f #bcbcbc #f8b800, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [176, 48]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #fcfcfc #bcbcbc #0b0b0f #f8b800, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [192, 48]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #fcfcfc #bcbcbc #f8b800 #0b0b0f, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [208, 48]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #fcfcfc #bcbcbc #0b0b0f #f8b800, or move the band so the colours fall into different areas.
-
-### 10. `game/sprites_src/title/spr_pp_dither.png` (asset, GATED, 16x16, 1 colours)
-
-Checker: `tools/nes_check.py check()`. named spr*, which is this project's prefix for a sprite sheet
-
-- pixels to repaint: 128 of 128 visible (100.0%)
-- rules: palette x1
-- off-palette or semi-transparent pixels: 128
-
-Proposed fix:
-
-- merge colours: #ffffff is not a PPU output (off palette at 128 pixels). Repaint it with #fcfcfc, the nearest of the 64, and this problem goes to zero.
-
-### 11. `output/drive_gantry_preview.png` (frame, GATED, 256x240, 7 colours)
-
-Checker: `tools/nes_composite_check.py check_frame()`. a finished 256x240 frame (a 256x240 screen at 1x), so the composite checker judges it, background and sprites together
-
-- pixels to repaint: 2 of 61,440 visible (0.0%)
-- rules: background_area x1
-- backdrop: #000000 (declared in drive_gantry_preview.json, shared by every background area)
-- 1 block(s) over the limit; worst five:
-  - background_area at [240, 176] size 16x16 carries 4 colours besides the backdrop, 2 pixel(s) to repaint: #005800 #006800 #7c7c7c #f8f8f8
-
-Proposed fix:
-
-- merge colours inside the attribute area at [240, 176]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #005800 #006800 #7c7c7c #f8f8f8, or move the band so the colours fall into different areas.
 
 ## Advisory failures, worst first
 
@@ -1035,6 +772,7 @@ Every file below passes every rule that applies to it. A pass is a rules pass on
 - `game/sprites_src/icons/spr_pp_icon_items_8.png` (asset, 72x16, 5 colours)
 - `game/sprites_src/icons/spr_pp_icon_status_16.png` (asset, 80x16, 4 colours)
 - `game/sprites_src/icons/spr_pp_icon_status_8.png` (asset, 40x8, 4 colours)
+- `game/sprites_src/title/spr_pp_dither.png` (asset, 16x16, 1 colours)
 - `game/sprites_src/title/spr_pp_font8.png` (asset, 616x8, 1 colours)
 - `game/sprites_src/title/spr_pp_menu_cursor.png` (asset, 16x8, 2 colours)
 - `game/sprites_src/title/spr_pp_title_logo.png` (asset, 448x64, 3 colours)
@@ -1128,6 +866,7 @@ Every file below passes every rule that applies to it. A pass is a rules pass on
 - `output/bg_battle_quay_dusk_field_preview.png` (frame, 256x240, 9 colours)
 - `output/bg_battle_wardroom_field_preview.png` (frame, 256x240, 9 colours)
 - `output/drive_corridor_preview.png` (frame, 256x240, 8 colours)
+- `output/drive_gantry_preview.png` (frame, 256x240, 7 colours)
 - `output/gate_textbox_preview.png` (frame, 256x240, 5 colours)
 - `output/nes_ui_preview.png` (sheet advisory, 1184x760, 3 colours)
 - `output/quay_block_preview.png` (frame, 256x240, 11 colours)
@@ -1146,7 +885,7 @@ Every file below passes every rule that applies to it. A pass is a rules pass on
 
 ## The 3x preview a person can look at
 
-`output\nes_audit_worst_3x.png` is `output/bg_battle_corridor_text_preview.png` at 3x with every offending block boxed in magenta (13 box(es)). Nothing in this repository can see it: the manager looks, and turns a boxed block into a specific repaint.
+`output\nes_audit_worst_3x.png` is `output/music_style_bible_preview.png` at 3x with every offending block boxed in magenta (9694 box(es)). Nothing in this repository can see it: the manager looks, and turns a boxed block into a specific repaint.
 
 ## Palette synergy: does the sprite read on the ground it stands on
 

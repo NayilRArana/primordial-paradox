@@ -969,7 +969,6 @@
       "palette": "bg0_asphalt",
       "roles": [
         "asphalt",
-        "bright",
         "dim"
       ],
       "note": "the terminal where a barrier run ramps down into the ground",
@@ -977,10 +976,9 @@
       "walkable": false,
       "walk_reason": "a fitting on the verge: a post is a solid",
       "blob": {
-        "colours": 3,
+        "colours": 2,
         "roles": [
           "asphalt",
-          "bright",
           "dim"
         ],
         "dark_roles": [
@@ -988,11 +986,11 @@
           "dim",
           "grey_0"
         ],
-        "lightest_role": "bright",
-        "lightest_share_percent": 0.8,
+        "lightest_role": "dim",
+        "lightest_share_percent": 12.1,
         "rows_without_dark": 0,
-        "horizontal_dark_runs": 18,
-        "interior_dark_pixels": 194
+        "horizontal_dark_runs": 16,
+        "interior_dark_pixels": 196
       },
       "blob_gated": true,
       "blob_verdict": "pass"
