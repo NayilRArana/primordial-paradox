@@ -1,0 +1,255 @@
+{
+ "format": "pp-hod-dissonance-devices",
+ "version": 1,
+ "card": "t_0ed3bd3f",
+ "written": "2026-10-26",
+ "study_set": {
+  "description": "Fan sequenced MIDI of Castlevania: Harmony of Dissonance (Konami, 2002), measured only. Not committed, not copied, not used as generator input.",
+  "works": 16,
+  "notes": 64598,
+  "manifest": "D:/Musikage-Corpus/study/hod/MANIFEST.json"
+ },
+ "measured": {
+  "beats": 5838,
+  "beats_with_clash_share": 0.825,
+  "clash_events": 13120,
+  "clash_events_per_100_notes": 20.31,
+  "clash_intervals": {
+   "M2": 0.2351,
+   "M7": 0.1353,
+   "TT": 0.222,
+   "m7": 0.2056,
+   "m2": 0.202
+  },
+  "clash_placement": {
+   "strong": 0.3982,
+   "weak": 0.4878,
+   "medium": 0.1139
+  },
+  "attacked_clash_placement": {
+   "strong": 0.4506,
+   "weak": 0.42,
+   "medium": 0.1294
+  },
+  "resolved_by_step_share": 0.568,
+  "quality_share": {
+   "maj7": 0.0694,
+   "unlabelled": 0.4236,
+   "maj": 0.1031,
+   "min": 0.0654,
+   "dom7": 0.1163,
+   "min7": 0.067,
+   "hdim7": 0.0591,
+   "dim": 0.0654,
+   "aug": 0.006,
+   "sus4": 0.0156,
+   "dim7": 0.0091
+  },
+  "chromatic_share": {
+   "mean": 0.252,
+   "min": 0.098,
+   "max": 0.418
+  },
+  "devices_per_100_notes": {
+   "suspension": 2.74,
+   "appoggiatura": 30.01,
+   "passing": 17.01,
+   "neighbour": 15.83,
+   "escape": 14.67
+  },
+  "accented_share_of_dissonances": 0.185,
+  "prepared_share_of_dissonances": 0.655,
+  "resolved_share_of_dissonances": 0.999
+ },
+ "rules": [
+  {
+   "id": "HOD-01",
+   "name": "diminished seventh as a passing colour",
+   "test": "A diminished seventh chord on any degree is accepted on a weak beat when both voices that form it move by step into and out of it, and the bass resolves down by semitone.",
+   "because": "The set spends 7 percent of its sonorities on dim7 and hdim7 chords, and 41 percent of its bass relative clashes are minor seconds or minor sevenths, which is the shape a diminished seventh makes against its own bass.",
+   "fails": "a dim7 that arrives by leap on a downbeat and leaves by leap reads as a wrong chord."
+  },
+  {
+   "id": "HOD-02",
+   "name": "chromatic approach to the tonic at a cadence",
+   "test": "A bass that arrives on the tonic from a semitone below or above is accepted when the upper voice holds a common tone or moves by step, and when the chromatic note is a whole beat or shorter.",
+   "because": "Chromatic notes are 10 to 42 percent of the notes measured, so a semitone bass arrival is the set's normal cadence colour and not an error.",
+   "fails": "a chromatic bass note longer than a beat under a chromatic upper voice, which is the m2 on a strong beat the gate already fails."
+  },
+  {
+   "id": "HOD-03",
+   "name": "tritone as an interval of the chord, not a clash",
+   "test": "A tritone between two voices is accepted when both pitch classes are members of the labelled chord (dim, aug, dim7, hdim7, dom7) and the chord is not on a strong beat with both voices leaping into it.",
+   "because": "A tritone is 22 percent of the measured bass relative clashes, so it is the commonest single colour in the set after the major second; the rule keeps it only where the chord explains it, which is what turns the interval into harmony.",
+   "fails": "a tritone between two voices in different chords, or one entered by leap on the downbeat."
+  },
+  {
+   "id": "HOD-04",
+   "name": "resolved appoggiatura on the strong beat",
+   "test": "A minor second or major seventh on a strong beat is accepted when it resolves by step within one eighth note and the resolving note is a chord member.",
+   "because": "51 percent of the measured clashes sit on a strong or medium beat and 57 percent of the voices that make one resolve it by step, so the accent alone cannot be the test; the resolution window is.",
+   "fails": "an accented clash that is held for a beat or left by leap."
+  },
+  {
+   "id": "HOD-05",
+   "name": "organ doubling and octave parallel accepted inside a registration",
+   "test": "Parallel octaves between two voices are accepted when the doubling is constant for a whole phrase and the two voices keep the same interval for at least two bars, which reads as one part in two registers.",
+   "because": "The set's arrangements double the organ and string lines for whole sections; the arranger of a chip cue can do the same with a duty cycle pair.",
+   "fails": "a doubling that starts or stops inside a phrase, which draws attention to the parallel."
+  },
+  {
+   "id": "HOD-06",
+   "name": "strong beat clash allowed once per phrase at a cadence",
+   "test": "One unprepared clash per phrase is accepted on the beat before a cadence when the following chord is the tonic and the clashing voice moves by step.",
+   "because": "A single accented clash per phrase is what makes the set's cadences sound deliberate; it is the same budget the project already uses for risk 3 devices.",
+   "fails": "two such clashes inside four bars, which stops being a device and becomes the texture."
+  }
+ ],
+ "next": "M1a decides which of these enter tools/counterpoint/rules.py. They are written as tests with a measured basis, not as permissions: every one of them narrows the existing fault.",
+ "works": [
+  {
+   "file": "CVHoD-_Castle_Theme.mid",
+   "title": "Castle",
+   "source": "https://www.vgmusic.com/music/console/nintendo/gba/CVHoD-_Castle_Theme.mid",
+   "licence": "Fan sequenced MIDI, publicly posted on VGMusic. Study only: measured for devices and statistics, never committed, never copied, never used as generator input.",
+   "sha256": "5691ab5abacffce81af6077c67ef5f16b497c3f4ee58023f961607a5c73ea4d9",
+   "notes": 3948,
+   "bars": 225
+  },
+  {
+   "file": "CVHoD-_Boss_Battle.mid",
+   "title": "Boss Battle",
+   "source": "https://www.vgmusic.com/music/console/nintendo/gba/CVHoD-_Boss_Battle.mid",
+   "licence": "Fan sequenced MIDI, publicly posted on VGMusic. Study only: measured for devices and statistics, never committed, never copied, never used as generator input.",
+   "sha256": "e8d9c4bc0eb49d801bcb9bc46f4139c8b04622812ce5e5ad39d5827a2543253e",
+   "notes": 3928,
+   "bars": 180
+  },
+  {
+   "file": "CVHoD-_Chapel_of_Dissonnance.mid",
+   "title": "Chapel of Dissonance",
+   "source": "https://www.vgmusic.com/music/console/nintendo/gba/CVHoD-_Chapel_of_Dissonnance.mid",
+   "licence": "Fan sequenced MIDI, publicly posted on VGMusic. Study only: measured for devices and statistics, never committed, never copied, never used as generator input.",
+   "sha256": "7b144692b766f0e9beb7dbfb491ad03a822af233d5f2b4cb7cac6652a97b0405",
+   "notes": 3840,
+   "bars": 144
+  },
+  {
+   "file": "CVHoD-_Clock_Tower.mid",
+   "title": "Clock Tower",
+   "source": "https://www.vgmusic.com/music/console/nintendo/gba/CVHoD-_Clock_Tower.mid",
+   "licence": "Fan sequenced MIDI, publicly posted on VGMusic. Study only: measured for devices and statistics, never committed, never copied, never used as generator input.",
+   "sha256": "ec46602a2a931a5f05b4e5b7031b169e35c7a088b12dbfe8c73e8b2cdd50fc31",
+   "notes": 4392,
+   "bars": 81
+  },
+  {
+   "file": "CVHoD-_Entrance.mid",
+   "title": "Entrance (Juste's theme)",
+   "source": "https://www.vgmusic.com/music/console/nintendo/gba/CVHoD-_Entrance.mid",
+   "licence": "Fan sequenced MIDI, publicly posted on VGMusic. Study only: measured for devices and statistics, never committed, never copied, never used as generator input.",
+   "sha256": "384bc6d2ce55028c2d5793f22d90af537e71169420aab0c9db6bdf1882565128",
+   "notes": 5627,
+   "bars": 85
+  },
+  {
+   "file": "CVHoD-Luminous_Cavern.mid",
+   "title": "Luminous Cavern",
+   "source": "https://www.vgmusic.com/music/console/nintendo/gba/CVHoD-Luminous_Cavern.mid",
+   "licence": "Fan sequenced MIDI, publicly posted on VGMusic. Study only: measured for devices and statistics, never committed, never copied, never used as generator input.",
+   "sha256": "5a35c9358dd83e693fd1a30d15b54f089e101b9e056f3e76fe1277e8150d99b5",
+   "notes": 3653,
+   "bars": 138
+  },
+  {
+   "file": "CVHoD-_Marble_Corridor.mid",
+   "title": "Marble Corridor",
+   "source": "https://www.vgmusic.com/music/console/nintendo/gba/CVHoD-_Marble_Corridor.mid",
+   "licence": "Fan sequenced MIDI, publicly posted on VGMusic. Study only: measured for devices and statistics, never committed, never copied, never used as generator input.",
+   "sha256": "11a3b5e4dabefae51db957e42345d6124d9a1bdeaaf753bc20739817b55dd365",
+   "notes": 9135,
+   "bars": 320
+  },
+  {
+   "file": "CVHoD-SkeletonCave.mid",
+   "title": "Skeleton Cave",
+   "source": "https://www.vgmusic.com/music/console/nintendo/gba/CVHoD-SkeletonCave.mid",
+   "licence": "Fan sequenced MIDI, publicly posted on VGMusic. Study only: measured for devices and statistics, never committed, never copied, never used as generator input.",
+   "sha256": "37c9deefd44ef3e09fbbd8d126dc6c2d8fed35ac97b1e2b61c1968bbad0ffdf0",
+   "notes": 4404,
+   "bars": 60
+  },
+  {
+   "file": "draculachd.mid",
+   "title": "Dracula's Theme",
+   "source": "https://www.vgmusic.com/music/console/nintendo/gba/draculachd.mid",
+   "licence": "Fan sequenced MIDI, publicly posted on VGMusic. Study only: measured for devices and statistics, never committed, never copied, never used as generator input.",
+   "sha256": "e6e5a2907ee3170fc5c5d1560e131fb8ee8a23c952b53df42b6578e4785070c6",
+   "notes": 440,
+   "bars": 29
+  },
+  {
+   "file": "Castlevania_HoD__Successor_of_fate.mid",
+   "title": "Successor of Fate",
+   "source": "https://www.vgmusic.com/music/console/nintendo/gba/Castlevania_HoD__Successor_of_fate.mid",
+   "licence": "Fan sequenced MIDI, publicly posted on VGMusic. Study only: measured for devices and statistics, never committed, never copied, never used as generator input.",
+   "sha256": "dacf524165afed840ec119f81accd02ae468a416d6f2cf4fe6f3912545761661",
+   "notes": 3972,
+   "bars": 105
+  },
+  {
+   "file": "HarmonyODissonance_Chapel.mid",
+   "title": "Chapel of Dissonance (XG)",
+   "source": "https://www.vgmusic.com/music/console/nintendo/gba/HarmonyODissonance_Chapel.mid",
+   "licence": "Fan sequenced MIDI, publicly posted on VGMusic. Study only: measured for devices and statistics, never committed, never copied, never used as generator input.",
+   "sha256": "ac71e4246190d9d5a6355f5963aa216df39a568b5928f696d9c1afed25f83ebc",
+   "notes": 2868,
+   "bars": 319
+  },
+  {
+   "file": "HarmonyODissonance_OffDef.mid",
+   "title": "Offense and Defense (XG)",
+   "source": "https://www.vgmusic.com/music/console/nintendo/gba/HarmonyODissonance_OffDef.mid",
+   "licence": "Fan sequenced MIDI, publicly posted on VGMusic. Study only: measured for devices and statistics, never committed, never copied, never used as generator input.",
+   "sha256": "0794338a4aebb63c4379e9c30bcd490e3f610e2decd8d5402f7b19e96aae8cd8",
+   "notes": 7080,
+   "bars": 338
+  },
+  {
+   "file": "HarmonyODissonance_Successor.mid",
+   "title": "Successor of Fate (XG)",
+   "source": "https://www.vgmusic.com/music/console/nintendo/gba/HarmonyODissonance_Successor.mid",
+   "licence": "Fan sequenced MIDI, publicly posted on VGMusic. Study only: measured for devices and statistics, never committed, never copied, never used as generator input.",
+   "sha256": "a8b8002591c8661df798ddff73bdb53d8defaa662393a1751dad955501b808f3",
+   "notes": 3241,
+   "bars": 245
+  },
+  {
+   "file": "Castlevania_intro.mid",
+   "title": "Title Intro",
+   "source": "https://www.vgmusic.com/music/console/nintendo/gba/Castlevania_intro.mid",
+   "licence": "Fan sequenced MIDI, publicly posted on VGMusic. Study only: measured for devices and statistics, never committed, never copied, never used as generator input.",
+   "sha256": "f8ef616bacd89b5e4b25540e5cb545f2f3b25696aa71f203b5ae1fea228a2511",
+   "notes": 96,
+   "bars": 9
+  },
+  {
+   "file": "shrine1.mid",
+   "title": "Shrine of the Apostates",
+   "source": "https://www.vgmusic.com/music/console/nintendo/gba/shrine1.mid",
+   "licence": "Fan sequenced MIDI, publicly posted on VGMusic. Study only: measured for devices and statistics, never committed, never copied, never used as generator input.",
+   "sha256": "23969147a362d84ab8b89d5bd62df4e2a72caf8b4a4dabfd1742940b9b66c8a8",
+   "notes": 4026,
+   "bars": 75
+  },
+  {
+   "file": "shrine2.mid",
+   "title": "Shrine of the Apostates (second)",
+   "source": "https://www.vgmusic.com/music/console/nintendo/gba/shrine2.mid",
+   "licence": "Fan sequenced MIDI, publicly posted on VGMusic. Study only: measured for devices and statistics, never committed, never copied, never used as generator input.",
+   "sha256": "3bd7b0c3f2612a8c6244fd13eb2ca93dd141751d89f37c7db219bf3866d3d701",
+   "notes": 3948,
+   "bars": 75
+  }
+ ]
+}

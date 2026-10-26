@@ -1,0 +1,869 @@
+{
+ "format": "pp-counterpoint-targets",
+ "version": 1,
+ "card": "t_0ed3bd3f",
+ "written": "2026-10-26",
+ "corpus": {
+  "description": "Bach: 15 two-part inventions (BWV 772 to 786), 15 three-part sinfonias (BWV 787 to 801) and 5 chorale settings, public domain, Mutopia Project",
+  "manifests": [
+   "tools/counterpoint/corpus.json",
+   "tools/counterpoint/manifest-sinfonias.json"
+  ],
+  "directory": "<workspace>/corpora/bach-counterpoint/midi",
+  "in_repository": false,
+  "works": 35,
+  "notes": 17130,
+  "read": "2026-10-26"
+ },
+ "method": "Every work read as a monophonic line per part. Intervals are signed semitone steps between consecutive notes in one voice; shares are of all melodic moves pooled across the corpus. Devices and unexplained dissonances come from tools/counterpoint/rules.py profile free, so these targets and the cue gate are the same measurement. Cadences are chord-pair readings: dominant to tonic, subdominant to tonic, dominant to submediant, and phrases that stop on the dominant at a rest. Sequences are 4-interval cells that recur at a new pitch inside a voice. Imitation is the same cell in another voice starting later and within four bars. Nothing melodic is stored here; every field is a count or a share.",
+ "targets": {
+  "melody": {
+   "interval_share": {
+    "P1": 0.0234,
+    "m3": 0.1152,
+    "m7": 0.0187,
+    "M2": 0.3423,
+    "P4": 0.0715,
+    "m6": 0.0189,
+    "m2": 0.217,
+    "M3": 0.071,
+    "TT": 0.0159,
+    "P5": 0.043,
+    "m3 (+1)": 0.0022,
+    "P4 (+1)": 0.0015,
+    "M2 (+1)": 0.0021,
+    "P5 (+1)": 0.0013,
+    "M6": 0.0226,
+    "m2 (+1)": 0.0013,
+    "P1 (+1)": 0.025,
+    "M3 (+1)": 0.0011,
+    "M7": 0.0045,
+    "P1 (+2)": 0.0004,
+    "m7 (+1)": 0.0003,
+    "TT (+1)": 0.0003,
+    "m6 (+1)": 0.0003,
+    "M6 (+1)": 0.0001,
+    "M2 (+2)": 0.0001,
+    "M3 (+2)": 0.0001
+   },
+   "step_share": {
+    "mean": 0.585,
+    "min": 0.189,
+    "max": 0.8
+   },
+   "leap_share": {
+    "mean": 0.415,
+    "min": 0.2,
+    "max": 0.811
+   },
+   "large_leap_share": {
+    "mean": 0.148,
+    "min": 0.053,
+    "max": 0.232
+   },
+   "leap_recovery_share": {
+    "mean": 0.316,
+    "min": 0.04,
+    "max": 0.712
+   },
+   "unison_share": {
+    "mean": 0.028,
+    "min": 0.0,
+    "max": 0.115
+   },
+   "direction_share": {
+    "repeat": 0.0234,
+    "down": 0.52,
+    "up": 0.4565
+   }
+  },
+  "rhythm": {
+   "duration_share": {
+    "1/4": 0.1619,
+    "1/2": 0.0153,
+    "1/8": 0.2932,
+    "3/8": 0.0103,
+    "3/4": 0.0119,
+    "1/16": 0.4448,
+    "shorter than 1/16": 0.0208,
+    "3/16": 0.0155,
+    "1.25 beats": 0.0085,
+    "2.25 beats": 0.0013,
+    "1/1": 0.0032,
+    "6.5 beats": 0.0008,
+    "3.5 beats": 0.0014,
+    "9.5 beats": 0.0001,
+    "16 beats": 0.0001,
+    "6.75 beats": 0.0001,
+    "9.25 beats": 0.0001,
+    "1.75 beats": 0.0018,
+    "18 beats": 0.0002,
+    "19 beats": 0.0002,
+    "5 beats": 0.0005,
+    "3/2": 0.0025,
+    "2.5 beats": 0.0025,
+    "2/1": 0.0004,
+    "14 beats": 0.0001,
+    "7 beats": 0.0002,
+    "15 beats": 0.0002,
+    "9 beats": 0.0006,
+    "3.75 beats": 0.0001,
+    "4.75 beats": 0.0001,
+    "10 beats": 0.0006,
+    "13 beats": 0.0001,
+    "12 beats": 0.0002,
+    "3.25 beats": 0.0001,
+    "4.25 beats": 0.0001,
+    "4.5 beats": 0.0002,
+    "21 beats": 0.0001,
+    "6.25 beats": 0.0001,
+    "8.25 beats": 0.0001,
+    "5.5 beats": 0.0001
+   },
+   "top_two_note_cells": [
+    {
+     "cell": "1/16+1/16",
+     "share": 0.3665
+    },
+    {
+     "cell": "1/8+1/8",
+     "share": 0.2136
+    },
+    {
+     "cell": "1/4+1/4",
+     "share": 0.1044
+    },
+    {
+     "cell": "1/16+1/8",
+     "share": 0.0413
+    },
+    {
+     "cell": "1/8+1/16",
+     "share": 0.0304
+    },
+    {
+     "cell": "1/8+1/4",
+     "share": 0.0277
+    },
+    {
+     "cell": "1/4+1/8",
+     "share": 0.0211
+    },
+    {
+     "cell": "shorter than 1/16+shorter than 1/16",
+     "share": 0.0146
+    },
+    {
+     "cell": "1/4+1/16",
+     "share": 0.0138
+    },
+    {
+     "cell": "3/16+1/16",
+     "share": 0.013
+    },
+    {
+     "cell": "1/16+1/4",
+     "share": 0.0106
+    },
+    {
+     "cell": "1/4+1/2",
+     "share": 0.0084
+    }
+   ],
+   "top_three_note_cells": [
+    {
+     "cell": "1/16+1/16+1/16",
+     "share": 0.3059
+    },
+    {
+     "cell": "1/8+1/8+1/8",
+     "share": 0.1717
+    },
+    {
+     "cell": "1/4+1/4+1/4",
+     "share": 0.0814
+    },
+    {
+     "cell": "1/16+1/16+1/8",
+     "share": 0.0348
+    },
+    {
+     "cell": "1/8+1/16+1/16",
+     "share": 0.0239
+    },
+    {
+     "cell": "1/16+1/8+1/8",
+     "share": 0.02
+    },
+    {
+     "cell": "1/8+1/8+1/4",
+     "share": 0.0167
+    },
+    {
+     "cell": "1/16+1/8+1/16",
+     "share": 0.0155
+    },
+    {
+     "cell": "1/8+1/8+1/16",
+     "share": 0.0132
+    },
+    {
+     "cell": "1/8+1/4+1/8",
+     "share": 0.0122
+    },
+    {
+     "cell": "1/4+1/16+1/16",
+     "share": 0.0112
+    },
+    {
+     "cell": "1/4+1/8+1/8",
+     "share": 0.0111
+    }
+   ],
+   "notes_per_bar": {
+    "mean": 17.255,
+    "min": 4.043,
+    "max": 32.619
+   }
+  },
+  "dissonance_per_100_notes": {
+   "suspension": {
+    "mean": 0.893,
+    "min": 0.0,
+    "max": 4.3
+   },
+   "passing": {
+    "mean": 4.752,
+    "min": 0.0,
+    "max": 12.9
+   },
+   "neighbour": {
+    "mean": 1.612,
+    "min": 0.0,
+    "max": 4.02
+   },
+   "appoggiatura": {
+    "mean": 2.413,
+    "min": 0.0,
+    "max": 6.3
+   },
+   "escape": {
+    "mean": 1.391,
+    "min": 0.0,
+    "max": 5.09
+   },
+   "unexplained_dissonance": {
+    "mean": 0.355,
+    "min": 0.0,
+    "max": 1.42
+   },
+   "weak_unexplained_dissonance": {
+    "mean": 0.281,
+    "min": 0.0,
+    "max": 4.29
+   },
+   "parallel_perfect": {
+    "mean": 0.037,
+    "min": 0.0,
+    "max": 0.39
+   },
+   "hidden_perfect": {
+    "mean": 0.714,
+    "min": 0.0,
+    "max": 1.97
+   },
+   "dissonances_per_100_notes": {
+    "mean": 11.683,
+    "min": 5.02,
+    "max": 16.74
+   }
+  },
+  "cadences": {
+   "per_100_bars": 11.04,
+   "type_share": {
+    "imperfect authentic": 0.4754,
+    "phrygian": 0.0902,
+    "plagal": 0.1393,
+    "perfect authentic": 0.1475,
+    "leading-tone authentic": 0.0328,
+    "deceptive": 0.1148
+   },
+   "counts": {
+    "imperfect authentic": 58,
+    "phrygian": 11,
+    "plagal": 17,
+    "perfect authentic": 18,
+    "leading-tone authentic": 4,
+    "deceptive": 14
+   },
+   "final_chord_is_tonic_works": 30,
+   "final_chord_is_tonic_share": 0.857,
+   "method_note": "A cadence here is a chord pair read on a beat grid: dominant to tonic, subdominant to tonic, dominant to submediant, or a phrase that stops on the dominant. Each chord must last half a beat and the resolution must land on a beat at least two beats after the previous cadence. The reading undercounts where a suspension or a pedal hides the bass motion, so the per 100 bar rate is a floor and the final chord check is printed beside it as the accuracy measure: on this corpus the labeller names the last chord the tonic in 30 of 35 works."
+  },
+  "sequences": {
+   "per_100_notes": {
+    "mean": 36.951,
+    "min": 0.0,
+    "max": 65.77
+   },
+   "share_of_notes_in_sequences": {
+    "mean": 0.369,
+    "min": 0.0,
+    "max": 0.658
+   }
+  },
+  "clash_census": {
+   "clashes_per_100_notes": {
+    "mean": 3.327,
+    "min": 0.0,
+    "max": 17.61
+   },
+   "beats_with_clash_share": {
+    "mean": 0.117,
+    "min": 0.0,
+    "max": 0.266
+   },
+   "resolved_by_step_share": {
+    "mean": 0.519,
+    "min": 0.0,
+    "max": 1.0
+   },
+   "clash_interval_share": {
+    "m7": 0.2917,
+    "TT": 0.3368,
+    "M2": 0.2465,
+    "M7": 0.0764,
+    "m2": 0.0486
+   },
+   "clash_placement": {
+    "strong": 0.2135,
+    "weak": 0.6267,
+    "medium": 0.1597
+   },
+   "chromatic_share": {
+    "mean": 0.095,
+    "min": 0.007,
+    "max": 0.226
+   }
+  },
+  "imitation": {
+   "events_per_work": {
+    "mean": 11.371,
+    "min": 0,
+    "max": 29
+   },
+   "offset_share": [
+    {
+     "offset_beats": 8.0,
+     "share": 0.2644
+    },
+    {
+     "offset_beats": 6.0,
+     "share": 0.1252
+    },
+    {
+     "offset_beats": 3.0,
+     "share": 0.0984
+    },
+    {
+     "offset_beats": 2.0,
+     "share": 0.0959
+    },
+    {
+     "offset_beats": 4.0,
+     "share": 0.0741
+    },
+    {
+     "offset_beats": 1.0,
+     "share": 0.0586
+    },
+    {
+     "offset_beats": 24.0,
+     "share": 0.0512
+    },
+    {
+     "offset_beats": 9.0,
+     "share": 0.0333
+    },
+    {
+     "offset_beats": 1.5,
+     "share": 0.0184
+    },
+    {
+     "offset_beats": 5.0,
+     "share": 0.0169
+    }
+   ],
+   "transposition_share": {
+    "P5": 0.1854,
+    "P1": 0.5472,
+    "P4": 0.171,
+    "m3": 0.0154,
+    "M6": 0.0109,
+    "m7": 0.0368,
+    "M2": 0.0253,
+    "M7": 0.002,
+    "m6": 0.0035,
+    "M3": 0.0015,
+    "TT": 0.001
+   }
+  }
+ },
+ "works": [
+  {
+   "file": "bwv_269.mid",
+   "title": "Aus meines Herzens Grunde",
+   "catalogue": "BWV 269",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV269/bwv_269/bwv_269.mid",
+   "licence": "Public Domain",
+   "sha256": "783a5a944f28030876a84c753a47abeeff93c56adb6a3dd7c396d06e07184d10",
+   "notes": 137,
+   "bars": 21,
+   "time_signature": "3/4",
+   "key_detected": "G major",
+   "tempo_bpm": 72.0
+  },
+  {
+   "file": "BWV-510.mid",
+   "title": "Chorale setting (title not in the source)",
+   "catalogue": "BWV 510",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV510/BWV-510/BWV-510.mid",
+   "licence": "Public Domain",
+   "sha256": "e93083ac39271b0be37c7ee4c4885e7a9beb728a005e581d1a64139e157be500",
+   "notes": 93,
+   "bars": 23,
+   "time_signature": "2/2",
+   "key_detected": "F major",
+   "tempo_bpm": 240.0
+  },
+  {
+   "file": "BWV-511.mid",
+   "title": "Chorale setting (title not in the source)",
+   "catalogue": "BWV 511",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV511/BWV-511/BWV-511.mid",
+   "licence": "Public Domain",
+   "sha256": "a7513a1e8d877766e56be2466019c29d14e3283acc5b899c5b3b48e756a93d7c",
+   "notes": 125,
+   "bars": 10,
+   "time_signature": "4/4",
+   "key_detected": "G minor",
+   "tempo_bpm": 60.0
+  },
+  {
+   "file": "BWV-512.mid",
+   "title": "Chorale setting (title not in the source)",
+   "catalogue": "BWV 512",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV512/BWV-512/BWV-512.mid",
+   "licence": "Public Domain",
+   "sha256": "5bca43e0037df5104a2f7b9498c8ff3bb694082febfd24c52d99913b5afbf762",
+   "notes": 135,
+   "bars": 10,
+   "time_signature": "4/4",
+   "key_detected": "E minor",
+   "tempo_bpm": 60.0
+  },
+  {
+   "file": "BWV772-invention-01.mid",
+   "title": "Invention 1",
+   "catalogue": "BWV 772",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV772/invention-01/invention-01.mid",
+   "licence": "Creative Commons Attribution-ShareAlike 3.0",
+   "sha256": "9b9a6213941932d5171d9102d85912c3c1c61f8176ce02005cd2198881823c2d",
+   "notes": 455,
+   "bars": 22,
+   "time_signature": "4/4",
+   "key_detected": "C major",
+   "tempo_bpm": 80.0
+  },
+  {
+   "file": "BWV773-invention-02.mid",
+   "title": "Invention 2",
+   "catalogue": "BWV 773",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV773/invention-02/invention-02.mid",
+   "licence": "Public Domain",
+   "sha256": "b61e1e4d4a42ca70efd0eb8a65de3ed0ca0ee9c31556354608f6caa360e78e98",
+   "notes": 634,
+   "bars": 27,
+   "time_signature": "4/4",
+   "key_detected": "G minor",
+   "tempo_bpm": 64.0
+  },
+  {
+   "file": "BWV774-invention-03.mid",
+   "title": "Invention 3",
+   "catalogue": "BWV 774",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV774/invention-03/invention-03.mid",
+   "licence": "Public Domain",
+   "sha256": "602579a39b5b0e13ab4740dcff36342302553dcbd3619066e678f0074890c268",
+   "notes": 495,
+   "bars": 59,
+   "time_signature": "3/8",
+   "key_detected": "D major",
+   "tempo_bpm": 80.0
+  },
+  {
+   "file": "BWV775-invention-04.mid",
+   "title": "Invention 4",
+   "catalogue": "BWV 775",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV775/invention-04/invention-04.mid",
+   "licence": "Public Domain",
+   "sha256": "5ecc06eb04d56ea40bd4db64bfd49ac9bff523e46d134912fa5bd07aea1db1c7",
+   "notes": 443,
+   "bars": 52,
+   "time_signature": "3/8",
+   "key_detected": "D minor",
+   "tempo_bpm": 90.0
+  },
+  {
+   "file": "BWV776-invention-05.mid",
+   "title": "Invention 5",
+   "catalogue": "BWV 776",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV776/invention-05/invention-05.mid",
+   "licence": "Public Domain",
+   "sha256": "8085d87bd49012a20afd59f79fd8a9864c4634b6303a7606e2e7a61b9e007542",
+   "notes": 734,
+   "bars": 32,
+   "time_signature": "4/4",
+   "key_detected": "Eb major",
+   "tempo_bpm": 105.0
+  },
+  {
+   "file": "BWV777-invention-06.mid",
+   "title": "Invention 6",
+   "catalogue": "BWV 777",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV777/invention-06/invention-06.mid",
+   "licence": "Creative Commons Attribution-ShareAlike 3.0",
+   "sha256": "457fcba53879cd3902d421d5f37383b8fdd848ae7888597981f5f257a962b945",
+   "notes": 547,
+   "bars": 62,
+   "time_signature": "3/8",
+   "key_detected": "E major",
+   "tempo_bpm": 40.0
+  },
+  {
+   "file": "BWV778-invention-07.mid",
+   "title": "Invention 7",
+   "catalogue": "BWV 778",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV778/invention-07/invention-07.mid",
+   "licence": "Public Domain",
+   "sha256": "ee5e02d6a43cd9a45f6c10e3c6b3905190ed42521b1de7487fee8a98c3735eb6",
+   "notes": 473,
+   "bars": 23,
+   "time_signature": "4/4",
+   "key_detected": "E minor",
+   "tempo_bpm": 90.0
+  },
+  {
+   "file": "BWV779-invention-08.mid",
+   "title": "Invention 08",
+   "catalogue": "BWV 779",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV779/invention-08/invention-08.mid",
+   "licence": "Public Domain",
+   "sha256": "07238719180171f76283756405ee43a0319226e869283bf29affb9e4c360e6f8",
+   "notes": 596,
+   "bars": 34,
+   "time_signature": "3/4",
+   "key_detected": "F major",
+   "tempo_bpm": 90.0
+  },
+  {
+   "file": "BWV780-invention-09.mid",
+   "title": "Invention 9",
+   "catalogue": "BWV 780",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV780/invention-09/invention-09.mid",
+   "licence": "Creative Commons Attribution-ShareAlike 3.0",
+   "sha256": "fcba8eaa630cec1e4207eb024ffe25e9ad03c4382a68c415b7162b6baa58b0b0",
+   "notes": 558,
+   "bars": 34,
+   "time_signature": "3/4",
+   "key_detected": "F minor",
+   "tempo_bpm": 94.0
+  },
+  {
+   "file": "BWV781-invention-10.mid",
+   "title": "Invention 10",
+   "catalogue": "BWV 781",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV781/invention-10/invention-10.mid",
+   "licence": "Public Domain",
+   "sha256": "64eed7d404ddbf668bef6a7e1d227390081e13731b9f2bf6c07792d6562eb822",
+   "notes": 439,
+   "bars": 32,
+   "time_signature": "9/8",
+   "key_detected": "G major",
+   "tempo_bpm": 172.0
+  },
+  {
+   "file": "BWV782-invention-11.mid",
+   "title": "Invention 11",
+   "catalogue": "BWV 782",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV782/invention-11/invention-11.mid",
+   "licence": "Public Domain",
+   "sha256": "9f6fce0e5c6f4e8eb28c7decf45e1f1de4474771619bf22884bac12646c49a5e",
+   "notes": 568,
+   "bars": 23,
+   "time_signature": "4/4",
+   "key_detected": "G minor",
+   "tempo_bpm": 85.0
+  },
+  {
+   "file": "BWV783-invention-12.mid",
+   "title": "Invention 12",
+   "catalogue": "BWV 783",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV783/invention-12/invention-12.mid",
+   "licence": "Creative Commons Attribution-ShareAlike 3.0",
+   "sha256": "321b93cc21097f960eb290067cb3e746c41e3d9f624f097d5339b4f6ac6f44c3",
+   "notes": 685,
+   "bars": 21,
+   "time_signature": "12/8",
+   "key_detected": "A major",
+   "tempo_bpm": 108.0
+  },
+  {
+   "file": "BWV784-invention-13.mid",
+   "title": "Invention 13",
+   "catalogue": "BWV 784",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV784/invention-13/invention-13.mid",
+   "licence": "Public Domain",
+   "sha256": "e5b4dd4790ee2f2fdadca75630790a373363e1f6cb4558838e34bbad907364f1",
+   "notes": 564,
+   "bars": 25,
+   "time_signature": "4/4",
+   "key_detected": "A minor",
+   "tempo_bpm": 100.0
+  },
+  {
+   "file": "BWV785-invention-14.mid",
+   "title": "Invention 14",
+   "catalogue": "BWV 785",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV785/invention-14/invention-14.mid",
+   "licence": "Public Domain",
+   "sha256": "8ef3606dc2b71c51c7c0e4438080ed641963e1a8e69d7b82aba42a04ebc5e9b9",
+   "notes": 592,
+   "bars": 20,
+   "time_signature": "4/4",
+   "key_detected": "Bb major",
+   "tempo_bpm": 65.0
+  },
+  {
+   "file": "BWV786-invention-15.mid",
+   "title": "Invention 15",
+   "catalogue": "BWV 786",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV786/invention-15/invention-15.mid",
+   "licence": "Public Domain",
+   "sha256": "4b629b29d815d9f253600836a2801444780f20718b74892c502a044da6f85a88",
+   "notes": 477,
+   "bars": 22,
+   "time_signature": "4/4",
+   "key_detected": "B minor",
+   "tempo_bpm": 105.0
+  },
+  {
+   "file": "BWV-691.mid",
+   "title": "Chorale prelude \u201cWer nur den lieben Gott l\u00e4\u00dft walten\u201d",
+   "catalogue": "BWV Anh. 691",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWVAnh691/BWV-691/BWV-691.mid",
+   "licence": "Public Domain",
+   "sha256": "d6e1dd6c2e8ac096cc7c37057eac7470eaf2f394c8730a4f9c950826e43a105f",
+   "notes": 163,
+   "bars": 9,
+   "time_signature": "4/4",
+   "key_detected": "A minor",
+   "tempo_bpm": 60.0
+  },
+  {
+   "file": "BWV787-sinfonia.mid",
+   "title": "Sinfonia (three-part invention), BWV 787",
+   "catalogue": "BWV 787",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV787/bwv787/bwv787.mid",
+   "licence": "Public Domain",
+   "sha256": "3cc099f4a5c85f02ef388d4b91f03cb24f3d98af5e78b1ebfe4ca2f73a3650d9",
+   "notes": 520,
+   "bars": 21,
+   "time_signature": "4/4",
+   "key_detected": "C major",
+   "tempo_bpm": 70.0
+  },
+  {
+   "file": "BWV788-sinfonia.mid",
+   "title": "Sinfonia (three-part invention), BWV 788",
+   "catalogue": "BWV 788",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV788/bwv788/bwv788.mid",
+   "licence": "Public Domain",
+   "sha256": "2118ab6176bc3c6cb8b661270aebb81ae7514eeeb2e0cec2a015e3cdb8294312",
+   "notes": 671,
+   "bars": 32,
+   "time_signature": "12/8",
+   "key_detected": "C minor",
+   "tempo_bpm": 120.0
+  },
+  {
+   "file": "BWV789-sinfonia.mid",
+   "title": "Sinfonia (three-part invention), BWV 789",
+   "catalogue": "BWV 789",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV789/bwv789/bwv789.mid",
+   "licence": "Public Domain",
+   "sha256": "ad7124a8f247078def2369a576f9e74030cb2ef836506ef4d85f6967c788cff0",
+   "notes": 590,
+   "bars": 25,
+   "time_signature": "4/4",
+   "key_detected": "B minor",
+   "tempo_bpm": 70.0
+  },
+  {
+   "file": "BWV790-sinfonia.mid",
+   "title": "Sinfonia (three-part invention), BWV 790",
+   "catalogue": "BWV 790",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV790/bwv790/bwv790.mid",
+   "licence": "Public Domain",
+   "sha256": "c9d765016f7be33e46195aeb8d87a4ac684a2b5bed262dd49a03d20b50eec18e",
+   "notes": 491,
+   "bars": 23,
+   "time_signature": "4/4",
+   "key_detected": "D minor",
+   "tempo_bpm": 60.0
+  },
+  {
+   "file": "BWV791-sinfonia.mid",
+   "title": "Sinfonia (three-part invention), BWV 791",
+   "catalogue": "BWV 791",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV791/bwv791/bwv791.mid",
+   "licence": "Public Domain",
+   "sha256": "17379da021571786c04f39ffd755c6951ccd53d583d40ecf6eb5232ec288d8d2",
+   "notes": 356,
+   "bars": 38,
+   "time_signature": "3/4",
+   "key_detected": "C minor",
+   "tempo_bpm": 55.0
+  },
+  {
+   "file": "BWV792-sinfonia.mid",
+   "title": "Sinfonia (three-part invention), BWV 792",
+   "catalogue": "BWV 792",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV792/bwv792/bwv792.mid",
+   "licence": "Public Domain",
+   "sha256": "a698c4962c6d25a0ac356914ea010bd4225a4fbd04a76b05802d20a10a106951",
+   "notes": 460,
+   "bars": 41,
+   "time_signature": "9/8",
+   "key_detected": "E major",
+   "tempo_bpm": 130.0
+  },
+  {
+   "file": "BWV793-sinfonia.mid",
+   "title": "Sinfonia (three-part invention), BWV 793",
+   "catalogue": "BWV 793",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV793/bwv793/bwv793.mid",
+   "licence": "Public Domain",
+   "sha256": "f5f867400a1bef6a96fe5903558147c80b2886762d734202617364e170f363e3",
+   "notes": 625,
+   "bars": 44,
+   "time_signature": "3/4",
+   "key_detected": "B minor",
+   "tempo_bpm": 80.0
+  },
+  {
+   "file": "BWV794-sinfonia.mid",
+   "title": "Sinfonia (three-part invention), BWV 794",
+   "catalogue": "BWV 794",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV794/bwv794/bwv794.mid",
+   "licence": "Public Domain",
+   "sha256": "e7f97b5546ac041ebdd315be859263736c3f1f5cf2c128967be0f1563a907d71",
+   "notes": 511,
+   "bars": 23,
+   "time_signature": "4/4",
+   "key_detected": "F major",
+   "tempo_bpm": 80.0
+  },
+  {
+   "file": "BWV795-sinfonia.mid",
+   "title": "Sinfonia (three-part invention), BWV 795",
+   "catalogue": "BWV 795",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV795/bwv795/bwv795.mid",
+   "licence": "Public Domain",
+   "sha256": "e95bbcbbb21e6d3c94768ece09ad5135f7b28ed7c75d9df8ff5c80903f5cb612",
+   "notes": 557,
+   "bars": 35,
+   "time_signature": "4/4",
+   "key_detected": "F minor",
+   "tempo_bpm": 70.0
+  },
+  {
+   "file": "BWV796-sinfonia.mid",
+   "title": "Sinfonia (three-part invention), BWV 796",
+   "catalogue": "BWV 796",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV796/bwv796/bwv796.mid",
+   "licence": "Public Domain",
+   "sha256": "52acb72b445e01889fcff6d86852e099730ff3193bc6b95a62fbc1b02c2ab1ec",
+   "notes": 553,
+   "bars": 33,
+   "time_signature": "3/4",
+   "key_detected": "E minor",
+   "tempo_bpm": 70.0
+  },
+  {
+   "file": "BWV797-sinfonia.mid",
+   "title": "Sinfonia (three-part invention), BWV 797",
+   "catalogue": "BWV 797",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV797/bwv797/bwv797.mid",
+   "licence": "Public Domain",
+   "sha256": "5d1b01e3c79e3cd86e963c5803b2f6787c5433b7f5c4c7855c87226befd4c0b4",
+   "notes": 476,
+   "bars": 72,
+   "time_signature": "3/8",
+   "key_detected": "G minor",
+   "tempo_bpm": 60.0
+  },
+  {
+   "file": "BWV798-sinfonia.mid",
+   "title": "Sinfonia (three-part invention), BWV 798",
+   "catalogue": "BWV 798",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV798/bwv798/bwv798.mid",
+   "licence": "Public Domain",
+   "sha256": "a81cc3949b1123b877708569f5a935507e9655a4e8fd6280623eaa41051b26e4",
+   "notes": 696,
+   "bars": 31,
+   "time_signature": "4/4",
+   "key_detected": "A major",
+   "tempo_bpm": 80.0
+  },
+  {
+   "file": "BWV799-sinfonia.mid",
+   "title": "Sinfonia (three-part invention), BWV 799",
+   "catalogue": "BWV 799",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV799/bwv799/bwv799.mid",
+   "licence": "Public Domain",
+   "sha256": "c5486b94298f5fdae2875fad0bdc6da93ab3d498f01b576714e5defbf6871796",
+   "notes": 533,
+   "bars": 64,
+   "time_signature": "3/8",
+   "key_detected": "A minor",
+   "tempo_bpm": 55.0
+  },
+  {
+   "file": "BWV800-sinfonia.mid",
+   "title": "Sinfonia (three-part invention), BWV 800",
+   "catalogue": "BWV 800",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV800/bwv800/bwv800.mid",
+   "licence": "Public Domain",
+   "sha256": "cab55cc5a02a64fe4f3671fa3c0b1e4c29c5555b849862cb0551dbeb9dcf8084",
+   "notes": 540,
+   "bars": 24,
+   "time_signature": "4/4",
+   "key_detected": "Bb major",
+   "tempo_bpm": 80.0
+  },
+  {
+   "file": "BWV801-sinfonia.mid",
+   "title": "Sinfonia (three-part invention), BWV 801",
+   "catalogue": "BWV 801",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV801/bwv801/bwv801.mid",
+   "licence": "Public Domain",
+   "sha256": "55bbe2dc2fcdfe0e571054a0bbe764ab55ed8ef69a4cdfb1fba6cc0af1d7ff98",
+   "notes": 638,
+   "bars": 38,
+   "time_signature": "9/16",
+   "key_detected": "B minor",
+   "tempo_bpm": 60.0
+  }
+ ]
+}
