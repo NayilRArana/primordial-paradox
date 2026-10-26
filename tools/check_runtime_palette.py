@@ -10,18 +10,25 @@ fight carries the design grey `#4a4a58` at `(73, 72, 87)` (knowledge/BATTLE-DIM-
 the row for the `dim` role). So the defect is not in a picture, it is in the resolve, and no audit of pictures can see
 it once the pictures stop being kept.
 
-What passing means, in three parts, so this check cannot go green by absence:
+What passing means, in five parts, so this check cannot go green by absence:
 
   1. `data/palette_ppu.json` exists and carries a mapping for **every** colour of `data/palette.json`, by index.
   2. every mapped target names a usable entry of `data/nes_palette.json`, so the resolved colour is a real output.
   3. `game/scripts/pp_data/pp_data.gml` names `palette_ppu.json`, so the table is what the runtime reads rather than
      a file somebody wrote and left beside the code.
+  4. a material family still ramps: the entries a hue family maps to never go backwards in measured luminance, since a
+     darker level drawn brighter than the level above it turns a shadow into a highlight.
+  5. the four roles every screen draws with stay four colours, and no room palette set collapses two levels of one
+     family onto one entry, which would spend a screen's palette on a step nobody can see.
+
+Parts 1 to 3 are the defect this file was opened for (card t_54db4d0f). Parts 4 and 5 pin the visual decision the card
+made, because "it looks right on a built game" is not a check anybody can run on a box with no GameMaker licence.
 
 Usage:
     python tools\\check_runtime_palette.py
     python tools\\check_runtime_palette.py --json output\\runtime_palette.json
 
-Exit 0 when all three hold, 1 otherwise, and it always prints the count of design colours that have no legal output so
+Exit 0 when all five hold, 1 otherwise, and it always prints the count of design colours that have no legal output so
 a red run says how big the job is.
 """
 
@@ -30,6 +37,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -38,6 +46,18 @@ MASTER = os.path.join("data", "nes_palette.json")
 TABLE = os.path.join("data", "palette_ppu.json")
 RUNTIME = os.path.join("game", "scripts", "pp_data", "pp_data.gml")
 RUNTIME_NAME = "palette_ppu.json"
+ROOMS = os.path.join("data", "room_palettes.json")
+
+# Luminance is not restated here: tools\art\contrast_check.py owns the 2C02 luminance table (card CONTRAST-TOOL), and
+# tools\palette_synergy.py imports it for the same reason.
+sys.path.insert(0, os.path.join(ROOT, "tools", "art"))
+import contrast_check  # noqa: E402
+
+# The role names every screen draws with, in the order the window draws them: ink is the border and the fade, paper is
+# the panel the glyphs sit on, dim is the mid tone (a bar track, a rule), text is the marker. window_shadow is separate
+# because a shadow has to be a different entry from the fill and the border, not a rung between them.
+UNIVERSAL = ("ink", "paper", "dim", "text")
+SHADOW_ROLE = "window_shadow"
 
 
 def read_json(path: str):
@@ -68,6 +88,109 @@ def runtime_names_the_table(root: str) -> tuple:
         return False, ("%s never names %s, so the table would be a file beside the code rather than what the "
                        "runtime reads" % (RUNTIME.replace(os.sep, "/"), RUNTIME_NAME))
     return True, "%s names %s" % (RUNTIME.replace(os.sep, "/"), RUNTIME_NAME)
+
+
+def rgb_of(hex_value: str) -> tuple:
+    body = str(hex_value).lstrip("#")
+    return int(body[0:2], 16), int(body[2:4], 16), int(body[4:6], 16)
+
+
+def family_levels(role_index: dict) -> dict:
+    """{family: {level: design index}} from the family_level role names (grey_0, sea_3, ...) in data/palette.json."""
+    found = {}
+    for name, index in role_index.items():
+        match = re.match(r"^([a-z]+)_([0-9])$", str(name))
+        if not match:
+            continue
+        found.setdefault(match.group(1), {})[int(match.group(2))] = int(index)
+    return found
+
+
+def layout_guards(root: str, role_index: dict, rows: list) -> list:
+    """The two guards that pin the visual decision, so the table cannot be tuned blind on a box with no GameMaker.
+
+    Guard 4, a family ramps: the mapped entries of one hue family never go backwards in measured luminance. The 2C02
+    cannot hold six levels of anything, so a level may share an entry with its neighbour; what it may not do is come
+    out brighter than the level above it, which draws a shadow as a highlight.
+    Guard 5, a screen keeps its steps: the four universal roles resolve to four different entries, and no room palette
+    set collapses two different design colours of one family onto one entry.
+    """
+    problems = []
+    lum = {}
+    for row in rows:
+        if row.get("legal") and row.get("entry_hex"):
+            lum[row["index"]] = contrast_check.luminance(rgb_of(row["entry_hex"]))
+
+    def code(index):
+        for row in rows:
+            if row["index"] == index:
+                return row.get("entry_hex") or "-"
+        return "-"
+
+    families = family_levels(role_index)
+    for family in sorted(families):
+        levels = families[family]
+        if family == "grey" or len(levels) < 2:
+            # grey is the UI family: its order is checked below by role name, because ink and paper are not a ramp of
+            # scenery but the fill and the border of a window.
+            continue
+        ordered = [levels[level] for level in sorted(levels) if levels[level] in lum]
+        for lower, upper in zip(ordered, ordered[1:]):
+            if lum[upper] < lum[lower] - 1e-9:
+                low_level = [k for k, v in levels.items() if v == lower][0]
+                high_level = [k for k, v in levels.items() if v == upper][0]
+                problems.append("%s_%d maps to %s at luminance %.3f, which is darker than %s_%d at %s (%.3f), so the "
+                                "family's ramp runs backwards"
+                                % (family, high_level, code(upper), lum[upper],
+                                   family, low_level, code(lower), lum[lower]))
+
+    # The four roles every screen draws with: fill, border, mid tone and marker stay four colours, in that order.
+    named = [role_index[name] for name in UNIVERSAL if name in role_index]
+    entries = {index: None for index in named}
+    if SHADOW_ROLE in role_index:
+        entries[role_index[SHADOW_ROLE]] = None
+    for row in rows:
+        if row["index"] in entries:
+            entries[row["index"]] = row.get("entry")
+    ordered_roles = [name for name in UNIVERSAL if name in role_index]
+    for first, second in zip(ordered_roles, ordered_roles[1:]):
+        a, b = role_index[first], role_index[second]
+        if a in lum and b in lum and lum[b] < lum[a] - 1e-9:
+            problems.append("role %s resolves to %s at luminance %.3f and %s to %s at %.3f, so the window draws its "
+                            "second colour darker than its first"
+                            % (first, code(a), lum[a], second, code(b), lum[b]))
+    for a, b in zip(ordered_roles, ordered_roles[1:]):
+        if entries.get(role_index[a]) is not None and entries.get(role_index[a]) == entries.get(role_index[b]):
+            problems.append("roles %s and %s both resolve to the same entry, so one of them draws nothing" % (a, b))
+    if SHADOW_ROLE in role_index:
+        shadow = role_index[SHADOW_ROLE]
+        for other in ("ink", "paper"):
+            if other in role_index and entries.get(shadow) is not None and entries.get(shadow) == entries.get(role_index[other]):
+                problems.append("role %s resolves to the same entry as %s, so a window shadow draws nothing"
+                                % (SHADOW_ROLE, other))
+
+    # Guard 5b: a room palette set may not collapse two design colours of one family onto one entry.
+    rooms_path = os.path.join(root, ROOMS)
+    if os.path.isfile(rooms_path):
+        rooms = read_json(rooms_path)
+        for palette_set in rooms.get("sets", []):
+            members = [role_index[name] for name in palette_set.get("roles", []) if name in role_index]
+            per_family = {}
+            for index in set(members):
+                per_family.setdefault(index // 6, set()).add(index)
+            for family, indices in sorted(per_family.items()):
+                if len(indices) < 2:
+                    continue
+                targets = {}
+                for index in indices:
+                    for row in rows:
+                        if row["index"] == index:
+                            targets[index] = row.get("entry")
+                if len(set(targets.values())) != len(indices):
+                    problems.append("room palette set %r spends %d design colours of family %d and they resolve to %d "
+                                    "entry(s), so one of them is a step nobody can see"
+                                    % (palette_set.get("id"), len(indices), family, len(set(targets.values()))))
+    return problems
 
 
 def check(root: str = ROOT) -> tuple:
@@ -130,14 +253,24 @@ def check(root: str = ROOT) -> tuple:
     if not names_it:
         problems.append(why)
 
+    role_index = {}
+    for name, index in (design.get("roles") or {}).items():
+        try:
+            role_index[str(name)] = int(index)
+        except (TypeError, ValueError):
+            continue
+    problems.extend(layout_guards(root, role_index, rows))
+
     counts = {"colours": len(colours), "mapped": len(mapping), "legal": len(colours) - off, "off": off,
-              "runtime_reads": bool(names_it)}
+              "runtime_reads": bool(names_it), "distinct_entries": len(set(mapping.values()))}
     return problems, rows, counts
 
 
 def report(rows: list, counts: dict, problems: list) -> int:
     print("runtime palette: %d colour(s) in data/palette.json, %d mapped in %s, %d resolved to a 2C02 output, %d not"
           % (counts["colours"], counts["mapped"], TABLE.replace(os.sep, "/"), counts["legal"], counts["off"]))
+    print("runtime palette: %d distinct 2C02 entry(s) for the %d design colours"
+          % (counts.get("distinct_entries", 0), counts["colours"]))
     for row in rows:
         print("  %2d %-9s %-9s  %s"
               % (row["index"], row["design_hex"],

@@ -177,6 +177,15 @@
     },
     {
       "$GMIncludedFile": "",
+      "%Name": "palette_ppu.json",
+      "CopyToMask": -1,
+      "filePath": "datafiles",
+      "name": "palette_ppu.json",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
       "%Name": "powers.json",
       "CopyToMask": -1,
       "filePath": "datafiles",

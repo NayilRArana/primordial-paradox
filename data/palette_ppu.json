@@ -1,0 +1,133 @@
+{
+  "format": 1,
+  "kind": "palette_ppu",
+  "name": "runtime",
+  "rule": "one mapping per colour of data/palette.json, keyed by its index; every target is an entry of data/nes_palette.json that is usable; the runtime resolves a role through this table and draws the entry, never the design hex",
+  "source": "data/palette.json",
+  "master": "data/nes_palette.json",
+  "decided": "2026-10-26, card t_54db4d0f, route (a) snap at load. The design palette keeps its frozen 54 and its frozen_digest, data/nes_palette.json is untouched, and no tolerance moved.",
+  "why": [
+    "0 of the 54 colours in data/palette.json is an output of the Ricoh 2C02, so every rectangle and every glyph background drawn from a role was an off palette pixel (measured 2026-10-26, knowledge/BATTLE-DIM-OFF-PALETTE-2026-10-26.md section 2: the dim role #4a4a58 captured at (73, 72, 87)).",
+    "Route (a) was chosen over re cutting the design palette because the 54 are referenced by index from room_palettes.json, every scene palette file and data/palette_recipes.json: a new 54 would invalidate all of them and re open frozen_digest for a look nobody can judge on this box, where no GameMaker licence exists.",
+    "The mapping is curated, not nearest neighbour. The 2C02's dark end holds one usable black ($0F) and no second dark neutral, so a nearest colour search hands a near black design grey a saturated blue or green. Each line below names the relationship it keeps.",
+    "The title's own table (tools/art/nes_snap.py, NIGHT_TABLE, 14 entries) is a night scene table and it maps INK to $0C and ASPHALT to $0F. The runtime is the other way round: ink is the black a fade and a backdrop are filled with, and paper is the panel the white 8x8 glyphs sit on. Two tables, two jobs, and this file is the runtime's."
+  ],
+  "mapping": {
+    "0": 15,
+    "1": 12,
+    "2": 2,
+    "3": 0,
+    "4": 16,
+    "5": 32,
+    "6": 15,
+    "7": 2,
+    "8": 12,
+    "9": 18,
+    "10": 34,
+    "11": 44,
+    "12": 15,
+    "13": 8,
+    "14": 7,
+    "15": 24,
+    "16": 23,
+    "17": 39,
+    "18": 15,
+    "19": 5,
+    "20": 5,
+    "21": 22,
+    "22": 38,
+    "23": 53,
+    "24": 15,
+    "25": 11,
+    "26": 10,
+    "27": 9,
+    "28": 25,
+    "29": 42,
+    "30": 15,
+    "31": 8,
+    "32": 8,
+    "33": 7,
+    "34": 0,
+    "35": 16,
+    "36": 15,
+    "37": 8,
+    "38": 24,
+    "39": 40,
+    "40": 40,
+    "41": 56,
+    "42": 15,
+    "43": 2,
+    "44": 3,
+    "45": 19,
+    "46": 35,
+    "47": 51,
+    "48": 15,
+    "49": 6,
+    "50": 6,
+    "51": 6,
+    "52": 22,
+    "53": 22
+  },
+  "families": {
+    "grey": {
+      "design_indices": [0, 1, 2, 3, 4, 5],
+      "entries": ["$0F", "$0C", "$02", "$00", "$10", "$20"],
+      "roles": "ink 0, paper 1, window_shadow 2, dim 3, grey_4, text and window_edge 5",
+      "note": "The UI family and the one that decides whether the game reads. ink is $0F, the only usable black, because ink fills the fade rectangle, the game over backdrop and every window border. paper is $0C dark cyan, which is the darkest desaturated output after black and keeps the panel dark enough for the sheet's white glyphs. window_shadow is $02, because a shadow of the same black would not draw at all. Measured luminance falls $0F 0.000, $0C 0.044, $02 0.036, $00 0.202, $10 0.503, $20 0.939: the paper and shadow pair is the one inversion, 0.008 the wrong way, and it is the price of having two dark neutrals on a chip that has one. grey_4 goes to $10 rather than $2D, whose 0.188 is 0.014 from $00 and would read as the same grey."
+    },
+    "sea": {
+      "design_indices": [6, 7, 8, 9, 10, 11],
+      "entries": ["$0F", "$02", "$0C", "$12", "$22", "$2C"],
+      "roles": "window 6, sea_1, sea_2, sea_3, sea_4, sea_5",
+      "note": "Blue to cyan, darkest first. $0F for the near black window colour, $02 and $0C for black water, then the blue ladder $12 and $22 for the sea body and $2C light cyan for the shallow water. Measured 0.000, 0.036, 0.044, 0.138, 0.276, 0.627, monotone."
+    },
+    "bronze": {
+      "design_indices": [12, 13, 14, 15, 16, 17],
+      "entries": ["$0F", "$08", "$07", "$18", "$17", "$27"],
+      "roles": "bronze_0 to bronze_5, accent 17",
+      "note": "Warm brown. The 2C02 has no mid brown: $08 dark brown at 0.038 and $07 dark orange at 0.057 are the whole dark end, and the next warm step is $18 at 0.232. So the four lit levels take the mustard and orange ladder $18, $17, $27, and accent stays at $27, a warm bright that reads on every dark set."
+    },
+    "wine": {
+      "design_indices": [18, 19, 20, 21, 22, 23],
+      "entries": ["$0F", "$05", "$05", "$16", "$26", "$35"],
+      "roles": "wine_0 to wine_5, warn 23",
+      "note": "Rose and red. $05 dark crimson carries wine_1 and wine_2 whole, because the chip has nothing between black and $05 in that hue. warn is $35 pale rose: it is the one warning colour that stays legible on both the daylight deck and the night quay, and nothing else in a set spends it."
+    },
+    "moss": {
+      "design_indices": [24, 25, 26, 27, 28, 29],
+      "entries": ["$0F", "$0B", "$0A", "$09", "$19", "$2A"],
+      "roles": "moss_0 to moss_5",
+      "note": "The one family the 2C02 dresses well: its dark greens are three distinct entries ($0B, $0A, $09 measured 0.070, 0.099, 0.134), so the drive_night set, which spends moss_1, moss_2, moss_3 and moss_5 on one screen, keeps four different greens. moss_5 is $2A rather than a pale mint because the design's pale verge is a lit green and not a white one."
+    },
+    "stone": {
+      "design_indices": [30, 31, 32, 33, 34, 35],
+      "entries": ["$0F", "$08", "$08", "$07", "$00", "$10"],
+      "roles": "stone_0 to stone_5",
+      "note": "Dry stone is warm in this palette (#3b3226, #554738) and the chip's warm dark end is $08 and $07, which knowledge/PALETTE-SYNERGY.md section 7 already names as the dark brown outline for warm interiors. stone_1 and stone_2 share $08: no set spends both, and quay_night spends stone_2, stone_4 and stone_5, which land on $08, $00 and $10 and stay three steps apart. stone_4 lands on the same $00 as dim, which costs the quay set no extra colour."
+    },
+    "gold": {
+      "design_indices": [36, 37, 38, 39, 40, 41],
+      "entries": ["$0F", "$08", "$18", "$28", "$28", "$38"],
+      "roles": "gold_0 to gold_5, marker_trail 40, marker 41",
+      "note": "Lamps and fittings. $28 saturated yellow is gold_3 and marker_trail, $38 pale yellow is gold_5 and marker, so the marker and its trail stay two different yellows on a dark ground. gold_2 takes $18, the mustard that reads as brass in shadow."
+    },
+    "violet": {
+      "design_indices": [42, 43, 44, 45, 46, 47],
+      "entries": ["$0F", "$02", "$03", "$13", "$23", "$33"],
+      "roles": "violet_0 to violet_5",
+      "note": "No room set spends a violet role today, so this family is placed for the scenes still to come: the blue black $02, then the four violet values $03, $13, $23, $33 measured 0.064, 0.141, 0.269, 0.557."
+    },
+    "blood": {
+      "design_indices": [48, 49, 50, 51, 52, 53],
+      "entries": ["$0F", "$06", "$06", "$06", "$16", "$16"],
+      "roles": "blood_0 to blood_5, hazard 53",
+      "note": "The chip's reds are all bright: $06 dark red at 0.087 is the darkest, and $16 at 0.228 is the strong red hazard needs. Three design levels share $06 and two share $16, because six reds painted as a ramp cannot become six reds on four rows. hazard is $16 and it is the only blood role any set spends."
+    }
+  },
+  "known_collapses": [
+    "1 and 2 (paper $0C, window_shadow $02) are 0.008 the wrong way round in luminance. The 2C02 has one usable black and no second dark neutral, so the shadow is slightly darker than the panel it sits behind. Both still draw, which is the defect the card named.",
+    "6 (window) lands on $0F, the same entry as ink. The window role is declared in the ui set and drawn by no code path today, and a near black frame around a near black panel is the correct NES reading of it.",
+    "13 and 32 (bronze_1, stone_2) share $08, and 38 and 15 (gold_2, bronze_3) share $18. No room palette set spends a colliding pair on one screen; the check refuses a set that would.",
+    "49, 50 and 51 share $06 and 52 and 53 share $16: six painted reds cannot be six entries on a chip with four red rows."
+  ]
+}

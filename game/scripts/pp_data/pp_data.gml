@@ -97,6 +97,8 @@ function pp_data_load() {
     var _bundle = {
         project: pp_data_json("project.json"),
         palette: pp_data_json("palette.json"),
+        palette_ppu: pp_data_json("palette_ppu.json"),
+        nes_palette: pp_data_json("nes_palette.json"),
         room_palettes: pp_data_json("room_palettes.json"),
         party: pp_data_json("characters/party.json"),
         enemies: pp_data_json("enemies/all.json"),
@@ -148,13 +150,63 @@ function pp_data_load() {
     }
 
     // The palette resolves to colours once, at load, so drawing never parses a string.
-    _bundle.palette_rgb = [];
-    if (is_struct(_bundle.palette) && is_array(_bundle.palette.colours)) {
-        for (var i = 0; i < array_length(_bundle.palette.colours); i++) {
-            array_push(_bundle.palette_rgb, pp_data_colour(_bundle.palette.colours[i]));
+    //
+    // Card t_54db4d0f: data\palette.json is the palette a person painted with, and none of its 54 hex values is an
+    // output of the Ricoh 2C02 (measured 2026-10-26: 0 of 54). data\palette_ppu.json maps every design index onto an
+    // entry of data\nes_palette.json, and the colour that reaches draw_set_colour is that entry's hex, so nothing the
+    // runtime draws is a colour the chip cannot produce. This is the one place the design palette becomes a drawing
+    // colour; a design index with no mapping draws PP_COLOUR_MISSING so the hole is visible instead of silent.
+    _bundle.palette_rgb = pp_data_palette_rgb(_bundle.palette, _bundle.palette_ppu, _bundle.nes_palette);
+    return _bundle;
+}
+
+/// The 2C02 colours the runtime draws with, one per colour of data\palette.json, resolved through the mapping table.
+/// A missing table, a missing mapping or a target that is not in the master palette reports itself in plain words and
+/// leaves PP_COLOUR_MISSING in that slot, because a magenta rectangle is a defect on screen and a guess is not a fix.
+function pp_data_palette_rgb(_design, _table, _master) {
+    var _out = [];
+    var _count = (is_struct(_design) && is_array(_design.colours)) ? array_length(_design.colours) : 0;
+    for (var i = 0; i < _count; i++) {
+        array_push(_out, PP_COLOUR_MISSING);
+    }
+
+    if (!is_struct(_table) || !variable_struct_exists(_table, "mapping") || !is_struct(_table.mapping)) {
+        array_push(global.pp_data_errors, "palette_ppu.json has no mapping, so no design colour has a 2C02 output");
+        return _out;
+    }
+
+    // entry index -> hex, once, so the resolve below is a lookup and never a scan.
+    var _entry_hex = {};
+    if (is_struct(_master) && is_array(_master.entries)) {
+        for (var e = 0; e < array_length(_master.entries); e += 1) {
+            var _entry = _master.entries[e];
+            if (!is_struct(_entry) || !variable_struct_exists(_entry, "index")) continue;
+            if (!variable_struct_exists(_entry, "hex")) continue;
+            if (variable_struct_exists(_entry, "usable") && !_entry.usable) continue;
+            _entry_hex[$ string(_entry.index)] = _entry.hex;
         }
     }
-    return _bundle;
+
+    var _unmapped = 0;
+    for (var i = 0; i < _count; i++) {
+        var _key = string(i);
+        if (!variable_struct_exists(_table.mapping, _key)) {
+            _unmapped += 1;
+            continue;
+        }
+        var _target = _table.mapping[$ _key];
+        var _hex = _entry_hex[$ string(_target)];
+        if (!is_string(_hex)) {
+            _unmapped += 1;
+            continue;
+        }
+        _out[i] = pp_data_colour(_hex);
+    }
+    if (_unmapped > 0) {
+        array_push(global.pp_data_errors, "palette_ppu.json leaves " + string(_unmapped)
+                   + " of " + string(_count) + " design colours without a usable 2C02 entry");
+    }
+    return _out;
 }
 
 /// One palette colour by index, with a visible fallback so a bad index draws the missing colour rather than crashing.

@@ -1941,3 +1941,51 @@ the role that tints it, so no colour literal enters the code and a palette chang
 four roles are pinned by a test on the sets rather than by a comment, so the defect this card fixed cannot come back
 through a later edit.
 Copied expression: none
+
+## DIALOGUE-BOX-ROLES, 2026-10-26: the box's chrome spends only roles every room declares (card `t_769b545d`)
+
+Studied: this repository's own files and one recorded take, read only, no decompiled material and no expression from any
+game in it: `specs/05-dialogue.md`, `specs/13-8bit-look.md` (the 16 colour screen cap and the cursor rule),
+`knowledge/ART-BIBLE.md` RULE 0 points 1 and 2, `game/scripts/pp_look/pp_look.gml` (`pp_look_declare` and
+`pp_role_colour`), `game/scripts/pp_dialogue/pp_dialogue.gml`, `game/scripts/pp_map/pp_map.gml` (`pp_map_kind_colour`),
+`game/scripts/pp_battle_director/pp_battle_director.gml` lines 1060 to 1068 (card R48), `data/palette.json`,
+`data/room_palettes.json`, `data/maps/all.json` (`ship_small`'s legend and tiles), `tests/test_arena_dim_and_roles.py`,
+`tests/test_look.py`, and `build/demo-game.log:163` of the 2026-10-26 take.
+Mechanics learned: three. One, a role name is an interface with a per room implementation: the set a room declares is the
+whole vocabulary that screen may use, so chrome that can appear in any room (a dialogue box, a menu panel, a cursor) may
+only ask for roles every set declares, and the intersection of the sets is the list. Two, the lookup's own report is
+per role per set and fires once, so the log line is a latch rather than a counter: its absence after a take is the proof
+the gap is gone, and one line is enough to find the room, which is why the fix is checked against the log rather than
+against a screenshot. Three, an NES has 16 colours on screen and no alpha, so a "safe fallback" inside the lookup is not
+safe at all: it spends a colour the room did not budget. The only safe fallback is a role the room already declared.
+Our implementation differs by: the box keeps its sprite window untinted, so only its flat chrome (the choice cursor, the
+page arrow and the name plate) is a role decision at all; the map's tile path draws the tileset untinted, so the role
+applies to the drawn rectangle fallback and not to the ship's real floor; and the rule is pinned by a test over the
+intersection of `data/room_palettes.json`'s sets plus an amended bullet in spec 05, rather than by a comment, so a later
+edit that asks for a role only the `ui` set owns fails in the suite.
+Copied expression: none
+
+## RUNTIME-PALETTE, 2026-10-26: a design palette is not a hardware palette, so the resolve needs a table and a guard (card `t_54db4d0f`)
+
+Studied: this repository's own files, read only, no decompiled material and no expression from any game in it:
+`data/palette.json` (the frozen 54 and its roles), `data/nes_palette.json` (the 64 outputs, the usable flag and the
+forbidden `$0D`), `data/room_palettes.json` (seven sets of role names), `knowledge/PALETTE-SYNERGY.md` sections 1, 1.1,
+5, 6, 7 and 11 (the 2C02 luma rows, the separation numbers, the outline choices, the scene sets),
+`knowledge/BATTLE-DIM-OFF-PALETTE-2026-10-26.md` section 2 (the capture that measured `dim` at `(73, 72, 87)`),
+`knowledge/GATED-REDS-2026-10-26.md` sections 1 and 2, `tools/art/nes_snap.py` (`NIGHT_TABLE`, the title's 14 curated
+choices), `game/scripts/pp_data/pp_data.gml` lines 150 to 165, `game/scripts/pp_look/pp_look.gml`
+(`pp_role_colour`), and `tools/art/contrast_check.py` (the luminance table every number here is measured with).
+Mechanics learned: three. One, a 54 colour design palette at six levels per hue cannot survive a chip with four value
+rows and one usable black: the dark end has to collapse, and the collapse has to be chosen rather than found by a
+nearest colour search, because nearest hands a near black grey a saturated blue. Two, the colour that decides whether
+the game reads is not the glyph: the 8x8 sheet draws its own white, so the load bearing role is the panel the glyphs sit
+on, which must stay dark, and the second is the border around it, which must be a different entry or it is not a border.
+Three, a palette table needs guards that measure relationships rather than colours, because the failure mode is order: a
+shadow brighter than its highlight, or four roles that all land on black, and both are invisible to a per colour check.
+Our implementation differs by: the mapping is a data file (`data/palette_ppu.json`) keyed by design index onto the
+project's own master table rather than a per scene hand painted ramp; the resolve is one function in `pp_data` that
+falls back to `PP_COLOUR_MISSING` and a plain words error instead of a guess; and the two relationship guards (ramp
+order, four role separation plus per set step distinctness) live in `tools/check_runtime_palette.py` with one negative
+control per way of cheating them in `tests/test_runtime_palette.py`, so a later edit that quietly maps `paper` onto
+`ink` fails the suite instead of shipping a HUD with no outline.
+Copied expression: none
