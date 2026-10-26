@@ -12,9 +12,9 @@ a priority under 30 when it was already blocked and needed no status change.
 ## What was measured
 
     board nayil-ops, read at 2026-10-26 (the board sqlite, read only, and hermes kanban list --json)
-    130 open cards = 22 todo + 11 ready + 83 blocked + 13 running
+    130 open cards = 23 todo + 10 ready + 83 blocked + 14 running
      65 of them are Primordial Paradox cards, listed below
-     65 are other projects (Musikage, job discovery, remote client, the fleet, a protected profile)
+     64 are other projects (Musikage, job discovery, remote client, the fleet, a protected profile)
 
 A few cards closed while this page was being written, so they no longer hold a priority. They are
 named here because the ranking was made on them, with the priority this page gave them:
@@ -22,7 +22,7 @@ named here because the ranking was made on them, with the priority this page gav
 - `t_2f0b1f93` LICENCE-INVENTORY: ranked 66, closed before the priorities were applied
 - `t_c146e9cd` WRITEUP-CLAIM-BANK: ranked 87, closed before the priorities were applied
 - `t_c8bfe899` MUSIC-DEMO-BED: ranked 70, closed before the priorities were applied
-- not game cards, closed while writing: `t_dca2eecd`
+- not game cards, closed while writing: `t_b6a1a4f5`, `t_dca2eecd`
 
 Two cards are protected by the board rules and appear at the top whatever their visibility:
 `t_771e78ef` MOVE-HOLD (Nayil's own order) and the META cards `t_5031b766` and `t_9332fe42`. No W card is
@@ -66,7 +66,7 @@ map and the 3 minute cut is built on the fight. It stays in this band, not in th
 | `t_2a2baf83` | blocked | 0 | 85 | no (the bonus) | Meta tooling (bonus) | S (Nayil) | four Meta bonus decisions, three of which gate the bonus cards |
 | `t_d6060104` | running | 82 | 84 | video | Demo + Impact | L | the palette-first GPU art batches that put plates and sprites on screen |
 | `t_8b07fe69` | blocked | 0 | 83 | video | Demo | S | the title theme is landed; PP-01 identity and one ear pass are the last two steps before the menu music is final |
-| `t_c0597404` | ready | 93 | 82 | video | Demo | M | M0: why title v7 and v8 sound dissonant, and a resolved v9. Nayil called the top-scoring title dissonant, and the title is the first sound in the video |
+| `t_c0597404` | running | 93 | 82 | video | Demo | M | M0: why title v7 and v8 sound dissonant, and a resolved v9. Nayil called the top-scoring title dissonant, and the title is the first sound in the video |
 | `t_65512e1c` | todo | 90 | 81 | video | Demo | L | M3: Baroque title and fight cues from the counterpoint engine, Nayil picks by ear. This is the cue set the video plays |
 | `t_279ef225` | blocked | 0 | 80 | video | Demo | S | battle cue v2, PP-04 wiring and the 168 vs 126 tempo line: the fight music the video plays |
 | `t_16417018` | blocked | 0 | 79 | video+repo | Demo + Technical depth | S | two title builds sit uncommitted and the yyp names a third: five red rows and the title music in one commit |
@@ -184,7 +184,6 @@ and routing cards, social and publishing, the Xbox worker, and the two protected
 - `t_ac15d469` Resume and CV: finish the 2026-10-14 resume work, fix errors, build PDFs (no submissions): resume and CV
 - `t_b0a237b0` CIT-SECRETS set an API key from the phone, no agent sees it: Citadel secrets
 - `t_b3cd0758` [handoff] code-review: who applies the witness-authz rework, a protected profile is protected: remote-client witness authz
-- `t_b6a1a4f5` RULES-R1-VIRAL: the Most Viral and Community Vote mechanics, deadlines and vote rules, cited or : virus and vote rules research
 - `t_bdab2ba5` [handoff] social-media-monitoring: pick the account, the Discord and the signing name for the ni: devlog drafts (outward)
 - `t_c15144f5` [handoff] builder: C15 red, a protected profile config.yaml drifted from its blessed manifest (Nayil: a protected profile config (protected, untouched)
 - `t_c31a9894` Audit stream: independent verification of fleet claims: audit stream tracker
@@ -200,6 +199,14 @@ and routing cards, social and publishing, the Xbox worker, and the two protected
 - `t_fd0c5401` [handoff] musician: FLP reader needs one on-screen check in FL Studio: Musikage FLP reader
 - `t_fd9b9219` [spike] Xbox Series S UWP worker: prove the pull-worker loop and measure throughput: Xbox worker
 - `t_fdbdb18f` [knowledge] WA trade names are $5 and plural; the LLC already exists; Nayilinist domains are fre: business name facts
+
+## 5. Opened after this ranking was drafted, listed but not ranked
+
+The board was being written to while this page was built. These cards exist and are open, and they
+carry the priority their author gave them. The next reader of this page should rank them by the same
+rule: video, then README, then repo.
+
+- `t_4c8e4181` W0b APPLY WIN-PRIORITIES: 65 priorities and 8 pauses, from the committed table (needs a profile that may mutate the board)
 
 ## 6. What this changes for the next four days
 
