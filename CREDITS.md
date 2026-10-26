@@ -131,7 +131,7 @@ future audit does not have to re-derive the question:
 ## 8. Authorship
 
 Built by Nayil Arana with his agent lanes (builder, testing, musician, research, audit, critics) under his direction.
-Every commit names the card that produced it, so the record of who wrote what is `git log` plus `DEVLOG.md`. The lanes
+Every commit names the card that produced it, so the record of who wrote what is `git log` plus the internal development log. The lanes
 are tools he runs, not separate copyright holders; nothing in this repository is credited to a model vendor, and no
 generated asset here carries a vendor attribution requirement.
 
