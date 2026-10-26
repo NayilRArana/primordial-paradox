@@ -178,7 +178,12 @@ def test_sources(tests_dir=TESTS):
 
 def check(root=ROOT):
     repo = repo_root(root)
-    prefix = os.path.relpath(root, repo).replace(os.sep, "/") + "/"
+    # git ls-files prints paths from the repo root, so a fixture is named with the project's own path in
+    # front of it. At a repo root that path is ".", and "./assets/..." is not a name git ever prints, which
+    # reported every tracked fixture as MISSING FROM COMMIT in the standalone hackathon repo (card
+    # t_43904993). A root project has no prefix at all.
+    relative = os.path.relpath(root, repo).replace(os.sep, "/")
+    prefix = "" if relative == "." else relative + "/"
     tracked = tracked_files(repo)
     problems = ["MISSING FROM COMMIT " + name for name in untracked_fixtures(tracked, prefix)]
     for name, source in test_sources(os.path.join(root, "tests")):

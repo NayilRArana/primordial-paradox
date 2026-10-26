@@ -40,8 +40,6 @@ TOOLS = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(TOOLS)
 OUT = os.path.join(REPO, "EVENT-LOG.md")
 TAG = "hackathon-baseline-2026-10-25"
-PROJECT = "projects/primordial-paradox"
-LOG_SELF = PROJECT + "/EVENT-LOG.md"
 CARD_ID = re.compile(r"\bt_[0-9a-f]{8}\b")
 LONG_DASHES = {"\u2013": "-", "\u2014": "-", "\u2015": "-", "\u2212": "-"}
 NOWIN = 0x08000000 if os.name == "nt" else 0
@@ -69,6 +67,29 @@ def git(args, cwd=REPO):
     if proc.returncode != 0:
         raise RuntimeError("git %s failed: %s" % (" ".join(args), (proc.stderr or "").strip()[:400]))
     return proc.stdout
+
+
+def _project_path(repo):
+    r"""The project's own path inside its repository, as a pathspec git reads from the root.
+
+    Asked of git rather than written down here, because the same tree is checked out two ways. Shared
+    carries it at projects/primordial-paradox, and the standalone hackathon repo D:\repos\primordial-paradox
+    carries it as the root, where the path is ".". A hardcoded prefix matched nothing there and the log came
+    out empty with "projects/primordial-paradox is not in the tree at HEAD" (card t_43904993).
+
+    When git cannot answer at all, the Shared layout is the value returned: the import must not fall over in
+    a tree that is not a checkout (the Pine zip), and every command in this tool fails loudly a moment later
+    anyway, before any log is written.
+    """
+    try:
+        root = git(["rev-parse", "--show-toplevel"]).strip()
+    except (RuntimeError, OSError):
+        return "projects/primordial-paradox"
+    return os.path.relpath(repo, root).replace(os.sep, "/")
+
+
+PROJECT = _project_path(REPO)
+LOG_SELF = PROJECT + "/EVENT-LOG.md"
 
 
 def plain(text):
@@ -136,10 +157,15 @@ def collect():
     projects/primordial-paradox matched nothing, because the path was read a second level down and the
     log came out empty on a checkout with one commit since the tag. The project path is also checked
     against the tree at HEAD first, so a renamed directory fails loudly instead of logging nothing.
+
+    At a repo root the project path is ".", which git will not take as a tree name: `HEAD:.` is not a
+    commit path. The check is the root tree itself in that case, `HEAD:`, which is the same object the
+    subfolder form names for the folder it sits in (card t_43904993).
     """
     root = git(["rev-parse", "--show-toplevel"]).strip()
+    in_head = "HEAD:" + ("" if PROJECT == "." else PROJECT)
     try:
-        git(["cat-file", "-e", "HEAD:" + PROJECT], cwd=root)
+        git(["cat-file", "-e", in_head], cwd=root)
     except RuntimeError:
         raise RuntimeError("%s is not in the tree at HEAD, so the log would be empty" % PROJECT)
     try:
