@@ -1,0 +1,163 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1720" height="1030" viewBox="0 0 1720 1030" font-family="Consolas, 'DejaVu Sans Mono', 'Courier New', monospace">
+<rect x="0" y="0" width="1720" height="1030" fill="#101116"/>
+<text x="40" y="34" font-size="26" fill="#e8e9ee" font-weight="bold" text-anchor="start">Primordial Paradox: the architecture, and what actually answered</text>
+<text x="40" y="72" font-size="13" fill="#969ba8" text-anchor="start">Every box names a file in this repository. Regenerate with python tools\make_architecture_diagram.py</text>
+<rect x="40" y="96" width="14" height="14" fill="#78d296"/>
+<text x="62" y="100" font-size="12" fill="#969ba8" text-anchor="start">LIVE Meta call: 0</text>
+<rect x="186" y="96" width="14" height="14" fill="#e8ba60"/>
+<text x="208" y="100" font-size="12" fill="#969ba8" text-anchor="start">MOCKED: recorded under the mock backend</text>
+<rect x="477" y="96" width="14" height="14" fill="#e29084"/>
+<text x="499" y="100" font-size="12" fill="#969ba8" text-anchor="start">FALLBACK: written offline, no model answered</text>
+<rect x="801" y="96" width="14" height="14" fill="#a896e8"/>
+<text x="823" y="100" font-size="12" fill="#969ba8" text-anchor="start">NODE: a machine the work runs on</text>
+<text x="40" y="136" font-size="13" fill="#969ba8" font-weight="bold" text-anchor="start">WHERE THE WORK RUNS</text>
+<text x="40" y="326" font-size="13" fill="#969ba8" font-weight="bold" text-anchor="start">THE PIPELINE, LEFT TO RIGHT</text>
+<text x="40" y="556" font-size="13" fill="#969ba8" font-weight="bold" text-anchor="start">META MODEL API CALLS, AND WHAT ANSWERED (read from data\ai_cache and data\meta_bake.json)</text>
+<text x="40" y="738" font-size="13" fill="#969ba8" font-weight="bold" text-anchor="start">WHAT THE PIPELINE LEAVES ON DISK</text>
+<rect x="40" y="150" width="533" height="140" fill="#1a1c24" stroke="#a896e8" stroke-width="1"/>
+<rect x="40" y="150" width="4" height="140" fill="#a896e8"/>
+<text x="56" y="174" font-size="17" fill="#e8e9ee" font-weight="bold" text-anchor="start">DESKTOP, this machine</text>
+<text x="56" y="198" font-size="12" fill="#969ba8" text-anchor="start">Windows, GameMaker LTS2026 (runtime 2026.0.0.23 tested)</text>
+<text x="56" y="217" font-size="12" fill="#969ba8" text-anchor="start">tools\run.ps1: gates, regenerate, Igor build, launch</text>
+<text x="56" y="236" font-size="12" fill="#969ba8" text-anchor="start">the only node that compiles or launches the game</text>
+<rect x="593" y="150" width="533" height="140" fill="#1a1c24" stroke="#a896e8" stroke-width="1"/>
+<rect x="593" y="150" width="4" height="140" fill="#a896e8"/>
+<text x="609" y="174" font-size="17" fill="#e8e9ee" font-weight="bold" text-anchor="start">PINE SANDBOX</text>
+<text x="609" y="198" font-size="12" fill="#969ba8" text-anchor="start">wrapper arananet\pine\pine_offload.py, outside this repo</text>
+<text x="609" y="217" font-size="12" fill="#969ba8" text-anchor="start">runs pytest and the gates in shards, no Igor</text>
+<text x="609" y="236" font-size="12" fill="#969ba8" text-anchor="start">evidence: knowledge\PINE-SUITE-2026-10-24.md</text>
+<text x="609" y="255" font-size="12" fill="#969ba8" text-anchor="start">latest verdict: knowledge\GATE-GREEN-2026-10-26.md</text>
+<rect x="1146" y="150" width="533" height="140" fill="#1a1c24" stroke="#a896e8" stroke-width="1"/>
+<rect x="1146" y="150" width="4" height="140" fill="#a896e8"/>
+<text x="1162" y="174" font-size="17" fill="#e8e9ee" font-weight="bold" text-anchor="start">KAGGLE GPU</text>
+<text x="1162" y="198" font-size="12" fill="#969ba8" text-anchor="start">tools\kaggle_r7_gpu.py pushes a private kernel, fetches, measures</text>
+<text x="1162" y="217" font-size="12" fill="#969ba8" text-anchor="start">a real image model ran there; it is NOT a Meta model</text>
+<text x="1162" y="236" font-size="12" fill="#969ba8" text-anchor="start">manifest: output\kaggle_r7\concepts_gpu\r7_manifest.json</text>
+<rect x="40" y="340" width="312" height="190" fill="#1a1c24" stroke="#6cc4f0" stroke-width="1"/>
+<rect x="40" y="340" width="4" height="190" fill="#6cc4f0"/>
+<text x="56" y="364" font-size="17" fill="#e8e9ee" font-weight="bold" text-anchor="start">1  CONCEPT</text>
+<text x="56" y="388" font-size="12" fill="#969ba8" text-anchor="start">tools\kaggle_r7.py paints or reads a</text>
+<text x="56" y="407" font-size="12" fill="#969ba8" text-anchor="start">concept frame</text>
+<text x="56" y="426" font-size="12" fill="#969ba8" text-anchor="start">tools\meta_client.py generate_image()</text>
+<text x="56" y="445" font-size="12" fill="#969ba8" text-anchor="start">and segment()</text>
+<text x="56" y="464" font-size="12" fill="#969ba8" text-anchor="start">tools\quantize_concept.py cuts to the</text>
+<text x="56" y="483" font-size="12" fill="#969ba8" text-anchor="start">scene palette</text>
+<rect x="372" y="340" width="312" height="190" fill="#1a1c24" stroke="#6cc4f0" stroke-width="1"/>
+<rect x="372" y="340" width="4" height="190" fill="#6cc4f0"/>
+<text x="388" y="364" font-size="17" fill="#e8e9ee" font-weight="bold" text-anchor="start">2  MODEL LANE</text>
+<text x="388" y="388" font-size="12" fill="#969ba8" text-anchor="start">tools\meta_client.py: the only file</text>
+<text x="388" y="407" font-size="12" fill="#969ba8" text-anchor="start">with the HTTP shapes</text>
+<text x="388" y="426" font-size="12" fill="#969ba8" text-anchor="start">tools\bake_meta.py writes</text>
+<text x="388" y="445" font-size="12" fill="#969ba8" text-anchor="start">data\meta_bake.json</text>
+<text x="388" y="464" font-size="12" fill="#969ba8" text-anchor="start">tools\eye_critic.py,</text>
+<text x="388" y="483" font-size="12" fill="#969ba8" text-anchor="start">tools\ear_critic.py score</text>
+<text x="388" y="502" font-size="12" fill="#969ba8" text-anchor="start">tools\talk_guard.py: a reply cannot</text>
+<text x="388" y="521" font-size="12" fill="#969ba8" text-anchor="start">stall a fight</text>
+<rect x="704" y="340" width="312" height="190" fill="#1a1c24" stroke="#6cc4f0" stroke-width="1"/>
+<rect x="704" y="340" width="4" height="190" fill="#6cc4f0"/>
+<text x="720" y="364" font-size="17" fill="#e8e9ee" font-weight="bold" text-anchor="start">3  NES GATE</text>
+<text x="720" y="388" font-size="12" fill="#969ba8" text-anchor="start">tools\nes_check.py: palette, 8x8 grid,</text>
+<text x="720" y="407" font-size="12" fill="#969ba8" text-anchor="start">3 colours</text>
+<text x="720" y="426" font-size="12" fill="#969ba8" text-anchor="start">tools\nes_audit_all.py: every asset and</text>
+<text x="720" y="445" font-size="12" fill="#969ba8" text-anchor="start">frame</text>
+<text x="720" y="464" font-size="12" fill="#969ba8" text-anchor="start">tools\palette_synergy.py,</text>
+<text x="720" y="483" font-size="12" fill="#969ba8" text-anchor="start">tools\scene_palette_set.py</text>
+<text x="720" y="502" font-size="12" fill="#969ba8" text-anchor="start">a model proposes, the checker decides</text>
+<rect x="1036" y="340" width="312" height="190" fill="#1a1c24" stroke="#6cc4f0" stroke-width="1"/>
+<rect x="1036" y="340" width="4" height="190" fill="#6cc4f0"/>
+<text x="1052" y="364" font-size="17" fill="#e8e9ee" font-weight="bold" text-anchor="start">4  GAME</text>
+<text x="1052" y="388" font-size="12" fill="#969ba8" text-anchor="start">game\PrimordialParadox.yyp, native 256</text>
+<text x="1052" y="407" font-size="12" fill="#969ba8" text-anchor="start">x 240</text>
+<text x="1052" y="426" font-size="12" fill="#969ba8" text-anchor="start">rooms: rm_pp_title, rm_pp_boot,</text>
+<text x="1052" y="445" font-size="12" fill="#969ba8" text-anchor="start">rm_pp_drive, rm_pp_ship</text>
+<text x="1052" y="464" font-size="12" fill="#969ba8" text-anchor="start">GML reads data files only, never the</text>
+<text x="1052" y="483" font-size="12" fill="#969ba8" text-anchor="start">network</text>
+<rect x="1368" y="340" width="312" height="190" fill="#1a1c24" stroke="#6cc4f0" stroke-width="1"/>
+<rect x="1368" y="340" width="4" height="190" fill="#6cc4f0"/>
+<text x="1384" y="364" font-size="17" fill="#e8e9ee" font-weight="bold" text-anchor="start">5  CAPTURE</text>
+<text x="1384" y="388" font-size="12" fill="#969ba8" text-anchor="start">tools\play_demo.py records the window,</text>
+<text x="1384" y="407" font-size="12" fill="#969ba8" text-anchor="start">60 fps</text>
+<text x="1384" y="426" font-size="12" fill="#969ba8" text-anchor="start">output\demo\run_001.mp4, 73.5 s, 768 x</text>
+<text x="1384" y="445" font-size="12" fill="#969ba8" text-anchor="start">720</text>
+<text x="1384" y="464" font-size="12" fill="#969ba8" text-anchor="start">tools\check_build_inputs.py: a cue and</text>
+<text x="1384" y="483" font-size="12" fill="#969ba8" text-anchor="start">its stream travel together</text>
+<rect x="40" y="570" width="312" height="132" fill="#1a1c24" stroke="#e8ba60" stroke-width="1"/>
+<rect x="40" y="570" width="4" height="132" fill="#e8ba60"/>
+<text x="56" y="594" font-size="17" fill="#e8e9ee" font-weight="bold" text-anchor="start">muse-image-1.0</text>
+<rect x="276" y="582" width="64" height="20" fill="#20232d" stroke="#e8ba60" stroke-width="1"/>
+<text x="286" y="586" font-size="11" fill="#e8ba60" font-weight="bold" text-anchor="start">MOCKED</text>
+<text x="56" y="618" font-size="12" fill="#969ba8" text-anchor="start">generate_image()</text>
+<text x="56" y="637" font-size="12" fill="#969ba8" text-anchor="start">concept art, aspect ratio only</text>
+<text x="56" y="656" font-size="12" fill="#969ba8" text-anchor="start">cache entries: 2</text>
+<rect x="372" y="570" width="312" height="132" fill="#1a1c24" stroke="#e8ba60" stroke-width="1"/>
+<rect x="372" y="570" width="4" height="132" fill="#e8ba60"/>
+<text x="388" y="594" font-size="17" fill="#e8e9ee" font-weight="bold" text-anchor="start">sam-3.1</text>
+<rect x="608" y="582" width="64" height="20" fill="#20232d" stroke="#e8ba60" stroke-width="1"/>
+<text x="618" y="586" font-size="11" fill="#e8ba60" font-weight="bold" text-anchor="start">MOCKED</text>
+<text x="388" y="618" font-size="12" fill="#969ba8" text-anchor="start">segment(), one noun per request</text>
+<text x="388" y="637" font-size="12" fill="#969ba8" text-anchor="start">a box and a mask</text>
+<text x="388" y="656" font-size="12" fill="#969ba8" text-anchor="start">cache entries: 1</text>
+<rect x="704" y="570" width="312" height="132" fill="#1a1c24" stroke="#e8ba60" stroke-width="1"/>
+<rect x="704" y="570" width="4" height="132" fill="#e8ba60"/>
+<text x="720" y="594" font-size="17" fill="#e8e9ee" font-weight="bold" text-anchor="start">muse-spark-1.3, vision</text>
+<rect x="940" y="582" width="64" height="20" fill="#20232d" stroke="#e8ba60" stroke-width="1"/>
+<text x="950" y="586" font-size="11" fill="#e8ba60" font-weight="bold" text-anchor="start">MOCKED</text>
+<text x="720" y="618" font-size="12" fill="#969ba8" text-anchor="start">vision() into tools\eye_critic.py</text>
+<text x="720" y="637" font-size="12" fill="#969ba8" text-anchor="start">a checklist per 256 x 240 frame</text>
+<text x="720" y="656" font-size="12" fill="#969ba8" text-anchor="start">cache entries for this model: 3</text>
+<rect x="1036" y="570" width="312" height="132" fill="#1a1c24" stroke="#e29084" stroke-width="1"/>
+<rect x="1036" y="570" width="4" height="132" fill="#e29084"/>
+<text x="1052" y="594" font-size="17" fill="#e8e9ee" font-weight="bold" text-anchor="start">muse-spark-1.3, JSON</text>
+<rect x="1257" y="582" width="79" height="20" fill="#20232d" stroke="#e29084" stroke-width="1"/>
+<text x="1267" y="586" font-size="11" fill="#e29084" font-weight="bold" text-anchor="start">FALLBACK</text>
+<text x="1052" y="618" font-size="12" fill="#969ba8" text-anchor="start">chat_structured() into</text>
+<text x="1052" y="637" font-size="12" fill="#969ba8" text-anchor="start">tools\bake_meta.py</text>
+<text x="1052" y="656" font-size="12" fill="#969ba8" text-anchor="start">data\meta_bake.json: 18 row(s)</text>
+<text x="1052" y="675" font-size="12" fill="#969ba8" text-anchor="start">live 0 of 18</text>
+<rect x="1368" y="570" width="312" height="132" fill="#1a1c24" stroke="#969ba8" stroke-width="1"/>
+<rect x="1368" y="570" width="4" height="132" fill="#969ba8"/>
+<text x="1384" y="594" font-size="17" fill="#e8e9ee" font-weight="bold" text-anchor="start">ear review</text>
+<rect x="1574" y="582" width="94" height="20" fill="#20232d" stroke="#969ba8" stroke-width="1"/>
+<text x="1584" y="586" font-size="11" fill="#969ba8" font-weight="bold" text-anchor="start">NOT CALLED</text>
+<text x="1384" y="618" font-size="12" fill="#969ba8" text-anchor="start">vision() on a spectrogram</text>
+<text x="1384" y="637" font-size="12" fill="#969ba8" text-anchor="start">tools\ear_critic.py</text>
+<text x="1384" y="656" font-size="12" fill="#969ba8" text-anchor="start">cache entries: 0, no model is named for</text>
+<text x="1384" y="675" font-size="12" fill="#969ba8" text-anchor="start">it</text>
+<rect x="40" y="752" width="395" height="100" fill="#1a1c24" stroke="#6cc4f0" stroke-width="1"/>
+<rect x="40" y="752" width="4" height="100" fill="#6cc4f0"/>
+<text x="56" y="776" font-size="17" fill="#e8e9ee" font-weight="bold" text-anchor="start">data\meta_bake.json</text>
+<text x="56" y="800" font-size="12" fill="#969ba8" text-anchor="start">18 rows, every row source fallback</text>
+<text x="56" y="819" font-size="12" fill="#969ba8" text-anchor="start">model muse-spark-1.3, live 0</text>
+<rect x="455" y="752" width="395" height="100" fill="#1a1c24" stroke="#6cc4f0" stroke-width="1"/>
+<rect x="455" y="752" width="4" height="100" fill="#6cc4f0"/>
+<text x="471" y="776" font-size="17" fill="#e8e9ee" font-weight="bold" text-anchor="start">data\ai_cache</text>
+<text x="471" y="800" font-size="12" fill="#969ba8" text-anchor="start">6 recorded answer(s), backend mock 6</text>
+<text x="471" y="819" font-size="12" fill="#969ba8" text-anchor="start">live entries: 0</text>
+<rect x="870" y="752" width="395" height="100" fill="#1a1c24" stroke="#6cc4f0" stroke-width="1"/>
+<rect x="870" y="752" width="4" height="100" fill="#6cc4f0"/>
+<text x="886" y="776" font-size="17" fill="#e8e9ee" font-weight="bold" text-anchor="start">data\scene_palettes.json</text>
+<text x="886" y="800" font-size="12" fill="#969ba8" text-anchor="start">one palette per scene</text>
+<text x="886" y="819" font-size="12" fill="#969ba8" text-anchor="start">tools\scene_palette_set.py validates it</text>
+<rect x="1285" y="752" width="395" height="100" fill="#1a1c24" stroke="#6cc4f0" stroke-width="1"/>
+<rect x="1285" y="752" width="4" height="100" fill="#6cc4f0"/>
+<text x="1301" y="776" font-size="17" fill="#e8e9ee" font-weight="bold" text-anchor="start">knowledge\NES-AUDIT.md</text>
+<text x="1301" y="800" font-size="12" fill="#969ba8" text-anchor="start">written by tools\nes_audit_all.py</text>
+<text x="1301" y="819" font-size="12" fill="#969ba8" text-anchor="start">today: FAIL, 183 file(s)</text>
+<text x="1301" y="838" font-size="12" fill="#969ba8" text-anchor="start">11 gated row(s) failing</text>
+<line x1="354" y1="435" x2="370" y2="435" stroke="#6cc4f0" stroke-width="2"/>
+<polygon points="370,435 362,431 362,439" fill="#6cc4f0"/>
+<line x1="686" y1="435" x2="702" y2="435" stroke="#6cc4f0" stroke-width="2"/>
+<polygon points="702,435 694,431 694,439" fill="#6cc4f0"/>
+<line x1="1018" y1="435" x2="1034" y2="435" stroke="#6cc4f0" stroke-width="2"/>
+<polygon points="1034,435 1026,431 1026,439" fill="#6cc4f0"/>
+<line x1="1350" y1="435" x2="1366" y2="435" stroke="#6cc4f0" stroke-width="2"/>
+<polygon points="1366,435 1358,431 1358,439" fill="#6cc4f0"/>
+<text x="40" y="538" font-size="12" fill="#969ba8" text-anchor="start">each call below lands in the stage above it; none of them is live today</text>
+<rect x="40" y="856" width="1640" height="100" fill="#20232d" stroke="#e29084" stroke-width="1"/>
+<text x="56" y="876" font-size="12" fill="#e8e9ee" text-anchor="start">No Meta model call has been made from this repository: data\ai_cache holds 6 entries, every one recorded under the mock backend, and</text>
+<text x="56" y="894" font-size="12" fill="#e8e9ee" text-anchor="start">data\meta_bake.json holds 18 rows whose source is fallback, with live 0.</text>
+<text x="56" y="912" font-size="12" fill="#e8e9ee" text-anchor="start">The one real model that has produced a frame here is an image model on the Kaggle GPU node, and it is not a Meta model (r7_manifest.json names it).</text>
+<text x="56" y="930" font-size="12" fill="#e8e9ee" text-anchor="start">The art audit verdict today is FAIL: 183 file(s) checked, 35 failing, 0 the checker could not read, 11 gated failure(s). It is regenerated by its own tool, never edited by hand.</text>
+<text x="40" y="984" font-size="11" fill="#969ba8" text-anchor="start">drawn by tools\make_architecture_diagram.py from the files in this repository; no hand editing, no timestamp, byte identical on every run</text>
+<text x="40" y="1004" font-size="11" fill="#969ba8" text-anchor="start">sources: data\meta_bake.json, data\ai_cache, knowledge\NES-AUDIT.md, output\demo\run_001_verify.json</text>
+</svg>
