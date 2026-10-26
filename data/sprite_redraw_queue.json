@@ -32,7 +32,7 @@
     "note": "no other game's art was opened, compared or traced; every redraw is hand authored from this repo's bibles"
   },
   "mirror_note": "Resolved on 2026-10-23 by card t_4e54cc9e. The queue measures game/sprites_src, which is the authored tree, and game/art is deleted: the folder was untracked and gitignored, the runtime reads game/datafiles/art, which tools/sync_art.py rebuilds from game/sprites_src/{title,env,chars,env/quay}, and the game's .yyp names datafiles 246 times and game/art zero times (knowledge/PALETTE-RULINGS-2026-10-23.md, ruling 3). Fifteen rows were repointed with their numbers re-measured from the new path, two were renamed to the shipped names, and two were retired with the only copy kept at assets/retired_art/. The same card removed .gitignore's game/art line, fixed tools/sync_art.py's docstring, pointed the three redraw tools at output/redraws/ instead of the retired folder, and pointed tests/test_make_font_row.py at the shipped font. Original note, kept as history: game/art was the folder the 2026-10-21 art lane wrote, and a redraw in it never reached the running game, because sync_art rewrites the mirror from sprites_src.",
-  "count": 31,
+  "count": 42,
   "entries": [
     {
       "id": "runtime_role_colours_not_2c02",
@@ -217,7 +217,8 @@
         ],
         "note": "measured from the shipped sheet on 2026-10-23; a listed entry the sheet does not spend is a palette_roles question for gamedev, not a defect this card decides"
       },
-      "status_note": "Status left at done. The check passes on the shipped sheet; what changed is which file the numbers came from."
+      "status_note": "Status left at done. The check passes on the shipped sheet; what changed is which file the numbers came from.",
+      "rank": 7
     },
     {
       "id": "spr_pp_menu_cursor",
@@ -373,7 +374,8 @@
           "Q2 the gold the row asks for. This row's palette_roles list $28 gold as the accent and $0F ink for the outline, and the shipped cursor can spend neither: scene_title.json gives the cursor sp3 ($0C, $0B, $20), the same triple the road band is painted in. Gold $28 is carried by sp0, which is the wordmark's and the two car busts' palette. May the menu cursor move to sp0 so it can be gold on ink, which is the colour the row's reading asks for, or does it stay white and dark green in sp3?"
         ],
         "status_note": "Done by this card: the row's own check now passes on the ground the cursor is drawn on. The unlit frame no longer disappears into the sky, the sheet carries both bands, and what is left is gamedev's: Q1 (the band the cursor is read on) and Q2 (the gold the row's palette_roles ask for)."
-      }
+      },
+      "rank": 11
     },
     {
       "id": "spr_pp_title_logo",
@@ -601,7 +603,8 @@
           "it asked for the open outline on the R to be closed and for an orphan corner pixel to be removed; the orphan specks are real but not where the model said"
         ]
       },
-      "eye_round_12": "round 12 measured the 18 pixel redraw (0.06 percent of the sheet) and the sheet A reviewer said it adds noise and buys no legibility."
+      "eye_round_12": "round 12 measured the 18 pixel redraw (0.06 percent of the sheet) and the sheet A reviewer said it adds noise and buys no legibility.",
+      "rank": 2
     },
     {
       "id": "spr_pp_window",
@@ -726,7 +729,8 @@
         ],
         "listed_entries_not_spent": [],
         "note": "measured from the shipped sheet on 2026-10-23; a listed entry the sheet does not spend is a palette_roles question for gamedev, not a defect this card decides"
-      }
+      },
+      "rank": 4
     },
     {
       "id": "spr_title_bubble",
@@ -856,7 +860,8 @@
           "$30"
         ],
         "note": "measured from the shipped sheet on 2026-10-23; a listed entry the sheet does not spend is a palette_roles question for gamedev, not a defect this card decides"
-      }
+      },
+      "rank": 13
     },
     {
       "id": "spr_title_car",
@@ -1040,7 +1045,8 @@
           "the wheels are one dark teal mass and want a lighter entry, blocked behind the open Q1 on t_13e25e31"
         ]
       },
-      "eye_round_12": "round 12 measured both files: the redraw folder copy is a 10-23 draft with 7 colours, the authored file at 00:09 has 3 colours. Two models on two sheets named the wheels as the weakest part of the car."
+      "eye_round_12": "round 12 measured both files: the redraw folder copy is a 10-23 draft with 7 colours, the authored file at 00:09 has 3 colours. Two models on two sheets named the wheels as the weakest part of the car.",
+      "rank": 8
     },
     {
       "id": "spr_title_cloud",
@@ -1252,7 +1258,8 @@
           "'nice fluffy cloud sprites'"
         ]
       },
-      "eye_round_12": "round 12 looked at the cloud at 7x on sheet C: the third cell's diagonal white streak reads as a scribble to the reviewer."
+      "eye_round_12": "round 12 looked at the cloud at 7x on sheet C: the third cell's diagonal white streak reads as a scribble to the reviewer.",
+      "rank": 3
     },
     {
       "id": "spr_title_cone",
@@ -1406,7 +1413,8 @@
       "q_for_gamedev": [
         "Q3 which palette judges the cone: measured, the beam at 140,200 falls over band bg3 ($0C, $0B, $20), which carries no light mid entry, so a three step falloff cannot be drawn inside it. The row's own palette_roles ask for $28 / $10 / $00, which sit in sp0 and sp2 and in no band. May the shipped cone move to the three step sheet and be judged on sprite palettes rather than on bg3, or does the band palette win and the cone stays one flat entry?"
       ],
-      "eye_round_12": "round 12 measured the redraw against the file the game draws: redraw 3 colours, 1352 of 3840 pixels, 01:20; authored 1 colour, 1246 pixels, 20:24. The redraw has not landed."
+      "eye_round_12": "round 12 measured the redraw against the file the game draws: redraw 3 colours, 1352 of 3840 pixels, 01:20; authored 1 colour, 1246 pixels, 20:24. The redraw has not landed.",
+      "rank": 1
     },
     {
       "id": "spr_title_exhaust",
@@ -1692,7 +1700,18 @@
         ],
         "note": "measured from the shipped sheet on 2026-10-23; a listed entry the sheet does not spend is a palette_roles question for gamedev, not a defect this card decides"
       },
-      "status_note": "Row id changed from spr_title_ronan to the shipped name. Status left at queued because nobody has read the bust as art, not because anything is wrong with the palette or the grid."
+      "status_note": "Still queued after card t_b15e9c7a, and now for a measured reason rather than an unread one. The redraw exists at output/redraws/spr_title_konrad.png (tools/art/make_title_bust_v2.py): 8 frames of 16x16, hand written 12x12 grids, three entries $0F ink, $00 grey and $28 gold, which is exactly hero_palettes.konrad, nes_check PASS and 0 of 4 tiles uncovered by title sp0. It cannot be marked done because palette_synergy fails 4 of 8 pairs on the only ground this sheet has, the car's glass pane, and the numbers under ground_measurement show that no entry of any title sprite palette clears both entries of that pane. Q: knowledge/PALETTE-RULINGS-2026-10-25.md section 2 tables spr_title_konrad as a figure because its window is one ground, the car interior behind the glass. Measured, that window holds $0C on 103 px and $20 on 14 px. Either the $20 reflection comes out of the car sheet, or the bust is classified again, or the bust is given an entry that sits between the two, and all three are gamedev's. Until then the row stays queued and no redraw can clear it.",
+      "ground_measurement": {
+        "measured_by": "tools/art/make_title_bust_v2.py build_ground, card t_b15e9c7a",
+        "ground": "output/spr_title_konrad_ground.png, the 15 x 8 glass pane of game/sprites_src/title/spr_title_car.png at x 11 to 25, rows 8 to 15, read with the composer's own window reader",
+        "entries": {
+          "$0C": "103 px, 88.0 percent",
+          "$20": "14 px, 12.0 percent, the diagonal reflection streak"
+        },
+        "why_no_entry_passes": "no entry of the title's four sprite palettes separates from both: $0F is 1.87:1 at 0 rows on $0C, $00 is 2.68:1 at 0 rows on $0C, $28 is 6.32:1 on $0C but 1.67:1 at 0 rows on $20, and a probe drawn in title sp2 ($0C $10 $20) reports body $10 at 5.90:1 on $0C but 1.79:1 one row from $20, so 4 of 8 pairs still fail. Contrasts measured with tools/art/contrast_check.py on the 2C02 luminances",
+        "consequence": "the pane's two entries sit two luminance rows apart at the ends, which is the same arithmetic that made the exhaust puff a tiled layer on card t_474cde50, so on this ground no 16x16 figure can pass RULE 0 point 2, and the drawing is not what decides it",
+        "question_for_gamedev": "Q: knowledge/PALETTE-RULINGS-2026-10-25.md section 2 tables spr_title_konrad as a figure because its window is one ground, the car interior behind the glass. Measured, that window holds $0C on 103 px and $20 on 14 px. Either the $20 reflection comes out of the car sheet, or the bust is classified again, or the bust is given an entry that sits between the two, and all three are gamedev's. Until then the row stays queued and no redraw can clear it."
+      }
     },
     {
       "id": "spr_title_sign",
@@ -1783,7 +1802,7 @@
         "means": "must print PASS: every pixel a data/nes_palette.json entry, width and height multiples of 8, at most 3 opaque colours per 8x8 tile, at most 25 colours per sheet",
         "result": "PASS on 2026-10-23 by card t_4e54cc9e, re-measured from this path"
       },
-      "status": "queued",
+      "status": "done",
       "measured_source": {
         "path": "game/sprites_src/title/spr_title_sign.png",
         "card": "t_4e54cc9e",
@@ -1804,7 +1823,64 @@
           "$30"
         ],
         "note": "measured from the shipped sheet on 2026-10-23; a listed entry the sheet does not spend is a palette_roles question for gamedev, not a defect this card decides"
-      }
+      },
+      "after": {
+        "drawn_by": "tools/art/make_title_sign_v2.py",
+        "card": "t_d8fd83fd",
+        "date": "2026-10-25",
+        "file": "output/redraws/spr_title_sign.png, a redraw in the scratch folder, not the shipped sheet",
+        "sheet_px": [
+          384,
+          24
+        ],
+        "frames": 4,
+        "frame_px": [
+          96,
+          24
+        ],
+        "colours": 3,
+        "entries": [
+          "$09 green #007800 the face, 5798 px over the four frames (62.9 percent)",
+          "$20 white #f8f8f8 the keyline and the lettering, 2474 px (26.8 percent)",
+          "$00 grey #7c7c7c the ink edge, 944 px (10.2 percent)"
+        ],
+        "drawn_px": 9216,
+        "worst_tile_opaque": 3,
+        "tiles": 144,
+        "outline_edge": "944 of 944 outer boundary pixels are the plate's ink $00, the ring SP-025 asks for on the ground side",
+        "nes_check": "PASS: 384x24, 144 tiles, 3 colours, 0 off palette pixels, worst 8x8 tile 3 opaque colours at tile 0,0",
+        "palette_synergy": "PASS on the verge the sign stands in, 0 failing pairs: --scene title --background output/spr_title_sign_ground.png --sprite output/redraws/spr_title_sign.png --frame-w 96 --frame-h 24 --at 0,0. A 96x24 frame is wider than a battle figure, so the sheet is a tiled layer and R1b is the rule. Body $20 reads 5.36:1 on the verge $09, 8.25:1 on $0B and 19.77:1 on $0F, so it clears 3.0:1 on every ground colour under it; the frame fits title sp1 [1], and nothing it spends is outside the scene's four sprite palettes. The ink edge $00 is the craft outline, not the separation: it reads 1.36:1 on $09, 2.10:1 on $0B and 5.03:1 on $0F.",
+        "ground": "output/spr_title_sign_ground.png, 96x24 at 30,154: the seven shipped title layers composed at camera 0 with the sign left out, cropped at data/title.json's sign.x, sign.y over the verge layer's own y. Entries $0B #005800 1057 px, $09 #007800 1055 px, $0F #000000 192 px.",
+        "before": {
+          "colours": 2,
+          "entries": [
+            "$09 #007800 6710 px",
+            "$20 #f8f8f8 2506 px"
+          ],
+          "largest_entry_pct": 72.8,
+          "drawn_px": 9216,
+          "worst_tile_opaque": 2,
+          "outline_edge": "0 of 944 outer boundary pixels are $00: the plate's outermost ring is $20 white, so the shipped plate has no ink edge at all",
+          "nes_check": "PASS",
+          "palette_synergy": "PASS, 0 failing pairs, body $20, ink $09, palette that fits [1], measured on 2026-10-25 before the redraw"
+        },
+        "before_vs_after": {
+          "entries_on_the_sheet": "2 before ($09, $20), 3 after ($09, $20, $00)",
+          "outline_edge": "0 of 944 boundary px on the ink before, 944 of 944 after",
+          "largest_entry_pct": "72.8 before ($09 6710 px), 62.9 after ($09 5798 px)",
+          "body_ground_pairs": "0 failing before, 0 after: the row's own check already passed on the shipped sheet, and this redraw does not regress it",
+          "worst_tile_opaque": "2 before, 3 after, against a ceiling of 3",
+          "what_the_redraw_adds": "the craft rule the row names, SP-025: an outline on the side the ground is. The shipped plate is a white ring laid straight on the verge with no edge of its own; the redraw draws 1 px of $00 outside the keyline all the way round, on the same three entries title sp1 carries."
+        },
+        "contact_sheet": "output/sprites_v2_sheet.png rebuilt by tools/art/make_title_rows_v2.py at 1024x4592, the sign band at (32, 3880) at 2x found by a full-pixel search of the sheet for output/redraws/spr_title_sign.png. It is one band, not two: the plate is opaque over its whole 96x24 frame, so a second band on the verge would be the same pixels, which is what the ui enemy row found on card t_b15e9c7a. The sheet carries 4 sprite_tile problems at y 3208, all in a band above the sign's and still there with the sign band switched off, so they are not this row's.",
+        "read": "vision check on output/sign_redraw_4x.png (1536x96, 4x): the four frames read BASINGSTOKE 20 over SOUTHAMPTON 55, BASINGSTOKE 8 over SOUTHAMPTON 43, WINCHESTER 12 over SOUTHAMPTON 30 and WINCHESTER 2 over SOUTHAMPTON 20, the lettering is legible, and each plate carries a dark edge, a white keyline and a green face.",
+        "q_for_gamedev": [
+          "Q1 the row's palette_roles against the scene. They list $0F ink, $30 white letters, $09 green border and $0B green shade, and data/palettes/scene_title.json gives spr_title_sign sp1, which is [$09, $00, $20]: $0F, $30 and $0B sit in no title sprite palette this name can reach, so the row lists three entries the scene cannot carry. The redraw spends sp1's three. May the row's palette_roles be rewritten to sp1's triple, the way the logo row's were rewritten to sp0's three on 2026-10-23?",
+          "Q2 who lands it. tools/art/make_title_world.py sign_plate() owns spr_title_sign, so this redraw sits in output/redraws and the shipped sheet is unchanged at sha256 86621d7f. May the title lane move sign_plate() onto this nine-slice plate, which adds the SP-025 ink edge and keeps the game's own SIGN_TEXTS count down untouched?"
+        ],
+        "status_note": "Done by card t_d8fd83fd: the row's own check passes on the redraw, and the craft rule the row names is now measured on the drawing, 944 of 944 outer boundary pixels in the plate's ink. What is left is gamedev's: Q1 (the row's palette_roles name three entries no title sprite palette carries) and Q2 (the owner tool lands the plate)."
+      },
+      "rank": 10
     },
     {
       "id": "spr_title_zander",
@@ -1924,7 +2000,18 @@
         ],
         "note": "measured from the shipped sheet on 2026-10-23; a listed entry the sheet does not spend is a palette_roles question for gamedev, not a defect this card decides"
       },
-      "status_note": "Row id changed from spr_title_theo to the shipped name. Status left at queued because nobody has read the bust as art, and because the palette_roles block above lists hero blues the shipped sheet does not spend."
+      "status_note": "Still queued after card t_b15e9c7a: this bust sits in the same pane as Konrad's and is refused by the same arithmetic, so no redraw of it can pass RULE 0 point 2 before the ground question is answered. Q: knowledge/PALETTE-RULINGS-2026-10-25.md section 2 tables spr_title_konrad as a figure because its window is one ground, the car interior behind the glass. Measured, that window holds $0C on 103 px and $20 on 14 px. Either the $20 reflection comes out of the car sheet, or the bust is classified again, or the bust is given an entry that sits between the two, and all three are gamedev's. Until then the row stays queued and no redraw can clear it.",
+      "ground_measurement": {
+        "measured_by": "tools/art/make_title_bust_v2.py build_ground, card t_b15e9c7a",
+        "ground": "output/spr_title_konrad_ground.png, the 15 x 8 glass pane of game/sprites_src/title/spr_title_car.png at x 11 to 25, rows 8 to 15, read with the composer's own window reader",
+        "entries": {
+          "$0C": "103 px, 88.0 percent",
+          "$20": "14 px, 12.0 percent, the diagonal reflection streak"
+        },
+        "why_no_entry_passes": "no entry of the title's four sprite palettes separates from both: $0F is 1.87:1 at 0 rows on $0C, $00 is 2.68:1 at 0 rows on $0C, $28 is 6.32:1 on $0C but 1.67:1 at 0 rows on $20, and a probe drawn in title sp2 ($0C $10 $20) reports body $10 at 5.90:1 on $0C but 1.79:1 one row from $20, so 4 of 8 pairs still fail. Contrasts measured with tools/art/contrast_check.py on the 2C02 luminances",
+        "consequence": "the pane's two entries sit two luminance rows apart at the ends, which is the same arithmetic that made the exhaust puff a tiled layer on card t_474cde50, so on this ground no 16x16 figure can pass RULE 0 point 2, and the drawing is not what decides it",
+        "question_for_gamedev": "Q: knowledge/PALETTE-RULINGS-2026-10-25.md section 2 tables spr_title_konrad as a figure because its window is one ground, the car interior behind the glass. Measured, that window holds $0C on 103 px and $20 on 14 px. Either the $20 reflection comes out of the car sheet, or the bust is classified again, or the bust is given an entry that sits between the two, and all three are gamedev's. Until then the row stays queued and no redraw can clear it."
+      }
     },
     {
       "id": "spr_title_wheel",
@@ -2015,7 +2102,7 @@
         "means": "must print PASS: every pixel a data/nes_palette.json entry, width and height multiples of 8, at most 3 opaque colours per 8x8 tile, at most 25 colours per sheet",
         "result": "PASS on 2026-10-23 by card t_4e54cc9e, re-measured from this path"
       },
-      "status": "queued",
+      "status": "done",
       "measured_source": {
         "path": "game/sprites_src/title/spr_title_wheel.png",
         "card": "t_4e54cc9e",
@@ -2036,7 +2123,42 @@
           "$10"
         ],
         "note": "measured from the shipped sheet on 2026-10-23; a listed entry the sheet does not spend is a palette_roles question for gamedev, not a defect this card decides"
-      }
+      },
+      "after": {
+        "path": "output/redraws/spr_title_wheel.png",
+        "tool": "tools/art/make_title_wheel_v2.py",
+        "frames": 4,
+        "frame_px": [
+          16,
+          16
+        ],
+        "note": "a redraw, not the shipped tree: game/sprites_src/title belongs to tools/art/make_title_car.py, which still draws the green tyre, so landing this sheet in the tree is a gamedev call on that generator"
+      },
+      "redraw": {
+        "path": "output/redraws/spr_title_wheel.png",
+        "card": "t_f9a18f00",
+        "date": "2026-10-26",
+        "ground": "output/spr_title_wheel_ground.png, the 16 x 16 of game/sprites_src/title/title_L6_road.png at the wheel's own placement (game macros PP_TITLE_CAR 76,193, the frame at car-local 6,19, the layer y 192 from data/title.json): $0F 234 px 91.4 percent and $0C 22 px 8.6 percent, one surface"
+      },
+      "measured_after": {
+        "colours": 2,
+        "entries": [
+          "$0C #004058",
+          "$20 #f8f8f8"
+        ],
+        "drawn_px": 352,
+        "largest_entry": "#004058",
+        "largest_entry_px": 210,
+        "largest_entry_pct": 59.7,
+        "outer_boundary_px": 112,
+        "outer_boundary_on_darkest": 112,
+        "outer_boundary_on_darkest_pct": 100.0,
+        "body_on_both_ground_entries": "$20 clears RULE 0 point 2 on $0F and on $0C, both 2 luminance rows apart, 0 failing pairs",
+        "nes_check": "PASS, 64x16 16 tiles 2 colours",
+        "palette_synergy": "PASS, 1 sprite file(s), 0 failing pair(s) on output/spr_title_wheel_ground.png, palettes that fit [2, 3] on all four frames",
+        "contact_sheet": "output/sprites_v2_sheet.png carries the row twice, the strip at 4x and the four frames laid on the road band at 4x"
+      },
+      "status_note": "Redrawn by card t_f9a18f00, the next P1 row after the two busts, which stay queued on their own Q. Before, measured on the shipped sheet: 3 colours, $0B #005800 135 px (44.4 percent) as the TYRE, $0C #004058 and $20 #f8f8f8, 304 drawn pixels, 96 outer boundary pixels of which 0 are the darkest entry (0.0 percent), nes_check PASS: a green tyre, so the tyre and the rim could not be told apart and the wheel read as a disc. After, on output/redraws/spr_title_wheel.png: 2 colours, $0C #004058 210 px as the tyre and the 1 px outline, $20 #f8f8f8 142 px as the rim, the four spokes and the hub, 352 drawn pixels, 112 outer boundary pixels of which 112 are the darkest entry (100.0 percent); SP-049 is met by four different spoke drawings (+ , x, three spoke, + one row up), not one drawing bobbed. Checks: nes_check PASS 64x16 16 tiles 2 colours; palette_synergy PASS 0 failing pairs on output/spr_title_wheel_ground.png (the 16 x 16 of shipped title_L6_road at the wheel's own placement, $0F 91.4 percent and $0C 8.6 percent), body $20 two luminance rows from both ground entries and palettes that fit [2, 3] on every frame; output/sprites_v2_sheet.png 1024x4912 carries the row as a strip at 4x and as four frames laid on the road band at 4x. Q: band bg3 (data/palettes/scene_title.json, the band this sheet is painted in) carries $0C $0B $20, so the row's palette_roles of $0F tyre, $10 rim and $20 hub cannot all ship, the same arithmetic that took the exhaust's $10 body to $20; the redraw spends $0C and $20 and leaves the $0B or RULE 0 point 3 accent line to gamedev. Q: the v2 car bakes its wheels, so the title draws no wheel sprite and whether this row retires is the art lane's call (knowledge/PALETTE-RULINGS-2026-10-25.md section 6)."
     },
     {
       "id": "spr_player_ow",
@@ -2737,8 +2859,66 @@
         "means": "palette and grid only; it cannot see which colour each frame spends",
         "result": "not run by this card"
       },
-      "status": "queued_by_eye",
-      "after": null,
+      "status": "done",
+      "after": {
+        "card": "t_5e488e26",
+        "date": "2026-10-25",
+        "drawn_by": "tools/art/make_enemies.py, the generator that owns this name: the sheet is generated by tools/art/make_enemies.py, which owns the name: the lower half of the body is the shade plane \"s\" (the same hex as the mid tone, so it costs no entry), and the hit frame is now drawn by the tool (hit_draw) with \"s\" lit to the light entry, instead of the blanket recolour of every mid tone that emptied the frame of its body",
+        "file": "game/sprites_src/enemies/bilge_slime.png",
+        "sheet_px": [
+          96,
+          32
+        ],
+        "frames": 3,
+        "frame_px": [
+          32,
+          32
+        ],
+        "colours_per_frame": {
+          "before": [
+            3,
+            3,
+            2
+          ],
+          "after": [
+            3,
+            3,
+            3
+          ]
+        },
+        "entries_per_frame_after": [
+          "$0f #000000 94 px (the rim, the eyes and the mouth)",
+          "$1a #00a800 148 px (the green body of the upper mass)",
+          "$2a #58d854 269 px (the lit lower mass and the splash)"
+        ],
+        "frame_3_before": "$2a #58d854 409 px and $0f #000000 96 px only: the flash repainted every mid tone, so the last frame dropped #00a800",
+        "px_that_are_a_ground_colour": {
+          "before": 0,
+          "after": 0
+        },
+        "pct_that_are_a_ground_colour": {
+          "before": 0.0,
+          "after": 0.0
+        },
+        "drawn_px": {
+          "before": [
+            505,
+            526,
+            505
+          ],
+          "after": [
+            505,
+            526,
+            511
+          ]
+        },
+        "off_palette_px": 0,
+        "worst_tile_opaque": 3,
+        "nes_check": "PASS: 96x32, 48 tiles, 3 colours, 0 off data/nes_palette.json (python tools/nes_check.py game/sprites_src/enemies/bilge_slime.png --type sprite, 2026-10-25)",
+        "palette_synergy": "PASS, 0 failing pairs, on the ground this enemy is drawn on: python tools/palette_synergy.py --scene sea --background output/enemies_sea_ground.png --at 0,0 --frame-w 32 --frame-h 32 (body $1a on the $02 sea clears the 3:1 floor, tiles 12 inked, 0 uncovered). Frame 2 now fits sprite palette sp2_green only, the same palette as frames 0 and 1; before it fit the same set but by two colours, which is what the dropped entry bought",
+        "contact_sheet": "output/sprites_v2_sheet.png rebuilt by tools/art/make_title_rows_v2.py at 1024x4224, 18 colours; the band BILGE SLIME SPR_PP_BILGE_SLIME is the exact 3x nearest upscale of this strip, found at (32, 2184) on the sheet by a pixel search",
+        "what_changed_in_the_drawing": "1) the shade plane: every mid tone at y >= 21 became \"s\" (the mid hex in frames 0 and 1, so nothing moved). 2) the hit frame is drawn rather than recoloured: it lights \"s\" to $2a and bubbles four splash blocks up, so the ink rim and the green body both stay on the sheet and frame 3 spends three entries."
+      },
       "source": {
         "sheet": "K",
         "tile": 1,
@@ -3128,7 +3308,8 @@
         "model_calls": [
           "basic, readable, standard NES sprite work (measured: the only defect found is the ground colour clash, 201 px)"
         ]
-      }
+      },
+      "rank": 5
     },
     {
       "id": "spr_pp_petty_officer",
@@ -3311,8 +3492,69 @@
         "means": "palette and grid only; it cannot see which colour each frame spends",
         "result": "not run by this card"
       },
-      "status": "queued_by_eye",
-      "after": null,
+      "status": "done",
+      "after": {
+        "card": "t_5e488e26",
+        "date": "2026-10-25",
+        "drawn_by": "tools/art/make_enemies.py, the generator that owns this name: the sheet is generated by tools/art/make_enemies.py, which owns the name: the lower half of the body is the shade plane \"s\" (the same hex as the mid tone, so it costs no entry), and the hit frame is now drawn by the tool (hit_draw) with \"s\" lit to the light entry, instead of the blanket recolour of every mid tone that emptied the frame of its body. Second defect, the eye's round 10 finding: the rim was \"k\", which in sp3_sea is #0000bc, the sea ground to the pixel, so the rim was invisible on the ground the enemy is drawn on; the rim is now \"l\" foam and \"k\" is spent only as the two pupils and the mouth, where a dark is the subject. The same answer the gull got on card t_ae4bbd15.",
+        "file": "game/sprites_src/enemies/rogue_wave.png",
+        "sheet_px": [
+          96,
+          32
+        ],
+        "frames": 3,
+        "frame_px": [
+          32,
+          32
+        ],
+        "colours_per_frame": {
+          "before": [
+            3,
+            3,
+            2
+          ],
+          "after": [
+            3,
+            3,
+            3
+          ]
+        },
+        "entries_per_frame_after": [
+          "$02 #0000bc 11 px (the two pupils and the mouth)",
+          "$3c #3cbcfc 393 px (the cyan body)",
+          "$30 #fcfcfc 283 px (the foam rim and the crest)"
+        ],
+        "frame_3_before": "$30 #fcfcfc 484 px and $02 #0000bc 203 px only: the flash repainted every mid tone, so the last frame dropped the cyan and needed a second sprite palette",
+        "px_that_are_a_ground_colour": {
+          "before": 627,
+          "after": 33
+        },
+        "pct_that_are_a_ground_colour": {
+          "before": 30.1,
+          "after": 1.6
+        },
+        "drawn_px": {
+          "before": [
+            687,
+            710,
+            687
+          ],
+          "after": [
+            687,
+            710,
+            692
+          ]
+        },
+        "off_palette_px": 0,
+        "worst_tile_opaque": 3,
+        "nes_check": "PASS: 96x32, 48 tiles, 3 colours, 0 off data/nes_palette.json (python tools/nes_check.py game/sprites_src/enemies/rogue_wave.png --type sprite, 2026-10-25)",
+        "palette_synergy": "PASS, 0 failing pairs, on the ground this enemy is drawn on: python tools/palette_synergy.py --scene sea --background output/enemies_sea_ground.png --at 0,0 --frame-w 32 --frame-h 32 (three frames, tiles 16 inked, 0 uncovered by any sprite palette of the scene). It was PASS 0 failing pairs before too, because R1 measures the body and the body was never the ground colour; the defect this row fixes was the rim and the frame 3 entry set, which the same run now reports as frame 2 fitting sprite palette 3 only (before: palettes 0 and 3, which is what a dropped entry buys and what needs the second palette)",
+        "contact_sheet": "output/sprites_v2_sheet.png rebuilt by tools/art/make_title_rows_v2.py at 1024x4224, 18 colours; the band ROGUE WAVE SPR_PP_ROGUE_WAVE is the exact 3x nearest upscale of this strip, found at (32, 1992) on the sheet by a pixel search",
+        "what_changed_in_the_drawing": "1) the shade plane: every mid tone at y >= 23 became \"s\", which carries the mid hex in frames 0 and 1, so nothing moved on screen and the flash has a plane to light. 2) the hit frame is drawn rather than recoloured: it lights \"s\" to $30 and throws four extra spray blocks, so the cyan body stays on the sheet and frame 3 spends three entries. 3) the rim moved from \"k\" to \"l\" foam: white on the navy is what a breaker crest looks like and it is the one pair that separates on that ground.",
+        "q_for_gamedev": [
+          "Q1 the mouth. The mouth is \"k\" (#0000bc in sp3_sea), so on the sea it reads as a hole in the wave rather than a line. It is 7 px and it is the only dark left besides the two pupils. Keeping it is this lane's reading of RULE 0 point 1 (a dark is fine where the dark is the subject); if gamedev wants the mouth in the body colour instead, that is a one line change."
+        ]
+      },
       "source": {
         "sheet": "K",
         "tile": 6,
@@ -3796,7 +4038,8 @@
         ],
         "listed_entries_not_spent": [],
         "note": "the row shipped no palette_roles list when the eye opened it ('not known to the eye'), so the three entries the redraw spends ARE the row's palette set now, and they are exactly one sprite palette of battle_deck_night. Gamedev owns the palette decision; Q2 to Q4 ask it."
-      }
+      },
+      "rank": 9
     },
     {
       "id": "sailor_ow_v2",
@@ -4017,7 +4260,8 @@
           "frames 7 and 8 collapse the face plane when he faces sideways; not verified here",
           "the scene size crop sent beside him contained no sailor at all, so that part of the review is about the eye's sheet, not about this row"
         ]
-      }
+      },
+      "rank": 12
     },
     {
       "id": "spr_pp_ui_enemy",
@@ -4050,9 +4294,10 @@
         "measured_largest_colour_share": 0.879
       },
       "drawn_by": {
-        "tool": null,
+        "tool": "tools/art/make_ui_frames_v2.py",
         "commit": null,
-        "note": "not recorded in the tree"
+        "date": "2026-10-25",
+        "note": "the tool writes the frame as three flat rings, ink $0F outside, white $30 inside it, gold $28 filling the block, and builds its ground from the shipped battle screen. tools/art/make_ui_nes.py still owns the shipped name and still draws the two colour block, so landing this art is a gamedev call on the owner tool"
       },
       "defect": {
         "name": "boundary_ring_is_the_light_colour",
@@ -4067,11 +4312,11 @@
         "why": "source=measured (output/_eye_r8_audit.py): 0.0 percent of this frame's opaque boundary pixels are the darkest colour in the file, so the outer ring is the lighter colour and the frame meets a light ground with no line at all, which is the RULE 0 white blob risk. source=model, sheet N (gemini-3-flash-preview): the critic called the same frame a flat mass and asked for a 1 px dark stroke between the white and the orange."
       },
       "check": {
-        "command": "python output/_eye_r8_tiling.py",
-        "means": "also proves the frame is mirror symmetric, so it tiles against itself",
-        "result": "run by this card; see section 3.8 of the report"
+        "command": "python tools/art/make_ui_frames_v2.py --audit ; python tools/nes_check.py output/redraws/spr_pp_ui_enemy.png --type sprite ; python tools/palette_synergy.py --scene ui --background output/spr_pp_ui_enemy_ground.png --sprite output/redraws/spr_pp_ui_enemy.png --frame-w 32 --frame-h 32",
+        "means": "nes_check must print PASS, palette_synergy must print PASS with 0 failing pairs and 0 uncovered tiles, and the audit must report 100.0 percent of the 124 boundary pixels on the darkest entry",
+        "result": "run by card t_b15e9c7a on 2026-10-25: nes_check PASS, palette_synergy PASS 0 failing pairs, the audit 0.0 percent before and 100.0 percent after, and the 4x band found on output/sprites_v2_sheet.png at y 3654"
       },
-      "status": "queued_by_eye",
+      "status": "done",
       "after": null,
       "source": {
         "sheet": "N",
@@ -4079,7 +4324,31 @@
         "model": "gemini-3-flash-preview",
         "review": "output/eye_reviews/_eye_r8_sheet_n_20261024T031723Z.md",
         "report": "output/EYE_AUTO_2026-10-23_R8.md"
-      }
+      },
+      "redraw": {
+        "path": "output/redraws/spr_pp_ui_enemy.png",
+        "card": "t_b15e9c7a",
+        "date": "2026-10-25",
+        "ground": "output/spr_pp_ui_enemy_ground.png, the 32 x 32 at (160, 88) of game/sprites_src/ui/screens/ui_battle.png, sky $0F 288 px and floor $00 736 px"
+      },
+      "measured_after": {
+        "colours": 3,
+        "entries": [
+          "$0F #000000",
+          "$30 #fcfcfc",
+          "$28 #f8b800"
+        ],
+        "drawn_px": 1024,
+        "largest_entry": "#f8b800",
+        "largest_entry_px": 784,
+        "largest_entry_pct": 76.6,
+        "boundary_pixels": 124,
+        "boundary_pixels_that_are_the_darkest_colour": 100.0,
+        "tile_colour_set": "$0F $30 $28 on every one of the 16 tiles, covered by ui sp0 [15, 40, 48] with 0 uncovered",
+        "nes_check": "PASS, 32x32 16 tiles 3 colours",
+        "palette_synergy": "PASS, 0 failing pairs, 0 of 16 tiles uncovered"
+      },
+      "status_note": "Redrawn by card t_b15e9c7a. Before: 2 colours, $f8b800 900 px and $fcfcfc 124 px, with 0 of 124 boundary pixels on the darkest entry (0.0 percent), the defect the eye's round 8 measured. After: 3 colours, $f8b800 784 px, $fcfcfc 116 px and $000000 124 px, 124 of 124 boundary pixels on the darkest entry (100.0 percent, ink $0F), every one of the 16 tiles inside ui sp0, nes_check PASS, palette_synergy PASS 0 failing pairs on output/spr_pp_ui_enemy_ground.png, and output/sprites_v2_sheet.png carries the row as a band at 4x at y 3654, checked by comparing the sheet pixels against the redraw. Q: landing the sheet is a change to tools/art/make_ui_nes.py, which owns the name, so it is gamedev's."
     },
     {
       "id": "spr_pp_ui_party",
@@ -4133,15 +4402,2779 @@
         "means": "also proves the frame is mirror symmetric, so it tiles against itself",
         "result": "run by this card; see section 3.8 of the report"
       },
-      "status": "queued_by_eye",
-      "after": null,
+      "status": "done",
+      "after": {
+        "drawn_by": "tools/art/make_ui_party_v2.py, hand written 24 x 32 rows in the tool: grey $00 outer ring, white $30 keyline, grey $00 body, and the member marker redrawn as a small gold head and shoulders silhouette instead of the blank 4 x 4 square",
+        "card": "t_09e10c47",
+        "date": "2026-10-26",
+        "file": "output/redraws/spr_pp_ui_party.png, a redraw in the scratch folder, not the shipped sheet",
+        "sheet_px": [
+          24,
+          32
+        ],
+        "frames": 1,
+        "frame_px": [
+          24,
+          32
+        ],
+        "colours": 3,
+        "entries": [
+          "$00 #7c7c7c 622 px: the outer ring and the body, the darkest entry the block may spend",
+          "$30 #fcfcfc 100 px: the keyline one pixel inside the ring",
+          "$28 #f8b800 46 px: the member marker, the gold silhouette"
+        ],
+        "drawn_px": 768,
+        "outer_boundary_px": 108,
+        "outer_boundary_on_darkest": 108,
+        "outer_boundary_on_darkest_pct": 100.0,
+        "worst_tile_opaque": 3,
+        "tiles": 12,
+        "nes_check": "PASS, 24x32, 12 tiles, 3 colours, 0 off palette pixels: python tools/nes_check.py output/redraws/spr_pp_ui_party.png --type sprite, run on Pine 2026-10-26 with pine_offload.py --cmd, exit 0",
+        "palette_synergy": "PASS on Pine, 2026-10-26: python tools/palette_synergy.py --scene ui --background output/spr_pp_ui_party_ground.png --sprite output/redraws/spr_pp_ui_party.png --frame-w 24 --frame-h 32 --at 0,0 -> 'PASS, 1 sprite file(s), 0 failing pair(s)', body $30 row 3 hue grey reading palettes that fit [1], 12 inked 8x8 tiles, 0 of them uncovered by any sprite palette of the scene (data/results/offload-uiparty-0.json in the pine project)",
+        "ground": "output/spr_pp_ui_party_ground.png, 24x32 at 200,32 of game/sprites_src/ui/screens/ui_battle.png: one entry, $0F on all 768 pixels, the sky band the four party slots are read on. data/ui_layouts.json puts the slots at x 28 tiles and y 4, 8, 12 and 16, which is x 224 to 247 and y 32 to 159, and the screen bakes a placeholder block into each of them, so the patch is the same band read in the columns just left of the slot",
+        "before": {
+          "sheet_px": [
+            24,
+            32
+          ],
+          "colours": 3,
+          "entries": [
+            "$00 #7c7c7c 644 px",
+            "$30 #fcfcfc 108 px",
+            "$28 #f8b800 16 px"
+          ],
+          "drawn_px": 768,
+          "outer_boundary_px": 108,
+          "outer_boundary_on_darkest": 0,
+          "outer_boundary_on_darkest_pct": 0.0,
+          "worst_tile_opaque": 3,
+          "nes_check": "PASS",
+          "read": "a white 1 px ring around a grey body with a blank 4 x 4 gold square at cols 4 to 7, rows 5 to 8: the only edge the block has is the lightest entry it spends"
+        },
+        "before_vs_after": {
+          "outer_boundary_on_darkest": "0 of 108 before (0.0 percent), 108 of 108 after (100.0 percent)",
+          "which_entry_is_the_ring": "$30 white before, $00 grey after",
+          "colours_on_the_sheet": "3 before, 3 after: no entry was added, the sheet still spends grey, white and gold",
+          "marker": "a blank 4 x 4 gold square before, a drawn gold head and shoulders silhouette after",
+          "largest_entry_pct": "644 of 768 before (83.9 percent), 622 of 768 after (81.0 percent)",
+          "worst_tile_opaque": "3 before, 3 after, against a ceiling of 3",
+          "drawn_px": "768 before, 768 after: the frame is fully opaque in both",
+          "before_sha256": "e30d47e3d2932ef0d1924801b2d65da4ba5024b97636c892dccea9234e2f5db4, measured on the shipped sheet this before column was read from"
+        },
+        "what_changed_in_the_drawing": "The ring and the body exchange entries. The shipped sheet draws white $30 on the outside over a grey $00 body, so the block's edge is the lightest colour it owns; the redraw draws the ring in the grey it already spends, keeps a 1 px white keyline just inside the ring so the edge reads as an edge, and leaves the body grey. The marker is no longer a blank square: it is a gold head 4 px wide on rows 8 to 11, a 2 px neck on row 12 and shoulders widening over rows 13 to 16, so a slot reads as a place a person stands instead of a flat block. No colour was added and no scene palette moved: data/ui_layouts.json check C15 fixes this block's palette as grey, white and gold, and data/palettes/scene_ui.json sp1 is exactly that triple.",
+        "contact_sheet": "output/sprites_v2_sheet.png rebuilt by tools/art/make_title_rows_v2.py at 1024x5360, 19 colours. The party row gets two bands: the redraw at 4x, found at (32, 3880) by an exact pixel search of the sheet for the 4x nearest upscale of output/redraws/spr_pp_ui_party.png, and the SHIPPED sheet at 4x labelled for comparison, because the frame is opaque over its whole cell and a band on the sky would be the same pixels as the strip. The 4 sprite_tile problems the checker still prints on the sheet are all at tile row 401 (y 3208), a band above the sign's, the same four card t_d8fd83fd recorded as not its own and still printed with the party bands out",
+        "q_for_gamedev": [
+          "Q1 who lands it. tools/art/make_ui_nes.py owns spr_pp_ui_party, so this redraw sits in output/redraws and the shipped sheet is unchanged. May the ui lane take the grey ring and the drawn marker into make_ui_nes.py?",
+          "Q2 the ring entry. The shipped outer ring is $30 white, the lightest entry the block spends, which is what the eye measured at 0 of 108 boundary pixels. This redraw draws the ring in $00 grey, the darkest of the three that check C15 fixes for this block and the triple scene_ui sp1 carries. It is not an ink line: $0F sits in sp0, which C15 gives the enemy block. If gamedev wants a true ink ring on the party block then C15 and the block's palette both change, and that is gamedev's call.",
+          "Q3 the four places. game/sprites_src/ui/screens/ui_battle.png bakes the same placeholder into all four party slots; the screen holds 644 grey, 108 white and 16 gold at 224,32, which are the shipped sheet's own counts. The opaque sheet is drawn over that baked block, so the screen and the sheet disagree until the screen is repainted from the same drawing, and repainting the screen is the ui lane's."
+        ],
+        "status_note": "Done by card t_09e10c47: the row's measured defect is closed on the drawing. Before, measured on the shipped sheet: 3 colours, 644 grey, 108 white and 16 gold, 768 drawn pixels, 108 outer boundary pixels of which 0 are the darkest entry in the file (0.0 percent), so the block's only edge was its lightest colour. After, on output/redraws/spr_pp_ui_party.png: 3 colours, 622 grey, 100 white and 46 gold, 768 drawn pixels, 108 outer boundary pixels of which 108 are the darkest entry (100.0 percent); nes_check PASS 24x32 12 tiles 3 colours; palette_synergy PASS with 0 failing pairs on the 24x32 $0F sky band at the party slots rows; every 8x8 tile fits scene_ui sp1. Left open, all gamedev's: Q1 (the owner tool lands it), Q2 (a true ink ring needs C15 and the block palette to change) and Q3 (the battle screen bakes the old block into all four slots)."
+      },
       "source": {
         "sheet": "N",
         "tile": 2,
         "model": "gemini-3-flash-preview",
         "review": "output/eye_reviews/_eye_r8_sheet_n_20261024T031723Z.md",
         "report": "output/EYE_AUTO_2026-10-23_R8.md"
-      }
+      },
+      "status_note": "Measured by card t_b15e9c7a and left queued_by_eye. The same defect as spr_pp_ui_enemy is in this file, 0 of 108 boundary pixels on the darkest entry, and it cannot be fixed by drawing alone: a 24x32 sheet is read per 8x8 tile, and an ink $0F ring over the grey body and the white keyline needs the set $0F $30 $00, which none of the ui scene's four sprite palettes carries (sp0 $0F $28 $30, sp1 $00 $30 $28, sp2 $02 $30 $28, sp3 $02 $00 $30). Q: either the party placeholder drops one of grey or white so an ink ring fits sp0, or the ui scene gains a palette that carries $0F $30 $00, and both are gamedev's.",
+      "pick_note": "Card t_09e10c47 took this row, not a higher one, because every row above it is held by gamedev, and each hold is recorded in its own row: spr_title_konrad and spr_title_zander (P1, queued) cannot pass RULE 0 point 2 on the car glass pane, which holds $0C on 103 px and $20 on 14 px, and that is posted as Q on both rows; the two 48 x 48 portraits (P2, queued_by_eye) have reference null, gamedev to fill or refuse, and their defect is a look question about three faces from one construction; hadrian_ow_v2 is redrawn and refused only by its palette set, Q2 on that row, because no scene palette in the project carries a purple; ts_exterior is a 256 x 64 background tileset, checked with nes_check --type background rather than the sprite rule, and gamedev owns its tile list. This row's defect is a drawing defect on a 24 x 32 sprite in a palette the spec already fixes, so a redraw can close it without moving a spec."
+    },
+    {
+      "id": "cand_r18_zeus_ow_walk",
+      "name": "Zeus, over world walk in 8 directions, 2 frames each, 16 x 24 cells",
+      "path": null,
+      "kind": "sprite",
+      "frames": 16,
+      "frame_px": [
+        16,
+        24
+      ],
+      "priority": "P2",
+      "reference": {
+        "art_bible": "ART-BIBLE RULE 0 (palette first) and the R18 gate page knowledge/GATE-ART-R18-2026-10-26.md",
+        "craft_rule": null,
+        "note": "a candidate row: gamedev has no ruling on this asset yet, so nothing here is shipped, replaced or wired into game/"
+      },
+      "palette_roles": {
+        "legal_entries": [
+          "#7c7c7c",
+          "#000000",
+          "#fcfcfc"
+        ],
+        "why": "one sprite palette row of the asset's scene for the whole cell, so a cell carries three opaque colours plus transparency",
+        "scene": "southampton"
+      },
+      "nes_grid": {
+        "frame_w": 16,
+        "frame_h": 24,
+        "tiles_w": 2,
+        "tiles_h": 3,
+        "tiles_per_frame": 6,
+        "max_opaque_per_tile": 3
+      },
+      "drawn_by": {
+        "tool": "kaggle-concept-art/concept_art_zeus_r18.py on Kaggle GPU, quantised by kaggle-concept-art/r18_batches_measure.py",
+        "commit": null,
+        "note": "this card, 2026-10-26"
+      },
+      "candidates": [
+        {
+          "cycle_seed": 141,
+          "frames": 16,
+          "score_mean": 74.95,
+          "score_min": 72.81,
+          "score_max": 77.82,
+          "files": [
+            {
+              "rank": 1,
+              "file": "output/art_candidates_r18/zeus/cells/zeus_walk_e_f1_t2i_seed141_cell.png",
+              "seed": 141,
+              "score": 77.82,
+              "mean_delta_e": 13.01,
+              "scene": "southampton",
+              "cell": [
+                16,
+                24
+              ],
+              "sprite_row": [
+                [
+                  124,
+                  124,
+                  124
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  252,
+                  252,
+                  252
+                ]
+              ],
+              "sprite_row_index": 0,
+              "colours": 3,
+              "colours_hex": [
+                "#000000",
+                "#7c7c7c",
+                "#fcfcfc"
+              ],
+              "max_colours_per_tile": 3,
+              "coverage": 0.422,
+              "components": 1,
+              "orphans_removed": 0,
+              "orphans_left": 0,
+              "outline_px": 74,
+              "outline_clipped": 6
+            },
+            {
+              "rank": 2,
+              "file": "output/art_candidates_r18/zeus/cells/zeus_walk_w_f1_t2i_seed141_cell.png",
+              "seed": 141,
+              "score": 77.04,
+              "mean_delta_e": 12.8,
+              "scene": "southampton",
+              "cell": [
+                16,
+                24
+              ],
+              "sprite_row": [
+                [
+                  124,
+                  124,
+                  124
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  252,
+                  252,
+                  252
+                ]
+              ],
+              "sprite_row_index": 0,
+              "colours": 3,
+              "colours_hex": [
+                "#000000",
+                "#7c7c7c",
+                "#fcfcfc"
+              ],
+              "max_colours_per_tile": 3,
+              "coverage": 0.427,
+              "components": 1,
+              "orphans_removed": 0,
+              "orphans_left": 0,
+              "outline_px": 74,
+              "outline_clipped": 7
+            },
+            {
+              "rank": 3,
+              "file": "output/art_candidates_r18/zeus/cells/zeus_walk_nw_f1_t2i_seed141_cell.png",
+              "seed": 141,
+              "score": 76.9,
+              "mean_delta_e": 11.87,
+              "scene": "southampton",
+              "cell": [
+                16,
+                24
+              ],
+              "sprite_row": [
+                [
+                  124,
+                  124,
+                  124
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  252,
+                  252,
+                  252
+                ]
+              ],
+              "sprite_row_index": 0,
+              "colours": 3,
+              "colours_hex": [
+                "#000000",
+                "#7c7c7c",
+                "#fcfcfc"
+              ],
+              "max_colours_per_tile": 3,
+              "coverage": 0.419,
+              "components": 1,
+              "orphans_removed": 0,
+              "orphans_left": 0,
+              "outline_px": 74,
+              "outline_clipped": 9
+            },
+            {
+              "rank": 4,
+              "file": "output/art_candidates_r18/zeus/cells/zeus_walk_n_f2_t2i_seed141_cell.png",
+              "seed": 141,
+              "score": 76.0,
+              "mean_delta_e": 12.13,
+              "scene": "southampton",
+              "cell": [
+                16,
+                24
+              ],
+              "sprite_row": [
+                [
+                  124,
+                  124,
+                  124
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  252,
+                  252,
+                  252
+                ]
+              ],
+              "sprite_row_index": 0,
+              "colours": 3,
+              "colours_hex": [
+                "#000000",
+                "#7c7c7c",
+                "#fcfcfc"
+              ],
+              "max_colours_per_tile": 3,
+              "coverage": 0.398,
+              "components": 1,
+              "orphans_removed": 0,
+              "orphans_left": 0,
+              "outline_px": 68,
+              "outline_clipped": 6
+            },
+            {
+              "rank": 5,
+              "file": "output/art_candidates_r18/zeus/cells/zeus_walk_se_f2_t2i_seed141_cell.png",
+              "seed": 141,
+              "score": 75.77,
+              "mean_delta_e": 13.44,
+              "scene": "southampton",
+              "cell": [
+                16,
+                24
+              ],
+              "sprite_row": [
+                [
+                  124,
+                  124,
+                  124
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  252,
+                  252,
+                  252
+                ]
+              ],
+              "sprite_row_index": 0,
+              "colours": 3,
+              "colours_hex": [
+                "#000000",
+                "#7c7c7c",
+                "#fcfcfc"
+              ],
+              "max_colours_per_tile": 3,
+              "coverage": 0.401,
+              "components": 1,
+              "orphans_removed": 0,
+              "orphans_left": 0,
+              "outline_px": 66,
+              "outline_clipped": 7
+            },
+            {
+              "rank": 6,
+              "file": "output/art_candidates_r18/zeus/cells/zeus_walk_n_f1_t2i_seed141_cell.png",
+              "seed": 141,
+              "score": 75.46,
+              "mean_delta_e": 11.82,
+              "scene": "southampton",
+              "cell": [
+                16,
+                24
+              ],
+              "sprite_row": [
+                [
+                  124,
+                  124,
+                  124
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  252,
+                  252,
+                  252
+                ]
+              ],
+              "sprite_row_index": 0,
+              "colours": 3,
+              "colours_hex": [
+                "#000000",
+                "#7c7c7c",
+                "#fcfcfc"
+              ],
+              "max_colours_per_tile": 3,
+              "coverage": 0.427,
+              "components": 1,
+              "orphans_removed": 0,
+              "orphans_left": 0,
+              "outline_px": 76,
+              "outline_clipped": 12
+            },
+            {
+              "rank": 7,
+              "file": "output/art_candidates_r18/zeus/cells/zeus_walk_w_f2_t2i_seed141_cell.png",
+              "seed": 141,
+              "score": 75.11,
+              "mean_delta_e": 13.66,
+              "scene": "southampton",
+              "cell": [
+                16,
+                24
+              ],
+              "sprite_row": [
+                [
+                  124,
+                  124,
+                  124
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  252,
+                  252,
+                  252
+                ]
+              ],
+              "sprite_row_index": 0,
+              "colours": 3,
+              "colours_hex": [
+                "#000000",
+                "#7c7c7c",
+                "#fcfcfc"
+              ],
+              "max_colours_per_tile": 3,
+              "coverage": 0.44,
+              "components": 1,
+              "orphans_removed": 0,
+              "orphans_left": 0,
+              "outline_px": 70,
+              "outline_clipped": 9
+            },
+            {
+              "rank": 8,
+              "file": "output/art_candidates_r18/zeus/cells/zeus_walk_e_f2_t2i_seed141_cell.png",
+              "seed": 141,
+              "score": 74.97,
+              "mean_delta_e": 14.18,
+              "scene": "southampton",
+              "cell": [
+                16,
+                24
+              ],
+              "sprite_row": [
+                [
+                  124,
+                  124,
+                  124
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  252,
+                  252,
+                  252
+                ]
+              ],
+              "sprite_row_index": 0,
+              "colours": 3,
+              "colours_hex": [
+                "#000000",
+                "#7c7c7c",
+                "#fcfcfc"
+              ],
+              "max_colours_per_tile": 3,
+              "coverage": 0.438,
+              "components": 1,
+              "orphans_removed": 0,
+              "orphans_left": 0,
+              "outline_px": 70,
+              "outline_clipped": 10
+            },
+            {
+              "rank": 9,
+              "file": "output/art_candidates_r18/zeus/cells/zeus_walk_ne_f1_t2i_seed141_cell.png",
+              "seed": 141,
+              "score": 74.81,
+              "mean_delta_e": 11.38,
+              "scene": "southampton",
+              "cell": [
+                16,
+                24
+              ],
+              "sprite_row": [
+                [
+                  124,
+                  124,
+                  124
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  252,
+                  252,
+                  252
+                ]
+              ],
+              "sprite_row_index": 0,
+              "colours": 3,
+              "colours_hex": [
+                "#000000",
+                "#7c7c7c",
+                "#fcfcfc"
+              ],
+              "max_colours_per_tile": 3,
+              "coverage": 0.432,
+              "components": 1,
+              "orphans_removed": 0,
+              "orphans_left": 0,
+              "outline_px": 72,
+              "outline_clipped": 12
+            },
+            {
+              "rank": 10,
+              "file": "output/art_candidates_r18/zeus/cells/zeus_walk_s_f2_t2i_seed141_cell.png",
+              "seed": 141,
+              "score": 74.51,
+              "mean_delta_e": 12.52,
+              "scene": "southampton",
+              "cell": [
+                16,
+                24
+              ],
+              "sprite_row": [
+                [
+                  124,
+                  124,
+                  124
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  252,
+                  252,
+                  252
+                ]
+              ],
+              "sprite_row_index": 0,
+              "colours": 3,
+              "colours_hex": [
+                "#000000",
+                "#7c7c7c",
+                "#fcfcfc"
+              ],
+              "max_colours_per_tile": 3,
+              "coverage": 0.445,
+              "components": 1,
+              "orphans_removed": 0,
+              "orphans_left": 0,
+              "outline_px": 74,
+              "outline_clipped": 10
+            },
+            {
+              "rank": 11,
+              "file": "output/art_candidates_r18/zeus/cells/zeus_walk_sw_f1_t2i_seed141_cell.png",
+              "seed": 141,
+              "score": 73.78,
+              "mean_delta_e": 14.25,
+              "scene": "southampton",
+              "cell": [
+                16,
+                24
+              ],
+              "sprite_row": [
+                [
+                  124,
+                  124,
+                  124
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  252,
+                  252,
+                  252
+                ]
+              ],
+              "sprite_row_index": 0,
+              "colours": 3,
+              "colours_hex": [
+                "#000000",
+                "#7c7c7c",
+                "#fcfcfc"
+              ],
+              "max_colours_per_tile": 3,
+              "coverage": 0.456,
+              "components": 1,
+              "orphans_removed": 0,
+              "orphans_left": 0,
+              "outline_px": 77,
+              "outline_clipped": 10
+            },
+            {
+              "rank": 12,
+              "file": "output/art_candidates_r18/zeus/cells/zeus_walk_se_f1_t2i_seed141_cell.png",
+              "seed": 141,
+              "score": 73.65,
+              "mean_delta_e": 13.78,
+              "scene": "southampton",
+              "cell": [
+                16,
+                24
+              ],
+              "sprite_row": [
+                [
+                  124,
+                  124,
+                  124
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  252,
+                  252,
+                  252
+                ]
+              ],
+              "sprite_row_index": 0,
+              "colours": 3,
+              "colours_hex": [
+                "#000000",
+                "#7c7c7c",
+                "#fcfcfc"
+              ],
+              "max_colours_per_tile": 3,
+              "coverage": 0.466,
+              "components": 1,
+              "orphans_removed": 0,
+              "orphans_left": 0,
+              "outline_px": 70,
+              "outline_clipped": 7
+            },
+            {
+              "rank": 13,
+              "file": "output/art_candidates_r18/zeus/cells/zeus_walk_s_f1_t2i_seed141_cell.png",
+              "seed": 141,
+              "score": 73.59,
+              "mean_delta_e": 15.08,
+              "scene": "southampton",
+              "cell": [
+                16,
+                24
+              ],
+              "sprite_row": [
+                [
+                  124,
+                  124,
+                  124
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  252,
+                  252,
+                  252
+                ]
+              ],
+              "sprite_row_index": 0,
+              "colours": 3,
+              "colours_hex": [
+                "#000000",
+                "#7c7c7c",
+                "#fcfcfc"
+              ],
+              "max_colours_per_tile": 3,
+              "coverage": 0.464,
+              "components": 1,
+              "orphans_removed": 0,
+              "orphans_left": 0,
+              "outline_px": 72,
+              "outline_clipped": 8
+            },
+            {
+              "rank": 14,
+              "file": "output/art_candidates_r18/zeus/cells/zeus_walk_ne_f2_t2i_seed141_cell.png",
+              "seed": 141,
+              "score": 73.51,
+              "mean_delta_e": 11.57,
+              "scene": "southampton",
+              "cell": [
+                16,
+                24
+              ],
+              "sprite_row": [
+                [
+                  124,
+                  124,
+                  124
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  252,
+                  252,
+                  252
+                ]
+              ],
+              "sprite_row_index": 0,
+              "colours": 3,
+              "colours_hex": [
+                "#000000",
+                "#7c7c7c",
+                "#fcfcfc"
+              ],
+              "max_colours_per_tile": 3,
+              "coverage": 0.448,
+              "components": 1,
+              "orphans_removed": 0,
+              "orphans_left": 0,
+              "outline_px": 72,
+              "outline_clipped": 12
+            },
+            {
+              "rank": 15,
+              "file": "output/art_candidates_r18/zeus/cells/zeus_walk_nw_f2_t2i_seed141_cell.png",
+              "seed": 141,
+              "score": 73.51,
+              "mean_delta_e": 11.98,
+              "scene": "southampton",
+              "cell": [
+                16,
+                24
+              ],
+              "sprite_row": [
+                [
+                  124,
+                  124,
+                  124
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  252,
+                  252,
+                  252
+                ]
+              ],
+              "sprite_row_index": 0,
+              "colours": 3,
+              "colours_hex": [
+                "#000000",
+                "#7c7c7c",
+                "#fcfcfc"
+              ],
+              "max_colours_per_tile": 3,
+              "coverage": 0.448,
+              "components": 1,
+              "orphans_removed": 0,
+              "orphans_left": 0,
+              "outline_px": 72,
+              "outline_clipped": 12
+            },
+            {
+              "rank": 16,
+              "file": "output/art_candidates_r18/zeus/cells/zeus_walk_sw_f2_t2i_seed141_cell.png",
+              "seed": 141,
+              "score": 72.81,
+              "mean_delta_e": 12.59,
+              "scene": "southampton",
+              "cell": [
+                16,
+                24
+              ],
+              "sprite_row": [
+                [
+                  124,
+                  124,
+                  124
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  252,
+                  252,
+                  252
+                ]
+              ],
+              "sprite_row_index": 0,
+              "colours": 3,
+              "colours_hex": [
+                "#000000",
+                "#7c7c7c",
+                "#fcfcfc"
+              ],
+              "max_colours_per_tile": 3,
+              "coverage": 0.458,
+              "components": 1,
+              "orphans_removed": 0,
+              "orphans_left": 0,
+              "outline_px": 75,
+              "outline_clipped": 12
+            }
+          ]
+        },
+        {
+          "cycle_seed": 143,
+          "frames": 16,
+          "score_mean": 63.87,
+          "score_min": 41.15,
+          "score_max": 73.15,
+          "files": [
+            {
+              "rank": 1,
+              "file": "output/art_candidates_r18/zeus/cells/zeus_walk_s_f1_t2i_seed143_cell.png",
+              "seed": 143,
+              "score": 73.15,
+              "mean_delta_e": 15.31,
+              "scene": "southampton",
+              "cell": [
+                16,
+                24
+              ],
+              "sprite_row": [
+                [
+                  124,
+                  124,
+                  124
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  252,
+                  252,
+                  252
+                ]
+              ],
+              "sprite_row_index": 0,
+              "colours": 3,
+              "colours_hex": [
+                "#000000",
+                "#7c7c7c",
+                "#fcfcfc"
+              ],
+              "max_colours_per_tile": 3,
+              "coverage": 0.464,
+              "components": 1,
+              "orphans_removed": 0,
+              "orphans_left": 0,
+              "outline_px": 31,
+              "outline_clipped": 4
+            },
+            {
+              "rank": 2,
+              "file": "output/art_candidates_r18/zeus/cells/zeus_walk_nw_f2_t2i_seed143_cell.png",
+              "seed": 143,
+              "score": 69.61,
+              "mean_delta_e": 18.92,
+              "scene": "southampton",
+              "cell": [
+                16,
+                24
+              ],
+              "sprite_row": [
+                [
+                  124,
+                  124,
+                  124
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  252,
+                  252,
+                  252
+                ]
+              ],
+              "sprite_row_index": 0,
+              "colours": 3,
+              "colours_hex": [
+                "#000000",
+                "#7c7c7c",
+                "#fcfcfc"
+              ],
+              "max_colours_per_tile": 3,
+              "coverage": 0.435,
+              "components": 1,
+              "orphans_removed": 0,
+              "orphans_left": 0,
+              "outline_px": 41,
+              "outline_clipped": 15
+            },
+            {
+              "rank": 3,
+              "file": "output/art_candidates_r18/zeus/cells/zeus_walk_w_f2_t2i_seed143_cell.png",
+              "seed": 143,
+              "score": 69.26,
+              "mean_delta_e": 18.54,
+              "scene": "southampton",
+              "cell": [
+                16,
+                24
+              ],
+              "sprite_row": [
+                [
+                  124,
+                  124,
+                  124
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  252,
+                  252,
+                  252
+                ]
+              ],
+              "sprite_row_index": 0,
+              "colours": 2,
+              "colours_hex": [
+                "#000000",
+                "#7c7c7c"
+              ],
+              "max_colours_per_tile": 2,
+              "coverage": 0.404,
+              "components": 1,
+              "orphans_removed": 0,
+              "orphans_left": 0,
+              "outline_px": 40,
+              "outline_clipped": 15
+            },
+            {
+              "rank": 4,
+              "file": "output/art_candidates_r18/zeus/cells/zeus_walk_n_f1_t2i_seed143_cell.png",
+              "seed": 143,
+              "score": 69.18,
+              "mean_delta_e": 19.48,
+              "scene": "southampton",
+              "cell": [
+                16,
+                24
+              ],
+              "sprite_row": [
+                [
+                  124,
+                  124,
+                  124
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  252,
+                  252,
+                  252
+                ]
+              ],
+              "sprite_row_index": 0,
+              "colours": 3,
+              "colours_hex": [
+                "#000000",
+                "#7c7c7c",
+                "#fcfcfc"
+              ],
+              "max_colours_per_tile": 3,
+              "coverage": 0.427,
+              "components": 1,
+              "orphans_removed": 0,
+              "orphans_left": 0,
+              "outline_px": 44,
+              "outline_clipped": 18
+            },
+            {
+              "rank": 5,
+              "file": "output/art_candidates_r18/zeus/cells/zeus_walk_n_f2_t2i_seed143_cell.png",
+              "seed": 143,
+              "score": 66.16,
+              "mean_delta_e": 16.03,
+              "scene": "southampton",
+              "cell": [
+                16,
+                24
+              ],
+              "sprite_row": [
+                [
+                  124,
+                  124,
+                  124
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  252,
+                  252,
+                  252
+                ]
+              ],
+              "sprite_row_index": 0,
+              "colours": 3,
+              "colours_hex": [
+                "#000000",
+                "#7c7c7c",
+                "#fcfcfc"
+              ],
+              "max_colours_per_tile": 3,
+              "coverage": 0.281,
+              "components": 1,
+              "orphans_removed": 0,
+              "orphans_left": 0,
+              "outline_px": 22,
+              "outline_clipped": 2
+            },
+            {
+              "rank": 6,
+              "file": "output/art_candidates_r18/zeus/cells/zeus_walk_nw_f1_t2i_seed143_cell.png",
+              "seed": 143,
+              "score": 64.96,
+              "mean_delta_e": 15.75,
+              "scene": "southampton",
+              "cell": [
+                16,
+                24
+              ],
+              "sprite_row": [
+                [
+                  124,
+                  124,
+                  124
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  252,
+                  252,
+                  252
+                ]
+              ],
+              "sprite_row_index": 0,
+              "colours": 3,
+              "colours_hex": [
+                "#000000",
+                "#7c7c7c",
+                "#fcfcfc"
+              ],
+              "max_colours_per_tile": 3,
+              "coverage": 0.279,
+              "components": 1,
+              "orphans_removed": 0,
+              "orphans_left": 0,
+              "outline_px": 23,
+              "outline_clipped": 3
+            },
+            {
+              "rank": 7,
+              "file": "output/art_candidates_r18/zeus/cells/zeus_walk_se_f1_t2i_seed143_cell.png",
+              "seed": 143,
+              "score": 64.96,
+              "mean_delta_e": 16.65,
+              "scene": "southampton",
+              "cell": [
+                16,
+                24
+              ],
+              "sprite_row": [
+                [
+                  124,
+                  124,
+                  124
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  252,
+                  252,
+                  252
+                ]
+              ],
+              "sprite_row_index": 0,
+              "colours": 3,
+              "colours_hex": [
+                "#000000",
+                "#7c7c7c",
+                "#fcfcfc"
+              ],
+              "max_colours_per_tile": 3,
+              "coverage": 0.279,
+              "components": 1,
+              "orphans_removed": 0,
+              "orphans_left": 0,
+              "outline_px": 23,
+              "outline_clipped": 3
+            },
+            {
+              "rank": 8,
+              "file": "output/art_candidates_r18/zeus/cells/zeus_walk_sw_f1_t2i_seed143_cell.png",
+              "seed": 143,
+              "score": 64.96,
+              "mean_delta_e": 16.65,
+              "scene": "southampton",
+              "cell": [
+                16,
+                24
+              ],
+              "sprite_row": [
+                [
+                  124,
+                  124,
+                  124
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  252,
+                  252,
+                  252
+                ]
+              ],
+              "sprite_row_index": 0,
+              "colours": 3,
+              "colours_hex": [
+                "#000000",
+                "#7c7c7c",
+                "#fcfcfc"
+              ],
+              "max_colours_per_tile": 3,
+              "coverage": 0.279,
+              "components": 1,
+              "orphans_removed": 0,
+              "orphans_left": 0,
+              "outline_px": 23,
+              "outline_clipped": 3
+            },
+            {
+              "rank": 9,
+              "file": "output/art_candidates_r18/zeus/cells/zeus_walk_ne_f1_t2i_seed143_cell.png",
+              "seed": 143,
+              "score": 63.45,
+              "mean_delta_e": 15.6,
+              "scene": "southampton",
+              "cell": [
+                16,
+                24
+              ],
+              "sprite_row": [
+                [
+                  124,
+                  124,
+                  124
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  252,
+                  252,
+                  252
+                ]
+              ],
+              "sprite_row_index": 0,
+              "colours": 3,
+              "colours_hex": [
+                "#000000",
+                "#7c7c7c",
+                "#fcfcfc"
+              ],
+              "max_colours_per_tile": 3,
+              "coverage": 0.25,
+              "components": 1,
+              "orphans_removed": 0,
+              "orphans_left": 0,
+              "outline_px": 21,
+              "outline_clipped": 2
+            },
+            {
+              "rank": 10,
+              "file": "output/art_candidates_r18/zeus/cells/zeus_walk_se_f2_t2i_seed143_cell.png",
+              "seed": 143,
+              "score": 63.45,
+              "mean_delta_e": 17.22,
+              "scene": "southampton",
+              "cell": [
+                16,
+                24
+              ],
+              "sprite_row": [
+                [
+                  124,
+                  124,
+                  124
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  252,
+                  252,
+                  252
+                ]
+              ],
+              "sprite_row_index": 0,
+              "colours": 3,
+              "colours_hex": [
+                "#000000",
+                "#7c7c7c",
+                "#fcfcfc"
+              ],
+              "max_colours_per_tile": 3,
+              "coverage": 0.25,
+              "components": 1,
+              "orphans_removed": 0,
+              "orphans_left": 0,
+              "outline_px": 21,
+              "outline_clipped": 2
+            },
+            {
+              "rank": 11,
+              "file": "output/art_candidates_r18/zeus/cells/zeus_walk_sw_f2_t2i_seed143_cell.png",
+              "seed": 143,
+              "score": 63.45,
+              "mean_delta_e": 18.74,
+              "scene": "southampton",
+              "cell": [
+                16,
+                24
+              ],
+              "sprite_row": [
+                [
+                  124,
+                  124,
+                  124
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  252,
+                  252,
+                  252
+                ]
+              ],
+              "sprite_row_index": 0,
+              "colours": 3,
+              "colours_hex": [
+                "#000000",
+                "#7c7c7c",
+                "#fcfcfc"
+              ],
+              "max_colours_per_tile": 3,
+              "coverage": 0.25,
+              "components": 1,
+              "orphans_removed": 0,
+              "orphans_left": 0,
+              "outline_px": 21,
+              "outline_clipped": 2
+            },
+            {
+              "rank": 12,
+              "file": "output/art_candidates_r18/zeus/cells/zeus_walk_e_f1_t2i_seed143_cell.png",
+              "seed": 143,
+              "score": 62.34,
+              "mean_delta_e": 16.29,
+              "scene": "southampton",
+              "cell": [
+                16,
+                24
+              ],
+              "sprite_row": [
+                [
+                  124,
+                  124,
+                  124
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  252,
+                  252,
+                  252
+                ]
+              ],
+              "sprite_row_index": 0,
+              "colours": 3,
+              "colours_hex": [
+                "#000000",
+                "#7c7c7c",
+                "#fcfcfc"
+              ],
+              "max_colours_per_tile": 3,
+              "coverage": 0.612,
+              "components": 1,
+              "orphans_removed": 0,
+              "orphans_left": 0,
+              "outline_px": 30,
+              "outline_clipped": 2
+            },
+            {
+              "rank": 13,
+              "file": "output/art_candidates_r18/zeus/cells/zeus_walk_w_f1_t2i_seed143_cell.png",
+              "seed": 143,
+              "score": 62.34,
+              "mean_delta_e": 15.52,
+              "scene": "southampton",
+              "cell": [
+                16,
+                24
+              ],
+              "sprite_row": [
+                [
+                  124,
+                  124,
+                  124
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  252,
+                  252,
+                  252
+                ]
+              ],
+              "sprite_row_index": 0,
+              "colours": 3,
+              "colours_hex": [
+                "#000000",
+                "#7c7c7c",
+                "#fcfcfc"
+              ],
+              "max_colours_per_tile": 3,
+              "coverage": 0.612,
+              "components": 1,
+              "orphans_removed": 0,
+              "orphans_left": 0,
+              "outline_px": 30,
+              "outline_clipped": 2
+            },
+            {
+              "rank": 14,
+              "file": "output/art_candidates_r18/zeus/cells/zeus_walk_e_f2_t2i_seed143_cell.png",
+              "seed": 143,
+              "score": 61.71,
+              "mean_delta_e": 15.73,
+              "scene": "southampton",
+              "cell": [
+                16,
+                24
+              ],
+              "sprite_row": [
+                [
+                  124,
+                  124,
+                  124
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  252,
+                  252,
+                  252
+                ]
+              ],
+              "sprite_row_index": 0,
+              "colours": 3,
+              "colours_hex": [
+                "#000000",
+                "#7c7c7c",
+                "#fcfcfc"
+              ],
+              "max_colours_per_tile": 3,
+              "coverage": 0.219,
+              "components": 1,
+              "orphans_removed": 0,
+              "orphans_left": 0,
+              "outline_px": 33,
+              "outline_clipped": 2
+            },
+            {
+              "rank": 15,
+              "file": "output/art_candidates_r18/zeus/cells/zeus_walk_ne_f2_t2i_seed143_cell.png",
+              "seed": 143,
+              "score": 61.71,
+              "mean_delta_e": 16.87,
+              "scene": "southampton",
+              "cell": [
+                16,
+                24
+              ],
+              "sprite_row": [
+                [
+                  124,
+                  124,
+                  124
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  252,
+                  252,
+                  252
+                ]
+              ],
+              "sprite_row_index": 0,
+              "colours": 3,
+              "colours_hex": [
+                "#000000",
+                "#7c7c7c",
+                "#fcfcfc"
+              ],
+              "max_colours_per_tile": 3,
+              "coverage": 0.219,
+              "components": 1,
+              "orphans_removed": 0,
+              "orphans_left": 0,
+              "outline_px": 33,
+              "outline_clipped": 2
+            },
+            {
+              "rank": 16,
+              "file": "output/art_candidates_r18/zeus/cells/zeus_walk_s_f2_t2i_seed143_cell.png",
+              "seed": 143,
+              "score": 41.15,
+              "mean_delta_e": 15.2,
+              "scene": "southampton",
+              "cell": [
+                16,
+                24
+              ],
+              "sprite_row": [
+                [
+                  124,
+                  124,
+                  124
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  252,
+                  252,
+                  252
+                ]
+              ],
+              "sprite_row_index": 0,
+              "colours": 3,
+              "colours_hex": [
+                "#000000",
+                "#7c7c7c",
+                "#fcfcfc"
+              ],
+              "max_colours_per_tile": 3,
+              "coverage": 0.893,
+              "components": 1,
+              "orphans_removed": 0,
+              "orphans_left": 0,
+              "outline_px": 13,
+              "outline_clipped": 2
+            }
+          ]
+        }
+      ],
+      "check": {
+        "command": "python tools/nes_check.py <candidate file> --type sprite",
+        "means": "PASS: every pixel a data/nes_palette.json entry, 8 px grid, at most 3 opaque colours per 8x8 tile"
+      },
+      "status": "queued_by_eye",
+      "owner_card": "t_f96847c9",
+      "card": "t_f96847c9",
+      "written_on": "2026-10-26",
+      "q_for_gamedev": [
+        "a 16 frame cycle where the two frames of a direction are a real step, and whether the 1 px outline may eat into the 16 x 24 cell the walk is built on"
+      ],
+      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (GEMINI_API_KEY absent from the worker), so no eye score exists yet and nothing is promoted."
+    },
+    {
+      "id": "cand_r18_kronos_ow",
+      "name": "Kronos, over world stander, 16 x 24 cell",
+      "path": null,
+      "kind": "sprite",
+      "frames": 1,
+      "frame_px": [
+        16,
+        24
+      ],
+      "priority": "P2",
+      "reference": {
+        "art_bible": "ART-BIBLE RULE 0 (palette first) and the R18 gate page knowledge/GATE-ART-R18-2026-10-26.md",
+        "craft_rule": null,
+        "note": "a candidate row: gamedev has no ruling on this asset yet, so nothing here is shipped, replaced or wired into game/"
+      },
+      "palette_roles": {
+        "legal_entries": [
+          "#7c7c7c",
+          "#000000",
+          "#fcfcfc"
+        ],
+        "why": "one sprite palette row of the asset's scene for the whole cell, so a cell carries three opaque colours plus transparency",
+        "scene": "southampton"
+      },
+      "nes_grid": {
+        "frame_w": 16,
+        "frame_h": 24,
+        "tiles_w": 2,
+        "tiles_h": 3,
+        "tiles_per_frame": 6,
+        "max_opaque_per_tile": 3
+      },
+      "drawn_by": {
+        "tool": "kaggle-concept-art/concept_art_cast_r18.py on Kaggle GPU, quantised by kaggle-concept-art/r18_batches_measure.py",
+        "commit": null,
+        "note": "this card, 2026-10-26"
+      },
+      "candidates": [
+        {
+          "rank": 1,
+          "file": "output/art_candidates_r18/cast/cells/kronos_ow_t2i_seed146_cell.png",
+          "seed": 146,
+          "score": 71.87,
+          "mean_delta_e": 14.26,
+          "scene": "southampton",
+          "cell": [
+            16,
+            24
+          ],
+          "sprite_row": [
+            [
+              124,
+              124,
+              124
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              252,
+              252,
+              252
+            ]
+          ],
+          "sprite_row_index": 0,
+          "colours": 3,
+          "colours_hex": [
+            "#000000",
+            "#7c7c7c",
+            "#fcfcfc"
+          ],
+          "max_colours_per_tile": 3,
+          "coverage": 0.414,
+          "components": 1,
+          "orphans_removed": 0,
+          "orphans_left": 0,
+          "outline_px": 36,
+          "outline_clipped": 11
+        },
+        {
+          "rank": 2,
+          "file": "output/art_candidates_r18/cast/cells/kronos_ow_t2i_seed141_cell.png",
+          "seed": 141,
+          "score": 71.23,
+          "mean_delta_e": 15.47,
+          "scene": "southampton",
+          "cell": [
+            16,
+            24
+          ],
+          "sprite_row": [
+            [
+              124,
+              124,
+              124
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              252,
+              252,
+              252
+            ]
+          ],
+          "sprite_row_index": 0,
+          "colours": 3,
+          "colours_hex": [
+            "#000000",
+            "#7c7c7c",
+            "#fcfcfc"
+          ],
+          "max_colours_per_tile": 3,
+          "coverage": 0.344,
+          "components": 1,
+          "orphans_removed": 0,
+          "orphans_left": 0,
+          "outline_px": 62,
+          "outline_clipped": 6
+        }
+      ],
+      "check": {
+        "command": "python tools/nes_check.py <candidate file> --type sprite",
+        "means": "PASS: every pixel a data/nes_palette.json entry, 8 px grid, at most 3 opaque colours per 8x8 tile"
+      },
+      "status": "queued_by_eye",
+      "owner_card": "t_f96847c9",
+      "card": "t_f96847c9",
+      "written_on": "2026-10-26",
+      "q_for_gamedev": [
+        "a stander only: no walk exists for him"
+      ],
+      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (GEMINI_API_KEY absent from the worker), so no eye score exists yet and nothing is promoted."
+    },
+    {
+      "id": "cand_r18_percy_ow",
+      "name": "Lt. Percy, over world stander, 16 x 24 cell",
+      "path": null,
+      "kind": "sprite",
+      "frames": 1,
+      "frame_px": [
+        16,
+        24
+      ],
+      "priority": "P2",
+      "reference": {
+        "art_bible": "ART-BIBLE RULE 0 (palette first) and the R18 gate page knowledge/GATE-ART-R18-2026-10-26.md",
+        "craft_rule": null,
+        "note": "a candidate row: gamedev has no ruling on this asset yet, so nothing here is shipped, replaced or wired into game/"
+      },
+      "palette_roles": {
+        "legal_entries": [
+          "#7c7c7c",
+          "#000000",
+          "#fcfcfc"
+        ],
+        "why": "one sprite palette row of the asset's scene for the whole cell, so a cell carries three opaque colours plus transparency",
+        "scene": "southampton"
+      },
+      "nes_grid": {
+        "frame_w": 16,
+        "frame_h": 24,
+        "tiles_w": 2,
+        "tiles_h": 3,
+        "tiles_per_frame": 6,
+        "max_opaque_per_tile": 3
+      },
+      "drawn_by": {
+        "tool": "kaggle-concept-art/concept_art_cast_r18.py on Kaggle GPU, quantised by kaggle-concept-art/r18_batches_measure.py",
+        "commit": null,
+        "note": "this card, 2026-10-26"
+      },
+      "candidates": [
+        {
+          "rank": 1,
+          "file": "output/art_candidates_r18/cast/cells/percy_ow_t2i_seed147_cell.png",
+          "seed": 147,
+          "score": 70.68,
+          "mean_delta_e": 12.63,
+          "scene": "southampton",
+          "cell": [
+            16,
+            24
+          ],
+          "sprite_row": [
+            [
+              124,
+              124,
+              124
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              252,
+              252,
+              252
+            ]
+          ],
+          "sprite_row_index": 0,
+          "colours": 3,
+          "colours_hex": [
+            "#000000",
+            "#7c7c7c",
+            "#fcfcfc"
+          ],
+          "max_colours_per_tile": 3,
+          "coverage": 0.497,
+          "components": 1,
+          "orphans_removed": 0,
+          "orphans_left": 0,
+          "outline_px": 87,
+          "outline_clipped": 10
+        },
+        {
+          "rank": 2,
+          "file": "output/art_candidates_r18/cast/cells/percy_ow_t2i_seed141_cell.png",
+          "seed": 141,
+          "score": 69.6,
+          "mean_delta_e": 18.61,
+          "scene": "southampton",
+          "cell": [
+            16,
+            24
+          ],
+          "sprite_row": [
+            [
+              124,
+              124,
+              124
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              252,
+              252,
+              252
+            ]
+          ],
+          "sprite_row_index": 0,
+          "colours": 3,
+          "colours_hex": [
+            "#000000",
+            "#7c7c7c",
+            "#fcfcfc"
+          ],
+          "max_colours_per_tile": 3,
+          "coverage": 0.344,
+          "components": 1,
+          "orphans_removed": 0,
+          "orphans_left": 0,
+          "outline_px": 68,
+          "outline_clipped": 11
+        }
+      ],
+      "check": {
+        "command": "python tools/nes_check.py <candidate file> --type sprite",
+        "means": "PASS: every pixel a data/nes_palette.json entry, 8 px grid, at most 3 opaque colours per 8x8 tile"
+      },
+      "status": "queued_by_eye",
+      "owner_card": "t_f96847c9",
+      "card": "t_f96847c9",
+      "written_on": "2026-10-26",
+      "q_for_gamedev": [
+        "a stander only: no walk exists for him"
+      ],
+      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (GEMINI_API_KEY absent from the worker), so no eye score exists yet and nothing is promoted."
+    },
+    {
+      "id": "cand_r18_percy_man_1",
+      "name": "Percy's first man, over world stander, 16 x 24 cell",
+      "path": null,
+      "kind": "sprite",
+      "frames": 1,
+      "frame_px": [
+        16,
+        24
+      ],
+      "priority": "P2",
+      "reference": {
+        "art_bible": "ART-BIBLE RULE 0 (palette first) and the R18 gate page knowledge/GATE-ART-R18-2026-10-26.md",
+        "craft_rule": null,
+        "note": "a candidate row: gamedev has no ruling on this asset yet, so nothing here is shipped, replaced or wired into game/"
+      },
+      "palette_roles": {
+        "legal_entries": [
+          "#7c7c7c",
+          "#000000",
+          "#fcfcfc"
+        ],
+        "why": "one sprite palette row of the asset's scene for the whole cell, so a cell carries three opaque colours plus transparency",
+        "scene": "southampton"
+      },
+      "nes_grid": {
+        "frame_w": 16,
+        "frame_h": 24,
+        "tiles_w": 2,
+        "tiles_h": 3,
+        "tiles_per_frame": 6,
+        "max_opaque_per_tile": 3
+      },
+      "drawn_by": {
+        "tool": "kaggle-concept-art/concept_art_cast_r18.py on Kaggle GPU, quantised by kaggle-concept-art/r18_batches_measure.py",
+        "commit": null,
+        "note": "this card, 2026-10-26"
+      },
+      "candidates": [
+        {
+          "rank": 1,
+          "file": "output/art_candidates_r18/cast/cells/percy_man_1_t2i_seed141_cell.png",
+          "seed": 141,
+          "score": 69.3,
+          "mean_delta_e": 19.19,
+          "scene": "southampton",
+          "cell": [
+            16,
+            24
+          ],
+          "sprite_row": [
+            [
+              124,
+              124,
+              124
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              252,
+              252,
+              252
+            ]
+          ],
+          "sprite_row_index": 0,
+          "colours": 3,
+          "colours_hex": [
+            "#000000",
+            "#7c7c7c",
+            "#fcfcfc"
+          ],
+          "max_colours_per_tile": 3,
+          "coverage": 0.331,
+          "components": 1,
+          "orphans_removed": 0,
+          "orphans_left": 0,
+          "outline_px": 69,
+          "outline_clipped": 9
+        },
+        {
+          "rank": 2,
+          "file": "output/art_candidates_r18/cast/cells/percy_man_1_t2i_seed146_cell.png",
+          "seed": 146,
+          "score": 66.46,
+          "mean_delta_e": 7.26,
+          "scene": "southampton",
+          "cell": [
+            16,
+            24
+          ],
+          "sprite_row": [
+            [
+              124,
+              124,
+              124
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              252,
+              252,
+              252
+            ]
+          ],
+          "sprite_row_index": 0,
+          "colours": 2,
+          "colours_hex": [
+            "#000000",
+            "#7c7c7c"
+          ],
+          "max_colours_per_tile": 2,
+          "coverage": 0.508,
+          "components": 1,
+          "orphans_removed": 0,
+          "orphans_left": 0,
+          "outline_px": 62,
+          "outline_clipped": 29
+        }
+      ],
+      "check": {
+        "command": "python tools/nes_check.py <candidate file> --type sprite",
+        "means": "PASS: every pixel a data/nes_palette.json entry, 8 px grid, at most 3 opaque colours per 8x8 tile"
+      },
+      "status": "queued_by_eye",
+      "owner_card": "t_f96847c9",
+      "card": "t_f96847c9",
+      "written_on": "2026-10-26",
+      "q_for_gamedev": [
+        "whether three men of one watch read as three people"
+      ],
+      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (GEMINI_API_KEY absent from the worker), so no eye score exists yet and nothing is promoted."
+    },
+    {
+      "id": "cand_r18_percy_man_2",
+      "name": "Percy's second man, over world stander, 16 x 24 cell",
+      "path": null,
+      "kind": "sprite",
+      "frames": 1,
+      "frame_px": [
+        16,
+        24
+      ],
+      "priority": "P2",
+      "reference": {
+        "art_bible": "ART-BIBLE RULE 0 (palette first) and the R18 gate page knowledge/GATE-ART-R18-2026-10-26.md",
+        "craft_rule": null,
+        "note": "a candidate row: gamedev has no ruling on this asset yet, so nothing here is shipped, replaced or wired into game/"
+      },
+      "palette_roles": {
+        "legal_entries": [
+          "#7c7c7c",
+          "#000000",
+          "#fcfcfc"
+        ],
+        "why": "one sprite palette row of the asset's scene for the whole cell, so a cell carries three opaque colours plus transparency",
+        "scene": "southampton"
+      },
+      "nes_grid": {
+        "frame_w": 16,
+        "frame_h": 24,
+        "tiles_w": 2,
+        "tiles_h": 3,
+        "tiles_per_frame": 6,
+        "max_opaque_per_tile": 3
+      },
+      "drawn_by": {
+        "tool": "kaggle-concept-art/concept_art_cast_r18.py on Kaggle GPU, quantised by kaggle-concept-art/r18_batches_measure.py",
+        "commit": null,
+        "note": "this card, 2026-10-26"
+      },
+      "candidates": [
+        {
+          "rank": 1,
+          "file": "output/art_candidates_r18/cast/cells/percy_man_2_t2i_seed141_cell.png",
+          "seed": 141,
+          "score": 68.99,
+          "mean_delta_e": 17.17,
+          "scene": "southampton",
+          "cell": [
+            16,
+            24
+          ],
+          "sprite_row": [
+            [
+              124,
+              124,
+              124
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              252,
+              252,
+              252
+            ]
+          ],
+          "sprite_row_index": 0,
+          "colours": 3,
+          "colours_hex": [
+            "#000000",
+            "#7c7c7c",
+            "#fcfcfc"
+          ],
+          "max_colours_per_tile": 3,
+          "coverage": 0.331,
+          "components": 1,
+          "orphans_removed": 0,
+          "orphans_left": 0,
+          "outline_px": 70,
+          "outline_clipped": 10
+        },
+        {
+          "rank": 2,
+          "file": "output/art_candidates_r18/cast/cells/percy_man_2_t2i_seed146_cell.png",
+          "seed": 146,
+          "score": 66.44,
+          "mean_delta_e": 13.92,
+          "scene": "southampton",
+          "cell": [
+            16,
+            24
+          ],
+          "sprite_row": [
+            [
+              124,
+              124,
+              124
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              252,
+              252,
+              252
+            ]
+          ],
+          "sprite_row_index": 0,
+          "colours": 3,
+          "colours_hex": [
+            "#000000",
+            "#7c7c7c",
+            "#fcfcfc"
+          ],
+          "max_colours_per_tile": 3,
+          "coverage": 0.37,
+          "components": 1,
+          "orphans_removed": 0,
+          "orphans_left": 0,
+          "outline_px": 40,
+          "outline_clipped": 15
+        }
+      ],
+      "check": {
+        "command": "python tools/nes_check.py <candidate file> --type sprite",
+        "means": "PASS: every pixel a data/nes_palette.json entry, 8 px grid, at most 3 opaque colours per 8x8 tile"
+      },
+      "status": "queued_by_eye",
+      "owner_card": "t_f96847c9",
+      "card": "t_f96847c9",
+      "written_on": "2026-10-26",
+      "q_for_gamedev": [
+        "as the first man"
+      ],
+      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (GEMINI_API_KEY absent from the worker), so no eye score exists yet and nothing is promoted."
+    },
+    {
+      "id": "cand_r18_percy_man_3",
+      "name": "Percy's third man, over world stander, 16 x 24 cell",
+      "path": null,
+      "kind": "sprite",
+      "frames": 1,
+      "frame_px": [
+        16,
+        24
+      ],
+      "priority": "P2",
+      "reference": {
+        "art_bible": "ART-BIBLE RULE 0 (palette first) and the R18 gate page knowledge/GATE-ART-R18-2026-10-26.md",
+        "craft_rule": null,
+        "note": "a candidate row: gamedev has no ruling on this asset yet, so nothing here is shipped, replaced or wired into game/"
+      },
+      "palette_roles": {
+        "legal_entries": [
+          "#7c7c7c",
+          "#000000",
+          "#fcfcfc"
+        ],
+        "why": "one sprite palette row of the asset's scene for the whole cell, so a cell carries three opaque colours plus transparency",
+        "scene": "southampton"
+      },
+      "nes_grid": {
+        "frame_w": 16,
+        "frame_h": 24,
+        "tiles_w": 2,
+        "tiles_h": 3,
+        "tiles_per_frame": 6,
+        "max_opaque_per_tile": 3
+      },
+      "drawn_by": {
+        "tool": "kaggle-concept-art/concept_art_cast_r18.py on Kaggle GPU, quantised by kaggle-concept-art/r18_batches_measure.py",
+        "commit": null,
+        "note": "this card, 2026-10-26"
+      },
+      "candidates": [
+        {
+          "rank": 1,
+          "file": "output/art_candidates_r18/cast/cells/percy_man_3_t2i_seed146_cell.png",
+          "seed": 146,
+          "score": 66.94,
+          "mean_delta_e": 18.02,
+          "scene": "southampton",
+          "cell": [
+            16,
+            24
+          ],
+          "sprite_row": [
+            [
+              124,
+              124,
+              124
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              252,
+              252,
+              252
+            ]
+          ],
+          "sprite_row_index": 0,
+          "colours": 3,
+          "colours_hex": [
+            "#000000",
+            "#7c7c7c",
+            "#fcfcfc"
+          ],
+          "max_colours_per_tile": 3,
+          "coverage": 0.43,
+          "components": 1,
+          "orphans_removed": 0,
+          "orphans_left": 0,
+          "outline_px": 51,
+          "outline_clipped": 25
+        },
+        {
+          "rank": 2,
+          "file": "output/art_candidates_r18/cast/cells/percy_man_3_t2i_seed145_cell.png",
+          "seed": 145,
+          "score": 60.83,
+          "mean_delta_e": 16.75,
+          "scene": "southampton",
+          "cell": [
+            16,
+            24
+          ],
+          "sprite_row": [
+            [
+              124,
+              124,
+              124
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              252,
+              252,
+              252
+            ]
+          ],
+          "sprite_row_index": 0,
+          "colours": 3,
+          "colours_hex": [
+            "#000000",
+            "#7c7c7c",
+            "#fcfcfc"
+          ],
+          "max_colours_per_tile": 3,
+          "coverage": 0.625,
+          "components": 1,
+          "orphans_removed": 0,
+          "orphans_left": 0,
+          "outline_px": 24,
+          "outline_clipped": 2
+        }
+      ],
+      "check": {
+        "command": "python tools/nes_check.py <candidate file> --type sprite",
+        "means": "PASS: every pixel a data/nes_palette.json entry, 8 px grid, at most 3 opaque colours per 8x8 tile"
+      },
+      "status": "queued_by_eye",
+      "owner_card": "t_f96847c9",
+      "card": "t_f96847c9",
+      "written_on": "2026-10-26",
+      "q_for_gamedev": [
+        "as the first man"
+      ],
+      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (GEMINI_API_KEY absent from the worker), so no eye score exists yet and nothing is promoted."
+    },
+    {
+      "id": "cand_r18_ouranos_ow",
+      "name": "Ouranos, the old man, over world stander, 16 x 24 cell",
+      "path": null,
+      "kind": "sprite",
+      "frames": 1,
+      "frame_px": [
+        16,
+        24
+      ],
+      "priority": "P2",
+      "reference": {
+        "art_bible": "ART-BIBLE RULE 0 (palette first) and the R18 gate page knowledge/GATE-ART-R18-2026-10-26.md",
+        "craft_rule": null,
+        "note": "a candidate row: gamedev has no ruling on this asset yet, so nothing here is shipped, replaced or wired into game/"
+      },
+      "palette_roles": {
+        "legal_entries": [
+          "#7c7c7c",
+          "#000000",
+          "#fcfcfc"
+        ],
+        "why": "one sprite palette row of the asset's scene for the whole cell, so a cell carries three opaque colours plus transparency",
+        "scene": "southampton"
+      },
+      "nes_grid": {
+        "frame_w": 16,
+        "frame_h": 24,
+        "tiles_w": 2,
+        "tiles_h": 3,
+        "tiles_per_frame": 6,
+        "max_opaque_per_tile": 3
+      },
+      "drawn_by": {
+        "tool": "kaggle-concept-art/concept_art_cast_r18.py on Kaggle GPU, quantised by kaggle-concept-art/r18_batches_measure.py",
+        "commit": null,
+        "note": "this card, 2026-10-26"
+      },
+      "candidates": [
+        {
+          "rank": 1,
+          "file": "output/art_candidates_r18/cast/cells/ouranos_ow_t2i_seed142_cell.png",
+          "seed": 142,
+          "score": 77.55,
+          "mean_delta_e": 16.45,
+          "scene": "southampton",
+          "cell": [
+            16,
+            24
+          ],
+          "sprite_row": [
+            [
+              124,
+              124,
+              124
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              252,
+              252,
+              252
+            ]
+          ],
+          "sprite_row_index": 0,
+          "colours": 3,
+          "colours_hex": [
+            "#000000",
+            "#7c7c7c",
+            "#fcfcfc"
+          ],
+          "max_colours_per_tile": 3,
+          "coverage": 0.391,
+          "components": 1,
+          "orphans_removed": 0,
+          "orphans_left": 0,
+          "outline_px": 67,
+          "outline_clipped": 0
+        },
+        {
+          "rank": 2,
+          "file": "output/art_candidates_r18/cast/cells/ouranos_ow_t2i_seed141_cell.png",
+          "seed": 141,
+          "score": 72.96,
+          "mean_delta_e": 14.66,
+          "scene": "southampton",
+          "cell": [
+            16,
+            24
+          ],
+          "sprite_row": [
+            [
+              124,
+              124,
+              124
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              252,
+              252,
+              252
+            ]
+          ],
+          "sprite_row_index": 0,
+          "colours": 3,
+          "colours_hex": [
+            "#000000",
+            "#7c7c7c",
+            "#fcfcfc"
+          ],
+          "max_colours_per_tile": 3,
+          "coverage": 0.375,
+          "components": 1,
+          "orphans_removed": 0,
+          "orphans_left": 0,
+          "outline_px": 76,
+          "outline_clipped": 10
+        }
+      ],
+      "check": {
+        "command": "python tools/nes_check.py <candidate file> --type sprite",
+        "means": "PASS: every pixel a data/nes_palette.json entry, 8 px grid, at most 3 opaque colours per 8x8 tile"
+      },
+      "status": "queued_by_eye",
+      "owner_card": "t_f96847c9",
+      "card": "t_f96847c9",
+      "written_on": "2026-10-26",
+      "q_for_gamedev": [
+        "a stander only, and whether the staff survives a 3 colour cell"
+      ],
+      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (GEMINI_API_KEY absent from the worker), so no eye score exists yet and nothing is promoted."
+    },
+    {
+      "id": "cand_r18_portrait_zeus",
+      "name": "Zeus, 32 x 32 battle portrait",
+      "path": null,
+      "kind": "sprite",
+      "frames": 1,
+      "frame_px": [
+        32,
+        32
+      ],
+      "priority": "P2",
+      "reference": {
+        "art_bible": "ART-BIBLE RULE 0 (palette first) and the R18 gate page knowledge/GATE-ART-R18-2026-10-26.md",
+        "craft_rule": null,
+        "note": "a candidate row: gamedev has no ruling on this asset yet, so nothing here is shipped, replaced or wired into game/"
+      },
+      "palette_roles": {
+        "legal_entries": [
+          "#000000",
+          "#7c7c7c",
+          "#fca044"
+        ],
+        "why": "one sprite palette row of the asset's scene for the whole cell, so a cell carries three opaque colours plus transparency",
+        "scene": "battle_corridor"
+      },
+      "nes_grid": {
+        "frame_w": 32,
+        "frame_h": 32,
+        "tiles_w": 4,
+        "tiles_h": 4,
+        "tiles_per_frame": 16,
+        "max_opaque_per_tile": 3
+      },
+      "drawn_by": {
+        "tool": "kaggle-concept-art/concept_art_cast_r18.py on Kaggle GPU, quantised by kaggle-concept-art/r18_batches_measure.py",
+        "commit": null,
+        "note": "this card, 2026-10-26"
+      },
+      "candidates": [
+        {
+          "rank": 1,
+          "file": "output/art_candidates_r18/cast/cells/portrait_zeus_t2i_seed141_cell.png",
+          "seed": 141,
+          "score": 71.29,
+          "mean_delta_e": 22.43,
+          "scene": "battle_corridor",
+          "cell": [
+            32,
+            32
+          ],
+          "sprite_row": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              124,
+              124,
+              124
+            ],
+            [
+              252,
+              160,
+              68
+            ]
+          ],
+          "sprite_row_index": 3,
+          "colours": 3,
+          "colours_hex": [
+            "#000000",
+            "#7c7c7c",
+            "#fca044"
+          ],
+          "max_colours_per_tile": 3,
+          "coverage": 0.315,
+          "components": 1,
+          "orphans_removed": 0,
+          "orphans_left": 0,
+          "outline_px": 102,
+          "outline_clipped": 0
+        },
+        {
+          "rank": 2,
+          "file": "output/art_candidates_r18/cast/cells/portrait_zeus_t2i_seed144_cell.png",
+          "seed": 144,
+          "score": 70.98,
+          "mean_delta_e": 25.52,
+          "scene": "battle_corridor",
+          "cell": [
+            32,
+            32
+          ],
+          "sprite_row": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              124,
+              124,
+              124
+            ],
+            [
+              252,
+              160,
+              68
+            ]
+          ],
+          "sprite_row_index": 3,
+          "colours": 3,
+          "colours_hex": [
+            "#000000",
+            "#7c7c7c",
+            "#fca044"
+          ],
+          "max_colours_per_tile": 3,
+          "coverage": 0.475,
+          "components": 1,
+          "orphans_removed": 0,
+          "orphans_left": 0,
+          "outline_px": 112,
+          "outline_clipped": 20
+        }
+      ],
+      "check": {
+        "command": "python tools/nes_check.py <candidate file> --type sprite",
+        "means": "PASS: every pixel a data/nes_palette.json entry, 8 px grid, at most 3 opaque colours per 8x8 tile"
+      },
+      "status": "queued_by_eye",
+      "owner_card": "t_f96847c9",
+      "card": "t_f96847c9",
+      "written_on": "2026-10-26",
+      "q_for_gamedev": [
+        "a 32 x 32 face in three entries: whether a portrait this small may spend a fourth row"
+      ],
+      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (GEMINI_API_KEY absent from the worker), so no eye score exists yet and nothing is promoted."
+    },
+    {
+      "id": "cand_r18_portrait_kronos",
+      "name": "Kronos, 32 x 32 battle portrait",
+      "path": null,
+      "kind": "sprite",
+      "frames": 1,
+      "frame_px": [
+        32,
+        32
+      ],
+      "priority": "P2",
+      "reference": {
+        "art_bible": "ART-BIBLE RULE 0 (palette first) and the R18 gate page knowledge/GATE-ART-R18-2026-10-26.md",
+        "craft_rule": null,
+        "note": "a candidate row: gamedev has no ruling on this asset yet, so nothing here is shipped, replaced or wired into game/"
+      },
+      "palette_roles": {
+        "legal_entries": [
+          "#000000",
+          "#7c7c7c",
+          "#fca044"
+        ],
+        "why": "one sprite palette row of the asset's scene for the whole cell, so a cell carries three opaque colours plus transparency",
+        "scene": "battle_deck_night"
+      },
+      "nes_grid": {
+        "frame_w": 32,
+        "frame_h": 32,
+        "tiles_w": 4,
+        "tiles_h": 4,
+        "tiles_per_frame": 16,
+        "max_opaque_per_tile": 3
+      },
+      "drawn_by": {
+        "tool": "kaggle-concept-art/concept_art_cast_r18.py on Kaggle GPU, quantised by kaggle-concept-art/r18_batches_measure.py",
+        "commit": null,
+        "note": "this card, 2026-10-26"
+      },
+      "candidates": [
+        {
+          "rank": 1,
+          "file": "output/art_candidates_r18/cast/cells/portrait_kronos_t2i_seed142_cell.png",
+          "seed": 142,
+          "score": 76.03,
+          "mean_delta_e": 21.08,
+          "scene": "battle_deck_night",
+          "cell": [
+            32,
+            32
+          ],
+          "sprite_row": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              124,
+              124,
+              124
+            ],
+            [
+              252,
+              160,
+              68
+            ]
+          ],
+          "sprite_row_index": 3,
+          "colours": 3,
+          "colours_hex": [
+            "#000000",
+            "#7c7c7c",
+            "#fca044"
+          ],
+          "max_colours_per_tile": 3,
+          "coverage": 0.386,
+          "components": 1,
+          "orphans_removed": 0,
+          "orphans_left": 0,
+          "outline_px": 112,
+          "outline_clipped": 5
+        },
+        {
+          "rank": 2,
+          "file": "output/art_candidates_r18/cast/cells/portrait_kronos_t2i_seed144_cell.png",
+          "seed": 144,
+          "score": 72.67,
+          "mean_delta_e": 19.38,
+          "scene": "battle_deck_night",
+          "cell": [
+            32,
+            32
+          ],
+          "sprite_row": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              124,
+              124,
+              124
+            ],
+            [
+              252,
+              160,
+              68
+            ]
+          ],
+          "sprite_row_index": 3,
+          "colours": 3,
+          "colours_hex": [
+            "#000000",
+            "#7c7c7c",
+            "#fca044"
+          ],
+          "max_colours_per_tile": 3,
+          "coverage": 0.332,
+          "components": 1,
+          "orphans_removed": 0,
+          "orphans_left": 0,
+          "outline_px": 105,
+          "outline_clipped": 0
+        }
+      ],
+      "check": {
+        "command": "python tools/nes_check.py <candidate file> --type sprite",
+        "means": "PASS: every pixel a data/nes_palette.json entry, 8 px grid, at most 3 opaque colours per 8x8 tile"
+      },
+      "status": "queued_by_eye",
+      "owner_card": "t_f96847c9",
+      "card": "t_f96847c9",
+      "written_on": "2026-10-26",
+      "q_for_gamedev": [
+        "as the Zeus portrait"
+      ],
+      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (GEMINI_API_KEY absent from the worker), so no eye score exists yet and nothing is promoted."
+    },
+    {
+      "id": "cand_r18_portrait_percy",
+      "name": "Lt. Percy, 32 x 32 battle portrait",
+      "path": null,
+      "kind": "sprite",
+      "frames": 1,
+      "frame_px": [
+        32,
+        32
+      ],
+      "priority": "P2",
+      "reference": {
+        "art_bible": "ART-BIBLE RULE 0 (palette first) and the R18 gate page knowledge/GATE-ART-R18-2026-10-26.md",
+        "craft_rule": null,
+        "note": "a candidate row: gamedev has no ruling on this asset yet, so nothing here is shipped, replaced or wired into game/"
+      },
+      "palette_roles": {
+        "legal_entries": [
+          "#000000",
+          "#7c7c7c",
+          "#fca044"
+        ],
+        "why": "one sprite palette row of the asset's scene for the whole cell, so a cell carries three opaque colours plus transparency",
+        "scene": "battle_corridor"
+      },
+      "nes_grid": {
+        "frame_w": 32,
+        "frame_h": 32,
+        "tiles_w": 4,
+        "tiles_h": 4,
+        "tiles_per_frame": 16,
+        "max_opaque_per_tile": 3
+      },
+      "drawn_by": {
+        "tool": "kaggle-concept-art/concept_art_cast_r18.py on Kaggle GPU, quantised by kaggle-concept-art/r18_batches_measure.py",
+        "commit": null,
+        "note": "this card, 2026-10-26"
+      },
+      "candidates": [
+        {
+          "rank": 1,
+          "file": "output/art_candidates_r18/cast/cells/portrait_percy_t2i_seed148_cell.png",
+          "seed": 148,
+          "score": 68.43,
+          "mean_delta_e": 20.78,
+          "scene": "battle_corridor",
+          "cell": [
+            32,
+            32
+          ],
+          "sprite_row": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              124,
+              124,
+              124
+            ],
+            [
+              252,
+              160,
+              68
+            ]
+          ],
+          "sprite_row_index": 3,
+          "colours": 3,
+          "colours_hex": [
+            "#000000",
+            "#7c7c7c",
+            "#fca044"
+          ],
+          "max_colours_per_tile": 3,
+          "coverage": 0.432,
+          "components": 1,
+          "orphans_removed": 0,
+          "orphans_left": 0,
+          "outline_px": 126,
+          "outline_clipped": 5
+        },
+        {
+          "rank": 2,
+          "file": "output/art_candidates_r18/cast/cells/portrait_percy_t2i_seed141_cell.png",
+          "seed": 141,
+          "score": 67.39,
+          "mean_delta_e": 23.38,
+          "scene": "battle_corridor",
+          "cell": [
+            32,
+            32
+          ],
+          "sprite_row": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              124,
+              124,
+              124
+            ],
+            [
+              252,
+              160,
+              68
+            ]
+          ],
+          "sprite_row_index": 3,
+          "colours": 3,
+          "colours_hex": [
+            "#000000",
+            "#7c7c7c",
+            "#fca044"
+          ],
+          "max_colours_per_tile": 3,
+          "coverage": 0.389,
+          "components": 1,
+          "orphans_removed": 0,
+          "orphans_left": 0,
+          "outline_px": 112,
+          "outline_clipped": 0
+        }
+      ],
+      "check": {
+        "command": "python tools/nes_check.py <candidate file> --type sprite",
+        "means": "PASS: every pixel a data/nes_palette.json entry, 8 px grid, at most 3 opaque colours per 8x8 tile"
+      },
+      "status": "queued_by_eye",
+      "owner_card": "t_f96847c9",
+      "card": "t_f96847c9",
+      "written_on": "2026-10-26",
+      "q_for_gamedev": [
+        "as the Zeus portrait, against the 48 x 48 row spr_pp_portrait_percy that already sits queued_by_eye"
+      ],
+      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (GEMINI_API_KEY absent from the worker), so no eye score exists yet and nothing is promoted."
     }
   ],
   "evidence": {
@@ -5674,7 +8707,7 @@
     }
   ],
   "eye_rounds_note": "written by the assistant profile from the automatic eye rounds; these are ranked suggestions about contact sheets, kept apart from `entries`, which is one row per sprite the game asks for by name. Gamedev and Nayil own the spec and the priority order, and a conflict is resolved in gamedev's favour. Regenerated by output/_eye_r6_queue.py.",
-  "updated_by": "gamedev (card t_474cde50, the exhaust row's ruling: a tiled layer, and the $20 body its band can carry)",
-  "updated_on": "2026-10-25",
-  "count_note": "31 rows. The 19 rows of the 2026-10-23 source of truth card are unchanged: 15 repointed to game/sprites_src, 2 renamed to the shipped names (spr_title_konrad, spr_title_zander), 2 retired (spr_player_ow, spr_gate_sentry_ow). Card t_bd32a72e redrew hadrian_ow_v2 (status queued_by_eye to redrawn) and changed no other row. AUTO-GEMINI-EYE round 8 (card t_134cacc4) added 12 rows with status queued_by_eye and priority P2, because the eye does not own priority: the 7 enemies whose frame 3 drops a colour, the 3 v2 characters that need two sprite palettes, and the 2 battle frames with no dark boundary ring. No row measures game/art. Card t_b08c01d5 redrew spr_title_cloud (status queued to done) and changed no other row: the shipped cloud went from 94.6 percent on one entry and 4 failing palette_synergy pairs to 52.5 percent on the white body and 0 failing pairs. Card t_bd5cfad5 redrew sailor_ow_v2 (status queued_by_eye to done) and changed no other row: the last of the three v2 characters the eye measured at 4 and 5 colours per 16x16 cell went from 4 entries (ink, white, navy, skin) and 4 failing palette_synergy pairs per frame to 3 entries in exactly one deck sprite palette and 0 failing pairs, with drawn_px unchanged at 1196. Card t_a44ae3db (gamedev, 2026-10-24) ruled Q1 on that row: the three entry sheet stands and the blob floor is re-expressed for a three entry sheet in tests/test_make_characters_v2.py and SPRITE-CRAFT 8.5, because a floor of four entries needs a second sprite palette and was never a gamedev spec; the ruling and its measured numbers are in the row's gamedev_ruling key. Card t_c3ad486b redrew spr_pp_navy_sailor and spr_pp_petty_officer (both queued_by_eye to done) and changed no other row: the two enemies were [3, 3, 2] colours per frame before, the hit frame dropping the navy, and are [3, 3, 3] after, with the body moved off the sea's own $02 navy onto the uniform's $30 white, which took palette_synergy from 2 failing pairs to 0 on the sea ground the enemy is placed on. The five other enemies keep the blanket recolour that drops a colour in frame 3 and stay queued_by_eye, and that is Q1 on the sailor row. Card t_f24ada8a (2026-10-24) redrew spr_pp_deck_rat and spr_pp_rope_knot (both queued_by_eye to done), the only two rows left whose own measured check was red: both were FAIL on palette_synergy with 2 body_ground pairs each, body $07 brown at 1.24:1 on the $02 navy sea ground, and both had [3, 3, 2] colours per frame with the hit frame dropping the brown. They are now [3, 3, 3] and PASS with 0 failing pairs, body $28 gold in scene_sea sp1_brown_gold, drawn by make_enemies.py, the tool that owns both names. It changed no other row: gull and rogue_wave already measured 0 failing pairs on that ground, and bilge_slime too, so the eye round 10 rank 3 reading is now settled for four of the five enemies it named. The P0 car and the P1 title rows above these two stay queued or redrawn: their remaining defects are gamedev's (Q3 on the car's band palette, the cursor's gold, the cone's flat single entry), not a drawing this lane can fix and prove. Card t_b825be3e redrew spr_title_cone (status queued to done) and changed no other row: the shipped sheet was one entry on all 1246 drawn pixels, and the redraw is three stepped entries ($28 lamp 200 px, $10 mid 448 px, $00 far 704 px) on 1352 drawn px, nes_check PASS with the worst 8x8 tile holding one opaque colour, and palette_synergy PASS with 0 failing pairs of 16 on the road ground rebuilt from the seven shipped title layers at the cone's own placement. Whether the shipped sheet moves is gamedev's, posted as Q3 on the row. Card t_9774ff51 redrew spr_title_exhaust (status queued to redrawn) and changed no other row: the shipped sheet's body flipped from $0C in frame 0 to $20 in frames 1 to 3, and the redraw is $10 body with a $0C outline in one sprite palette (sp2), growing 5x4 to 12x10 over the four frames. nes_check PASS, palette_synergy 9 failing pairs to 4, and the 4 left are one pair repeated (body $10 at 1.79:1 on the road's $20 marking). The row is redrawn, not done: whether an effect puff is a figure or a layer is Q for gamedev, and under R1b the same sheet passes 0 of 16. Card t_474cde50 (gamedev, 2026-10-25) answered that Q and closed the row: the puff is a tiled layer, because over one scroll its 16x16 window crosses four ground entries on 2C02 rows 0 and 2 and no body entry can clear RULE 0 point 2 on both ends (failing pairs: 4 as a figure, the arithmetic floor, and 0 under R1b). The same ruling moved the body from the redraw's $10 to $20, since the puff's band is bg3 and the band pass flattens $10 (118 pixels); the generator now draws the shipping pair and the shipped sheet is #f8f8f8 118 px plus #004058 70 px, nes_check PASS, palette_synergy PASS 0 failing pairs. Card t_30746cd8 (gamedev, 2026-10-26) retired two eye rows and added one measured row, and changed no sprite row's status: eye_auto_r6_off_palette_combat_overlay and eye_auto_r6_combat_blocks_no_outline are retired with the three bg_battle fight mocks and the game over mock they named, which were deleted with the rest of the nine untracked mocks that carried data/palette.json's four design greys; eye_auto_r6_small_text_legibility lost the game over mock from its files and stays open, because its question is about the font and not about that picture. The row that replaces them is runtime_role_colours_not_2c02, P0 measured, checked by tools/check_runtime_palette.py, because the defect is the runtime resolve and not a PNG: 0 of the 54 design colours is a 2C02 output and pp_data.gml draws the design hex. The nine sha256 and the measurements are at knowledge/GATED-REDS-2026-10-26.md. Card t_54db4d0f closed runtime_role_colours_not_2c02 to done, so the count opens at 31."
-}
+  "updated_by": "assistant (card t_09e10c47, the battle party member frame redrawn)",
+  "updated_on": "2026-10-26",
+  "count_note": "31 rows. The 19 rows of the 2026-10-23 source of truth card are unchanged: 15 repointed to game/sprites_src, 2 renamed to the shipped names (spr_title_konrad, spr_title_zander), 2 retired (spr_player_ow, spr_gate_sentry_ow). Card t_bd32a72e redrew hadrian_ow_v2 (status queued_by_eye to redrawn) and changed no other row. AUTO-GEMINI-EYE round 8 (card t_134cacc4) added 12 rows with status queued_by_eye and priority P2, because the eye does not own priority: the 7 enemies whose frame 3 drops a colour, the 3 v2 characters that need two sprite palettes, and the 2 battle frames with no dark boundary ring. No row measures game/art. Card t_b08c01d5 redrew spr_title_cloud (status queued to done) and changed no other row: the shipped cloud went from 94.6 percent on one entry and 4 failing palette_synergy pairs to 52.5 percent on the white body and 0 failing pairs. Card t_bd5cfad5 redrew sailor_ow_v2 (status queued_by_eye to done) and changed no other row: the last of the three v2 characters the eye measured at 4 and 5 colours per 16x16 cell went from 4 entries (ink, white, navy, skin) and 4 failing palette_synergy pairs per frame to 3 entries in exactly one deck sprite palette and 0 failing pairs, with drawn_px unchanged at 1196. Card t_a44ae3db (gamedev, 2026-10-24) ruled Q1 on that row: the three entry sheet stands and the blob floor is re-expressed for a three entry sheet in tests/test_make_characters_v2.py and SPRITE-CRAFT 8.5, because a floor of four entries needs a second sprite palette and was never a gamedev spec; the ruling and its measured numbers are in the row's gamedev_ruling key. Card t_c3ad486b redrew spr_pp_navy_sailor and spr_pp_petty_officer (both queued_by_eye to done) and changed no other row: the two enemies were [3, 3, 2] colours per frame before, the hit frame dropping the navy, and are [3, 3, 3] after, with the body moved off the sea's own $02 navy onto the uniform's $30 white, which took palette_synergy from 2 failing pairs to 0 on the sea ground the enemy is placed on. The five other enemies keep the blanket recolour that drops a colour in frame 3 and stay queued_by_eye, and that is Q1 on the sailor row. Card t_f24ada8a (2026-10-24) redrew spr_pp_deck_rat and spr_pp_rope_knot (both queued_by_eye to done), the only two rows left whose own measured check was red: both were FAIL on palette_synergy with 2 body_ground pairs each, body $07 brown at 1.24:1 on the $02 navy sea ground, and both had [3, 3, 2] colours per frame with the hit frame dropping the brown. They are now [3, 3, 3] and PASS with 0 failing pairs, body $28 gold in scene_sea sp1_brown_gold, drawn by make_enemies.py, the tool that owns both names. It changed no other row: gull and rogue_wave already measured 0 failing pairs on that ground, and bilge_slime too, so the eye round 10 rank 3 reading is now settled for four of the five enemies it named. The P0 car and the P1 title rows above these two stay queued or redrawn: their remaining defects are gamedev's (Q3 on the car's band palette, the cursor's gold, the cone's flat single entry), not a drawing this lane can fix and prove. Card t_b825be3e redrew spr_title_cone (status queued to done) and changed no other row: the shipped sheet was one entry on all 1246 drawn pixels, and the redraw is three stepped entries ($28 lamp 200 px, $10 mid 448 px, $00 far 704 px) on 1352 drawn px, nes_check PASS with the worst 8x8 tile holding one opaque colour, and palette_synergy PASS with 0 failing pairs of 16 on the road ground rebuilt from the seven shipped title layers at the cone's own placement. Whether the shipped sheet moves is gamedev's, posted as Q3 on the row. Card t_9774ff51 redrew spr_title_exhaust (status queued to redrawn) and changed no other row: the shipped sheet's body flipped from $0C in frame 0 to $20 in frames 1 to 3, and the redraw is $10 body with a $0C outline in one sprite palette (sp2), growing 5x4 to 12x10 over the four frames. nes_check PASS, palette_synergy 9 failing pairs to 4, and the 4 left are one pair repeated (body $10 at 1.79:1 on the road's $20 marking). The row is redrawn, not done: whether an effect puff is a figure or a layer is Q for gamedev, and under R1b the same sheet passes 0 of 16. Card t_474cde50 (gamedev, 2026-10-25) answered that Q and closed the row: the puff is a tiled layer, because over one scroll its 16x16 window crosses four ground entries on 2C02 rows 0 and 2 and no body entry can clear RULE 0 point 2 on both ends (failing pairs: 4 as a figure, the arithmetic floor, and 0 under R1b). The same ruling moved the body from the redraw's $10 to $20, since the puff's band is bg3 and the band pass flattens $10 (118 pixels); the generator now draws the shipping pair and the shipped sheet is #f8f8f8 118 px plus #004058 70 px, nes_check PASS, palette_synergy PASS 0 failing pairs.\nCard t_5e488e26 redrew spr_pp_rogue_wave and spr_pp_bilge_slime (both queued_by_eye to done) and changed no other row: the two frames the eye's round 8 measured at [3, 3, 2] entries are [3, 3, 3] now, because the hit frame is drawn by the tool with the shade plane lit instead of repainting every mid tone, and the wave's invisible rim (\"k\" is #0000bc in sp3_sea, the sea ground to the pixel: 627 px, 30.1 percent of the figure, were the colour behind it) is now \"l\" foam at 33 px, 1.6 percent. nes_check PASS on both, palette_synergy PASS 0 failing pairs on output/enemies_sea_ground.png for both, and the contact sheet carries both bands at (32, 1992) and (32, 2184). The P1 title rows konrad, zander, sign and wheel are still queued and were not touched: each row's own palette_roles block lists entries its title sprite palette does not carry ($36 skin and $10/$07 tweed on konrad, the hero blues $21/$31 on zander), so redrawing them would trade a look for a palette_count failure that is gamedev's to settle, and that is the same reason the card before this one left them. Card t_b15e9c7a redrew spr_pp_ui_enemy (queued_by_eye to done) and changed no other row's status: the block was 2 colours with 0 of 124 boundary pixels on the darkest entry, and is 3 colours with all 124 on ink $0F, every tile inside ui sp0, nes_check PASS, palette_synergy PASS with 0 failing pairs on a ground built from the shipped battle screen, and bands on output/sprites_v2_sheet.png at 4x and on its own floor. It also redrew spr_title_konrad to output/redraws/spr_title_konrad.png and left that row queued, because it measured why the row cannot pass: the car's glass pane carries $0C on 103 px and $20 on 14 px, no entry of any title sprite palette separates from both, and the same wall made the exhaust puff a layer. spr_pp_ui_party carries the same boundary defect and cannot be fixed without a palette gamedev does not yet carry, so it stays queued_by_eye with the arithmetic written down. Card t_09e10c47 redrew spr_pp_ui_party (status queued_by_eye to done) and changed no other row: the battle party block went from 0 of 108 outer boundary pixels on the darkest entry it spends (its only edge was the white $30 ring) to 108 of 108 on $00 grey, with the marker redrawn as a gold head and shoulders silhouette, 3 colours before and after, nes_check PASS 24x32 12 tiles and palette_synergy PASS 0 failing pairs on the 24x32 $0F sky band. The card took that row rather than a higher one because every higher row is held by gamedev, and its pick_note names each hold: the two P1 busts sit on the car glass pane arithmetic, the two 48 x 48 portraits have no reference, hadrian_ow_v2 waits on its palette set, and ts_exterior is a background tileset checked with the background rule rather than this card's sprite recipe. tools/art/make_ui_party_v2.py is the new tool that draws the row, and tools/art/make_title_rows_v2.py gained a party_strip and a party_ground band for the sheet. Card t_30746cd8 (gamedev, 2026-10-26) retired two eye rows and added one measured row, and changed no sprite row's status: eye_auto_r6_off_palette_combat_overlay and eye_auto_r6_combat_blocks_no_outline are retired with the three bg_battle fight mocks and the game over mock they named, which were deleted with the rest of the nine untracked mocks that carried data/palette.json's four design greys; eye_auto_r6_small_text_legibility lost the game over mock from its files and stays open, because its question is about the font and not about that picture. The row that replaces them is runtime_role_colours_not_2c02, P0 measured, checked by tools/check_runtime_palette.py, because the defect is the runtime resolve and not a PNG: 0 of the 54 design colours is a 2C02 output and pp_data.gml draws the design hex. The nine sha256 and the measurements are at knowledge/GATED-REDS-2026-10-26.md. Card t_54db4d0f closed runtime_role_colours_not_2c02 to done, so the count opens at 31."
+}
