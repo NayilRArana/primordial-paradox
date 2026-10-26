@@ -25,6 +25,14 @@ What it audits, and why each scope is gated or not:
 A SKIP is not a pass, so a file the checker cannot read is counted as UNMEASURED and the tool exits 1 on it
 when the file is gated (PLAN-V2-2026-10-21.md section 0: measurable checks, no silent greens).
 
+One red number is not one kind of red, so every record carries a `class` and every report prints the failed
+count per class (card t_b8e56b9d). The four scopes ARE the classes: `asset`, `frame`, `sheet`, `capture`. A
+`frame` red is a shipped 256x240 screen and it gates; a `sheet` or `capture` red is a contact sheet or a window
+capture and it is advisory; an `asset` red is shipped art and it gates. Printing "35 failing" over all four
+invites a reader to treat a 2 pixel contact sheet and a black-on-the-PPU gameover screen as the same finding,
+and they are not. `class_counts()` is the single place that split is computed, so the console line, the JSON and
+the page cannot disagree.
+
 How visible a failure is. The checker says WHICH blocks break a rule. This tool also counts how many pixels a
 fix would have to repaint, and sorts by that number, so worst first means most visible first: a 1024x120 sky
 that breaks 3 colour slots is named above a 3 pixel cursor tint. The counting is the only thing here that is
@@ -511,6 +519,55 @@ def rules_of(problems: list) -> dict:
     return {rule: counts[rule] for rule in sorted(counts)}
 
 
+# The four audit classes, in the order a reader should read them: the two that gate, then the two that do not.
+CLASSES = ("frame", "asset", "sheet", "capture")
+
+CLASS_MEANING = {
+    "frame": "a finished 256x240 screen, GATED",
+    "asset": "a shipped art source under game/sprites_src, GATED",
+    "sheet": "a contact sheet built to be looked at, advisory",
+    "capture": "a window capture of the running game, advisory",
+}
+
+
+def class_counts(records: list) -> list:
+    """The failed count per class, as the rows the console, the JSON and the page all print (card t_b8e56b9d).
+
+    `fail` counts every record with `ok` false, which is exactly the set the per file FAIL lines enumerate, so a
+    reader can count the lines and get the same number. `unmeasured` is broken out because a skip is not a pass:
+    a record with no verdict is already inside `fail`, and printing it twice would inflate the red count. A class
+    with no files in the run is left out rather than printed as a zero, because a zero reads like a pass.
+    """
+    rows = []
+    for name in CLASSES:
+        members = [record for record in records if record["scope"] == name]
+        if not members:
+            continue
+        rows.append({
+            "class": name,
+            "files": len(members),
+            "pass": sum(1 for record in members if record["ok"]),
+            "fail": sum(1 for record in members if not record["ok"]),
+            "unmeasured": sum(1 for record in members if record["unmeasured"]),
+            "gated": sum(1 for record in members if record["gated"]),
+            "gated_fail": sum(1 for record in members if record["gated"] and not record["ok"]),
+            "means": CLASS_MEANING[name],
+        })
+    return rows
+
+
+def record_class(record: dict) -> str:
+    """The record's class. `class` and `scope` hold the same value; a record built by a test may carry only one."""
+    return record.get("class") or record["scope"]
+
+
+def class_split_text(records: list) -> str:
+    """`frame 10, sheet 20, capture 4, asset 1`: the one line every output carries."""
+    rows = class_counts(records)
+    return ", ".join("%s %d" % (row["class"], row["fail"]) for row in rows if row["fail"])
+
+
+
 def nearest_ppu(rgb: tuple, allowed: list) -> str:
     best = None
     for candidate in allowed:
@@ -572,6 +629,7 @@ def audit_one(root: str, target: Target, nes_check, composite, palette: dict) ->
     record = {
         "path": target.rel,
         "scope": target.scope,
+        "class": target.scope,
         "kind": target.kind,
         "gated": target.gated,
         "scale": target.scale,
@@ -700,20 +758,20 @@ def render_markdown(records: list, verdict: dict) -> str:
     add("")
     add("## Summary")
     add("")
-    add("| scope | files | pass | fail | unmeasured | gated |")
-    add("|---|---|---|---|---|---|")
-    for scope in ("asset", "frame", "sheet", "capture"):
-        rows = [r for r in records if r["scope"] == scope]
-        if not rows:
-            continue
-        add("| %s | %d | %d | %d | %d | %d of %d |" % (
-            scope, len(rows), sum(1 for r in rows if r["ok"]),
-            sum(1 for r in rows if not r["ok"] and not r["unmeasured"]),
-            sum(1 for r in rows if r["unmeasured"]),
-            sum(1 for r in rows if r["gated"]), len(rows)))
+    add("| class | files | pass | fail | unmeasured | gated | what a red here means |")
+    add("|---|---|---|---|---|---|---|")
+    for row in class_counts(records):
+        add("| %s | %d | %d | %d | %d | %d of %d | %s |" % (
+            row["class"], row["files"], row["pass"], row["fail"], row["unmeasured"],
+            row["gated"], row["files"], row["means"]))
     add("")
     add("Verdict: **%s**. %d file(s) checked, %d failing, %d the checker could not read, %d gated failure(s)."
         % (verdict["verdict"], len(records), len(failing), len(unmeasured), verdict["gated_failures"]))
+    add("")
+    add("Failures by class: **%s**. One red number is not one kind of red, so it is never printed as one: a "
+        "`frame` or an `asset` red is shipped art and it gates, while a `sheet` or a `capture` red is a viewing "
+        "aid and it is advisory. The table above is that split, and a class with no files in this run is left "
+        "out rather than printed as a zero." % (class_split_text(records) or "no failures at all"))
     add("")
     add("Exit code from `tools/nes_audit_all.py`: %d. A gated row is a shipped asset or a finished 256x240 frame. "
         "A sheet or a window capture is ADVISORY: a 3x contact sheet and a window capture carrying the "
@@ -740,11 +798,11 @@ def render_markdown(records: list, verdict: dict) -> str:
         return (-(record["offending_pixels"] or 0), record["path"])
 
     def emit_table(rows):
-        add("| # | file | scope | pixels to repaint | % of image | rules | worst block |")
+        add("| # | file | class | pixels to repaint | % of image | rules | worst block |")
         add("|---|---|---|---|---|---|---|")
         for position, record in enumerate(sorted(rows, key=distance_to_fix), start=1):
             add("| %d | `%s` | %s | %s | %s | %s | %s |" % (
-                position, record["path"], record["scope"],
+                position, record["path"], record_class(record),
                 human(record["offending_pixels"]),
                 "-" if record["percent_of_image"] is None else "%s%%" % record["percent_of_image"],
                 ", ".join("%s x%d" % (rule, count) for rule, count in record["rules"].items()),
@@ -755,7 +813,7 @@ def render_markdown(records: list, verdict: dict) -> str:
         for position, record in enumerate(sorted(rows, key=distance_to_fix), start=1):
             size = record.get("size") or [0, 0]
             add("### %d. `%s` (%s, %s, %dx%d, %s colours)" % (
-                position, record["path"], record["scope"], "GATED" if record["gated"] else "advisory",
+                position, record["path"], record_class(record), "GATED" if record["gated"] else "advisory",
                 size[0], size[1], record.get("colours") if record.get("colours") is not None else "-"))
             add("")
             add("Checker: `%s`. %s" % (record["checker"], record["why"]))
@@ -909,7 +967,8 @@ def audit(root: str, only: str | None = None, write: bool = True) -> dict:
     records = []
     for target in targets:
         if target.kind == "frame" and composite is None:
-            records.append({"path": target.rel, "scope": target.scope, "kind": target.kind,
+            records.append({"path": target.rel, "scope": target.scope, "class": target.scope,
+                            "kind": target.kind,
                             "gated": target.gated, "scale": target.scale, "why": target.reason,
                             "checker": "none", "ok": False, "problems": [], "rules": {"unmeasured": 1},
                             "problem_count": 1, "size": None, "colours": None, "unmeasured":
@@ -929,6 +988,8 @@ def audit(root: str, only: str | None = None, write: bool = True) -> dict:
         "advisory_failures": sum(1 for r in records if not r["gated"] and (not r["ok"] or r["unmeasured"]))
                              + (synergy["advisory_failures"] if synergy else 0),
         "exit_code": 0 if (not gated_failures and not synergy_gated) else 1,
+        "classes": class_counts(records),
+        "class_split": class_split_text(records),
         "palette": os.path.relpath(palette_path, root).replace(os.sep, "/"),
         "palette_source": palette_why,
         "composite_checker": composite is not None,
@@ -1000,14 +1061,15 @@ def main(argv=None) -> int:
     if args.quiet:
         scope = verdict.get("scope") or {}
         print("nes_audit_all: %s, %d file(s), %d failing (%d gated), %d unmeasured, %d output file(s) skipped, "
-              "exit %d"
+              "exit %d; by class: %s"
               % (verdict["verdict"], len(records), len(failing), verdict["gated_failures"],
                  len(unmeasured), len(scope.get("excluded_by_name") or []) + len(scope.get("named_but_absent") or []),
-                 result["exit_code"]))
+                 result["exit_code"], class_split_text(records) or "no failures"))
         return result["exit_code"]
 
-    print("nes_audit_all: %s  %d file(s), %d failing, %d unmeasured"
-          % (verdict["verdict"], len(records), len(failing), len(unmeasured)))
+    print("nes_audit_all: %s  %d file(s), %d failing (%s), %d unmeasured"
+          % (verdict["verdict"], len(records), len(failing),
+             class_split_text(records) or "no failures", len(unmeasured)))
     for line in scope_lines(verdict["scope"]):
         print(line)
     print("  palette: %s (%s)" % (verdict["palette"], verdict["palette_source"]))
@@ -1017,6 +1079,11 @@ def main(argv=None) -> int:
     elif synergy:
         print("  synergy: %d pair(s), %d gated failure(s), %d advisory (report %s)"
               % (synergy["entries"], synergy["gated_failures"], synergy["advisory_failures"], synergy["report"]))
+    for row in class_counts(records):
+        print("  class %-8s %3d file(s), %3d pass, %3d fail%s, %s"
+              % (row["class"], row["files"], row["pass"], row["fail"],
+                 " (%d gated)" % row["gated_fail"] if row["gated_fail"] else "",
+                 row["means"]))
     for record in sorted(failing, key=lambda r: (-(r["offending_pixels"] or 0), r["path"])):
         size = record.get("size") or [0, 0]
         print("  FAIL %-9s %-56s %dx%d  %s px  %s"
