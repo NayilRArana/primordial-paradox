@@ -77,6 +77,41 @@ with injected samplers (owner sampler, screen grab, log line counter) and with t
 rectangle that is not the game's; the verdict on a covered take is proven against the real take that carries the
 defect this card was written about.
 
+## Addendum, second pass on 2026-10-26: a real recording with a window raised over it mid run
+
+The card's check asks for "a take recorded with a window deliberately raised over the game mid-run". The game still
+cannot be launched here (`python tools/idle_check.py` -> exit 4 again, naming codex.exe and codex-computer-use-swift.exe,
+`--force` forbidden), so the rectangle in this proof is a window the proof script owns instead of the game window.
+That keeps the during-recording path real: ffmpeg gdigrab, the real `capture_title.cover_report`, the real
+`PIL.ImageGrab` signature, a real second window raised over the rectangle, and the frames of the finished mp4
+measured with the same palette arithmetic the check uses.
+
+Measured (`build/pollution-live-2026-10-26.json`, video `build/_pollution_live.mp4`, 84983 bytes, 14.0 s at 30 fps):
+
+- the watch took 8 samples; the cover window was raised at t=3.02 s over the rectangle's centre sample point and
+  owned it at t=4.51, 6.28, 8.01, 9.63 and 11.33 s, each sample naming `python.exe 'PP POLLUTION PROOF COVER'`;
+  `stop_requested` went True after the second consecutive cover sample, which is the line `run_demo` uses to end
+  the run;
+- the finished file's frames at t=5.0 and t=9.0 measure palette share 0.3283 (1200 colours) and 0.3288 (1085
+  colours) -> `frame_verdict` = "not the game", with `cover_near` attributing both to the raised window; neither
+  is "art", so neither reaches the art lane's finding;
+- the frames at t=1.5 and t=13.0 measure 0.0774 and 0.0780 and are ALSO "not the game", because the rectangle is
+  a Tk window and not the game at all. That is the honest limit of this proof: the discrimination it establishes
+  is the attribution and the during-recording stop, not the art / not-art boundary, which is established on the
+  real take demo-box-2026-10-26.mp4 (above).
+
+One operational number worth keeping: with `POLLUTION_POLL_S = 1.0` the samples actually land every 1.6 s, because
+each poll pays for five `WindowFromPoint` calls plus a full rectangle grab. An earlier run of this proof held the
+cover window for 4 s (t=3.5 to t=7.0) and got exactly ONE cover sample, so `stop_requested` stayed False: a window
+that flashes for under about 3 s is caught as pollution (the take is marked) but may not stop the run. Running until
+the file's own frames are checked is what covers that case, which is why `verify_video` treats a "not the game"
+frame as a failure on its own.
+
+The proof script itself (`prove_live.py`) is attached to card t_5d1a6ec4 rather than added to `tools/`: it is a
+one-off live probe that opens two windows, and `tools/` is the set the project tests and the provenance check
+walk.
+
+
 ## Follow-ups this card does not take
 
 - `play_demo` still appends a failure if, after the recording, another window owns a sampled point of the rectangle.
