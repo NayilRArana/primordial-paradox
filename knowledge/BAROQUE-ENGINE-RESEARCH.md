@@ -419,6 +419,10 @@ DIS-30) and this card does not edit it.
 
 Three candidates were checked. The facts below were read on 2026-10-26 unless the row says otherwise.
 
+The hardware claim is quoted from the NotaGen README so it can be checked against the page rather than
+paraphrased: "Deploying NotaGen-X inference locally may require 8GB of GPU memory."
+(`https://github.com/ElectricAlexis/NotaGen`, read 2026-10-26.)
+
 | candidate | licence | size | runs on an RTX 4060 with 8 GB | runs on a Kaggle GPU | gate |
 | --- | --- | --- | --- | --- | --- |
 | NotaGen (and NotaGen-X) | MIT, `LICENSE` read 2026-10-26 | 110M, 244M, 516M parameters; weights public on Hugging Face | at the stated line: the repository says local inference of NotaGen-X may need about 8 GB, and training NotaGen-large needs 24 GB | yes, and that is where the probe is queued | none: a range request to the weights URL answered 206 without a token |
