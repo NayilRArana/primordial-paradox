@@ -1,0 +1,2430 @@
+{
+ "file": "assets/audio/pp_01_title_v9/pp_01_title_v9.mid",
+ "bars": 52,
+ "key": "A minor",
+ "summary": {
+  "by_class": {
+   "suspension": 15,
+   "appoggiatura": 15,
+   "passing": 20,
+   "neighbour": 5,
+   "anticipation": 18,
+   "raw clash": 2
+  },
+  "raw_by_pair": {
+   "vrc6 pulse a | vrc6 saw": 2
+  },
+  "blocks": {
+   "6": 2
+  },
+  "blocks_total": 7,
+  "raw_total": 2,
+  "strong_raw": 0,
+  "dissonances": 75
+ },
+ "events": [
+  {
+   "bar": 3,
+   "beat": 3.0,
+   "tick": 3840,
+   "pair": "triangle | vrc6 pulse a",
+   "weight": "weak",
+   "low": "B2",
+   "high": "C5",
+   "ic_name": "m2",
+   "low_voice": "triangle",
+   "high_voice": "vrc6 pulse a",
+   "voice": "vrc6 pulse a",
+   "ref": "triangle",
+   "subject": null,
+   "attacker": "vrc6 pulse a",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "vrc6 pulse a",
+     "to": "B4",
+     "step": -1,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 3,
+     "beat": 3.5
+    }
+   },
+   "class": "passing",
+   "why": "weak beat, step in and step on"
+  },
+  {
+   "bar": 3,
+   "beat": 3.0,
+   "tick": 3840,
+   "pair": "vrc6 pulse a | vrc6 saw",
+   "weight": "weak",
+   "low": "B3",
+   "high": "C5",
+   "ic_name": "m2",
+   "low_voice": "vrc6 saw",
+   "high_voice": "vrc6 pulse a",
+   "voice": "vrc6 pulse a",
+   "ref": "vrc6 saw",
+   "subject": null,
+   "attacker": "vrc6 pulse a",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "vrc6 pulse a",
+     "to": "B4",
+     "step": -1,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 3,
+     "beat": 3.5
+    }
+   },
+   "class": "passing",
+   "why": "weak beat, step in and step on"
+  },
+  {
+   "bar": 6,
+   "beat": 3.0,
+   "tick": 8160,
+   "pair": "triangle | vrc6 pulse a",
+   "weight": "weak",
+   "low": "G2",
+   "high": "A4",
+   "ic_name": "M2",
+   "low_voice": "triangle",
+   "high_voice": "vrc6 pulse a",
+   "voice": "vrc6 pulse a",
+   "ref": "triangle",
+   "subject": null,
+   "attacker": "vrc6 pulse a",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "vrc6 pulse a",
+     "to": "B4",
+     "step": 2,
+     "ok": true,
+     "why": "consonant",
+     "bar": 6,
+     "beat": 3.5
+    }
+   },
+   "class": "passing",
+   "why": "weak beat, step in and step on"
+  },
+  {
+   "bar": 6,
+   "beat": 3.0,
+   "tick": 8160,
+   "pair": "vrc6 pulse a | vrc6 pulse b",
+   "weight": "weak",
+   "low": "G#4",
+   "high": "A4",
+   "ic_name": "m2",
+   "low_voice": "vrc6 pulse b",
+   "high_voice": "vrc6 pulse a",
+   "voice": "vrc6 pulse a",
+   "ref": "vrc6 pulse b",
+   "subject": null,
+   "attacker": "vrc6 pulse a",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "vrc6 pulse a",
+     "to": "B4",
+     "step": 2,
+     "ok": true,
+     "why": "consonant",
+     "bar": 6,
+     "beat": 3.5
+    }
+   },
+   "class": "passing",
+   "why": "weak beat, step in and step on"
+  },
+  {
+   "bar": 6,
+   "beat": 3.0,
+   "tick": 8160,
+   "pair": "vrc6 pulse a | vrc6 saw",
+   "weight": "weak",
+   "low": "G#3",
+   "high": "A4",
+   "ic_name": "m2",
+   "low_voice": "vrc6 saw",
+   "high_voice": "vrc6 pulse a",
+   "voice": "vrc6 pulse a",
+   "ref": "vrc6 saw",
+   "subject": null,
+   "attacker": "vrc6 pulse a",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "vrc6 pulse a",
+     "to": "B4",
+     "step": 2,
+     "ok": true,
+     "why": "consonant",
+     "bar": 6,
+     "beat": 3.5
+    }
+   },
+   "class": "passing",
+   "why": "weak beat, step in and step on"
+  },
+  {
+   "bar": 6,
+   "beat": 3.5,
+   "tick": 8400,
+   "pair": "pulse 1 | pulse 2",
+   "weight": "offbeat",
+   "low": "B3",
+   "high": "A4",
+   "ic_name": "m7",
+   "low_voice": "pulse 1",
+   "high_voice": "pulse 2",
+   "voice": "pulse 2",
+   "ref": "pulse 1",
+   "subject": null,
+   "attacker": "pulse 2",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "pulse 2",
+     "to": "B4",
+     "step": 2,
+     "ok": false,
+     "why": "M2",
+     "bar": 7,
+     "beat": 1.0
+    }
+   },
+   "class": "anticipation",
+   "why": "the next chord's tone, sounded early and a chord tone at the line"
+  },
+  {
+   "bar": 6,
+   "beat": 3.5,
+   "tick": 8400,
+   "pair": "pulse 2 | triangle",
+   "weight": "offbeat",
+   "low": "G2",
+   "high": "A4",
+   "ic_name": "M2",
+   "low_voice": "triangle",
+   "high_voice": "pulse 2",
+   "voice": "pulse 2",
+   "ref": "triangle",
+   "subject": null,
+   "attacker": "pulse 2",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "pulse 2",
+     "to": "B4",
+     "step": 2,
+     "ok": false,
+     "why": "M2",
+     "bar": 7,
+     "beat": 1.0
+    }
+   },
+   "class": "anticipation",
+   "why": "the next chord's tone, sounded early and a chord tone at the line"
+  },
+  {
+   "bar": 6,
+   "beat": 3.5,
+   "tick": 8400,
+   "pair": "pulse 2 | vrc6 pulse a",
+   "weight": "offbeat",
+   "low": "A4",
+   "high": "B4",
+   "ic_name": "M2",
+   "low_voice": "pulse 2",
+   "high_voice": "vrc6 pulse a",
+   "voice": "vrc6 pulse a",
+   "ref": "pulse 2",
+   "subject": null,
+   "attacker": "vrc6 pulse a",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "vrc6 pulse a",
+     "to": "E5",
+     "step": 5,
+     "ok": true,
+     "why": "consonant",
+     "bar": 7,
+     "beat": 1.0
+    }
+   },
+   "class": "anticipation",
+   "why": "the next chord's tone, sounded early and a chord tone at the line"
+  },
+  {
+   "bar": 6,
+   "beat": 3.5,
+   "tick": 8400,
+   "pair": "pulse 2 | vrc6 pulse b",
+   "weight": "offbeat",
+   "low": "G#4",
+   "high": "A4",
+   "ic_name": "m2",
+   "low_voice": "vrc6 pulse b",
+   "high_voice": "pulse 2",
+   "voice": "pulse 2",
+   "ref": "vrc6 pulse b",
+   "subject": null,
+   "attacker": "pulse 2",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "pulse 2",
+     "to": "B4",
+     "step": 2,
+     "ok": false,
+     "why": "M7",
+     "bar": 7,
+     "beat": 1.0
+    }
+   },
+   "class": "anticipation",
+   "why": "the next chord's tone, sounded early and a chord tone at the line"
+  },
+  {
+   "bar": 6,
+   "beat": 3.5,
+   "tick": 8400,
+   "pair": "pulse 2 | vrc6 saw",
+   "weight": "offbeat",
+   "low": "G#3",
+   "high": "A4",
+   "ic_name": "m2",
+   "low_voice": "vrc6 saw",
+   "high_voice": "pulse 2",
+   "voice": "pulse 2",
+   "ref": "vrc6 saw",
+   "subject": null,
+   "attacker": "pulse 2",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "pulse 2",
+     "to": "B4",
+     "step": 2,
+     "ok": true,
+     "why": "other voice silent",
+     "bar": 7,
+     "beat": 1.0
+    }
+   },
+   "class": "anticipation",
+   "why": "the next chord's tone, sounded early and a chord tone at the line"
+  },
+  {
+   "bar": 7,
+   "beat": 1.0,
+   "tick": 8640,
+   "pair": "pulse 1 | pulse 2",
+   "weight": "strong",
+   "low": "A3",
+   "high": "B4",
+   "ic_name": "M2",
+   "low_voice": "pulse 1",
+   "high_voice": "pulse 2",
+   "voice": "pulse 2",
+   "ref": "pulse 1",
+   "subject": null,
+   "attacker": "pulse 2",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "pulse 2",
+     "to": "C5",
+     "step": 1,
+     "ok": true,
+     "why": "consonant",
+     "bar": 7,
+     "beat": 1.5
+    }
+   },
+   "class": "appoggiatura",
+   "why": "downbeat, entered freely, resolves by step"
+  },
+  {
+   "bar": 7,
+   "beat": 1.0,
+   "tick": 8640,
+   "pair": "pulse 2 | triangle",
+   "weight": "strong",
+   "low": "A2",
+   "high": "B4",
+   "ic_name": "M2",
+   "low_voice": "triangle",
+   "high_voice": "pulse 2",
+   "voice": "pulse 2",
+   "ref": "triangle",
+   "subject": null,
+   "attacker": "pulse 2",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "pulse 2",
+     "to": "C5",
+     "step": 1,
+     "ok": true,
+     "why": "consonant",
+     "bar": 7,
+     "beat": 1.5
+    }
+   },
+   "class": "appoggiatura",
+   "why": "downbeat, entered freely, resolves by step"
+  },
+  {
+   "bar": 7,
+   "beat": 1.0,
+   "tick": 8640,
+   "pair": "pulse 2 | vrc6 pulse b",
+   "weight": "strong",
+   "low": "C4",
+   "high": "B4",
+   "ic_name": "M7",
+   "low_voice": "vrc6 pulse b",
+   "high_voice": "pulse 2",
+   "voice": "pulse 2",
+   "ref": "vrc6 pulse b",
+   "subject": null,
+   "attacker": "pulse 2",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "pulse 2",
+     "to": "C5",
+     "step": 1,
+     "ok": true,
+     "why": "consonant",
+     "bar": 7,
+     "beat": 1.5
+    }
+   },
+   "class": "appoggiatura",
+   "why": "downbeat, entered freely, resolves by step"
+  },
+  {
+   "bar": 7,
+   "beat": 3.5,
+   "tick": 9840,
+   "pair": "pulse 2 | vrc6 pulse b",
+   "weight": "offbeat",
+   "low": "C4",
+   "high": "B4",
+   "ic_name": "M7",
+   "low_voice": "vrc6 pulse b",
+   "high_voice": "pulse 2",
+   "voice": "pulse 2",
+   "ref": "vrc6 pulse b",
+   "subject": null,
+   "attacker": "pulse 2",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "pulse 2",
+     "to": "B4",
+     "step": 0,
+     "ok": true,
+     "why": "consonant",
+     "bar": 8,
+     "beat": 1.0
+    }
+   },
+   "class": "anticipation",
+   "why": "the next chord's tone, sounded early and a chord tone at the line"
+  },
+  {
+   "bar": 7,
+   "beat": 3.5,
+   "tick": 9840,
+   "pair": "pulse 2 | vrc6 saw",
+   "weight": "offbeat",
+   "low": "C3",
+   "high": "B4",
+   "ic_name": "M7",
+   "low_voice": "vrc6 saw",
+   "high_voice": "pulse 2",
+   "voice": "pulse 2",
+   "ref": "vrc6 saw",
+   "subject": null,
+   "attacker": "pulse 2",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "pulse 2",
+     "to": "B4",
+     "step": 0,
+     "ok": true,
+     "why": "other voice silent",
+     "bar": 8,
+     "beat": 1.0
+    }
+   },
+   "class": "anticipation",
+   "why": "the next chord's tone, sounded early and a chord tone at the line"
+  },
+  {
+   "bar": 10,
+   "beat": 3.5,
+   "tick": 14160,
+   "pair": "pulse 2 | triangle",
+   "weight": "offbeat",
+   "low": "D3",
+   "high": "E5",
+   "ic_name": "M2",
+   "low_voice": "triangle",
+   "high_voice": "pulse 2",
+   "voice": "pulse 2",
+   "ref": "triangle",
+   "subject": null,
+   "attacker": "pulse 2",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "pulse 2",
+     "to": "F5",
+     "step": 1,
+     "ok": false,
+     "why": "m2",
+     "bar": 11,
+     "beat": 1.0
+    }
+   },
+   "class": "anticipation",
+   "why": "the next chord's tone, sounded early and a chord tone at the line"
+  },
+  {
+   "bar": 10,
+   "beat": 3.5,
+   "tick": 14160,
+   "pair": "pulse 2 | vrc6 pulse b",
+   "weight": "offbeat",
+   "low": "F4",
+   "high": "E5",
+   "ic_name": "M7",
+   "low_voice": "vrc6 pulse b",
+   "high_voice": "pulse 2",
+   "voice": "pulse 2",
+   "ref": "vrc6 pulse b",
+   "subject": null,
+   "attacker": "pulse 2",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "pulse 2",
+     "to": "F5",
+     "step": 1,
+     "ok": true,
+     "why": "consonant",
+     "bar": 11,
+     "beat": 1.0
+    }
+   },
+   "class": "passing",
+   "why": "weak beat, step in and step on"
+  },
+  {
+   "bar": 10,
+   "beat": 3.5,
+   "tick": 14160,
+   "pair": "pulse 2 | vrc6 saw",
+   "weight": "offbeat",
+   "low": "F3",
+   "high": "E5",
+   "ic_name": "M7",
+   "low_voice": "vrc6 saw",
+   "high_voice": "pulse 2",
+   "voice": "pulse 2",
+   "ref": "vrc6 saw",
+   "subject": null,
+   "attacker": "pulse 2",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "pulse 2",
+     "to": "F5",
+     "step": 1,
+     "ok": true,
+     "why": "other voice silent",
+     "bar": 11,
+     "beat": 1.0
+    }
+   },
+   "class": "passing",
+   "why": "weak beat, step in and step on"
+  },
+  {
+   "bar": 11,
+   "beat": 1.0,
+   "tick": 14400,
+   "pair": "pulse 1 | pulse 2",
+   "weight": "strong",
+   "low": "E4",
+   "high": "F5",
+   "ic_name": "m2",
+   "low_voice": "pulse 1",
+   "high_voice": "pulse 2",
+   "voice": "pulse 2",
+   "ref": "pulse 1",
+   "subject": null,
+   "attacker": "pulse 2",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "pulse 2",
+     "to": "E5",
+     "step": -1,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 11,
+     "beat": 1.5
+    }
+   },
+   "class": "appoggiatura",
+   "why": "downbeat, entered freely, resolves by step"
+  },
+  {
+   "bar": 11,
+   "beat": 1.0,
+   "tick": 14400,
+   "pair": "pulse 2 | triangle",
+   "weight": "strong",
+   "low": "E3",
+   "high": "F5",
+   "ic_name": "m2",
+   "low_voice": "triangle",
+   "high_voice": "pulse 2",
+   "voice": "pulse 2",
+   "ref": "triangle",
+   "subject": null,
+   "attacker": "pulse 2",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "pulse 2",
+     "to": "E5",
+     "step": -1,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 11,
+     "beat": 1.5
+    }
+   },
+   "class": "appoggiatura",
+   "why": "downbeat, entered freely, resolves by step"
+  },
+  {
+   "bar": 11,
+   "beat": 1.0,
+   "tick": 14400,
+   "pair": "pulse 2 | vrc6 pulse a",
+   "weight": "strong",
+   "low": "E5",
+   "high": "F5",
+   "ic_name": "m2",
+   "low_voice": "vrc6 pulse a",
+   "high_voice": "pulse 2",
+   "voice": "pulse 2",
+   "ref": "vrc6 pulse a",
+   "subject": null,
+   "attacker": "pulse 2",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "pulse 2",
+     "to": "E5",
+     "step": -1,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 11,
+     "beat": 1.5
+    }
+   },
+   "class": "appoggiatura",
+   "why": "downbeat, entered freely, resolves by step"
+  },
+  {
+   "bar": 11,
+   "beat": 3.5,
+   "tick": 15600,
+   "pair": "pulse 1 | pulse 2",
+   "weight": "offbeat",
+   "low": "B3",
+   "high": "C5",
+   "ic_name": "m2",
+   "low_voice": "pulse 1",
+   "high_voice": "pulse 2",
+   "voice": "pulse 2",
+   "ref": "pulse 1",
+   "subject": null,
+   "attacker": "pulse 2",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "pulse 2",
+     "to": "B4",
+     "step": -1,
+     "ok": false,
+     "why": "M2",
+     "bar": 12,
+     "beat": 1.0
+    }
+   },
+   "class": "anticipation",
+   "why": "the next chord's tone, sounded early and a chord tone at the line"
+  },
+  {
+   "bar": 11,
+   "beat": 3.5,
+   "tick": 15600,
+   "pair": "pulse 2 | vrc6 saw",
+   "weight": "offbeat",
+   "low": "D3",
+   "high": "C5",
+   "ic_name": "m7",
+   "low_voice": "vrc6 saw",
+   "high_voice": "pulse 2",
+   "voice": "pulse 2",
+   "ref": "vrc6 saw",
+   "subject": null,
+   "attacker": "pulse 2",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "pulse 2",
+     "to": "B4",
+     "step": -1,
+     "ok": true,
+     "why": "other voice silent",
+     "bar": 12,
+     "beat": 1.0
+    }
+   },
+   "class": "neighbour",
+   "why": "weak beat, step in and step back"
+  },
+  {
+   "bar": 11,
+   "beat": 3.5,
+   "tick": 15600,
+   "pair": "vrc6 pulse a | vrc6 saw",
+   "weight": "offbeat",
+   "low": "D3",
+   "high": "E5",
+   "ic_name": "M2",
+   "low_voice": "vrc6 saw",
+   "high_voice": "vrc6 pulse a",
+   "voice": "vrc6 pulse a",
+   "ref": "vrc6 saw",
+   "subject": null,
+   "attacker": "vrc6 pulse a",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "vrc6 pulse a",
+     "to": "A4",
+     "step": -7,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 12,
+     "beat": 1.0
+    }
+   },
+   "class": "anticipation",
+   "why": "the next chord's tone, sounded early and a chord tone at the line"
+  },
+  {
+   "bar": 12,
+   "beat": 1.0,
+   "tick": 15840,
+   "pair": "pulse 1 | pulse 2",
+   "weight": "strong",
+   "low": "A3",
+   "high": "B4",
+   "ic_name": "M2",
+   "low_voice": "pulse 1",
+   "high_voice": "pulse 2",
+   "voice": "pulse 2",
+   "ref": "pulse 1",
+   "subject": null,
+   "attacker": "pulse 2",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "pulse 2",
+     "to": "A4",
+     "step": -2,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 12,
+     "beat": 1.5
+    }
+   },
+   "class": "appoggiatura",
+   "why": "downbeat, entered freely, resolves by step"
+  },
+  {
+   "bar": 12,
+   "beat": 1.0,
+   "tick": 15840,
+   "pair": "pulse 2 | triangle",
+   "weight": "strong",
+   "low": "A2",
+   "high": "B4",
+   "ic_name": "M2",
+   "low_voice": "triangle",
+   "high_voice": "pulse 2",
+   "voice": "pulse 2",
+   "ref": "triangle",
+   "subject": null,
+   "attacker": "pulse 2",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "pulse 2",
+     "to": "A4",
+     "step": -2,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 12,
+     "beat": 1.5
+    }
+   },
+   "class": "appoggiatura",
+   "why": "downbeat, entered freely, resolves by step"
+  },
+  {
+   "bar": 12,
+   "beat": 1.0,
+   "tick": 15840,
+   "pair": "pulse 2 | vrc6 pulse a",
+   "weight": "strong",
+   "low": "A4",
+   "high": "B4",
+   "ic_name": "M2",
+   "low_voice": "vrc6 pulse a",
+   "high_voice": "pulse 2",
+   "voice": "pulse 2",
+   "ref": "vrc6 pulse a",
+   "subject": null,
+   "attacker": "pulse 2",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "pulse 2",
+     "to": "A4",
+     "step": -2,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 12,
+     "beat": 1.5
+    }
+   },
+   "class": "appoggiatura",
+   "why": "downbeat, entered freely, resolves by step"
+  },
+  {
+   "bar": 12,
+   "beat": 1.0,
+   "tick": 15840,
+   "pair": "pulse 2 | vrc6 pulse b",
+   "weight": "strong",
+   "low": "C4",
+   "high": "B4",
+   "ic_name": "M7",
+   "low_voice": "vrc6 pulse b",
+   "high_voice": "pulse 2",
+   "voice": "pulse 2",
+   "ref": "vrc6 pulse b",
+   "subject": null,
+   "attacker": "pulse 2",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "pulse 2",
+     "to": "A4",
+     "step": -2,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 12,
+     "beat": 1.5
+    }
+   },
+   "class": "appoggiatura",
+   "why": "downbeat, entered freely, resolves by step"
+  },
+  {
+   "bar": 13,
+   "beat": 3.0,
+   "tick": 18240,
+   "pair": "pulse 1 | vrc6 pulse b",
+   "weight": "weak",
+   "low": "A4",
+   "high": "A#5",
+   "ic_name": "m2",
+   "low_voice": "pulse 1",
+   "high_voice": "vrc6 pulse b",
+   "voice": "vrc6 pulse b",
+   "ref": "pulse 1",
+   "subject": null,
+   "attacker": "vrc6 pulse b",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "vrc6 pulse b",
+     "to": "C6",
+     "step": 2,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 13,
+     "beat": 3.5
+    }
+   },
+   "class": "passing",
+   "why": "weak beat, step in and step on"
+  },
+  {
+   "bar": 13,
+   "beat": 3.0,
+   "tick": 18240,
+   "pair": "vrc6 pulse b | vrc6 saw",
+   "weight": "weak",
+   "low": "C3",
+   "high": "A#5",
+   "ic_name": "m7",
+   "low_voice": "vrc6 saw",
+   "high_voice": "vrc6 pulse b",
+   "voice": "vrc6 pulse b",
+   "ref": "vrc6 saw",
+   "subject": null,
+   "attacker": "vrc6 pulse b",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "vrc6 pulse b",
+     "to": "C6",
+     "step": 2,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 13,
+     "beat": 3.5
+    }
+   },
+   "class": "passing",
+   "why": "weak beat, step in and step on"
+  },
+  {
+   "bar": 13,
+   "beat": 3.0,
+   "tick": 18240,
+   "pair": "vrc6 pulse b | vrc6 saw",
+   "weight": "weak",
+   "low": "E3",
+   "high": "A#5",
+   "ic_name": "TT",
+   "low_voice": "vrc6 saw",
+   "high_voice": "vrc6 pulse b",
+   "voice": "vrc6 pulse b",
+   "ref": "vrc6 saw",
+   "subject": null,
+   "attacker": "vrc6 pulse b",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "vrc6 pulse b",
+     "to": "C6",
+     "step": 2,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 13,
+     "beat": 3.5
+    }
+   },
+   "class": "passing",
+   "why": "weak beat, step in and step on"
+  },
+  {
+   "bar": 14,
+   "beat": 2.5,
+   "tick": 19440,
+   "pair": "vrc6 pulse a | vrc6 pulse b",
+   "weight": "offbeat",
+   "low": "G#4",
+   "high": "F#5",
+   "ic_name": "m7",
+   "low_voice": "vrc6 pulse a",
+   "high_voice": "vrc6 pulse b",
+   "voice": "vrc6 pulse b",
+   "ref": "vrc6 pulse a",
+   "subject": null,
+   "attacker": "vrc6 pulse b",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "vrc6 pulse b",
+     "to": "F5",
+     "step": -1,
+     "ok": true,
+     "why": "consonant",
+     "bar": 14,
+     "beat": 3.0
+    }
+   },
+   "class": "passing",
+   "why": "weak beat, step in and step on"
+  },
+  {
+   "bar": 14,
+   "beat": 2.5,
+   "tick": 19440,
+   "pair": "vrc6 pulse b | vrc6 saw",
+   "weight": "offbeat",
+   "low": "G#3",
+   "high": "F#5",
+   "ic_name": "m7",
+   "low_voice": "vrc6 saw",
+   "high_voice": "vrc6 pulse b",
+   "voice": "vrc6 pulse b",
+   "ref": "vrc6 saw",
+   "subject": null,
+   "attacker": "vrc6 pulse b",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "vrc6 pulse b",
+     "to": "F5",
+     "step": -1,
+     "ok": true,
+     "why": "consonant",
+     "bar": 14,
+     "beat": 3.0
+    }
+   },
+   "class": "passing",
+   "why": "weak beat, step in and step on"
+  },
+  {
+   "bar": 14,
+   "beat": 3.0,
+   "tick": 19680,
+   "pair": "triangle | vrc6 pulse a",
+   "weight": "weak",
+   "low": "G2",
+   "high": "A4",
+   "ic_name": "M2",
+   "low_voice": "triangle",
+   "high_voice": "vrc6 pulse a",
+   "voice": "vrc6 pulse a",
+   "ref": "triangle",
+   "subject": null,
+   "attacker": "vrc6 pulse a",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "vrc6 pulse a",
+     "to": "B4",
+     "step": 2,
+     "ok": true,
+     "why": "consonant",
+     "bar": 14,
+     "beat": 3.5
+    }
+   },
+   "class": "passing",
+   "why": "weak beat, step in and step on"
+  },
+  {
+   "bar": 14,
+   "beat": 3.0,
+   "tick": 19680,
+   "pair": "triangle | vrc6 pulse b",
+   "weight": "weak",
+   "low": "G2",
+   "high": "F5",
+   "ic_name": "m7",
+   "low_voice": "triangle",
+   "high_voice": "vrc6 pulse b",
+   "voice": "vrc6 pulse b",
+   "ref": "triangle",
+   "subject": null,
+   "attacker": "vrc6 pulse b",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "vrc6 pulse b",
+     "to": "G5",
+     "step": 2,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 14,
+     "beat": 3.5
+    }
+   },
+   "class": "neighbour",
+   "why": "weak beat, step in and back by another step"
+  },
+  {
+   "bar": 14,
+   "beat": 3.0,
+   "tick": 19680,
+   "pair": "vrc6 pulse a | vrc6 saw",
+   "weight": "weak",
+   "low": "G#3",
+   "high": "A4",
+   "ic_name": "m2",
+   "low_voice": "vrc6 saw",
+   "high_voice": "vrc6 pulse a",
+   "voice": "vrc6 pulse a",
+   "ref": "vrc6 saw",
+   "subject": null,
+   "attacker": "vrc6 pulse a",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "vrc6 pulse a",
+     "to": "B4",
+     "step": 2,
+     "ok": true,
+     "why": "consonant",
+     "bar": 14,
+     "beat": 3.5
+    }
+   },
+   "class": "passing",
+   "why": "weak beat, step in and step on"
+  },
+  {
+   "bar": 17,
+   "beat": 3.0,
+   "tick": 24000,
+   "pair": "pulse 1 | vrc6 pulse b",
+   "weight": "weak",
+   "low": "A4",
+   "high": "A#4",
+   "ic_name": "m2",
+   "low_voice": "pulse 1",
+   "high_voice": "vrc6 pulse b",
+   "voice": "vrc6 pulse b",
+   "ref": "pulse 1",
+   "subject": null,
+   "attacker": "vrc6 pulse b",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "vrc6 pulse b",
+     "to": "C5",
+     "step": 2,
+     "ok": true,
+     "why": "consonant",
+     "bar": 17,
+     "beat": 3.5
+    }
+   },
+   "class": "passing",
+   "why": "weak beat, step in and step on"
+  },
+  {
+   "bar": 17,
+   "beat": 3.5,
+   "tick": 24240,
+   "pair": "vrc6 pulse a | vrc6 pulse b",
+   "weight": "offbeat",
+   "low": "C5",
+   "high": "D5",
+   "ic_name": "M2",
+   "low_voice": "vrc6 pulse b",
+   "high_voice": "vrc6 pulse a",
+   "voice": "vrc6 pulse b",
+   "ref": "vrc6 pulse a",
+   "subject": "vrc6 pulse a",
+   "attacker": "vrc6 pulse b",
+   "prepared": true,
+   "resolution": {
+    "subject": {
+     "voice": "vrc6 pulse a",
+     "to": "B4",
+     "step": -3,
+     "ok": true,
+     "why": "consonant",
+     "bar": 18,
+     "beat": 1.0
+    },
+    "attacker": {
+     "voice": "vrc6 pulse b",
+     "to": "D5",
+     "step": 2,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 18,
+     "beat": 1.0
+    }
+   },
+   "class": "passing",
+   "why": "weak beat, step in and step on"
+  },
+  {
+   "bar": 17,
+   "beat": 3.5,
+   "tick": 24240,
+   "pair": "vrc6 pulse b | vrc6 saw",
+   "weight": "offbeat",
+   "low": "D3",
+   "high": "C5",
+   "ic_name": "m7",
+   "low_voice": "vrc6 saw",
+   "high_voice": "vrc6 pulse b",
+   "voice": "vrc6 pulse b",
+   "ref": "vrc6 saw",
+   "subject": null,
+   "attacker": "vrc6 pulse b",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "vrc6 pulse b",
+     "to": "D5",
+     "step": 2,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 18,
+     "beat": 1.0
+    }
+   },
+   "class": "passing",
+   "why": "weak beat, step in and step on"
+  },
+  {
+   "bar": 18,
+   "beat": 2.0,
+   "tick": 24960,
+   "pair": "vrc6 pulse b | vrc6 saw",
+   "weight": "medium",
+   "low": "G#3",
+   "high": "D5",
+   "ic_name": "TT",
+   "low_voice": "vrc6 saw",
+   "high_voice": "vrc6 pulse b",
+   "voice": "vrc6 saw",
+   "ref": "vrc6 pulse b",
+   "subject": "vrc6 pulse b",
+   "attacker": "vrc6 saw",
+   "prepared": true,
+   "resolution": {
+    "subject": {
+     "voice": "vrc6 pulse b",
+     "to": "C5",
+     "step": -2,
+     "ok": true,
+     "why": "consonant",
+     "bar": 18,
+     "beat": 2.5
+    },
+    "attacker": {
+     "voice": "vrc6 saw",
+     "to": "A3",
+     "step": 1,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 18,
+     "beat": 3.0
+    }
+   },
+   "class": "suspension",
+   "why": "held over at that pitch, resolves down a step"
+  },
+  {
+   "bar": 19,
+   "beat": 3.5,
+   "tick": 27120,
+   "pair": "vrc6 pulse a | vrc6 saw",
+   "weight": "offbeat",
+   "low": "D3",
+   "high": "E5",
+   "ic_name": "M2",
+   "low_voice": "vrc6 saw",
+   "high_voice": "vrc6 pulse a",
+   "voice": "vrc6 pulse a",
+   "ref": "vrc6 saw",
+   "subject": null,
+   "attacker": "vrc6 pulse a",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "vrc6 pulse a",
+     "to": "A4",
+     "step": -7,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 20,
+     "beat": 1.0
+    }
+   },
+   "class": "anticipation",
+   "why": "the next chord's tone, sounded early and a chord tone at the line"
+  },
+  {
+   "bar": 20,
+   "beat": 1.5,
+   "tick": 27600,
+   "pair": "pulse 1 | vrc6 pulse b",
+   "weight": "offbeat",
+   "low": "E4",
+   "high": "F4",
+   "ic_name": "m2",
+   "low_voice": "pulse 1",
+   "high_voice": "vrc6 pulse b",
+   "voice": "pulse 1",
+   "ref": "vrc6 pulse b",
+   "subject": "vrc6 pulse b",
+   "attacker": "pulse 1",
+   "prepared": true,
+   "resolution": {
+    "subject": {
+     "voice": "vrc6 pulse b",
+     "to": "E4",
+     "step": -1,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 21,
+     "beat": 1.0
+    },
+    "attacker": {
+     "voice": "pulse 1",
+     "to": "C4",
+     "step": -4,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 20,
+     "beat": 2.0
+    }
+   },
+   "class": "suspension",
+   "why": "held over at that pitch, resolves down a step"
+  },
+  {
+   "bar": 20,
+   "beat": 2.0,
+   "tick": 27840,
+   "pair": "vrc6 pulse b | vrc6 saw",
+   "weight": "medium",
+   "low": "E3",
+   "high": "F4",
+   "ic_name": "m2",
+   "low_voice": "vrc6 saw",
+   "high_voice": "vrc6 pulse b",
+   "voice": "vrc6 saw",
+   "ref": "vrc6 pulse b",
+   "subject": "vrc6 pulse b",
+   "attacker": "vrc6 saw",
+   "prepared": true,
+   "resolution": {
+    "subject": {
+     "voice": "vrc6 pulse b",
+     "to": "E4",
+     "step": -1,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 21,
+     "beat": 1.0
+    },
+    "attacker": {
+     "voice": "vrc6 saw",
+     "to": "E3",
+     "step": 0,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 20,
+     "beat": 3.0
+    }
+   },
+   "class": "suspension",
+   "why": "held over at that pitch, resolves down a step"
+  },
+  {
+   "bar": 20,
+   "beat": 2.5,
+   "tick": 28080,
+   "pair": "pulse 1 | vrc6 pulse b",
+   "weight": "offbeat",
+   "low": "E4",
+   "high": "F4",
+   "ic_name": "m2",
+   "low_voice": "pulse 1",
+   "high_voice": "vrc6 pulse b",
+   "voice": "pulse 1",
+   "ref": "vrc6 pulse b",
+   "subject": "vrc6 pulse b",
+   "attacker": "pulse 1",
+   "prepared": true,
+   "resolution": {
+    "subject": {
+     "voice": "vrc6 pulse b",
+     "to": "E4",
+     "step": -1,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 21,
+     "beat": 1.0
+    },
+    "attacker": {
+     "voice": "pulse 1",
+     "to": "C5",
+     "step": 8,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 20,
+     "beat": 3.0
+    }
+   },
+   "class": "suspension",
+   "why": "held over at that pitch, resolves down a step"
+  },
+  {
+   "bar": 20,
+   "beat": 3.0,
+   "tick": 28320,
+   "pair": "triangle | vrc6 pulse a",
+   "weight": "weak",
+   "low": "B2",
+   "high": "A4",
+   "ic_name": "m7",
+   "low_voice": "triangle",
+   "high_voice": "vrc6 pulse a",
+   "voice": "triangle",
+   "ref": "vrc6 pulse a",
+   "subject": "vrc6 pulse a",
+   "attacker": "triangle",
+   "prepared": true,
+   "resolution": {
+    "subject": {
+     "voice": "vrc6 pulse a",
+     "to": "G4",
+     "step": -2,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 21,
+     "beat": 1.0
+    },
+    "attacker": {
+     "voice": "triangle",
+     "to": "C3",
+     "step": 1,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 21,
+     "beat": 1.0
+    }
+   },
+   "class": "suspension",
+   "why": "held over at that pitch, resolves down a step"
+  },
+  {
+   "bar": 20,
+   "beat": 3.0,
+   "tick": 28320,
+   "pair": "triangle | vrc6 pulse b",
+   "weight": "weak",
+   "low": "B2",
+   "high": "F4",
+   "ic_name": "TT",
+   "low_voice": "triangle",
+   "high_voice": "vrc6 pulse b",
+   "voice": "triangle",
+   "ref": "vrc6 pulse b",
+   "subject": "vrc6 pulse b",
+   "attacker": "triangle",
+   "prepared": true,
+   "resolution": {
+    "subject": {
+     "voice": "vrc6 pulse b",
+     "to": "E4",
+     "step": -1,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 21,
+     "beat": 1.0
+    },
+    "attacker": {
+     "voice": "triangle",
+     "to": "C3",
+     "step": 1,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 21,
+     "beat": 1.0
+    }
+   },
+   "class": "suspension",
+   "why": "held over at that pitch, resolves down a step"
+  },
+  {
+   "bar": 20,
+   "beat": 3.0,
+   "tick": 28320,
+   "pair": "vrc6 pulse b | vrc6 saw",
+   "weight": "weak",
+   "low": "E3",
+   "high": "F4",
+   "ic_name": "m2",
+   "low_voice": "vrc6 saw",
+   "high_voice": "vrc6 pulse b",
+   "voice": "vrc6 saw",
+   "ref": "vrc6 pulse b",
+   "subject": "vrc6 pulse b",
+   "attacker": "vrc6 saw",
+   "prepared": true,
+   "resolution": {
+    "subject": {
+     "voice": "vrc6 pulse b",
+     "to": "E4",
+     "step": -1,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 21,
+     "beat": 1.0
+    },
+    "attacker": {
+     "voice": "vrc6 saw",
+     "to": "E3",
+     "step": 0,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 21,
+     "beat": 1.0
+    }
+   },
+   "class": "suspension",
+   "why": "held over at that pitch, resolves down a step"
+  },
+  {
+   "bar": 20,
+   "beat": 3.5,
+   "tick": 28560,
+   "pair": "pulse 1 | vrc6 pulse b",
+   "weight": "offbeat",
+   "low": "E4",
+   "high": "F4",
+   "ic_name": "m2",
+   "low_voice": "pulse 1",
+   "high_voice": "vrc6 pulse b",
+   "voice": "pulse 1",
+   "ref": "vrc6 pulse b",
+   "subject": "vrc6 pulse b",
+   "attacker": "pulse 1",
+   "prepared": true,
+   "resolution": {
+    "subject": {
+     "voice": "vrc6 pulse b",
+     "to": "E4",
+     "step": -1,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 21,
+     "beat": 1.0
+    },
+    "attacker": {
+     "voice": "pulse 1",
+     "to": "C4",
+     "step": -4,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 21,
+     "beat": 1.0
+    }
+   },
+   "class": "suspension",
+   "why": "held over at that pitch, resolves down a step"
+  },
+  {
+   "bar": 22,
+   "beat": 1.0,
+   "tick": 30240,
+   "pair": "pulse 2 | vrc6 pulse a",
+   "weight": "strong",
+   "low": "D5",
+   "high": "E5",
+   "ic_name": "M2",
+   "low_voice": "vrc6 pulse a",
+   "high_voice": "pulse 2",
+   "voice": "vrc6 pulse a",
+   "ref": "pulse 2",
+   "subject": "pulse 2",
+   "attacker": "vrc6 pulse a",
+   "prepared": true,
+   "resolution": {
+    "subject": {
+     "voice": "pulse 2",
+     "to": "D5",
+     "step": -2,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 22,
+     "beat": 1.5
+    },
+    "attacker": {
+     "voice": "vrc6 pulse a",
+     "to": "B4",
+     "step": -3,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 22,
+     "beat": 2.5
+    }
+   },
+   "class": "suspension",
+   "why": "held over at that pitch, resolves down a step"
+  },
+  {
+   "bar": 22,
+   "beat": 1.0,
+   "tick": 30240,
+   "pair": "pulse 2 | vrc6 saw",
+   "weight": "strong",
+   "low": "D3",
+   "high": "E5",
+   "ic_name": "M2",
+   "low_voice": "vrc6 saw",
+   "high_voice": "pulse 2",
+   "voice": "vrc6 saw",
+   "ref": "pulse 2",
+   "subject": "pulse 2",
+   "attacker": "vrc6 saw",
+   "prepared": true,
+   "resolution": {
+    "subject": {
+     "voice": "pulse 2",
+     "to": "D5",
+     "step": -2,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 22,
+     "beat": 1.5
+    },
+    "attacker": {
+     "voice": "vrc6 saw",
+     "to": "E3",
+     "step": 2,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 23,
+     "beat": 1.0
+    }
+   },
+   "class": "suspension",
+   "why": "held over at that pitch, resolves down a step"
+  },
+  {
+   "bar": 25,
+   "beat": 1.0,
+   "tick": 34560,
+   "pair": "pulse 2 | vrc6 saw",
+   "weight": "strong",
+   "low": "A3",
+   "high": "G#4",
+   "ic_name": "M7",
+   "low_voice": "vrc6 saw",
+   "high_voice": "pulse 2",
+   "voice": "vrc6 saw",
+   "ref": "pulse 2",
+   "subject": "pulse 2",
+   "attacker": "vrc6 saw",
+   "prepared": true,
+   "resolution": {
+    "subject": {
+     "voice": "pulse 2",
+     "to": "A5",
+     "step": 13,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 25,
+     "beat": 1.5
+    },
+    "attacker": {
+     "voice": "vrc6 saw",
+     "to": "G3",
+     "step": -2,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 26,
+     "beat": 1.0
+    }
+   },
+   "class": "appoggiatura",
+   "why": "downbeat, entered freely, resolves by step"
+  },
+  {
+   "bar": 26,
+   "beat": 1.0,
+   "tick": 36000,
+   "pair": "pulse 2 | vrc6 pulse a",
+   "weight": "strong",
+   "low": "G5",
+   "high": "A5",
+   "ic_name": "M2",
+   "low_voice": "vrc6 pulse a",
+   "high_voice": "pulse 2",
+   "voice": "vrc6 pulse a",
+   "ref": "pulse 2",
+   "subject": "pulse 2",
+   "attacker": "vrc6 pulse a",
+   "prepared": true,
+   "resolution": {
+    "subject": {
+     "voice": "pulse 2",
+     "to": "G5",
+     "step": -2,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 26,
+     "beat": 1.5
+    },
+    "attacker": {
+     "voice": "vrc6 pulse a",
+     "to": "E5",
+     "step": -3,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 26,
+     "beat": 2.5
+    }
+   },
+   "class": "suspension",
+   "why": "held over at that pitch, resolves down a step"
+  },
+  {
+   "bar": 26,
+   "beat": 1.0,
+   "tick": 36000,
+   "pair": "pulse 2 | vrc6 saw",
+   "weight": "strong",
+   "low": "G3",
+   "high": "A5",
+   "ic_name": "M2",
+   "low_voice": "vrc6 saw",
+   "high_voice": "pulse 2",
+   "voice": "vrc6 saw",
+   "ref": "pulse 2",
+   "subject": "pulse 2",
+   "attacker": "vrc6 saw",
+   "prepared": true,
+   "resolution": {
+    "subject": {
+     "voice": "pulse 2",
+     "to": "G5",
+     "step": -2,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 26,
+     "beat": 1.5
+    },
+    "attacker": {
+     "voice": "vrc6 saw",
+     "to": "B3",
+     "step": 4,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 27,
+     "beat": 1.0
+    }
+   },
+   "class": "suspension",
+   "why": "held over at that pitch, resolves down a step"
+  },
+  {
+   "bar": 36,
+   "beat": 3.5,
+   "tick": 51600,
+   "pair": "vrc6 pulse a | vrc6 saw",
+   "weight": "offbeat",
+   "low": "G#3",
+   "high": "G4",
+   "ic_name": "M7",
+   "low_voice": "vrc6 saw",
+   "high_voice": "vrc6 pulse a",
+   "voice": "vrc6 pulse a",
+   "ref": "vrc6 saw",
+   "subject": null,
+   "attacker": "vrc6 pulse a",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "vrc6 pulse a",
+     "to": "E4",
+     "step": -3,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 37,
+     "beat": 1.0
+    }
+   },
+   "class": "anticipation",
+   "why": "the next chord's tone, sounded early and a chord tone at the line"
+  },
+  {
+   "bar": 38,
+   "beat": 2.5,
+   "tick": 54000,
+   "pair": "vrc6 pulse a | vrc6 pulse b",
+   "weight": "offbeat",
+   "low": "D5",
+   "high": "E5",
+   "ic_name": "M2",
+   "low_voice": "vrc6 pulse a",
+   "high_voice": "vrc6 pulse b",
+   "voice": "vrc6 pulse a",
+   "ref": "vrc6 pulse b",
+   "subject": "vrc6 pulse b",
+   "attacker": "vrc6 pulse a",
+   "prepared": true,
+   "resolution": {
+    "subject": {
+     "voice": "vrc6 pulse b",
+     "to": "D#5",
+     "step": -1,
+     "ok": true,
+     "why": "consonant",
+     "bar": 39,
+     "beat": 2.0
+    },
+    "attacker": {
+     "voice": "vrc6 pulse a",
+     "to": "B4",
+     "step": -3,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 38,
+     "beat": 3.0
+    }
+   },
+   "class": "suspension",
+   "why": "held over at that pitch, resolves down a step"
+  },
+  {
+   "bar": 39,
+   "beat": 1.0,
+   "tick": 54720,
+   "pair": "triangle | vrc6 pulse b",
+   "weight": "strong",
+   "low": "B2",
+   "high": "E5",
+   "ic_name": "P4",
+   "low_voice": "triangle",
+   "high_voice": "vrc6 pulse b",
+   "voice": "triangle",
+   "ref": "vrc6 pulse b",
+   "subject": "vrc6 pulse b",
+   "attacker": "triangle",
+   "prepared": true,
+   "resolution": {
+    "subject": {
+     "voice": "vrc6 pulse b",
+     "to": "D#5",
+     "step": -1,
+     "ok": true,
+     "why": "other voice silent",
+     "bar": 39,
+     "beat": 2.0
+    },
+    "attacker": {
+     "voice": "triangle",
+     "to": "D3",
+     "step": 3,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 39,
+     "beat": 3.0
+    }
+   },
+   "class": "suspension",
+   "why": "held over at that pitch, resolves down a step"
+  },
+  {
+   "bar": 39,
+   "beat": 1.5,
+   "tick": 54960,
+   "pair": "pulse 1 | vrc6 pulse b",
+   "weight": "offbeat",
+   "low": "F#4",
+   "high": "E5",
+   "ic_name": "m7",
+   "low_voice": "pulse 1",
+   "high_voice": "vrc6 pulse b",
+   "voice": "pulse 1",
+   "ref": "vrc6 pulse b",
+   "subject": "vrc6 pulse b",
+   "attacker": "pulse 1",
+   "prepared": true,
+   "resolution": {
+    "subject": {
+     "voice": "vrc6 pulse b",
+     "to": "D#5",
+     "step": -1,
+     "ok": true,
+     "why": "consonant",
+     "bar": 39,
+     "beat": 2.0
+    },
+    "attacker": {
+     "voice": "pulse 1",
+     "to": "D#4",
+     "step": -3,
+     "ok": true,
+     "why": "consonant",
+     "bar": 39,
+     "beat": 2.0
+    }
+   },
+   "class": "suspension",
+   "why": "held over at that pitch, resolves down a step"
+  },
+  {
+   "bar": 41,
+   "beat": 2.0,
+   "tick": 58080,
+   "pair": "vrc6 pulse a | vrc6 saw",
+   "weight": "medium",
+   "low": "D3",
+   "high": "C#5",
+   "ic_name": "M7",
+   "low_voice": "vrc6 saw",
+   "high_voice": "vrc6 pulse a",
+   "voice": "vrc6 pulse a",
+   "ref": "vrc6 saw",
+   "subject": null,
+   "attacker": "vrc6 pulse a",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "vrc6 pulse a",
+     "to": "A4",
+     "step": -4,
+     "ok": true,
+     "why": "consonant",
+     "bar": 42,
+     "beat": 1.0
+    }
+   },
+   "class": "raw clash",
+   "why": "the upper voice arrives over a held note, on beat 2"
+  },
+  {
+   "bar": 42,
+   "beat": 1.0,
+   "tick": 59040,
+   "pair": "pulse 1 | vrc6 pulse a",
+   "weight": "strong",
+   "low": "A4",
+   "high": "A#4",
+   "ic_name": "m2",
+   "low_voice": "vrc6 pulse a",
+   "high_voice": "pulse 1",
+   "voice": "pulse 1",
+   "ref": "vrc6 pulse a",
+   "subject": null,
+   "attacker": "pulse 1",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "pulse 1",
+     "to": "A4",
+     "step": -1,
+     "ok": true,
+     "why": "consonant",
+     "bar": 42,
+     "beat": 1.5
+    }
+   },
+   "class": "appoggiatura",
+   "why": "downbeat, entered freely, resolves by step"
+  },
+  {
+   "bar": 42,
+   "beat": 2.0,
+   "tick": 59520,
+   "pair": "vrc6 pulse a | vrc6 saw",
+   "weight": "medium",
+   "low": "D3",
+   "high": "G#4",
+   "ic_name": "TT",
+   "low_voice": "vrc6 saw",
+   "high_voice": "vrc6 pulse a",
+   "voice": "vrc6 pulse a",
+   "ref": "vrc6 saw",
+   "subject": null,
+   "attacker": "vrc6 pulse a",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "vrc6 pulse a",
+     "to": "B4",
+     "step": 3,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 43,
+     "beat": 1.0
+    }
+   },
+   "class": "raw clash",
+   "why": "the upper voice arrives over a held note, on beat 2"
+  },
+  {
+   "bar": 46,
+   "beat": 3.0,
+   "tick": 65760,
+   "pair": "triangle | vrc6 pulse a",
+   "weight": "weak",
+   "low": "G2",
+   "high": "A4",
+   "ic_name": "M2",
+   "low_voice": "triangle",
+   "high_voice": "vrc6 pulse a",
+   "voice": "vrc6 pulse a",
+   "ref": "triangle",
+   "subject": null,
+   "attacker": "vrc6 pulse a",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "vrc6 pulse a",
+     "to": "B4",
+     "step": 2,
+     "ok": true,
+     "why": "consonant",
+     "bar": 46,
+     "beat": 3.5
+    }
+   },
+   "class": "passing",
+   "why": "weak beat, step in and step on"
+  },
+  {
+   "bar": 46,
+   "beat": 3.0,
+   "tick": 65760,
+   "pair": "vrc6 pulse a | vrc6 saw",
+   "weight": "weak",
+   "low": "G#3",
+   "high": "A4",
+   "ic_name": "m2",
+   "low_voice": "vrc6 saw",
+   "high_voice": "vrc6 pulse a",
+   "voice": "vrc6 pulse a",
+   "ref": "vrc6 saw",
+   "subject": null,
+   "attacker": "vrc6 pulse a",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "vrc6 pulse a",
+     "to": "B4",
+     "step": 2,
+     "ok": true,
+     "why": "consonant",
+     "bar": 46,
+     "beat": 3.5
+    }
+   },
+   "class": "passing",
+   "why": "weak beat, step in and step on"
+  },
+  {
+   "bar": 46,
+   "beat": 3.5,
+   "tick": 66000,
+   "pair": "pulse 2 | triangle",
+   "weight": "offbeat",
+   "low": "G2",
+   "high": "A4",
+   "ic_name": "M2",
+   "low_voice": "triangle",
+   "high_voice": "pulse 2",
+   "voice": "pulse 2",
+   "ref": "triangle",
+   "subject": null,
+   "attacker": "pulse 2",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "pulse 2",
+     "to": "E5",
+     "step": 7,
+     "ok": true,
+     "why": "consonant",
+     "bar": 47,
+     "beat": 1.0
+    }
+   },
+   "class": "anticipation",
+   "why": "the next chord's tone, sounded early and a chord tone at the line"
+  },
+  {
+   "bar": 46,
+   "beat": 3.5,
+   "tick": 66000,
+   "pair": "pulse 2 | vrc6 pulse a",
+   "weight": "offbeat",
+   "low": "A4",
+   "high": "B4",
+   "ic_name": "M2",
+   "low_voice": "pulse 2",
+   "high_voice": "vrc6 pulse a",
+   "voice": "vrc6 pulse a",
+   "ref": "pulse 2",
+   "subject": null,
+   "attacker": "vrc6 pulse a",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "vrc6 pulse a",
+     "to": "E5",
+     "step": 5,
+     "ok": true,
+     "why": "consonant",
+     "bar": 47,
+     "beat": 1.0
+    }
+   },
+   "class": "anticipation",
+   "why": "the next chord's tone, sounded early and a chord tone at the line"
+  },
+  {
+   "bar": 46,
+   "beat": 3.5,
+   "tick": 66000,
+   "pair": "pulse 2 | vrc6 saw",
+   "weight": "offbeat",
+   "low": "G#3",
+   "high": "A4",
+   "ic_name": "m2",
+   "low_voice": "vrc6 saw",
+   "high_voice": "pulse 2",
+   "voice": "pulse 2",
+   "ref": "vrc6 saw",
+   "subject": null,
+   "attacker": "pulse 2",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "pulse 2",
+     "to": "E5",
+     "step": 7,
+     "ok": true,
+     "why": "other voice silent",
+     "bar": 47,
+     "beat": 1.0
+    }
+   },
+   "class": "anticipation",
+   "why": "the next chord's tone, sounded early and a chord tone at the line"
+  },
+  {
+   "bar": 47,
+   "beat": 3.5,
+   "tick": 67440,
+   "pair": "pulse 2 | vrc6 saw",
+   "weight": "offbeat",
+   "low": "C3",
+   "high": "B4",
+   "ic_name": "M7",
+   "low_voice": "vrc6 saw",
+   "high_voice": "pulse 2",
+   "voice": "pulse 2",
+   "ref": "vrc6 saw",
+   "subject": null,
+   "attacker": "pulse 2",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "pulse 2",
+     "to": "B4",
+     "step": 0,
+     "ok": true,
+     "why": "other voice silent",
+     "bar": 48,
+     "beat": 1.0
+    }
+   },
+   "class": "anticipation",
+   "why": "the next chord's tone, sounded early and a chord tone at the line"
+  },
+  {
+   "bar": 50,
+   "beat": 3.5,
+   "tick": 71760,
+   "pair": "pulse 2 | triangle",
+   "weight": "offbeat",
+   "low": "D3",
+   "high": "E5",
+   "ic_name": "M2",
+   "low_voice": "triangle",
+   "high_voice": "pulse 2",
+   "voice": "pulse 2",
+   "ref": "triangle",
+   "subject": null,
+   "attacker": "pulse 2",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "pulse 2",
+     "to": "F5",
+     "step": 1,
+     "ok": false,
+     "why": "m2",
+     "bar": 51,
+     "beat": 1.0
+    }
+   },
+   "class": "anticipation",
+   "why": "the next chord's tone, sounded early and a chord tone at the line"
+  },
+  {
+   "bar": 50,
+   "beat": 3.5,
+   "tick": 71760,
+   "pair": "pulse 2 | vrc6 saw",
+   "weight": "offbeat",
+   "low": "F3",
+   "high": "E5",
+   "ic_name": "M7",
+   "low_voice": "vrc6 saw",
+   "high_voice": "pulse 2",
+   "voice": "pulse 2",
+   "ref": "vrc6 saw",
+   "subject": null,
+   "attacker": "pulse 2",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "pulse 2",
+     "to": "F5",
+     "step": 1,
+     "ok": true,
+     "why": "other voice silent",
+     "bar": 51,
+     "beat": 1.0
+    }
+   },
+   "class": "passing",
+   "why": "weak beat, step in and step on"
+  },
+  {
+   "bar": 51,
+   "beat": 1.0,
+   "tick": 72000,
+   "pair": "pulse 1 | pulse 2",
+   "weight": "strong",
+   "low": "E4",
+   "high": "F5",
+   "ic_name": "m2",
+   "low_voice": "pulse 1",
+   "high_voice": "pulse 2",
+   "voice": "pulse 2",
+   "ref": "pulse 1",
+   "subject": null,
+   "attacker": "pulse 2",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "pulse 2",
+     "to": "E5",
+     "step": -1,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 51,
+     "beat": 1.5
+    }
+   },
+   "class": "appoggiatura",
+   "why": "downbeat, entered freely, resolves by step"
+  },
+  {
+   "bar": 51,
+   "beat": 1.0,
+   "tick": 72000,
+   "pair": "pulse 2 | triangle",
+   "weight": "strong",
+   "low": "E3",
+   "high": "F5",
+   "ic_name": "m2",
+   "low_voice": "triangle",
+   "high_voice": "pulse 2",
+   "voice": "pulse 2",
+   "ref": "triangle",
+   "subject": null,
+   "attacker": "pulse 2",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "pulse 2",
+     "to": "E5",
+     "step": -1,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 51,
+     "beat": 1.5
+    }
+   },
+   "class": "appoggiatura",
+   "why": "downbeat, entered freely, resolves by step"
+  },
+  {
+   "bar": 51,
+   "beat": 1.0,
+   "tick": 72000,
+   "pair": "pulse 2 | vrc6 pulse a",
+   "weight": "strong",
+   "low": "E5",
+   "high": "F5",
+   "ic_name": "m2",
+   "low_voice": "vrc6 pulse a",
+   "high_voice": "pulse 2",
+   "voice": "pulse 2",
+   "ref": "vrc6 pulse a",
+   "subject": null,
+   "attacker": "pulse 2",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "pulse 2",
+     "to": "E5",
+     "step": -1,
+     "ok": true,
+     "why": "chord tone",
+     "bar": 51,
+     "beat": 1.5
+    }
+   },
+   "class": "appoggiatura",
+   "why": "downbeat, entered freely, resolves by step"
+  },
+  {
+   "bar": 51,
+   "beat": 3.5,
+   "tick": 73200,
+   "pair": "pulse 1 | pulse 2",
+   "weight": "offbeat",
+   "low": "B3",
+   "high": "C5",
+   "ic_name": "m2",
+   "low_voice": "pulse 1",
+   "high_voice": "pulse 2",
+   "voice": "pulse 2",
+   "ref": "pulse 1",
+   "subject": null,
+   "attacker": "pulse 2",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "pulse 2",
+     "to": "B4",
+     "step": -1,
+     "ok": true,
+     "why": "consonant",
+     "bar": 52,
+     "beat": 1.0
+    }
+   },
+   "class": "neighbour",
+   "why": "weak beat, step in and step back"
+  },
+  {
+   "bar": 51,
+   "beat": 3.5,
+   "tick": 73200,
+   "pair": "pulse 2 | triangle",
+   "weight": "offbeat",
+   "low": "B2",
+   "high": "C5",
+   "ic_name": "m2",
+   "low_voice": "triangle",
+   "high_voice": "pulse 2",
+   "voice": "pulse 2",
+   "ref": "triangle",
+   "subject": null,
+   "attacker": "pulse 2",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "pulse 2",
+     "to": "B4",
+     "step": -1,
+     "ok": true,
+     "why": "consonant",
+     "bar": 52,
+     "beat": 1.0
+    }
+   },
+   "class": "neighbour",
+   "why": "weak beat, step in and step back"
+  },
+  {
+   "bar": 51,
+   "beat": 3.5,
+   "tick": 73200,
+   "pair": "pulse 2 | vrc6 saw",
+   "weight": "offbeat",
+   "low": "D3",
+   "high": "C5",
+   "ic_name": "m7",
+   "low_voice": "vrc6 saw",
+   "high_voice": "pulse 2",
+   "voice": "pulse 2",
+   "ref": "vrc6 saw",
+   "subject": null,
+   "attacker": "pulse 2",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "pulse 2",
+     "to": "B4",
+     "step": -1,
+     "ok": true,
+     "why": "other voice silent",
+     "bar": 52,
+     "beat": 1.0
+    }
+   },
+   "class": "neighbour",
+   "why": "weak beat, step in and step back"
+  },
+  {
+   "bar": 51,
+   "beat": 3.5,
+   "tick": 73200,
+   "pair": "vrc6 pulse a | vrc6 saw",
+   "weight": "offbeat",
+   "low": "D3",
+   "high": "E5",
+   "ic_name": "M2",
+   "low_voice": "vrc6 saw",
+   "high_voice": "vrc6 pulse a",
+   "voice": "vrc6 pulse a",
+   "ref": "vrc6 saw",
+   "subject": null,
+   "attacker": "vrc6 pulse a",
+   "prepared": false,
+   "resolution": {
+    "attacker": {
+     "voice": "vrc6 pulse a",
+     "to": "B4",
+     "step": -5,
+     "ok": true,
+     "why": "other voice silent",
+     "bar": 52,
+     "beat": 1.0
+    }
+   },
+   "class": "anticipation",
+   "why": "the next chord's tone, sounded early and a chord tone at the line"
+  }
+ ]
+}

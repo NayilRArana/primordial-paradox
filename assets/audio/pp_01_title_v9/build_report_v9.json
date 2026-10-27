@@ -1,0 +1,212 @@
+{
+  "source": "<repo>\\assets\\audio\\pp_01_title_v7\\pp_01_title_v7.mid",
+  "out": "<repo>\\assets\\audio\\pp_01_title_v9\\pp_01_title_v9.mid",
+  "key": "A minor",
+  "time_sig": [
+    3,
+    4
+  ],
+  "tempo_bpm": 126.0,
+  "bars": 52,
+  "loop": "bar 5 for 48 bars",
+  "frozen": {
+    "vrc6 pulse a": {
+      "notes_before": 129,
+      "notes_after": 129,
+      "identical": true
+    },
+    "noise": {
+      "notes_before": 266,
+      "notes_after": 266,
+      "identical": true
+    },
+    "dpcm": {
+      "notes_before": 105,
+      "notes_after": 105,
+      "identical": true
+    }
+  },
+  "before": {
+    "by_class": {
+      "suspension": 25,
+      "appoggiatura": 25,
+      "passing": 41,
+      "neighbour": 6,
+      "anticipation": 19,
+      "raw clash": 196
+    },
+    "raw_total": 196,
+    "strong_raw": 30,
+    "dissonances": 312
+  },
+  "after": {
+    "by_class": {
+      "suspension": 15,
+      "appoggiatura": 15,
+      "passing": 20,
+      "neighbour": 5,
+      "anticipation": 18,
+      "raw clash": 2
+    },
+    "raw_total": 2,
+    "strong_raw": 0,
+    "dissonances": 75
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "raw": 196,
+      "strong": 30
+    },
+    {
+      "round": 2,
+      "raw": 55,
+      "strong": 15
+    },
+    {
+      "round": 3,
+      "raw": 29,
+      "strong": 7
+    },
+    {
+      "round": 4,
+      "raw": 6,
+      "strong": 0
+    },
+    {
+      "round": 5,
+      "raw": 5,
+      "strong": 2
+    },
+    {
+      "round": 6,
+      "raw": 2,
+      "strong": 0
+    }
+  ],
+  "edits": 216,
+  "edits_by_voice": {
+    "pulse 2": 48,
+    "triangle": 20,
+    "vrc6 pulse b": 35,
+    "vrc6 saw": 47,
+    "pulse 1": 66
+  },
+  "rests": 23,
+  "chord_rewrites": [
+    {
+      "bar": 27,
+      "beat": 1.0,
+      "voice": "vrc6 saw",
+      "from": "G#3+B2",
+      "to": "B3+B2",
+      "why": "whole chord re-voiced: a single note could not keep it a triad"
+    },
+    {
+      "bar": 10,
+      "beat": 2.0,
+      "voice": "vrc6 saw",
+      "from": "A3+F3",
+      "to": "G#3+F3",
+      "why": "whole chord re-voiced: a single note could not keep it a triad"
+    },
+    {
+      "bar": 32,
+      "beat": 3.0,
+      "voice": "vrc6 saw",
+      "from": "B3+F3",
+      "to": "B3+G3",
+      "why": "whole chord re-voiced: a single note could not keep it a triad"
+    },
+    {
+      "bar": 50,
+      "beat": 2.0,
+      "voice": "vrc6 saw",
+      "from": "A3+F3",
+      "to": "G#3+F3",
+      "why": "whole chord re-voiced: a single note could not keep it a triad"
+    },
+    {
+      "bar": 10,
+      "beat": 2.0,
+      "voice": "vrc6 saw",
+      "from": "G#3+F3",
+      "to": "B3+F3",
+      "why": "whole chord re-voiced: a single note could not keep it a triad"
+    },
+    {
+      "bar": 50,
+      "beat": 2.0,
+      "voice": "vrc6 saw",
+      "from": "G#3+F3",
+      "to": "B3+F3",
+      "why": "whole chord re-voiced: a single note could not keep it a triad"
+    }
+  ],
+  "residual": [
+    {
+      "bar": 41,
+      "beat": 2.0,
+      "pair": "vrc6 pulse a | vrc6 saw",
+      "low": "D3",
+      "high": "C#5",
+      "why": "the upper voice arrives over a held note, on beat 2"
+    },
+    {
+      "bar": 42,
+      "beat": 2.0,
+      "pair": "vrc6 pulse a | vrc6 saw",
+      "low": "D3",
+      "high": "G#4",
+      "why": "the upper voice arrives over a held note, on beat 2"
+    }
+  ],
+  "devices_after": [
+    {
+      "slot": "DIS-09 anticipation",
+      "bar": 36,
+      "beat": 3.5,
+      "pair": "vrc6 pulse a | vrc6 saw",
+      "low": "G#3",
+      "high": "G4",
+      "class": "anticipation",
+      "why": "the next chord's tone, sounded early and a chord tone at the line"
+    },
+    {
+      "slot": "DIS-04 suspension",
+      "bar": 39,
+      "beat": 1.0,
+      "pair": "triangle | vrc6 pulse b",
+      "low": "B2",
+      "high": "E5",
+      "class": "suspension",
+      "why": "held over at that pitch, resolves down a step"
+    },
+    {
+      "slot": "DIS-04 suspension",
+      "bar": 39,
+      "beat": 1.5,
+      "pair": "pulse 1 | vrc6 pulse b",
+      "low": "F#4",
+      "high": "E5",
+      "class": "suspension",
+      "why": "held over at that pitch, resolves down a step"
+    }
+  ],
+  "registers": [],
+  "tracks_out": {
+    "dpcm": 105,
+    "meta": 0,
+    "noise": 266,
+    "pulse 1": 287,
+    "pulse 2": 97,
+    "triangle": 114,
+    "vrc6 pulse a": 129,
+    "vrc6 pulse b": 90,
+    "vrc6 saw": 148
+  },
+  "hook": {
+    "before": 83,
+    "after": 83
+  }
+}
