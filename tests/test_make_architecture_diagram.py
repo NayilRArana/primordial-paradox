@@ -15,6 +15,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import pathlib
 import re
 
 import pytest
@@ -118,7 +119,11 @@ def test_render_svg_is_the_same_string_twice_and_carries_no_local_path():
     assert first.rstrip().endswith("</svg>")
     assert ROOT not in first
     assert "C:\\" not in first
-    assert "<workspace>" not in first
+    # The check is built from ROOT rather than a literal folder name: every component of the
+    # path is covered, not just one, and spelling that name in this file would make the public
+    # export refuse it.
+    for part in pathlib.Path(ROOT).parts[1:]:
+        assert part not in first
 
 
 def test_render_svg_escapes_text_that_looks_like_markup():
