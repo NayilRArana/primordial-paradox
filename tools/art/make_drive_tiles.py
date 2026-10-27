@@ -69,6 +69,7 @@ BACKDROP_ROLE = "grey_0"
 
 sys.path.insert(0, os.path.join(ROOT, "tools", "art"))
 import nes_snap  # noqa: E402  the project's curated project palette to 2C02 bridge
+import style_b  # noqa: E402  the direction B polish pass (card ART-B-OPENING)
 
 ODBL = ("(c) OpenStreetMap contributors, Open Database Licence (ODbL) 1.0, "
         "https://www.openstreetmap.org/copyright")
@@ -549,10 +550,14 @@ def load_colours():
     COLOUR[BACKDROP_ROLE] = (0, 0, 0, 255)
 
 
-def render_tile(painter):
-    canvas = Canvas()
-    canvas.fill(None)
-    painter(canvas)
+def render_canvas(canvas):
+    """One 16x16 RGBA tile from a role grid. The grid is the truth, so what is written is what was measured.
+
+    Card ART-B-OPENING: this takes the canvas itself rather than the painter, because the direction B pass
+    edits the grid after the painter has run and a renderer that re-runs the painter writes the pre-pass
+    drawing while the manifest reports the post-pass numbers. Measured 2026-10-27 on the first wiring:
+    drive_tiles.json recorded three tones per road tile and drive_tiles.png was pixel identical to HEAD.
+    """
     image = Image.new("RGBA", (TILE, TILE), COLOUR[BACKDROP_ROLE])
     pixels = image.load()
     for y in range(TILE):
@@ -562,11 +567,55 @@ def render_tile(painter):
     return image
 
 
+def render_tile(painter):
+    canvas = Canvas()
+    canvas.fill(None)
+    painter(canvas)
+    return render_canvas(canvas)
+
+
 def luminance(rgb):
     def channel(value):
         value = value / 255.0
         return value / 12.92 if value <= 0.03928 else ((value + 0.055) / 1.055) ** 2.4
     return 0.2126 * channel(rgb[0]) + 0.7152 * channel(rgb[1]) + 0.0722 * channel(rgb[2])
+
+
+def style_b_pass(canvas, palette_name):
+    """The direction B polish pass on one tile (card ART-B-OPENING), inside the tile's own palette.
+
+    A drive tile draws from exactly one of the four background palettes, three roles plus the shared
+    backdrop, so the tile's own three roles ARE its three tones: sorted by measured luminance they are
+    the shadow, the mid and the lit tone of the one form on that tile. tools/art/style_b.py does the
+    drawing; this function only tells it which role is which rung, which is why the pass cannot add a
+    colour the tile's palette does not already hold.
+
+    Returns (before, after) numbers so the caller can print what moved.
+    """
+    roles = [role for (pname, proles, _note) in BG_PALETTES if pname == palette_name for role in proles]
+    order = sorted(roles, key=lambda role: luminance(COLOUR[role]))
+    ids = {role: index for index, role in enumerate(order)}
+    bright = {index: int(round(luminance(COLOUR[role]) * 255)) for role, index in ids.items()}
+    tones = {}
+    for position, role in enumerate(order):
+        darker = ids[order[position - 1]] if position > 0 else None
+        lighter = ids[order[position + 1]] if position + 1 < len(order) else None
+        tones[ids[role]] = (darker, lighter)
+    rows = canvas.rows()
+    px = bytearray([style_b.TRANSPARENT]) * (TILE * TILE)
+    for y in range(TILE):
+        for x in range(TILE):
+            role = rows[y][x]
+            if role is not None:
+                px[y * TILE + x] = ids[role]
+    out = style_b.apply(TILE, TILE, px, tones=tones, bright=bright)
+    back = {index: role for role, index in ids.items()}
+    for at in range(TILE * TILE):
+        value = out[at]
+        y, x = divmod(at, TILE)
+        canvas.px[y][x] = None if value == style_b.TRANSPARENT else back[value]
+    return (style_b.measure(TILE, TILE, px, tones=tones, bright=bright),
+            style_b.measure(TILE, TILE, out, tones=tones, bright=bright))
 
 
 def blob_numbers(canvas, extra_dark=None):
@@ -623,6 +672,39 @@ def blob_verdict(numbers, gated):
     return "pass" if not failures else "FAIL: " + "; ".join(failures)
 
 
+def flatten_canvas_dither(canvas):
+    """Remove every 2x2 checker that survives the pass, on the role grid, before the tile is measured.
+
+    Card ART-B-OPENING. tools/art/style_b.py flattens the checkers it makes, but the pass runs per tile and a
+    tile painter can also lay a checker down itself, and the pass's own flatten restores pixels from the
+    drawing, which can re-make one somewhere else. Measured 2026-10-27 on assets/tiles/drive/drive_tiles.png:
+    five patch(es) in the shipped sheet, three of them whole inside a tile, which ART-STYLE section 2 counts
+    as dithering. Replacing one partner with the other can only spend a role the tile already uses.
+    """
+    rows = canvas.rows()
+    changed = 0
+    for _round in range(16):
+        found = []
+        for y in range(TILE - 2):
+            for x in range(TILE - 2):
+                a = rows[y][x]
+                b = rows[y][x + 1]
+                if a == b:
+                    continue
+                if rows[y + 1][x] == b and rows[y + 1][x + 1] == a \
+                        and rows[y][x + 2] == a and rows[y + 2][x] == a:
+                    found.append((x, y))
+        if not found:
+            break
+        for x, y in found:
+            keep = rows[y][x]
+            for dx, dy in ((1, 0), (0, 1), (1, 1)):
+                if rows[y + dy][x + dx] != keep:
+                    rows[y + dy][x + dx] = keep
+                    changed += 1
+    return changed
+
+
 def build():
     load_colours()
     rendered = []
@@ -635,19 +717,29 @@ def build():
         outside = [role for role in roles if role not in allowed]
         if outside:
             raise SystemExit("%s draws %s outside %s" % (entry["name"], outside, entry["palette"]))
+        # Direction B (card ART-B-OPENING): the polish pass, on the role grid, before the tile is
+        # rendered and before the blob test reads it, so every number below describes what ships.
+        style_b_before, style_b_after = style_b_pass(canvas, entry["palette"])
+        flatten_canvas_dither(canvas)
+        roles = sorted({role for row in canvas.rows() for role in row if role})
         numbers = blob_numbers(canvas, DARK_ROLE.get(entry["name"]))
         rendered.append({
             "name": entry["name"], "character": entry["char"], "palette": entry["palette"],
             "roles": roles, "note": entry["note"], "source": entry["source"],
             "walkable": entry["walkable"], "walk_why": entry["walk_why"],
             "blob": numbers, "blob_verdict": blob_verdict(numbers, entry["gated"]),
-            "blob_gated": entry["gated"], "image": render_tile(entry["painter"]), "canvas": canvas,
+            "blob_gated": entry["gated"], "image": render_canvas(canvas), "canvas": canvas,
+            "style_b": {"before": style_b_before, "after": style_b_after},
         })
 
     sheet = Image.new("RGBA", (COLUMNS * TILE, ((len(rendered) + COLUMNS - 1) // COLUMNS) * TILE),
                       COLOUR[BACKDROP_ROLE])
     for position, item in enumerate(rendered):
         sheet.paste(item["image"], ((position % COLUMNS) * TILE, (position // COLUMNS) * TILE))
+    # A checker that straddles two tiles is inside neither, so the per tile pass cannot see it and the sheet is
+    # what the audit reads. Measured 2026-10-27: two of the five patches sat on a tile's last column. Setting a
+    # partner to the other partner's tone spends no colour the two tiles do not already use.
+    sheet, _seam_moved = style_b.flatten_self(sheet)
     return rendered, sheet
 
 
@@ -713,7 +805,7 @@ GANTRY = {
     ],
     "objects": [
         ("barrier_rail", 0, 176), ("barrier_post", 48, 176), ("barrier_post", 112, 176),
-        ("barrier_post", 176, 176), ("barrier_end", 232, 176),
+        ("barrier_post", 176, 176), ("barrier_end", 240, 176),
         ("gantry_leg", 0, 96), ("gantry_leg", 0, 112), ("gantry_leg", 0, 128), ("gantry_leg", 0, 144),
         ("gantry_leg", 240, 96), ("gantry_leg", 240, 112), ("gantry_leg", 240, 128), ("gantry_leg", 240, 144),
         ("gantry_beam", 16, 96), ("gantry_beam", 32, 96), ("gantry_beam", 48, 96), ("gantry_beam", 64, 96),

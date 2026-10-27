@@ -46,30 +46,30 @@ The art root here is the card's `assets/tiles/drive/`, not `game/sprites_src/env
 
 | # | name | char | palette | walkable | blob test | what it is |
 |---|---|---|---|---|---|---|
-| 0 | `road_surface` | `a` | `bg0_asphalt` | yes | n/a (light 9%, 0 rows no dark, 35 runs, 177 inner dark) | the carriageway between the lines |
-| 1 | `road_surface_worn` | `b` | `bg0_asphalt` | yes | n/a (light 16%, 0 rows no dark, 31 runs, 167 inner dark) | the same tarmac with a reinstatement seam across it |
-| 2 | `road_lane_dash` | `c` | `bg0_asphalt` | yes | n/a (light 2%, 0 rows no dark, 36 runs, 173 inner dark) | the lane line: 2 m of paint in a 6 m gap, one 8 m tile |
-| 3 | `road_edge_line` | `d` | `bg0_asphalt` | yes | n/a (light 6%, 2 rows no dark, 30 runs, 157 inner dark) | the continuous edge line at the outside of the corridor |
-| 4 | `road_shoulder` | `e` | `bg0_asphalt` | yes | n/a (light 6%, 1 rows no dark, 33 runs, 112 inner dark) | the hard shoulder, 3.3 m, inside its own white line |
-| 5 | `road_wet` | `f` | `bg0_asphalt` | yes | n/a (light 2%, 0 rows no dark, 33 runs, 146 inner dark) | the surface in rain: the sheen and the glints of shot 4 |
-| 6 | `road_stud` | `g` | `bg0_asphalt` | yes | n/a (light 2%, 0 rows no dark, 38 runs, 171 inner dark) | a cat's eye in the lane line, the one thing on the road that reflects |
-| 7 | `road_single_lane` | `h` | `bg0_asphalt` | yes | n/a (light 12%, 4 rows no dark, 25 runs, 127 inner dark) | the slip road narrowing to one lane, both edges painted |
-| 8 | `verge_grass` | `i` | `bg1_verge` | yes | n/a (light 2%, 0 rows no dark, 63 runs, 156 inner dark) | the night verge: blades on a dark floor, tips catching the moon |
-| 9 | `verge_tuft` | `j` | `bg1_verge` | yes | n/a (light 3%, 0 rows no dark, 41 runs, 145 inner dark) | a denser clump for the verges between the posts |
-| 10 | `hedge_night` | `k` | `bg1_verge` | no | n/a (light 4%, 4 rows no dark, 17 runs, 52 inner dark) | the hedge mass that closes the far side of the roadside |
-| 11 | `verge_shadow` | `l` | `bg1_verge` | yes | n/a (light 33%, 5 rows no dark, 15 runs, 136 inner dark) | the dark band under the hedge, so its foot does not float |
-| 12 | `kerb` | `m` | `bg3_lamp` | yes | n/a (light 38%, 6 rows no dark, 20 runs, 9 inner dark) | the kerb between verge and tarmac, 3 m of stone across the tile |
-| 13 | `marker_post` | `n` | `bg3_lamp` | no | PASS (light 2%, 0 rows no dark, 18 runs, 174 inner dark) | the roadside marker post with its amber reflector |
-| 14 | `lamp_post` | `o` | `bg3_lamp` | no | PASS (light 7%, 0 rows no dark, 16 runs, 188 inner dark) | the lamp column: sodium lighting is why the extract is tagged lit=yes |
-| 15 | `lamp_head` | `p` | `bg3_lamp` | no | PASS (light 20%, 0 rows no dark, 35 runs, 145 inner dark) | the sodium head and the first rows of its cone |
-| 16 | `gantry_beam` | `q` | `bg0_asphalt` | no | n/a (light 3%, 2 rows no dark, 27 runs, 154 inner dark) | the gantry's horizontal lattice member |
-| 17 | `gantry_leg` | `r` | `bg0_asphalt` | no | n/a (light 3%, 0 rows no dark, 61 runs, 154 inner dark) | the gantry's upright lattice leg, standing on the verge |
-| 18 | `gantry_sign_panel` | `s` | `bg2_sign` | no | n/a (light 22%, 15 rows no dark, 1 runs, 0 inner dark) | the green sign face; the miles come from spr_title_sign, not from this tile |
+| 0 | `road_surface` | `a` | `bg0_asphalt` | yes | n/a (light 29%, 1 rows no dark, 40 runs, 149 inner dark) | the carriageway between the lines |
+| 1 | `road_surface_worn` | `b` | `bg0_asphalt` | yes | n/a (light 7%, 1 rows no dark, 35 runs, 129 inner dark) | the same tarmac with a reinstatement seam across it |
+| 2 | `road_lane_dash` | `c` | `bg0_asphalt` | yes | n/a (light 2%, 1 rows no dark, 39 runs, 137 inner dark) | the lane line: 2 m of paint in a 6 m gap, one 8 m tile |
+| 3 | `road_edge_line` | `d` | `bg0_asphalt` | yes | n/a (light 7%, 3 rows no dark, 32 runs, 139 inner dark) | the continuous edge line at the outside of the corridor |
+| 4 | `road_shoulder` | `e` | `bg0_asphalt` | yes | n/a (light 12%, 2 rows no dark, 38 runs, 118 inner dark) | the hard shoulder, 3.3 m, inside its own white line |
+| 5 | `road_wet` | `f` | `bg0_asphalt` | yes | n/a (light 2%, 1 rows no dark, 32 runs, 94 inner dark) | the surface in rain: the sheen and the glints of shot 4 |
+| 6 | `road_stud` | `g` | `bg0_asphalt` | yes | n/a (light 2%, 1 rows no dark, 43 runs, 132 inner dark) | a cat's eye in the lane line, the one thing on the road that reflects |
+| 7 | `road_single_lane` | `h` | `bg0_asphalt` | yes | n/a (light 13%, 5 rows no dark, 31 runs, 112 inner dark) | the slip road narrowing to one lane, both edges painted |
+| 8 | `verge_grass` | `i` | `bg1_verge` | yes | n/a (light 2%, 4 rows no dark, 34 runs, 115 inner dark) | the night verge: blades on a dark floor, tips catching the moon |
+| 9 | `verge_tuft` | `j` | `bg1_verge` | yes | n/a (light 9%, 1 rows no dark, 34 runs, 129 inner dark) | a denser clump for the verges between the posts |
+| 10 | `hedge_night` | `k` | `bg1_verge` | no | n/a (light 18%, 2 rows no dark, 21 runs, 70 inner dark) | the hedge mass that closes the far side of the roadside |
+| 11 | `verge_shadow` | `l` | `bg1_verge` | yes | n/a (light 6%, 5 rows no dark, 19 runs, 129 inner dark) | the dark band under the hedge, so its foot does not float |
+| 12 | `kerb` | `m` | `bg3_lamp` | yes | n/a (light 6%, 6 rows no dark, 20 runs, 9 inner dark) | the kerb between verge and tarmac, 3 m of stone across the tile |
+| 13 | `marker_post` | `n` | `bg3_lamp` | no | PASS (light 7%, 0 rows no dark, 18 runs, 174 inner dark) | the roadside marker post with its amber reflector |
+| 14 | `lamp_post` | `o` | `bg3_lamp` | no | PASS (light 4%, 0 rows no dark, 31 runs, 171 inner dark) | the lamp column: sodium lighting is why the extract is tagged lit=yes |
+| 15 | `lamp_head` | `p` | `bg3_lamp` | no | PASS (light 14%, 0 rows no dark, 34 runs, 147 inner dark) | the sodium head and the first rows of its cone |
+| 16 | `gantry_beam` | `q` | `bg0_asphalt` | no | n/a (light 3%, 3 rows no dark, 29 runs, 118 inner dark) | the gantry's horizontal lattice member |
+| 17 | `gantry_leg` | `r` | `bg0_asphalt` | no | n/a (light 3%, 1 rows no dark, 63 runs, 104 inner dark) | the gantry's upright lattice leg, standing on the verge |
+| 18 | `gantry_sign_panel` | `s` | `bg2_sign` | no | n/a (light 6%, 2 rows no dark, 24 runs, 48 inner dark) | the green sign face; the miles come from spr_title_sign, not from this tile |
 | 19 | `gantry_sign_edge` | `t` | `bg2_sign` | no | n/a (light 9%, 15 rows no dark, 1 runs, 0 inner dark) | the panel's lit top rim, for the top row of a two tile sign |
 | 20 | `gantry_sign_back` | `u` | `bg2_sign` | no | n/a (light 6%, 15 rows no dark, 1 runs, 0 inner dark) | the rear of the sign, which is what the car sees after it has passed |
-| 21 | `barrier_rail` | `v` | `bg0_asphalt` | no | n/a (light 12%, 4 rows no dark, 21 runs, 131 inner dark) | the steel safety barrier in its two bands |
-| 22 | `barrier_post` | `w` | `bg0_asphalt` | no | n/a (light 1%, 0 rows no dark, 32 runs, 154 inner dark) | the post the barrier rail hangs on |
-| 23 | `barrier_end` | `x` | `bg0_asphalt` | no | PASS (light 12%, 0 rows no dark, 16 runs, 196 inner dark) | the terminal where a barrier run ramps down into the ground |
+| 21 | `barrier_rail` | `v` | `bg0_asphalt` | no | n/a (light 16%, 5 rows no dark, 20 runs, 131 inner dark) | the steel safety barrier in its two bands |
+| 22 | `barrier_post` | `w` | `bg0_asphalt` | no | n/a (light 8%, 0 rows no dark, 16 runs, 14 inner dark) | the post the barrier rail hangs on |
+| 23 | `barrier_end` | `x` | `bg0_asphalt` | no | PASS (light 3%, 0 rows no dark, 21 runs, 189 inner dark) | the terminal where a barrier run ramps down into the ground |
 
 ## Where each tile's shape comes from
 

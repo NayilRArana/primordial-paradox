@@ -212,10 +212,10 @@
           "grey_0"
         ],
         "lightest_role": "dim",
-        "lightest_share_percent": 9.4,
-        "rows_without_dark": 0,
-        "horizontal_dark_runs": 35,
-        "interior_dark_pixels": 177
+        "lightest_share_percent": 29.3,
+        "rows_without_dark": 1,
+        "horizontal_dark_runs": 40,
+        "interior_dark_pixels": 149
       },
       "blob_gated": false,
       "blob_verdict": "reported only: a pattern, a structure or a light source, not a character silhouette"
@@ -227,6 +227,7 @@
       "palette": "bg0_asphalt",
       "roles": [
         "asphalt",
+        "bright",
         "dim"
       ],
       "note": "the same tarmac with a reinstatement seam across it",
@@ -234,20 +235,21 @@
       "walkable": true,
       "walk_reason": "a road surface: the corridor is driven and walked across",
       "blob": {
-        "colours": 2,
+        "colours": 3,
         "roles": [
           "asphalt",
+          "bright",
           "dim"
         ],
         "dark_roles": [
           "asphalt",
           "grey_0"
         ],
-        "lightest_role": "dim",
-        "lightest_share_percent": 16.0,
-        "rows_without_dark": 0,
-        "horizontal_dark_runs": 31,
-        "interior_dark_pixels": 167
+        "lightest_role": "bright",
+        "lightest_share_percent": 7.0,
+        "rows_without_dark": 1,
+        "horizontal_dark_runs": 35,
+        "interior_dark_pixels": 129
       },
       "blob_gated": false,
       "blob_verdict": "reported only: a pattern, a structure or a light source, not a character silhouette"
@@ -279,9 +281,9 @@
         ],
         "lightest_role": "bright",
         "lightest_share_percent": 1.6,
-        "rows_without_dark": 0,
-        "horizontal_dark_runs": 36,
-        "interior_dark_pixels": 173
+        "rows_without_dark": 1,
+        "horizontal_dark_runs": 39,
+        "interior_dark_pixels": 137
       },
       "blob_gated": false,
       "blob_verdict": "reported only: a pattern, a structure or a light source, not a character silhouette"
@@ -312,10 +314,10 @@
           "grey_0"
         ],
         "lightest_role": "bright",
-        "lightest_share_percent": 6.2,
-        "rows_without_dark": 2,
-        "horizontal_dark_runs": 30,
-        "interior_dark_pixels": 157
+        "lightest_share_percent": 7.0,
+        "rows_without_dark": 3,
+        "horizontal_dark_runs": 32,
+        "interior_dark_pixels": 139
       },
       "blob_gated": false,
       "blob_verdict": "reported only: a pattern, a structure or a light source, not a character silhouette"
@@ -346,10 +348,10 @@
           "grey_0"
         ],
         "lightest_role": "bright",
-        "lightest_share_percent": 6.2,
-        "rows_without_dark": 1,
-        "horizontal_dark_runs": 33,
-        "interior_dark_pixels": 112
+        "lightest_share_percent": 12.5,
+        "rows_without_dark": 2,
+        "horizontal_dark_runs": 38,
+        "interior_dark_pixels": 118
       },
       "blob_gated": false,
       "blob_verdict": "reported only: a pattern, a structure or a light source, not a character silhouette"
@@ -381,9 +383,9 @@
         ],
         "lightest_role": "bright",
         "lightest_share_percent": 2.3,
-        "rows_without_dark": 0,
-        "horizontal_dark_runs": 33,
-        "interior_dark_pixels": 146
+        "rows_without_dark": 1,
+        "horizontal_dark_runs": 32,
+        "interior_dark_pixels": 94
       },
       "blob_gated": false,
       "blob_verdict": "reported only: a pattern, a structure or a light source, not a character silhouette"
@@ -415,9 +417,9 @@
         ],
         "lightest_role": "bright",
         "lightest_share_percent": 1.6,
-        "rows_without_dark": 0,
-        "horizontal_dark_runs": 38,
-        "interior_dark_pixels": 171
+        "rows_without_dark": 1,
+        "horizontal_dark_runs": 43,
+        "interior_dark_pixels": 132
       },
       "blob_gated": false,
       "blob_verdict": "reported only: a pattern, a structure or a light source, not a character silhouette"
@@ -448,10 +450,10 @@
           "grey_0"
         ],
         "lightest_role": "bright",
-        "lightest_share_percent": 12.5,
-        "rows_without_dark": 4,
-        "horizontal_dark_runs": 25,
-        "interior_dark_pixels": 127
+        "lightest_share_percent": 12.9,
+        "rows_without_dark": 5,
+        "horizontal_dark_runs": 31,
+        "interior_dark_pixels": 112
       },
       "blob_gated": false,
       "blob_verdict": "reported only: a pattern, a structure or a light source, not a character silhouette"
@@ -483,9 +485,9 @@
         ],
         "lightest_role": "green_pale",
         "lightest_share_percent": 1.6,
-        "rows_without_dark": 0,
-        "horizontal_dark_runs": 63,
-        "interior_dark_pixels": 156
+        "rows_without_dark": 4,
+        "horizontal_dark_runs": 34,
+        "interior_dark_pixels": 115
       },
       "blob_gated": false,
       "blob_verdict": "reported only: a pattern, a structure or a light source, not a character silhouette"
@@ -516,10 +518,10 @@
           "grey_0"
         ],
         "lightest_role": "green_pale",
-        "lightest_share_percent": 2.7,
-        "rows_without_dark": 0,
-        "horizontal_dark_runs": 41,
-        "interior_dark_pixels": 145
+        "lightest_share_percent": 8.6,
+        "rows_without_dark": 1,
+        "horizontal_dark_runs": 34,
+        "interior_dark_pixels": 129
       },
       "blob_gated": false,
       "blob_verdict": "reported only: a pattern, a structure or a light source, not a character silhouette"
@@ -550,10 +552,10 @@
           "grey_0"
         ],
         "lightest_role": "green_pale",
-        "lightest_share_percent": 3.9,
-        "rows_without_dark": 4,
-        "horizontal_dark_runs": 17,
-        "interior_dark_pixels": 52
+        "lightest_share_percent": 18.4,
+        "rows_without_dark": 2,
+        "horizontal_dark_runs": 21,
+        "interior_dark_pixels": 70
       },
       "blob_gated": false,
       "blob_verdict": "reported only: a pattern, a structure or a light source, not a character silhouette"
@@ -565,27 +567,29 @@
       "palette": "bg1_verge",
       "roles": [
         "green_deep",
-        "green_mid"
+        "green_mid",
+        "green_pale"
       ],
       "note": "the dark band under the hedge, so its foot does not float",
       "source": "lit",
       "walkable": true,
       "walk_reason": "open grass: low, and the drive lets you stand on it",
       "blob": {
-        "colours": 2,
+        "colours": 3,
         "roles": [
           "green_deep",
-          "green_mid"
+          "green_mid",
+          "green_pale"
         ],
         "dark_roles": [
           "green_deep",
           "grey_0"
         ],
-        "lightest_role": "green_mid",
-        "lightest_share_percent": 32.8,
+        "lightest_role": "green_pale",
+        "lightest_share_percent": 6.2,
         "rows_without_dark": 5,
-        "horizontal_dark_runs": 15,
-        "interior_dark_pixels": 136
+        "horizontal_dark_runs": 19,
+        "interior_dark_pixels": 129
       },
       "blob_gated": false,
       "blob_verdict": "reported only: a pattern, a structure or a light source, not a character silhouette"
@@ -596,6 +600,7 @@
       "character": "m",
       "palette": "bg3_lamp",
       "roles": [
+        "gold",
         "green_mid",
         "stone_mid"
       ],
@@ -604,8 +609,9 @@
       "walkable": true,
       "walk_reason": "a kerb is a step of one pixel: crossable, so the map does not block it",
       "blob": {
-        "colours": 3,
+        "colours": 4,
         "roles": [
+          "gold",
           "green_mid",
           "grey_0",
           "stone_mid"
@@ -613,8 +619,8 @@
         "dark_roles": [
           "grey_0"
         ],
-        "lightest_role": "green_mid",
-        "lightest_share_percent": 37.5,
+        "lightest_role": "gold",
+        "lightest_share_percent": 6.2,
         "rows_without_dark": 6,
         "horizontal_dark_runs": 20,
         "interior_dark_pixels": 9
@@ -649,7 +655,7 @@
           "stone_mid"
         ],
         "lightest_role": "gold",
-        "lightest_share_percent": 1.6,
+        "lightest_share_percent": 7.4,
         "rows_without_dark": 0,
         "horizontal_dark_runs": 18,
         "interior_dark_pixels": 174
@@ -663,6 +669,7 @@
       "character": "o",
       "palette": "bg3_lamp",
       "roles": [
+        "gold",
         "green_mid",
         "stone_mid"
       ],
@@ -671,8 +678,9 @@
       "walkable": false,
       "walk_reason": "a fitting on the verge: a post is a solid",
       "blob": {
-        "colours": 3,
+        "colours": 4,
         "roles": [
+          "gold",
           "green_mid",
           "grey_0",
           "stone_mid"
@@ -681,11 +689,11 @@
           "grey_0",
           "stone_mid"
         ],
-        "lightest_role": "green_mid",
-        "lightest_share_percent": 6.6,
+        "lightest_role": "gold",
+        "lightest_share_percent": 4.3,
         "rows_without_dark": 0,
-        "horizontal_dark_runs": 16,
-        "interior_dark_pixels": 188
+        "horizontal_dark_runs": 31,
+        "interior_dark_pixels": 171
       },
       "blob_gated": true,
       "blob_verdict": "pass"
@@ -697,6 +705,7 @@
       "palette": "bg3_lamp",
       "roles": [
         "gold",
+        "green_mid",
         "stone_mid"
       ],
       "note": "the sodium head and the first rows of its cone",
@@ -704,9 +713,10 @@
       "walkable": false,
       "walk_reason": "overhead structure: it blocks the lane it crosses when placed in the ground layer",
       "blob": {
-        "colours": 3,
+        "colours": 4,
         "roles": [
           "gold",
+          "green_mid",
           "grey_0",
           "stone_mid"
         ],
@@ -715,10 +725,10 @@
           "stone_mid"
         ],
         "lightest_role": "gold",
-        "lightest_share_percent": 19.9,
+        "lightest_share_percent": 13.7,
         "rows_without_dark": 0,
-        "horizontal_dark_runs": 35,
-        "interior_dark_pixels": 145
+        "horizontal_dark_runs": 34,
+        "interior_dark_pixels": 147
       },
       "blob_gated": true,
       "blob_verdict": "pass"
@@ -750,9 +760,9 @@
         ],
         "lightest_role": "bright",
         "lightest_share_percent": 3.1,
-        "rows_without_dark": 2,
-        "horizontal_dark_runs": 27,
-        "interior_dark_pixels": 154
+        "rows_without_dark": 3,
+        "horizontal_dark_runs": 29,
+        "interior_dark_pixels": 118
       },
       "blob_gated": false,
       "blob_verdict": "reported only: a pattern, a structure or a light source, not a character silhouette"
@@ -784,9 +794,9 @@
         ],
         "lightest_role": "bright",
         "lightest_share_percent": 2.7,
-        "rows_without_dark": 0,
-        "horizontal_dark_runs": 61,
-        "interior_dark_pixels": 154
+        "rows_without_dark": 1,
+        "horizontal_dark_runs": 63,
+        "interior_dark_pixels": 104
       },
       "blob_gated": false,
       "blob_verdict": "reported only: a pattern, a structure or a light source, not a character silhouette"
@@ -817,10 +827,10 @@
           "grey_0"
         ],
         "lightest_role": "bright",
-        "lightest_share_percent": 21.9,
-        "rows_without_dark": 15,
-        "horizontal_dark_runs": 1,
-        "interior_dark_pixels": 0
+        "lightest_share_percent": 5.5,
+        "rows_without_dark": 2,
+        "horizontal_dark_runs": 24,
+        "interior_dark_pixels": 48
       },
       "blob_gated": false,
       "blob_verdict": "reported only: a pattern, a structure or a light source, not a character silhouette"
@@ -919,9 +929,9 @@
           "grey_0"
         ],
         "lightest_role": "bright",
-        "lightest_share_percent": 12.5,
-        "rows_without_dark": 4,
-        "horizontal_dark_runs": 21,
+        "lightest_share_percent": 16.4,
+        "rows_without_dark": 5,
+        "horizontal_dark_runs": 20,
         "interior_dark_pixels": 131
       },
       "blob_gated": false,
@@ -950,14 +960,13 @@
           "grey_0"
         ],
         "dark_roles": [
-          "asphalt",
           "grey_0"
         ],
         "lightest_role": "bright",
-        "lightest_share_percent": 0.8,
+        "lightest_share_percent": 7.8,
         "rows_without_dark": 0,
-        "horizontal_dark_runs": 32,
-        "interior_dark_pixels": 154
+        "horizontal_dark_runs": 16,
+        "interior_dark_pixels": 14
       },
       "blob_gated": false,
       "blob_verdict": "reported only: a pattern, a structure or a light source, not a character silhouette"
@@ -969,6 +978,7 @@
       "palette": "bg0_asphalt",
       "roles": [
         "asphalt",
+        "bright",
         "dim"
       ],
       "note": "the terminal where a barrier run ramps down into the ground",
@@ -976,9 +986,10 @@
       "walkable": false,
       "walk_reason": "a fitting on the verge: a post is a solid",
       "blob": {
-        "colours": 2,
+        "colours": 3,
         "roles": [
           "asphalt",
+          "bright",
           "dim"
         ],
         "dark_roles": [
@@ -986,11 +997,11 @@
           "dim",
           "grey_0"
         ],
-        "lightest_role": "dim",
-        "lightest_share_percent": 12.1,
+        "lightest_role": "bright",
+        "lightest_share_percent": 3.1,
         "rows_without_dark": 0,
-        "horizontal_dark_runs": 16,
-        "interior_dark_pixels": 196
+        "horizontal_dark_runs": 21,
+        "interior_dark_pixels": 189
       },
       "blob_gated": true,
       "blob_verdict": "pass"

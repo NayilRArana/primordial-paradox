@@ -93,6 +93,7 @@ STAR_FPS = 6
 # colours plus transparency (ART-BIBLE.md 1.2).
 STAR_BRIGHT = 0x30
 STAR_DIM = 0x10
+STAR_DARK = 0x0C   # the dark entry the star's own sprite row (sp2, $0C $10 $20) already holds
 
 
 def load_palette() -> list[tuple[int, int, int]]:
@@ -195,19 +196,38 @@ def write_star_sprite(palette) -> int:
     """Write spr_title_star.png and its sidecar. Returns 0 on success."""
     bright = palette[STAR_BRIGHT]
     dim = palette[STAR_DIM]
+    dark = palette[STAR_DARK]
     size = STAR_FRAME * STAR_FRAMES
     strip = Image.new("RGBA", (size, STAR_FRAME), (0, 0, 0, 0))
     # The 5x5 cross is the widest shape, so it is centred in the 8x8 frame: offset 3 holds columns 1 to 5.
     offset = STAR_FRAME // 2 - 1
-    # Frame 0: the star at rest, one pixel.
-    strip.putpixel((offset, offset), bright + (255,))
-    # Frame 1: a 3x3 plus.
-    for dx, dy in ((0, 0), (1, 0), (-1, 0), (0, 1), (0, -1)):
-        strip.putpixel((STAR_FRAME + offset + dx, offset + dy), bright + (255,))
-    # Frame 2: the wider cross, the dim colour with a bright centre, so the twinkle grows.
-    for dx, dy in ((0, 0), (1, 0), (-1, 0), (0, 1), (0, -1), (2, 0), (-2, 0), (0, 2), (0, -2)):
-        strip.putpixel((STAR_FRAME * 2 + offset + dx, offset + dy), dim + (255,))
-    strip.putpixel((STAR_FRAME * 2 + offset, offset), bright + (255,))
+
+    def put(frame, dx, dy, colour):
+        strip.putpixel((frame * STAR_FRAME + offset + dx, offset + dy), colour + (255,))
+
+    # Direction B (card ART-B-OPENING): three tones, lit from the top left. The core is the bright entry,
+    # the arms are the mid entry, and the tips facing away from the light carry the dark entry, so the
+    # twinkle has a lit side and a shaded side instead of being one flat colour. Three entries is what a
+    # sprite palette holds, so this is the whole budget the star has and it now spends all of it.
+    arms = ((1, 0), (-1, 0), (0, 1), (0, -1))
+    wide = ((2, 0), (-2, 0), (0, 2), (0, -2), (1, 1), (-1, -1), (1, -1), (-1, 1))
+    # Frame 0: the star at rest, one lit pixel with its shadow on the side away from the light.
+    put(0, 0, 0, bright)
+    put(0, 1, 1, dark)
+    # Frame 1: a 3x3 plus, core lit, arms mid, the underside dark.
+    put(1, 0, 0, bright)
+    for dx, dy in arms:
+        put(1, dx, dy, dim)
+    put(1, 1, 1, dark)
+    put(1, 2, 1, dark)
+    # Frame 2: the wide four point star, the widest the frame holds.
+    put(2, 0, 0, bright)
+    for dx, dy in arms + wide:
+        put(2, dx, dy, dim)
+    put(2, 0, 1, bright)
+    put(2, 1, 0, bright)
+    for dx, dy in ((1, 1), (2, 1), (1, 2)):
+        put(2, dx, dy, dark)
     strip = enforce_star_palette(strip)
     png = os.path.join(TITLE_SRC, STAR_NAME + ".png")
     strip.save(png)
@@ -243,17 +263,43 @@ def fade_rule(root: str):
     return owned, scene
 
 
+def flatten_checkers(strip: Image.Image, frame_w: int, frame_h: int):
+    """Clean the 2x2 checkers ART-STYLE section 2 counts, frame by frame, and return (image, pixels moved).
+
+    A fade is a per colour map and it is not one to one: two neighbouring tones of the direction B drawing
+    can land on the same faded tone in the pattern the rule counts as dither. Measured 2026-10-27 on the
+    three tone sky, title_L1_sky_fade1 went from 6 checker patches in HEAD to 48 after the pass while its
+    own base strip went to 0. This runs in fade_for, which both write_fades and check_fades call, so a
+    rerun of the generator and the staleness check agree on the file on disk.
+    """
+    art_dir = os.path.join(ROOT, "tools", "art")
+    if art_dir not in sys.path:
+        sys.path.insert(0, art_dir)
+    import style_b
+
+    out = strip.copy()
+    moved = 0
+    for index in range(max(1, strip.width // max(1, frame_w))):
+        box = (index * frame_w, 0, (index + 1) * frame_w, strip.height)
+        fixed, took = style_b.flatten_self(strip.crop(box))
+        if took:
+            out.paste(fixed, (box[0], 0))
+            moved += took
+    return out, moved
+
+
 def fade_for(twin: str, base: Image.Image, meta: dict, steps: int, palette, rule) -> Image.Image:
     """The fade strip that ships: one brightness row darker, then inside the scene palette when that pass owns it."""
     faded = fade_image(base, steps, palette)
-    owned, scene = rule
-    if twin not in owned or scene is None:
-        return faded
-    import scene_palette
-
     frame_w = meta.get("frame_w", faded.width)
     frame_h = meta.get("frame_h", faded.height)
-    scene_palette.enforce_sprites(faded, scene, frame_w, frame_h, sprite_height=min(16, frame_h))
+    owned, scene = rule
+    if twin in owned and scene is not None:
+        import scene_palette
+
+        scene_palette.enforce_sprites(faded, scene, frame_w, frame_h, sprite_height=min(16, frame_h))
+    if twin.startswith("title_"):
+        faded, _moved = flatten_checkers(faded, frame_w, frame_h)
     return faded
 
 

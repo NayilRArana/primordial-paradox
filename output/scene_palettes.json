@@ -404,7 +404,7 @@
     "report": [
       "frame.png    frame 256x240  read at scale 1 from 256x240 (already 256x240, crop [0, 0, 256, 240])",
       "  colours: 8 in the frame, 25 allowed; backdrop #000000 (the most common colour in the frame)",
-      "  background: 240 blocks, 14 distinct colour sets, 4 palette(s) cover them, 4 allowed",
+      "  background: 240 blocks, 10 distinct colour sets, 4 palette(s) cover them, 4 allowed",
       "    palette #004058 #005800 #f8f8f8",
       "    palette #0078f8 #7c7c7c #f8f8f8",
       "    palette #004058 #005800 #007800",
@@ -634,7 +634,7 @@
       "groups_outside_a_palette": 0,
       "groups_over_three": 0,
       "oam_sprites_per_frame": 0,
-      "worst_colours": 2
+      "worst_colours": 3
     },
     "spr_title_wheel": {
       "busiest_scanline": 2,

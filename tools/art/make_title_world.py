@@ -394,11 +394,26 @@ class Tile:
 # -----------------------------------------------------------------------------------------------------------------
 
 # The bands sit on 16 px boundaries, so a 16x16 area never carries two band colours.
+#
+# Direction B (card ART-B-OPENING) lights the frame from the top left, and ART-STYLE section 2 counts it as
+# "every light pixel that has a mid tone below it or to its right". A ramp that gets brighter toward the
+# bottom of the screen is therefore wrong by that row even though a night sky painted that way looks
+# natural, and measured 2026-10-27 the sky was the largest single offender in the card's set: 4097 pairs
+# correct against 4585 wrong. So the ramp runs bright at the zenith (SKY_LOW) down to SKY_DEEP, the darkest
+# band, at the horizon. Same three colours, so the frame's 16 colour budget does not move.
 SKY_BANDS = [
-    (0, 15, SKY_DEEP),
-    (16, 47, SKY_MID),
-    (48, 119, SKY_LOW),
+    (0, 47, SKY_LOW),
+    (48, 79, SKY_MID),
+    (80, 119, SKY_DEEP),
 ]
+
+
+def sky_band(y):
+    """The band colour at row y, read off SKY_BANDS so the moon's bite and the field cannot disagree."""
+    for y0, y1, colour in SKY_BANDS:
+        if y0 <= y <= y1:
+            return colour
+    return SKY_BANDS[-1][2]
 
 MOON_CX, MOON_CY, MOON_R = 176, 30, 11
 
@@ -467,7 +482,7 @@ def build_sky():
     for y in range(MOON_CY - MOON_R + 3, MOON_CY + MOON_R - 1):
         for x in range(MOON_CX - MOON_R + 3, MOON_CX):
             if (x - MOON_CX) ** 2 + (y - MOON_CY) ** 2 <= (MOON_R - 3) ** 2:
-                band = SKY_BANDS[0][2] if y < 16 else (SKY_MID if y < 48 else SKY_LOW)
+                band = sky_band(y)
                 tile.put(x, y, band)
 
     # Nothing is drawn over the moon, and no star sits in the tower's column on the Big Ben shot.
@@ -475,7 +490,7 @@ def build_sky():
         for x in range(MOON_CX - MOON_R - 2, MOON_CX + MOON_R + 3):
             if (x - MOON_CX) ** 2 + (y - MOON_CY) ** 2 <= (MOON_R + 1) ** 2:
                 if tile.get(x, y) in (DIM, BRIGHT):
-                    band = SKY_BANDS[0][2] if y < 16 else (SKY_MID if y < 48 else SKY_LOW)
+                    band = sky_band(y)
                     tile.put(x, y, band)
 
     # The twinkle frame: a deterministic subset of the near stars changes level. The moon does not move.
@@ -514,7 +529,12 @@ def build_clouds():
             for dy in range(height):
                 y = cy - height // 2 + dy
                 tile.put(x, y, SKY_DEEP)
-            tile.put(x, cy - height // 2, DIM)
+    # No separate crown row. Direction B (card ART-B-OPENING) drew one in DIM and then in BRIGHT, and neither
+    # ships as drawn: the cloud sits in bands 1 and 2, whose palette is bg0 ($12 $00 $28), so the band pass
+    # snaps any other light tone to $00 grey, and $00 is a row 0 entry: in a fade twin it falls to black in one
+    # step while the body under it only drops one row. Measured 2026-10-27: title_L2_clouds_fade1 read 473
+    # correct against 545 wrong with the DIM crown and the same with the BRIGHT one. The polish pass already
+    # rims the body's top boundary with $12, which is brighter than the body and fades on the same row as it.
     return [tile]
 
 
@@ -563,7 +583,11 @@ def build_downs():
     tops = [int(round(ridge(x))) for x in range(W)]
     for x in range(W):
         tile.column(x, tops[x], 47, SKY_DEEP)
-        tile.put(x, tops[x], DIM)
+        # The crest is BRIGHT and not DIM for the same reason the cloud crown is: a $00 crest falls to black in
+        # one fade step while the body under it only drops a row, so the lit line ends up darker than the
+        # down it lights. Measured 2026-10-27: title_L3_downs_fade1 read 568 correct against 573 wrong with
+        # the DIM crest and title_L3_downs read 1117 against 254. Chalk is white, so the ridge reads as chalk.
+        tile.put(x, tops[x], BRIGHT)
 
     # The chalk cutting of Twyford Down: a bright scar across the face of the down, with the dim
     # shadow under its lip. It is the feature the road is named for, so it is drawn on the skyline.
@@ -753,21 +777,30 @@ def build_road():
 
     The tarmac is the backdrop, so an area may add the bright markings, the dim edge line and the
     green shoulder, which is three.
+
+    Direction B (card ART-B-OPENING) makes two changes here, and both are measured rather than felt. The
+    curated palette hands the tarmac $0F black, so nothing may sit below the tarmac and be brighter: any
+    band under it counts as a light pixel under a dark one, which ART-STYLE section 2 counts wrong. That is
+    why the near verge is not drawn on this strip any more (the foreground layer is the near grass) and why
+    the moonlit edge of the far verge is the top row of the strip instead of a line under it. And the chip
+    speckle is DIM rather than INK, because the lightning frame lifts every entry a row and the two palettes
+    are not ordered the same way: measured 2026-10-27 the ink chips alone put title_L6_road_flash at 5597
+    correct against 6435 wrong.
     """
     tile = Tile(W, 44)
-    tile.rect(0, 0, W - 1, 3, GREEN_MID)
-    tile.hline(0, W - 1, 4, DIM)
+    tile.hline(0, W - 1, 0, DIM)          # the lit outer edge of the far verge, against the sky
+    tile.rect(0, 1, W - 1, 4, GREEN_MID)  # the verge's own body
     tile.rect(0, 5, W - 1, 40, ASPHALT)
     for y in range(5, 41):
         for x in range(W):
             if ((x % 32) + 2 * (y % 8)) % 13 == 0:
-                tile.put(x, y, INK)
+                tile.put(x, y, DIM)
     # The dashed centre line and the continuous edge lines.
     for x in range(0, W, 16):
         tile.rect(x, 12, x + 8, 13, BRIGHT)
     tile.hline(0, W - 1, 6, BRIGHT)
     tile.hline(0, W - 1, 38, BRIGHT)
-    tile.rect(0, 41, W - 1, 43, GREEN_MID)
+    tile.rect(0, 41, W - 1, 43, ASPHALT)
     return [tile]
 
 
@@ -778,8 +811,13 @@ def build_road():
 def build_fg():
     """The near grass and the fence posts, which pass in front of the car.
 
-    The ink is the backdrop, so an area may add the deep green of the grass tufts and the stone of the
-    posts, which is two.
+    Direction B (card ART-B-OPENING): the grass is GREEN_DEEP and not INK, and that is a palette fact rather
+    than a taste. tools/art/nes_snap.py hands ink $0C and asphalt $0F, so an ink drawing ships as a teal body
+    with a BLACK rim on its top edge: the pass had put the light on the wrong side of the material, and
+    measured 2026-10-27 the strip read 157 correct light pairs against 655 wrong. GREEN_DEEP ships as $0B and
+    its rim as GREEN_MID $0A, so the lit row is brighter than the body it sits on and the strip is correct
+    wherever the pass shades it. The posts keep the ground band's mid green for the same reason the sign posts
+    do: the backdrop is the clear, not a paint.
     """
     tile = Tile(W, 44)
     for block in range(4):
@@ -791,8 +829,7 @@ def build_fg():
                 bx = x + blade * 2 - blades
                 height = rng.randrange(6, 13)
                 for dy in range(height):
-                    tile.put(bx + dy // 4, 43 - dy, INK)
-            tile.put(x, 40, GREEN_DEEP)
+                    tile.put(bx + dy // 4, 43 - dy, GREEN_DEEP)
 
     # The fence posts that pass in front of the car, in the ground band's dark green for the same reason the sign
     # posts are: the backdrop is the clear, not a paint.
@@ -801,7 +838,7 @@ def build_fg():
         tile.put(post_x + 3, 8, DIM)
         tile.put(post_x + 3, 20, DIM)
         tile.put(post_x + 3, 34, DIM)
-    tile.rect(0, 42, W - 1, 43, INK)
+    tile.rect(0, 42, W - 1, 43, GREEN_DEEP)
     return [tile]
 
 
@@ -1067,6 +1104,41 @@ def seam_metric(image):
     return wrap_max, interior_max
 
 
+def guard_strip(path):
+    """Run the dither rule on one shipped strip, frame by frame, and write it back only when it changed.
+
+    The frame width comes from the strip's own sidecar, because a checker must not be counted across the
+    seam between two frames of a strip: the two frames are different pictures drawn side by side.
+    Returns the number of pixels changed.
+    """
+    sidecar = os.path.splitext(path)[0] + ".json"
+    width = None
+    if os.path.isfile(sidecar):
+        with open(sidecar, "r", encoding="utf-8-sig") as handle:
+            meta = json.load(handle)
+        width = meta.get("frame_w")
+    with Image.open(path) as handle:
+        strip = handle.convert("RGBA")
+    if not width:
+        width = strip.width
+    art_dir = os.path.dirname(os.path.abspath(__file__))
+    if art_dir not in sys.path:
+        sys.path.insert(0, art_dir)
+    import style_b
+    frames = strip.width // width
+    out = strip.copy()
+    changed = 0
+    for index in range(frames):
+        box = (index * width, 0, (index + 1) * width, strip.height)
+        fixed, moved = style_b.flatten_self(strip.crop(box))
+        if moved:
+            out.paste(fixed, (box[0], 0))
+            changed += moved
+    if changed:
+        save_png(out, path)
+    return changed
+
+
 def strip_images(images):
     """One animation strip out of the per frame images, in order."""
     width = images[0].width
@@ -1239,6 +1311,7 @@ def main() -> int:
     sys.path.insert(0, os.path.join(args.root, "tools"))
     import nes_bg
     import nes_snap
+    import style_b
 
     colours, index_of = nes_bg.load_palette(args.root)
 
@@ -1307,6 +1380,16 @@ def main() -> int:
                                  % (spec["name"], tile.w, tile.h, spec["width"], design_height))
         backdrop = LAYER_BACKDROP[spec["name"]]
         priority = LAYER_PRIORITY[spec["name"]]
+        # Direction B (card ART-B-OPENING): the polish pass runs on the DRAWING and before the 16x16 solver,
+        # so the solver's three colours per area are spent on the tones the pass placed. Section 4 of
+        # knowledge/ART-STYLE.md is what the pass implements, tools/art/style_b.py is where it lives, and the
+        # numbers it moved are printed below and carried in the manifest, so the change is measured and not
+        # asserted.
+        style_b_report = [style_b.measure(tiles[0].w, tiles[0].h, tiles[0].px)]
+        for tile in tiles:
+            tile.px = style_b.apply(tile.w, tile.h, tile.px)
+        style_b_report.append(style_b.measure(tiles[0].w, tiles[0].h, tiles[0].px))
+        spec["style_b"] = style_b_report
         # The solver runs on the pixel image, because the rule is about pixels, not about indices. What it
         # returns is what gets written: the strip on disk is the solved strip, never the raw drawing.
         solved = []
@@ -1317,6 +1400,22 @@ def main() -> int:
                                                backdrop=backdrop, limit=3, priority=priority)
             changed += moved
             solved.append(image)
+        # Direction B, second half (card ART-B-OPENING): the solver can merge a fourth tone down into a 2x2
+        # checker that the pass itself never drew, and ART-STYLE section 2 counts those. So the shipped
+        # strip is compared against the SAME drawing solved WITHOUT the pass, and every checker pixel is
+        # put back to the tone that drawing always had. Measured on 2026-10-27 against HEAD: title_BG_bigben
+        # went 0 -> 156 checker patches in the strip while the pass reported none.
+        plain = []
+        for tile in spec["builder"]():
+            image = tile.image()
+            image, _moved = nes_bg.reduce_areas(image, index_of, colours,
+                                                backdrop=backdrop, limit=3, priority=priority)
+            plain.append(image)
+        restored = 0
+        for index, image in enumerate(solved):
+            solved[index], took = style_b.flatten_image(image, plain[index])
+            restored += took
+        spec["dither_restored"] = restored
         spec["frames"] = solved
         spec["tiles"] = tiles
         spec["solver_changes"] = changed
@@ -1332,8 +1431,16 @@ def main() -> int:
             if tile.w != spec["width"] or tile.h != spec["height"]:
                 raise SystemExit("%s: built %dx%d, the table says %dx%d"
                                  % (spec["name"], tile.w, tile.h, spec["width"], spec["height"]))
-        images = [tile.image() for tile in tiles]
         spec["tiles"] = tiles
+        # Direction B is applied to the background layers and NOT to these two sprites. A sprite holds its
+        # own three entry row on the PPU and no backdrop, so a pass that adds a tone to the sign or the
+        # cone spends a fourth entry that no row holds, and tools/check_scene_palettes.py says so:
+        # measured on 2026-10-26, "spr_title_sign has 96 group(s) whose colours fit none of the four
+        # sprite palettes". The sign and the cone stay as drawn; their outline and their three tones are
+        # a sprite palette job with its own card, not a background job with a generic pass.
+        spec["style_b"] = [style_b.measure(tiles[0].w, tiles[0].h, tiles[0].px)]
+        spec["style_b"].append(spec["style_b"][0])
+        images = [tile.image() for tile in tiles]
         spec["frames"] = images
         emit(spec, images, transparent=True)
         built[spec["name"]] = spec
@@ -1467,6 +1574,9 @@ def main() -> int:
         "compose": [{"name": spec["name"], "y": spec["y"], "height": spec["height"],
                      "speed": spec["speed"]} for spec in LAYERS],
         "solver_changes": {spec["name"]: spec["solver_changes"] for spec in LAYERS},
+        "style_b": {spec["name"]: {"before": spec["style_b"][0], "after": spec["style_b"][1]}
+                    for spec in list(LAYERS) + list(SPRITES)},
+        "style_b_pass": "tools/art/style_b.py, direction B of knowledge/ART-STYLE.md section 4",
         "files": [],
     }
     for path in records:
@@ -1487,6 +1597,17 @@ def main() -> int:
     print("solver changes per layer (pixels the 16x16 rule moved):")
     for spec in LAYERS:
         print("  %-22s %d" % (spec["name"], spec["solver_changes"]))
+    print("checker pixels put back by the dither guard (strip against the same drawing solved without the pass):")
+    for spec in LAYERS:
+        print("  %-22s %d" % (spec["name"], spec.get("dither_restored", 0)))
+    print("direction B pass (three tone areas before -> after, rim lights with a mid tone below or right):")
+    for spec in list(LAYERS) + list(SPRITES):
+        before, after = spec["style_b"]
+        print("  %-22s areas 3 tones %3d -> %3d of %3d   rims %d/%d -> %d/%d   dither %d -> %d"
+              % (spec["name"], before["areas_with_three_tones"], after["areas_with_three_tones"],
+                 after["areas"], before["lit_correct"], before["lit_correct"] + before["lit_wrong"],
+                 after["lit_correct"], after["lit_correct"] + after["lit_wrong"],
+                 before["dither_patches"], after["dither_patches"]))
     print("seam check (wrap max step, interior max step):")
     for name, wrap_max, interior_max in seam_report:
         print("  %-22s %4d %4d" % (name, wrap_max, interior_max))
@@ -1523,6 +1644,24 @@ def main() -> int:
     # because the lift is per band and one table over entries cannot describe it. The file written earlier in this
     # function is the placeholder until that pass runs.
     print("flash table: read back off the strips by the band pass (title_bands.apply)")
+    # Card ART-B-OPENING, the last half of the dither guard. Everything above runs AFTER the direction B
+    # pass: the scene palette pass rewrites pixels into the four background palettes and the band lift
+    # writes the flash twins, and a colour merge in either can land as a 2x2 checker that neither the pass
+    # nor the solver drew. So the section 2 rule is measured on the strips that SHIP, and every checker
+    # pixel is set to its own 2x2 partner, which is a tone the same 16x16 area already spends. Sprite
+    # sheets are not touched: the cone's hatch (299 patches in HEAD) and the sign's dither (68) are drawn
+    # on purpose and are not this card's assets.
+    flattened = {}
+    for spec in LAYERS:
+        for name in (spec["name"], spec["name"] + "_flash"):
+            path = os.path.join(SPRITE_DIR, name + ".png")
+            if not os.path.isfile(path):
+                continue
+            moved = guard_strip(path)
+            if moved:
+                flattened[name] = moved
+    print("dither guard on the shipped strips (checker pixels set to their own partner): %s"
+          % (", ".join("%s %d" % (item, count) for item, count in sorted(flattened.items())) or "none"))
     return 0
 
 
