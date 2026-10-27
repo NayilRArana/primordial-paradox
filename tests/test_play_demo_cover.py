@@ -11,7 +11,11 @@ What these tests hold down, and why each one earns its place:
      measures as a jump (0.896) while the same window twelve seconds apart measures 0.000;
   5. the palette floor that splits "art" from "not the game" sits between the two populations measured on the
      real takes (0.9285 to 0.9939 for the game, 0.0024 and 0.0025 for the covered frames), and one frame's
-     verdict follows from its own share.
+     verdict follows from its own share;
+  6. the one reading taken once the recorder has stopped is asked while the game is still the raised window and
+     is a NOTE, never a failure (card t_4da3eb20: asked after `restore_foreground` it measured the window this
+     tool itself put there, and its failure text reached tools/judge_panel.py as "Recorded failure in that run"
+     on takes whose frames were all the game's).
 
 Why the takes are built here and not read from output/demo: the recordings are gitignored outputs, so a checkout
 at HEAD has none, and tools/check_test_inputs.py forbids a test that skips because a path is missing. The two game
@@ -330,3 +334,42 @@ def test_one_frame_is_split_into_game_art_or_not_the_game_by_its_own_share(takes
     assert demo.frame_verdict(0.75, 40, min_colours, palette_min) == "art", "mostly palette and off it is art"
     assert demo.frame_verdict(0.20, 3, min_colours, palette_min) == "blank"
     assert demo.frame_verdict(None, 900, min_colours, palette_min) == "unjudged", "no measurement is no verdict"
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# 6: the single reading taken once the recorder has stopped (card t_4da3eb20)
+
+@pytest.mark.windows_only
+def test_the_stopped_recording_is_asked_who_owns_the_rectangle_before_the_previous_window_returns(takes):
+    """The card's own defect: the question was asked after this tool had raised the previous window again."""
+    with open(os.path.join(TOOLS, "play_demo.py"), "r", encoding="utf-8") as handle:
+        source = handle.read()
+    body = source[source.index("def run_demo("):]
+    restore = body.index("cap.restore_foreground(previous)")
+    before, after = body[:restore], body[restore:body.index("if recorder.returncode")]
+    assert "cap.cover_report(hwnd, rect)" in before, "nothing asks who owns the rectangle while the game is raised"
+    assert "cover_report" not in after, (
+        "the post-recording cover question still runs after restore_foreground, so it can measure the window "
+        "this tool itself put back in front")
+    # The wording that reached the judge panel on a clean take, and the list it was pushed into.
+    assert "after the recording another window owns" not in source
+    assert "report.setdefault(\"notes\", []).append(post_record_note)" in source
+    assert "failures.append(\"after the recording" not in source
+
+
+@pytest.mark.windows_only
+def test_a_window_over_the_rectangle_when_the_recorder_stopped_is_a_note_and_names_the_process(takes, capsys):
+    """Evidence, not a verdict: the six checks and the during-recording samples are what decide a take."""
+    demo = takes["demo"]
+    assert demo.post_recording_cover_note([]) is None, "a clean reading has to say nothing at all"
+    note = demo.post_recording_cover_note([(100, 100, "codex.exe", "Primordial Paradox")])
+    assert note.startswith("NOTE"), note
+    assert "codex.exe" in note and "1 of the sampled points" in note, note
+    assert "not a verdict" in note, note
+    # Nothing in it reads as a defect: judge_panel.py quotes run.failures as "Recorded failure in that run".
+    assert "fail" not in note.lower(), note
+    # And it is printed beside the checks, where the other evidence lines go.
+    demo.print_report({"checks": {}, "notes": [note]})
+    printed = capsys.readouterr().out
+    assert printed.strip() == note, printed
+

@@ -114,9 +114,17 @@ walk.
 
 ## Follow-ups this card does not take
 
-- `play_demo` still appends a failure if, after the recording, another window owns a sampled point of the rectangle.
-  That check runs after `restore_foreground(previous)`, so it can be measuring the window this tool itself brought
-  back. It is not part of the pollution verdict on purpose (feeding it in would condemn clean takes), but somebody
-  should measure whether it ever fires on a clean run.
+- ~~`play_demo` still appends a failure if, after the recording, another window owns a sampled point of the
+  rectangle. That check runs after `restore_foreground(previous)`, so it can be measuring the window this tool
+  itself brought back. It is not part of the pollution verdict on purpose (feeding it in would condemn clean
+  takes), but somebody should measure whether it ever fires on a clean run.~~
+  Taken by card t_4da3eb20. Measured before touching it: the line appears in none of the six verify files on
+  disk (`output/demo/*_verify.json`, grep "after the recording another window owner" -> 0 hits), so it never
+  fired on this host. It was still wrong in two ways. The reading was taken after `restore_foreground`, whose
+  whole job is to raise the window that was in front when the run started, so any window that one puts over the
+  rectangle is charged to the take; and the text went into `run.failures`, which `tools/judge_panel.py` quotes
+  into the judging prompt as "Recorded failure in that run". Now the rectangle is asked who owns it before the
+  restore, and the answer is a NOTE beside the checks (`report["notes"]`), never an entry in `run.failures`, so a
+  take whose frames are all the game's still passes. Pinned by two tests in `tests/test_play_demo_cover.py`.
 - No automatic re-record on pollution. The take is kept, marked and named, because a polluted file is evidence of
   the automation, and a retry loop would fight that automation for the screen.

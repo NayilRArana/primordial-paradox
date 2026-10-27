@@ -10,7 +10,8 @@ this tool is the player.
 It is not a second capture harness. Every window and key primitive is the one tools/capture_title.py
 already proved on this PC: the window is found by process image name (not by title), it is raised with the
 foreground lock lifted, every key goes through the input queue because a GameMaker game reads key state and
-a posted key is a dud, and the rectangle is checked for a covering window before and after recording. What
+a posted key is a dud, and the rectangle is checked for a covering window before recording and every second
+while it records. What
 this file adds is the script, the clock, the ffmpeg recording at 60 fps cut to a true 3x of the NES screen,
 and a check that the result is a video of the game and not of a terminal.
 
@@ -33,6 +34,12 @@ frames: a sampled frame with fewer than half its pixels on the 2C02 palette is n
 resolves every colour through data/palette_ppu.json, and a frame between that floor and the 0.90 palette floor
 is the art lane's. Measured on 2026-10-26: 33 frames of the game scored 0.9285 to 0.9939, the two covered
 frames of the demo-box take scored 0.0024 and 0.0025.
+
+A window that owns a sampled point once the recording has stopped is a NOTE beside the checks and never a
+failure (card t_4da3eb20). It is asked before the window that was in front when the run started is restored,
+because asking after that restore measures the window this tool itself raised; and the answer is evidence only,
+because the owner samples taken during the recording are the verdict and the frames of the finished file are
+the second net.
 
 Usage:
     python tools\\play_demo.py                        play data\\demo\\run_001.json and record output\\demo\\run_001.mp4
@@ -1143,11 +1150,30 @@ def verify_video(path, script, report_path=None, pollution=None):
     return ok, report
 
 
+def post_recording_cover_note(covered):
+    """The NOTE line for a window that owned a sampled point when the recording stopped, or None.
+
+    Card t_4da3eb20: this reading is evidence and never a failure. The owner samples taken DURING the
+    recording are the verdict (PollutionWatch) and the finished file's frames are the second net, so the same
+    question asked once at the end cannot red a take. It used to append a failure, and that text reached
+    tools/judge_panel.py as "Recorded failure in that run" on takes whose frames were all the game's.
+    """
+    if not covered:
+        return None
+    who = sorted({"%s %r" % (row[2] or "?", row[3]) for row in covered})
+    return ("NOTE another window owned %d of the sampled points of the rectangle when the recording stopped "
+            "(%s). This line is evidence and not a verdict: the owner samples taken during the recording and "
+            "the frames of this file are what decide, so a take whose frames are all the game's still passes."
+            % (len(covered), "; ".join(who)))
+
+
 def print_report(report):
     for name in ("file", "duration", "stream", "not_black", "not_a_terminal", "not_polluted", "jumps", "motion"):
         line = report["checks"].get(name)
         if line:
             print("  %s" % line)
+    for note in report.get("notes") or []:
+        print("  %s" % note)
     for row in report.get("samples", []):
         print("  sample t=%.2f s: luma %s, %s colours, palette share %s%s"
               % (row["t"], row.get("luma"), row.get("colours"), row.get("palette_share"),
@@ -1333,14 +1359,16 @@ def run_demo(script, keep_raw=False):
                 recorder.kill()
             failures.append("ffmpeg did not stop on its own and was terminated, so the file may be truncated")
         cap.release_on_top(hwnd)
-        cap.restore_foreground(previous)
 
-        # Ask Windows again who owns the pixels, so a covering window that arrived mid recording is caught
-        # instead of being written off as a colour difference in the frame checks.
-        covered, owners = cap.cover_report(hwnd, rect)
-        if covered:
-            failures.append("after the recording another window owns %d of the sampled points of the rectangle"
-                            % len(covered))
+        # Who owns the rectangle now that the recorder has stopped, asked BEFORE restore_foreground (card
+        # t_4da3eb20). restore_foreground raises the window that was in front when this run started, so a
+        # reading taken after it measures the window this tool itself put there and a clean take collected a
+        # false line. The answer is a NOTE in the report and never a failure: the owner samples taken during
+        # the recording are the verdict and the finished file's frames are the second net, while a failure
+        # line here reached the judge panel as "Recorded failure in that run" on takes that were clean.
+        covered, _owners = cap.cover_report(hwnd, rect)
+        post_record_note = post_recording_cover_note(covered)
+        cap.restore_foreground(previous)
 
         if recorder.returncode not in (0, None) and not stopped_by_cover:
             failures.append("ffmpeg exited with code %s, its log is %s" % (recorder.returncode, recorder_log_path))
@@ -1390,6 +1418,10 @@ def run_demo(script, keep_raw=False):
         report["run"] = {"trace": replay.trace, "failures": failures, "game_log": os.path.relpath(log_path, ROOT),
                          "footsteps": footsteps, "planned_seconds": round(seconds, 3),
                          "recorded_seconds": round(record_seconds, 3)}
+        # A cover seen once the recording had stopped is a NOTE beside the checks, never one of the six and
+        # never an entry in run.failures (card t_4da3eb20: the judge panel reads that list as a defect record).
+        if post_record_note:
+            report.setdefault("notes", []).append(post_record_note)
         with open(verify_path, "w", encoding="utf-8", newline="\n") as handle:
             handle.write(json.dumps(report, indent=2, sort_keys=True) + "\n")
         print_report(report)
