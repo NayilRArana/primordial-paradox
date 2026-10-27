@@ -70,7 +70,7 @@ python tools/check_data.py
 
 ## How it was made
 
-Nayil Arana directs specialised AI agents through a shared task board. Every claimed change requires a reproducible check, and a different agent reruns it before the work counts as done. Read [BUILT-WITH-AGENTS.md](BUILT-WITH-AGENTS.md).
+Nayil Arana directs specialised AI agents through a shared task board. Every claimed change requires a reproducible check, and a different agent reruns it before the work counts as done. Read [BUILT-WITH-AGENTS.md](BUILT-WITH-AGENTS.md). The build and publish machinery behind the game is formally verified; read [FORMAL-VERIFICATION.md](docs/FORMAL-VERIFICATION.md).
 
 ## Licence and credits
 
