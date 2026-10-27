@@ -1,6 +1,12 @@
-/// pp_overworld: the walker, the triggers, the markers and the scene that plays over the map (spec 04).
-/// One tile per press, always centred; rail walk at 8 steps per tile, free walk at 12; triggers inert for 20 steps after
-/// a scene or battle; story blocked tiles open with a flag. Nothing here reads a key directly, only pp_input.
+﻿/// pp_overworld: the walker, the triggers, the markers and the scene that plays over the map (spec 04).
+/// The player walks FREE, in pixels, in eight directions, the way this genre's modern games move: a held direction
+/// becomes a unit vector, the vector becomes pixels at PP_WALK_SPEED, and collision is a 10x6 box at
+/// the feet resolved one axis at a time so a wall is slid along instead of stuck on. Order Nayil gave on 2026-10-26
+/// (card PP-FREE-MOVE): "The grid movement is too rigid. This ain't pokemon. Most games nowadays let you hold down and
+/// right to go diagonally." A scripted move (a scene rail) is still a TILE path at PP_WALK_STEPS_RAIL, and it snaps the
+/// walker to the nearest tile centre before it runs, so every scene, cutscene and demo beat plays as it always did.
+/// Triggers are inert for 20 steps after a scene or battle; story blocked tiles open with a flag. Nothing here reads a
+/// key or an axis directly, only pp_input.
 /// Saving is here in two shapes (spec 11 rule 4): every map entry arms one silent autosave, which pp_overworld_step
 /// releases once the fade is done and no scene owns the screen, and a trigger of kind `save` writes at a save point
 /// the player confirms, printing the ship's log line that names the point.
@@ -22,6 +28,11 @@ function pp_overworld_new(_map_id, _spawn_name) {
         dialogue: undefined,
         trigger_lock: PP_TRIGGER_LOCK_STEPS,
         marker_off: {},
+        // The tile the feet stood on last step (card PP-FREE-MOVE rule 5). A touch trigger fires when the feet ENTER its
+        // tile, so the tile he is standing on has to be remembered to tell an entry from a standstill: without it, a
+        // walker standing still on a marker would fire it again the step its respawn counter ran out.
+        enter_tx: _spawn.x,
+        enter_ty: _spawn.y,
         cam_x: 0,
         cam_y: 0,
         camera_follow: true,
@@ -79,7 +90,19 @@ function pp_overworld_hero(_tx, _ty) {
         px: _tx * PP_TILE,
         py: _ty * PP_TILE,
         facing: "down",
+        // `moving` is what it always was: a SCRIPTED move owns him until it lands. The free walk does not set it (a
+        // scene that waits for a rail would then wait for the player), so it has its own three keys below.
         moving: false,
+        // The free walk's own state (card PP-FREE-MOVE): `walking` is the draw's question, `walk_px` is the distance
+        // walked that times the two frame cycle, `walk_anim` is the frame it lands on, `step_px` is the distance since
+        // the last footstep, and face_x / face_y are the input signs of the step before, which is what the facing rule
+        // compares against to decide which component just changed.
+        walking: false,
+        walk_px: 0,
+        walk_anim: 0,
+        step_px: 0,
+        face_x: 0,
+        face_y: 0,
         from_x: _tx * PP_TILE,
         from_y: _ty * PP_TILE,
         to_x: _tx * PP_TILE,
@@ -101,10 +124,210 @@ function pp_world_dir_vector(_dir) {
     return { x: 0, y: 0 };
 }
 
-/// Start a scripted or free move to a tile. A blocked tile stops the move where it is, and says so once.
+// ---------------------------------------------------------------------------------------------------------------
+// The feet, the walls and the walk (card PP-FREE-MOVE). Everything below is in PIXELS: the walker's own position is
+// `px` / `py` at the top left of his 16x16 figure, the tile he stands on is read off his feet, and the only thing the
+// tiles are asked is whether a tile may be walked on.
+
+/// The tile the feet stand on. The feet are the bottom middle of the figure, so the tile is read from the feet's own
+/// centre and a walker straddling a boundary belongs to the tile his feet are most in, which is also the tile a trigger
+/// on that boundary fires from.
+function pp_world_tile_at(_px, _py) {
+    return {
+        x: floor((_px + PP_TILE * 0.5) / PP_TILE),
+        y: floor((_py + PP_TILE - PP_HERO_FEET_H * 0.5) / PP_TILE)
+    };
+}
+
+/// Keep `tx` / `ty` (what the triggers, the actors, the save file and every log line read) in step with the pixels.
+function pp_world_sync_tile(_hero) {
+    var _t = pp_world_tile_at(_hero.px, _hero.py);
+    _hero.tx = _t.x;
+    _hero.ty = _t.y;
+}
+
+/// The collision hitbox: 10x6 at the bottom middle of the figure, in pixels. Inclusive bounds, so it is exactly
+/// PP_HERO_FEET_W by PP_HERO_FEET_H pixels and never a pixel more.
+function pp_world_feet_box(_px, _py) {
+    var _x1 = _px + (PP_TILE - PP_HERO_FEET_W) * 0.5;
+    var _y1 = _py + PP_TILE - PP_HERO_FEET_H;
+    return { x1: _x1, y1: _y1, x2: _x1 + PP_HERO_FEET_W - 1, y2: _y1 + PP_HERO_FEET_H - 1 };
+}
+
+/// True when the feet box would overlap a blocked tile or an actor if the figure stood at this position. The map is
+/// asked per TILE (pp_map_walkable), which is the same collision grid every rail and every data checker already reads.
+function pp_world_blocked(_world, _px, _py) {
+    var _b = pp_world_feet_box(_px, _py);
+    var _tx1 = floor(_b.x1 / PP_TILE);
+    var _tx2 = floor(_b.x2 / PP_TILE);
+    var _ty1 = floor(_b.y1 / PP_TILE);
+    var _ty2 = floor(_b.y2 / PP_TILE);
+    for (var _ty = _ty1; _ty <= _ty2; _ty += 1) {
+        for (var _tx = _tx1; _tx <= _tx2; _tx += 1) {
+            if (!pp_map_walkable(_world.map, _tx, _ty)) return true;
+            if (!is_undefined(pp_overworld_actor_at(_world, _tx, _ty))) return true;
+        }
+    }
+    return false;
+}
+
+/// The sideways offset, up to PP_CORNER_NUDGE pixels, that lets a blocked push go through; 0 when no offset within
+/// reach makes the move legal (card PP-FREE-MOVE rule 2). The offset is tried nearest first and on both sides, and the
+/// step onto the offset is tested as well as the move itself, so a nudge can never put the feet box somewhere the walk
+/// could not have reached. A long wall offers no offset at all, which is why this costs nothing on a straight wall.
+function pp_world_nudge(_world, _px, _py, _vx, _vy) {
+    var _push_x = (_vx != 0);
+    var _k = 1;
+    var _s = -1;
+    while (_k <= PP_CORNER_NUDGE) {
+        _s = -1;
+        while (_s <= 1) {
+            var _ox = _push_x ? 0 : _s * _k;
+            var _oy = _push_x ? _s * _k : 0;
+            if (_s != 0
+                && !pp_world_blocked(_world, _px + _ox, _py + _oy)
+                && !pp_world_blocked(_world, _px + _ox + _vx, _py + _oy + _vy)) {
+                return _push_x ? _oy : _ox;
+            }
+            _s += 2;
+        }
+        _k += 1;
+    }
+    return 0;
+}
+
+/// The facing rule for a free walk (card PP-FREE-MOVE rule 3): four directions for the sheet, and the component that
+/// CHANGED this step wins. So a diagonal held from the start faces its horizontal half and keeps that face while both
+/// keys stay down, adding the other axis turns him once, and letting one axis go leaves him facing the one still held.
+function pp_world_face_input(_hero, _wx, _wy) {
+    var _changed_x = (_wx != _hero.face_x);
+    var _changed_y = (_wy != _hero.face_y);
+    if (_wx != 0 && (_changed_x || _wy == 0)) {
+        _hero.facing = (_wx > 0) ? "right" : "left";
+    } else if (_wy != 0 && (_changed_y || _wx == 0)) {
+        _hero.facing = (_wy > 0) ? "down" : "up";
+    }
+    _hero.face_x = _wx;
+    _hero.face_y = _wy;
+}
+
+/// He is not walking this step: the cycle goes back to its standing frame, and the facing rule forgets which way the
+/// input was pushing so the next push counts as a change.
+function pp_world_stop_walk(_hero) {
+    _hero.walking = false;
+    _hero.walk_anim = 0;
+    _hero.face_x = 0;
+    _hero.face_y = 0;
+}
+
+/// One step of free movement (card PP-FREE-MOVE). The input pair becomes a UNIT vector, the unit vector becomes pixels
+/// at the walk speed (or the run speed while run is held), and the pixels are resolved ONE AXIS AT A TIME: the X move is
+/// tried against the position the figure stands at, then the Y move against the X result. That order is the whole
+/// reason a wall is slid along instead of stuck on, because a blocked axis simply stays where it was while the other
+/// one keeps its share of the step.
+function pp_world_free_step(_world) {
+    var _hero = _world.hero;
+    // A scripted move owns him: a held key must never fight a scene's rail.
+    if (_hero.moving) return false;
+
+    var _wx = pp_walk_x();
+    var _wy = pp_walk_y();
+    if (_wx == 0 && _wy == 0) {
+        pp_world_stop_walk(_hero);
+        return false;
+    }
+
+    pp_world_face_input(_hero, _wx, _wy);
+
+    // One speed in eight directions: the pair is divided by its own length, so a diagonal spends 0.7071 of a step on
+    // each axis and covers the ground a straight walk covers in the same time.
+    var _speed = pp_action("run") ? PP_RUN_STEP_PX : PP_WALK_STEP_PX;
+    var _len = point_distance(0, 0, _wx, _wy);
+    var _vx = (_wx / _len) * _speed;
+    var _vy = (_wy / _len) * _speed;
+
+    var _moved_x = 0;
+    var _moved_y = 0;
+    var _hit_x = false;
+    var _hit_y = false;
+
+    if (_vx != 0) {
+        if (!pp_world_blocked(_world, _hero.px + _vx, _hero.py)) {
+            _hero.px += _vx;
+            _moved_x = _vx;
+        } else {
+            _hit_x = true;
+        }
+    }
+    if (_vy != 0) {
+        if (!pp_world_blocked(_world, _hero.px, _hero.py + _vy)) {
+            _hero.py += _vy;
+            _moved_y = _vy;
+        } else {
+            _hit_y = true;
+        }
+    }
+
+    // A push that a corner blocks by three pixels or less is walked round instead of into.
+    if (_hit_x) {
+        var _nudge_y = pp_world_nudge(_world, _hero.px, _hero.py, _vx, 0);
+        if (_nudge_y != 0) {
+            _hero.py += _nudge_y;
+            _hero.px += _vx;
+            _moved_x = _vx;
+            _moved_y = _nudge_y;
+            _hit_x = false;
+            _hit_y = false;
+        }
+    }
+    if (_hit_y) {
+        var _nudge_x = pp_world_nudge(_world, _hero.px, _hero.py, 0, _vy);
+        if (_nudge_x != 0) {
+            _hero.px += _nudge_x;
+            _hero.py += _vy;
+            _moved_x = _nudge_x;
+            _moved_y = _vy;
+            _hit_y = false;
+        }
+    }
+
+    var _dist = point_distance(0, 0, _moved_x, _moved_y);
+    if (_dist <= 0) {
+        // Blocked on both axes, so the feet do not move and the cycle does not run: a walker pushed into a wall is
+        // standing still with a direction held, which is not a walk.
+        pp_world_stop_walk(_hero);
+        return false;
+    }
+
+    _hero.walking = true;
+    // The two frame cycle is timed to the PIXELS WALKED, not to the steps held (card PP-FREE-MOVE rule 3): a walker
+    // pushed into a corner keeps both feet planted, and a runner cycles at the speed he is actually covering.
+    _hero.walk_px += _dist;
+    _hero.walk_anim = floor(_hero.walk_px / PP_WALK_FRAME_PX) mod 2;
+    _hero.step_px += _dist;
+    if (_hero.step_px >= PP_FOOTSTEP_PX) {
+        _hero.step_px -= PP_FOOTSTEP_PX;
+        pp_audio_play("footstep");
+    }
+    pp_world_sync_tile(_hero);
+    return true;
+}
+
+/// Start a SCRIPTED move along a tile path (a scene's rail). A blocked tile stops the move where it is, and says so once.
+/// Card PP-FREE-MOVE rule 6: the free walk leaves the figure anywhere in a tile, and a tile path has to start from a
+/// tile, so he is snapped to the nearest tile centre first and the path is measured from there. The caller's target is
+/// a DELTA from where he stood, so the same delta is applied to the tile the snap landed on: a figure nudged one tile by
+/// the snap still walks the tiles the scene asked for, instead of one less.
 function pp_world_start_move(_world, _tx, _ty, _steps_per_tile) {
     var _hero = _world.hero;
     if (_hero.moving) return false;
+    var _delta_x = _tx - _hero.tx;
+    var _delta_y = _ty - _hero.ty;
+    _hero.px = round(_hero.px / PP_TILE) * PP_TILE;
+    _hero.py = round(_hero.py / PP_TILE) * PP_TILE;
+    pp_world_sync_tile(_hero);
+    _tx = _hero.tx + _delta_x;
+    _ty = _hero.ty + _delta_y;
     var _sx = sign(_tx - _hero.tx);
     var _sy = sign(_ty - _hero.ty);
     if (_tx != _hero.tx && _ty != _hero.ty) {
@@ -147,17 +370,23 @@ function pp_world_start_move(_world, _tx, _ty, _steps_per_tile) {
     return true;
 }
 
-/// One step of the current move; the walker stays whole pixel and finishes the tile.
+/// One step of a scripted move; the walker stays whole pixel and finishes the tile. The free walk does NOT come through
+/// here (card PP-FREE-MOVE): a rail is a tile path, and pp_scene is its only caller.
 function pp_world_move_step(_world) {
     var _hero = _world.hero;
     if (!_hero.moving) return;
     _hero.steps += 1;
+    _hero.walking = true;
+    _hero.walk_anim = floor(_hero.steps / 4) mod 2;
     var _t = _hero.steps / _hero.total;
     if (_t >= 1) {
         _hero.px = _hero.to_x;
         _hero.py = _hero.to_y;
         _hero.moving = false;
+        _hero.walking = false;
+        _hero.walk_anim = 0;
         _hero.steps = _hero.total;
+        pp_world_sync_tile(_hero);
         // Card SFX-WIRE: a hatch is a tile, not a trigger, so the sound fires when the hero lands on one.
         var _kind = pp_map_tile_kind(_world.map, _hero.tx, _hero.ty);
         if (string_pos("hatch", _kind) > 0) pp_audio_play("door_hatch");
@@ -189,12 +418,44 @@ function pp_world_destroy_actor(_world, _name) {
     }
 }
 
-/// Follow the hero, clamped so the view never shows outside the map.
+/// Follow the hero, clamped so the view never shows outside the map. This is the SNAP: it is called when a map loads, a
+/// map is swapped and a scene hands control back, and it puts the view exactly where it belongs so nothing is seen
+/// sliding into place. The per step follow is pp_overworld_camera_step.
 function pp_overworld_camera_follow(_world) {
     var _map = _world.map;
     var _full = pp_map_pixel_size(_map);
     _world.cam_x = clamp(_world.hero.px + PP_TILE * 0.5 - PP_FRAME_W * 0.5, 0, max(0, _full.w - PP_FRAME_W));
     _world.cam_y = clamp(_world.hero.py + PP_TILE * 0.5 - PP_FRAME_H * 0.5, 0, max(0, _full.h - PP_FRAME_H));
+}
+
+/// The per step follow (card PP-FREE-MOVE rule 5). The target is the same clamped centre pp_overworld_camera_follow
+/// computes, and there are two ways to reach it, because the two cases want opposite things:
+///
+/// WHILE HE WALKS the camera takes his own pixel, exactly: cam = floor(target), which is the hero's own floor less the
+/// constant half tile the target adds, so the figure sits on the same screen pixel for the whole walk and the world
+/// slides under him. The float camera this replaced could not do that. A lerp lags the walker by (1 - smooth) / smooth
+/// of his speed, and while it lags his pixel and the camera's pixel cross their own rounding boundaries at different
+/// moments, which on a diagonal (0.7071 of a step on each axis) makes the figure bob one pixel against a grid that is
+/// standing still, about two frames in three. That bob is exactly the jitter the card forbids, and it is only visible
+/// on the diagonals the card was written for.
+///
+/// WHILE HE STANDS the camera eases the rest of the way (PP_CAMERA_SMOOTH of the distance each step) and snaps the last
+/// pixel, so a map load, a scene handback or a step out of a doorway slides into place instead of jumping. Nothing is
+/// moving under it then, so there is no bob to make.
+function pp_overworld_camera_step(_world) {
+    var _map = _world.map;
+    var _full = pp_map_pixel_size(_map);
+    var _target_x = clamp(_world.hero.px + PP_TILE * 0.5 - PP_FRAME_W * 0.5, 0, max(0, _full.w - PP_FRAME_W));
+    var _target_y = clamp(_world.hero.py + PP_TILE * 0.5 - PP_FRAME_H * 0.5, 0, max(0, _full.h - PP_FRAME_H));
+    if (_world.hero.walking == true) {
+        _world.cam_x = floor(_target_x);
+        _world.cam_y = floor(_target_y);
+        return;
+    }
+    _world.cam_x = lerp(_world.cam_x, _target_x, PP_CAMERA_SMOOTH);
+    _world.cam_y = lerp(_world.cam_y, _target_y, PP_CAMERA_SMOOTH);
+    if (abs(_target_x - _world.cam_x) < 1) _world.cam_x = _target_x;
+    if (abs(_target_y - _world.cam_y) < 1) _world.cam_y = _target_y;
 }
 
 /// Start a scene over the current map.
@@ -351,15 +612,59 @@ function pp_overworld_change_map(_world, _map_id, _spawn_name) {
     return true;
 }
 
-/// The trigger the hero would fire with confirm: the tile ahead first, then the tile underfoot.
-function pp_overworld_confirm_target(_world) {
-    var _d = pp_world_dir_vector(_world.hero.facing);
-    var _ahead = pp_map_trigger_at(_world.map, _world.hero.tx + _d.x, _world.hero.ty + _d.y);
-    if (!is_undefined(_ahead)) return _ahead;
-    return pp_map_trigger_at(_world.map, _world.hero.tx, _world.hero.ty);
+/// The rectangle a confirm reaches: the feet box, extended PP_REACH pixels the way the hero faces (card PP-FREE-MOVE
+/// rule 4). This is what makes the target the person or the thing in FRONT OF THE FEET rather than the next tile: a
+/// walker stopped against a doorway reaches the person standing in it, and a walker still a few pixels short of a sign
+/// does not.
+function pp_world_reach_box(_hero) {
+    var _b = pp_world_feet_box(_hero.px, _hero.py);
+    var _d = pp_world_dir_vector(_hero.facing);
+    var _r = { x1: _b.x1, y1: _b.y1, x2: _b.x2, y2: _b.y2 };
+    if (_d.x > 0) {
+        _r.x1 = _b.x2 + 1;
+        _r.x2 = _r.x1 + PP_REACH - 1;
+    } else if (_d.x < 0) {
+        _r.x2 = _b.x1 - 1;
+        _r.x1 = _r.x2 - PP_REACH + 1;
+    } else if (_d.y > 0) {
+        _r.y1 = _b.y2 + 1;
+        _r.y2 = _r.y1 + PP_REACH - 1;
+    } else if (_d.y < 0) {
+        _r.y2 = _b.y1 - 1;
+        _r.y1 = _r.y2 - PP_REACH + 1;
+    }
+    return _r;
 }
 
-/// The actor standing on one tile, or undefined. Used for talk and for blocking a walk into somebody.
+/// True when two inclusive pixel rectangles overlap.
+function pp_world_boxes_overlap(_a, _b) {
+    return (_a.x1 <= _b.x2 && _a.x2 >= _b.x1 && _a.y1 <= _b.y2 && _a.y2 >= _b.y1);
+}
+
+/// The trigger a confirm fires (card PP-FREE-MOVE rule 4). The reach box is asked from its FAR END toward the feet, so
+/// the door the player is aiming at is chosen before the one he is standing on; the tile he stands on is the last
+/// chance, because a door underfoot still opens on confirm.
+///
+/// The far end is one point, and which of its edges is "far" depends on the way he faces: the far edge on the facing
+/// axis, and the MIDDLE of the box on the other one. Reading the far corner instead would make a walker facing up ask
+/// the tile above and to the right of him, so a sign one tile to the side would open before the one straight ahead
+/// (the reach box is 14 px wide against a 10 px feet box, so that corner really does fall in the next column).
+function pp_overworld_confirm_target(_world) {
+    var _hero = _world.hero;
+    var _r = pp_world_reach_box(_hero);
+    var _d = pp_world_dir_vector(_hero.facing);
+    var _mid_x = floor(((_r.x1 + _r.x2) * 0.5) / PP_TILE);
+    var _mid_y = floor(((_r.y1 + _r.y2) * 0.5) / PP_TILE);
+    var _far_x = (_d.x == 0) ? _mid_x : floor(((_d.x < 0) ? _r.x1 : _r.x2) / PP_TILE);
+    var _far_y = (_d.y == 0) ? _mid_y : floor(((_d.y < 0) ? _r.y1 : _r.y2) / PP_TILE);
+    var _far = pp_map_trigger_at(_world.map, _far_x, _far_y);
+    if (!is_undefined(_far)) return _far;
+    var _next = pp_map_trigger_at(_world.map, _hero.tx + _d.x, _hero.ty + _d.y);
+    if (!is_undefined(_next)) return _next;
+    return pp_map_trigger_at(_world.map, _hero.tx, _hero.ty);
+}
+
+/// The actor standing on one tile, or undefined. Used for blocking a walk into somebody.
 function pp_overworld_actor_at(_world, _tx, _ty) {
     var _names = variable_struct_get_names(_world.actors);
     for (var _i = 0; _i < array_length(_names); _i += 1) {
@@ -369,11 +674,16 @@ function pp_overworld_actor_at(_world, _tx, _ty) {
     return undefined;
 }
 
-/// The actor the hero is facing, or undefined. Talk is confirm on the tile ahead, so the same key that reads a
-/// sign reads a sailor.
+/// The actor the hero is facing, or undefined: whoever's own feet box the reach box touches, nearest first in the order
+/// the map placed them. Talk is confirm in front of the feet, so the same key that reads a sign reads a sailor.
 function pp_overworld_actor_ahead(_world) {
-    var _d = pp_world_dir_vector(_world.hero.facing);
-    return pp_overworld_actor_at(_world, _world.hero.tx + _d.x, _world.hero.ty + _d.y);
+    var _r = pp_world_reach_box(_world.hero);
+    var _names = variable_struct_get_names(_world.actors);
+    for (var _i = 0; _i < array_length(_names); _i += 1) {
+        var _a = _world.actors[$ _names[_i]];
+        if (pp_world_boxes_overlap(_r, pp_world_feet_box(_a.px, _a.py))) return _a;
+    }
+    return undefined;
 }
 
 /// Step the overworld: clocks, scene, dialogue, walking, triggers.
@@ -461,14 +771,31 @@ function pp_overworld_step(_world) {
         return;
     }
 
-    // A marker fires on touch, never on confirm.
-    var _here = pp_map_trigger_at(_world.map, _world.hero.tx, _world.hero.ty);
-    if (!is_undefined(_here) && _here.kind == "marker") {
-        var _mkey = string(_here.x) + "_" + string(_here.y);
-        if (!variable_struct_exists(_world.marker_off, _mkey)) {
-            _world.marker_off[$ _mkey] = PP_MARKER_RESPAWN_STEPS;
-            pp_overworld_fire(_world, _here);
-            return;
+    // The free walk moves him, so the tile he stands on is read AFTER it moved: an entry is a tile the feet were not on
+    // the step before (card PP-FREE-MOVE rule 5), which is what makes a marker fire once per entry instead of once per
+    // step stood on it. The tile he enters is kept even when the trigger underneath turns out to be inert, so the entry
+    // is not repeated when the 20 step grace or a respawn counter runs out.
+    pp_world_free_step(_world);
+    var _entered = (_world.hero.tx != _world.enter_tx) || (_world.hero.ty != _world.enter_ty);
+    _world.enter_tx = _world.hero.tx;
+    _world.enter_ty = _world.hero.ty;
+
+    if (_entered) {
+        // A hatch is a tile, not a trigger, so its sound is played when the feet arrive on one, the same rule the
+        // scripted walk has always used (card SFX-WIRE).
+        var _kind_here = pp_map_tile_kind(_world.map, _world.hero.tx, _world.hero.ty);
+        if (string_pos("hatch", _kind_here) > 0) pp_audio_play("door_hatch");
+
+        // A marker fires on touch, never on confirm.
+        var _here = pp_map_trigger_at(_world.map, _world.hero.tx, _world.hero.ty);
+        if (!is_undefined(_here) && _here.kind == "marker") {
+            var _mkey = string(_here.x) + "_" + string(_here.y);
+            if (!variable_struct_exists(_world.marker_off, _mkey)) {
+                _world.marker_off[$ _mkey] = PP_MARKER_RESPAWN_STEPS;
+                pp_overworld_fire(_world, _here);
+                pp_overworld_clock_step(_world);
+                return;
+            }
         }
     }
 
@@ -499,24 +826,9 @@ function pp_overworld_step(_world) {
         }
     }
 
-    // Free walk: one tile per press, four directions, facing updates instantly.
-    var _dir = "";
-    if (pp_pressed("left")) _dir = "left";
-    else if (pp_pressed("right")) _dir = "right";
-    else if (pp_pressed("up")) _dir = "up";
-    else if (pp_pressed("down")) _dir = "down";
-
-    if (_dir != "") {
-        _world.hero.facing = _dir;
-        var _d = pp_world_dir_vector(_dir);
-        var _nx = _world.hero.tx + _d.x;
-        var _ny = _world.hero.ty + _d.y;
-        if (pp_map_walkable(_world.map, _nx, _ny) && is_undefined(pp_overworld_actor_at(_world, _nx, _ny))) {
-            pp_world_start_move(_world, _nx, _ny, PP_WALK_STEPS_FREE);
-        } else if (PP_DEBUG) {
-            show_debug_message("PP: wall at " + string(_nx) + "," + string(_ny));
-        }
-    }
+    // The free walk has already run, above, before the triggers were read: it is what moves him, and the tile it left
+    // him on is what the entry test and the confirm target are read from (card PP-FREE-MOVE). Nothing is left to do here
+    // but the clocks that run under everything.
 
     pp_overworld_clock_step(_world);
 }
@@ -541,7 +853,7 @@ function pp_overworld_clock_step(_world) {
         _world.cam_y = floor(lerp(_p.from_y, _p.to_y, _t));
         if (_p.steps >= _p.total) _world.cam_pan = undefined;
     } else if (_world.camera_follow) {
-        pp_overworld_camera_follow(_world);
+        pp_overworld_camera_step(_world);
     }
 }
 
@@ -574,8 +886,10 @@ function pp_overworld_draw(_world) {
             var _key = string(_tr.x) + "_" + string(_tr.y);
             if (!variable_struct_exists(_world.marker_off, _key)) {
                 draw_set_colour(pp_role_colour("hazard"));
-                draw_rectangle(_tr.x * PP_TILE - _world.cam_x + 4 + _ox, _tr.y * PP_TILE - _world.cam_y + 3 + _oy,
-                               _tr.x * PP_TILE - _world.cam_x + 11 + _ox, _tr.y * PP_TILE - _world.cam_y + 15 + _oy, false);
+                // The camera is a float and is floored once here, on the same value the map and the figures are drawn
+                // against, so a marker cannot land a fraction of a pixel inside its own tile (card PP-FREE-MOVE rule 5).
+                draw_rectangle(_tr.x * PP_TILE - floor(_world.cam_x) + 4 + _ox, _tr.y * PP_TILE - floor(_world.cam_y) + 3 + _oy,
+                               _tr.x * PP_TILE - floor(_world.cam_x) + 11 + _ox, _tr.y * PP_TILE - floor(_world.cam_y) + 15 + _oy, false);
             }
         }
         _t += 1;
@@ -674,31 +988,39 @@ function pp_world_dir_row(_dir) {
     return 0;
 }
 
-/// The frame of one figure in its sheet: direction times frames per direction, plus the walk step. Frames per
+/// The frame of one figure in its sheet: direction times frames per direction, plus the walk frame. Frames per
 /// direction is read off the sheet (eight frames over four directions is two), so a twelve frame sheet with three
-/// frames per direction would animate without a code change. Idle is frame 0 of the direction; a move cycles.
-function pp_world_sheet_frame(_name, _dir, _moving, _steps) {
+/// frames per direction would animate without a code change. Idle is frame 0 of the direction; a walk cycles.
+/// `_walk_frame` is the frame the caller has already chosen from the DISTANCE walked (card PP-FREE-MOVE rule 3), not a
+/// step count, so a figure standing still cannot animate and a runner animates at the speed he covers.
+function pp_world_sheet_frame(_name, _dir, _walking, _walk_frame) {
     var _per = 2;
     var _info = pp_art_info(_name);
     if (!is_undefined(_info) && _info.frames > 0 && (_info.frames mod 4) == 0) _per = _info.frames div 4;
     var _step = 0;
-    if (_moving && _per > 1) _step = floor(_steps / 4) mod _per;
+    if (_walking && _per > 1) _step = _walk_frame mod _per;
     return pp_world_dir_row(_dir) * _per + _step;
 }
 
-/// The walk step of a figure: 0 standing, 1 and 2 while a move is under way. Two frames, 4 steps apart, so the
-/// cycle reads at a walking pace without a separate clock.
-function pp_world_walk_frame(_moving, _steps) {
-    if (!_moving) return 0;
-    return 1 + (floor(_steps / 4) mod 2);
+/// The walk frame of a figure: 0 standing, 1 and 2 while a walk is under way. Two frames, alternated by the distance
+/// walked, so the cycle is timed to the movement rather than to the number of steps the key has been held.
+function pp_world_walk_frame(_walking, _walk_frame) {
+    if (!_walking) return 0;
+    return 1 + (_walk_frame mod 2);
 }
 
 function pp_overworld_draw_hero(_world, _ox, _oy) {
     var _hero = _world.hero;
-    var _sx = _hero.px - _world.cam_x + _ox;
-    var _sy = _hero.py - _world.cam_y + _oy;
-    var _step = pp_world_walk_frame(_hero.moving, _hero.steps);
-    var _frame = pp_world_sheet_frame(PP_HERO_SHEET, _hero.facing, _hero.moving, _hero.steps);
+    // Floor the figure and the camera separately, on the same camera the map is drawn against (card PP-FREE-MOVE rule
+    // 5). The walk moves him by fractions of a pixel on a diagonal and the camera eases by fractions every step, and a
+    // 16x16 sprite drawn at a fraction of a pixel does not move: it shimmers, because its own edges land between the
+    // pixels while the tiles behind it stay on them. Whole pixels on both sides keep him exact, and the pixel he is
+    // on changes exactly when he has walked onto it.
+    var _sx = floor(_hero.px) - floor(_world.cam_x) + _ox;
+    var _sy = floor(_hero.py) - floor(_world.cam_y) + _oy;
+    var _walking = (_hero.walking == true);
+    var _step = pp_world_walk_frame(_walking, _hero.walk_anim);
+    var _frame = pp_world_sheet_frame(PP_HERO_SHEET, _hero.facing, _walking, _hero.walk_anim);
     if (pp_art_draw(PP_HERO_SHEET, _frame, _sx, _sy, PP_UNTINTED, 1)) return;
 
     // Blocks: blond head, light blue bomber, dark trousers. 12 wide, 14 tall inside the 16 pixel tile.
@@ -726,8 +1048,9 @@ function pp_overworld_draw_actors(_world, _ox, _oy) {
     var _i = 0;
     while (_i < array_length(_names)) {
         var _a = _world.actors[$ _names[_i]];
-        var _sx = _a.px - _world.cam_x + _ox;
-        var _sy = _a.py - _world.cam_y + _oy;
+        // Whole pixels, exactly as the hero and the map (card PP-FREE-MOVE rule 5).
+        var _sx = floor(_a.px) - floor(_world.cam_x) + _ox;
+        var _sy = floor(_a.py) - floor(_world.cam_y) + _oy;
         var _frame = pp_world_sheet_frame(PP_SAILOR_SHEET, _a.facing, false, 0);
         if (!pp_art_draw(PP_SAILOR_SHEET, _frame, _sx, _sy, PP_UNTINTED, 1)) {
             // Blocks: navy jacket with a white collar, cap, so a sailor does not read as the hero.

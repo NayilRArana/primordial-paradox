@@ -48,6 +48,10 @@ Usage:
     python tools\\play_demo.py --check --video P.mp4  check some other file the same way
     python tools\\play_demo.py --dry-run              validate the script and print the timeline in seconds
 
+Event kinds (card PP-FREE-MOVE): `note` is a beat with no input, `key` is one press, and `hold` is a key that goes
+down at `step`, stays down for `steps` and comes up. Since the overworld walks while a direction is HELD, a walk beat
+on the map is a `hold`; a press moves the walker a couple of pixels and no further.
+
 Exit codes:
     0  the recording passed every check, or --check passed, or --dry-run validated the script
     1  a check failed, or the script is malformed, or the game window never appeared
@@ -276,6 +280,7 @@ def validate_script(script):
         return problems
     last_absolute = -1
     last_key_step = None
+    busy_until = -1
     seen_ids = set()
     for index, event in enumerate(events):
         where = "events[%d]" % index
@@ -290,8 +295,8 @@ def validate_script(script):
         else:
             seen_ids.add(identifier)
         kind = event.get("kind")
-        if kind not in ("key", "note"):
-            problems.append("%s.kind must be key or note, not %r" % (where, kind))
+        if kind not in ("key", "hold", "note"):
+            problems.append("%s.kind must be key, hold or note, not %r" % (where, kind))
         if not isinstance(event.get("beat"), int):
             problems.append("%s.beat must be an integer beat number from the beat sheet" % where)
         if not isinstance(event.get("note"), str) or not event.get("note"):
@@ -313,6 +318,9 @@ def validate_script(script):
             if step < last_absolute:
                 problems.append("%s.step %d is before the previous event's step %d, so the clock goes backwards"
                                 % (where, step, last_absolute))
+            if step < busy_until:
+                problems.append("%s.step %d lands inside the hold that runs until step %d, so it would fire while the "
+                                "key is still down" % (where, step, busy_until))
             last_absolute = max(last_absolute, step)
         if kind == "key":
             key_name = event.get("key")
@@ -325,6 +333,24 @@ def validate_script(script):
                                     "the game needs to read two presses"
                                     % (where, step, step - last_key_step, MIN_KEY_GAP_STEPS))
                 last_key_step = step
+        if kind == "hold":
+            # Card PP-FREE-MOVE: a held direction is what walks now, so a walk beat is a key that goes down, stays down
+            # for `steps` and comes back up. The release is the moment the next press has to clear, which is why the
+            # gap is measured from the END of the hold and not its start.
+            key_name = event.get("key")
+            if key_name not in cap.KEY_CODES:
+                problems.append("%s.key %r is not one of %s"
+                                % (where, key_name, ", ".join(sorted(cap.KEY_CODES))))
+            hold_steps = event.get("steps")
+            if not isinstance(hold_steps, int) or hold_steps <= 0:
+                problems.append("%s.steps must be a positive integer, not %r" % (where, hold_steps))
+            elif step is not None:
+                if last_key_step is not None and step - last_key_step < MIN_KEY_GAP_STEPS:
+                    problems.append("%s.hold at step %d starts %d steps after the previous key, under the %d step gap "
+                                    "the game needs to read the release"
+                                    % (where, step, step - last_key_step, MIN_KEY_GAP_STEPS))
+                last_key_step = step + hold_steps
+                busy_until = max(busy_until, step + hold_steps)
     return problems
 
 
@@ -338,6 +364,7 @@ def timeline(script):
             "beat": event["beat"],
             "kind": event["kind"],
             "key": event.get("key"),
+            "steps": event.get("steps"),
             "second": round(event["step"] / float(fps), 3),
             "marker": event.get("marker"),
             "note": event["note"],
@@ -450,6 +477,24 @@ class Replay(object):
                 late = reached - int(event["step"])
                 if late > self.fps:
                     failures.append("%s fired %.1f s late" % (event["id"], late / float(self.fps)))
+            if event["kind"] == "hold":
+                # Card PP-FREE-MOVE: the overworld walks while a direction is HELD, so a walk beat is a key that goes
+                # down, stays down on the clock and comes back up. A press moves him a couple of pixels and no further,
+                # which is why the eight taps this beat used to be are one hold now. The focus is retaken before the
+                # down, because a key sent to the wrong window is a recording of a game that never moved.
+                ok, why = cap.ensure_key_focus(self.hwnd, attempts=2, settle=0.15)
+                if not ok:
+                    failures.append("%s: the game never took the keyboard focus for the hold (%s)" % (event["id"], why))
+                    break
+                cap.send_vk_down(cap.KEY_CODES[event["key"]])
+                self.record(event["id"], "down", event["key"], self.step_now())
+                end = int(event["step"]) + int(event["steps"])
+                reached = self.wait_until(end)
+                cap.send_vk_up(cap.KEY_CODES[event["key"]])
+                self.record(event["id"], "up", event["key"], self.step_now())
+                late = reached - end
+                if late > self.fps:
+                    failures.append("%s held the key until %.1f s late" % (event["id"], late / float(self.fps)))
             if event["kind"] == "key":
                 # A press is only ever a real press: if the focus cannot be retaken the run stops, because a
                 # posted key would produce a recording of a menu that never moved.

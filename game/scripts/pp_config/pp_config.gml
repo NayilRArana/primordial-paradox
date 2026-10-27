@@ -180,11 +180,9 @@ enum PPElement {
 // tiles a second, which is a jog and not a blur at 16 pixels a tile.
 #macro PP_RUN_SPEED 200
 #macro PP_RUN_STEP_PX (PP_RUN_SPEED / PP_STEPS_PER_SECOND)
-// The tile walk's own constant, kept while the committed pp_overworld still walks tiles (card t_26dbea7d, GATE-HEAD-GREEN):
-// the pixel walk above replaces it on the step pp_overworld lands, and this line goes with it. Until then a HEAD checkout
-// calls pp_world_start_move(..., PP_WALK_STEPS_FREE) in pp_overworld.gml line 515, so removing it alone leaves HEAD red on
-// tests/test_project.py::test_gml_uses_only_defined_macros_and_enums.
-#macro PP_WALK_STEPS_FREE 12
+// The rail walk's steps per tile (card PP-FREE-MOVE): the player walks in pixels now, so the tile walk's own
+// steps-per-tile macro went with the tile walk in the same commit (card t_26dbea7d, GATE-HEAD-GREEN). A scripted
+// move is still a tile path, so this one stays and tests/test_move_hold.py pins it at 8.
 #macro PP_WALK_STEPS_RAIL 8
 #macro PP_TRIGGER_LOCK_STEPS 20
 #macro PP_MARKER_RESPAWN_STEPS 30

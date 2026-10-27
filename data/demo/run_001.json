@@ -108,66 +108,18 @@
     {
       "id": "e10",
       "step": 3420,
-      "kind": "key",
+      "kind": "hold",
       "key": "right",
+      "steps": 72,
       "beat": 26,
-      "note": "step 1 of the eight step walk the ship capture uses (tools/capture_title.py, SHIP_WALK_STEPS = 8)"
+      "note": "the walk east: one HOLD of the direction, because the walker walks while the key is down (card PP-FREE-MOVE). The corridor is open from the spawn at 2,7 to the tile before the navy_sailor at 11,7, which is 8 tiles or 128 pixels, and 128 pixels is 64 steps at PP_WALK_SPEED's 2 pixels a step; 72 steps gives the walker a little to spare so he is standing against the sailor when the confirm is pressed, since he cannot walk through him. This beat used to be eight taps of Right, one a second, which was eight tiles under the tile walk and is about 16 pixels now."
     },
     {
       "id": "e11",
-      "step": 3480,
-      "kind": "key",
-      "key": "right",
+      "step": 3560,
+      "kind": "note",
       "beat": 26,
-      "note": "step 2"
-    },
-    {
-      "id": "e12",
-      "step": 3540,
-      "kind": "key",
-      "key": "right",
-      "beat": 26,
-      "note": "step 3"
-    },
-    {
-      "id": "e13",
-      "step": 3600,
-      "kind": "key",
-      "key": "right",
-      "beat": 26,
-      "note": "step 4"
-    },
-    {
-      "id": "e14",
-      "step": 3660,
-      "kind": "key",
-      "key": "right",
-      "beat": 26,
-      "note": "step 5"
-    },
-    {
-      "id": "e15",
-      "step": 3720,
-      "kind": "key",
-      "key": "right",
-      "beat": 26,
-      "note": "step 6"
-    },
-    {
-      "id": "e16",
-      "step": 3780,
-      "kind": "key",
-      "key": "right",
-      "beat": 26,
-      "note": "step 7"
-    },
-    {
-      "id": "e17",
-      "step": 3840,
-      "kind": "key",
-      "key": "right",
-      "beat": 26,
-      "note": "step 8"
+      "note": "he has arrived: the hold released at step 3492 against the sailor, and this is the room held still for a second so the last step of the walk is visible"
     },
     {
       "id": "e18",
