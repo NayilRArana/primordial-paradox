@@ -323,6 +323,17 @@ function pp_dialogue_advance(_d) {
     return false;
 }
 
+/// Leave the box without turning its pages (card t_7baa8fb4): on the field a held direction means "walk", not "read
+/// on", so the box closes where it stands and the caller's own walk runs on the same step. The entry's `sets` are
+/// applied exactly as a page-turned close applies them (spec 05: `sets` names flags applied when the box closes), so
+/// leaving early cannot drop a flag. Returns true, the same answer pp_dialogue_advance gives when it closes.
+function pp_dialogue_leave(_d) {
+    if (is_undefined(_d) || _d.closed) return true;
+    pp_dialogue_apply_flags(_d.sets);
+    _d.closed = true;
+    return true;
+}
+
 function pp_dialogue_closed(_d) {
     if (is_undefined(_d)) return true;
     return _d.closed;

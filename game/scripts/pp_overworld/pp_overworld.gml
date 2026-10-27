@@ -733,13 +733,22 @@ function pp_overworld_step(_world) {
     }
     _world.scene = undefined;
 
-    // A dialogue opened by a `say` trigger owns the screen too.
+    // A dialogue opened by a `say` trigger owns the screen, but a held direction LEAVES it (card t_7baa8fb4): the step
+    // closes the box and then falls through to the walk, so the press that leaves the box is the press that moves him
+    // and plays its footstep. Before this the branch returned unconditionally, so a box left open on the field ate
+    // every direction press: no walk, no footstep, and the recording stalled on the field.
+    // A page that offers a choice keeps the d-pad, because up and down are that page's cursor (D2.4), so the gate's
+    // three replies can never be closed out from under the player halfway through a pick.
     if (!pp_dialogue_closed(_world.dialogue)) {
-        if (pp_pressed("confirm")) pp_dialogue_advance(_world.dialogue);
-        pp_dialogue_step(_world.dialogue);
-        if (pp_dialogue_closed(_world.dialogue)) _world.dialogue = undefined;
-        pp_overworld_clock_step(_world);
-        return;
+        if ((pp_walk_x() != 0 || pp_walk_y() != 0) && !pp_dialogue_on_choice_page(_world.dialogue)) {
+            pp_dialogue_leave(_world.dialogue);
+        } else {
+            if (pp_pressed("confirm")) pp_dialogue_advance(_world.dialogue);
+            pp_dialogue_step(_world.dialogue);
+            if (pp_dialogue_closed(_world.dialogue)) _world.dialogue = undefined;
+            pp_overworld_clock_step(_world);
+            return;
+        }
     }
     _world.dialogue = undefined;
 
