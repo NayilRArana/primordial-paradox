@@ -35,6 +35,7 @@ this table exists on disk and every severity 1 finding has a frame.
 | 8 | 3 | `frames_oct27/f_0016.png` to `f_0021.png` | Six black frames at 16 s to 21 s. That is the intro fade, on purpose, and a black frame scores a legal NES colour. | none |
 | 9 | 3 | `frames_oct27/f_0030.png` and `frames_oct27_skip/f_0053.png` | The crawl's lowest visible line is a half line (`A SA`), which is the text scrolling in, not a line running out of its box. The skip prompt is drawn at x 8, y 8 (`game/scripts/pp_overworld/pp_overworld.gml:924`), so the prompt is not clipped either. In the skip take `f_0053.png` (52 s) is the one frame the measure cannot call the game at all, share 0.352 and 26 colours, and it is the skip transition itself. | none: `game/scripts/pp_title/pp_title.gml` scrolls it on purpose |
 | 10 | 3 | none: the log of the take that carried the evidence | The grab tool writes every take's game log to one fixed path, `build/qa-grab-game.log` (`output/screens_newest/play_and_grab.py:108`), so a later take overwrites an earlier one's evidence. The full route's log was overwritten by the skip take at 07:30 and cannot be re-read; the finding 1 claim that rests on it is instead proved by the frames and by the code, which do not disappear. A tool that copies the log beside the frames would stop this. | `output/screens_newest/play_and_grab.py`, and the same one path in `tools/play_demo.py` |
+| 11 | 2 | `frames_oct27/f_0001.png` (0 s, the title), cropped at `output/qa_playthrough_20261026/_crop_f0001_lowerleft.png` | The title screen draws a sign panel about 40 game pixels off the left edge of the screen, so the two lines a player can read are `STOKE 20` and `MPTON 55` instead of `BASINGSTOKE 20` and `SOUTHAMPTON 55`, and the panel's own left border is off screen. This is the demo's first shot, and it is not in the 22:49 build: `output/screens_newest/frames_show/f_0004.png` is the same title with no panel on it at all, so this is new in the 06:59 build. The two lines it is clipping are the two pages of `drive_sign_55` (`* SOUTHAMPTON 55.` and `* BASINGSTOKE 20.`, `data/dialogue/all.json`), which is the same dialogue finding 1 is about, drawn here at an x off screen instead of not drawn. | `game/scripts/pp_title/pp_title.gml` for the composition, and whichever draw path puts that panel up: the box's own rect is at x 8 (`game/scripts/pp_config/pp_config.gml:235`) and this panel is not, so it is a second draw of sign text with its own alignment |
 
 ### The one line that proves finding 1
 
@@ -73,7 +74,7 @@ recording, or anybody who expects a box to appear cannot.
 ## 2. The ten that cost the most Demo points, in order
 
 The demo is scored out of 25 over six shots, S1 title, S2 crawl, S3 drive, S4 gate, S5 dock office and S6 fight
-(`knowledge/DEMO-SCRIPT.md`). Five ranked findings is the honest length, not ten: finding 1 stops S3 in its first
+(`knowledge/DEMO-SCRIPT.md`). Six ranked findings is the honest length, not ten: finding 1 stops S3 in its first
 minute, finding 2 repeats that stop at the head of S4, S5 and S6, and finding 3 ends every take at 143 s.
 
 | rank | finding | the shot it costs | why it costs those points |
@@ -81,8 +82,9 @@ minute, finding 2 repeats that stop at the head of S4, S5 and S6, and finding 3 
 | 1 | finding 1, no cutscene box is drawn, so the drive holds one picture from 69 s | S3 drive, and with it S4, S5 and S6 | four of six shots sit after that second; a judge who cannot see past the still cannot score the gate, the dock office or the fight, and the one line to fix is named |
 | 2 | finding 2, the same missing draw at the head of every later scene | S4 gate, S5 dock office and S6 fight | it is why fixing the drive alone does not make the demo runnable: each of the three later shots opens with a `say` and would stop on its first second |
 | 3 | finding 3, every take dies at 143.4 s on this host | every shot after S3 in practice | it is the reason this report cannot answer for the ship, the talk or the fight, and the reason a fix can only be checked in takes shorter than 143 s until the host has memory |
-| 4 | finding 4, the drive's music is a placeholder | S3 drive | the shot's claim is an NES faithful night drive, and its music is the first thing a judge hears |
-| 5 | finding 5, footsteps, knife and six blips are not in the project file | S4 gate, S5 dock office, S6 fight | the walk and the fight are carried by footsteps and the knife; without them the two loudest shots are silent |
+| 4 | finding 11, the title screen clips a sign panel off the left edge | S1 title | it is the first picture a judge sees and the words on it are cut in half, so the demo's opening frame reads as a bug rather than as a deliberate NES sign |
+| 5 | finding 4, the drive's music is a placeholder | S3 drive | the shot's claim is an NES faithful night drive, and its music is the first thing a judge hears |
+| 6 | finding 5, footsteps, knife and six blips are not in the project file | S4 gate, S5 dock office, S6 fight | the walk and the fight are carried by footsteps and the knife; without them the two loudest shots are silent |
 
 ## 3. The 30 second capture of held walking
 
@@ -286,3 +288,16 @@ All from `<repo>` on CitadelArana, the desktop, 2026-10-27,
     `2026-10-27T07:24:36 memory low (0.3 GB free): no dispatch, no moves` (finding 3).
 23. `python tools/idle_check.py` again at the end of this run -> the same REFUSED line, exit 4, which is why the
     cutscene fix has not been watched running yet.
+24. `python output/qa_playthrough_20261026/crop_title.py` -> `_crop_f0001_lowerleft.png` and `_crop_f0001_top.png`,
+    the 2x crops that carry finding 11.
+25. Read of `output/screens_newest/frames_show/f_0004.png`, the 22:49 build's title frame, against
+    `output/qa_playthrough_20261026/frames_oct27/f_0001.png`, the 06:59 build's: the first has `PRIMORDIAL`,
+    `PARADOX` and the copyright line and no sign panel at all, the second adds the panel that clips
+    `BASINGSTOKE 20` and `SOUTHAMPTON 55` at the left edge (finding 11).
+26. `python "<workspace>/Shared/projects/arananet/manager/guard/lane_commit.py" --repo
+    "<workspace>/Shared" --lane testing -m "QA-PLAYTHROUGH (t_84fe6ab8) ..." --
+    projects/primordial-paradox/knowledge/QA-PLAYTHROUGH-2026-10-26.md` -> `COMMITTED 5e02e638091f9eba0d27024b3cdb5937ec64ddaf
+    lane=testing paths=2`, the report plus the gate log line the gate adds. The first two attempts exited 8 with
+    `staged claim: FAIL`, because other lanes committed to the same repo while the private index was building
+    (`DRIFT: the private index was built from HEAD ee04f81fc, and HEAD is now 4ac179edc`, then `4ac179edc` to
+    `cb0c05d22`); the third fired straight after another lane's commit and landed.
