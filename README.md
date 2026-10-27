@@ -24,7 +24,7 @@ git diff --stat hackathon-baseline-2026-10-25..HEAD
 
 ## Meta AI in this game
 
-- **`muse-spark-1.3`:** `tools/bake_meta.py` calls it to judge dialogue. `tools/eye_critic.py` also sends it frames for art review. The live TALK path asks the same model through a local bridge this repository does not ship.
+- **`muse-spark-1.3`:** `tools/bake_meta.py` calls it to judge dialogue. `tools/eye_critic.py` also sends it frames for art review. The live TALK path asks the same model through `tools/ai_bridge.py`, the loopback bridge this repository ships and `tools/run.ps1` starts before the game.
 - **`muse-image-1.0`:** `tools/meta_client.py` calls `generate_image()` for concept art and `edit_image()` for revisions.
 - **`sam-3.1`:** `tools/meta_client.py` calls `segment()` to separate a subject from its background.
 
@@ -41,7 +41,7 @@ Art in this build was generated with Muse Image 1.0 and cut out with SAM 3.1, us
 
 ### Meta in the pipeline
 
-`tools/meta_art.py` runs one asset from prompt to NES frame and keeps every step beside the finished picture, so a reader can check the Meta call instead of taking it on trust. The reference run is the title backdrop in `output/meta_art/title_backdrop/c1`:
+`tools/meta_art.py` runs one asset from prompt to NES frame and keeps every step beside the finished picture, so a reader can check the Meta call instead of taking it on trust. The reference run is the title backdrop, and the files it left are tracked in `data/meta_art_reference/title_backdrop_c1`, so a fresh clone holds the same evidence without running anything. The tool writes every run to `output/meta_art/title_backdrop/c1` too, which is a local output directory that git ignores:
 
 | step | file beside it | measured |
 | --- | --- | --- |
@@ -60,6 +60,8 @@ That frame passes the project's NES limits: `tools/nes_check.py` passes it at 25
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\run.ps1
 ```
+
+**The talk bridge.** That same command starts `tools/ai_bridge.py` on 127.0.0.1 port 8791 before the game and stops it after, so a live TALK turn gets a verdict from `muse-spark-1.3` when a Meta key is in the environment, then from the local model, then from the recorded answers in `data/ai_cache/bridge`. It never sends audio off this PC. A bridge that will not start prints a warning and the fight falls back to the recorded answers, -NoBridge skips it, and replay mode needs no server at all.
 
 **Check the data: Python 3 only.** Install the dependency, then run the checker. Neither step needs GameMaker.
 
