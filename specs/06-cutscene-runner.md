@@ -43,6 +43,10 @@ Rules
 10. A scene's end is where the demo route moves: whichever way the runner finishes (its own `end`, a runout, the
     command cap), the overworld drops it in one place and that place tells the route (pp_route_scene_finished). See
     spec 20, decision 1.
+11. Amendment, 2026-10-26 (card t_ee178652, spec 21): no scene command opens the live TALK entry box. A scene blocks
+    on a dialogue it owns and a box that waits on a player's typing has no bound, so a scene that needs the player to
+    say something uses `branch` on a flag an earlier `say` set, exactly as rule 3 already requires. The box is entered
+    from the battle menu only, where the fight's own turn loop bounds the wait.
 
 Numbers: camera move 24 steps, linear, floored; fade 12 steps when the argument is omitted; music crossfade 30 steps;
 shake 1 or 2 pixels changing every 2 steps, maximum 60 steps; a scene over 256 commands is a checker warning, because

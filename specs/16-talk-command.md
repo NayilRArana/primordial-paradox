@@ -16,6 +16,7 @@ Goal: in battle the player types what their character says. A language model rea
 TALK stays one entry in the five entry battle menu (spec 07). Picking it opens a two step flow.
 
 Step 1, context options: up to 4 lines from the enemy's talk_dialogue, unchanged from spec 07, drawn in the 96 pixel choice panel (spec 05), plus a fifth fixed entry SAY IT YOURSELF at the bottom of the list after a one pixel separator rule. The fifth entry is never conditional.
+Amendment, 2026-10-26 (card t_ee178652, spec 21): the panel now draws four rows and the row pitch moved with it, from 16 to 13, first row at `PP_MENU_TOP + 8` (176, 189, 202, 215, last glyph bottom 223, inside the band's border at 232). At 16 a fourth row lands on 234 and prints over the border. The rule above the fifth row is drawn in the `dim` role at `y - 3`. The fifth entry opens the live box in spec 21 rather than applying a row here: it carries no effect and no delta of its own, so a pick that only opens a box cannot move the meter.
 
 Step 2, the input row, only for SAY IT YOURSELF:
 - Input row inside the message box: x 16 to 232, y 200 to 224, our own 8x8 font, text ink only, a 6 pixel underscore cursor that blinks 30 steps on, 30 steps off.
@@ -24,6 +25,8 @@ Step 2, the input row, only for SAY IT YOURSELF:
 - Keyboard only. A build with no keyboard available draws SAY IT YOURSELF disabled in the second ink with the low blip on press (spec 07 rule 1). Typing is never available during the dodge phase; the request is sent before the enemy turn starts.
 - The battle clock pauses while the input row is open and while the request is pending. Talking never costs the player a hit.
 - On send: input closes, the message box shows `* ...` and waits (section 12). At most one request is in flight; the menu cannot open during it.
+
+Amendment, 2026-10-26 (card t_ee178652): four bullets above are superseded by spec 21 and the rest still stand. The input row is the battle's own message window (x 0 to 256, y 0 to 48) and not a row at y 200; the 120 character cap and the 30/30 blip stand, and the counter moved to the prompt row's right end as `2/3` tries left rather than a character count; "Keyboard only" is superseded because the same line can be built on a 44 cell letter grid with the d-pad and spoken into the microphone and edited as a transcript, which is what makes the mechanic playable on a pad and on stage; and the 150 step budget in section 12 is 420 steps, because the request now goes to a local bridge whose own rung ladder has a 6 second deadline and a game that gave up first would turn every slow but good answer into a fallback.
 
 ## 2. The mercy meter
 

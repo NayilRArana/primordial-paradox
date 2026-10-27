@@ -18,15 +18,20 @@ function pp_input_table() {
         { id: "down",    keys: [vk_down, ord("S")], pads: [gp_padd], axis: "y" },
         { id: "left",    keys: [vk_left, ord("A")], pads: [gp_padl], axis: "x" },
         { id: "right",   keys: [vk_right, ord("D")], pads: [gp_padr], axis: "x" },
+        // The run (spec 04 rule 1, card PP-FREE-MOVE): shift and the right shoulder are the two inputs no other action
+        // claims, so the run takes the keys that are free rather than one another action already owns. It is HELD, and
+        // only the overworld reads it, so a menu or a box can never be moved faster by it.
+        { id: "run",     keys: [vk_shift], pads: [gp_shoulderr], axis: "" },
         { id: "debug_warp",  keys: [vk_f1], pads: [], axis: "" },
         { id: "debug_step",  keys: [vk_f2], pads: [], axis: "" },
         { id: "debug_flags", keys: [vk_f3], pads: [], axis: "" },
-        // The TALK box's two actions (spec 21 section 2, card t_ee178652). live_voice is the held record key: the left
-        // shoulder is where a NES-era pad would put a second face row, and F5 off the pads so a keyboard player can
-        // reach it. live_mode flips replay to live in one press, which is how the demo's switch is shown on camera.
-        // Neither key belongs to another action above; tests\test_talk_live.py and tests\test_project.py pin that.
-        { id: "live_voice", keys: [vk_f5], pads: [gp_shoulderl], axis: "" },
-        { id: "live_mode",  keys: [vk_f6], pads: [], axis: "" }
+        // The TALK box's voice key (spec 21 section 2, card t_ee178652). HELD, not pressed: a press starts a
+        // recording and the release ends it. F5 and the left shoulder are the two keys no other action claims, and a
+        // letter would have been a letter the player could no longer type.
+        { id: "live_voice",  keys: [vk_f5], pads: [gp_shoulderl], axis: "" },
+        // F6 flips the live TALK path between replay and live at run time, so the demo can be recorded both ways
+        // without a rebuild (spec 21 section 1).
+        { id: "live_mode",   keys: [vk_f6], pads: [], axis: "" }
     ];
 }
 
@@ -55,13 +60,23 @@ function pp_input_init() {
         vec_y: 0,
         vec_len: 0,
         // The text entry reader's state (spec 21 section 2, card t_ee178652). Declared here for the same reason
-        // lock_steps is: the TALK box reads these every step it is open, and a key a struct does not carry is a
+        // stick_dir below is: the TALK box reads these every step it is open, and a key a struct does not carry is a
         // crash on the first frame that reads it.
         text_mode: false,
         text_char: "",
         text_send: false,
         text_back: false,
         text_del: false,
+        // The left stick's dominant direction as one of the four walk names, or "" when the stick is inside the
+        // deadzone (card t_771e78ef). Declared here because the overworld reads it every step it walks, and a key a
+        // struct does not carry is a crash on the first frame that reads it.
+        stick_dir: "",
+        // The WALK vector (card PP-FREE-MOVE): -1, 0 or 1 on each axis, so the four directions make eight, from the keys
+        // and the d-pad through the action table or from the left stick. Published here for the same reason stick_dir
+        // is: no module outside this one touches a pad axis (spec 02 rule 1). Declared because pp_overworld reads both
+        // every step the player can walk, and a key a struct does not carry is a crash on the first of them.
+        walk_x: 0,
+        walk_y: 0,
         pad_seen: -1
     };
 }
@@ -103,8 +118,6 @@ function pp_input_sample() {
         pp_input_clear_edges();
     }
 
-    // The text reader samples before the vector, so a character typed on the same step a box opens is read by the
-    // box, not lost to the order the two happen to run in (spec 21 section 2, card t_ee178652).
     pp_input_text_step();
     pp_input_update_vector();
     if (gamepad_is_connected(0)) _in.pad_seen = 1; else _in.pad_seen = -1;
@@ -151,6 +164,29 @@ function pp_action(_name) {
     return _a.held;
 }
 
+/// The left stick as one of the four walk directions, or "" when it is inside the deadzone (card t_771e78ef).
+/// Read by the overworld so a stick push and a d-pad push walk the same way, and so pp_overworld never touches an axis.
+function pp_stick_dir() {
+    var _in = global.pp_input;
+    if (!is_struct(_in)) return "";
+    if (!is_string(_in.stick_dir)) return "";
+    return _in.stick_dir;
+}
+
+/// The walk vector's two components (card PP-FREE-MOVE): each is -1, 0 or 1, so four keys make eight directions.
+/// Read by pp_overworld, which divides the pair by its own length to make every direction the same speed.
+function pp_walk_x() {
+    var _in = global.pp_input;
+    if (!is_struct(_in) || !variable_struct_exists(_in, "walk_x")) return 0;
+    return _in.walk_x;
+}
+
+function pp_walk_y() {
+    var _in = global.pp_input;
+    if (!is_struct(_in) || !variable_struct_exists(_in, "walk_y")) return 0;
+    return _in.walk_y;
+}
+
 function pp_pressed(_name) {
     var _a = global.pp_input.actions[$ _name];
     if (is_undefined(_a)) return false;
@@ -171,6 +207,15 @@ function pp_repeat(_name) {
 
 /// One normalised vector for the dodge phase (spec 02 rule 5, spec 08, and delta T3).
 /// Keyboard gives one of eight unit directions; stick keeps its angle but not its magnitude.
+///
+/// It also publishes `stick_dir`, the same stick as ONE of the four walk directions (card t_771e78ef): a tile walk
+/// cannot spend a diagonal, and the overworld needs the stick to behave like the d-pad (spec 04 rule 1). The dominant
+/// axis wins, ties go to vertical, and the reading is taken here so no module outside this file touches an axis.
+///
+/// And it publishes the WALK vector itself (card PP-FREE-MOVE): `walk_x` and `walk_y`, each -1, 0 or 1, so the four
+/// directions become eight. The four key and d-pad actions are read first and the stick second, so a resting stick can
+/// never fight a key that is being held; each stick axis has to clear the deadzone on its own, which is what makes a
+/// stick pushed into a corner a diagonal instead of a single direction.
 function pp_input_update_vector() {
     var _in = global.pp_input;
     var _x = 0;
@@ -179,6 +224,7 @@ function pp_input_update_vector() {
     var _ay = 0;
     var _from_stick = false;
 
+    _in.stick_dir = "";
     if (gamepad_is_connected(0)) {
         _ax = gamepad_axis_value(0, gp_axislh);
         _ay = gamepad_axis_value(0, gp_axislv);
@@ -186,6 +232,11 @@ function pp_input_update_vector() {
             _x = _ax;
             _y = _ay;
             _from_stick = true;
+            if (abs(_ax) >= abs(_ay)) {
+                _in.stick_dir = (_ax > 0) ? "right" : "left";
+            } else {
+                _in.stick_dir = (_ay > 0) ? "down" : "up";
+            }
         }
     }
 
@@ -205,6 +256,23 @@ function pp_input_update_vector() {
     _in.vec_x = _x;
     _in.vec_y = _y;
     _in.vec_len = point_distance(0, 0, _x, _y);
+
+    // The walk vector (card PP-FREE-MOVE). Signs rather than magnitudes, because the overworld makes its own unit vector
+    // from the pair: a diagonal is (1, 1) or (-1, 1) and the speed is applied after the divide, so all eight directions
+    // are the same speed. Keys first, so a stick left off centre cannot pull a keyboard walk off its axis.
+    var _walk_x = 0;
+    var _walk_y = 0;
+    if (pp_action("left") || pp_action("right") || pp_action("up") || pp_action("down")) {
+        if (pp_action("left")) _walk_x -= 1;
+        if (pp_action("right")) _walk_x += 1;
+        if (pp_action("up")) _walk_y -= 1;
+        if (pp_action("down")) _walk_y += 1;
+    } else if (_from_stick) {
+        if (abs(_ax) > PP_STICK_DEADZONE) _walk_x = sign(_ax);
+        if (abs(_ay) > PP_STICK_DEADZONE) _walk_y = sign(_ay);
+    }
+    _in.walk_x = _walk_x;
+    _in.walk_y = _walk_y;
 }
 
 /// Cursor axis with repeat, for menus: -1, 0 or 1 on the step the player moves the cursor.

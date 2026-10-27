@@ -48,6 +48,12 @@ NOT_RUNTIME = frozenset({
     # no reader; under D5 the game's only talk input is data/meta_bake.json, and spec 19 section 12.5
     # forbids the list travelling in the bundle next to the bake it already guards).
     "talk_profanity.json",
+    # talk_personas.json is the persona cards the live talk outside a fight answers as (card t_acae7c0a, spec 21
+    # section 11). tools/ai_bridge.py and tools/bake_personas.py read it by path out of data\, and no GML module
+    # names it: the game talks to the bridge over loopback, not through the bundle, exactly as it does with the
+    # judge prompt in data\talk\. Keep it here until a card wires a persona scene into GML; that card moves this
+    # line out and lets the mirror carry the file, and tests\test_talk_personas.py names both halves.
+    "talk_personas.json",
     # audio_cues_source.json is the cue table's source rows, copied inside the game so the audio tests
     # read only files inside the project (card t_a6fb94f8, manager decision A on t_41553cc5). No GML
     # module names it and no loader opens it: the runtime table is data\audio.json, which pp_data loads
@@ -66,9 +72,20 @@ NOT_RUNTIME = frozenset({
 # a new set of Included Files in the .yyp on every re-record (six of them on 2026-10-22, which
 # tools/check_project.py reported as "not listed as an Included File"). It stays tracked in data\
 # because the committed cache is what the offline demo and the replay tests read.
+#
+# talk/ is the talk bridge's build time input (card W1 PP-BRIDGE, 2026-10-26): data\talk\sailor_judge.json
+# is the judge prompt the talk director owns and tools/ai_bridge.py sends, and data\talk\bridge_latency.json
+# is a measurement report. No GML file names either one; the bridge reaches the game through a loopback HTTP
+# call, not through the bundle, so the same rule applies as above: mirroring them would only add Included
+# Files the engine never opens and the .yyp would then have to carry.
+#
+# authoring/ holds dormant scene drafts and their flag handoffs (card t_31079972). PP-SCENES-WIRE merges the
+# approved rows into the live registries. Mirroring them before that merge would add unregistered Included Files.
 NOT_RUNTIME_DIRS = (
     "schemas/",
     "ai_cache/",
+    "talk/",
+    "authoring/",
 )
 
 

@@ -70,6 +70,10 @@
 #macro PP_FIGHT_DAMAGE_MIN 2
 #macro PP_FIGHT_DAMAGE_MAX 12
 
+// The swing (card PP-KNIFE, t_503707c8): one slash frame of the held weapon's sheet every 6 steps of the message a
+// FIGHT opens, so three frames cover 18 steps of an 8 fps read and the arc is still moving while the box types.
+#macro PP_SLASH_FRAME_STEPS 6
+
 /// The application modes from spec 01. Only registered modes can be entered; pp_app_boot fails loudly otherwise.
 enum PPMode {
     boot = 0,
@@ -160,14 +164,47 @@ enum PPElement {
     void = 4
 }
 
-// Overworld (spec 04). Free walk is 12 steps per tile, rail walk 8, and the walker always finishes a tile.
+// Overworld (spec 04, card PP-FREE-MOVE). Nayil, 2026-10-26: "The grid movement is too rigid. This ain't pokemon. Most
+// games nowadays let you hold down and right to go diagonally." The player walks in PIXELS in eight directions, so the
+// speed is pixels a second and not steps a tile: 120 pixels a second is 7.5 tiles a second at 16 pixels a tile, which is
+// the speed the tile walk already gave (8 steps a tile at 60 steps a second), so the feel of the walk is the number the
+// card asked to keep. The overworld divides the input by its own length, so a diagonal covers the same pixels a second
+// as a straight walk on each axis rather than 1.41 times more.
+// The rail walk is untouched: a scripted move is still a tile path at 8 steps a tile, asked for by pp_scene.
 #macro PP_TILE 16
 #macro PP_VIEW_W 16
 #macro PP_VIEW_H 15
+#macro PP_WALK_SPEED 120
+#macro PP_WALK_STEP_PX (PP_WALK_SPEED / PP_STEPS_PER_SECOND)
+// The run (card PP-FREE-MOVE rule 1): a key and a shoulder that no other action claims. 200 pixels a second is 12.5
+// tiles a second, which is a jog and not a blur at 16 pixels a tile.
+#macro PP_RUN_SPEED 200
+#macro PP_RUN_STEP_PX (PP_RUN_SPEED / PP_STEPS_PER_SECOND)
+// The tile walk's own constant, kept while the committed pp_overworld still walks tiles (card t_26dbea7d, GATE-HEAD-GREEN):
+// the pixel walk above replaces it on the step pp_overworld lands, and this line goes with it. Until then a HEAD checkout
+// calls pp_world_start_move(..., PP_WALK_STEPS_FREE) in pp_overworld.gml line 515, so removing it alone leaves HEAD red on
+// tests/test_project.py::test_gml_uses_only_defined_macros_and_enums.
 #macro PP_WALK_STEPS_FREE 12
 #macro PP_WALK_STEPS_RAIL 8
 #macro PP_TRIGGER_LOCK_STEPS 20
 #macro PP_MARKER_RESPAWN_STEPS 30
+// The feet (card PP-FREE-MOVE rule 2): a 10x6 hitbox at the bottom middle of the 16x16 figure is what collides, what
+// fires a trigger and what a confirm reaches from. PP_CORNER_NUDGE is how far round a corner he slides when a push is
+// blocked by that much or less, and PP_REACH is how far in front of the feet a person or a door is still reachable.
+#macro PP_HERO_FEET_W 10
+#macro PP_HERO_FEET_H 6
+#macro PP_CORNER_NUDGE 3
+#macro PP_REACH 14
+// The two frame walk cycle is counted in pixels walked, not in steps held (card PP-FREE-MOVE rule 3): a frame every 8
+// pixels is two frames a tile, which is what the tile walk showed, and a footstep every 16 pixels is one a tile.
+#macro PP_WALK_FRAME_PX 8
+#macro PP_FOOTSTEP_PX 16
+// The camera's follow (card PP-FREE-MOVE rule 5). While the walker moves the view is PINNED to his own pixel, so the
+// figure cannot bob against a grid that is standing still (a lerp camera lags him, and on a diagonal the lag makes his
+// pixel and the camera's cross their rounding boundaries at different moments: one pixel of bob, two frames in three).
+// While he stands the view eases the rest of the way, a quarter of the distance each step, and snaps the last pixel, so
+// a map load or a scene handback slides into place. Both are drawn from the same floor.
+#macro PP_CAMERA_SMOOTH 0.25
 
 // The first room of a new run (card ASSEMBLE, settled by card SFX-WIRE 2026-10-22): the Small Ship's deck, played in
 // rm_pp_ship from the map file data\maps\all.json. It is here, in the constants, so a different first room is one line
