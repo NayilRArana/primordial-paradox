@@ -91,9 +91,42 @@ loudly, because the config is the manager tree's.
 
 ## 5. The rehearsal commit
 
-Section 6 names the claim and quotes the gate's own row.
+`lane_commit.py --lane gamedev` with a 3 path claim: `projects/arananet/manager/guard/suite_config.json`,
+`projects/primordial-paradox/tests/test_gate_caps.py`,
+`projects/primordial-paradox/knowledge/GATE-CAP-PP-2026-10-27.md`. Commit **73170727**. A fourth path,
+`projects/arananet/manager/guard/gate-log/2026-10-27.md`, was declared by the gate itself and added to
+the commit, which is the documented shape.
 
-## 6. What a reader can reproduce
+The gate's own row, quoted from that log entry (06:46:41, staged mode):
+
+    - primordial-paradox staged check: MEASURED-PASS in 0s | staged pairing: every staged cue source is named by the staged project file
+    - primordial-paradox: suite tree = D:\Temp\hermes-tmp\gate-index-yymz6dp0\tree\projects\primordial-paradox (materialised from the index; the live tree is not judged)
+    - primordial-paradox: prepare tools/sync_data.py ok in 1s
+    - primordial-paradox: prepare tools/sync_art.py --no-project ok in 2s
+    - primordial-paradox: origin ... collected=1 file(s), every one under the tree | mapped: tests/test_gate_caps.py
+    - primordial-paradox: MEASURED-PASS in 10s | cmd: python -m pytest ... tests/test_gate_caps.py | 5 passed in 7.24s
+    - verdict: MEASURED-PASS | 2 measured-pass, 0 fail, 0 not-applicable, 0 unmeasured
+
+That is the row this card asked for: a PP commit that reached the gate, printed a suite verdict, and
+finished in 10 seconds of suite time against the 60 s budget. `lane_commit` printed
+`commit budget 2511s (primordial-paradox staged_time_cap_s=2331)`, exit 0.
+
+## 6. What is still not landable, and it is not a cap
+
+The same log carries two neighbouring entries worth reading before blaming a cap:
+
+- 06:43:05, a 41 path claim of art and UI sources: the mapped selection ran
+  `tests/test_build_inputs.py tests/test_make_battle_bg.py tests/test_project.py tests/test_talk_live.py`,
+  1 failed and 90 passed in 36.13 s, the failure being
+  `tests/test_project.py::test_data_passes`. That is the data red from section 3, and it refuses the
+  commit on content, correctly.
+- 06:46:25, a 10 path claim: the staged check refused it because the index's project file names
+  `datafiles/streams/title_theme_v6.ogg` with no source in `assets/`. Also correct.
+
+So the remaining reason a *game* path cannot land today is HEAD's committed `data/`, not this gate's
+clock. That repair is the 762 uncommitted paths' business and belongs to the cards that own them.
+
+## 7. What a reader can reproduce
 
     # the suite number (about 12 minutes at HEAD, in a worktree, no other lane's work)
     git worktree add --detach D:/hermes-worktrees/pp-head HEAD
