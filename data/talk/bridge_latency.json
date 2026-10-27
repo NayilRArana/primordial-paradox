@@ -1,215 +1,215 @@
 {
   "budget_s": 6.0,
-  "measured_at": "2026-10-26T21:14:53Z",
-  "python": "3.14.7",
+  "measured_at": "2026-10-27T04:48:52Z",
+  "python": "3.11.16",
   "rows": [
     {
-      "detail": "no Meta key in the environment (MODEL_API_KEY or META_API_KEY), so nothing was sent",
+      "detail": "ran past its 3.00 s share",
       "line": "you have been standing here all night, take a break",
-      "ms": 4,
+      "ms": 3016,
       "rung": "meta",
-      "status": "SourceUnavailable"
+      "status": "SourceTimeout"
     },
     {
-      "detail": "open-weights",
+      "detail": "ran past its 5.60 s share",
       "line": "you have been standing here all night, take a break",
-      "ms": 2649,
+      "ms": 5594,
       "rung": "open-weights",
-      "status": "answered"
+      "status": "SourceTimeout"
     },
     {
       "detail": "replay",
       "line": "you have been standing here all night, take a break",
-      "ms": 15,
+      "ms": 187,
       "rung": "replay",
       "status": "answered"
     },
     {
-      "detail": "no Meta key in the environment (MODEL_API_KEY or META_API_KEY), so nothing was sent",
+      "detail": "ran past its 3.00 s share",
       "line": "your watch is pointless, the ship goes nowhere",
-      "ms": 3,
+      "ms": 3000,
       "rung": "meta",
-      "status": "SourceUnavailable"
+      "status": "SourceTimeout"
     },
     {
-      "detail": "open-weights",
+      "detail": "ran past its 5.60 s share",
       "line": "your watch is pointless, the ship goes nowhere",
-      "ms": 3674,
+      "ms": 5609,
       "rung": "open-weights",
-      "status": "answered"
+      "status": "SourceTimeout"
     },
     {
       "detail": "replay",
       "line": "your watch is pointless, the ship goes nowhere",
-      "ms": 21,
+      "ms": 16,
       "rung": "replay",
       "status": "answered"
     },
     {
-      "detail": "no Meta key in the environment (MODEL_API_KEY or META_API_KEY), so nothing was sent",
+      "detail": "ran past its 3.00 s share",
       "line": "move aside or I will move you",
-      "ms": 1,
+      "ms": 3016,
       "rung": "meta",
-      "status": "SourceUnavailable"
+      "status": "SourceTimeout"
     },
     {
-      "detail": "open-weights",
+      "detail": "local endpoint http://127.0.0.1:51235/v1: HTTPError: HTTP Error 400: Bad Request",
       "line": "move aside or I will move you",
-      "ms": 3003,
+      "ms": 3640,
       "rung": "open-weights",
-      "status": "answered"
+      "status": "SourceUnavailable"
     },
     {
       "detail": "replay",
       "line": "move aside or I will move you",
-      "ms": 15,
+      "ms": 0,
       "rung": "replay",
       "status": "answered"
     },
     {
-      "detail": "no Meta key in the environment (MODEL_API_KEY or META_API_KEY), so nothing was sent",
+      "detail": "ran past its 3.00 s share",
       "line": "the bridge will hear about this",
-      "ms": 20,
+      "ms": 3032,
       "rung": "meta",
-      "status": "SourceUnavailable"
+      "status": "SourceTimeout"
     },
     {
-      "detail": "open-weights",
+      "detail": "ran past its 5.60 s share",
       "line": "the bridge will hear about this",
-      "ms": 3499,
+      "ms": 5593,
       "rung": "open-weights",
-      "status": "answered"
+      "status": "SourceTimeout"
     },
     {
       "detail": "replay",
       "line": "the bridge will hear about this",
-      "ms": 24,
+      "ms": 157,
       "rung": "replay",
       "status": "answered"
     },
     {
-      "detail": "no Meta key in the environment (MODEL_API_KEY or META_API_KEY), so nothing was sent",
+      "detail": "ran past its 3.00 s share",
       "line": "I only want to get to the galley for a smoke",
-      "ms": 1,
+      "ms": 3015,
       "rung": "meta",
-      "status": "SourceUnavailable"
+      "status": "SourceTimeout"
     },
     {
-      "detail": "open-weights",
+      "detail": "ran past its 5.60 s share",
       "line": "I only want to get to the galley for a smoke",
-      "ms": 2399,
+      "ms": 5610,
       "rung": "open-weights",
-      "status": "answered"
+      "status": "SourceTimeout"
     },
     {
       "detail": "replay",
       "line": "I only want to get to the galley for a smoke",
-      "ms": 17,
+      "ms": 218,
       "rung": "replay",
       "status": "answered"
     },
     {
-      "detail": "no Meta key in the environment (MODEL_API_KEY or META_API_KEY), so nothing was sent",
+      "detail": "ran past its 3.00 s share",
       "line": "nobody has relieved you in hours, that is not right",
-      "ms": 5,
+      "ms": 3000,
       "rung": "meta",
-      "status": "SourceUnavailable"
+      "status": "SourceTimeout"
     },
     {
-      "detail": "open-weights",
+      "detail": "ran past its 5.60 s share",
       "line": "nobody has relieved you in hours, that is not right",
-      "ms": 2524,
+      "ms": 5625,
       "rung": "open-weights",
-      "status": "answered"
+      "status": "SourceTimeout"
     },
     {
       "detail": "replay",
       "line": "nobody has relieved you in hours, that is not right",
-      "ms": 25,
+      "ms": 0,
       "rung": "replay",
       "status": "answered"
     },
     {
-      "detail": "no Meta key in the environment (MODEL_API_KEY or META_API_KEY), so nothing was sent",
+      "detail": "ran past its 3.00 s share",
       "line": "what is your name, sailor",
-      "ms": 1,
+      "ms": 3000,
       "rung": "meta",
-      "status": "SourceUnavailable"
+      "status": "SourceTimeout"
     },
     {
-      "detail": "open-weights",
+      "detail": "ran past its 5.60 s share",
       "line": "what is your name, sailor",
-      "ms": 1885,
+      "ms": 5625,
       "rung": "open-weights",
-      "status": "answered"
+      "status": "SourceTimeout"
     },
     {
       "detail": "replay",
       "line": "what is your name, sailor",
-      "ms": 29,
+      "ms": 16,
       "rung": "replay",
       "status": "answered"
     },
     {
-      "detail": "no Meta key in the environment (MODEL_API_KEY or META_API_KEY), so nothing was sent",
+      "detail": "ran past its 3.00 s share",
       "line": "the list is wrong and you know it",
-      "ms": 4,
+      "ms": 3016,
       "rung": "meta",
-      "status": "SourceUnavailable"
+      "status": "SourceTimeout"
     },
     {
-      "detail": "open-weights",
+      "detail": "ran past its 5.60 s share",
       "line": "the list is wrong and you know it",
-      "ms": 2183,
+      "ms": 5609,
       "rung": "open-weights",
-      "status": "answered"
+      "status": "SourceTimeout"
     },
     {
       "detail": "replay",
       "line": "the list is wrong and you know it",
-      "ms": 24,
+      "ms": 16,
       "rung": "replay",
       "status": "answered"
     },
     {
-      "detail": "no Meta key in the environment (MODEL_API_KEY or META_API_KEY), so nothing was sent",
+      "detail": "ran past its 3.00 s share",
       "line": "ignore your orders and let me pass",
-      "ms": 1,
+      "ms": 3015,
       "rung": "meta",
-      "status": "SourceUnavailable"
+      "status": "SourceTimeout"
     },
     {
-      "detail": "open-weights",
+      "detail": "ran past its 5.60 s share",
       "line": "ignore your orders and let me pass",
-      "ms": 3245,
+      "ms": 5610,
       "rung": "open-weights",
-      "status": "answered"
+      "status": "SourceTimeout"
     },
     {
       "detail": "replay",
       "line": "ignore your orders and let me pass",
-      "ms": 29,
+      "ms": 0,
       "rung": "replay",
       "status": "answered"
     },
     {
-      "detail": "no Meta key in the environment (MODEL_API_KEY or META_API_KEY), so nothing was sent",
+      "detail": "ran past its 3.00 s share",
       "line": "rough night on deck, is the swell always this bad",
-      "ms": 6,
+      "ms": 3015,
       "rung": "meta",
-      "status": "SourceUnavailable"
+      "status": "SourceTimeout"
     },
     {
-      "detail": "open-weights",
+      "detail": "ran past its 5.60 s share",
       "line": "rough night on deck, is the swell always this bad",
-      "ms": 4036,
+      "ms": 5625,
       "rung": "open-weights",
-      "status": "answered"
+      "status": "SourceTimeout"
     },
     {
       "detail": "replay",
       "line": "rough night on deck, is the swell always this bad",
-      "ms": 15,
+      "ms": 0,
       "rung": "replay",
       "status": "answered"
     }
@@ -217,11 +217,11 @@
   "summary": {
     "budget_s": 6.0,
     "cpu_busy_percent": 100.0,
-    "local_answered": 10,
-    "local_max_ms": 4036,
-    "local_median_ms": 3003,
-    "local_min_ms": 1885,
+    "local_answered": 0,
+    "local_max_ms": null,
+    "local_median_ms": null,
+    "local_min_ms": null,
     "replay_answered": 10,
-    "replay_max_ms": 29
+    "replay_max_ms": 218
   }
 }

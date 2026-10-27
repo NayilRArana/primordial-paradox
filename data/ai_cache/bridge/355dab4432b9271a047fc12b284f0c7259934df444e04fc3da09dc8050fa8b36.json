@@ -1,0 +1,28 @@
+{
+  "answer": {
+    "effect": "setback",
+    "model": "muse-spark-1.3",
+    "mood": "rattled",
+    "repaired": [],
+    "source": "meta",
+    "text": [
+      "FINE. TELL THE BRIDGE.",
+      "I AM STILL ON WATCH."
+    ]
+  },
+  "backend": "meta",
+  "created_at": "2026-10-27T04:45:13Z",
+  "key": "355dab4432b9271a047fc12b284f0c7259934df444e04fc3da09dc8050fa8b36",
+  "kind": "talk",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "navy_sailor",
+    "player_chars": 31,
+    "player_sha256": "2a193d70ec60cc6e5856e4de6afda8d793e451f8eda2b38dba6270384ede64d7",
+    "scene": "fight"
+  },
+  "source": "meta"
+}
