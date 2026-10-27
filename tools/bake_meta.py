@@ -686,6 +686,15 @@ def resolve_mode(offline):
                        "for" % backend)
         return mode
     if not meta_client.key_present():
+        if meta_client.mode() == "replay":
+            # PP_AI_MODE=replay is the documented no key path (README: it "reads the recorded answers
+            # in data/ai_cache and makes no request, so it needs no key"). The client's replay branch
+            # reads the cache and raises CacheMiss on a miss without ever calling api_key() or opening
+            # a socket, so the key gate must not turn this run into 18 hand written fallbacks.
+            # `live_allowed` stays False on purpose: a cache read is not a live call, and the header is
+            # built from `state`, never from this flag (R43 B1).
+            mode.update({"offline": False, "why": "", "live_allowed": False})
+            return mode
         mode["why"] = ("offline: no key in the environment (%s), so every row is the fallback"
                        % " then ".join(meta_client.KEY_ENVS))
         return mode

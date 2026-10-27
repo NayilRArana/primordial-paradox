@@ -509,3 +509,56 @@ def test_the_effects_table_is_the_spec_enum_and_maps_to_existing_pool_names():
     assert bake_meta.EFFECTS == ("none", "nudge", "soften", "setback", "end")
     assert set(bake_meta.EFFECT_TO_POOL) == {"soften", "nudge", "setback"}
     assert set(bake_meta.EFFECT_TO_POOL.values()) <= {"weak", "neutral", "strong"}
+
+
+# ----------------------------------------------------------------- the documented no key path
+# README: "For every Python tool, PP_AI_MODE=replay reads the recorded answers in data/ai_cache and
+# makes no request, so it needs no key." Measured 2026-10-27 (card TALK-REPLAY-NOKEY t_209e764c):
+# resolve_mode() answered "offline: no key" before it ever read PP_AI_MODE, so a keyless replay wrote
+# 18 hand written fallbacks and never read the cache. These pin the mode, and one pins that the
+# decision reaches the calls, so the promise holds at the level the README makes it.
+
+def _no_key_at_all(monkeypatch):
+    monkeypatch.delenv("MODEL_API_KEY", raising=False)
+    monkeypatch.delenv("META_API_KEY", raising=False)
+    monkeypatch.setenv("PP_AI_BACKEND", "meta")
+
+
+def test_a_keyless_replay_mode_is_not_offline_and_is_not_a_live_call(monkeypatch):
+    _no_key_at_all(monkeypatch)
+    monkeypatch.setenv("PP_AI_MODE", "replay")
+    mode = bake_meta.resolve_mode(offline=False)
+    assert mode["offline"] is False, mode["why"]
+    assert mode["live_allowed"] is False, "a cache read is not a live call"
+    assert mode["why"] == ""
+
+
+def test_a_keyless_default_mode_still_falls_back_and_says_why(monkeypatch):
+    _no_key_at_all(monkeypatch)
+    monkeypatch.delenv("PP_AI_MODE", raising=False)
+    mode = bake_meta.resolve_mode(offline=False)
+    assert mode["offline"] is True
+    assert mode["live_allowed"] is False
+    assert "no key" in mode["why"], mode["why"]
+
+
+def test_a_keyless_replay_bake_asks_the_cache_for_every_row(monkeypatch):
+    """The promised no key path, end to end: the calls happen, the header says replay, not offline."""
+    _no_key_at_all(monkeypatch)
+    monkeypatch.setenv("PP_AI_MODE", "replay")
+    asked = []
+
+    def call(messages, schema=None, sleep=None, transport=None):
+        asked.append(schema["properties"]["effect"]["enum"])
+        if transport is not None:
+            transport.update(dict(CACHED))
+        return {"text": ["IT SNIFFS YOUR HAND."], "mood": "warm", "effect": "soften", "hint": "THE ROPE."}
+
+    monkeypatch.setattr(bake_meta, "call_model", call)
+    document, _mode, state, _skipped, _units = bake_meta.run_bake(offline=False)
+    assert asked and state["calls"] == len(asked), "a keyless replay run must still ask, and ask the cache"
+    assert document["bake"]["mode"] == "replay", document["bake"]["note"]
+    assert document["bake"]["network"] is False
+    assert all(row["source"] != "fallback" or row["reason"] != "offline: no key in the environment "
+               "(MODEL_API_KEY then META_API_KEY), so every row is the fallback"
+               for row in document["rows"]), "a keyless replay fell back as if it were offline"
