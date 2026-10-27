@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import subprocess
 import sys
 
@@ -161,3 +162,41 @@ def test_the_intro_timings_have_one_home():
             assert word not in low, "intro_stars.json carries %r, so the timing has a second home" % key
     # The one file that does carry it, and the one pp_title reads for the twinkle, is the timing json.
     assert "intro" in timing()
+
+
+def test_the_pan_lands_on_the_star_field_and_never_fades_it():
+    """The two properties the card asks for, read off the source instead of a window that the idle gate may refuse.
+
+    The shot is the sky, then every world layer with the pan added, then the stars, then the crawl. So the pan
+    ending on an empty star field is one inequality over the layer table (the highest world layer's top edge has
+    reached the frame's bottom edge at the last pan step), and the fade never clipping the twinkle is the draw
+    order: the stars are drawn after every faded strip, and they are the one thing that is not faded at all.
+    """
+    with open(TITLE_GML, "r", encoding="utf-8") as handle:
+        source = handle.read()
+    gml = macros(TITLE_GML)
+    config = macros(os.path.join(ROOT, "game", "scripts", "pp_config", "pp_config.gml"))
+    frame_h = int(config["PP_FRAME_H"])
+    pan_px = int(gml["PP_TITLE_INTRO_PAN_PX"])
+
+    # The layer table in pp_title_defaults, as its y values. data\title.json may override it, so the file is read
+    # too and every layer it names is added; the highest layer is what decides whether the world is still on screen.
+    ys = [int(v) for v in re.findall(r"\{\s*name:\s*\"title_L\d_\w+\",\s*y:\s*(-?\d+)", source)]
+    assert len(ys) >= 6, "the layer table did not parse, so the pan cannot be checked"
+    with open(os.path.join(ROOT, "data", "title.json"), "r", encoding="utf-8") as handle:
+        title = json.load(handle)
+    for row in title.get("layers", []):
+        if isinstance(row, dict) and "y" in row:
+            ys.append(int(row["y"]))
+    # At the last pan step every world layer starts at or below the frame's bottom row, so only the sky and the
+    # stars are on screen; a star is drawn at its own y with no pan, so the field is where the data puts it.
+    assert min(ys) + pan_px >= frame_h
+
+    # The draw order inside the intro shot: the sky, the world, then the stars, then the crawl. The stars are after
+    # every strip that can be faded (pp_title_fade_name), and they are drawn from the base sprite, never a fade copy.
+    shot = source.split("function pp_title_draw_intro_scene", 1)[1].split("\nfunction ", 1)[0]
+    assert shot.index("pp_title_draw_stars(_s)") > shot.index("pp_title_fade_name(\"title_L1_sky\"")
+    assert shot.index("pp_title_draw_stars(_s)") > shot.rindex("pp_title_fade_name(_layer.name")
+    assert "pp_title_fade_name(\"spr_title_star\"" not in source
+    stars_draw = source.split("function pp_title_draw_stars", 1)[1].split("\nfunction ", 1)[0]
+    assert "pp_title_fade_name" not in stars_draw
