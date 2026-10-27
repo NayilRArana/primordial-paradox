@@ -49,6 +49,13 @@ ROOT_FILES = {
 EXEMPT = {
     "datafiles/streams/percy_theme_v3.ogg":
         "a path inside game/PrimordialParadox.yyp, quoted from check_build_inputs.py output",
+    # README.md names this folder as the reference Meta run (META-ART-1, card t_9332fe42). The run
+    # writes it under output/, which .gitignore line 28 keeps out of git, so a checkout never holds
+    # it and the test that runs this checker on the real tree failed on every clean tree (card
+    # t_582bf539: HEAD red at 23d0d45e, 1 failed 30 passed). The entry is one exact path with a
+    # reason, not a blanket output/ rule: a new path under output/ is still a missing path.
+    "output/meta_art/title_backdrop/c1":
+        "the reference Meta run's output folder; output/ is gitignored, so no checkout carries it",
 }
 
 DASHES = {"\u2012": "figure dash", "\u2013": "en dash", "\u2014": "em dash", "\u2015": "horizontal bar"}
@@ -80,7 +87,22 @@ def normalise(token):
 def collect(lines):
     paths = []
     commands = []
+    in_fence = False
     for line in lines:
+        # A fenced block is where a reader copies from, and it was not being read: the README tells a
+        # reader to run "python tools/check_data.py" inside a sh block, and rule 2 reported "0
+        # command(s)" on it (measured 2026-10-26 in the public export, which is the tree a judge
+        # reads). Only lines that start with a known runner count, so prose and output stay prose.
+        if line.strip().startswith("```"):
+            in_fence = not in_fence
+            continue
+        if in_fence:
+            token = line.strip()
+            if token.startswith("$ "):
+                token = token[2:].strip()
+            if COMMAND.match(token):
+                commands.append(token)
+            continue
         for token in CODE_SPAN.findall(line):
             token = token.strip()
             match = COMMAND.match(token)

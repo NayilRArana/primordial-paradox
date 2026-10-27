@@ -72,6 +72,46 @@ def test_collect_separates_commands_from_paths_and_dedupes():
     assert commands == ["python tools/check_data.py"]
 
 
+def test_collect_reads_a_fenced_block_because_that_is_what_a_reader_copies():
+    """The README's own commands live in fences, and fences were not read: rule 2 said 0 commands.
+
+    Measured 2026-10-26 in the public export, where the whole README is three fences and the checker
+    reported "0 command(s)": the two commands a judge copies were never resolved against the tree.
+    """
+    lines = [
+        "Prose that names a fence:",
+        "```sh",
+        "python tools/check_data.py",
+        "$ python -m pytest -q",
+        "```",
+        "```",
+        "the pasted output of a run, is not a command: 4 passed in 1.2s",
+        "```",
+    ]
+    paths, commands = check_readme.collect(lines)
+    assert paths == []
+    assert commands == ["python tools/check_data.py", "python -m pytest -q"]
+
+
+def test_check_commands_flags_a_missing_script_named_inside_a_fence(tmp_path, capsys):
+    """The negative control for the fenced rule: a fence naming a script that is not there must fail."""
+    (tmp_path / "tools").mkdir()
+    (tmp_path / "tools" / "good.py").write_text("", encoding="utf-8")
+    (tmp_path / "README.md").write_text(
+        "Copy this:\n\n```sh\npython tools/good.py\npython tools/nope.py\n```\n", encoding="utf-8")
+    assert check_readme.main(["--readme", str(tmp_path / "README.md"), "--root", str(tmp_path)]) == 1
+    out = capsys.readouterr().out
+    assert "MISSING" in out and "tools/nope.py" in out
+
+
+def test_the_real_readme_commands_all_resolve():
+    """Every command the live README tells a reader to run names something this tree holds."""
+    with open(os.path.join(ROOT, "README.md"), encoding="utf-8") as fh:
+        _paths, commands = check_readme.collect(fh.read().splitlines())
+    assert commands, "the README tells a reader to run something, so the list cannot be empty"
+    assert check_readme.check_commands(commands, ROOT) == []
+
+
 def test_check_paths_names_the_path_that_is_not_on_disk(tmp_path, capsys):
     (tmp_path / "tools").mkdir()
     (tmp_path / "tools" / "present.py").write_text("", encoding="utf-8")
@@ -89,6 +129,23 @@ def test_check_paths_prints_an_exemption_and_does_not_call_it_missing(capsys):
     assert missing == []
     assert "EXEMPT" in out
     assert "1 exempt" in out
+
+
+def test_the_exempt_run_output_is_printed_with_its_reason(capsys):
+    """The path a Meta run writes is gitignored, so it is exempt by name and its reason is printed.
+
+    Card t_582bf539. README.md points a reader at the reference run's folder under output/, which
+    .gitignore keeps out of the tree, so the live check failed on every clean checkout. The exemption
+    covers that ONE path and nothing else: an unnamed path under output/ must still fail.
+    """
+    assert check_readme.main([]) == 0
+    out = capsys.readouterr().out
+    reason = check_readme.EXEMPT["output/meta_art/title_backdrop/c1"]
+    assert "EXEMPT   output/meta_art/title_backdrop/c1" in out
+    assert reason in out
+    # the exemption is not a blanket rule over the ignored folder
+    assert check_readme.check_paths(["output/meta_art/some_other_run/c1"], ROOT) == [
+        "output/meta_art/some_other_run/c1"]
 
 
 # --------------------------------------------------------------------------- 2. commands
