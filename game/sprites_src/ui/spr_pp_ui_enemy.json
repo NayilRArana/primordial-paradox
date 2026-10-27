@@ -8,8 +8,9 @@
   ],
   "pixels": "32x32",
   "colours": {
-    "edge": 48,
+    "outline": 15,
+    "rim": 48,
     "body": 40
   },
-  "rule": "32x32 is 4x4 tiles; 2 colours per tile"
+  "rule": "32x32 is 4x4 tiles; 2 colours plus the backdrop per tile"
 }

@@ -1157,7 +1157,11 @@ function pp_talk_live_prompt_y() { return 2; }
 function pp_talk_live_rows_y() { return 10; }
 function pp_talk_live_row_pitch() { return 8; }
 function pp_talk_live_hint_y() { return 34; }
-function pp_talk_live_grid_y() { return 2; }
+// The grid starts one whole glyph below the prompt row, not on it. The first layout put the grid's first row at
+// y 2, the same row as the prompt and the tries counter, and every capture of the ENTRY GRID frame shows the two
+// printed over each other (output/talk_live_capture/entry_grid.png). The prompt owns row 2 to 9, so the grid
+// owns rows 10, 18, 26 and 34 and its last row ends at 41, clear of the window's border at 46.
+function pp_talk_live_grid_y() { return 10; }
 function pp_talk_live_grid_pitch() { return 20; }
 
 function pp_talk_live_draw(_battle) {
@@ -1221,9 +1225,11 @@ function pp_talk_live_draw_grid(_battle) {
     var _pitch = pp_talk_live_grid_pitch();
     var _cols = max(1, _d.grid_cols);
     var _n = array_length(_d.grid);
-    var _tail = pp_talk_live_rows(_battle.live_text);
-    if (array_length(_tail) > 0) pp_font_draw("* " + _tail[array_length(_tail) - 1], _x, pp_talk_live_hint_y(), 1);
 
+    // No tail line and no controls hint in grid mode: the grid moved down one row to stop printing over the
+    // prompt, and its four rows now fill the four rows the interior has left, so row 34 is the grid's last row and
+    // not a message row. The line being built is on screen again the moment the grid closes (escape, or the END
+    // cell), and the cells themselves show what the d-pad does.
     for (var i = 0; i < _n; i++) {
         var _cell = string(_d.grid[i]);
         var _cx = _x + (i mod _cols) * _pitch;
@@ -1239,10 +1245,6 @@ function pp_talk_live_draw_grid(_battle) {
             draw_rectangle(_cx, _cy + 8, _cx + 7, _cy + 8, false);
         }
     }
-
-    // In grid mode the hint row carries the line being built instead of the controls: the row is the only one left
-    // inside the window, the cells themselves show what the d-pad does, and escape returns the controls in one press.
-    if (array_length(_tail) == 0) pp_talk_live_draw_hint(_d.hint_grid);
 }
 
 function pp_talk_live_draw_hint(_text) {

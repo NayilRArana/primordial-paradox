@@ -35,8 +35,10 @@
   },
   "role": "menu, dialogue, command and status window",
   "colours": {
-    "border": 48,
+    "outline": 15,
+    "rim": 48,
     "fill": 2
   },
-  "rule": "3 colours per 8x8 tile, transparent corner pixel"
+  "style": "B, late NES polish: 1 px ink outline all round, a white rim inside it on the top and left, a second ink pixel as the shadow on the right and bottom",
+  "rule": "3 colours plus the backdrop per 8x8 tile, transparent corner pixel"
 }

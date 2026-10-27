@@ -35,9 +35,10 @@
   },
   "role": "dialogue name tab, same nine slices in the accent colour",
   "colours": {
-    "border": 40,
-    "inner": 40,
+    "outline": 15,
+    "rim": 40,
     "fill": 2
   },
-  "rule": "3 colours per 8x8 tile, transparent corner pixel"
+  "style": "B, the window's finish in the gold accent",
+  "rule": "3 colours plus the backdrop per 8x8 tile, transparent corner pixel"
 }

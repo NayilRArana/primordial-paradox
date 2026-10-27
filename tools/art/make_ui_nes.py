@@ -5,7 +5,9 @@ What it makes, all deterministic, no randomness, no image inputs beyond the exis
 (game\\sprites_src\\title\\spr_pp_font8.png) so a rerun produces the same bytes:
 
     game\\sprites_src\\ui\\spr_pp_ui_window.png    72x8   9 slices: tl t tr l c r bl b br (dark blue fill,
-                                                          2 px white border)
+                                                          style B finish: 1 px ink outline, white rim and
+                                                          blue lit tone on the top left, ink shadow right
+                                                          and bottom)
     game\\sprites_src\\ui\\spr_pp_ui_tab.png       72x8   9 slices, the same window in the accent colour, for
                                                           the dialogue name tab
     game\\sprites_src\\ui\\spr_pp_ui_cursor.png    16x8   2 frames: the 8x8 gold arrow, then the blank frame the
@@ -97,25 +99,76 @@ def load_nes_palette(root: str) -> dict:
 
 
 # ---------------------------------------------------------------------------------------------------------------
-# Nine slice window tiles. '.' is transparent so the backdrop shows through the rounded corner; the corner
-# drops exactly one pixel, which is what reads as "rounded" on an 8 px grid.
+# Nine slice window tiles, drawn in art direction B, LATE NES POLISH (knowledge/ART-STYLE.md section 4).
+#
+# The finish is direction B's bold dark outline plus a three tone read, and it is spent in exactly three entries
+# per tile and no more:
+#
+#     K  ink   $0F, the shared backdrop, so it costs no palette slot at all. It is the bold outline on all four
+#              sides and the second, inner pixel on the right and the bottom, which is the shadow side.
+#     W  rim   $30 white. The lit edge, one pixel inside the outline, on the top and the left.
+#     B  fill  $02 navy. The mid tone, the window body and the ground the text sits on.
+#
+# So the three tones are ink (dark), white (light) and navy (mid), lit from the top left, inside a bold dark
+# outline that the old flat version did not have.
+#
+# A fourth tone was drawn, measured and removed. `$12 blue` as a one pixel lit band under the rim is the obvious
+# place to spend it, and on the top edge it puts gold and light blue in the same 16x16 area in five places: the
+# gold name tab on the dialogue box, the gold MENU heading, the gold PARTY and ITEMS headings and the gold command
+# cursor. On the left edge it does the same in three: the command cursor, MENU and PARTY. That is four entries in
+# an area, the attribute rule fails, and tools/check_ui_nes.py names every one of those areas by coordinate. The
+# band is therefore not in the frame; the third tone is ink, and the extra tone of direction B is spent where no
+# gold sits, on the battle backgrounds and the portraits.
+#
+# The corners are authored rather than flipped: with light from the top left, a horizontal flip of the top left
+# corner is not a legal top right corner any more.
 
 WINDOW_SLICES = {
     "tl": [
-        ".WWWWWWW",
-        "WWWWWWWW",
-        "WWBBBBBB",
-        "WWBBBBBB",
-        "WWBBBBBB",
-        "WWBBBBBB",
-        "WWBBBBBB",
-        "WWBBBBBB",
+        ".KKKKKKK",
+        "KWWWWWWW",
+        "KWBBBBBB",
+        "KWBBBBBB",
+        "KWBBBBBB",
+        "KWBBBBBB",
+        "KWBBBBBB",
+        "KWBBBBBB",
     ],
-    "t": ["WWWWWWWW", "WWWWWWWW"] + ["BBBBBBBB"] * 6,
-    "l": ["WWBBBBBB"] * 8,
+    "t": ["KKKKKKKK", "WWWWWWWW"] + ["BBBBBBBB"] * 6,
+    "tr": [
+        "KKKKKKK.",
+        "WWWWWWWK",
+        "BBBBBBKK",
+        "BBBBBBKK",
+        "BBBBBBKK",
+        "BBBBBBKK",
+        "BBBBBBKK",
+        "BBBBBBKK",
+    ],
+    "l": ["KWBBBBBB"] * 8,
     "c": ["BBBBBBBB"] * 8,
-    "b": ["BBBBBBBB"] * 6 + ["WWWWWWWW", "WWWWWWWW"],
-    "r": ["BBBBBBWW"] * 8,
+    "r": ["BBBBBBKK"] * 8,
+    "bl": [
+        "KWBBBBBB",
+        "KWBBBBBB",
+        "KWBBBBBB",
+        "KWBBBBBB",
+        "KWBBBBBB",
+        "KWBBBBBB",
+        "KKKKKKKK",
+        ".KKKKKKK",
+    ],
+    "b": ["BBBBBBBB"] * 6 + ["KKKKKKKK"] * 2,
+    "br": [
+        "BBBBBBKK",
+        "BBBBBBKK",
+        "BBBBBBKK",
+        "BBBBBBKK",
+        "BBBBBBKK",
+        "BBBBBBKK",
+        "KKKKKKKK",
+        "KKKKKKK.",
+    ],
 }
 WINDOW_ORDER = ["tl", "t", "tr", "l", "c", "r", "bl", "b", "br"]
 
@@ -144,19 +197,12 @@ def flip_vertical(rows: list) -> list:
 
 
 def build_slices(base: dict, order: list) -> list:
-    """Expand the six authored tiles into the nine slices, flipping the corners and edges."""
-    out = []
-    for name in order:
-        if name == "tr":
-            rows = flip_horizontal(base["tl"])
-        elif name == "bl":
-            rows = flip_vertical(base["tl"])
-        elif name == "br":
-            rows = flip_horizontal(flip_vertical(base["tl"]))
-        else:
-            rows = base[name]
-        out.append((name, rows))
-    return out
+    """Return the nine slices in sheet order.
+
+    Every corner is authored now, so there is nothing to flip: see the comment above WINDOW_SLICES for why a
+    horizontal flip of the top left corner is no longer a legal top right corner.
+    """
+    return [(name, base[name]) for name in order]
 
 
 def render_tile(rows: list, colour_of: dict) -> Image.Image:
@@ -293,20 +339,37 @@ class Font:
 
 
 def placeholder(canvas: Image.Image, px: int, py: int, w: int, h: int, body: tuple, edge: tuple,
-                mark: tuple | None = None, mark_size: int = 4) -> None:
+                mark: tuple | None = None, mark_size: int = 4, ink: tuple | None = None) -> None:
+    """A block with direction B's finish: bold ink outline, one lit rim on the top and left, flat body.
+
+    The outline is ink $0F, which is the screen's backdrop and so costs no palette slot; the rim is the block's
+    own light entry, kept to the top and the left because the light comes from the top left. The marker moves to
+    the bottom right, the shadow corner, so the block reads as lit from one side instead of edged all round.
+    """
     fill_pixels(canvas, px, py, px + w, py + h, body)
-    fill_pixels(canvas, px, py, px + w, py + 1, edge)
-    fill_pixels(canvas, px, py + h - 1, px + w, py + h, edge)
-    fill_pixels(canvas, px, py, px + 1, py + h, edge)
-    fill_pixels(canvas, px + w - 1, py, px + w, py + h, edge)
+    if ink is not None:
+        fill_pixels(canvas, px, py, px + w, py + 1, ink)
+        fill_pixels(canvas, px, py + h - 1, px + w, py + h, ink)
+        fill_pixels(canvas, px, py, px + 1, py + h, ink)
+        fill_pixels(canvas, px + w - 1, py, px + w, py + h, ink)
+        fill_pixels(canvas, px + 1, py + 1, px + w - 1, py + 2, edge)
+        fill_pixels(canvas, px + 1, py + 1, px + 2, py + h - 1, edge)
+    else:
+        fill_pixels(canvas, px, py, px + w, py + 1, edge)
+        fill_pixels(canvas, px, py + h - 1, px + w, py + h, edge)
+        fill_pixels(canvas, px, py, px + 1, py + h, edge)
+        fill_pixels(canvas, px + w - 1, py, px + w, py + h, edge)
     if mark is not None:
-        mx, my = px + 4, py + 5
+        # The marker sits on the body, not on the rim: an 8x8 sprite tile spends three entries plus
+        # transparency, and a marker in the rim tile would make it four (outline, rim, body, marker).
+        mx, my = px + (w - mark_size) // 2, py + h - mark_size - 3
         fill_pixels(canvas, mx, my, mx + mark_size, my + mark_size, mark)
 
 
-def placeholder_sprite(w: int, h: int, body: tuple, edge: tuple, mark: tuple | None) -> Image.Image:
+def placeholder_sprite(w: int, h: int, body: tuple, edge: tuple, mark: tuple | None,
+                       ink: tuple | None = None) -> Image.Image:
     sprite = Image.new("RGBA", (w, h), (0, 0, 0, 0))
-    placeholder(sprite, 0, 0, w, h, body, edge, mark)
+    placeholder(sprite, 0, 0, w, h, body, edge, mark, ink=ink)
     return sprite
 
 
@@ -327,20 +390,20 @@ def screen_battle(canvas, palette, font, tiles, tab_tiles) -> dict:
     for rect in (msg, cmd, status):
         draw_window(canvas, tiles, rect["x"], rect["y"], rect["w"], rect["h"])
 
-    # Enemies: placeholder blocks on the left, over the strip.
+    # Enemies: placeholder blocks on the left, over the strip. Ink outline, lit rim on the top and left.
     enemies = [
         {"x": 3, "y": 8, "w": 4, "h": 4},
-        {"x": 12, "y": 11, "w": 4, "h": 4},
+        {"x": 12, "y": 7, "w": 4, "h": 4},
     ]
     for box in enemies:
         placeholder(canvas, box["x"] * CELL, box["y"] * CELL, box["w"] * CELL, box["h"] * CELL,
-                    palette[GOLD], palette[WHITE])
+                    palette[GOLD], palette[WHITE], ink=palette[BLACK])
 
     # Party: four 24x32 blocks stacked down the right edge, FF1 side view.
     party = [{"x": 28, "y": 4 + index * 4, "w": 3, "h": 4} for index in range(4)]
     for index, box in enumerate(party):
         placeholder(canvas, box["x"] * CELL, box["y"] * CELL, box["w"] * CELL, box["h"] * CELL,
-                    palette[GREY], palette[WHITE], palette[GOLD])
+                    palette[GREY], palette[WHITE], ink=palette[BLACK])
 
     message = ["A STORM CLOUD BLOCKS THE ROAD.", "PERCY RAISES THE TRIDENT."]
     for index, line in enumerate(message):
@@ -404,7 +467,7 @@ def screen_dialogue(canvas, palette, font, tiles, tab_tiles) -> dict:
 
     hero = {"x": 6, "y": 12, "w": 3, "h": 4}
     placeholder(canvas, hero["x"] * CELL, hero["y"] * CELL, hero["w"] * CELL, hero["h"] * CELL,
-                palette[GREY], palette[WHITE], palette[GOLD])
+                palette[GREY], palette[WHITE], ink=palette[BLACK])
 
     box = {"x": 0, "y": 21, "w": 32, "h": 9}
     draw_window(canvas, tiles, box["x"], box["y"], box["w"], box["h"])
@@ -619,14 +682,16 @@ def scene_palette(table: dict) -> dict:
                  "data/nes_palette.json entry number"),
         "notes": [
             "written by tools/art/make_ui_nes.py for the UI-NES card; the card that asked for the screens owns this file",
-            "backdrop $0F black is the shared backdrop of all three screens",
-            "bg0 is the window itself: the fill $02 and a 2 px border plus the text in $30",
-            "bg1 is the accent: gold $28 with the blue fill and the white text (name tab, gold headings)",
-            "bg2 is the placeholder blocks: white edge, grey body, gold marker",
+            "backdrop $0F black is the shared backdrop of all three screens, and it is also the windows' bold outline",
+            "bg0 is the window in direction B: fill $02, rim $30, and the outline plus the right and bottom shadow in "
+            "the shared backdrop $0F",
+            "bg1 is the accent, the name tab: fill $02, rim $28 gold, name in $30 white, outline in the backdrop",
+            "bg2 is the placeholder blocks: white rim, grey body, gold marker, ink outline",
             "bg3 is spare and unused; the screens need 3 background palettes",
             "sp0 covers the cursor and the enemy block (black $0F, gold $28, white $30)",
-            "sp1 covers the party block (grey $00, white $30, gold $28)",
-            "sp2 and sp3 are spare; the screens need 2 sprite palettes",
+            "sp1 covers the party block body (ink $0F, grey $00, white $30)",
+            "sp2 covers the party block's gold marker tile (ink $0F, grey $00, gold $28)",
+            "sp3 is spare; the screens need 3 sprite palettes",
         ],
         "background": [
             group("bg0", [FILL, WHITE, GREY]),
@@ -636,8 +701,8 @@ def scene_palette(table: dict) -> dict:
         ],
         "sprites": [
             group("sp0", [BLACK, GOLD, WHITE]),
-            group("sp1", [GREY, WHITE, GOLD]),
-            group("sp2", [FILL, WHITE, GOLD]),
+            group("sp1", [BLACK, GREY, WHITE]),
+            group("sp2", [BLACK, GREY, GOLD]),
             group("sp3", [FILL, GREY, WHITE]),
         ],
     }
@@ -656,8 +721,10 @@ def main(argv=None) -> int:
     out_dir = os.path.join(root, "game", "sprites_src", "ui")
     os.makedirs(out_dir, exist_ok=True)
 
-    window_colours = {"W": palette[WHITE], "G": palette[GREY], "B": palette[FILL]}
-    tab_colours = {"W": palette[GOLD], "G": palette[GOLD], "B": palette[FILL]}
+    # Two tones per frame tile, and the third is ink: K (dark), W (light), B (mid). A fourth tone was built,
+    # measured and taken back out; see the comment above WINDOW_SLICES for the five areas that refused it.
+    window_colours = {"K": palette[BLACK], "W": palette[WHITE], "B": palette[FILL]}
+    tab_colours = {"K": palette[BLACK], "W": palette[GOLD], "B": palette[FILL]}
 
     window_slices = build_slices(WINDOW_SLICES, WINDOW_ORDER)
     tab_slices = build_slices(WINDOW_SLICES, TAB_ORDER)
@@ -668,8 +735,8 @@ def main(argv=None) -> int:
     cursor_sheet = Image.new("RGBA", (CELL * 2, CELL), (0, 0, 0, 0))
     cursor_sheet.paste(render_tile(ARROW, {"B": palette[GOLD]}), (0, 0))
 
-    party_sheet = placeholder_sprite(24, 32, palette[GREY], palette[WHITE], palette[GOLD])
-    enemy_sheet = placeholder_sprite(32, 32, palette[GOLD], palette[WHITE], None)
+    party_sheet = placeholder_sprite(24, 32, palette[GREY], palette[WHITE], None, ink=palette[BLACK])
+    enemy_sheet = placeholder_sprite(32, 32, palette[GOLD], palette[WHITE], None, ink=palette[BLACK])
 
     slices_json = {"tiles": WINDOW_ORDER,
                    "tile_size": CELL,
@@ -678,22 +745,26 @@ def main(argv=None) -> int:
                                   "fill": ["c"]}}
     save_sheet(window_sheet, out_dir, "spr_pp_ui_window",
                dict(slices_json, role="menu, dialogue, command and status window",
-                    colours={"border": WHITE, "fill": FILL},
-                    rule="3 colours per 8x8 tile, transparent corner pixel"))
+                    colours={"outline": BLACK, "rim": WHITE, "fill": FILL},
+                    style="B, late NES polish: 1 px ink outline all round, a white rim inside it on the top and "
+                          "left, a second ink pixel as the shadow on the right and bottom",
+                    rule="3 colours plus the backdrop per 8x8 tile, transparent corner pixel"))
     save_sheet(tab_sheet, out_dir, "spr_pp_ui_tab",
                dict(slices_json, role="dialogue name tab, same nine slices in the accent colour",
-                    colours={"border": GOLD, "inner": GOLD, "fill": FILL},
-                    rule="3 colours per 8x8 tile, transparent corner pixel"))
+                    colours={"outline": BLACK, "rim": GOLD, "fill": FILL},
+                    style="B, the window's finish in the gold accent",
+                    rule="3 colours plus the backdrop per 8x8 tile, transparent corner pixel"))
     save_sheet(cursor_sheet, out_dir, "spr_pp_ui_cursor",
                {"frames_detail": ["arrow", "blank (the off phase of the blink)"], "fps": 2.0,
                 "colours": {"arrow": GOLD}, "rule": "one colour plus transparency; 1 sprite per scanline"})
     save_sheet(party_sheet, out_dir, "spr_pp_ui_party",
                {"frames_detail": ["idle placeholder"], "pixels": "24x32",
-                "colours": {"edge": WHITE, "body": GREY, "marker": GOLD},
-                "rule": "24x32 is 3x4 tiles, 3 sprites wide by 4 tall; 3 colours per tile"})
+                "colours": {"outline": BLACK, "rim": WHITE, "body": GREY},
+                "rule": "24x32 is one sprite rect, so 3 colours plus transparency for the whole block"})
     save_sheet(enemy_sheet, out_dir, "spr_pp_ui_enemy",
                {"frames_detail": ["idle placeholder"], "pixels": "32x32",
-                "colours": {"edge": WHITE, "body": GOLD}, "rule": "32x32 is 4x4 tiles; 2 colours per tile"})
+                "colours": {"outline": BLACK, "rim": WHITE, "body": GOLD},
+                "rule": "32x32 is 4x4 tiles; 2 colours plus the backdrop per tile"})
 
     font = Font(root)
     tiles = {name: render_tile(rows, window_colours) for name, rows in window_slices}
@@ -709,11 +780,13 @@ def main(argv=None) -> int:
                    "edge": ["t", "b", "l", "r"],
                    "fill": ["c"],
                    "border_ring_tiles": 1,
-                   "border_line_px": 2,
-                   "note": ("the border ring is one whole 8x8 tile on every side; the 2 px white line is drawn on the "
-                            "outer edge of that ring and the rest of the ring is the fill colour, so the text interior "
-                            "is exactly (w-2) x (h-2) whole tiles and text starts at tile x+1, y+1. Any w>=3, h>=3 "
-                            "works: corners, edges and fill are independent tiles"),
+                   "border_line_px": 1,
+                   "note": ("the border ring is one whole 8x8 tile on every side. It is drawn in direction B: the "
+                            "outer pixel is the ink outline ($0F, the shared backdrop), then one pixel of the lit "
+                            "rim ($30) and, on the top edge only, one pixel of the lit tone ($12); the right and "
+                            "bottom edges spend the outline pixel twice, as outline then shadow. The text interior "
+                            "is therefore still exactly (w-2) x (h-2) whole tiles and text starts at tile x+1, "
+                            "y+1. Any w>=3, h>=3 works: corners, edges and fill are independent tiles"),
                    "tab": "game/sprites_src/ui/spr_pp_ui_tab.png, the same nine slices with the border in the accent",
                },
                "safe_area": {
@@ -731,7 +804,7 @@ def main(argv=None) -> int:
                "font": {"name": "spr_pp_font8", "cell": "8x8",
                         "glyphs": "".join(GLYPHS), "path": "game/sprites_src/title/spr_pp_font8.png"},
                "colours": {"fill": FILL, "border": WHITE, "text": WHITE, "accent": GOLD,
-                           "backdrop": BLACK},
+                           "outline": BLACK, "backdrop": BLACK},
                "palettes": "data/palettes/scene_ui.json",
                "windows": {name: os.path.join("game", "sprites_src", "ui", name + ".png")
                            for name in ("spr_pp_ui_window", "spr_pp_ui_tab")},

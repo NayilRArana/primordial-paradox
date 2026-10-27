@@ -136,11 +136,11 @@
       ]
     }
   ],
-  "unique_tiles": 42,
+  "unique_tiles": 57,
   "unique_tile_budget": 128,
-  "tiles_used_once": 17,
+  "tiles_used_once": 11,
   "tile_reuse": {
-    "max_times_a_tile_repeats": 52,
+    "max_times_a_tile_repeats": 49,
     "total_tile_slots": 448
   },
   "colours_used": [

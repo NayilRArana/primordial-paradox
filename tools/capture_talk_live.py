@@ -291,13 +291,12 @@ def draw_box(canvas, role, sheet, box, machine, dots="", listen=False):
             draw_text(canvas, sheet, row, box["PP_TALK_LIVE_BOX_X"],
                       box["PP_TALK_LIVE_ROWS_Y"] + index * box["PP_TALK_LIVE_ROW_PITCH"], role["text"])
 
-    hint = machine.data["hint_grid"] if machine.grid_mode == "grid" else machine.data["hint_keys"]
-    tail = machine.view_rows()[-1] if machine.view_rows() else ""
-    if machine.grid_mode == "grid" and tail:
-        # The GML's rule: in grid mode the bottom row carries the line being built, the cells teach the d-pad.
-        draw_text(canvas, sheet, "* " + tail, box["PP_TALK_LIVE_BOX_X"], box["PP_TALK_LIVE_HINT_Y"], role["text"])
-    else:
-        draw_text(canvas, sheet, hint, box["PP_TALK_LIVE_BOX_X"], box["PP_TALK_LIVE_HINT_Y"], role["dim"])
+    if machine.grid_mode != "grid":
+        draw_text(canvas, sheet, machine.data["hint_keys"], box["PP_TALK_LIVE_BOX_X"],
+                  box["PP_TALK_LIVE_HINT_Y"], role["dim"])
+    # In grid mode nothing is drawn on the message row: pp_talk_live_grid_y moved the grid down one row off the
+    # prompt, its four rows now own 10, 18, 26 and 34, and pp_talk_live_draw_grid no longer draws a tail line or
+    # the controls hint because there is no row left to draw them on.
 
     if machine.grid_mode == "grid":
         cols = box["PP_TALK_LIVE_GRID_COLS"]
@@ -584,6 +583,20 @@ def prepare(data=None, tape=None):
         problems.append("the panel's fourth row ends at y %d, over the band's border at 232" % last)
     if ctx["bars"]["bar_y"] + ctx["bars"]["will_dy"] + 4 > 168:
         problems.append("the MERCY bar ends below y 168, under the command band")
+
+    # The grid against the prompt row, which is the bug the ENTRY GRID frame showed: the grid's first row started
+    # on the prompt's own row and the two printed over each other. Both numbers come out of pp_talk_live.gml, and
+    # both are measured here rather than trusted.
+    box = ctx["box"]
+    grid_top = box["PP_TALK_LIVE_GRID_Y"]
+    prompt_bottom = box["PP_TALK_LIVE_PROMPT_Y"] + GLYPH
+    if grid_top < prompt_bottom:
+        problems.append("the grid's first row starts at y %d, over the prompt row that ends at y %d"
+                        % (grid_top, prompt_bottom))
+    rows = (len(grid) + data["grid_cols"] - 1) // data["grid_cols"]
+    grid_bottom = grid_top + (rows - 1) * box["PP_TALK_LIVE_ROW_PITCH"] + GLYPH
+    if grid_bottom > 46:
+        problems.append("the grid's last row ends at y %d, over the window's border at y 46" % grid_bottom)
     if problems:
         for problem in problems:
             print("REFUSED " + problem)

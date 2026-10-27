@@ -8,9 +8,9 @@
   ],
   "pixels": "24x32",
   "colours": {
-    "edge": 48,
-    "body": 0,
-    "marker": 40
+    "outline": 15,
+    "rim": 48,
+    "body": 0
   },
-  "rule": "24x32 is 3x4 tiles, 3 sprites wide by 4 tall; 3 colours per tile"
+  "rule": "24x32 is one sprite rect, so 3 colours plus transparency for the whole block"
 }

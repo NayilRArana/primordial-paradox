@@ -22,13 +22,13 @@
         "#fcfcfc"
       ],
       [
+        "#0000bc",
         "#7c7c7c",
-        "#f8b800",
         "#fcfcfc"
       ]
     ],
     "palette_count": 2,
-    "distinct_colour_sets": 7,
+    "distinct_colour_sets": 6,
     "all_blocks_palette_legal": true
   },
   "screen": {
@@ -37,7 +37,7 @@
     "top": [
       [
         "#000000",
-        34992
+        36320
       ],
       [
         "#0000bc",
@@ -45,15 +45,15 @@
       ],
       [
         "#7c7c7c",
-        6108
+        6073
       ],
       [
         "#fcfcfc",
-        2908
+        1881
       ],
       [
         "#f8b800",
-        372
+        106
       ]
     ]
   },
@@ -63,12 +63,15 @@
     "offending_boxes": [],
     "palettes": [
       [
+        "#000000",
         "#7c7c7c",
-        "#f8b800",
         "#fcfcfc"
+      ],
+      [
+        "#f8b800"
       ]
     ],
-    "palette_count": 1,
+    "palette_count": 2,
     "max_per_line": 1,
     "busiest_line": 223
   },

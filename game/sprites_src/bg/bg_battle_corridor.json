@@ -136,9 +136,9 @@
       ]
     }
   ],
-  "unique_tiles": 41,
+  "unique_tiles": 59,
   "unique_tile_budget": 128,
-  "tiles_used_once": 12,
+  "tiles_used_once": 23,
   "tile_reuse": {
     "max_times_a_tile_repeats": 58,
     "total_tile_slots": 448

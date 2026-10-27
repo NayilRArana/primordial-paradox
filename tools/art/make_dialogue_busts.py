@@ -214,7 +214,12 @@ def draw_shoulders(grid):
         half = 10 + (y - 35)
         if half > 20:
             half = 20
+        # The shoulder contour is 2 px wide, not 1 (card t_ca9ad5b3): a one pixel 45 degree line is the exact
+        # shape ART-STYLE section 2's dither count flags, and it measured 31 patches per portrait, which is
+        # why the three busts read red while the pass itself added nothing. Direction B asks for bold dark
+        # outlines, so the contour gains the inner pixel; the count is re-measured with tools/art/style_b.py.
         grid.set(HALF - half, y, INK)
+        grid.set(HALF - half + 1, y, INK)
         if y >= 37:
             grid.set(HALF - half + 2, y, INK)
     # Top of the shoulders: an ink line from the outer edge in to the neck, so the neck is not floating.
@@ -343,12 +348,49 @@ def prometheus_licks(g):
     outline(g, ACCENT)
 
 
+def shade_pass(grid, min_run=6):
+    """Direction B's shadow: the last pixel of every long run of a mass becomes ink.
+
+    This is the same mechanical rule tools/art/make_art_target.py's `edge_shade` applies to the reference frame
+    for direction B: the light comes from the top left, so the right end of a horizontal run and the bottom end
+    of a vertical run are the shadow. It is applied to the finished, mirrored grid, so the axis seam cannot be
+    shaded by accident, and it spends no new entry: the shadow is the ink the silhouette already uses, which is
+    what lets a four entry bust carry three tones (ink, the mass, and the panel behind it).
+
+    Runs shorter than `min_run` are left alone: a two pixel shadow on a two pixel mass is a smudge, not shading.
+    """
+    for role in (SKIN, ACCENT):
+        for y in range(1, SIZE - 1):
+            x = 1
+            while x < SIZE - 1:
+                if grid.get(x, y) != role:
+                    x += 1
+                    continue
+                start = x
+                while x < SIZE - 1 and grid.get(x, y) == role:
+                    x += 1
+                if x - start >= min_run:
+                    grid.set(x - 1, y, INK)
+        for x in range(1, SIZE - 1):
+            y = 1
+            while y < SIZE - 1:
+                if grid.get(x, y) != role:
+                    y += 1
+                    continue
+                start = y
+                while y < SIZE - 1 and grid.get(x, y) == role:
+                    y += 1
+                if y - start >= min_run:
+                    grid.set(x, y - 1, INK)
+
+
 def build(name):
-    """One bust as a Grid: left half drawn, mirrored, the one asymmetric detail, frame last."""
+    """One bust as a Grid: left half drawn, mirrored, the one asymmetric detail, the shadow, frame last."""
     grid = BUILDERS[name]()
     grid.mirror_x()
     if name == "prometheus":
         prometheus_licks(grid)
+    shade_pass(grid)
     draw_frame(grid)
     return grid, BUSTS[name]
 

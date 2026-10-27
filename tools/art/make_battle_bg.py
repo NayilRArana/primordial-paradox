@@ -216,7 +216,12 @@ def cor_hatch(c, tx: int, ty: int) -> None:
                 c[y][x] = 2
             elif d <= 1.8:
                 c[y][x] = 2
-            elif d <= 8.0 and (abs(dx) < 1.0 or abs(dy) < 1.0 or abs(abs(dx) - abs(dy)) < 1.0):
+            elif d <= 8.0 and (abs(dx) < 1.0 or abs(dy) < 1.0 or abs(abs(dx) - abs(dy)) < 2.0):
+                # The four spokes are 2 px wide, not 1 (card t_ca9ad5b3). A one pixel 45 degree spoke is the exact
+                # shape ART-STYLE section 2's dither count flags, a 2x2 checker that continues, so at 1 px the
+                # wheel measured 2 dither patches on bg_battle_corridor.png. Direction B asks for bold lines, so
+                # the diagonal spokes gain a pixel instead of losing the detail; the count is re-measured, not
+                # argued (tools/art/style_b.py --report).
                 c[y][x] = 2
 
 
@@ -443,7 +448,12 @@ def quay_crane(c, tx: int, ty: int) -> None:
                 steel = True
             if steel:
                 c[y][x] = 0
-                if ((X + Y) % 4 == 0) or ((X * 3 + Y) % 7 == 0):
+                # Rivets on a fixed 8 px lattice (card t_ca9ad5b3). This was a one pixel diagonal stripe,
+                # ((X + Y) % 4 == 0) or ((X * 3 + Y) % 7 == 0), which is the 2x2 checker ART-STYLE section 2's
+                # dither count flags: it measured 42 patches on bg_battle_quay_dusk.png before this card and 44
+                # after the style B pass, all of it inside the crane. Direction B's own wall treatment is a
+                # stipple on a fixed lattice, so the texture stays and the diagonal goes.
+                if (X % 8 in (2, 3)) and (Y % 8 in (2, 3)):
                     c[y][x] = 1
 
 
@@ -716,6 +726,115 @@ def load_palette(root: str) -> tuple:
     return colours, path
 
 
+def luminance(hex_colour: str) -> float:
+    """Rec. 601 luma of a #rrggbb string. Only used to order a palette's three tones, never to invent a colour."""
+    value = hex_colour.lstrip("#")
+    r, g, b = (int(value[i:i + 2], 16) for i in (0, 2, 4))
+    return 0.299 * r + 0.587 * g + 0.114 * b
+
+
+def style_b_cell(cell, palette) -> int:
+    """Direction B's three tone pass on one 16x16 cell, in that cell's own palette. Returns the pixels repainted.
+
+    The rule is the mechanical one the direction B reference frame uses (tools/art/make_art_target.py,
+    `edge_lit` and `edge_shade`): light comes from the top left, so the first pixel of a horizontal run of a
+    material is its lit edge and the last pixel is its shadow, with the tone in between left as the mid fill.
+    Here the three tones are already the cell's three palette entries, ordered by luminance, so the pass spends
+    no new colour and cannot leave the attribute area: roles are still only 0, 1 and 2.
+
+    Short runs are left alone (three pixels across, four down), because a one pixel shadow on a two pixel
+    detail is not shading, it is noise.
+    """
+    order = sorted(range(3), key=lambda role: luminance(palette[role][1]))
+    darkest, mid, lightest = order[0], order[1], order[2]
+    counts = {}
+    for y in range(CELL):
+        row = cell[y]
+        for x in range(CELL):
+            role = row[x]
+            if role in (0, 1, 2):
+                counts[role] = counts.get(role, 0) + 1
+    if not counts:
+        return 0
+    material = max(counts, key=lambda role: counts[role])
+    painted = 0
+    for y in range(CELL):
+        x = 0
+        while x < CELL:
+            if cell[y][x] != material:
+                x += 1
+                continue
+            start = x
+            while x < CELL and cell[y][x] == material:
+                x += 1
+            if x - start >= 3:
+                above = cell[y - 1][start] if y > 0 else None
+                left = cell[y][start - 1] if start > 0 else None
+                if above != mid and left != mid:
+                    cell[y][start] = lightest
+                    painted += 1
+                if x - 1 != start:
+                    cell[y][x - 1] = darkest
+                    painted += 1
+    for x in range(CELL):
+        y = 0
+        while y < CELL:
+            if cell[y][x] != material:
+                y += 1
+                continue
+            start = y
+            while y < CELL and cell[y][x] == material:
+                y += 1
+            if y - start >= 4 and y - 1 != start:
+                cell[y - 1][x] = darkest
+                painted += 1
+    return painted
+
+
+def ink_form_lines(roles, dominant, min_step=45.0, skip=None) -> int:
+    """A one pixel ink line where one cell's material meets a materially different one.
+
+    The ink is role 3, the shared backdrop, so this costs no palette slot: it is the same trick the party
+    floor uses one screen down in this file.
+
+    Only a real step in tone draws a line, `min_step` luma apart, and the two cells have to be different cells:
+    the first attempt inked every boundary whose dominant role differed, and a review of the 3x preview said
+    exactly what that looks like, "a lattice of dark lines rather than a single lit surface". A band of the same
+    material repeated now stays seamless, which is what a wall is.
+
+    `skip` is a predicate for the pixels the party floor will paint anyway. The floor is ink too, so a pixel this
+    pass inks inside the block's own rectangle is a pixel the floor would have set, and the strip's own test would
+    then find fewer than 1920 pixels moving when the flag is switched off (tests/test_make_battle_bg.py,
+    test_the_pass_moves_the_block_and_nothing_else).
+    """
+    painted = 0
+    for row in range(1, ROWS):
+        for col in range(COLS):
+            above, below = dominant[row - 1][col], dominant[row][col]
+            if above is None or below is None:
+                continue
+            if abs(luminance(above) - luminance(below)) < min_step:
+                continue
+            y = row * CELL - 1
+            for x in range(col * CELL, col * CELL + CELL):
+                if roles[y][x] in (0, 1, 2) and not (skip and skip(x, y)):
+                    roles[y][x] = 3
+                    painted += 1
+    for col in range(1, COLS):
+        for row in range(ROWS):
+            left, right = dominant[row][col - 1], dominant[row][col]
+            if left is None or right is None:
+                continue
+            if abs(luminance(left) - luminance(right)) < min_step:
+                continue
+            x = col * CELL - 1
+            for y in range(row * CELL, row * CELL + CELL):
+                if roles[y][x] in (0, 1, 2) and not (skip and skip(x, y)):
+                    roles[y][x] = 3
+                    painted += 1
+    return painted
+
+
 def build_scene(scene: dict, entries: list, party_rects=None) -> dict:
     names = [name for name, _ in scene["background"]]
     palettes = {
@@ -740,6 +859,7 @@ def build_scene(scene: dict, entries: list, party_rects=None) -> dict:
     roles = [[3] * W for _ in range(H)]
     used = set()
     cell_names = []
+    dominant = [[None] * COLS for _ in range(ROWS)]
     for row_index, row in enumerate(scene["layout"]):
         if len(row) != COLS:
             raise SystemExit("scene %s row %d is %d cells, expected %d" % (scene["name"], row_index, len(row), COLS))
@@ -752,6 +872,17 @@ def build_scene(scene: dict, entries: list, party_rects=None) -> dict:
                 raise SystemExit("scene %s cell %r names palette %r" % (scene["name"], letter, palette_name))
             cell = blank()
             painter(cell)
+            # Direction B: three tones lit from the top left, in the cell's own palette. Runs before the cell is
+            # written to the strip, so the tile count below describes what ships.
+            style_b_cell(cell, palettes[palette_name])
+            counts = {}
+            for cell_row in cell:
+                for role in cell_row:
+                    if role in (0, 1, 2):
+                        counts[role] = counts.get(role, 0) + 1
+            dominant[row_index][col_index] = (
+                palettes[palette_name][max(counts, key=lambda role: counts[role])][1] if counts else None
+            )
             line.append("%s/%s" % (letter, palette_name))
             for y in range(CELL):
                 target = roles[row_index * CELL + y]
@@ -761,6 +892,15 @@ def build_scene(scene: dict, entries: list, party_rects=None) -> dict:
                         raise SystemExit("role %r out of range in %s" % (role, scene["name"]))
                     target[col_index * CELL + x] = role
         cell_names.append(line)
+
+    # The bold dark outline: one ink pixel where one material meets a different one, before the party floor so the
+    # floor is still the last thing painted under the block. The block's own rectangle is skipped because the floor
+    # paints it ink anyway, and the strip's test counts exactly those 1920 pixels moving.
+    skip = None
+    if party_rects:
+        boxes = [(x, y, x + w, y + h) for x, y, w, h in party_rects]
+        skip = lambda px, py: any(bx0 <= px < bx1 and by0 <= py < by1 for bx0, by0, bx1, by1 in boxes)
+    ink_pixels = ink_form_lines(roles, dominant, skip=skip)
 
     # The party block's floor, on the strips that declare it: role 3 is the shared backdrop, which every
     # attribute area may use, so this paints nothing the palettes do not already carry. It runs BEFORE the
@@ -828,6 +968,7 @@ def build_scene(scene: dict, entries: list, party_rects=None) -> dict:
         "tiles": tiles,
         "palette_of_area": palette_of_area,
         "party_floor": party_floor,
+        "style_b_ink_pixels": ink_pixels,
     }
 
 

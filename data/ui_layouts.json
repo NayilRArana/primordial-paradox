@@ -28,8 +28,8 @@
       "c"
     ],
     "border_ring_tiles": 1,
-    "border_line_px": 2,
-    "note": "the border ring is one whole 8x8 tile on every side; the 2 px white line is drawn on the outer edge of that ring and the rest of the ring is the fill colour, so the text interior is exactly (w-2) x (h-2) whole tiles and text starts at tile x+1, y+1. Any w>=3, h>=3 works: corners, edges and fill are independent tiles",
+    "border_line_px": 1,
+    "note": "the border ring is one whole 8x8 tile on every side. It is drawn in direction B: the outer pixel is the ink outline ($0F, the shared backdrop), then one pixel of the lit rim ($30) and, on the top edge only, one pixel of the lit tone ($12); the right and bottom edges spend the outline pixel twice, as outline then shadow. The text interior is therefore still exactly (w-2) x (h-2) whole tiles and text starts at tile x+1, y+1. Any w>=3, h>=3 works: corners, edges and fill are independent tiles",
     "tab": "game/sprites_src/ui/spr_pp_ui_tab.png, the same nine slices with the border in the accent"
   },
   "safe_area": {
@@ -53,6 +53,7 @@
     "border": 48,
     "text": 48,
     "accent": 40,
+    "outline": 15,
     "backdrop": 15
   },
   "palettes": "data/palettes/scene_ui.json",
@@ -123,7 +124,7 @@
         },
         {
           "x": 12,
-          "y": 11,
+          "y": 7,
           "w": 4,
           "h": 4,
           "pixels": "32x32"
@@ -229,7 +230,7 @@
         },
         {
           "x": 96,
-          "y": 88,
+          "y": 56,
           "w": 32,
           "h": 32,
           "role": "enemy"

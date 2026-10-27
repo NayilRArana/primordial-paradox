@@ -136,7 +136,7 @@
       ]
     }
   ],
-  "unique_tiles": 30,
+  "unique_tiles": 33,
   "unique_tile_budget": 128,
   "tiles_used_once": 4,
   "tile_reuse": {

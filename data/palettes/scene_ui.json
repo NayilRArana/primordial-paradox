@@ -6,14 +6,15 @@
   "rule": "NES: 1 backdrop shared by both layers, 4 background palettes of 3 entries on 16x16 areas, 4 sprite palettes of 3 entries plus transparency on 8x8 tiles; every entry is a data/nes_palette.json entry number",
   "notes": [
     "written by tools/art/make_ui_nes.py for the UI-NES card; the card that asked for the screens owns this file",
-    "backdrop $0F black is the shared backdrop of all three screens",
-    "bg0 is the window itself: the fill $02 and a 2 px border plus the text in $30",
-    "bg1 is the accent: gold $28 with the blue fill and the white text (name tab, gold headings)",
-    "bg2 is the placeholder blocks: white edge, grey body, gold marker",
+    "backdrop $0F black is the shared backdrop of all three screens, and it is also the windows' bold outline",
+    "bg0 is the window in direction B: fill $02, rim $30, and the outline plus the right and bottom shadow in the shared backdrop $0F",
+    "bg1 is the accent, the name tab: fill $02, rim $28 gold, name in $30 white, outline in the backdrop",
+    "bg2 is the placeholder blocks: white rim, grey body, gold marker, ink outline",
     "bg3 is spare and unused; the screens need 3 background palettes",
     "sp0 covers the cursor and the enemy block (black $0F, gold $28, white $30)",
-    "sp1 covers the party block (grey $00, white $30, gold $28)",
-    "sp2 and sp3 are spare; the screens need 2 sprite palettes"
+    "sp1 covers the party block body (ink $0F, grey $00, white $30)",
+    "sp2 covers the party block's gold marker tile (ink $0F, grey $00, gold $28)",
+    "sp3 is spare; the screens need 3 sprite palettes"
   ],
   "background": [
     {
@@ -86,26 +87,26 @@
     {
       "name": "sp1",
       "colours": [
+        15,
         0,
-        48,
-        40
+        48
       ],
       "hex": [
+        "#000000",
         "#7c7c7c",
-        "#fcfcfc",
-        "#f8b800"
+        "#fcfcfc"
       ]
     },
     {
       "name": "sp2",
       "colours": [
-        2,
-        48,
+        15,
+        0,
         40
       ],
       "hex": [
-        "#0000bc",
-        "#fcfcfc",
+        "#000000",
+        "#7c7c7c",
         "#f8b800"
       ]
     },
