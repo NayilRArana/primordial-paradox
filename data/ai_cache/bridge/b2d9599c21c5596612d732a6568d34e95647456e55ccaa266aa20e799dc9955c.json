@@ -1,0 +1,28 @@
+{
+  "answer": {
+    "effect": "none",
+    "model": "muse-spark-1.3",
+    "mood": "rattled",
+    "repaired": [],
+    "source": "meta",
+    "text": [
+      "WHERE ARE YOU?",
+      "WHERE ARE YOU!"
+    ]
+  },
+  "backend": "meta",
+  "created_at": "2026-10-27T21:54:14Z",
+  "key": "b2d9599c21c5596612d732a6568d34e95647456e55ccaa266aa20e799dc9955c",
+  "kind": "talk",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "quay_townsperson",
+    "player_chars": 18,
+    "player_sha256": "5b720ff8410c278bbfe67034d277ba5446bed1ab27a63df2e1e5bcc1daabf384",
+    "scene": "npc"
+  },
+  "source": "meta"
+}

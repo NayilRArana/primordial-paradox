@@ -1,0 +1,28 @@
+{
+  "answer": {
+    "effect": "none",
+    "model": "muse-spark-1.3",
+    "mood": "warm",
+    "repaired": [],
+    "source": "meta",
+    "text": [
+      "AH, LOVELY RAIN INDEED!",
+      "SMELL THE CLOUDS ROLL IN."
+    ]
+  },
+  "backend": "meta",
+  "created_at": "2026-10-27T21:51:03Z",
+  "key": "2d8fcf1da0e54117cb535f7dd7984b07d43e51ee83123805d240037b8f5171cf",
+  "kind": "talk",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "urien",
+    "player_chars": 23,
+    "player_sha256": "011bdf3d4ff0a09aff18c9b9aef1be0bb67af3a124163c17e87c26b631ba38ad",
+    "scene": "npc"
+  },
+  "source": "meta"
+}

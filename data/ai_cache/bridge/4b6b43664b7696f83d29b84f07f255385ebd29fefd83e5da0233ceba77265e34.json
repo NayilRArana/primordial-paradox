@@ -1,0 +1,28 @@
+{
+  "answer": {
+    "effect": "setback",
+    "model": "muse-spark-1.3",
+    "mood": "angry",
+    "repaired": [],
+    "source": "meta",
+    "text": [
+      "NOT ON MY WATCH.",
+      "TRY IT."
+    ]
+  },
+  "backend": "meta",
+  "created_at": "2026-10-27T21:48:21Z",
+  "key": "4b6b43664b7696f83d29b84f07f255385ebd29fefd83e5da0233ceba77265e34",
+  "kind": "talk",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "navy_sailor",
+    "player_chars": 29,
+    "player_sha256": "856840bf6fd008e112fcf81c7873bc96826f91c2561172f152bea00fb5c6f8f4",
+    "scene": "fight"
+  },
+  "source": "meta"
+}

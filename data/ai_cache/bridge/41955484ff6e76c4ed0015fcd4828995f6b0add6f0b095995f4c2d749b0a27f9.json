@@ -1,0 +1,28 @@
+{
+  "answer": {
+    "effect": "none",
+    "model": "muse-spark-1.3",
+    "mood": "guarded",
+    "repaired": [],
+    "source": "meta",
+    "text": [
+      "NICE IS GOOD.",
+      "FIRSTS ARE BETTER."
+    ]
+  },
+  "backend": "meta",
+  "created_at": "2026-10-27T21:49:22Z",
+  "key": "41955484ff6e76c4ed0015fcd4828995f6b0add6f0b095995f4c2d749b0a27f9",
+  "kind": "talk",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "konrad",
+    "player_chars": 20,
+    "player_sha256": "4141d477c238e9fa4089cac69d66631fc778a0e3b0d56583a26b5d3f108f6bc0",
+    "scene": "npc"
+  },
+  "source": "meta"
+}

@@ -1,0 +1,28 @@
+{
+  "answer": {
+    "effect": "soften",
+    "model": "muse-spark-1.3",
+    "mood": "calm",
+    "repaired": [],
+    "source": "meta",
+    "text": [
+      "YEAH. I WANT ONE TOO.",
+      "STILL ON WATCH. TIRED."
+    ]
+  },
+  "backend": "meta",
+  "created_at": "2026-10-27T21:48:27Z",
+  "key": "be2fb662003b89bc5f2cc8abe51321ae6c790e26fcf8d71cc0b6cea4ef2bd01b",
+  "kind": "talk",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "navy_sailor",
+    "player_chars": 44,
+    "player_sha256": "9a7ce5193f37518f540d263beadf100d99105931fb6e5b79a2c3e41652624574",
+    "scene": "fight"
+  },
+  "source": "meta"
+}

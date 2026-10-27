@@ -1,0 +1,28 @@
+{
+  "answer": {
+    "effect": "soften",
+    "model": "muse-spark-1.3",
+    "mood": "calm",
+    "repaired": [],
+    "source": "meta",
+    "text": [
+      "YEAH. ALL NIGHT HERE.",
+      "TIRED TO THE BONE."
+    ]
+  },
+  "backend": "meta",
+  "created_at": "2026-10-27T21:48:06Z",
+  "key": "0f2391d6ade5b9fe2b722562d04f255ef74d989e7ca4842df5a2592ed02a55ce",
+  "kind": "talk",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "navy_sailor",
+    "player_chars": 51,
+    "player_sha256": "a6986d60c4c7d829653f526a6de82a99a5f7a115e74ffcb4d5906c377aa090ab",
+    "scene": "fight"
+  },
+  "source": "meta"
+}

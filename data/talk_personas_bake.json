@@ -1,0 +1,870 @@
+{
+  "format": 1,
+  "kind": "talk_personas_bake",
+  "owner": "gamedev",
+  "card": "t_acae7c0a (META-NPC-TALK)",
+  "rule": "Written by tools/bake_personas.py only, never by hand. Every row is one bake line of one persona sent through tools/ai_bridge.py's Meta rung, and the answer beside it is the answer that rung returned, after the same cleaning and the same guards the live path applies. A row with no text says why, and a row with text names the cache file that replays it.",
+  "personas_file": "data/talk_personas.json",
+  "personas_version": 2,
+  "cache": "data/ai_cache/bridge",
+  "bake": {
+    "created_at": "2026-10-27T21:54:46Z",
+    "mode": "live",
+    "network": true,
+    "model": "muse-spark-1.3",
+    "budget_s": 45.0,
+    "live_budget_s": 6.0,
+    "calls_attempted": 45,
+    "answered": 45,
+    "fallback": 0,
+    "rows": 45,
+    "elapsed_ms": 330172,
+    "note": "live: 45 of 45 lines are answers from the Meta client, each one validated through the bridge before it was written"
+  },
+  "coverage": {
+    "personas": 3,
+    "per_persona": [
+      {
+        "id": "konrad",
+        "scene": "S1",
+        "rows": 15,
+        "answered": 15,
+        "calls_attempted": 15
+      },
+      {
+        "id": "quay_townsperson",
+        "scene": "S3",
+        "rows": 15,
+        "answered": 15,
+        "calls_attempted": 15
+      },
+      {
+        "id": "urien",
+        "scene": "S2",
+        "rows": 15,
+        "answered": 15,
+        "calls_attempted": 15
+      }
+    ]
+  },
+  "rows": [
+    {
+      "persona": "konrad",
+      "scene": "S1",
+      "line": "This is a nice room.",
+      "transport": "live",
+      "text": [
+        "NICE IS GOOD.",
+        "FIRSTS ARE BETTER."
+      ],
+      "effect": "none",
+      "mood": "guarded",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "41955484ff6e76c4ed0015fcd4828995f6b0add6f0b095995f4c2d749b0a27f9",
+      "latency_ms": 6235,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "konrad",
+      "scene": "S1",
+      "line": "You did not have to drive me.",
+      "transport": "live",
+      "text": [
+        "IT WAS NO TROUBLE AT ALL.",
+        "MAKE IT WORTH THE DRIVE."
+      ],
+      "effect": "none",
+      "mood": "guarded",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "9ca17b827a37def10ec3c671471bb47a37b183fee4323d63d7721f9ed13128e0",
+      "latency_ms": 4688,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "konrad",
+      "scene": "S1",
+      "line": "I unpacked the books already.",
+      "transport": "live",
+      "text": [
+        "GOOD. SHELVES LIKE WORK NOW."
+      ],
+      "effect": "none",
+      "mood": "calm",
+      "repaired": [
+        "capped_sentences"
+      ],
+      "model": "muse-spark-1.3",
+      "cache_key": "9201d471161571cde4f6b44347b2f604a694925185242ed7ea91497046f2c7d6",
+      "latency_ms": 4813,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "konrad",
+      "scene": "S1",
+      "line": "The kettle is for both of us.",
+      "transport": "live",
+      "text": [
+        "GOOD. THAT WILL HELP."
+      ],
+      "effect": "none",
+      "mood": "calm",
+      "repaired": [
+        "capped_sentences"
+      ],
+      "model": "muse-spark-1.3",
+      "cache_key": "d2d1a99599eaa10ca3159349b829ed126dfabd15083218b65ce5e07849501a09",
+      "latency_ms": 9407,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "konrad",
+      "scene": "S1",
+      "line": "Are you staying for tea?",
+      "transport": "live",
+      "text": [
+        "NO. THE DRIVE IS AN HOUR."
+      ],
+      "effect": "none",
+      "mood": "guarded",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "f9a052ceecba01142a298b8b339c9d076d62a76d63ecaf17687b0640854b8332",
+      "latency_ms": 6312,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "konrad",
+      "scene": "S1",
+      "line": "I will ring after my lecture.",
+      "transport": "live",
+      "text": [
+        "THAT IS SENSIBLE.",
+        "I WILL WAIT FOR THE CALL."
+      ],
+      "effect": "none",
+      "mood": "calm",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "0998b2aa3c787cc61b17c7962c094b251d5c9a53ff539e7d2503ef97da43e2dd",
+      "latency_ms": 7625,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "konrad",
+      "scene": "S1",
+      "line": "The laundry card was declined.",
+      "transport": "live",
+      "text": [
+        "WE SORTED THAT THIS MORNING.",
+        "BEST NOT START BEHIND."
+      ],
+      "effect": "none",
+      "mood": "calm",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "b0818e0f8d50ed0b42b70a4d51bb1884052951d08633124bef8278894d134ee4",
+      "latency_ms": 6594,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "konrad",
+      "scene": "S1",
+      "line": "I met two people on my floor.",
+      "transport": "live",
+      "text": [
+        "THAT IS NICE.",
+        "THE DESK IS FOR WORK."
+      ],
+      "effect": "none",
+      "mood": "guarded",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "115cecb5a11799c9f62b849d519a378ff71069812a660e17340f3b5132c3ad7e",
+      "latency_ms": 7187,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "konrad",
+      "scene": "S1",
+      "line": "Average is fine, honestly.",
+      "transport": "live",
+      "text": [
+        "AVERAGE IS A SMALL WORD.",
+        "SAY FIRST FOR ME."
+      ],
+      "effect": "none",
+      "mood": "guarded",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "53bad32ade9c8d3a81e523a96349348d8236c21af0fa27eb3140ee197f341623",
+      "latency_ms": 6234,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "konrad",
+      "scene": "S1",
+      "line": "My snacks are mine.",
+      "transport": "live",
+      "text": [
+        "I HAD TWO ON THE WAY UP.",
+        "LEAVE THE REST FOR WORK."
+      ],
+      "effect": "none",
+      "mood": "guarded",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "0c5599255c35af0e1721b16e8fea17d556b1442b10a138cfb295e6b71a9c32b7",
+      "latency_ms": 7469,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "konrad",
+      "scene": "S1",
+      "line": "You took the last snack.",
+      "transport": "live",
+      "text": [
+        "I HAD ONE ON THE DRIVE.",
+        "THANK YOU FOR NOTICING."
+      ],
+      "effect": "none",
+      "mood": "guarded",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "8d8626f0b0100b5bb00efbabc4fb9700a49ab41678fb440c7464a41f3381a755",
+      "latency_ms": 5093,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "konrad",
+      "scene": "S1",
+      "line": "Did you pack the knife?",
+      "transport": "live",
+      "text": [
+        "YES.",
+        "IN WITH THE KETTLE."
+      ],
+      "effect": "none",
+      "mood": "guarded",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "bfee59113b1d18ac8717584c1bf016955055f11ca79dcbdf6d95d0f81f65f78e",
+      "latency_ms": 6829,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "konrad",
+      "scene": "S1",
+      "line": "Thanks for the lift, Dad.",
+      "transport": "live",
+      "text": [
+        "QUITE ALL RIGHT.",
+        "KEEP THE DESK LOOKING BUSY."
+      ],
+      "effect": "none",
+      "mood": "calm",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "528b8a301ba8b1c19dfc57ac9c88537fa105d46f261a53493f05570a8d81f46f",
+      "latency_ms": 7563,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "konrad",
+      "scene": "S1",
+      "line": "You can go now.",
+      "transport": "live",
+      "text": [
+        "KEEP THE DESK CLEAR.",
+        "MAKE THE DRIVE WORTH IT."
+      ],
+      "effect": "none",
+      "mood": "guarded",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "7ef8a25fd428520b9bb29c15359c3499ea188d10dc4f3be8b6ad0262ff20f7db",
+      "latency_ms": 8016,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "konrad",
+      "scene": "S1",
+      "line": "Six rooms on my floor. I met two.",
+      "transport": "live",
+      "text": [
+        "THAT IS SOCIAL ENOUGH.",
+        "BEST KEEP THE DESK CLEAR."
+      ],
+      "effect": "none",
+      "mood": "guarded",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "dfdb2f3cb730dbfac6e92779cbf09d35ef92fd5108396a8711a313661dba5299",
+      "latency_ms": 6281,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "urien",
+      "scene": "S2",
+      "line": "Lovely rain, is it not?",
+      "transport": "live",
+      "text": [
+        "AH, LOVELY RAIN INDEED!",
+        "SMELL THE CLOUDS ROLL IN."
+      ],
+      "effect": "none",
+      "mood": "warm",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "2d8fcf1da0e54117cb535f7dd7984b07d43e51ee83123805d240037b8f5171cf",
+      "latency_ms": 5985,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "urien",
+      "scene": "S2",
+      "line": "Do you know this street well?",
+      "transport": "live",
+      "text": [
+        "I KNOW THE RAIN HERE BEST.",
+        "LOVELY WHEN IT POURS."
+      ],
+      "effect": "none",
+      "mood": "warm",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "948337a28bab7ae4f82964d8158df8bcdd94b1ad76f482076bb49d3023158c31",
+      "latency_ms": 4688,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "urien",
+      "scene": "S2",
+      "line": "I am new here.",
+      "transport": "live",
+      "text": [
+        "WELCOME TO TOWN, FRIEND!",
+        "MIND THE CLOUDS, EH?"
+      ],
+      "effect": "none",
+      "mood": "warm",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "cb541652e5cd8863153b4f7040693a70e7aa2afd5cf8eee4f318041826883e26",
+      "latency_ms": 6000,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "urien",
+      "scene": "S2",
+      "line": "Were you caught in the downpour?",
+      "transport": "live",
+      "text": [
+        "OH AYE, JUST MISSED IT!",
+        "LOOK AT THOSE CLOUDS!"
+      ],
+      "effect": "none",
+      "mood": "warm",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "32c34023c6539730c46f77f73240cfe46c44d215ca42a75fecb57ec4838eae2d",
+      "latency_ms": 5546,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "urien",
+      "scene": "S2",
+      "line": "The bus is late again.",
+      "transport": "live",
+      "text": [
+        "AH, THE BUSES LOVE THE RAIN!",
+        "SMELL THAT SKY, EH?"
+      ],
+      "effect": "none",
+      "mood": "warm",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "1e2f4edfcb8d52532e897b5bdb25a97f038cc8b402a070c6ecc64606632658a7",
+      "latency_ms": 5859,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "urien",
+      "scene": "S2",
+      "line": "I should find a shop before it gets worse.",
+      "transport": "live",
+      "text": [
+        "OH AYE, CLOUDS ARE BUILDING.",
+        "STAY, WATCH IT ROLL IN."
+      ],
+      "effect": "none",
+      "mood": "calm",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "039aac2ae669b732b5849505b22020d0d049cb3bed65c9dbe079051505aa4e1f",
+      "latency_ms": 6297,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "urien",
+      "scene": "S2",
+      "line": "I have a knife in my bag.",
+      "transport": "live",
+      "text": [
+        "OH, KEEP THAT TUCKED AWAY,",
+        "LOOK AT THAT SKY FILLING."
+      ],
+      "effect": "none",
+      "mood": "calm",
+      "repaired": [
+        "mood_mapped"
+      ],
+      "model": "muse-spark-1.3",
+      "cache_key": "c1565b48cc4ce28f1afe171c3cd79f456354166eb2a0efbdea71a32d4398b613",
+      "latency_ms": 5906,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "urien",
+      "scene": "S2",
+      "line": "It is only for sandwiches.",
+      "transport": "live",
+      "text": [
+        "SANDWICHES! GRAND IN RAIN."
+      ],
+      "effect": "none",
+      "mood": "warm",
+      "repaired": [
+        "capped_sentences"
+      ],
+      "model": "muse-spark-1.3",
+      "cache_key": "eb975f22744ee184479557aac579704644e77ab8f261954e235aa77602a31eab",
+      "latency_ms": 6953,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "urien",
+      "scene": "S2",
+      "line": "Do you want a snack?",
+      "transport": "live",
+      "text": [
+        "OH, THAT IS KIND OF YOU!",
+        "GOT A SANDWICH TO SHARE?"
+      ],
+      "effect": "none",
+      "mood": "warm",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "2675989f2f19ca3ac2d43fa3b505f417a03624b4821402768263c2f3223b1fd7",
+      "latency_ms": 5782,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "urien",
+      "scene": "S2",
+      "line": "The sky is getting darker.",
+      "transport": "live",
+      "text": [
+        "AYE, SHE IS BREWING NICELY!",
+        "LOVELY DARK OVER THE WATER."
+      ],
+      "effect": "none",
+      "mood": "warm",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "0a8600e3f7bdceaa7b34dfc8a1dfd031f7c34f5aa3842ee9e5453935e8823ac2",
+      "latency_ms": 4891,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "urien",
+      "scene": "S2",
+      "line": "Have you lived here long?",
+      "transport": "live",
+      "text": [
+        "OH, I LOVE THE RAIN HERE!",
+        "LOOK AT THOSE CLOUDS!"
+      ],
+      "effect": "none",
+      "mood": "calm",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "908529f228d9b74e3e5a8d8971563232ba6b4399ed745c9ec8f0457948be259a",
+      "latency_ms": 7110,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "urien",
+      "scene": "S2",
+      "line": "You seem to know the weather.",
+      "transport": "live",
+      "text": [
+        "AH, YOU CAN SMELL IT TOO!",
+        "RAIN IS COMING, FRIEND."
+      ],
+      "effect": "none",
+      "mood": "warm",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "9d79fb2b15f5da2ff47d38e448cff5de049e6323a907bf1deff20cd0a497f084",
+      "latency_ms": 6016,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "urien",
+      "scene": "S2",
+      "line": "What are you carrying?",
+      "transport": "live",
+      "text": [
+        "NOTHING BUT RAIN, FRIEND.",
+        "SMELL IT COMING, EH?"
+      ],
+      "effect": "none",
+      "mood": "calm",
+      "repaired": [
+        "mood_mapped"
+      ],
+      "model": "muse-spark-1.3",
+      "cache_key": "0ce64fea188ccebc25524dcde2605926779d21c440ac5b086110e93d97454549",
+      "latency_ms": 6656,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "urien",
+      "scene": "S2",
+      "line": "Is the ferry still running?",
+      "transport": "live",
+      "text": [
+        "OH AYE, SHE STILL RUNS!",
+        "TILL THE SKY TURNS BLACK."
+      ],
+      "effect": "none",
+      "mood": "warm",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "2e46c7142e1062b438eb134bbb50c521fc92a6032b0ce285d44ad140719f6e3e",
+      "latency_ms": 4922,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "urien",
+      "scene": "S2",
+      "line": "I like the rain too.",
+      "transport": "live",
+      "text": [
+        "EH? THEN PULL IN CLOSE."
+      ],
+      "effect": "none",
+      "mood": "warm",
+      "repaired": [
+        "capped_sentences"
+      ],
+      "model": "muse-spark-1.3",
+      "cache_key": "5f698b333d3bfe336c3d11bba5a492d8452633451e1f0410b11c630f0b36328c",
+      "latency_ms": 7079,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "quay_townsperson",
+      "scene": "S3",
+      "line": "What is happening to the water?",
+      "transport": "live",
+      "text": [
+        "IS IT OVER THE RAIL?",
+        "IS IT OVER THE RAIL?"
+      ],
+      "effect": "none",
+      "mood": "rattled",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "f6f65583cadecd7df756983048d84e2ca5ac045b0a9e481122deba16e476ca8c",
+      "latency_ms": 6094,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "quay_townsperson",
+      "scene": "S3",
+      "line": "Should we move inland?",
+      "transport": "live",
+      "text": [
+        "YES, YES, OFF THE QUAY!",
+        "WHERE IS IT, WHERE IS IT?"
+      ],
+      "effect": "none",
+      "mood": "rattled",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "126f5a86c946e5cde0ca671ff33eea35608d37f372062075bf025ea5c2ee0d2d",
+      "latency_ms": 12250,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "quay_townsperson",
+      "scene": "S3",
+      "line": "Where are the lifeboats?",
+      "transport": "live",
+      "text": [
+        "UP THE STEPS, UP THE STEPS!",
+        "ARE YOU HERE, ARE YOU HERE?"
+      ],
+      "effect": "none",
+      "mood": "rattled",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "02364edfcafedd35806a6ecbfd82a4930070e2b0f490c2c340d7c2f0669ba2d6",
+      "latency_ms": 9594,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "quay_townsperson",
+      "scene": "S3",
+      "line": "The wind took my hat.",
+      "transport": "live",
+      "text": [
+        "YOUR HAT, YOUR HAT,",
+        "WHICH WAY? WHICH WAY?"
+      ],
+      "effect": "none",
+      "mood": "rattled",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "b2f60fa7b72a441cc8c9e4a0e622017e1c2cf72582811879c2b677a56b113f96",
+      "latency_ms": 19219,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "quay_townsperson",
+      "scene": "S3",
+      "line": "Hold the rail. Hold it.",
+      "transport": "live",
+      "text": [
+        "DID YOU SEE HIM?",
+        "DID YOU SEE HIM?"
+      ],
+      "effect": "none",
+      "mood": "rattled",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "31520bd7eb78034d7711f0d6f8f54dde8f0387d4f458b7991fd5fe792852c4e2",
+      "latency_ms": 6828,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "quay_townsperson",
+      "scene": "S3",
+      "line": "Is anybody still on the pier?",
+      "transport": "live",
+      "text": [
+        "WHO IS STILL OUT THERE?",
+        "WHO IS STILL OUT THERE?"
+      ],
+      "effect": "none",
+      "mood": "rattled",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "3da786f0602787841b510b97453b097969b25463a3c599d692ecc26e0882597e",
+      "latency_ms": 8938,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "quay_townsperson",
+      "scene": "S3",
+      "line": "Why are you smiling?",
+      "transport": "live",
+      "text": [
+        "WHY WOULD I SMILE?",
+        "WHY WOULD I SMILE?"
+      ],
+      "effect": "none",
+      "mood": "rattled",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "25fac9770cbcb18a881dc2ad1b1e004e8d723732afb905cf5cba661fd884da0b",
+      "latency_ms": 8032,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "quay_townsperson",
+      "scene": "S3",
+      "line": "The river is going sideways.",
+      "transport": "live",
+      "text": [
+        "WHERE IS THE WAY OFF?",
+        "WHERE IS THE WAY OFF?"
+      ],
+      "effect": "none",
+      "mood": "rattled",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "da67e65f445ac12ccb01d63c837f0b12668aa254fb965d63898b37d7d354df9c",
+      "latency_ms": 9641,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "quay_townsperson",
+      "scene": "S3",
+      "line": "My bag is gone.",
+      "transport": "live",
+      "text": [
+        "WHERE IS IT?",
+        "WHERE IS IT?"
+      ],
+      "effect": "none",
+      "mood": "rattled",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "5897744b3a32a1b27661d3fe8427c109fb3c58d75acb38e22adac0669d00114f",
+      "latency_ms": 8969,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "quay_townsperson",
+      "scene": "S3",
+      "line": "Do not go out on the quay.",
+      "transport": "live",
+      "text": [
+        "I AM ON IT! I AM ON IT!"
+      ],
+      "effect": "none",
+      "mood": "rattled",
+      "repaired": [
+        "capped_sentences"
+      ],
+      "model": "muse-spark-1.3",
+      "cache_key": "e23103bf3cca0c644671b488eeb72ea7fe240a1cd7d6a9d3f4e68eb65d7646d8",
+      "latency_ms": 8953,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "quay_townsperson",
+      "scene": "S3",
+      "line": "Can you hear that?",
+      "transport": "live",
+      "text": [
+        "WHERE ARE YOU?",
+        "WHERE ARE YOU!"
+      ],
+      "effect": "none",
+      "mood": "rattled",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "b2d9599c21c5596612d732a6568d34e95647456e55ccaa266aa20e799dc9955c",
+      "latency_ms": 7922,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "quay_townsperson",
+      "scene": "S3",
+      "line": "I cannot find my brother.",
+      "transport": "live",
+      "text": [
+        "LOST MINE TOO, WHERE IS HE?",
+        "WHERE IS HE?"
+      ],
+      "effect": "none",
+      "mood": "rattled",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "22b787473566c9a3fda106d093353182560b2cfcdb1cb1baa6438dd5f7ad037a",
+      "latency_ms": 7969,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "quay_townsperson",
+      "scene": "S3",
+      "line": "Get inside. Please.",
+      "transport": "live",
+      "text": [
+        "WHERE IS THE DOOR?",
+        "WHERE IS THE DOOR?"
+      ],
+      "effect": "none",
+      "mood": "rattled",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "601952596fbeca7030d6a380013a174e581acd153736520c881d0da0415442a1",
+      "latency_ms": 7391,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "quay_townsperson",
+      "scene": "S3",
+      "line": "This is not normal weather.",
+      "transport": "live",
+      "text": [
+        "NO NO, IT IS WEATHER!",
+        "WHERE IS HE, WHERE IS HE?"
+      ],
+      "effect": "none",
+      "mood": "rattled",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "793d8920116cfce3f58601893c4041b025b8eb9c83c11c49586d0f026ad21eea",
+      "latency_ms": 8094,
+      "reason": "",
+      "calls_attempted": 1
+    },
+    {
+      "persona": "quay_townsperson",
+      "scene": "S3",
+      "line": "Who are you?",
+      "transport": "live",
+      "text": [
+        "I AM NOBODY, JUST HOLD ON!",
+        "WHERE IS HE, WHERE IS HE?"
+      ],
+      "effect": "none",
+      "mood": "rattled",
+      "repaired": [],
+      "model": "muse-spark-1.3",
+      "cache_key": "74aa5b54d9396b695c66bd0401e37d32acf8ec61ed7587fbbe6908b7c868c5ed",
+      "latency_ms": 8859,
+      "reason": "",
+      "calls_attempted": 1
+    }
+  ]
+}

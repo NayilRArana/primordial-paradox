@@ -1,0 +1,28 @@
+{
+  "answer": {
+    "effect": "none",
+    "model": "muse-spark-1.3",
+    "mood": "rattled",
+    "repaired": [],
+    "source": "meta",
+    "text": [
+      "WHERE IS THE DOOR?",
+      "WHERE IS THE DOOR?"
+    ]
+  },
+  "backend": "meta",
+  "created_at": "2026-10-27T21:54:29Z",
+  "key": "601952596fbeca7030d6a380013a174e581acd153736520c881d0da0415442a1",
+  "kind": "talk",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "quay_townsperson",
+    "player_chars": 19,
+    "player_sha256": "7b5637ca4aa6b18b503a5bc3ae5986d1769fb094de3b6d9f0da530067e42d962",
+    "scene": "npc"
+  },
+  "source": "meta"
+}

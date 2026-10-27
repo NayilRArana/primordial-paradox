@@ -1,0 +1,28 @@
+{
+  "answer": {
+    "effect": "none",
+    "model": "muse-spark-1.3",
+    "mood": "rattled",
+    "repaired": [],
+    "source": "meta",
+    "text": [
+      "YES, YES, OFF THE QUAY!",
+      "WHERE IS IT, WHERE IS IT?"
+    ]
+  },
+  "backend": "meta",
+  "created_at": "2026-10-27T21:52:46Z",
+  "key": "126f5a86c946e5cde0ca671ff33eea35608d37f372062075bf025ea5c2ee0d2d",
+  "kind": "talk",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "quay_townsperson",
+    "player_chars": 22,
+    "player_sha256": "08ec7e979285bf75ae30c96b2465062529521f5fd699d81a9d43fc826c113e1a",
+    "scene": "npc"
+  },
+  "source": "meta"
+}

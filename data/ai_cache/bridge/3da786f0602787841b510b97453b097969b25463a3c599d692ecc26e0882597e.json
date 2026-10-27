@@ -1,0 +1,28 @@
+{
+  "answer": {
+    "effect": "none",
+    "model": "muse-spark-1.3",
+    "mood": "rattled",
+    "repaired": [],
+    "source": "meta",
+    "text": [
+      "WHO IS STILL OUT THERE?",
+      "WHO IS STILL OUT THERE?"
+    ]
+  },
+  "backend": "meta",
+  "created_at": "2026-10-27T21:53:30Z",
+  "key": "3da786f0602787841b510b97453b097969b25463a3c599d692ecc26e0882597e",
+  "kind": "talk",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "quay_townsperson",
+    "player_chars": 29,
+    "player_sha256": "95f85221940577ad14e5967af3d8e679680b2651e36ecbb23f22c6abf0ba4a83",
+    "scene": "npc"
+  },
+  "source": "meta"
+}

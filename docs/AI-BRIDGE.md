@@ -73,9 +73,12 @@ fails if the copy drifts, so the prompt has one home and the data file is a veri
 It also holds `system_local`, a shorter variant used only on the open weights rung, for a reason that is a
 measurement: the full 2408 character prompt made a warm `phi-4-mini` answer in 20 to 27 seconds on this PC, and
 made two 2B reasoning models spend their whole token budget thinking (`finish_reason: length`, empty content).
-The 1018 character local prompt answers in the same shape in seconds. Meta always gets the full text. The local
+The 1004 character local prompt answers in the same shape in seconds. Meta always gets the full text. The local
 prompt's example lines are deliberately neutral, because an example that reads like a real reply gets copied
-verbatim (measured: every answer opened with the example's line until it stopped being one).
+verbatim (measured: every answer opened with the example's line until it stopped being one). They are now two
+placeholders, `<LINE 1>` and `<LINE 2>`: a recorded answer carried the older example's `I AM LISTENING.` into
+the box the player reads, and a placeholder holding angle brackets is outside the alphabet, so a model that
+copies it is refused by the cleaner instead of shown (card t_1ef2d52d).
 
 ## What was measured, on this PC
 

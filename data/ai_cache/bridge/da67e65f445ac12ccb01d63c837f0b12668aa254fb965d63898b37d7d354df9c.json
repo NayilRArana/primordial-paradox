@@ -1,0 +1,28 @@
+{
+  "answer": {
+    "effect": "none",
+    "model": "muse-spark-1.3",
+    "mood": "rattled",
+    "repaired": [],
+    "source": "meta",
+    "text": [
+      "WHERE IS THE WAY OFF?",
+      "WHERE IS THE WAY OFF?"
+    ]
+  },
+  "backend": "meta",
+  "created_at": "2026-10-27T21:53:48Z",
+  "key": "da67e65f445ac12ccb01d63c837f0b12668aa254fb965d63898b37d7d354df9c",
+  "kind": "talk",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "quay_townsperson",
+    "player_chars": 28,
+    "player_sha256": "5dd1c6d9ffeb3a377850156a90440a3cb7dd2b4cec3303316d5d746acfe9f908",
+    "scene": "npc"
+  },
+  "source": "meta"
+}

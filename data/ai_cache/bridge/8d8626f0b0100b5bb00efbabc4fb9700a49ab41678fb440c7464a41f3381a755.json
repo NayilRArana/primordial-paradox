@@ -1,0 +1,28 @@
+{
+  "answer": {
+    "effect": "none",
+    "model": "muse-spark-1.3",
+    "mood": "guarded",
+    "repaired": [],
+    "source": "meta",
+    "text": [
+      "I HAD ONE ON THE DRIVE.",
+      "THANK YOU FOR NOTICING."
+    ]
+  },
+  "backend": "meta",
+  "created_at": "2026-10-27T21:50:28Z",
+  "key": "8d8626f0b0100b5bb00efbabc4fb9700a49ab41678fb440c7464a41f3381a755",
+  "kind": "talk",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "konrad",
+    "player_chars": 24,
+    "player_sha256": "546f10e3a0d107f5c4c5b33cef315ae873030af6ad3bf57b4d09abce5af4a836",
+    "scene": "npc"
+  },
+  "source": "meta"
+}
