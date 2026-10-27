@@ -13,8 +13,11 @@ to run the mapped selection rather than the whole suite. The numbers themselves 
 next to the cap they justify, because a test that invented its own copy of them would be a second
 source of truth and the first one to go stale.
 
-The config is the manager tree's, so a checkout of this project alone has nothing to read: every row
-skips there, loudly, rather than passing on an absence.
+The config is the manager tree's, so a checkout of this project alone has nothing to read, and every
+row FAILS there naming the path (card t_5f0a896e). It used to skip, which is the shape this project
+already paid for once: a row that reports healthy while it read nothing is indistinguishable from one
+that checked a cap. tools/check_test_inputs.py rule 1 forbids a skip guarded by a path existence test
+for exactly that reason, so the guard's verdict is a red with the missing path in it.
 """
 
 from __future__ import annotations
@@ -36,16 +39,24 @@ CAP_MULTIPLIER = 1.5
 
 
 def project_entry():
-    """(the config, the primordial-paradox entry), or skip when the manager tree is not here."""
+    """(the config, the primordial-paradox entry); fails naming the path when the manager tree is absent.
+
+    The rule this file runs is written in the manager tree, so a checkout that lacks that tree cannot
+    run it. Following it is a red that names the path, not a skip: card t_5f0a896e, and rule 1 in
+    tools/check_test_inputs.py, both exist because a skip here reports healthy while reading nothing.
+    """
     if not os.path.exists(CONFIG):
-        pytest.skip("the gate's suite_config.json is not in this tree (%s); the manager tree owns it"
-                    % CONFIG)
+        pytest.fail(
+            "the gate's suite_config.json is not in this tree (%s). The cap numbers this file checks "
+            "live in the manager tree, so these rows cannot reach a verdict without it; run the suite "
+            "from a checkout of <workspace>/Shared." % CONFIG)
     with open(CONFIG, encoding="utf-8") as handle:
         config = json.load(handle)
     for entry in config.get("projects", []):
         if entry.get("name") == "primordial-paradox":
             return config, entry
-    pytest.skip("suite_config.json carries no primordial-paradox entry")
+    pytest.fail("suite_config.json carries no primordial-paradox entry (%s), so no cap is declared "
+                "for this project and nothing can be checked" % CONFIG)
 
 
 def measurements(entry):
