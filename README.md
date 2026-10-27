@@ -41,7 +41,7 @@ Art in this build was generated with Muse Image 1.0 and cut out with SAM 3.1, us
 
 ### Meta in the pipeline
 
-`tools/meta_art.py` runs one asset from prompt to NES frame and keeps every step beside the finished picture, so a reader can check the Meta call instead of taking it on trust. The reference run is the title backdrop, and the files it left are tracked in `data/meta_art_reference/title_backdrop_c1`, so a fresh clone holds the same evidence without running anything. The tool writes every run to `output/meta_art/title_backdrop/c1` too, which is a local output directory that git ignores:
+`tools/meta_art.py` runs one asset from prompt to NES frame and keeps every step beside the finished picture, so a reader can check the Meta call instead of taking it on trust. The reference run is the title backdrop, and the files it left are tracked in the project's records folder, `knowledge/meta_art_reference/title_backdrop_c1`, so a fresh clone holds the same evidence without running anything. The tool writes every run to `output/meta_art/title_backdrop/c1` too, which is a local output directory that git ignores:
 
 | step | file beside it | measured |
 | --- | --- | --- |
@@ -50,6 +50,8 @@ Art in this build was generated with Muse Image 1.0 and cut out with SAM 3.1, us
 | `sam-3.1` asked for "the temple" | `sam_mask.json` | 0.0025 USD, the answer was empty, so no mask was written |
 | the frame at 256 by 240 | `frame_nes.png` | 4 colours, 960 tiles |
 | concept beside frame | `comparison.png` | 96.75 percent of pixels changed, mean Delta E 19.59 |
+
+The tracked folder holds `request.json`, `cached_response.json`, `sam_mask.json`, `frame_nes.png`, `comparison.png` and the run's own record of itself, `evidence.json`, so the whole chain from prompt to frame is in the clone. `concept.png`, the 1024 by 1024 picture the frame was cut from, stays in the local run folder at 2.6 MB and is not tracked.
 
 That frame passes the project's NES limits: `tools/nes_check.py` passes it at 256 by 240 and 960 tiles with the backdrop declared `$0F`; `tools/palette_synergy.py --gate` reports 0 gated failures across its 10 scene entries; `nes_composite_check.check_frame()` reports 0 problems in its palette, background and screen sections. An empty segmentation answer is recorded as a missing cut and never drawn as a guessed silhouette. Two further assets, the quay at night and the ship deck, are queued on the same chain and are not rendered yet.
 

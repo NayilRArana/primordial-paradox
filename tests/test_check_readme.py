@@ -13,6 +13,7 @@ being true. Three kinds of test here:
 
 from __future__ import annotations
 
+import json
 import os
 
 import check_readme
@@ -146,6 +147,48 @@ def test_the_exempt_run_output_is_printed_with_its_reason(capsys):
     # the exemption is not a blanket rule over the ignored folder
     assert check_readme.check_paths(["output/meta_art/some_other_run/c1"], ROOT) == [
         "output/meta_art/some_other_run/c1"]
+
+
+def test_the_reference_meta_run_is_tracked_so_a_fresh_clone_shows_it():
+    """Card t_c398ddd1. The exemption keeps the check green; this test says the evidence is still readable.
+
+    The exemption above answers "why is this path not on disk", not "can a judge see the run". The
+    reference run's small files are tracked under knowledge/ and the README names that folder, so a
+    clone holds the run itself. The frame is read through its own PNG header, and the answers through
+    their model fields, so the table in the README cannot claim a run that is not in the tree.
+    """
+    folder = os.path.join(ROOT, "knowledge", "meta_art_reference", "title_backdrop_c1")
+    for name in ("request.json", "cached_response.json", "sam_mask.json", "evidence.json",
+                 "frame_nes.png", "comparison.png"):
+        assert os.path.exists(os.path.join(folder, name)), "the tracked reference run is missing %s" % name
+
+    assert check_readme.check_paths(["knowledge/meta_art_reference/title_backdrop_c1"], ROOT) == []
+
+    with open(os.path.join(ROOT, "README.md"), encoding="utf-8") as fh:
+        readme = fh.read()
+    assert "knowledge/meta_art_reference/title_backdrop_c1" in readme, (
+        "the README does not point a judge at the tracked reference run")
+
+    with open(os.path.join(folder, "request.json"), encoding="utf-8") as fh:
+        assert json.load(fh)["model"] == "muse-image-1.0"
+    with open(os.path.join(folder, "cached_response.json"), encoding="utf-8") as fh:
+        answer = json.load(fh)
+    assert answer["model"] == "muse-image-1.0" and answer["network"] is True, (
+        "the tracked answer does not say it came from the live API, so the README's network true is unchecked")
+    assert answer["recorded_at"] in readme, (
+        "the README table does not carry the tracked answer's own timestamp")
+    with open(os.path.join(folder, "sam_mask.json"), encoding="utf-8") as fh:
+        sam = json.load(fh)
+    assert sam["model"] == "sam-3.1"
+    assert sam["masks"] == [] and sam["boxes"] == [], "the tracked segmentation answer claims a mask it never got"
+
+    with open(os.path.join(folder, "frame_nes.png"), "rb") as fh:
+        header = fh.read(24)
+    assert header[:8] == b"\x89PNG\r\n\x1a\n", "frame_nes.png is not a PNG"
+    width = int.from_bytes(header[16:20], "big")
+    height = int.from_bytes(header[20:24], "big")
+    assert (width, height) == (256, 240), (
+        "the tracked frame is %d by %d, not the NES frame at 256 by 240" % (width, height))
 
 
 # --------------------------------------------------------------------------- 2. commands

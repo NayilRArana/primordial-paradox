@@ -1,0 +1,14 @@
+{
+  "backend": "meta",
+  "boxes": [],
+  "cached": false,
+  "image_path": "<repo>\\output\\meta_art\\title_backdrop\\c1\\concept.png",
+  "kind": "segment",
+  "masks": [],
+  "mode": "record",
+  "model": "sam-3.1",
+  "note": "box and mask parsed from the documented special token grammar (dev.meta.ai/docs/sam/reading-segmentation, read 2026-10-26); the raw text is always returned, and a line the parser cannot read yields [] rather than a guess",
+  "objects": [],
+  "prompt": "the temple",
+  "text": ""
+}

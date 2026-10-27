@@ -1,0 +1,120 @@
+{
+  "asset": "title_backdrop",
+  "candidate": "c1",
+  "problems": [],
+  "prompt": "NES style title screen backdrop for a 1989 adventure about two Greek houses, a marble temple front with cracked columns at night, a low mountain ridge behind it, deep indigo sky, late NES era 8 bit art, bold black 1 pixel outlines on every form, three tone shading lit from the top left, detailed tiles on a 16x16 grid, restricted palette of about fourteen colours, cold grey stone against black, strong readable silhouette, no text, no logo, no characters",
+  "scene": "title",
+  "size": "1024x1024",
+  "spend": [
+    {
+      "backend": "meta",
+      "basis": "LIST",
+      "candidate": "c1",
+      "card": "t_9332fe42",
+      "cost": "cost_usd=0.01",
+      "kind": "image",
+      "model": "muse-image-1.0",
+      "network": "True",
+      "notes": "response usage keys: input_tokens, output_tokens, total_tokens",
+      "when": "2026-10-27T01:58:17-07:00"
+    },
+    {
+      "backend": "meta",
+      "basis": "LIST",
+      "candidate": "c1",
+      "card": "t_9332fe42",
+      "cost": "cost_usd=0.0025",
+      "kind": "segment",
+      "model": "sam-3.1",
+      "network": "True",
+      "notes": "response usage keys: none",
+      "when": "2026-10-27T01:58:21-07:00"
+    }
+  ],
+  "steps": {
+    "comparison": "output/meta_art/title_backdrop/c1/comparison.png",
+    "convert": {
+      "accepted": false,
+      "allowed_entries": 9,
+      "changed_percent": 96.75,
+      "colours_after": 4,
+      "colours_before": 13843,
+      "free_mean_delta_e": 18.61,
+      "max_delta_e": 47.0,
+      "mean_delta_e": 19.59,
+      "out": "output/meta_art/title_backdrop/c1/frame_nes.png",
+      "scene": "title",
+      "sheet": "output/meta_art/title_backdrop/c1/frame_nes_sheet.png"
+    },
+    "cut": {
+      "path": null,
+      "why": "no box in the SAM answer, so no silhouette was written"
+    },
+    "gates": [
+      {
+        "argv": [
+          "<home>\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+          "<repo>\\tools\\nes_check.py",
+          "<repo>\\output/meta_art/title_backdrop/c1/frame_nes.png",
+          "--type",
+          "background",
+          "--backdrop",
+          "$0F"
+        ],
+        "exit_code": 0,
+        "gate": "nes_check",
+        "passed": true,
+        "tail": [
+          "<repo>\\output\\meta_art\\title_backdrop\\c1\\frame_nes.png  256x240  960 tiles  4 colours  PASS",
+          "  backdrop #000000 (declared)",
+          "  palette: data\\nes_palette.json, the 2C02 palette (64 colours)"
+        ]
+      },
+      {
+        "exit_code": 0,
+        "gate": "palette_synergy (background_report)",
+        "passed": true,
+        "problems": 0,
+        "tail": [
+          "no background problem: 3 colours per area, <=4 palettes, all 2C02 members"
+        ]
+      },
+      {
+        "exit_code": 0,
+        "gate": "nes_audit_all (audit_one)",
+        "passed": true,
+        "problems": 0,
+        "tail": [
+          "tools/nes_composite_check.py check_frame(): 0 problem(s) {}"
+        ]
+      }
+    ],
+    "image": {
+      "backend": "meta",
+      "cache_copied_to": "output/meta_art/title_backdrop/c1/cached_response.json",
+      "cache_entry": "data/ai_cache/91212a6249c6fa68d09f6308de71602a4e3eb74bb4c98dcf887b6fd06f7b1f9c.json",
+      "cache_network": true,
+      "cached": false,
+      "mode": "record",
+      "model": "muse-image-1.0",
+      "network": true,
+      "path": "output/meta_art/title_backdrop/c1/concept.png",
+      "reported_height": null,
+      "reported_width": null,
+      "revised_prompt": null
+    },
+    "segment": {
+      "backend": "meta",
+      "boxes": [],
+      "cached": false,
+      "masks_found": 0,
+      "mode": "record",
+      "model": "sam-3.1",
+      "note": "box and mask parsed from the documented special token grammar (dev.meta.ai/docs/sam/reading-segmentation, read 2026-10-26); the raw text is always returned, and a line the parser cannot read yields [] rather than a guess",
+      "noun": "the temple",
+      "text": ""
+    }
+  },
+  "style": "B",
+  "when": "2026-10-27T01:58:02-07:00"
+}
