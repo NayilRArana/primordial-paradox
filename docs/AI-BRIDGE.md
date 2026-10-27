@@ -48,9 +48,12 @@ implements a fourth, `fallback`. A game that must always answer needs a rung tha
 encounter's own line as `replay` would be a lie about where it came from. The fourth label is the honest shape
 of the same idea.
 
-The whole request runs under one deadline, `PP_TALK_TIMEOUT` seconds (default 6). The two live rungs get shares
-of what is left; the two file rungs keep a small reservation. A rung that runs past its share is abandoned (a
-daemon thread, so it cannot hold the door open) and the next one answers.
+The whole request runs under one deadline, `PP_TALK_TIMEOUT` seconds. The default is 6 s, and it grows to 12 s
+when a Meta key is present (Demiurge decision 2026-10-27, handoff t_3da6e753): muse-spark-1.3 answers the fight
+prompt in 8.3 to 9.7 s, so a 6 s budget can never carry it. With a key the Meta rung keeps all but a 0.6 s
+reserve for the file rungs instead of a half share; the two live rungs otherwise get shares of what is left and
+the two file rungs keep a small reservation. A rung that runs past its share is abandoned (a daemon thread, so it
+cannot hold the door open) and the next one answers.
 
 Three defects were found and fixed after the first measurements, and each has a test that names it:
 

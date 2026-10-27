@@ -110,7 +110,7 @@ def test_data_file_is_complete(data):
     assert data["hear_path"] == "/hear"
     assert data["mode_default"] in ("live", "replay")
     assert data["tries_max"] == 3
-    assert data["timeout_steps"] > 6 * 60, "the game must outwait the bridge's own 6 second deadline"
+    assert data["timeout_steps"] > 12 * 60, "the game must outwait the bridge's own 12 second deadline (key present)"
     assert data["chars_max"] == 120
     assert data["cols"] == 28
     assert data["rows_shown"] == 2

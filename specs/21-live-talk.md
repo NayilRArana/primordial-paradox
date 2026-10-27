@@ -55,9 +55,10 @@ Rules
 2. On a send the box closes, `live_tries` goes up by one, the stage becomes `wait`, and the message window shows
    `* .`, `* . .`, `* . . .` one dot per 15 steps and no more than three. Not a spinner: a spinner at 60 steps a
    second says the game is busy, three dots say the game is waiting.
-3. The budget is 420 steps (7 s). It must exceed `tools/ai_bridge.py`'s own 6 second rung deadline, or the game would
-   cut answers the bridge was about to deliver. At 421 with nothing in hand the fallback answers, the turn continues,
-   and a late answer is discarded by the id check in the async handler.
+3. The budget is 780 steps (13 s). It must exceed `tools/ai_bridge.py`'s own rung deadline (6 s, or 12 s when a Meta
+   key is present, which is the budget muse-spark-1.3 needs), or the game would cut answers the bridge was about to
+   deliver. At 781 with nothing in hand the fallback answers, the turn continues, and a late answer is discarded by
+   the id check in the async handler.
 4. One request in flight, always. A second send while one is out is refused and logged.
 5. The battle clock never pauses for the request, and talking never costs the player a hit.
 
@@ -167,7 +168,7 @@ tests/test_no_network_in_build.py -q` (13 checks).
 2. Tape: every recorded delta is a delta the judge's own effect map can produce for that verdict, every reply line is
    1 to 28 characters and drawable, the three demo lines are recorded, the miss row is labelled `fallback`.
 3. Line: typing, the sheet filter, delete, the 120 cap, the two row window and the empty submit.
-4. Replay timing: the deferred answer lands at the recorded latency, and the timeout's fallback lands at exactly 420
+4. Replay timing: the deferred answer lands at the recorded latency, and the timeout's fallback lands at exactly 780
    steps, once, with the box out of the way.
 5. Meter: +20 on 95 leaves 100 and the delta printed is 5; no answer moves the meter outside 0..100.
 6. Three tries: the fourth is refused with the note, and the authored options still reach the spare threshold after.

@@ -294,6 +294,41 @@ def test_a_spent_budget_still_ends_in_an_answer_not_an_exception(talk):
         "a model rung with no budget left must say so instead of being called")
 
 
+def test_the_default_budget_grows_to_twelve_seconds_when_a_meta_key_is_present(cache_dir, judge, monkeypatch):
+    monkeypatch.delenv("PP_TALK_TIMEOUT", raising=False)
+    monkeypatch.setenv("META_API_KEY", "test-key-value")
+    box = ai_bridge.TalkJudge(cache=ai_bridge.Cache(cache_dir), judge=judge)
+    assert box.budget == 12.0, "a Meta key must grow the whole-request budget to 12 s"
+
+
+def test_the_default_budget_stays_six_seconds_without_a_key(cache_dir, judge, monkeypatch):
+    monkeypatch.delenv("PP_TALK_TIMEOUT", raising=False)
+    monkeypatch.delenv("META_API_KEY", raising=False)
+    monkeypatch.delenv("MODEL_API_KEY", raising=False)
+    box = ai_bridge.TalkJudge(cache=ai_bridge.Cache(cache_dir), judge=judge)
+    assert box.budget == 6.0, "no Meta key means the shipped 6 s budget"
+
+
+def test_the_meta_rung_keeps_the_budget_minus_the_file_reserve_when_a_key_is_present(cache_dir, judge, monkeypatch):
+    monkeypatch.delenv("PP_TALK_TIMEOUT", raising=False)
+    monkeypatch.setenv("META_API_KEY", "test-key-value")
+    box = ai_bridge.TalkJudge(cache=ai_bridge.Cache(cache_dir), judge=judge)
+    # muse-spark-1.3 needs up to ~9.7 s, so a half share of 6 s would abandon it. With a key the rung keeps all
+    # but the 0.6 s file-rung reserve; without a key it keeps the half share it always has (and is skipped anyway).
+    assert box._share("meta", box.budget) == pytest.approx(box.budget - 0.6)
+    assert box._share("meta", box.budget) >= 9.7, "the share must cover muse-spark-1.3's measured worst case"
+    monkeypatch.delenv("META_API_KEY", raising=False)
+    no_key = ai_bridge.TalkJudge(cache=ai_bridge.Cache(cache_dir), judge=judge)
+    assert no_key._share("meta", no_key.budget) == pytest.approx(no_key.budget * 0.5)
+
+
+def test_pp_talk_timeout_still_overrides_the_key_aware_default(cache_dir, judge, monkeypatch):
+    monkeypatch.setenv("META_API_KEY", "test-key-value")
+    monkeypatch.setenv("PP_TALK_TIMEOUT", "20")
+    box = ai_bridge.TalkJudge(cache=ai_bridge.Cache(cache_dir), judge=judge)
+    assert box.budget == 20.0, "an explicit PP_TALK_TIMEOUT wins over the key-aware default"
+
+
 def test_a_refused_reply_falls_to_the_next_rung(talk):
     def refuses(task, deadline):
         raise ai_bridge.BadReply("refusal_phrase:as an ai")

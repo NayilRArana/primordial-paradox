@@ -64,7 +64,7 @@ function pp_talk_live_data() {
         rows_shown: 2,
         shown_max: 60,
         tries_max: 3,
-        timeout_steps: 420,
+        timeout_steps: 780,
         blink_steps: 30,
         dots_steps: 15,
         voice_enabled: true,
@@ -80,7 +80,7 @@ function pp_talk_live_data() {
         hint_keys: "TYPE  ENTER SEND  ESC BACK",
         hint_grid: "D PAD MOVE  A TYPE  START SEND",
         hint_voice: "HOLD F5 TO SPEAK",
-        hint_wait: "HE IS LISTENING",
+        hint_wait: "THE SAILOR CONSIDERS IT",
         tries_note: "That is enough talking.",
         empty_note: "Say something first.",
         will_max: 100,
@@ -165,7 +165,7 @@ function pp_talk_live_data() {
     if (_d.cols < 8) _d.cols = 28;
     if (_d.rows_shown < 1) _d.rows_shown = 2;
     if (_d.tries_max < 1) _d.tries_max = 3;
-    if (_d.timeout_steps < 60) _d.timeout_steps = 420;
+    if (_d.timeout_steps < 60) _d.timeout_steps = 780;
     if (_d.blink_steps < 1) _d.blink_steps = 30;
 
     global.pp_talk_live_table = _d;

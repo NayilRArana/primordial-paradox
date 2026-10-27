@@ -39,11 +39,11 @@
   },
 
   "timings": {
-    "timeout_steps": 420,
+    "timeout_steps": 780,
     "cursor_blink_steps": 30,
     "dots_step_steps": 15,
     "after_reply_steps": 8,
-    "note": "420 steps is 7 seconds at 60 steps a second: tools/ai_bridge.py gives its whole rung ladder PP_TALK_TIMEOUT seconds (default 6) and a game that gave up before the bridge would turn every slow but good answer into a fallback. The budget must exceed the bridge's deadline, and this is the one number to retune if the bridge's own timeout moves."
+    "note": "780 steps is 13 seconds at 60 steps a second: tools/ai_bridge.py gives its whole rung ladder PP_TALK_TIMEOUT seconds (default 6, or 12 when a Meta key is present, which is the budget muse-spark-1.3 needs) and a game that gave up before the bridge would turn every slow but good answer into a fallback. The budget must exceed the bridge's deadline, and this is the one number to retune if the bridge's own timeout moves."
   },
 
   "voice": {
@@ -71,7 +71,7 @@
     "hint_keys": "TYPE  ENTER SEND  ESC BACK",
     "hint_grid": "D PAD MOVE  A TYPE  B DEL",
     "hint_voice": "HOLD F5 TO SPEAK",
-    "hint_wait": "HE IS LISTENING",
+    "hint_wait": "THE SAILOR CONSIDERS IT",
     "tries_note": "That is enough talking.",
     "empty_note": "Say something first.",
     "note": "Every string the box draws. 28 columns at most, checked by the test: the sheet is 8 pixels a glyph and the window is 224 interior pixels. The strings are capitals because the sheet's capitals are the shape the first fight's authored options already use."

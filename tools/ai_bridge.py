@@ -56,7 +56,8 @@ The ladder, in the order it is tried
     4. fallback       data/encounters/all.json's talk.fallback_pool, uppercased and fitted to the box. This is
                       the only rung that cannot fail.
 
-    Every rung runs under one deadline, PP_TALK_TIMEOUT seconds for the whole request (default 6). A rung that
+    Every rung runs under one deadline, PP_TALK_TIMEOUT seconds for the whole request (default 6, or 12 when a
+    Meta key is present, so muse-spark-1.3 can answer). A rung that
     runs past its share is abandoned and the next one answers; the late thread is a daemon and dies with the
     process. The measured table is in docs/AI-BRIDGE.md.
 
@@ -91,7 +92,7 @@ Voice
 Environment, read at call time, never at import
     PP_BRIDGE_HOST       default 127.0.0.1, and any other value is refused at startup
     PP_BRIDGE_PORT       default 8791
-    PP_TALK_TIMEOUT      seconds for a whole /talk request, default 6
+    PP_TALK_TIMEOUT      seconds for a whole /talk request, default 6, or 12 when a Meta key is present
     PP_TALK_MAX_LINES    optional override of the judge file's line count
     PP_AI_MODE           record (default) | replay | live, handed to tools/meta_client.py
     PP_AI_BACKEND        meta (default) | gemini | mock, handed to tools/meta_client.py
@@ -152,6 +153,10 @@ DEFAULT_BAKE = os.path.join(DATA, "ai_bake_open", "replies.json")
 LOOPBACK_HOST = "127.0.0.1"
 DEFAULT_PORT = 8791
 DEFAULT_TALK_TIMEOUT = 6.0
+# When a Meta key is present the live Meta rung can answer, and muse-spark-1.3 needs 8.3 to 9.7 s (measured
+# 2026-10-26), so the whole-request budget grows to 12 s (Demiurge decision 2026-10-27, handoff t_3da6e753). Without
+# a key the shipped 6 s promise holds, because the only live rung is the local model and it answers in under 6 s.
+DEFAULT_TALK_TIMEOUT_KEY = 12.0
 DEFAULT_LOCAL_URL = "http://127.0.0.1:51235/v1"
 DEFAULT_WHISPER_MODEL = "tiny"
 SAMPLE_RATE = 16000
@@ -220,6 +225,22 @@ def env_int(name, default):
         return int(env(name, str(default)))
     except (TypeError, ValueError):
         return int(default)
+
+
+def meta_key_present():
+    """Whether a Meta API key is in the environment, the same check the meta rung makes before spending budget.
+
+    Imported lazily so this module keeps its light import and the tests can drive the client. The meta rung
+    already refuses without a key before its share matters, so the budget and the rung agree by construction.
+    """
+    try:
+        import meta_client
+    except Exception:
+        return False
+    try:
+        return bool(meta_client.key_present())
+    except Exception:
+        return False
 
 
 def read_json(path):
@@ -1011,8 +1032,9 @@ class TalkJudge:
         self.encounters = load_encounters(self.root)
         self.personas = load_personas(self.root)
         self.cache = cache or Cache()
-        self.budget = float(budget if budget is not None else env_float("PP_TALK_TIMEOUT",
-                                                                       DEFAULT_TALK_TIMEOUT))
+        self._meta_key = meta_key_present()
+        _default = DEFAULT_TALK_TIMEOUT_KEY if self._meta_key else DEFAULT_TALK_TIMEOUT
+        self.budget = float(budget if budget is not None else env_float("PP_TALK_TIMEOUT", _default))
         self._injected = sources
         self._lock = threading.Lock()
         self._bake = None
@@ -1100,6 +1122,10 @@ class TalkJudge:
         almost the whole budget, which is what lets a 4 s answer land inside a 6 s promise.
         """
         if name == "meta":
+            if self._meta_key:
+                # With a key the Meta rung is the live rung the recording wants, and muse-spark-1.3 needs up to
+                # ~9.7 s of the 12 s budget, so it keeps all but the file-rung reserve instead of a half share.
+                return max(0.05, remaining - 0.6)
             return max(0.05, min(remaining * 0.5, remaining - 0.6))
         if name in FILE_RUNGS:
             # Never less than the floor: a fallback that is refused for want of budget is the one failure the
