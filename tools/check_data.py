@@ -554,12 +554,44 @@ class Checker:
             path = "items[%d]" % index
             name = self.require(row, "id", "str", filename, path)
             self.require(row, "name", "str", filename, path)
-            heal = self.require(row, "heal", "int", filename, path)
-            if heal is not None:
-                self.in_range(heal, 1, 99, filename, path + ".heal")
-            carry = self.require(row, "max_carry", "int", filename, path)
-            if carry is not None:
-                self.in_range(carry, 1, 99, filename, path + ".max_carry")
+            # Card PP-KNIFE (t_503707c8): an item is a consumable unless its row says otherwise. A weapon is not a
+            # thing with a heal value and a carry limit, it is a thing with a damage band, a hit count and the line
+            # the battle screen prints, so the row names its kind and is checked as what it says it is. A row with
+            # no kind keeps the consumable rule it has always had, which is why salve needed no edit.
+            kind = self.want(row, "kind", "str", filename, path)
+            if kind is not None and kind not in ("consumable", "weapon"):
+                self.error(filename, path + ".kind", "must be consumable or weapon")
+            if kind == "weapon":
+                self.require(row, "description", "str", filename, path)
+                self.require(row, "attack_line", "str", filename, path)
+                self.require(row, "sprite", "str", filename, path)
+                low = self.require(row, "damage_min", "int", filename, path)
+                high = self.require(row, "damage_max", "int", filename, path)
+                if low is not None and high is not None and low > high:
+                    self.error(filename, path + ".damage", "min %s is above max %s" % (low, high))
+                if low is not None:
+                    self.in_range(low, 1, 99, filename, path + ".damage_min")
+                if high is not None:
+                    self.in_range(high, 1, 99, filename, path + ".damage_max")
+                hits = self.require(row, "hits", "int", filename, path)
+                if hits is not None:
+                    self.in_range(hits, 1, 9, filename, path + ".hits")
+                chance = self.require(row, "hit_chance", "int", filename, path)
+                if chance is not None:
+                    self.in_range(chance, 1, 100, filename, path + ".hit_chance")
+                frames = self.want(row, "slash_frames", "list", filename, path)
+                if isinstance(frames, list):
+                    for frame_index, frame in enumerate(frames):
+                        if not isinstance(frame, int) or frame < 1:
+                            self.error(filename, "%s.slash_frames[%d]" % (path, frame_index),
+                                       "must be a frame number, 1 or above (0 is the icon)")
+            else:
+                heal = self.require(row, "heal", "int", filename, path)
+                if heal is not None:
+                    self.in_range(heal, 1, 99, filename, path + ".heal")
+                carry = self.require(row, "max_carry", "int", filename, path)
+                if carry is not None:
+                    self.in_range(carry, 1, 99, filename, path + ".max_carry")
             if isinstance(name, str):
                 if name in ids["item"] and ids["item"][name] is not row:
                     self.error(filename, path + ".id", "duplicate id %r" % name)
@@ -902,6 +934,15 @@ class Checker:
             if mult is not None:
                 self.in_range(mult, 0.5, 3.0, filename, path + ".power_multiplier")
             self.require(row, "sprite", "str", filename, path)
+            # Card PP-KNIFE: a character may name the item row it carries in its hand. The reference is checked like
+            # any other, so a party file that points at a weapon id no item defines fails here instead of drawing a
+            # fight with no attack line. Optional: a character with no weapon simply has none.
+            weapon = self.want(row, "weapon", "str", filename, path)
+            if weapon is not None:
+                self.ref(ids, "item", weapon, filename, path + ".weapon")
+                carried = ids["item"].get(weapon)
+                if isinstance(carried, dict) and carried.get("kind", "") not in ("", "weapon"):
+                    self.error(filename, path + ".weapon", "%r is a %s, not a weapon" % (weapon, carried.get("kind")))
             start = self.want(row, "starting_items", "list", filename, path)
             if start is not None:
                 for item_index, item in enumerate(start):

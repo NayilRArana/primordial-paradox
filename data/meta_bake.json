@@ -1350,7 +1350,7 @@
         "card": "percy",
         "pool": "weak",
         "index": 0,
-        "source_text": "The sea hears you. So do I.",
+        "source_text": "THE SEA HEARS YOU. SO DO I.",
         "text": [
           "THE SEA HEARS YOU. SO DO I."
         ],
@@ -1458,10 +1458,9 @@
         "card": "percy",
         "pool": "neutral",
         "index": 1,
-        "source_text": "Words. The sea has heard worse.",
+        "source_text": "WORDS. THE SEA HEARS WORSE.",
         "text": [
-          "WORDS. THE SEA HAS HEARD",
-          "WORSE."
+          "WORDS. THE SEA HEARS WORSE."
         ],
         "mood": "calm",
         "effect": "nudge",
@@ -1566,7 +1565,7 @@
         "card": "percy",
         "pool": "strong",
         "index": 0,
-        "source_text": "Do not dress me in titles.",
+        "source_text": "DO NOT DRESS ME IN TITLES.",
         "text": [
           "DO NOT DRESS ME IN TITLES."
         ],
@@ -1579,8 +1578,7 @@
       "id": "fight/percy_phase2/1",
       "scene": "fight",
       "text": [
-        "WINDED. DO NOT MISTAKE IT",
-        "FOR SOFT."
+        "WINDED. DO NOT CALL IT SOFT."
       ],
       "mood": "warm",
       "effect": "soften",
@@ -1674,10 +1672,9 @@
         "card": "percy_phase2",
         "pool": "weak",
         "index": 0,
-        "source_text": "Winded. Do not mistake it for soft.",
+        "source_text": "Winded. Do not call it soft.",
         "text": [
-          "WINDED. DO NOT MISTAKE IT",
-          "FOR SOFT."
+          "WINDED. DO NOT CALL IT SOFT."
         ],
         "mood": "warm",
         "effect": "soften",
@@ -1783,10 +1780,9 @@
         "card": "percy_phase2",
         "pool": "neutral",
         "index": 1,
-        "source_text": "Words. The sea has heard worse.",
+        "source_text": "WORDS. THE SEA HEARS WORSE.",
         "text": [
-          "WORDS. THE SEA HAS HEARD",
-          "WORSE."
+          "WORDS. THE SEA HEARS WORSE."
         ],
         "mood": "calm",
         "effect": "nudge",
