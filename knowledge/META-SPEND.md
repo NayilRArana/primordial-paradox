@@ -2,7 +2,7 @@
 
 Every live Meta Model API call recorded in `data/ai_cache`, priced at the documented list price. This page is generated from the cache by `tools/meta_spend_ledger.py`; a replayed or mock answer is not in it, because it cost nothing and crossed no network.
 
-Generated 2026-10-27 03:49 UTC from 203 live cache entries (2026-10-27T00:02:47Z to 2026-10-27T03:47:44Z). The cache also holds 6 mock entries, which are not counted.
+Generated 2026-10-27 10:13 UTC from 274 live cache entries (2026-10-27T00:02:47Z to 2026-10-27T10:00:27Z). The cache also holds 11 mock entries, which are not counted.
 
 ## 1. Prices used, and where they come from
 
@@ -23,12 +23,12 @@ The token counts are the API's own `usage` object as it was stored with each ans
 | window | live calls | cost, USD |
 | --- | --- | --- |
 | A: live work recorded before this worker's first command (2026-10-27T00:02:47Z to just before 2026-10-27T01:43:26Z) | 118 | 1.3243 |
-| B: everything recorded from 2026-10-27T01:43:26Z to now | 85 | 1.0654 |
-| **all live calls in the cache** | **203** | **2.3897** |
+| B: everything recorded from 2026-10-27T01:43:26Z to now | 156 | 1.8825 |
+| **all live calls in the cache** | **274** | **3.2068** |
 
 A cache entry records the model, the request and the answer, and not which process or lane asked for it, so window B is a time window and not an attribution: it holds this worker's own calls and any other run that was live in the same minutes. The number that is exact is the total.
 
-The card's ceiling is 40.00 USD of measured spend. Measured: **2.3897 USD**, which is 5.97 percent of the ceiling. The cost inside window B (this worker's own calls plus any other live run in the same minutes) is 1.0654 USD.
+The card's ceiling is 40.00 USD of measured spend. Measured: **3.2068 USD**, which is 8.02 percent of the ceiling. The cost inside window B (this worker's own calls plus any other live run in the same minutes) is 1.8825 USD.
 
 ## 3. By kind and model
 
@@ -37,13 +37,13 @@ The card's ceiling is 40.00 USD of measured spend. Measured: **2.3897 USD**, whi
 | A | chat | muse-spark-1.3 | 111 | 49809 | 78130 | 260606 | 0 | 1.1816 |
 | A | segment | sam-3.1 | 2 | 0 | 0 | 0 | 0 | 0.0050 |
 | A | vision | muse-spark-1.3 | 5 | 10670 | 0 | 29272 | 0 | 0.1377 |
-| B | chat | muse-spark-1.3 | 75 | 53684 | 27507 | 187771 | 0 | 0.8693 |
+| B | chat | muse-spark-1.3 | 139 | 113688 | 35820 | 333699 | 0 | 1.5657 |
 | B | edit | muse-image-1.0 | 1 | 0 | 0 | 0 | 1 | 0.0100 |
-| B | image | muse-image-1.0 | 1 | 0 | 0 | 0 | 1 | 0.0100 |
-| B | segment | sam-3.1 | 1 | 0 | 0 | 0 | 0 | 0.0025 |
-| B | vision | muse-spark-1.3 | 7 | 13179 | 867 | 36948 | 0 | 0.1736 |
+| B | image | muse-image-1.0 | 2 | 0 | 0 | 0 | 2 | 0.0200 |
+| B | segment | sam-3.1 | 2 | 0 | 0 | 0 | 0 | 0.0050 |
+| B | vision | muse-spark-1.3 | 12 | 20962 | 867 | 60116 | 0 | 0.2818 |
 
-Live calls per kind, the number the card asks the cache to show is greater than zero for: chat 186, edit 1, image 1, segment 3, vision 12.
+Live calls per kind, the number the card asks the cache to show is greater than zero for: chat 250, edit 1, image 2, segment 4, vision 17.
 
 ## 4. Every live call, in the order it was made
 
@@ -252,6 +252,77 @@ Live calls per kind, the number the card asks the cache to show is greater than 
 | 2026-10-27T03:47:26Z | chat | muse-spark-1.3 | 342 | 753 | 4744 | 0.02070 |
 | 2026-10-27T03:47:34Z | chat | muse-spark-1.3 | 355 | 753 | 2285 | 0.01027 |
 | 2026-10-27T03:47:44Z | chat | muse-spark-1.3 | 350 | 753 | 3307 | 0.01461 |
+| 2026-10-27T04:44:25Z | chat | muse-spark-1.3 | 1023 | 0 | 1804 | 0.00895 |
+| 2026-10-27T04:44:59Z | chat | muse-spark-1.3 | 138 | 881 | 2541 | 0.01110 |
+| 2026-10-27T04:45:13Z | chat | muse-spark-1.3 | 1017 | 0 | 1692 | 0.00846 |
+| 2026-10-27T04:45:28Z | chat | muse-spark-1.3 | 1023 | 0 | 2544 | 0.01209 |
+| 2026-10-27T04:45:46Z | chat | muse-spark-1.3 | 1023 | 0 | 2488 | 0.01185 |
+| 2026-10-27T04:46:11Z | chat | muse-spark-1.3 | 1019 | 0 | 4274 | 0.01944 |
+| 2026-10-27T04:46:22Z | chat | muse-spark-1.3 | 1019 | 0 | 2337 | 0.01121 |
+| 2026-10-27T04:46:41Z | chat | muse-spark-1.3 | 1019 | 0 | 2225 | 0.01073 |
+| 2026-10-27T04:46:53Z | chat | muse-spark-1.3 | 1023 | 0 | 2610 | 0.01237 |
+| 2026-10-27T04:47:41Z | chat | muse-spark-1.3 | 12 | 1009 | 1393 | 0.00609 |
+| 2026-10-27T05:08:08Z | vision | muse-spark-1.3 | 1103 | 0 | 5199 | 0.02347 |
+| 2026-10-27T06:02:00Z | chat | muse-spark-1.3 | 1057 | 0 | 1416 | 0.00734 |
+| 2026-10-27T06:02:10Z | chat | muse-spark-1.3 | 1054 | 0 | 2328 | 0.01121 |
+| 2026-10-27T06:02:23Z | chat | muse-spark-1.3 | 1056 | 0 | 1616 | 0.00819 |
+| 2026-10-27T06:02:28Z | chat | muse-spark-1.3 | 1048 | 0 | 1594 | 0.00808 |
+| 2026-10-27T06:03:35Z | chat | muse-spark-1.3 | 1075 | 0 | 2049 | 0.01005 |
+| 2026-10-27T06:03:46Z | chat | muse-spark-1.3 | 1071 | 0 | 2922 | 0.01376 |
+| 2026-10-27T06:04:04Z | chat | muse-spark-1.3 | 1099 | 0 | 2389 | 0.01153 |
+| 2026-10-27T06:04:14Z | chat | muse-spark-1.3 | 1096 | 0 | 2300 | 0.01115 |
+| 2026-10-27T06:04:36Z | chat | muse-spark-1.3 | 1098 | 0 | 2172 | 0.01060 |
+| 2026-10-27T06:04:46Z | chat | muse-spark-1.3 | 1096 | 0 | 3015 | 0.01418 |
+| 2026-10-27T06:05:02Z | chat | muse-spark-1.3 | 345 | 753 | 2032 | 0.00918 |
+| 2026-10-27T06:05:08Z | chat | muse-spark-1.3 | 1094 | 0 | 1946 | 0.00964 |
+| 2026-10-27T08:58:17Z | image | muse-image-1.0 | 0 | 0 | 0 | 0.01000 |
+| 2026-10-27T08:58:21Z | segment | sam-3.1 | 0 | 0 | 0 | 0.00250 |
+| 2026-10-27T09:32:54Z | chat | muse-spark-1.3 | 1053 | 0 | 1599 | 0.00811 |
+| 2026-10-27T09:33:03Z | chat | muse-spark-1.3 | 1051 | 0 | 2652 | 0.01258 |
+| 2026-10-27T09:33:14Z | chat | muse-spark-1.3 | 296 | 753 | 1791 | 0.00809 |
+| 2026-10-27T09:33:20Z | chat | muse-spark-1.3 | 1046 | 0 | 1892 | 0.00935 |
+| 2026-10-27T09:33:33Z | chat | muse-spark-1.3 | 1073 | 0 | 1820 | 0.00908 |
+| 2026-10-27T09:33:43Z | chat | muse-spark-1.3 | 1075 | 0 | 3435 | 0.01594 |
+| 2026-10-27T09:33:58Z | chat | muse-spark-1.3 | 1096 | 0 | 1825 | 0.00913 |
+| 2026-10-27T09:34:03Z | chat | muse-spark-1.3 | 1096 | 0 | 1522 | 0.00784 |
+| 2026-10-27T09:34:26Z | chat | muse-spark-1.3 | 1095 | 0 | 3833 | 0.01766 |
+| 2026-10-27T09:34:35Z | chat | muse-spark-1.3 | 1100 | 0 | 2729 | 0.01297 |
+| 2026-10-27T09:34:48Z | chat | muse-spark-1.3 | 1095 | 0 | 1728 | 0.00871 |
+| 2026-10-27T09:34:57Z | chat | muse-spark-1.3 | 1093 | 0 | 2671 | 0.01272 |
+| 2026-10-27T09:51:00Z | vision | muse-spark-1.3 | 2237 | 0 | 4594 | 0.02232 |
+| 2026-10-27T09:51:19Z | vision | muse-spark-1.3 | 2237 | 0 | 4874 | 0.02351 |
+| 2026-10-27T09:52:17Z | chat | muse-spark-1.3 | 1055 | 0 | 1574 | 0.00801 |
+| 2026-10-27T09:52:24Z | chat | muse-spark-1.3 | 1055 | 0 | 1784 | 0.00890 |
+| 2026-10-27T09:52:34Z | chat | muse-spark-1.3 | 1050 | 0 | 1262 | 0.00668 |
+| 2026-10-27T09:52:42Z | chat | muse-spark-1.3 | 1049 | 0 | 2769 | 0.01308 |
+| 2026-10-27T09:52:54Z | vision | muse-spark-1.3 | 1103 | 0 | 3781 | 0.01745 |
+| 2026-10-27T09:53:00Z | chat | muse-spark-1.3 | 1074 | 0 | 2842 | 0.01342 |
+| 2026-10-27T09:53:07Z | chat | muse-spark-1.3 | 191 | 881 | 2384 | 0.01050 |
+| 2026-10-27T09:53:12Z | vision | muse-spark-1.3 | 1103 | 0 | 4720 | 0.02144 |
+| 2026-10-27T09:53:21Z | chat | muse-spark-1.3 | 1093 | 0 | 2408 | 0.01160 |
+| 2026-10-27T09:53:28Z | chat | muse-spark-1.3 | 1094 | 0 | 2194 | 0.01069 |
+| 2026-10-27T09:53:46Z | chat | muse-spark-1.3 | 1097 | 0 | 2754 | 0.01308 |
+| 2026-10-27T09:53:54Z | chat | muse-spark-1.3 | 1103 | 0 | 2816 | 0.01335 |
+| 2026-10-27T09:54:08Z | chat | muse-spark-1.3 | 1100 | 0 | 2518 | 0.01208 |
+| 2026-10-27T09:54:16Z | chat | muse-spark-1.3 | 1095 | 0 | 2602 | 0.01243 |
+| 2026-10-27T09:58:26Z | chat | muse-spark-1.3 | 30 | 1009 | 1295 | 0.00569 |
+| 2026-10-27T09:58:32Z | chat | muse-spark-1.3 | 1052 | 0 | 1796 | 0.00895 |
+| 2026-10-27T09:58:37Z | chat | muse-spark-1.3 | 1055 | 0 | 1640 | 0.00829 |
+| 2026-10-27T09:58:42Z | chat | muse-spark-1.3 | 25 | 1009 | 1181 | 0.00520 |
+| 2026-10-27T09:58:47Z | chat | muse-spark-1.3 | 1049 | 0 | 1880 | 0.00930 |
+| 2026-10-27T09:58:52Z | chat | muse-spark-1.3 | 1046 | 0 | 1380 | 0.00717 |
+| 2026-10-27T09:59:01Z | chat | muse-spark-1.3 | 1065 | 0 | 3262 | 0.01519 |
+| 2026-10-27T09:59:08Z | chat | muse-spark-1.3 | 1073 | 0 | 2103 | 0.01028 |
+| 2026-10-27T09:59:16Z | chat | muse-spark-1.3 | 1073 | 0 | 3000 | 0.01409 |
+| 2026-10-27T09:59:24Z | chat | muse-spark-1.3 | 70 | 1009 | 2605 | 0.01131 |
+| 2026-10-27T09:59:30Z | chat | muse-spark-1.3 | 1090 | 0 | 1801 | 0.00902 |
+| 2026-10-27T09:59:38Z | chat | muse-spark-1.3 | 1098 | 0 | 2635 | 0.01257 |
+| 2026-10-27T09:59:45Z | chat | muse-spark-1.3 | 1086 | 0 | 2542 | 0.01216 |
+| 2026-10-27T09:59:57Z | chat | muse-spark-1.3 | 1095 | 0 | 3353 | 0.01562 |
+| 2026-10-27T10:00:05Z | chat | muse-spark-1.3 | 1101 | 0 | 2740 | 0.01302 |
+| 2026-10-27T10:00:11Z | chat | muse-spark-1.3 | 76 | 1009 | 2133 | 0.00931 |
+| 2026-10-27T10:00:18Z | chat | muse-spark-1.3 | 1096 | 0 | 2370 | 0.01144 |
+| 2026-10-27T10:00:27Z | chat | muse-spark-1.3 | 1094 | 0 | 3121 | 0.01463 |
 
 ## 5. What this page does not claim
 
