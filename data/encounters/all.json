@@ -5,7 +5,9 @@
     {
       "id": "tutorial_sailors",
       "name": "Deck Watch",
-      "enemies": ["navy_sailor"],
+      "enemies": [
+        "navy_sailor"
+      ],
       "seed": 20261019,
       "music": "PP-04",
       "intro_dialogue": "battle_intro_sailors",
@@ -13,8 +15,14 @@
       "win_dialogue_spare": "navy_win_spare",
       "lose_dialogue": "battle_lose",
       "trust_per_talk": 1,
-      "flags_on_kill": ["ship_door_open", "sailor_killed"],
-      "flags_on_spare": ["ship_door_open", "sailor_spared"],
+      "flags_on_kill": [
+        "ship_door_open",
+        "sailor_killed"
+      ],
+      "flags_on_spare": [
+        "ship_door_open",
+        "sailor_spared"
+      ],
       "spare_refuses_on_route": "genocide",
       "spare_refused_dialogue": "navy_spare_refused",
       "epilogue_scene": "navy_aftermath",
@@ -49,7 +57,9 @@
     {
       "id": "deck_hound",
       "name": "Deck Hound",
-      "enemies": ["deck_hound"],
+      "enemies": [
+        "deck_hound"
+      ],
       "seed": 20261022,
       "music": "PP-04",
       "intro_dialogue": "battle_intro_hound",
@@ -66,7 +76,10 @@
         "seconds_fixed": 27,
         "seconds_per_turn": 21,
         "seconds": 48,
-        "band_seconds": [45, 60],
+        "band_seconds": [
+          45,
+          60
+        ],
         "source": "PACING-AND-CUTSCENES.md section 9 beat 23 is 48 s at one turn, and data/mechanics/pacing_recipes.json PAC-26 sets first_fight_seconds 45 to 60 with one command win and no loss possible; the 48 s is the FIGHT path, and the TALK path runs to 3 turns for a player who will not press it"
       },
       "talk": {
@@ -77,13 +90,13 @@
         "mercy_per_option": 20,
         "mercy_to_spare": 60,
         "talks_to_spare": 3,
-        "fallback_line": "It waits for you to move first.",
+        "fallback_line": "* It waits. You have the knife.",
         "fallback_delta": 0,
         "fallback_mood": "guarded",
         "fallback_pool": [
           "* A low growl. Then a thump.",
           "* It sniffs the salt on your hands.",
-          "* It waits for you to move first."
+          "* It waits. You have the knife."
         ],
         "fallback_rule": "index = (fnv1a32(normalised line) + mercy before the change) modulo the pool length, no RNG anywhere, so a replay says the same words (specs/16-talk-command.md section 9 step 5)"
       }
@@ -91,7 +104,9 @@
     {
       "id": "percy",
       "name": "Percy",
-      "enemies": ["percy"],
+      "enemies": [
+        "percy"
+      ],
       "seed": 771,
       "music": "PP-06",
       "intro_dialogue": "percy_entry",
@@ -99,8 +114,12 @@
       "win_dialogue_spare": "percy_win_spare",
       "lose_dialogue": "battle_lose",
       "trust_per_talk": 1,
-      "flags_on_kill": ["percy_killed"],
-      "flags_on_spare": ["percy_spared"],
+      "flags_on_kill": [
+        "percy_killed"
+      ],
+      "flags_on_spare": [
+        "percy_spared"
+      ],
       "epilogue_scene": "percy_aftermath",
       "spare_refuses_on_route": "genocide"
     }

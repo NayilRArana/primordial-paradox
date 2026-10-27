@@ -86,7 +86,7 @@
       "phase_note": "",
       "trust_to_spare": 3,
       "mercy_to_spare": 60,
-      "personality": "Two years of night watches and a mop he treats like a rifle: tired, decent, and not paid enough to care who you are.",
+      "personality": "Two years of night watches and a mop he treats like a rifle: tired, decent, and worried about a parking ticket.",
       "voice": "Lower deck watch keeper, tired, clipped, short flat sentences, no poetry, nothing warmer than dry.",
       "wants": [
         "the watch to end",
@@ -328,7 +328,7 @@
       "phase_note": "",
       "trust_to_spare": 3,
       "mercy_to_spare": 60,
-      "personality": "Has eaten better than the crew for three years and knows exactly which stores hatch is loose.",
+      "personality": "Has eaten better than the crew for three years; the loose stores hatch is his dining room.",
       "voice": "Fast, greedy, unbothered; talks about food and escape routes.",
       "wants": [
         "biscuits",
@@ -415,7 +415,7 @@
       "phase_note": "",
       "trust_to_spare": 3,
       "mercy_to_spare": 60,
-      "personality": "Screaming, thieving, entirely convinced the ship was built as a restaurant for one.",
+      "personality": "Screaming, thieving, entirely convinced the ship is a restaurant with very slow service.",
       "voice": "Loud, rude, gleeful; short bursts, food obsessed.",
       "wants": [
         "chips",
@@ -501,7 +501,7 @@
       "phase_note": "",
       "trust_to_spare": 3,
       "mercy_to_spare": 60,
-      "personality": "The sea got tired of being told what to do and grew eyes about it.",
+      "personality": "The sea got tired of being told what to do and grew eyes to file a complaint.",
       "voice": "Slow, swelling, ancient; speaks in tide and weather, never in names.",
       "wants": [
         "to reach the deck",
@@ -590,7 +590,7 @@
       "phase_note": "",
       "trust_to_spare": 3,
       "mercy_to_spare": 60,
-      "personality": "Nobody tied it and nobody can untie it, and it has opinions about both facts.",
+      "personality": "Nobody tied it and nobody can untie it. It has applied for permanence.",
       "voice": "Tight, tangled, grumbling; repeats itself, corrects itself.",
       "wants": [
         "to be left alone",
@@ -677,7 +677,7 @@
       "phase_note": "",
       "trust_to_spare": 3,
       "mercy_to_spare": 60,
-      "personality": "The bottom of the ship learned to want things: warmth, a biscuit, and the sound of someone saying its name.",
+      "personality": "The bottom of the ship learned to want things: warmth, a biscuit, and someone to hold the ladder.",
       "voice": "Slow, bubbling, friendly, slightly sad; asks small questions.",
       "wants": [
         "a warm pipe",
@@ -764,7 +764,7 @@
       "phase_note": "",
       "trust_to_spare": 3,
       "mercy_to_spare": 60,
-      "personality": "A thin rope yard dog on the foredeck: it holds the line nobody else was given, and it has decided you are the thing to watch.",
+      "personality": "A thin rope yard dog on the foredeck: it guards the line nobody else wanted, and it takes the job personally.",
       "voice": "Thin rope yard dog, wary and terse: a reply is a movement, not speech, three or four flat words of narration, never warm, never a plea.",
       "wants": [
         "the rope end in its teeth",

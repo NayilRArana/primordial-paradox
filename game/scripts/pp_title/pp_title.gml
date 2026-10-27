@@ -138,8 +138,8 @@ function pp_title_defaults() {
         menu: ["NEW GAME", "CONTINUE", "SETTINGS", "QUIT"],
         intro: [
             "THE ROAD TO SOUTHAMPTON.",
-            "TWO MEN WHO DO NOT KNOW EACH OTHER.",
-            "ONE OF THEM IS WAITING FOR THE OTHER."
+            "TWO STRANGERS IN ONE CAR.",
+            "ONE OF THEM KNOWS THE WAY."
         ]
     };
 }
@@ -738,7 +738,7 @@ function pp_title_draw_settings(_s) {
     if (!pp_window_draw(24, 84, 26, 9, 1)) pp_title_draw_window_plain(24, 84, 208, 72);
     draw_set_alpha(1);
     pp_font_draw_centre("SETTINGS", PP_FRAME_W / 2, 92, 1);
-    pp_title_draw_disabled("NOTHING HERE YET", PP_FRAME_W / 2, 108);
+    pp_title_draw_disabled("SETTINGS ARE ON SHORE LEAVE", PP_FRAME_W / 2, 108);
     pp_font_draw_centre("BACK", PP_FRAME_W / 2, 128, 1);
     if (pp_art_has("spr_pp_menu_cursor")) {
         var _cursor = floor(_s.steps / PP_TITLE_CURSOR_PERIOD) mod 2;
@@ -823,7 +823,7 @@ function pp_title_intro_beats() {
     }
     if (array_length(_rows) > 0) return _rows;
     // The fallback crawl, so the shot never runs on an empty screen.
-    var _fallback = ["THE GODS NEVER DIED.", "THEY WERE FORGOTTEN."];
+    var _fallback = ["THE GODS NEVER DIED.", "THEY GOT PART-TIME JOBS."];
     for (var f = 0; f < array_length(_fallback); f += 1) array_push(_rows, { beat: f, text: _fallback[f] });
     return _rows;
 }

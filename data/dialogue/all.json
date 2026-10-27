@@ -6,9 +6,9 @@
       "id": "ship_rail_note",
       "speaker": "narrator",
       "lines": [
-        "* The deck tilts.",
+        "* The deck tilts. The mop does not.",
         "* A sailor blocks the hatch.",
-        "* He will not move."
+        "* He checks his parking ticket."
       ]
     },
     {
@@ -20,7 +20,7 @@
           "lines": [
             "* The horn shakes the deck.",
             "* Salt, rope and wet paint.",
-            "* A wardroom hatch, shut."
+            "* The mop has seen worse."
           ]
         }
       ]
@@ -33,15 +33,15 @@
           "speaker": "narrator",
           "lines": [
             "* A log book, chained down.",
-            "* The last hand is tight.",
-            "* Rain all night, no cargo."
+            "* The last entry: no cargo.",
+            "* One pen. Also chained."
           ]
         },
         {
           "speaker": "narrator",
           "lines": [
-            "* You add a line and a date.",
-            "* The page takes the ink.",
+            "* You sign below that.",
+            "* The pen works. Suspicious.",
             "* Then the book is shut."
           ]
         }
@@ -56,7 +56,7 @@
           "lines": [
             "* A plank, then a rail.",
             "* The pier is behind you.",
-            "* Nobody asks your name."
+            "* Your welcome: a wet sock."
           ]
         }
       ]
@@ -66,8 +66,8 @@
       "speaker": "narrator",
       "lines": [
         "* A Navy Sailor squares up.",
-        "* TALK can calm this.",
-        "* FIGHT can end it faster."
+        "* His mop is regulation.",
+        "* TALK or FIGHT. Choose."
       ]
     },
     {
@@ -93,7 +93,7 @@
       "lines": [
         "* He steps aside.",
         "* His eyes stay on the sea.",
-        "* \"Bridge is that way.\""
+        "* \"Bridge is that way. Move.\""
       ]
     },
     {
@@ -101,8 +101,8 @@
       "speaker": "narrator",
       "lines": [
         "* You lower your hands.",
-        "* The sailor does not.",
-        "* \"Not this time. Not for you.\""
+        "* The sailor keeps his mop up.",
+        "* \"Not before my relief.\""
       ]
     },
     {
@@ -111,7 +111,7 @@
       "lines": [
         "* He keeps the watch alone.",
         "* The hatch stays open behind him.",
-        "* Nobody counts the spared."
+        "* He writes one name in the book."
       ]
     },
     {
@@ -128,8 +128,8 @@
       "speaker": "narrator",
       "lines": [
         "* Percy fills the doorway.",
-        "* \"The sea hears you.\"",
-        "* \"Show me the veil.\""
+        "* \"NAME. BUSINESS. VEIL.\"",
+        "* \"IN THAT ORDER.\""
       ]
     },
     {
@@ -138,7 +138,7 @@
       "portrait": "percy",
       "lines": [
         "* \"A stowaway with a god.\"",
-        "* \"The sea does not care.\"",
+        "* \"STATE YOUR BUSINESS.\"",
         "* Percy lifts the trident."
       ]
     },
@@ -147,9 +147,9 @@
       "speaker": "percy",
       "portrait": "percy",
       "lines": [
-        "* \"You still talk. How dull.\"",
-        "* \"Ask what the veil is.\"",
-        "* \"Ask it plainly.\""
+        "* \"STILL TALKING. NOTED.\"",
+        "* \"THE VEIL. YOUR QUESTION.\"",
+        "* \"PLAINLY.\""
       ]
     },
     {
@@ -157,9 +157,9 @@
       "speaker": "percy",
       "portrait": "percy",
       "lines": [
-        "* \"The tide turns anyway.\"",
-        "* \"You asked about the veil.\"",
-        "* \"That is the veil.\""
+        "* \"THE TIDE TURNS. LOG IT.\"",
+        "* \"THE VEIL. AGAIN.\"",
+        "* \"THAT IS THE VEIL.\""
       ]
     },
     {
@@ -168,7 +168,7 @@
       "portrait": "percy",
       "lines": [
         "* Percy plants the trident.",
-        "* \"So. You have hurt me.\"",
+        "* \"INJURY. NOT SURRENDER.\"",
         "* The water answers him."
       ]
     },
@@ -177,9 +177,9 @@
       "speaker": "percy",
       "portrait": "percy",
       "lines": [
-        "* \"Rain. Wall. Now the fan.\"",
-        "* \"Last of the three.\"",
-        "* \"Name me, or drown.\""
+        "* \"RAIN. WALL. FAN.\"",
+        "* \"FINAL DRILL.\"",
+        "* \"NAME ME, OR DROWN.\""
       ]
     },
     {
@@ -188,7 +188,7 @@
       "portrait": "percy",
       "lines": [
         "* Percy opens the sea wide.",
-        "* \"Everything at once, then.\"",
+        "* \"FULL FLOOD. AUTHORISED.\"",
         "* The whole sea comes with it."
       ]
     },
@@ -264,7 +264,7 @@
       "speaker": "narrator",
       "lines": [
         "* Something moves by the rope.",
-        "* A hound on the deck. It is thin.",
+        "* A thin hound guards one knot.",
         "* FIGHT ends this in one blow."
       ]
     },
@@ -274,7 +274,7 @@
       "lines": [
         "* A low growl. Then a thump.",
         "* It sniffs the salt on your hands.",
-        "* It waits for you to move first."
+        "* It waits. You have the knife."
       ]
     },
     {
@@ -291,7 +291,7 @@
       "lines": [
         "* The hound rolls over.",
         "* It lets you pass the rope.",
-        "* Its eyes follow the water."
+        "* It keeps the knot."
       ]
     },
     {
@@ -303,7 +303,7 @@
           "lines": [
             "* Rain on the barrier arm.",
             "* A hut. One lit window.",
-            "* The man inside stands up."
+            "* The guard hides a form."
           ]
         },
         {
@@ -312,7 +312,7 @@
           "lines": [
             "* \"That is far enough.\"",
             "* \"Name and business.\"",
-            "* He holds a clipboard."
+            "* He caps his pen twice."
           ]
         },
         {
@@ -320,7 +320,7 @@
           "lines": [
             "* Past him the yard is dark.",
             "* Past that, a grey hull.",
-            "* One lamp on the water."
+            "* The Itchen takes the rain."
           ]
         }
       ]
@@ -336,24 +336,33 @@
           "lines": [
             "* \"No pass, no gate.\"",
             "* \"So. What is it?\"",
-            "* He waits, pen ready."
+            "* The pen waits. It is dry."
           ]
         }
       ],
       "choices": [
         {
           "label": "No pass.",
-          "sets": ["gate_passed", "gate_truth"],
+          "sets": [
+            "gate_passed",
+            "gate_truth"
+          ],
           "goto": "quay_gate_truth"
         },
         {
           "label": "Crew list.",
-          "sets": ["gate_passed", "gate_bluff"],
+          "sets": [
+            "gate_passed",
+            "gate_bluff"
+          ],
           "goto": "quay_gate_bluff"
         },
         {
-          "label": "Ask him.",
-          "sets": ["gate_passed", "gate_authority"],
+          "label": "Officer.",
+          "sets": [
+            "gate_passed",
+            "gate_authority"
+          ],
           "goto": "quay_gate_authority"
         }
       ]
@@ -395,7 +404,7 @@
         {
           "speaker": "narrator",
           "lines": [
-            "* He does not look down."
+            "* The page says TEA."
           ]
         }
       ]
@@ -416,7 +425,7 @@
         {
           "speaker": "narrator",
           "lines": [
-            "* He does not believe it."
+            "* The kettle snores too."
           ]
         }
       ]
@@ -430,7 +439,7 @@
           "lines": [
             "* Counter. A lamp. A ledger.",
             "* Two men. One is Navy.",
-            "* The other is not."
+            "* The other owns the kettle."
           ]
         },
         {
@@ -446,7 +455,7 @@
           "lines": [
             "* A line left in the ledger.",
             "* The ink on it is dry.",
-            "* Not the clerk's hand."
+            "* Beside it: a tea ring."
           ]
         }
       ]
@@ -468,7 +477,7 @@
           "lines": [
             "* \"Sign it and come on.\"",
             "* \"I have a ladder to hold.\"",
-            "* He does not look up."
+            "* \"It is holding my tea.\""
           ]
         },
         {
@@ -476,11 +485,13 @@
           "lines": [
             "* The slip changes hands.",
             "* It is warm from a pocket.",
-            "* Behind them the gate shut."
+            "* The gate shuts behind you."
           ]
         }
       ],
-      "sets": ["has_boarding_pass"]
+      "sets": [
+        "has_boarding_pass"
+      ]
     },
     {
       "id": "say_door_register",
@@ -488,7 +499,8 @@
       "pages": [
         {
           "lines": [
-            "* Registry office. Shut."
+            "* Registry shut. No queue.",
+            "* Your number is up. Later."
           ]
         }
       ]
@@ -499,7 +511,8 @@
       "pages": [
         {
           "lines": [
-            "* A pub. Warm and loud."
+            "* A pub. Warm. Loud. Dry.",
+            "* Rain files a complaint."
           ]
         }
       ]
@@ -510,7 +523,8 @@
       "pages": [
         {
           "lines": [
-            "* Flats. Every bell dead."
+            "* Flats. The bells quit.",
+            "* Everyone waits for a text."
           ]
         }
       ]
@@ -521,7 +535,8 @@
       "pages": [
         {
           "lines": [
-            "* Telephone House. No call."
+            "* Telephone House. No call.",
+            "* The receiver is off duty."
           ]
         }
       ]
@@ -532,7 +547,8 @@
       "pages": [
         {
           "lines": [
-            "* A kitchen, still open."
+            "* A kitchen, still open.",
+            "* Vinegar. Hot oil. Salt."
           ]
         }
       ]
@@ -543,7 +559,8 @@
       "pages": [
         {
           "lines": [
-            "* Ferries. Not your ship."
+            "* Ferries. Not your ship.",
+            "* Yours has worse snacks."
           ]
         }
       ]
@@ -554,7 +571,8 @@
       "pages": [
         {
           "lines": [
-            "* A door with no light."
+            "* Dark door. Tonight: SHUT.",
+            "* The poster looks relieved."
           ]
         }
       ]
@@ -574,7 +592,7 @@
       "lines": [
         "* SOUTHAMPTON 43.",
         "* BASINGSTOKE 8.",
-        "* Twelve miles gone."
+        "* Twelve miles gone. No crisps."
       ]
     },
     {
@@ -592,7 +610,7 @@
       "lines": [
         "* SOUTHAMPTON 20.",
         "* WINCHESTER 2.",
-        "* One lane now."
+        "* One lane now. Snack wrapper."
       ]
     },
     {
@@ -600,17 +618,17 @@
       "speaker": "narrator",
       "lines": [
         "* The radio finds a station.",
-        "* A weather bulletin.",
-        "* Rain from the west."
+        "* Rain from the west.",
+        "* It sends its regards."
       ]
     },
     {
       "id": "drive_radio_2",
       "speaker": "narrator",
       "lines": [
-        "* A traffic report.",
-        "* A lane shut at Winchester.",
-        "* The car does not slow."
+        "* Winchester loses a lane.",
+        "* The car does not slow.",
+        "* Dad calls it momentum."
       ]
     },
     {
@@ -619,7 +637,7 @@
       "lines": [
         "* A phone in, on the storm.",
         "* He says it is not natural.",
-        "* The signal drifts."
+        "* His bins are still outside."
       ]
     },
     {
@@ -628,16 +646,16 @@
       "lines": [
         "* The news. A power cut.",
         "* Two streets, dark.",
-        "* Nobody gives a cause."
+        "* The fridge goes on strike."
       ]
     },
     {
       "id": "drive_radio_5",
       "speaker": "narrator",
       "lines": [
-        "* The shipping forecast.",
         "* Wight. Portland. Force 8.",
-        "* The reader says it twice."
+        "* The reader says it twice.",
+        "* The sea was not listening."
       ]
     },
     {
@@ -646,7 +664,7 @@
       "lines": [
         "* Portsmouth. Sailings held.",
         "* Nothing sails before dawn.",
-        "* The wipers keep time."
+        "* The car is not a boat."
       ]
     },
     {

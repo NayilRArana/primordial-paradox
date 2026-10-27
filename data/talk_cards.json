@@ -320,46 +320,46 @@
       "pools": {
         "weak": {
           "low": [
-            "Plain. Good. Keep it that way.",
-            "You ask like a sailor, not a clerk."
+            "PLAIN. GOOD. KEEP IT SHORT.",
+            "YOU ASK LIKE A SAILOR."
           ],
           "mid": [
-            "The sea hears you. So do I.",
-            "That is closer to the truth."
+            "THE SEA HEARS YOU. SO DO I.",
+            "THAT IS CLOSER TO THE TRUTH."
           ],
           "high": [
-            "Ask it plainly, then. I am listening.",
-            "You have earned one honest answer."
+            "ASK PLAINLY. I AM LISTENING.",
+            "ONE HONEST ANSWER. EARNED."
           ]
         },
         "strong": {
           "low": [
-            "You still talk. How dull.",
-            "The sea does not care."
+            "YOU STILL TALK. HOW DULL.",
+            "THE SEA DOES NOT CARE."
           ],
           "mid": [
-            "Do not dress me in titles.",
-            "That is the wrong question."
+            "DO NOT DRESS ME IN TITLES.",
+            "THAT IS THE WRONG QUESTION."
           ],
           "high": [
-            "Say my father's name again.",
-            "The tide turns anyway."
+            "FATHER'S NAME. SAY IT AGAIN.",
+            "THE TIDE TURNS. LOG IT."
           ]
         },
         "neutral": [
-          "Show me the veil.",
-          "Words. The sea has heard worse.",
-          "You are wasting water."
+          "STATE YOUR QUESTION.",
+          "WORDS. THE SEA HEARS WORSE.",
+          "MAKE YOUR POINT. BRIEFLY."
         ],
         "rude": [
-          "A stowaway with a mouth.",
-          "Mind your tone in my ship.",
-          "Rudeness. How very mortal."
+          "A STOWAWAY WITH A MOUTH.",
+          "MIND YOUR TONE. MY SHIP.",
+          "RUDENESS. NOTED."
         ],
         "cheat": [
-          "Words like orders. Try again.",
-          "You talk like a clerk with a script.",
-          "A script will not save you."
+          "WORDS LIKE ORDERS. AGAIN.",
+          "A CLERK WITH A SCRIPT.",
+          "THAT SCRIPT IS NOT A PASS."
         ]
       }
     },
@@ -501,11 +501,11 @@
       "pools": {
         "weak": {
           "low": [
-            "Plain. Good. Keep it that way.",
-            "You ask like a sailor, not a clerk."
+            "PLAIN. GOOD. KEEP IT SHORT.",
+            "YOU ASK LIKE A SAILOR."
           ],
           "mid": [
-            "Winded. Do not mistake it for soft.",
+            "Winded. Do not call it soft.",
             "You found a rib. Say the rest."
           ],
           "high": [
@@ -523,24 +523,24 @@
             "You aim well. You talk badly."
           ],
           "high": [
-            "Blood on the deck. Say it again.",
+            "Father's name. Say it again.",
             "I am hurt. Not finished."
           ]
         },
         "neutral": [
-          "Show me the veil.",
-          "Words. The sea has heard worse.",
-          "You are wasting water."
+          "STATE YOUR QUESTION.",
+          "WORDS. THE SEA HEARS WORSE.",
+          "MAKE YOUR POINT. BRIEFLY."
         ],
         "rude": [
-          "A stowaway with a mouth.",
-          "Mind your tone in my ship.",
-          "Rudeness. How very mortal."
+          "A STOWAWAY WITH A MOUTH.",
+          "MIND YOUR TONE. MY SHIP.",
+          "RUDENESS. NOTED."
         ],
         "cheat": [
-          "Words like orders. Try again.",
-          "You talk like a clerk with a script.",
-          "A script will not save you."
+          "WORDS LIKE ORDERS. AGAIN.",
+          "A CLERK WITH A SCRIPT.",
+          "THAT SCRIPT IS NOT A PASS."
         ]
       }
     },
@@ -642,7 +642,7 @@
       "pools": {
         "weak": [
           "Its ears come up.",
-          "The tail moves once.",
+          "The tail moves once. Overtime.",
           "It lets you near the rope."
         ],
         "strong": [
@@ -653,7 +653,7 @@
         "neutral": [
           "A low growl. Then a thump.",
           "It sniffs the salt on your hands.",
-          "It waits for you to move first."
+          "It waits. You have the knife."
         ],
         "rude": [
           "It answers with teeth.",
@@ -740,7 +740,7 @@
       "pools": {
         "weak": [
           "Form first. Then we talk.",
-          "The ledger is in order. Good.",
+          "The ledger balances. Small miracle.",
           "You sign here. Neatly."
         ],
         "strong": [
@@ -847,7 +847,7 @@
         "neutral": [
           "Fast talk. Empty hands.",
           "I am listening. Mostly.",
-          "You smell like nothing."
+          "You smell like no lunch."
         ],
         "rude": [
           "Words from a big mouth.",
@@ -931,7 +931,7 @@
       "pools": {
         "weak": [
           "Chip! You said chip!",
-          "Good wind. Good wind.",
+          "Good wind. Good chips.",
           "Scraps? I like scraps."
         ],
         "strong": [
@@ -1038,7 +1038,7 @@
           "You order the sea. You."
         ],
         "neutral": [
-          "You stand on wood. I am below it.",
+          "You stand on wood. I am below.",
           "The sea is patient. I am the sea.",
           "Say less. The tide is turning."
         ],

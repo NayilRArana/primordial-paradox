@@ -2,6 +2,32 @@
   "format": 1,
   "kind": "items",
   "items": [
-    { "id": "salve", "name": "Salt Salve", "heal": 6, "max_carry": 8 }
+    {
+      "id": "dads_good_knife",
+      "kind": "weapon",
+      "name": "Dad's Good Knife",
+      "description": "Steel, wood, and thirty years of being the good one.",
+      "attack_line": "* You brandish {name}. You feel judged.",
+      "damage_line": "* It lands for {damage}. Nobody mentions the sandwiches.",
+      "damage_min": 2,
+      "damage_max": 12,
+      "hits": 1,
+      "hit_chance": 100,
+      "sprite": "spr_pp_knife",
+      "icon_frame": 0,
+      "slash_frames": [
+        1,
+        2,
+        3
+      ],
+      "balance_note": "Card PP-KNIFE: the numbers the FIGHT bar already gave, 2 to 12 scaled by the 60 step sweep and the actor's multiplier, one hit at 100 percent (JRPG-MECHANICS decision 4). The knife replaced the wording, not the arithmetic: tests/test_knife.py holds these two numbers equal to PP_FIGHT_DAMAGE_MIN and PP_FIGHT_DAMAGE_MAX, so editing one without the other fails.",
+      "name_note": "Card PP-KNIFE: this is the ONE field the name lives in. The battle attack line, the damage line, the menu row and the sprite's own sidecar all read it, so Nayil renames the knife here and nothing else moves. Working name; the final one comes from PP-SCENES-1."
+    },
+    {
+      "id": "salve",
+      "name": "Salt Salve",
+      "heal": 6,
+      "max_carry": 8
+    }
   ]
 }
