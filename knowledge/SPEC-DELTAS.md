@@ -14,7 +14,9 @@ underspecified; code cannot be written from it), MISSING (no spec covers it at a
 Counts: 13 specs read, 26 deltas found, of which 6 CORRECTION, 12 THIN, 8 MISSING. Counted from the headings in this
 file on 2026-10-19 after the review fix pass added C6 and M8. (An earlier line said 4, 13 and 7, then 5, 12 and 7;
 neither matched the headings once more items landed, so the numbers are counted from the headings, not carried
-forward.)
+forward.) 2026-10-26: D1 and D2, in their own section at the end of this file, are not one of those 26. They record
+spec text changes that Nayil ordered and cards t_771e78ef and PP-FREE-MOVE landed, so they belong here as the note for
+each change and not as a delta somebody found.
 
 ## How to read a source line
 
@@ -307,4 +309,58 @@ The numbers that the specs already fix are all kept as written: 256x240, integer
 12 step fades, 16x16 tiles, 160x100 dodge box, 8x8 marker at 2 px per step, 30 step invulnerability, 2 steps per
 character, 30 character lines (C4 disputes the arithmetic behind that one and recommends 28; the number is listed here
 as the spec states it, not as endorsed), 3 line pages, 900 step phase cap, 54 colour palette, 16 colours on screen.
-No spec was rewritten; every item above is a proposal with a recommended fix.
+No spec was rewritten in that pass; every item above is a proposal with a recommended fix.
+
+## Spec changes ordered after that pass, newest last
+
+These are not deltas. Each one is a change to a spec's own text, made on a dated order, recorded here because the spec
+change note lives with the delta list (card t_771e78ef asks for exactly this pairing).
+
+D1. 2026-10-26, specs/04-overworld-rails-and-triggers.md, card t_771e78ef. Nayil's order, quoted in full: "the movement
+system on the map was fucked, had to press direction keys a billion times to move. Fix."
+Before: rule 1 said "Free movement is 4 directions, one tile per press, no diagonals, facing updates instantly", the
+rail line said "free walk is 12 steps per tile", and acceptance 1 said "Single presses move exactly one tile".
+After: hold to walk, tap for one tile. A tile that finishes while the direction is still held starts the next tile on
+the same step, a tap still moves exactly one tile, a change of direction while held turns at the next tile boundary,
+and a wall stops the walk with no repeated bump. Free walk is 8 steps per tile, which is 7.5 tiles a second at 60
+steps a second, and it is `PP_WALK_STEPS_FREE` in pp_config.gml; rail walk stays `PP_WALK_STEPS_RAIL` at 8 steps per
+tile and the 20 step trigger grace is untouched. The left stick now walks too, published as one of the four directions
+by pp_input, so the keyboard, the d-pad and the stick behave the same and no module outside pp_input reads an axis.
+Spec 04 rules 1, 2 and 7, its rail line and acceptance 1 and 2 carry the new text, and its own Change log line names
+this date and this card. spec 17 rule 6, which cross-references spec 04's speed and input shape, was corrected to
+match. knowledge/SPEC-REVIEW.md's row for spec 04 reads rewritten, gamedev, 2026-10-26 for the same reason.
+
+D2. 2026-10-26, specs/04-overworld-rails-and-triggers.md, card PP-FREE-MOVE. Nayil's order, quoted in full: "The grid
+movement is too rigid. This ain't pokemon. Most games nowadays let you hold down and right to go diagonally."
+Before: rules 1 to 5 described a TILE walk. One tile per press was already gone (D1), but the walker still finished
+every tile, faced one of four directions chosen from a single held one, collided by the tile he was about to step onto,
+and read a trigger or an actor from "the next tile", while the free walk speed was `PP_WALK_STEPS_FREE` steps per tile.
+After: the hero walks FREE, in pixels, in eight directions, at `PP_WALK_SPEED` (120 pixels a second, which is the 7.5
+tiles a second the tile walk gave), with `PP_RUN_SPEED` (200) on shift or the right shoulder, which were the only two
+inputs no other action claimed. Collision is a 10x6 hitbox at the feet against the collision grid and against actors,
+resolved one axis at a time so a wall is slid along, with a `PP_CORNER_NUDGE` (3) pixel slide round a corner that blocks
+by that much or less. Facing is four directions and the component that changed on the step wins; the two frame cycle is
+timed to `PP_WALK_FRAME_PX` (8) pixels walked. Confirm reaches `PP_REACH` (14) pixels in front of the feet box instead
+of the next tile, read from the middle of the reach box so a walker facing up asks the tile straight above him and not
+the one above and to the side. A touch trigger fires once per entry, which the world tracks as the tile the feet were
+on. The camera is PINNED to the walker's own pixel while he walks and drawn from the same floor as the map and the
+figures, and it eases by `PP_CAMERA_SMOOTH` (0.25) and snaps its last pixel only while he stands, because a camera that
+eases toward a walker lags him and the lag bobs the figure one pixel against the map on every diagonal.
+`PP_WALK_STEPS_FREE` is deleted; `PP_WALK_STEPS_RAIL` stays 8 steps per tile, and a scripted move snaps the hero to the
+nearest tile centre first, so every rail, cutscene and demo beat plays unchanged.
+Spec 04 rules 1 to 6, its rail line, its acceptance 1 and 2 and its out of scope line carry the new text, and its own
+Change log names this date and this card. Spec 17 section 1 item 6 and its Gap 2 paragraph, which cross-reference spec
+04's walk shape, were corrected to match. tests/test_move_hold.py drives the shipped input table and the shipped macros
+through a simulation of pp_world_free_step, and pins the GML the simulation is a model of.
+
+D3. 2026-10-26, specs/16-talk-command.md and specs/06-cutscene-runner.md, card t_ee178652 (lane W2 of
+WIN-PLAN-2026-10-26). Not a delta somebody found: the new spec 21 changes existing spec text, so the change is recorded
+here beside D1 and D2. Before: spec 16 drew the TALK context panel at a 16 pixel pitch, so four authored rows plus the
+fifth fixed entry landed a row at y 234 and printed over the band's border at 232; its step 2 input row was keyboard
+only, sat at y 200 to 224 inside the message box, and named a 150 step budget. After: the pitch is 13 from
+`PP_MENU_TOP + 8` (176, 189, 202, 215, last glyph bottom 223 inside the border), the fifth entry opens the live box of
+spec 21 instead of applying a delta of its own, the same line can be typed, built on a 44 cell letter grid with the
+d-pad, or spoken and edited as a transcript, and the answer's budget is 420 steps because the local bridge's own rung
+ladder has a 6 second deadline. Spec 06 gained rule 11: no scene command opens the live box, because a cutscene cannot
+bound a wait on a player's typing, so a scene that needs a line uses `branch` on an earlier `say` flag. The edits are
+amendments under the original rules, so the old text still reads and the amendment says which bullets it supersedes.

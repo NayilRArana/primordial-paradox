@@ -171,6 +171,11 @@ TITLE_INTRO_MARKER = "PP title: intro started"
 TITLE_INTRO_PRESS_CAP = 5
 TITLE_PRESS_GAP_S = 0.9
 SHIP_WALK_STEPS = 8
+# Card PP-FREE-MOVE: the overworld walks while a direction is HELD, so the ship's eight tile walk east of the spawn is
+# one HOLD and not eight taps. Eight taps used to move him a tile (six pixels each at the old 0.05 s press); a hold of
+# eight tiles at the walk speed (7.5 tiles a second, pp_config's PP_WALK_SPEED) is 1.07 s, and this gives it a little to
+# spare so the walker is against the sailor when the confirm is pressed.
+SHIP_WALK_HOLD_S = 1.15
 SHIP_KEY_GAP_S = 0.18
 SHIP_AFTER_WALK_S = 4.0
 SHIP_MIN_DIFF = 0.001
@@ -527,6 +532,43 @@ def game_has_focus(hwnd):
     return top == hwnd
 
 
+def send_vk_down(vk):
+    """Put one key down through the input queue and leave it down.
+
+    Card PP-FREE-MOVE: the overworld walks while a direction is HELD, so a scripted walk is a key that goes down, is left
+    down for as long as the walk needs and is released. The extended key flag is the same one send_vk_focused marks, so
+    an arrow sent here arrives as an arrow and not as its numpad twin.
+    """
+    if user32 is None:
+        return "not sent (this host has no user32)"
+    flags = KEYEVENTF_EXTENDEDKEY if vk in EXTENDED_KEYS else 0
+    user32.keybd_event(vk, 0, flags, 0)
+    return "down"
+
+
+def send_vk_up(vk):
+    """Release one key put down by send_vk_down, with the same extended flag it went down with."""
+    if user32 is None:
+        return "not sent (this host has no user32)"
+    flags = KEYEVENTF_EXTENDEDKEY if vk in EXTENDED_KEYS else 0
+    user32.keybd_event(vk, 0, flags | KEYEVENTF_KEYUP, 0)
+    return "up"
+
+
+def send_vk_hold(vk, seconds):
+    """Hold one key down for `seconds` and let it go.
+
+    The down and the up go out separately with the wait between them, which is the only thing a game that reads key STATE
+    can call a hold. The caller has to hold the focus for the game already: this sends to whatever window has it.
+    """
+    down = send_vk_down(vk)
+    if down.startswith("not sent"):
+        return down
+    time.sleep(max(0.0, float(seconds)))
+    send_vk_up(vk)
+    return "held %.2f s" % seconds
+
+
 def send_vk_focused(vk):
     """Send one real key press while this process already holds the focus for the game.
 
@@ -538,10 +580,9 @@ def send_vk_focused(vk):
     without KEYEVENTF_EXTENDEDKEY they arrive as their numpad twins, so the Enter that was sent worked and the
     two Down presses before it did nothing (first keys run of 2026-10-22, menu never moved).
     """
-    flags = KEYEVENTF_EXTENDEDKEY if vk in EXTENDED_KEYS else 0
-    user32.keybd_event(vk, 0, flags, 0)
+    send_vk_down(vk)
     time.sleep(0.05)
-    user32.keybd_event(vk, 0, flags | KEYEVENTF_KEYUP, 0)
+    send_vk_up(vk)
     return "sent"
 
 
@@ -1678,12 +1719,13 @@ def run_ship_capture():
         else:
             print("copied window rectangle %s %sx%s" % (window_first, rect[2], rect[3]))
 
-        sent = 0
-        for _step in range(SHIP_WALK_STEPS):
-            if press(VK_RIGHT) in ("sent", "posted"):
-                sent += 1
-            time.sleep(SHIP_KEY_GAP_S)
-        print("right key sent %d times" % sent)
+        # Card PP-FREE-MOVE: the walk is free now, so this is ONE HOLD of the direction and not eight taps. Eight taps
+        # moved him six pixels each and stopped a tile and a half short of the sailor; the hold is eight tiles at the
+        # walk speed. The focus is taken back first, because a held key needs it for as long as it is down.
+        raised, raise_note = ensure_key_focus(hwnd, attempts=3, settle=0.2)
+        print("hold raise: %s" % raise_note)
+        print("right held %.2f s for the %d tile walk: %s"
+              % (SHIP_WALK_HOLD_S, SHIP_WALK_STEPS, send_vk_hold(VK_RIGHT, SHIP_WALK_HOLD_S)))
         # The sailor stands on the tile the hero has just walked up against, so one confirm opens the dialogue box in
         # the spr_pp_window frame. The third self frame is taken after this press.
         print("confirm at the sailor %s" % press(VK_Z))
