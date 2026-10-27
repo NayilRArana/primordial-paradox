@@ -1,0 +1,28 @@
+{
+  "answer": {
+    "effect": "soften",
+    "model": "microsoft_phi-4-mini-instruct",
+    "mood": "rattled",
+    "repaired": [],
+    "source": "open-weights",
+    "text": [
+      "LIST IS WRONG. I KNOW IT.",
+      "I'LL CHECK THE LIST AGAIN.",
+      "SMOKE?"
+    ]
+  },
+  "created_at": "2026-10-26T21:14:46Z",
+  "endpoint": "http://127.0.0.1:51235/v1",
+  "key": "8915e390eb84f4d096259acad59b31984e24cd41bab07ed0a0e96c1121c2d523",
+  "kind": "talk",
+  "model": "microsoft_phi-4-mini-instruct",
+  "network": false,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "navy_sailor",
+    "player_chars": 33,
+    "player_sha256": "97bdfe6788fed0b32faae98d840610dde7729c7f5e6183a3f5e7f51e7f88082c",
+    "scene": "fight"
+  },
+  "source": "open-weights"
+}

@@ -1,0 +1,28 @@
+{
+  "answer": {
+    "effect": "none",
+    "model": "muse-spark-1.3",
+    "mood": "warm",
+    "repaired": [],
+    "source": "meta",
+    "text": [
+      "AYE, SKY LOOKS PROPER DARK!",
+      "BEST WATCH IT WITH ME."
+    ]
+  },
+  "backend": "meta",
+  "created_at": "2026-10-27T01:42:33Z",
+  "key": "bb4315a9ae5a2ebf00c2df626c466c4ff116f322a3f7c1b423c31c09d71e9e87",
+  "kind": "talk",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "urien",
+    "player_chars": 42,
+    "player_sha256": "f088eac9561cd65c3c21c7637d34c0bfce7b8e40dfd9a2501238bc0582adc526",
+    "scene": "npc"
+  },
+  "source": "meta"
+}

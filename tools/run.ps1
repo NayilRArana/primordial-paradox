@@ -7,7 +7,7 @@
   or double click tools\run.vbs, which runs this script with no console at all.
 
   Exit codes:
-      0  the game launched
+      0  the build finished: the game launched, or with -Compile it compiled and nothing was launched
       1  a data or project check failed (the game was NOT built)
       2  GameMaker is not installed, or Igor is there but no licence folder exists yet
       3  Igor ran and returned an error (the last 20 lines are printed)
@@ -16,12 +16,21 @@
   runtime at bin\igor\windows\x64\Igor.exe, and the account folder at %APPDATA%\GameMakerStudio2-LTS2026. Those folder
   names are not the 2024 ones this script was first written against, so the discovery below matches both lines.
   -Compile builds and stops; -SkipChecks skips the Python gates.
+  Igor's Run WAITS for the launched game to exit (measured 2026-10-25), so anything that wants only a build, and that is
+  the push gate's step, passes -Compile. Run stays what a human double clicks when he wants to play.
+
+  The talk bridge (card W1 PP-BRIDGE, added 2026-10-26). With no -Compile and no -NoBridge this script starts
+  tools\ai_bridge.py before Igor and stops it after the game closes, so the talk fight gets a live verdict from the
+  local model and a transcript from faster-whisper. It listens on 127.0.0.1 only, its log is build\last-bridge.log, and
+  a bridge that will not start is a printed warning rather than a failed build: the game still runs, and the talk fight
+  falls back to the recorded answers in data\ai_cache\bridge. -NoBridge is for anything that must not start a server.
 #>
 
 [CmdletBinding()]
 param(
     [switch]$SkipChecks,
-    [switch]$Compile
+    [switch]$Compile,
+    [switch]$NoBridge
 )
 
 $ErrorActionPreference = 'Stop'
@@ -130,7 +139,66 @@ if ([string]::IsNullOrWhiteSpace($userFolder)) {
 if (-not (Test-Path $yyp)) { Fail 1 "The project file is missing: $yyp" }
 
 # ---------------------------------------------------------------------------------------------------------------
-# 3. Build and run.
+# 3. The talk bridge, when the game is going to be played rather than only compiled.
+#
+# Started here, after the runtime and licence are known good, so a Fail above never leaves a server running. -Compile
+# skips it: the push gate compiles on a machine that may have no model loaded, and a compile must not depend on one.
+# A bridge that will not answer is a warning, not a failed build: the game still plays, every talk turn falls to the
+# recorded answer, and the reason is in build\last-bridge.log.
+
+$bridgePid = $null
+if (-not $Compile -and -not $NoBridge) {
+    $bridgeScript = Join-Path $root 'tools\ai_bridge.py'
+    $bridgeLog = Join-Path $build 'last-bridge.log'
+    $bridgeErr = Join-Path $build 'last-bridge-error.log'
+    foreach ($stale in @($bridgeLog, $bridgeErr)) { if (Test-Path $stale) { Remove-Item $stale -Force } }
+    $bridgePort = 8791
+    if (-not [string]::IsNullOrWhiteSpace($env:PP_BRIDGE_PORT)) {
+        $parsed = 0
+        if ([int]::TryParse($env:PP_BRIDGE_PORT, [ref]$parsed) -and $parsed -gt 0) { $bridgePort = $parsed }
+    }
+    try {
+        $bridge = Start-Process -FilePath $python `
+            -ArgumentList @("`"$bridgeScript`"", '--serve', '--warm', '--port', "$bridgePort") `
+            -WorkingDirectory $root -WindowStyle Hidden -PassThru `
+            -RedirectStandardOutput $bridgeLog -RedirectStandardError $bridgeErr
+        $bridgePid = $bridge.Id
+        # The parent exits through Fail() on some paths, which does not run a finally block, so the stop is also
+        # registered on the engine's own exit event. The pid travels in the event's MessageData because an action
+        # script block runs in its own runspace and cannot see this script's variables.
+        $null = Register-EngineEvent -SourceIdentifier PowerShell.Exiting -MessageData $bridgePid -Action {
+            if ($event.MessageData) {
+                Stop-Process -Id $event.MessageData -Force -ErrorAction SilentlyContinue
+            }
+        }
+        $ready = $false
+        $deadline = (Get-Date).AddSeconds(20)
+        while ((Get-Date) -lt $deadline) {
+            $client = New-Object System.Net.Sockets.TcpClient
+            try {
+                $connect = $client.ConnectAsync('127.0.0.1', $bridgePort)
+                if ($connect.Wait(400) -and $client.Connected) { $ready = $true; break }
+            } catch {
+            } finally {
+                $client.Close()
+            }
+            if ($bridge.HasExited) { break }
+            Start-Sleep -Milliseconds 250
+        }
+        if ($ready) {
+            Say "talk bridge: http://127.0.0.1:$bridgePort (log: $bridgeLog)"
+        } else {
+            $reason = Get-Content -Path $bridgeErr -Tail 3 -ErrorAction SilentlyContinue
+            foreach ($line in $reason) { Say "talk bridge stderr: $line" }
+            Say "talk bridge did not answer on 127.0.0.1:$bridgePort. The game still runs; talk falls back to the recorded answers."
+        }
+    } catch {
+        Say "talk bridge could not be started ($($_.Exception.Message)). The game still runs; talk falls back to the recorded answers."
+    }
+}
+
+# ---------------------------------------------------------------------------------------------------------------
+# 4. Build and run.
 
 $mode = 'Run'
 if ($Compile) { $mode = 'Compile' }
@@ -164,8 +232,20 @@ $process = Start-Process -FilePath $igor -ArgumentList $arguments -WorkingDirect
 if ($process.ExitCode -ne 0) {
     $tail = Get-Content -Path $igorLog -Tail 20 -ErrorAction SilentlyContinue
     foreach ($line in $tail) { Write-Host $line }
+    if ($null -ne $bridgePid) { Stop-Process -Id $bridgePid -Force -ErrorAction SilentlyContinue }
     Fail 3 "Igor returned $($process.ExitCode). The last 20 lines are above. Build log: $igorLog. Gate log: $log"
 }
 
-Say 'Igor finished. The game window is the only window that opened.'
+# The game has closed (Igor's Run waits for it), so the bridge has nothing left to answer. Stopping it here is also
+# what keeps a second run from finding the port taken.
+if ($null -ne $bridgePid) {
+    Stop-Process -Id $bridgePid -Force -ErrorAction SilentlyContinue
+    Say 'talk bridge stopped.'
+}
+
+if ($Compile) {
+    Say 'Igor finished: the project compiled, and nothing was launched (that is what -Compile means).'
+} else {
+    Say 'Igor finished. The game window is the only window that opened.'
+}
 exit 0

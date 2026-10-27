@@ -1,0 +1,28 @@
+{
+  "answer": {
+    "effect": "none",
+    "model": "muse-spark-1.3",
+    "mood": "guarded",
+    "repaired": [],
+    "source": "meta",
+    "text": [
+      "THAT IS FINE.",
+      "KEEP THE DESK FOR WORK."
+    ]
+  },
+  "backend": "meta",
+  "created_at": "2026-10-27T01:41:48Z",
+  "key": "e5d71a206bf939f16d90bab0c817cc06aeedb5ddd63aaa3d69682cc35ad38266",
+  "kind": "talk",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "konrad",
+    "player_chars": 15,
+    "player_sha256": "7db567940a305632ac590823d38ff17849ca73f5b3b1802bf9b4e43ed3f6f2d9",
+    "scene": "npc"
+  },
+  "source": "meta"
+}

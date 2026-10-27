@@ -1,0 +1,31 @@
+{
+  "answer": {
+    "effect": "soften",
+    "model": "microsoft_phi-4-mini-instruct",
+    "mood": "guarded",
+    "repaired": [
+      "truncated",
+      "uppercased"
+    ],
+    "source": "open-weights",
+    "text": [
+      "I DON'T CARE FOR FOOLS. TRY",
+      "THE BRIDGE NEEDS ME MORE",
+      "ORDERS ARE ORDERS, EVEN IF"
+    ]
+  },
+  "created_at": "2026-10-26T20:41:05Z",
+  "endpoint": "http://127.0.0.1:51235/v1",
+  "key": "e909f64aca810c6bc42f54144253c0b198e863c56034874c27fe06692447e8f9",
+  "kind": "talk",
+  "model": "microsoft_phi-4-mini-instruct",
+  "network": false,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "navy_sailor",
+    "player_chars": 37,
+    "player_sha256": "cbbc909e1f9d88059524d3880d4ba8d3004e9af9d236bc56484aa3b89af3d7a2",
+    "scene": "fight"
+  },
+  "source": "open-weights"
+}

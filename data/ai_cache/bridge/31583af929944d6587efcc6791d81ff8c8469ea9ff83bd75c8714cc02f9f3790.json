@@ -1,0 +1,29 @@
+{
+  "answer": {
+    "effect": "none",
+    "model": "microsoft_phi-4-mini-instruct",
+    "mood": "guarded",
+    "repaired": [
+      "truncated"
+    ],
+    "source": "open-weights",
+    "text": [
+      "SHE'S A STOWAWAY. WE DON'T",
+      "I'LL BE BACK ON WATCH IN NO"
+    ]
+  },
+  "created_at": "2026-10-26T22:31:27Z",
+  "endpoint": "http://127.0.0.1:51235/v1",
+  "key": "31583af929944d6587efcc6791d81ff8c8469ea9ff83bd75c8714cc02f9f3790",
+  "kind": "talk",
+  "model": "microsoft_phi-4-mini-instruct",
+  "network": false,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "navy_sailor",
+    "player_chars": 51,
+    "player_sha256": "a6986d60c4c7d829653f526a6de82a99a5f7a115e74ffcb4d5906c377aa090ab",
+    "scene": "fight"
+  },
+  "source": "open-weights"
+}

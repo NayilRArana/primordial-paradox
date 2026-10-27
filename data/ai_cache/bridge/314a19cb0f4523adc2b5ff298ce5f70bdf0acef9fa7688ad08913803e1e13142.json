@@ -1,0 +1,28 @@
+{
+  "answer": {
+    "effect": "none",
+    "model": "muse-spark-1.3",
+    "mood": "warm",
+    "repaired": [],
+    "source": "meta",
+    "text": [
+      "OOH, LONG ENOUGH, LOVE.",
+      "KNOW EACH CLOUD BY NOW!"
+    ]
+  },
+  "backend": "meta",
+  "created_at": "2026-10-27T01:43:08Z",
+  "key": "314a19cb0f4523adc2b5ff298ce5f70bdf0acef9fa7688ad08913803e1e13142",
+  "kind": "talk",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "urien",
+    "player_chars": 25,
+    "player_sha256": "52a8920d47f1e159830d603c05ea40dd742e8ee56f2ec4a8c3cf25b4ffe995f8",
+    "scene": "npc"
+  },
+  "source": "meta"
+}

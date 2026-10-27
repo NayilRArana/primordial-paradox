@@ -1,0 +1,29 @@
+{
+  "answer": {
+    "effect": "soften",
+    "model": "microsoft_phi-4-mini-instruct",
+    "mood": "guarded",
+    "repaired": [
+      "truncated"
+    ],
+    "source": "open-weights",
+    "text": [
+      "SMOKE. I'LL GET YOU ONE.",
+      "I DON'T CARE IF IT'S"
+    ]
+  },
+  "created_at": "2026-10-26T22:31:29Z",
+  "endpoint": "http://127.0.0.1:51235/v1",
+  "key": "2a98e8db2608a1c3820d2ef530a9dc9bd5ceaecde32e5912b656f076f628d48e",
+  "kind": "talk",
+  "model": "microsoft_phi-4-mini-instruct",
+  "network": false,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "navy_sailor",
+    "player_chars": 44,
+    "player_sha256": "9a7ce5193f37518f540d263beadf100d99105931fb6e5b79a2c3e41652624574",
+    "scene": "fight"
+  },
+  "source": "open-weights"
+}

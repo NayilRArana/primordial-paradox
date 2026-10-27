@@ -1,0 +1,29 @@
+{
+  "answer": {
+    "effect": "none",
+    "model": "muse-spark-1.3",
+    "mood": "guarded",
+    "repaired": [
+      "capped_sentences"
+    ],
+    "source": "meta",
+    "text": [
+      "GOOD. THAT IS SOCIABLE."
+    ]
+  },
+  "backend": "meta",
+  "created_at": "2026-10-27T01:41:59Z",
+  "key": "ff6324197468451552de3ec3c957f2ee771e9bb3025c1057cbfc9288729c644e",
+  "kind": "talk",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "konrad",
+    "player_chars": 33,
+    "player_sha256": "17e9c64344fee71a9710d4161159b4a101ce48dc7f31bd72751f2286f38413c5",
+    "scene": "npc"
+  },
+  "source": "meta"
+}

@@ -1,0 +1,28 @@
+{
+  "answer": {
+    "effect": "none",
+    "model": "muse-spark-1.3",
+    "mood": "rattled",
+    "repaired": [],
+    "source": "meta",
+    "text": [
+      "STATION THAT WAY, THAT WAY!",
+      "WHERE IS HE, WHERE IS HE?"
+    ]
+  },
+  "backend": "meta",
+  "created_at": "2026-10-27T01:44:02Z",
+  "key": "5861dab0ad32f19330c2ce0e53c9dd60e160c2867e2ff6892bfdc95f2186b272",
+  "kind": "talk",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "quay_townsperson",
+    "player_chars": 24,
+    "player_sha256": "8d6bb80dbeeada96f3f92009688fc690cc312886542b6765c8962757c4ff7baa",
+    "scene": "npc"
+  },
+  "source": "meta"
+}

@@ -1,0 +1,28 @@
+{
+  "answer": {
+    "effect": "none",
+    "model": "muse-spark-1.3",
+    "mood": "guarded",
+    "repaired": [],
+    "source": "meta",
+    "text": [
+      "IT IS IN THE SIDE POCKET.",
+      "EAT LESS SNACKS, WORK MORE."
+    ]
+  },
+  "backend": "meta",
+  "created_at": "2026-10-27T00:55:11Z",
+  "key": "1bbc97b33808c54aa7782479820c27aa6175bf285b644ae4aca6f5a099d34632",
+  "kind": "talk",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "konrad",
+    "player_chars": 23,
+    "player_sha256": "0aee02fd85462b0841dc4090ef619b5096fb968d246ec266975086d2e275c0b9",
+    "scene": "npc"
+  },
+  "source": "meta"
+}

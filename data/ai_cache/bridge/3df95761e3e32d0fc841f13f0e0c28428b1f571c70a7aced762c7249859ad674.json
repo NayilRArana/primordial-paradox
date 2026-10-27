@@ -1,0 +1,29 @@
+{
+  "answer": {
+    "effect": "soften",
+    "model": "microsoft_phi-4-mini-instruct",
+    "mood": "guarded",
+    "repaired": [
+      "truncated"
+    ],
+    "source": "open-weights",
+    "text": [
+      "THE BRIDGE IS MY LIFE. YOUR",
+      "I'VE BEEN KEEPING AN EYE ON"
+    ]
+  },
+  "created_at": "2026-10-26T21:14:30Z",
+  "endpoint": "http://127.0.0.1:51235/v1",
+  "key": "3df95761e3e32d0fc841f13f0e0c28428b1f571c70a7aced762c7249859ad674",
+  "kind": "talk",
+  "model": "microsoft_phi-4-mini-instruct",
+  "network": false,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "navy_sailor",
+    "player_chars": 46,
+    "player_sha256": "056cd98ffd350e25f2bf193edff842a24828d8fd70c8a892bdf6aaec8a4dfb22",
+    "scene": "fight"
+  },
+  "source": "open-weights"
+}

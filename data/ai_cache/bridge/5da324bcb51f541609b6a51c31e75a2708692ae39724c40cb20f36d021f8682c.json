@@ -1,0 +1,29 @@
+{
+  "answer": {
+    "effect": "none",
+    "model": "microsoft_phi-4-mini-instruct",
+    "mood": "guarded",
+    "repaired": [
+      "truncated"
+    ],
+    "source": "open-weights",
+    "text": [
+      "STAY WHERE YOU ARE. I DON'T",
+      "I'LL NOT BE THE ONE LETTING"
+    ]
+  },
+  "created_at": "2026-10-26T21:14:49Z",
+  "endpoint": "http://127.0.0.1:51235/v1",
+  "key": "5da324bcb51f541609b6a51c31e75a2708692ae39724c40cb20f36d021f8682c",
+  "kind": "talk",
+  "model": "microsoft_phi-4-mini-instruct",
+  "network": false,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "navy_sailor",
+    "player_chars": 34,
+    "player_sha256": "cce8f903bfe4952e5e8055a8b56b55a14ef224747f107ab68b8d5aedc2490f64",
+    "scene": "fight"
+  },
+  "source": "open-weights"
+}

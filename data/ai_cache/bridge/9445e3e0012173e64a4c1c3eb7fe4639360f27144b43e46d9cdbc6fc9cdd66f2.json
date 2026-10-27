@@ -1,0 +1,30 @@
+{
+  "answer": {
+    "effect": "soften",
+    "model": "microsoft_phi-4-mini-instruct",
+    "mood": "guarded",
+    "repaired": [
+      "truncated",
+      "uppercased"
+    ],
+    "source": "open-weights",
+    "text": [
+      "I DON'T KNOW WHO YOU MEAN.",
+      "A SMOKE MIGHT HELP"
+    ]
+  },
+  "created_at": "2026-10-27T00:38:03Z",
+  "endpoint": "http://127.0.0.1:51235/v1",
+  "key": "9445e3e0012173e64a4c1c3eb7fe4639360f27144b43e46d9cdbc6fc9cdd66f2",
+  "kind": "talk",
+  "model": "microsoft_phi-4-mini-instruct",
+  "network": false,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "navy_sailor",
+    "player_chars": 25,
+    "player_sha256": "ef02693d9b2d33a65bb534b3a6e2d417efcecae7382819483b936ebe5d03fd73",
+    "scene": "fight"
+  },
+  "source": "open-weights"
+}

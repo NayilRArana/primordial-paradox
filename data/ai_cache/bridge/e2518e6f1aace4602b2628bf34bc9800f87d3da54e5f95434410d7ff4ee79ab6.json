@@ -1,0 +1,28 @@
+{
+  "answer": {
+    "effect": "none",
+    "model": "muse-spark-1.3",
+    "mood": "warm",
+    "repaired": [],
+    "source": "meta",
+    "text": [
+      "OH AYE, SHE RUNS STILL.",
+      "LOOK AT THOSE CLOUDS!"
+    ]
+  },
+  "backend": "meta",
+  "created_at": "2026-10-27T00:56:57Z",
+  "key": "e2518e6f1aace4602b2628bf34bc9800f87d3da54e5f95434410d7ff4ee79ab6",
+  "kind": "talk",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "urien",
+    "player_chars": 27,
+    "player_sha256": "2a4e01358667fbf8bbd67c59bf60fc334c595d68d6bc9f274962dfea2d605a3b",
+    "scene": "npc"
+  },
+  "source": "meta"
+}

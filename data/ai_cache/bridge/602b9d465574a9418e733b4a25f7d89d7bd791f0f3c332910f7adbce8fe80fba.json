@@ -1,0 +1,28 @@
+{
+  "answer": {
+    "effect": "none",
+    "model": "muse-spark-1.3",
+    "mood": "warm",
+    "repaired": [],
+    "source": "meta",
+    "text": [
+      "AH, YOU LIKE IT TOO, EH?",
+      "SEE THOSE CLOUDS ROLL IN."
+    ]
+  },
+  "backend": "meta",
+  "created_at": "2026-10-27T00:57:03Z",
+  "key": "602b9d465574a9418e733b4a25f7d89d7bd791f0f3c332910f7adbce8fe80fba",
+  "kind": "talk",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "urien",
+    "player_chars": 20,
+    "player_sha256": "551a06eb337569b1ba2301f70f4dd5efaed9f7ef6a519886eb9a04551988c27b",
+    "scene": "npc"
+  },
+  "source": "meta"
+}

@@ -1,0 +1,31 @@
+{
+  "answer": {
+    "effect": "soften",
+    "model": "microsoft_phi-4-mini-instruct",
+    "mood": "guarded",
+    "repaired": [
+      "truncated",
+      "uppercased"
+    ],
+    "source": "open-weights",
+    "text": [
+      "I DON'T MIND THE WATCH.",
+      "NAVY SAILOR",
+      "I'M JUST DOING MY JOB."
+    ]
+  },
+  "created_at": "2026-10-26T21:14:42Z",
+  "endpoint": "http://127.0.0.1:51235/v1",
+  "key": "281d79a1f3fdd89fba52254cfab46c411b30de7f468a89ab6ee4698ab1ab9982",
+  "kind": "talk",
+  "model": "microsoft_phi-4-mini-instruct",
+  "network": false,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "navy_sailor",
+    "player_chars": 51,
+    "player_sha256": "5f91af8f63f895bdfdd4ee96c9e5ee2aeb0a33cc897709728de0b5ee1c16c212",
+    "scene": "fight"
+  },
+  "source": "open-weights"
+}

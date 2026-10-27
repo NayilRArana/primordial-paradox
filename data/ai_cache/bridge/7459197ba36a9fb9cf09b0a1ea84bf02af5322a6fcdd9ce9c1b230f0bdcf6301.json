@@ -1,0 +1,29 @@
+{
+  "answer": {
+    "effect": "soften",
+    "model": "microsoft_phi-4-mini-instruct",
+    "mood": "guarded",
+    "repaired": [
+      "truncated"
+    ],
+    "source": "open-weights",
+    "text": [
+      "THE BRIDGE WON'T HEAR US.",
+      "I AM LISTENING."
+    ]
+  },
+  "created_at": "2026-10-26T21:14:37Z",
+  "endpoint": "http://127.0.0.1:51235/v1",
+  "key": "7459197ba36a9fb9cf09b0a1ea84bf02af5322a6fcdd9ce9c1b230f0bdcf6301",
+  "kind": "talk",
+  "model": "microsoft_phi-4-mini-instruct",
+  "network": false,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "navy_sailor",
+    "player_chars": 31,
+    "player_sha256": "2a193d70ec60cc6e5856e4de6afda8d793e451f8eda2b38dba6270384ede64d7",
+    "scene": "fight"
+  },
+  "source": "open-weights"
+}

@@ -1,0 +1,28 @@
+{
+  "answer": {
+    "effect": "none",
+    "model": "muse-spark-1.3",
+    "mood": "calm",
+    "repaired": [],
+    "source": "meta",
+    "text": [
+      "YOU ARE WELCOME.",
+      "MAKE IT WORTH THE DRIVE."
+    ]
+  },
+  "backend": "meta",
+  "created_at": "2026-10-27T01:41:39Z",
+  "key": "caec3f353f59307ea142a600fd0d2dff8b6fbe32851a8dd3f8ef3a10255afbd5",
+  "kind": "talk",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "konrad",
+    "player_chars": 25,
+    "player_sha256": "8f7c6a742bb030ebf8eda1b82299d4948a0a33a78503d38021eacf6f750dc34d",
+    "scene": "npc"
+  },
+  "source": "meta"
+}

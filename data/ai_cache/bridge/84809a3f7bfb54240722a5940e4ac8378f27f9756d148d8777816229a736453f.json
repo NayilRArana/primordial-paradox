@@ -1,0 +1,29 @@
+{
+  "answer": {
+    "effect": "none",
+    "model": "microsoft_phi-4-mini-instruct",
+    "mood": "guarded",
+    "repaired": [
+      "uppercased"
+    ],
+    "source": "open-weights",
+    "text": [
+      "A SMOKE. NOT NOW.",
+      "I AIN'T DONE YET."
+    ]
+  },
+  "created_at": "2026-10-27T03:18:24Z",
+  "endpoint": "http://127.0.0.1:51235/v1",
+  "key": "84809a3f7bfb54240722a5940e4ac8378f27f9756d148d8777816229a736453f",
+  "kind": "talk",
+  "model": "microsoft_phi-4-mini-instruct",
+  "network": false,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "navy_sailor",
+    "player_chars": 51,
+    "player_sha256": "a6986d60c4c7d829653f526a6de82a99a5f7a115e74ffcb4d5906c377aa090ab",
+    "scene": "fight"
+  },
+  "source": "open-weights"
+}

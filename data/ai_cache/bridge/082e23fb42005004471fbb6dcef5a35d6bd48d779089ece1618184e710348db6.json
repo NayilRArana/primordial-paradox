@@ -1,0 +1,27 @@
+{
+  "answer": {
+    "effect": "none",
+    "model": "microsoft_phi-4-mini-instruct",
+    "mood": "guarded",
+    "repaired": [],
+    "source": "open-weights",
+    "text": [
+      "MOVE. BE CAREFUL.",
+      "I'LL WATCH YOUR BACK."
+    ]
+  },
+  "created_at": "2026-10-26T21:14:33Z",
+  "endpoint": "http://127.0.0.1:51235/v1",
+  "key": "082e23fb42005004471fbb6dcef5a35d6bd48d779089ece1618184e710348db6",
+  "kind": "talk",
+  "model": "microsoft_phi-4-mini-instruct",
+  "network": false,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "navy_sailor",
+    "player_chars": 29,
+    "player_sha256": "856840bf6fd008e112fcf81c7873bc96826f91c2561172f152bea00fb5c6f8f4",
+    "scene": "fight"
+  },
+  "source": "open-weights"
+}

@@ -1,0 +1,28 @@
+{
+  "answer": {
+    "effect": "none",
+    "model": "muse-spark-1.3",
+    "mood": "guarded",
+    "repaired": [],
+    "source": "meta",
+    "text": [
+      "I ONLY HAD THE ONE BAG.",
+      "YOU COUNT WELL."
+    ]
+  },
+  "backend": "meta",
+  "created_at": "2026-10-27T00:54:55Z",
+  "key": "3b1e174a7c3b2aa5277912b32ee9a583df2cc6389b6110d10e7123bc70c520e3",
+  "kind": "talk",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "konrad",
+    "player_chars": 19,
+    "player_sha256": "a05a7c2eccfd3683c9e8bd4526f2408f77779a067ca45d4e06610fb33a687463",
+    "scene": "npc"
+  },
+  "source": "meta"
+}

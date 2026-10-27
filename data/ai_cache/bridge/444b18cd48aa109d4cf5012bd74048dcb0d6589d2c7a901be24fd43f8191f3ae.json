@@ -1,0 +1,28 @@
+{
+  "answer": {
+    "effect": "none",
+    "model": "muse-spark-1.3",
+    "mood": "guarded",
+    "repaired": [],
+    "source": "meta",
+    "text": [
+      "TWO IS FINE.",
+      "THE DESK MATTERS MORE."
+    ]
+  },
+  "backend": "meta",
+  "created_at": "2026-10-27T00:55:34Z",
+  "key": "444b18cd48aa109d4cf5012bd74048dcb0d6589d2c7a901be24fd43f8191f3ae",
+  "kind": "talk",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "konrad",
+    "player_chars": 33,
+    "player_sha256": "17e9c64344fee71a9710d4161159b4a101ce48dc7f31bd72751f2286f38413c5",
+    "scene": "npc"
+  },
+  "source": "meta"
+}

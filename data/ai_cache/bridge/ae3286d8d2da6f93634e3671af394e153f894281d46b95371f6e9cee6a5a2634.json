@@ -1,0 +1,29 @@
+{
+  "answer": {
+    "effect": "none",
+    "model": "microsoft_phi-4-mini-instruct",
+    "mood": "guarded",
+    "repaired": [
+      "truncated"
+    ],
+    "source": "open-weights",
+    "text": [
+      "SHE'S A STOWAWAY. WE DON'T",
+      "WE'RE ON A MISSION."
+    ]
+  },
+  "created_at": "2026-10-26T21:14:53Z",
+  "endpoint": "http://127.0.0.1:51235/v1",
+  "key": "ae3286d8d2da6f93634e3671af394e153f894281d46b95371f6e9cee6a5a2634",
+  "kind": "talk",
+  "model": "microsoft_phi-4-mini-instruct",
+  "network": false,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "navy_sailor",
+    "player_chars": 49,
+    "player_sha256": "25d5e7fb11f0196065c3ac9ca881cba81503451b2c9655ad899d7939778123b2",
+    "scene": "fight"
+  },
+  "source": "open-weights"
+}

@@ -1,0 +1,20 @@
+{
+  "answer": {
+    "transcript": "You have been standing on watch all night, sailor. Take a break, I will cover for you."
+  },
+  "created_at": "2026-10-26T19:40:02Z",
+  "duration_s": 6.825,
+  "key": "9c9f44e92b844c7e10507fb8b4394ef279be919766802e25546a2c713a8a2b4c",
+  "kind": "hear",
+  "language": "en",
+  "model": "tiny",
+  "network": false,
+  "request": {
+    "encounter_id": null,
+    "npc": null,
+    "player_chars": 0,
+    "player_sha256": "dc937b59892604f5a86ac96936cd7ff09e25f18ae6b758e8014a24c7fa039e91",
+    "scene": null
+  },
+  "source": "whisper"
+}

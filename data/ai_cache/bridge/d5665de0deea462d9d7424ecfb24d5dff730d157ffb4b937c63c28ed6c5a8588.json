@@ -1,0 +1,28 @@
+{
+  "answer": {
+    "effect": "none",
+    "model": "muse-spark-1.3",
+    "mood": "warm",
+    "repaired": [],
+    "source": "meta",
+    "text": [
+      "LONG ENOUGH TO KNOW CLOUDS!",
+      "SEE THAT GREY ROLLING IN!"
+    ]
+  },
+  "backend": "meta",
+  "created_at": "2026-10-27T00:56:40Z",
+  "key": "d5665de0deea462d9d7424ecfb24d5dff730d157ffb4b937c63c28ed6c5a8588",
+  "kind": "talk",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "urien",
+    "player_chars": 25,
+    "player_sha256": "52a8920d47f1e159830d603c05ea40dd742e8ee56f2ec4a8c3cf25b4ffe995f8",
+    "scene": "npc"
+  },
+  "source": "meta"
+}
