@@ -21,10 +21,16 @@ and then cropped to the viewport that tools/nes_composite_check.py finds in a pr
 is the game's own pixels and not the desktop's scaling of them. A frame of a terminal, of the desktop or of
 a cover window has no such viewport and is refused.
 
-Audio: system audio needs a loopback device, and this host reports none (tools/capture_title.py records the
-same). When there is no loopback the video is recorded silent and a stand-in track is rendered from the
-title theme that ships in the repo, then muxed in and labelled in the mp4's own metadata and in the verify
-file. It is never passed off as the game's live output.
+Audio has exactly two honest answers and no third (card DEMO-AUDIO-CAPTURE). With a loopback capture device
+or a virtual cable (a CABLE Output, a Stereo Mix, a virtual-audio-capturer) the game's own output is recorded
+with the video, and the verify file's `audio_source` says "game". Without one, the track is rebuilt from the
+game's own log: every "PP audio:" line the game writes is stamped with the second it arrived on the
+recording's clock, and the same file the line names is placed at that second, at the gain the game plays it
+at, with the game's own 30 step crossfade and its 6 dB intro duck. The verify file then says "reconstructed",
+and the mp4's own comment says so in words. A take with neither is a failure and never a silent pass. The old
+stand-in (one title theme looped over the whole film) is gone: a take recorded after 2026-10-30 may not carry
+it. `--audio-devices` prints this host's ffmpeg device list and the one install a machine without a loopback
+needs.
 
 Pollution (card t_5d1a6ec4): the rectangle is asked who owns it every second while the recording runs, not
 only before and after, and its pixels are read once a second as well. A foreign window found there stops the
@@ -42,11 +48,19 @@ because the owner samples taken during the recording are the verdict and the fra
 the second net.
 
 Usage:
-    python tools\\play_demo.py                        play data\\demo\\run_001.json and record output\\demo\\run_001.mp4
-    python tools\\play_demo.py --script data\\demo\\x.json --out output\\demo\\x.mp4
+    python tools\\play_demo.py                        play data\\demo\\run_002.json and record output\\demo\\run_002.mp4
+                                                      (the 180 s submission take, card t_785b61f0; run_001.json is the
+                                                      71 s walk take and is named with --script when it is wanted)
+    python tools\\play_demo.py --script data\\demo\\run_001.json --out output\\demo\\x.mp4
     python tools\\play_demo.py --check                re-check the mp4 the script names, without launching the game
     python tools\\play_demo.py --check --video P.mp4  check some other file the same way
     python tools\\play_demo.py --dry-run              validate the script and print the timeline in seconds
+    python tools\\play_demo.py --audio-devices        print the capture devices, the loopback and the install, no run
+
+A take also writes <stem>_audio.m4a beside the mp4 when its track was rebuilt from the game's own log (card
+DEMO-AUDIO-CAPTURE), and <stem>_cues.json: the beats of the shot table the game's own log named, the footstep
+count, and which leg of the TALK path the take used. `--check` reads both, because a video file alone cannot say
+that.
 
 Event kinds (card PP-FREE-MOVE): `note` is a beat with no input, `key` is one press, and `hold` is a key that goes
 down at `step`, stays down for `steps` and comes up. Since the overworld walks while a direction is HELD, a walk beat
@@ -75,6 +89,7 @@ silently or going red.
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 import threading
@@ -156,7 +171,7 @@ LAUNCH = None
 DEMO_DIR = os.path.join(ROOT, "data", "demo")
 OUTPUT_DIR = os.path.join(ROOT, "output", "demo")
 BUILD_DIR = os.path.join(ROOT, "build")
-DEFAULT_SCRIPT = os.path.join(DEMO_DIR, "run_001.json")
+DEFAULT_SCRIPT = os.path.join(DEMO_DIR, "run_002.json")
 MANIFEST = os.path.join(DEMO_DIR, "manifest.json")
 
 # The frames the run is checked on, as a share of the recording: the start, then every sixth. Sampling on
@@ -193,8 +208,46 @@ POLLUTION_SAMPLE_WINDOW_S = 1.5
 # A press this close to the previous one can land inside one game step, where the game reads it as the same
 # press (the reason capture_title.py spaces its keys). The runner refuses a script that asks for less.
 MIN_KEY_GAP_STEPS = 6
-# The audio stand-in is the title theme, which is what plays over the attract and the crawl.
-THEME_GLOBS = ("title_theme_v5", "title_theme_v4", "title_theme_v3", "title_theme_v2", "title_theme")
+# Card DEMO-AUDIO-CAPTURE (2026-10-27): what the audio in a take is, in one field, and the two honest answers.
+# A take that carries neither is a failure, so the old stand-in (one theme looped over the film) has no name here
+# at all and no code path to reach it.
+AUDIO_SOURCE_GAME = "game"
+AUDIO_SOURCE_RECONSTRUCTED = "reconstructed"
+AUDIO_SOURCE_NONE = "none"
+AUDIO_SOURCES = (AUDIO_SOURCE_GAME, AUDIO_SOURCE_RECONSTRUCTED)
+# The gains, crossfade and step length the game itself plays at, so a rebuilt track is at the game's levels and
+# not at a mixer's idea of them (game/scripts/pp_audio/pp_audio.gml:42 to :51).
+GAME_GAIN_MUSIC = 0.7
+GAME_GAIN_SFX = 0.9
+GAME_GAIN_BLIP_FACTOR = 0.5
+GAME_FADE_STEPS = 30
+GAME_STEP_MS = 16.6667
+# A loopback device is sold under these names. The first four are the ones capture_title.pick_loopback_device
+# already knows; the rest are the other names the same hardware and the OBS family install under.
+LOOPBACK_HINTS = ("stereo mix", "cable output", "virtual-audio-capturer", "loopback", "voicemeeter", "vb-audio",
+                  "what u hear", "wave out mix", "obs virtual", "screen-capture-recorder")
+# The one install that turns this host's silence into a capture, printed when no loopback device is present.
+LOOPBACK_INSTALL = ("audio install: install VB-Audio Virtual Cable (vb-audio.com/Cable) and set the game's output "
+                    "to CABLE Input, so ffmpeg can record CABLE Output with the video; OBS Studio's Audio Output "
+                    "Capture with the virtual audio device is the other way to the same device")
+# The game writes one "PP audio:" line per cue it asks for, plays or leaves silent
+# (game/scripts/pp_audio/pp_audio.gml), so the log is the account of what it played and when.
+AUDIO_LOG_NEEDLE = "PP audio:"
+AUDIO_LOG_POLL_S = 0.05
+# A rebuilt track whose mean level is at or under this is silence, not audio: nothing on this card may pass a
+# silent track off as the game's sound.
+SILENT_TRACK_DB = -70.0
+MUSIC_STREAM_RE = re.compile(r"^PP audio: title_theme streaming (\S+), instance")
+MUSIC_CUE_RE = re.compile(r"^PP audio: music cue (\S+) streaming (\S+), instance")
+MUSIC_MISSING_RE = re.compile(r"^PP audio: music cue (\S+) has no OGG yet")
+MUSIC_STOP_RE = re.compile(r"^PP audio: (?:music|title_theme) stopping over")
+SFX_PLAYED_RE = re.compile(r"^PP audio: ([a-z0-9_]+) played, instance")
+DUCK_RE = re.compile(r"^PP audio: title_theme ducked (-?[\d.]+) dB")
+UNDUCK_RE = re.compile(r"^PP audio: title_theme back to full after")
+SFX_MANIFEST = os.path.join(ROOT, "game", "datafiles", "sfx", "sfx.json")
+# Where the cue files the game names in its log actually live on this checkout: the build mirrors the delivered
+# OGGs into game/datafiles/streams, and assets/audio holds the delivered originals.
+STREAM_DIRS = (os.path.join(ROOT, "game", "datafiles", "streams"), os.path.join(ROOT, "assets", "audio"))
 
 # The binary is found once, on first use, because finding it goes through capture_title (card PINE-HONEST). A host
 # that reaches this line without the Windows path gets PlatformUnavailable from capture_module, not a traceback here.
@@ -488,7 +541,10 @@ class Replay(object):
                     break
                 cap.send_vk_down(cap.KEY_CODES[event["key"]])
                 self.record(event["id"], "down", event["key"], self.step_now())
-                end = int(event["step"]) + int(event["steps"])
+                # Card t_785b61f0: the hold lasts `steps` from where the key actually went down, not from the declared
+                # step. A press that landed 24 steps late used to hold for 24 steps less, and a 40 step hold of cancel
+                # that arrives late became 19 steps, under the 30 a scene needs to read it as a skip.
+                end = self.step_now() + int(event["steps"])
                 reached = self.wait_until(end)
                 cap.send_vk_up(cap.KEY_CODES[event["key"]])
                 self.record(event["id"], "up", event["key"], self.step_now())
@@ -573,34 +629,474 @@ def start_recorder(rect, out_path, duration_s, fps, loopback):
     return process, handle, log_path
 
 
-def newest_theme():
-    """The newest title theme in the repository, as the stand-in track's source. None when none is on disk."""
-    audio_dir = os.path.join(ROOT, "assets", "audio")
-    for folder in THEME_GLOBS:
-        candidate = os.path.join(audio_dir, folder)
-        if not os.path.isdir(candidate):
+def dshow_devices(ffmpeg_path):
+    """Every DirectShow capture device ffmpeg sees on this host, with the tool's own words about the rest.
+
+    System audio in an ffmpeg capture on Windows needs a loopback style audio device: gdigrab reads pixels and
+    has no audio input at all, so a host with no audio device records a silent picture no matter what the game
+    plays. The raw lines are kept so the verify file can say what the machine actually offered.
+    """
+    result = subprocess.run([ffmpeg_path, "-hide_banner", "-list_devices", "true", "-f", "dshow", "-i", "dummy"],
+                            capture_output=True, text=True, timeout=60, stdin=subprocess.DEVNULL)
+    text = (result.stderr or "") + (result.stdout or "")
+    devices = []
+    notes = []
+    raw = []
+    for line in text.splitlines():
+        stripped = line.strip()
+        if not stripped:
             continue
-        for name in sorted(os.listdir(candidate)):
-            if name.endswith(".ogg"):
-                return os.path.join(candidate, name)
+        if "(video)" in stripped or "(audio)" in stripped:
+            if '"' in stripped:
+                name = stripped.split('"')[1]
+                kind = "video" if "(video)" in stripped else "audio"
+                devices.append((name, kind))
+                raw.append(stripped[:200])
+            continue
+        if "Could not enumerate" in stripped or stripped.startswith("Error opening") or "dummy:" in stripped:
+            notes.append(stripped[:200])
+            raw.append(stripped[:200])
+    return {"devices": devices, "notes": notes, "raw": raw}
+
+
+def wasapi_demuxer(ffmpeg_path):
+    """True when this ffmpeg build can open a WASAPI device itself.
+
+    The Windows build installed here ships DirectShow and no WASAPI demuxer, so "no WASAPI loopback" is a fact
+    about the binary and not only about the sound card: `ffmpeg -formats` lists dshow and no wasapi row, and
+    `ffmpeg -h demuxer=wasapi` answers "Unknown format 'wasapi'". Measured 2026-10-27.
+    """
+    result = subprocess.run([ffmpeg_path, "-hide_banner", "-formats"], capture_output=True, text=True, timeout=60,
+                            stdin=subprocess.DEVNULL)
+    return "wasapi" in ((result.stdout or "") + (result.stderr or "")).lower()
+
+
+def pick_game_audio_device(devices):
+    """The audio device that carries the game's own output, or None. A microphone is never one of these."""
+    for name, kind in devices:
+        if kind == "audio" and any(hint in name.lower() for hint in LOOPBACK_HINTS):
+            return name
     return None
 
 
-def render_stand_in_audio(theme, seconds, out_path):
-    """Loop the title theme to the length of the video and write it as its own track file.
+def audio_device_report(ffmpeg_path):
+    """This host's audio inputs in one dict: the dshow list, whether ffmpeg has WASAPI, and the device chosen."""
+    found = dshow_devices(ffmpeg_path)
+    chosen = pick_game_audio_device(found["devices"])
+    return {"dshow": [{"name": name, "kind": kind} for name, kind in found["devices"]],
+            "dshow_notes": found["notes"],
+            "dshow_raw": found["raw"],
+            "wasapi_demuxer": wasapi_demuxer(ffmpeg_path),
+            "loopback": chosen,
+            "install": None if chosen else LOOPBACK_INSTALL}
 
-    This is not the game's live sound: without a loopback device ffmpeg cannot hear the game. The track is
-    the theme the game itself plays over the attract, rendered separately and labelled as a stand-in
-    everywhere it appears, so a viewer hears the right music and nobody mistakes it for a direct capture.
+
+class LogAudioWatch(threading.Thread):
+    """Stamp every "PP audio:" line the game writes with the second it arrived, on the recording's clock.
+
+    The game's log carries no timestamps, so the moment a line was read is the only second it can honestly be
+    placed at. Lines already in the file when the watch starts were written before the recording did (the
+    title theme streams at boot, seconds before the window is found), so they are placed at 0.0 and flagged
+    `before_recording` rather than guessed at.
     """
-    cap = capture_module()
+
+    def __init__(self, log_path, started_at, poll_s=AUDIO_LOG_POLL_S):
+        threading.Thread.__init__(self, name="log-audio-watch", daemon=True)
+        self.log_path = log_path
+        self.started_at = started_at
+        self.poll_s = poll_s
+        self.rows = []
+        self._stop_event = threading.Event()
+        self._offset = 0
+        self._tail = ""
+        self._polled_once = False
+
+    def run(self):
+        while not self._stop_event.is_set():
+            self.poll()
+            self._stop_event.wait(self.poll_s)
+        self.poll()
+
+    def poll(self):
+        """Read whatever is new in the log, split it into lines, and stamp the audio ones."""
+        try:
+            size = os.path.getsize(self.log_path)
+        except OSError:
+            return
+        if size <= self._offset:
+            return
+        try:
+            with open(self.log_path, "rb") as handle:
+                handle.seek(self._offset)
+                blob = handle.read(size - self._offset)
+        except OSError:
+            return
+        self._offset += len(blob)
+        text = self._tail + blob.decode("utf-8", "replace")
+        lines = text.splitlines()
+        if text and not text.endswith(("\n", "\r")):
+            self._tail = lines.pop() if lines else text
+        else:
+            self._tail = ""
+        for line in lines:
+            if AUDIO_LOG_NEEDLE not in line:
+                continue
+            at = 0.0 if not self._polled_once else max(0.0, time.monotonic() - self.started_at)
+            self.rows.append({"at": round(at, 3), "line": line.strip(), "before_recording": not self._polled_once})
+        self._polled_once = True
+
+    def stop(self):
+        """Stop reading and return the stamped lines, whatever the run did."""
+        self._stop_event.set()
+        if self.is_alive():
+            self.join(timeout=5)
+        self.poll()
+        return self.rows
+
+
+def sfx_table():
+    """The effect rows the build ships, id to (file, seconds), read from the manifest the game itself reads."""
+    cached = getattr(sfx_table, "_rows", None)
+    if cached is not None:
+        return cached
+    rows = {}
+    try:
+        with open(SFX_MANIFEST, "r", encoding="utf-8") as handle:
+            data = json.load(handle)
+        for row in data.get("cues") or []:
+            if not row.get("id") or not row.get("file"):
+                continue
+            rows[row["id"]] = (row["file"], float(row.get("seconds") or 0.0))
+    except (OSError, ValueError, TypeError):
+        rows = {}
+    sfx_table._rows = rows
+    return rows
+
+
+def resolve_stream(named):
+    """The cue file a log line names, found on this checkout. None when nothing of that name is here.
+
+    The log names the file the way the game sees it (`streams/title_theme_v3_126.ogg`), which is not a path
+    this repository has, so the leaf name is looked for in the two places the delivered OGGs actually live.
+    """
+    leaf = os.path.basename(str(named).replace("\\", "/"))
+    if not leaf:
+        return None
+    for folder in STREAM_DIRS:
+        candidate = os.path.join(folder, leaf)
+        if os.path.isfile(candidate):
+            return candidate
+        if not os.path.isdir(folder):
+            continue
+        for root_dir, _dirs, files in os.walk(folder):
+            if leaf in files:
+                return os.path.join(root_dir, leaf)
+    return None
+
+
+def sfx_gain(cue_id):
+    """The gain the game plays an effect at: the effect level, and half that for a text blip (pp_audio.gml)."""
+    return GAME_GAIN_SFX * GAME_GAIN_BLIP_FACTOR if str(cue_id).startswith("text_blip") else GAME_GAIN_SFX
+
+
+def audio_events(rows):
+    """One event per audio line: what the game played, from which file, and at what gain.
+
+    Returns (events, notes). A line this tool cannot place becomes a note and never an invented sound: the
+    reconstruction reproduces the game's own sound, and where the game was silent it stays silent.
+    """
+    events = []
+    notes = []
+    effects = sfx_table()
+    for row in rows:
+        line = str(row.get("line") or "")
+        at = max(0.0, float(row.get("at") or 0.0))
+        match = MUSIC_STREAM_RE.match(line)
+        if match:
+            path = resolve_stream(match.group(1))
+            if path is None:
+                notes.append("%.3f s: the log names %s and no file of that name is on this checkout"
+                             % (at, match.group(1)))
+                continue
+            events.append({"kind": "music", "at": at, "cue": "title_theme", "file": path})
+            continue
+        match = MUSIC_CUE_RE.match(line)
+        if match:
+            path = resolve_stream(match.group(2))
+            if path is None:
+                notes.append("%.3f s: the log names %s for cue %s and no file of that name is on this checkout"
+                             % (at, match.group(2), match.group(1)))
+                continue
+            events.append({"kind": "music", "at": at, "cue": match.group(1), "file": path})
+            continue
+        match = MUSIC_MISSING_RE.match(line)
+        if match:
+            events.append({"kind": "music_missing", "at": at, "cue": match.group(1)})
+            continue
+        if MUSIC_STOP_RE.match(line):
+            events.append({"kind": "music_stop", "at": at})
+            continue
+        match = DUCK_RE.match(line)
+        if match:
+            try:
+                db = float(match.group(1))
+            except ValueError:
+                notes.append("%.3f s: a duck line whose level could not be read: %s" % (at, line))
+                continue
+            events.append({"kind": "duck", "at": at, "db": db, "gain": GAME_GAIN_MUSIC * 10.0 ** (db / 20.0)})
+            continue
+        if UNDUCK_RE.match(line):
+            events.append({"kind": "unduck", "at": at, "gain": GAME_GAIN_MUSIC})
+            continue
+        match = SFX_PLAYED_RE.match(line)
+        if match:
+            cue_id = match.group(1)
+            if cue_id not in effects:
+                notes.append("%.3f s: the log says %s played and the effect manifest has no row for it"
+                             % (at, cue_id))
+                continue
+            file_name, length = effects[cue_id]
+            path = os.path.join(os.path.dirname(SFX_MANIFEST), file_name)
+            if not os.path.isfile(path):
+                notes.append("%.3f s: the log says %s played and %s is not on this checkout" % (at, cue_id, file_name))
+                continue
+            events.append({"kind": "sfx", "at": at, "id": cue_id, "file": path, "seconds": length,
+                           "gain": sfx_gain(cue_id)})
+    return events, notes
+
+
+def music_gain_at(gains, moment, start):
+    """The gain the game's own log puts the music at this second: the music level, or its intro duck."""
+    level = GAME_GAIN_MUSIC
+    for row in sorted(gains, key=lambda item: item["at"]):
+        if start - 0.001 <= row["at"] <= moment:
+            level = row["gain"]
+    return round(level, 4)
+
+
+def log_audio_plan(events, seconds):
+    """The track's segments: what the game played, from where, at what gain, between which seconds.
+
+    Returns (segments, silent_cues). A music cue the game asked for and could not start is carried as a silent
+    cue, so the rebuilt track is silent exactly where the game was: the reconstruction reproduces the game's
+    sound, not the sound the game was supposed to make.
+    """
+    fade = GAME_FADE_STEPS * GAME_STEP_MS / 1000.0
+    starts = [row for row in events if row["kind"] == "music"]
+    stops = [row["at"] for row in events if row["kind"] == "music_stop"]
+    gains = [row for row in events if row["kind"] in ("duck", "unduck")]
+    silent_cues = [{"at": round(row["at"], 3), "cue": row.get("cue"),
+                    "why": "the game asked for this cue and its OGG is not where the game looks, so the game "
+                           "played nothing here and neither does the reconstruction"}
+                   for row in events if row["kind"] == "music_missing"]
+    duck_moments = [row["at"] for row in gains]
+    segments = []
+    for index, row in enumerate(starts):
+        start = max(0.0, float(row["at"]))
+        stop = seconds if index + 1 >= len(starts) else float(starts[index + 1]["at"])
+        for moment in stops:
+            if start < moment < stop:
+                stop = moment
+        if stop - start <= 0.02:
+            continue
+        edges = [start] + sorted(moment for moment in duck_moments if start < moment < stop) + [stop]
+        for piece in range(len(edges) - 1):
+            piece_in, piece_out = edges[piece], edges[piece + 1]
+            if piece_out - piece_in <= 0.02:
+                continue
+            segments.append({"kind": "music", "cue": row.get("cue") or os.path.basename(row["file"]),
+                             "file": row["file"], "in": round(piece_in, 3), "out": round(piece_out, 3),
+                             "gain": music_gain_at(gains, piece_in, start), "loop": True,
+                             "fade_in": round(fade, 3) if piece == 0 else 0.0,
+                             "fade_out": round(fade, 3) if piece == len(edges) - 2 else 0.0,
+                             "why": "the game's own cue line, placed at the second it arrived"})
+    for row in events:
+        if row["kind"] != "sfx":
+            continue
+        at = max(0.0, float(row["at"]))
+        if at >= seconds:
+            continue
+        length = float(row.get("seconds") or 0.0) or 1.0
+        segments.append({"kind": "sfx", "cue": row["id"], "file": row["file"], "in": round(at, 3),
+                         "out": round(min(seconds, at + length), 3), "gain": row["gain"], "loop": False,
+                         "fade_in": 0.0, "fade_out": 0.0,
+                         "why": "an effect the game played, placed at the second its log line arrived"})
+    return segments, silent_cues
+
+
+def render_log_audio(segments, seconds, out_path):
+    """Build the track from the segments in one ffmpeg filtergraph, so the mixing is ffmpeg's and not a guess."""
     FFMPEG = ffmpeg_path()
-    ok, note = cap.run_ffmpeg(FFMPEG, ["-stream_loop", "-1", "-i", theme, "-t", "%.3f" % seconds,
-                                      "-c:a", "aac", "-b:a", "160k", out_path], timeout=180)
-    return ok, note
+    if not FFMPEG:
+        return False, "ffmpeg was not found"
+    arguments = ["-f", "lavfi", "-t", "%.3f" % seconds, "-i", "anullsrc=r=48000:cl=stereo"]
+    filters = []
+    labels = ["[0:a]"]
+    index = 0
+    for segment in segments:
+        seconds_in = max(0.0, float(segment["in"]))
+        length = float(segment["out"]) - seconds_in
+        if length <= 0.01:
+            continue
+        if segment.get("loop"):
+            arguments += ["-stream_loop", "-1", "-i", segment["file"]]
+        else:
+            arguments += ["-i", segment["file"]]
+        index += 1
+        chain = ["atrim=0:%.3f" % length, "asetpts=PTS-STARTPTS", "volume=%.4f" % float(segment["gain"])]
+        fade_in = min(float(segment.get("fade_in") or 0.0), length / 2.0)
+        fade_out = min(float(segment.get("fade_out") or 0.0), length / 2.0)
+        if fade_in > 0.01:
+            chain.append("afade=t=in:st=0:d=%.3f" % fade_in)
+        if fade_out > 0.01:
+            chain.append("afade=t=out:st=%.3f:d=%.3f" % (length - fade_out, fade_out))
+        chain.append("adelay=%d:all=1" % int(round(seconds_in * 1000.0)))
+        filters.append("[%d:a]%s[r%d]" % (index, ",".join(chain), index))
+        labels.append("[r%d]" % index)
+    if index == 0:
+        return False, "no segment had a length to place"
+    filters.append("%samix=inputs=%d:duration=first:normalize=0[out]" % ("".join(labels), len(labels)))
+    arguments += ["-filter_complex", ";".join(filters), "-map", "[out]", "-c:a", "aac", "-b:a", "160k",
+                  "-ar", "48000", "-ac", "2", "-t", "%.3f" % seconds, out_path]
+    return capture_module().run_ffmpeg(FFMPEG, arguments, timeout=300)
 
 
-def cut_and_scale(raw_path, viewport, script, out_path, audio_path):
+def mean_volume_db(path):
+    """ffmpeg's own volumedetect mean for a file, in dBFS, so a track of digital silence cannot pass as audio."""
+    FFMPEG = ffmpeg_path()
+    if not FFMPEG:
+        return None
+    try:
+        result = subprocess.run([FFMPEG, "-hide_banner", "-nostats", "-i", path, "-af", "volumedetect",
+                                 "-f", "null", "-"], capture_output=True, text=True, timeout=180,
+                                stdin=subprocess.DEVNULL)
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    for line in (result.stderr or "").splitlines():
+        if "mean_volume:" in line:
+            try:
+                return float(line.split("mean_volume:")[1].strip().split()[0])
+            except (IndexError, ValueError):
+                return None
+    return None
+
+
+def reconstruct_audio(rows, seconds, out_path):
+    """Build the take's track from the game's own log lines. Returns the dict the verify file carries."""
+    events, notes = audio_events(rows)
+    segments, silent_cues = log_audio_plan(events, seconds)
+    info = {"source": AUDIO_SOURCE_NONE, "lines": len(rows), "notes": notes, "silent_cues": silent_cues,
+            "segments": segments, "track": None}
+    if not segments:
+        info["why"] = "the log holds no audio line this tool could place, so there is nothing to rebuild"
+        return info
+    ok, note = render_log_audio(segments, seconds, out_path)
+    if not ok:
+        info["why"] = "the reconstruction did not render: %s" % note
+        return info
+    mean = mean_volume_db(out_path)
+    info["mean_volume_db"] = None if mean is None else round(mean, 2)
+    if mean is None or mean <= SILENT_TRACK_DB:
+        info["why"] = ("the rebuilt track measures %s dB mean, which is silence, so it is not audio"
+                       % ("unmeasured" if mean is None else "%.1f" % mean))
+        return info
+    music = [segment for segment in segments if segment["kind"] == "music"]
+    info.update({"source": AUDIO_SOURCE_RECONSTRUCTED,
+                 "track": out_path,
+                 "first_music": None if not music else {"cue": music[0]["cue"],
+                                                        "file": os.path.relpath(music[0]["file"], ROOT).replace("\\", "/"),
+                                                        "at": music[0]["in"]},
+                 "why": "%d segment%s from %d audio line%s in the game's log"
+                        % (len(segments), "" if len(segments) == 1 else "s",
+                           len(rows), "" if len(rows) == 1 else "s")})
+    return info
+
+
+def read_audio_record(video_path):
+    """The audio record a take's own verify file holds, so --check can judge audio without the run that made it.
+
+    A take recorded before card DEMO-AUDIO-CAPTURE carries a stand-in line and no `audio_source`; that file is
+    read back as the stand-in it says it is, so checking it fails the audio check instead of passing quietly.
+    """
+    sibling = os.path.splitext(video_path)[0] + "_verify.json"
+    if not os.path.isfile(sibling):
+        return None
+    try:
+        with open(sibling, "r", encoding="utf-8") as handle:
+            prior = json.load(handle)
+    except (OSError, ValueError):
+        return None
+    detail = dict(prior.get("audio_detail") or {})
+    if prior.get("audio_source"):
+        detail["source"] = prior["audio_source"]
+    if not detail.get("source") and "stand-in" in str(prior.get("audio") or "").lower():
+        detail["source"] = "stand-in"
+        detail["why"] = ("the verify file beside this take says its audio was a rendered stand-in rendered from a "
+                         "theme file, not the game's own sound")
+    return detail or None
+
+
+def audio_summary(audio):
+    """The one line the verify file carries in its `audio` field: what this take's sound is, in words."""
+    audio = audio or {}
+    source = audio.get("source")
+    if source == AUDIO_SOURCE_GAME:
+        return "game: the game's own output, recorded from %s with the video" % (audio.get("device") or "the loopback device")
+    if source == AUDIO_SOURCE_RECONSTRUCTED:
+        first = audio.get("first_music") or {}
+        music = "" if not first else " (%s at %.2f s)" % (first.get("cue"), first.get("at") or 0.0)
+        return ("reconstructed: %d segment%s placed from the game's own log, with the game's own files and gains%s, "
+                "not a loopback capture"
+                % (len(audio.get("segments") or []), "" if len(audio.get("segments") or []) == 1 else "s", music))
+    if source == AUDIO_SOURCE_NONE:
+        return "none: no loopback device and nothing in the log to rebuild, so this take has no game audio (%s)" % (
+            audio.get("why") or "no reason recorded")
+    return "unrecorded: this run has no account of where the audio came from"
+
+
+def audio_check(audio, has_audio):
+    """The audio verdict for a take, as (ok, line): game or reconstructed pass, and nothing else does.
+
+    Card DEMO-AUDIO-CAPTURE: a final take may carry the game's own captured output, or a track rebuilt from
+    the game's own log, and it may carry neither a stand-in nor silence. `audio is None` is the --check path,
+    where a file on disk is read without the run that made it: then the answer is UNMEASURED either way,
+    because no verdict is a different thing from a wrong one.
+    """
+    if audio is None:
+        # No record of this take's audio at all: a file alone cannot say where its sound came from. The run path
+        # always carries a record, so this shape is a video some other tool wrote, and saying "unmeasured" is
+        # different from saying "wrong". A take this tool records always says game or reconstructed.
+        if has_audio:
+            return True, ("UNMEASURED the file carries an audio stream and this run has no record of where it came "
+                          "from: a take this tool records says game or reconstructed, and --check reads the sibling "
+                          "verify file for that")
+        return True, ("UNMEASURED the file carries no audio stream and this run has no record of where its sound came "
+                      "from: a take this tool records says game or reconstructed, and --check reads the sibling "
+                      "verify file for that")
+    source = audio.get("source")
+    if source == AUDIO_SOURCE_GAME:
+        if not has_audio:
+            return False, ("FAIL the take names the loopback device %r and the finished file carries no audio "
+                           "stream, so none of the game's sound reached it" % (audio.get("device") or "?"))
+        return True, ("PASS the audio is the game's own output, recorded from %r with the video"
+                      % (audio.get("device") or "the loopback device"))
+    if source == AUDIO_SOURCE_RECONSTRUCTED:
+        first = audio.get("first_music") or {}
+        where = "" if not first else ", and %s enters at %.2f s" % (first.get("cue"), first.get("at") or 0.0)
+        if not has_audio:
+            return False, ("FAIL the take is labelled reconstructed and the finished file carries no audio stream")
+        return True, ("PASS the audio is reconstructed from the game's own log: %d cue placement%s with the game's "
+                      "own files and gains%s. This is the game's sounds at the game's own steps, not a loopback "
+                      "capture of the sound card"
+                      % (len(audio.get("segments") or []),
+                         "" if len(audio.get("segments") or []) == 1 else "s", where))
+    return False, ("FAIL this take carries no game audio (%s). A final take may carry the game's own capture "
+                   "(audio_source game) or a track rebuilt from the game's own log (audio_source reconstructed); "
+                   "a stand-in or silence is neither. %s"
+                   % ((audio.get("why") or "no reason recorded"), LOOPBACK_INSTALL))
+
+
+def cut_and_scale(raw_path, viewport, script, out_path, audio_path, audio_comment=None):
     """Crop the raw window recording to the viewport and scale it to a true 3x of the 256x240 screen."""
     cap = capture_module()
     FFMPEG = ffmpeg_path()
@@ -614,9 +1110,10 @@ def cut_and_scale(raw_path, viewport, script, out_path, audio_path):
     arguments += ["-filter:v", ",".join(filters), "-r", str(record["fps"]),
                   "-c:v", "libx264", "-preset", "medium", "-crf", "18", "-pix_fmt", "yuv420p"]
     if audio_path:
+        # Card DEMO-AUDIO-CAPTURE: the mp4 says in its own words which of the two honest answers it carries, so a
+        # viewer who reads the metadata is never told a rebuilt track is a capture of the sound card.
         arguments += ["-map", "0:v", "-map", "1:a", "-c:a", "aac", "-b:a", "160k", "-shortest",
-                      "-metadata", "comment=audio is a rendered stand-in (title theme), not the game's "
-                                   "loopback output"]
+                      "-metadata", "comment=%s" % (audio_comment or "audio source is not recorded")]
     arguments.append(out_path)
     return cap.run_ffmpeg(FFMPEG, arguments, timeout=900)
 
@@ -688,6 +1185,97 @@ def game_log_lines(path):
             return sum(1 for _line in handle)
     except OSError:  # gate: ok a log that is not there yet has no lines, which is what the count says
         return 0
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# The shot table's beats, read out of the game's own log (card t_785b61f0)
+#
+# Why a table here and not a paragraph in the verify report: a take is 180 s and a reader watching it should be able to
+# ask one file whether the beats the write-up claims were on screen, and get an answer the game's own lines support. Each
+# row is a beat of knowledge/DEMO-SCRIPT.md section 1 and the line the game writes when that beat starts. Nothing here
+# reads the video: the beats are what the run did, and the frames are what the run looked like.
+BEAT_CUES = (
+    ("S1 title", "PP title: room rm_pp_title live"),
+    ("S2 crawl", "PP title: intro started"),
+    ("S3 drive", "PP: music PP-02 requested"),
+    ("S4 gate", "PP scene: quay_gate_checkpoint end at tile"),
+    ("S5 office", "PP route: step gate handed to step office"),
+    ("S5 boarding", "PP route: step office handed to step boarding"),
+    ("S6 talk fight", "PP: talk pick, option 0, effect soften, mercy 60"),
+    ("S6 hound fight", "PP: battle start deck_hound"),
+    ("S6 ship log save", "PP: ship's log"),
+    ("S6 defeat", "PP: fight result defeat"),
+)
+FOOTSTEP_NEEDLE = "footstep played"
+LIVE_TALK_NEEDLE = "PP: talk live open, mode live"
+REPLAY_TALK_NEEDLE = "PP: talk open, 3 options"
+
+
+def beat_report(log_text):
+    """One row a beat: whether the game's own log carried its line, and the line itself when it did."""
+    rows = {}
+    for name, needle in BEAT_CUES:
+        line = ""
+        if log_text:
+            for candidate in log_text.splitlines():
+                if needle in candidate:
+                    line = candidate.strip()
+                    break
+        rows[name] = {"needle": needle, "found": bool(line), "line": line}
+    return rows
+
+
+def talk_report(log_text):
+    """Which leg of the TALK path this take actually used, said from the game's own lines.
+
+    The live leg is a socket to tools/ai_bridge.py and it prints `PP: talk live open, mode live`; the replay leg reads
+    data/meta_bake.json and never opens one. The label is read from the log and never from the script's wish, so a take
+    cannot say live because the script asked for it.
+    """
+    text = log_text or ""
+    if LIVE_TALK_NEEDLE in text:
+        return {"mode": "live", "evidence": LIVE_TALK_NEEDLE}
+    if REPLAY_TALK_NEEDLE in text:
+        return {"mode": "replay", "evidence": REPLAY_TALK_NEEDLE,
+                "why": "the game opened the TALK panel and never wrote the live mode line, so the replies came from "
+                       "the baked rows in data/meta_bake.json"}
+    return {"mode": "not reached", "evidence": "",
+            "why": "this take never opened the TALK panel, so it says nothing either way"}
+
+
+def cues_path(video_path):
+    """Where a take's beat and footstep rows are kept: beside the mp4, named from it."""
+    stem, _extension = os.path.splitext(video_path)
+    return stem + "_cues.json"
+
+
+def write_cues(video_path, log_text, footsteps, trace, script):
+    """Write the sidecar a later `--check` reads, because a video file alone cannot name the beats that made it."""
+    payload = {
+        "video": video_path,
+        "written_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "script": (os.path.relpath(script_path_used, ROOT) if script_path_used else None),
+        "beats": beat_report(log_text),
+        "cues": {"footsteps": int(footsteps)},
+        "talk": talk_report(log_text),
+        "trace": trace,
+    }
+    with open(cues_path(video_path), "w", encoding="utf-8", newline="\n") as handle:
+        handle.write(json.dumps(payload, indent=2, sort_keys=True) + "\n")
+    payload["sidecar"] = cues_path(video_path)
+    return payload
+
+
+def read_cues(video_path):
+    """The sidecar written beside a take, or None when there is none (an older take, or a file copied on its own)."""
+    path = cues_path(video_path)
+    if not os.path.isfile(path):
+        return None
+    try:
+        with open(path, "r", encoding="utf-8") as handle:
+            return json.load(handle)
+    except (OSError, ValueError):  # gate: ok a sidecar that cannot be read is treated as absent, and the check says so
+        return None
 
 
 class PollutionWatch(object):
@@ -942,7 +1530,7 @@ def audio_stream(ffprobe, path):
     return bool(data.get("streams"))
 
 
-def verify_video(path, script, report_path=None, pollution=None):
+def verify_video(path, script, report_path=None, pollution=None, cues=None, audio=None):
     """Check a finished mp4 against the script. Returns (ok, report).
 
     The four checks the card asks for, in the order a wrong recording shows up:
@@ -1029,6 +1617,22 @@ def verify_video(path, script, report_path=None, pollution=None):
                                           % (measured[0], measured[1], stream.get("codec_name"), measured_fps))
             ok_stream = True
     report["has_audio"] = audio_stream(ffprobe, path)
+    # Card DEMO-AUDIO-CAPTURE: the take says where its sound came from, and only two answers pass. `audio` is the
+    # dict the run built; it is None on the --check path, where a file on disk is read without the run that made it.
+    ok_audio, audio_line = audio_check(audio, report["has_audio"])
+    report["checks"]["audio"] = audio_line
+    report["audio"] = audio_summary(audio)
+    report["audio_source"] = (audio or {}).get("source")
+    if audio:
+        detail = {}
+        for key in ("device", "lines", "segments", "silent_cues", "notes", "track", "why", "mean_volume_db",
+                    "first_music", "devices"):
+            if audio.get(key) is not None:
+                detail[key] = audio[key]
+        track = detail.get("track")
+        if track:
+            detail["track"] = os.path.relpath(track, ROOT).replace("\\", "/")
+        report["audio_detail"] = detail
 
     work = os.path.join(BUILD_DIR, "_demo_check")
     os.makedirs(work, exist_ok=True)
@@ -1184,7 +1788,50 @@ def verify_video(path, script, report_path=None, pollution=None):
                                  "the scene moves" % best) if ok_motion else (
         "FAIL the sampled frames do not differ (largest %s), so the recording is a still" % best)
 
-    ok = bool(ok_duration and ok_stream and ok_lit and ok_game and ok_motion and ok_pollution)
+    ok = bool(ok_duration and ok_stream and ok_lit and ok_game and ok_motion and ok_pollution and ok_audio)
+
+    # The shot table's beats, and the footstep cues (card t_785b61f0). A 180 s take is not one picture, so the file
+    # that judges it has to say which beats the game's own log named and how many footstep cues the walk played. Both
+    # are read from the sidecar this tool writes beside the mp4 at record time, because a video file alone cannot name
+    # them; a script that names required beats and has no sidecar FAILS here rather than passing unmeasured.
+    required_beats = [str(name) for name in (checks.get("required_beats") or [])]
+    required_footsteps = int(checks.get("required_footsteps") or 0)
+    cue_rows = (cues or {})
+    beat_rows = cue_rows.get("beats") or {}
+    report["beats"] = beat_rows
+    report["talk"] = cue_rows.get("talk") or talk_report(None)
+    footsteps = int((cue_rows.get("cues") or {}).get("footsteps") or 0)
+    report["cues"] = {"footsteps": footsteps, "required_footsteps": required_footsteps,
+                      "sidecar": cues_path(path) if cues is not None else None}
+    named = [name for name in required_beats if (beat_rows.get(name) or {}).get("found")]
+    missing = [name for name in required_beats if name not in named]
+    if required_beats and cues is None:
+        report["checks"]["beats"] = (
+            "FAIL no cue log beside this take (%s), so nothing here names the beats the %d the script requires were on "
+            "screen: %s" % (os.path.basename(cues_path(path)), len(required_beats), ", ".join(required_beats)))
+        ok_beats = False
+    elif missing:
+        report["checks"]["beats"] = (
+            "FAIL %d of the %d beats the script requires were never named by the game's own log: %s. Found: %s"
+            % (len(missing), len(required_beats), ", ".join(missing), ", ".join(named) or "none"))
+        ok_beats = False
+    else:
+        report["checks"]["beats"] = (
+            "PASS the game's own log names %d of the %d beats the shot table asks for: %s"
+            % (len(named), len(required_beats), ", ".join(named)) if required_beats else
+            "PASS the game's own log was read for the shot table's beats (%d of %d found)"
+            % (len([name for name, _needle in BEAT_CUES if (beat_rows.get(name) or {}).get("found")]), len(BEAT_CUES)))
+        ok_beats = True
+    if footsteps < required_footsteps:
+        report["checks"]["cues"] = (
+            "FAIL the take carries %d footstep cues, and the script asks for at least %d"
+            % (footsteps, required_footsteps))
+        ok_cues = False
+    else:
+        report["checks"]["cues"] = (
+            "PASS %d footstep cues in the take, at least the %d the script asks for" % (footsteps, required_footsteps))
+        ok_cues = True
+    ok = bool(ok and ok_beats and ok_cues)
     report["ok"] = ok
     # A jump is evidence and never a verdict (the game's own scene change measures as one), so only a cover or
     # a frame that is not the game's picture makes a take polluted.
@@ -1213,10 +1860,14 @@ def post_recording_cover_note(covered):
 
 
 def print_report(report):
-    for name in ("file", "duration", "stream", "not_black", "not_a_terminal", "not_polluted", "jumps", "motion"):
+    for name in ("file", "duration", "stream", "audio", "not_black", "not_a_terminal", "not_polluted", "jumps",
+                 "motion", "beats", "cues"):
         line = report["checks"].get(name)
         if line:
             print("  %s" % line)
+    talk = report.get("talk") or {}
+    if talk.get("mode"):
+        print("  talk leg: %s%s" % (talk["mode"], "" if not talk.get("why") else " (%s)" % talk["why"]))
     for note in report.get("notes") or []:
         print("  %s" % note)
     for row in report.get("samples", []):
@@ -1274,9 +1925,19 @@ def run_demo(script, keep_raw=False):
     exe_path, win_path = build
     print("build: %s" % exe_path)
 
-    devices = cap.dshow_audio_devices(FFMPEG)
-    loopback = cap.pick_loopback_device(devices)
-    print("system audio: %s" % (loopback or "no loopback device, the video is recorded silent"))
+    # Card DEMO-AUDIO-CAPTURE: what this host offers is printed and carried into the verify file, so a take made
+    # on a machine with no loopback device says so in its own evidence and not only in a person's memory.
+    devices = audio_device_report(FFMPEG)
+    loopback = devices["loopback"]
+    print("system audio: %s" % (loopback or "no loopback capture device on this host"))
+    for row in devices["dshow"]:
+        print("  dshow %s: %s" % (row["kind"], row["name"]))
+    for note in devices["dshow_notes"]:
+        print("  dshow: %s" % note)
+    print("  ffmpeg wasapi demuxer: %s" % ("present" if devices["wasapi_demuxer"] else
+                                           "absent in this build, so no WASAPI loopback can be opened"))
+    if not loopback:
+        print("  %s" % LOOPBACK_INSTALL)
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     out_path = out_path_for(script)
@@ -1310,6 +1971,7 @@ def run_demo(script, keep_raw=False):
     recorder = None
     recorder_log = None
     watch = None
+    log_audio = None
     try:
         match = cap.find_window(
             lambda hwnd, pid, title, visible, rect: visible and title.lower().startswith(
@@ -1371,8 +2033,13 @@ def run_demo(script, keep_raw=False):
             raise SystemExit("the game lost the keyboard focus and would not take it back (%s)" % why)
 
         record_seconds = seconds + 2.5
+        # The recording's clock starts here: the log watch stamps each audio line with its distance from this
+        # instant, so a rebuilt track is placed on the same clock the video runs on.
+        audio_started_at = time.monotonic()
         recorder, recorder_log, recorder_log_path = start_recorder(rect, raw_path, record_seconds, fps, loopback)
         print("recording %.1f s of the window to %s" % (record_seconds, raw_path))
+        log_audio = LogAudioWatch(log_path, audio_started_at)
+        log_audio.start()
 
         # Card t_5d1a6ec4: ask who owns the rectangle while it is being recorded, not only before and after.
         watch = PollutionWatch(hwnd, rect, owners_at=lambda: cap.cover_report(hwnd, rect),
@@ -1404,6 +2071,9 @@ def run_demo(script, keep_raw=False):
                 recorder.kill()
             failures.append("ffmpeg did not stop on its own and was terminated, so the file may be truncated")
         cap.release_on_top(hwnd)
+        # The game's own account of its sound, stamped while the recording ran (card DEMO-AUDIO-CAPTURE).
+        audio_rows = log_audio.stop() if log_audio is not None else []
+        print("audio lines the game wrote: %d" % len(audio_rows))
 
         # Who owns the rectangle now that the recorder has stopped, asked BEFORE restore_foreground (card
         # t_4da3eb20). restore_foreground raises the window that was in front when this run started, so a
@@ -1437,29 +2107,53 @@ def run_demo(script, keep_raw=False):
             failures.append("the game played no footstep cue, so the Right presses did not reach the walk")
 
         audio_path = None
+        audio_comment = None
+        audio_info = {"source": AUDIO_SOURCE_NONE, "device": loopback, "devices": devices,
+                      "why": "no loopback device and no audio line in the log to rebuild from"}
         if loopback:
-            print("audio: recorded from %s with the video" % loopback)
+            audio_info = {"source": AUDIO_SOURCE_GAME, "device": loopback, "devices": devices}
+            audio_comment = ("audio is the game's own output, recorded from the loopback device %s with the video"
+                             % loopback)
+            print("audio: the game's own output, recorded from %s with the video" % loopback)
         else:
-            theme = newest_theme()
-            if theme:
-                audio_path = os.path.join(OUTPUT_DIR, "%s_audio.m4a" % stem)
-                made, note = render_stand_in_audio(theme, record_seconds, audio_path)
-                print("audio: no loopback, so a stand-in track was rendered from %s (%s): %s"
-                      % (os.path.relpath(theme, ROOT), note, audio_path))
-                if not made:
-                    audio_path = None
+            # Card DEMO-AUDIO-CAPTURE, second path: no capture device, so the track is rebuilt from the log the
+            # game itself wrote, file by file, at the second each line arrived. It is labelled reconstructed.
+            track_path = os.path.join(OUTPUT_DIR, "%s_audio.m4a" % stem)
+            rebuilt = reconstruct_audio(audio_rows, record_seconds, track_path)
+            rebuilt["devices"] = devices
+            audio_info = rebuilt
+            for note in rebuilt.get("notes") or []:
+                print("audio note: %s" % note)
+            for cue in rebuilt.get("silent_cues") or []:
+                print("audio note: %.2f s cue %s was silent in the game, so it is silent here too"
+                      % (cue.get("at") or 0.0, cue.get("cue")))
+            if rebuilt["source"] == AUDIO_SOURCE_RECONSTRUCTED:
+                audio_path = track_path
+                first = rebuilt.get("first_music") or {}
+                audio_comment = ("audio is reconstructed from the game's own log: %d cue placements at the seconds "
+                                 "the game's own audio lines arrived, with the game's own files and gains, mean %s dB; "
+                                 "it is not a capture of the sound card"
+                                 % (len(rebuilt["segments"]), rebuilt.get("mean_volume_db")))
+                print("audio: rebuilt %d segments from %d log lines, mean %s dB; %s enters at %.2f s: %s"
+                      % (len(rebuilt["segments"]), len(audio_rows), rebuilt.get("mean_volume_db"),
+                         first.get("cue"), first.get("at") or 0.0, track_path))
+            else:
+                print("FAIL no game audio: %s" % rebuilt.get("why"))
 
-        made, note = cut_and_scale(raw_path, viewport, script, out_path, audio_path)
+        made, note = cut_and_scale(raw_path, viewport, script, out_path, audio_path, audio_comment=audio_comment)
         if not made:
             print("FAIL the cut and scale did not run: %s" % note)
             return 1
         print("wrote %s" % out_path)
 
-        ok, report = verify_video(out_path, script, verify_path, pollution=pollution)
+        # Card t_785b61f0: the beats and the footsteps go in a sidecar beside the mp4, written while the game's own log
+        # is still in hand, so `--check` on the file alone can name the shot table's beats afterwards.
+        cues = write_cues(out_path, log_text, footsteps, replay.trace, script)
+        print("wrote %s" % cues)
+        print("talk leg: %s" % json.dumps(talk_report(log_text), sort_keys=True))
+
+        ok, report = verify_video(out_path, script, verify_path, pollution=pollution, cues=cues, audio=audio_info)
         report["script"] = os.path.relpath(script_path_used, ROOT) if script_path_used else None
-        report["audio"] = ("loopback %s" % loopback) if loopback else (
-            "rendered stand-in from %s, not the game's live output" % os.path.basename(audio_path)
-            if audio_path else "none")
         report["run"] = {"trace": replay.trace, "failures": failures, "game_log": os.path.relpath(log_path, ROOT),
                          "footsteps": footsteps, "planned_seconds": round(seconds, 3),
                          "recorded_seconds": round(record_seconds, 3)}
@@ -1484,6 +2178,12 @@ def run_demo(script, keep_raw=False):
     finally:
         # The one exit line, and the game closed before the raw file is cleaned up (card CAPTURE-QUIET-IMPL).
         run.finish()
+        if log_audio is not None:
+            # The audio watch reads the game's log every 50 ms; it is stopped here whatever path the run took.
+            try:
+                log_audio.stop()
+            except Exception:  # gate: ok best effort stop of the log reader during cleanup.
+                pass
         if watch is not None:
             # A sampling thread is stopped before the run returns, whatever path it took, so no poll outlives it.
             try:
@@ -1528,10 +2228,32 @@ def main():
     parser.add_argument("--dry-run", action="store_true",
                         help="validate the script and print its timeline in seconds, then stop")
     parser.add_argument("--keep-raw", action="store_true", help="keep the uncropped window recording")
+    parser.add_argument("--audio-devices", action="store_true",
+                        help="print this host's ffmpeg capture devices, whether it has a loopback, and the install "
+                             "a machine without one needs, then stop")
     args = parser.parse_args()
     LAUNCH = pp_launch.policy_from_args(args)
 
     try:
+        if args.audio_devices:
+            # Card DEMO-AUDIO-CAPTURE: the device list is evidence, so it is printed from ffmpeg's own words and
+            # never summarised from a document. Nothing here opens a window or records anything.
+            FFMPEG = ffmpeg_path()
+            if not FFMPEG:
+                print("ffmpeg was not found in the winget package folder and is not on PATH")
+                return 1
+            print("ffmpeg: %s" % FFMPEG)
+            report = audio_device_report(FFMPEG)
+            for row in report["dshow"]:
+                print("dshow %s: %s" % (row["kind"], row["name"]))
+            for note in report["dshow_notes"]:
+                print("dshow: %s" % note)
+            print("ffmpeg wasapi demuxer: %s" % ("present" if report["wasapi_demuxer"] else "absent in this build"))
+            print("loopback device for the game's own audio: %s" % (report["loopback"] or "none"))
+            if report["install"]:
+                print(report["install"])
+            return 0
+
         script_path_used = os.path.abspath(args.script)
         script = load_script(script_path_used)
         if args.out:
@@ -1553,7 +2275,13 @@ def main():
         if args.check:
             path = os.path.abspath(args.video) if args.video else out_path_for(script)
             print("checking %s against %s" % (path, os.path.basename(script_path_used)))
-            ok, report = verify_video(path, script)
+            # The sidecar written at record time is what names the beats from the file alone (card t_785b61f0). A take
+            # with none is checked, and the beats check says UNMEASURED in those words instead of passing.
+            cues = read_cues(path)
+            if cues is None:
+                print("no cue log beside this take (%s), so the beats it was made of cannot be named from the file"
+                      % os.path.basename(cues_path(path)))
+            ok, report = verify_video(path, script, cues=cues, audio=read_audio_record(path))
             print_report(report)
             return 0 if ok else 1
 
