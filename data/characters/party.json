@@ -9,6 +9,7 @@
       "will_max": 3,
       "power_multiplier": 1.0,
       "sprite": "spr_pp_hero",
+      "weapon": "dads_good_knife",
       "starting_items": [
         { "id": "salve", "count": 2 }
       ]

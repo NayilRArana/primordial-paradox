@@ -477,3 +477,45 @@ def test_a_renamed_phase_card_breaks_both_ends(data_root, read_json, write_json)
     errors = failures(data_root)
     assert any("no talk card" in e and "talk_phase" in e for e in errors), errors
     assert any("unreachable" in e and "percy_phase3" in e for e in errors), errors
+
+
+# Card PP-KNIFE (t_503707c8): an item row now says what it is, so the checker has a branch per kind and each branch
+# needs a control that can fail. These three are the controls: a kind nobody knows is refused, a weapon is checked
+# for the fields a weapon has (and not asked for a heal value), and a consumable that has lost its heal is still
+# refused, which is the rule that existed before the knife and must not have been loosened to make room for it.
+
+def _item_rows(data_root, read_json, write_json):
+    path = data_root / "data" / "items.json"
+    data = read_json(path)
+    return path, data
+
+
+def test_an_item_kind_nobody_knows_is_refused(data_root, read_json, write_json):
+    path, data = _item_rows(data_root, read_json, write_json)
+    data["items"][0]["kind"] = "relic"
+    write_json(path, data)
+
+    errors = failures(data_root)
+    assert any("items[0].kind" in e and "consumable or weapon" in e for e in errors), errors
+
+
+def test_a_weapon_is_checked_as_a_weapon_and_not_asked_for_a_heal(data_root, read_json, write_json):
+    path, data = _item_rows(data_root, read_json, write_json)
+    row = data["items"][0]
+    assert row.get("kind") == "weapon", "this control assumes the knife is the first row"
+    del row["damage_min"]
+    write_json(path, data)
+
+    errors = failures(data_root)
+    assert any("damage_min" in e and "missing required field" in e for e in errors), errors
+    assert not any("heal" in e for e in errors), errors
+
+
+def test_a_consumable_that_lost_its_heal_is_still_refused(data_root, read_json, write_json):
+    path, data = _item_rows(data_root, read_json, write_json)
+    salve = [row for row in data["items"] if row.get("kind", "consumable") == "consumable"][0]
+    del salve["heal"]
+    write_json(path, data)
+
+    errors = failures(data_root)
+    assert any("heal" in e and "missing required field" in e for e in errors), errors

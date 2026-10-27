@@ -600,6 +600,15 @@
     },
     {
       "$GMIncludedFile": "",
+      "%Name": "spr_pp_knife.png",
+      "CopyToMask": -1,
+      "filePath": "datafiles/art",
+      "name": "spr_pp_knife.png",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
       "%Name": "spr_pp_menu_cursor.png",
       "CopyToMask": -1,
       "filePath": "datafiles/art",

@@ -70,6 +70,9 @@ ART_SOURCES = (
     # source, so both are named here, and tests/test_battle_draw.py fails when the two lists drift apart.
     os.path.join(ROOT, "game", "sprites_src", "bg"),
     os.path.join(ROOT, "game", "sprites_src", "enemies"),
+    # Card PP-KNIFE (t_503707c8): the weapon sheet folder is mirrored too (tools/sync_art.py WEAPON_SRC), and the two
+    # lists are held together by tests/test_battle_draw.py's folder test, so it is named here.
+    os.path.join(ROOT, "game", "sprites_src", "weapons"),
 )
 SFX_FOLDER = "sfx"
 # Direction C's vocabulary. Kept apart from the two older words on purpose; see the docstring.

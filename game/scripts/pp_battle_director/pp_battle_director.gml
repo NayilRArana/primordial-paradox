@@ -227,10 +227,11 @@ function pp_battle_line_fill(_text, _battle, _damage) {
 }
 
 /// The FIGHT message, built from the weapon row: its attack line, then its damage line when the row carries one. A
-/// fight whose party names no weapon keeps the wording the director used before the knife, so the command still
-/// resolves and never opens an empty board.
+/// fight whose party names no weapon still resolves and never opens an empty board, on a plain line of its own. Card
+/// PP-KNIFE retires the pre knife wording here, so no live line reads like the old weapon: the replacement is the
+/// repo's own voice study, not a sentence invented in this file.
 function pp_battle_fight_lines(_battle, _damage) {
-    var _plain = "* You strike for " + string(_damage) + ".";
+    var _plain = "* You swing for " + string(_damage) + ". No comment.";
     var _w = pp_battle_weapon_row(_battle);
     if (is_undefined(_w)) return [_plain];
     if (!variable_struct_exists(_w, "attack_line")) return [_plain];

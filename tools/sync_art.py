@@ -58,7 +58,11 @@ DRIVE_SRC = os.path.join(ROOT, "assets", "tiles", "drive")
 # draw. Two folders here, one index, nothing else changes.
 BG_SRC = os.path.join(ROOT, "game", "sprites_src", "bg")
 ENEMY_SRC = os.path.join(ROOT, "game", "sprites_src", "enemies")
-SOURCES = (SRC, ENV_SRC, CHARS_SRC, ENV_QUAY_SRC, DRIVE_SRC, BG_SRC, ENEMY_SRC)
+# Card PP-KNIFE (t_503707c8): the weapon sheets (Dad's Good Knife, one 16x16 icon plus three slash frames) live in
+# game\sprites_src\weapons\. They are mirrored like every other animation, so the battle screen asks for
+# pp_art_has("spr_pp_knife") and gets a frame count instead of a hardcoded path.
+WEAPON_SRC = os.path.join(ROOT, "game", "sprites_src", "weapons")
+SOURCES = (SRC, ENV_SRC, CHARS_SRC, ENV_QUAY_SRC, DRIVE_SRC, BG_SRC, ENEMY_SRC, WEAPON_SRC)
 DST = os.path.join(ROOT, "game", "datafiles", "art")
 INDEX = "title_manifest.json"
 

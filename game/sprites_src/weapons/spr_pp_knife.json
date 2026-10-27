@@ -1,0 +1,336 @@
+{
+  "format": 1,
+  "kind": "weapon_frames",
+  "name": "spr_pp_knife",
+  "title": "Dad's Good Knife: one 16x16 icon and three slash frames",
+  "size": "64x16",
+  "frame_w": 16,
+  "frame_h": 16,
+  "frames": 4,
+  "fps": 8.0,
+  "grid": {
+    "cols": 4,
+    "rows": 1,
+    "cell_w": 16,
+    "cell_h": 16,
+    "sheet_w": 64,
+    "sheet_h": 16
+  },
+  "transparent": true,
+  "layer": true,
+  "layer_note": "the sheet is an OVERLAY, not a figure standing on ground: frame 0 is the icon a menu draws on its paper, and frames 1 to 3 are the swing drawn over the enemy slot while the message plays. tools/palette_synergy.py therefore asks R1b (ink or body clears 3:1 on the ground under it) and not R1's feet-on-ground row gap.",
+  "sprite_palette_count": 1,
+  "sprite_palettes_used": [
+    "zander"
+  ],
+  "sprite_palette_note": "Zander's own reserved hero triple from data/scene_palettes.json hero_palettes: $0F outline, $21 body, $31 accent. One palette for the icon and the swing, so the knife can never drift into two colours, and a battle strip that declares party_cast already carries it.",
+  "sprite_objects_per_frame": 4,
+  "max_sprite_objects_if_all_frames_on_screen": 16,
+  "frame_roles": {
+    "icon": 0,
+    "slash_frames": [
+      1,
+      2,
+      3
+    ]
+  },
+  "colour_count": 3,
+  "colours_used": [
+    {
+      "index": 15,
+      "hex": "#000000",
+      "role": "outline",
+      "usable": true
+    },
+    {
+      "index": 33,
+      "hex": "#3cbcfc",
+      "role": "body",
+      "usable": true
+    },
+    {
+      "index": 49,
+      "hex": "#a4e4fc",
+      "role": "accent",
+      "usable": true
+    }
+  ],
+  "rule": "sprite art: at most 3 opaque colours plus transparency on any 8x8 tile; entry 0 of a sprite palette is transparency; black is $0F; no gradient, no anti aliasing, no dithering",
+  "built_by": "tools\\art\\make_knife_nes.py",
+  "frames_detail": [
+    {
+      "index": 0,
+      "name": "icon",
+      "x": 0,
+      "y": 0,
+      "w": 16,
+      "h": 16,
+      "tiles_w": 2,
+      "tiles_h": 2,
+      "sprite_objects": 4,
+      "sprite_palette": "zander",
+      "colours": {
+        "outline": 15,
+        "body": 33,
+        "accent": 49
+      },
+      "hex": {
+        "outline": "#000000",
+        "body": "#3cbcfc",
+        "accent": "#a4e4fc"
+      },
+      "opaque_pixels": 103,
+      "colour_count": 3,
+      "bounds": {
+        "x1": 4,
+        "y1": 0,
+        "x2": 13,
+        "y2": 15
+      },
+      "tiles": [
+        {
+          "tile_x": 0,
+          "tile_y": 0,
+          "colours": 3,
+          "hex": [
+            "#000000",
+            "#3cbcfc",
+            "#a4e4fc"
+          ]
+        },
+        {
+          "tile_x": 1,
+          "tile_y": 0,
+          "colours": 3,
+          "hex": [
+            "#000000",
+            "#3cbcfc",
+            "#a4e4fc"
+          ]
+        },
+        {
+          "tile_x": 0,
+          "tile_y": 1,
+          "colours": 3,
+          "hex": [
+            "#000000",
+            "#3cbcfc",
+            "#a4e4fc"
+          ]
+        },
+        {
+          "tile_x": 1,
+          "tile_y": 1,
+          "colours": 2,
+          "hex": [
+            "#000000",
+            "#3cbcfc"
+          ]
+        }
+      ],
+      "note": "knife at rest, on the diagonal: a kitchen knife with a straight spine up its top left, the belly curving away under it inked as the shadow side, two pale pixels where the spine catches the light, a short bolster and a plain handle at the lower left with no guard on it, which is what makes it a dad's knife and not a dagger"
+    },
+    {
+      "index": 1,
+      "name": "slash_1",
+      "x": 16,
+      "y": 0,
+      "w": 16,
+      "h": 16,
+      "tiles_w": 2,
+      "tiles_h": 2,
+      "sprite_objects": 4,
+      "sprite_palette": "zander",
+      "colours": {
+        "outline": 15,
+        "body": 33,
+        "accent": 49
+      },
+      "hex": {
+        "outline": "#000000",
+        "body": "#3cbcfc",
+        "accent": "#a4e4fc"
+      },
+      "opaque_pixels": 31,
+      "colour_count": 3,
+      "bounds": {
+        "x1": 1,
+        "y1": 6,
+        "x2": 7,
+        "y2": 12
+      },
+      "tiles": [
+        {
+          "tile_x": 0,
+          "tile_y": 0,
+          "colours": 2,
+          "hex": [
+            "#000000",
+            "#a4e4fc"
+          ]
+        },
+        {
+          "tile_x": 1,
+          "tile_y": 0,
+          "colours": 0,
+          "hex": []
+        },
+        {
+          "tile_x": 0,
+          "tile_y": 1,
+          "colours": 3,
+          "hex": [
+            "#000000",
+            "#3cbcfc",
+            "#a4e4fc"
+          ]
+        },
+        {
+          "tile_x": 1,
+          "tile_y": 1,
+          "colours": 0,
+          "hex": []
+        }
+      ],
+      "note": "the swing starts: the first third of a crescent, pale along its outer edge and inked along its inner one, coming up from the lower left where the arm is"
+    },
+    {
+      "index": 2,
+      "name": "slash_2",
+      "x": 32,
+      "y": 0,
+      "w": 16,
+      "h": 16,
+      "tiles_w": 2,
+      "tiles_h": 2,
+      "sprite_objects": 4,
+      "sprite_palette": "zander",
+      "colours": {
+        "outline": 15,
+        "body": 33,
+        "accent": 49
+      },
+      "hex": {
+        "outline": "#000000",
+        "body": "#3cbcfc",
+        "accent": "#a4e4fc"
+      },
+      "opaque_pixels": 48,
+      "colour_count": 3,
+      "bounds": {
+        "x1": 2,
+        "y1": 3,
+        "x2": 9,
+        "y2": 12
+      },
+      "tiles": [
+        {
+          "tile_x": 0,
+          "tile_y": 0,
+          "colours": 3,
+          "hex": [
+            "#000000",
+            "#3cbcfc",
+            "#a4e4fc"
+          ]
+        },
+        {
+          "tile_x": 1,
+          "tile_y": 0,
+          "colours": 1,
+          "hex": [
+            "#000000"
+          ]
+        },
+        {
+          "tile_x": 0,
+          "tile_y": 1,
+          "colours": 3,
+          "hex": [
+            "#000000",
+            "#3cbcfc",
+            "#a4e4fc"
+          ]
+        },
+        {
+          "tile_x": 1,
+          "tile_y": 1,
+          "colours": 0,
+          "hex": []
+        }
+      ],
+      "note": "the swing is halfway: the same crescent past the middle of the arc, body tone showing between the rim and the shadow, so it reads as a blade travelling and not as a line"
+    },
+    {
+      "index": 3,
+      "name": "slash_3",
+      "x": 48,
+      "y": 0,
+      "w": 16,
+      "h": 16,
+      "tiles_w": 2,
+      "tiles_h": 2,
+      "sprite_objects": 4,
+      "sprite_palette": "zander",
+      "colours": {
+        "outline": 15,
+        "body": 33,
+        "accent": 49
+      },
+      "hex": {
+        "outline": "#000000",
+        "body": "#3cbcfc",
+        "accent": "#a4e4fc"
+      },
+      "opaque_pixels": 76,
+      "colour_count": 3,
+      "bounds": {
+        "x1": 2,
+        "y1": 1,
+        "x2": 13,
+        "y2": 12
+      },
+      "tiles": [
+        {
+          "tile_x": 0,
+          "tile_y": 0,
+          "colours": 3,
+          "hex": [
+            "#000000",
+            "#3cbcfc",
+            "#a4e4fc"
+          ]
+        },
+        {
+          "tile_x": 1,
+          "tile_y": 0,
+          "colours": 3,
+          "hex": [
+            "#000000",
+            "#3cbcfc",
+            "#a4e4fc"
+          ]
+        },
+        {
+          "tile_x": 0,
+          "tile_y": 1,
+          "colours": 3,
+          "hex": [
+            "#000000",
+            "#3cbcfc",
+            "#a4e4fc"
+          ]
+        },
+        {
+          "tile_x": 1,
+          "tile_y": 1,
+          "colours": 1,
+          "hex": [
+            "#000000"
+          ]
+        }
+      ],
+      "note": "the swing lands: the crescent reaches the far end of the arc and a three tone chip sits where it stops, which is the hit and not a splash"
+    }
+  ]
+}
