@@ -5,6 +5,13 @@
 
 #macro PP_DEBUG false
 
+// The live TALK path's build switch (spec 21 section 1, card t_ee178652). "replay" is the demo's mode: every answer
+// comes from data/talk_live_tape.json and the game opens no socket at all. "live" asks tools/ai_bridge.py on
+// 127.0.0.1. F6 flips it at run time, so one recording can show both ways without a rebuild, and anything else
+// spelled here is ignored and the data file's own default is used, because a typo in a macro is not a reason to
+// reach for the network.
+#macro PP_TALK_LIVE_MODE "replay"
+
 // Frame and time (spec 03, spec 01).
 #macro PP_FRAME_W 256
 #macro PP_FRAME_H 240

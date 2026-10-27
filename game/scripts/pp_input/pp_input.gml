@@ -20,7 +20,13 @@ function pp_input_table() {
         { id: "right",   keys: [vk_right, ord("D")], pads: [gp_padr], axis: "x" },
         { id: "debug_warp",  keys: [vk_f1], pads: [], axis: "" },
         { id: "debug_step",  keys: [vk_f2], pads: [], axis: "" },
-        { id: "debug_flags", keys: [vk_f3], pads: [], axis: "" }
+        { id: "debug_flags", keys: [vk_f3], pads: [], axis: "" },
+        // The TALK box's two actions (spec 21 section 2, card t_ee178652). live_voice is the held record key: the left
+        // shoulder is where a NES-era pad would put a second face row, and F5 off the pads so a keyboard player can
+        // reach it. live_mode flips replay to live in one press, which is how the demo's switch is shown on camera.
+        // Neither key belongs to another action above; tests\test_talk_live.py and tests\test_project.py pin that.
+        { id: "live_voice", keys: [vk_f5], pads: [gp_shoulderl], axis: "" },
+        { id: "live_mode",  keys: [vk_f6], pads: [], axis: "" }
     ];
 }
 
@@ -48,6 +54,14 @@ function pp_input_init() {
         vec_x: 0,
         vec_y: 0,
         vec_len: 0,
+        // The text entry reader's state (spec 21 section 2, card t_ee178652). Declared here for the same reason
+        // lock_steps is: the TALK box reads these every step it is open, and a key a struct does not carry is a
+        // crash on the first frame that reads it.
+        text_mode: false,
+        text_char: "",
+        text_send: false,
+        text_back: false,
+        text_del: false,
         pad_seen: -1
     };
 }
@@ -89,6 +103,9 @@ function pp_input_sample() {
         pp_input_clear_edges();
     }
 
+    // The text reader samples before the vector, so a character typed on the same step a box opens is read by the
+    // box, not lost to the order the two happen to run in (spec 21 section 2, card t_ee178652).
+    pp_input_text_step();
     pp_input_update_vector();
     if (gamepad_is_connected(0)) _in.pad_seen = 1; else _in.pad_seen = -1;
 }
@@ -196,4 +213,111 @@ function pp_menu_axis(_negative, _positive) {
     if (pp_pressed(_negative) || pp_repeat(_negative)) _dir = -1;
     if (pp_pressed(_positive) || pp_repeat(_positive)) _dir = (_dir == -1) ? 0 : 1;
     return _dir;
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+// Text entry (spec 16 section 1 step 2, spec 21 section 2, card t_ee178652)
+//
+// The TALK box needs letters, and letters are the one thing a five action table cannot carry. The wrong fix is a
+// keyboard_check inside the box, because then two places in the project read a key and spec 02 rule 1 stops being
+// true. So the reader lives here, in the one module that may read a key, and the box asks for a character the same
+// way every other feature asks for a press: once per step, from a value the sampler published.
+//
+// Three things this reader knows that a naive scan does not:
+//   1. A letter is one key with two characters. Scanning 32 to 126 would report both A and a for one press, so the
+//      letters are scanned once from A to Z and the case comes from the shift key.
+//   2. A digit with shift is the mark above it, which is how ! " ' ( ) * : ? are typed at all: the sheet carries
+//      those glyphs and a player with no letter grid would otherwise have no way to reach them.
+//   3. A locked input reports nothing, so a key held from the step before a box opens cannot type into it.
+
+/// Turn the reader on. The box calls this when it opens and pp_input_text_end when it closes, so a stray key in the
+/// overworld never builds a string.
+function pp_input_text_begin() {
+    var _in = global.pp_input;
+    if (!is_struct(_in)) return false;
+    if (!variable_struct_exists(_in, "text_mode")) _in.text_mode = false;
+    _in.text_mode = true;
+    _in.text_char = "";
+    _in.text_send = false;
+    _in.text_back = false;
+    _in.text_del = false;
+    return true;
+}
+
+function pp_input_text_end() {
+    var _in = global.pp_input;
+    if (!is_struct(_in)) return false;
+    _in.text_mode = false;
+    _in.text_char = "";
+    _in.text_send = false;
+    _in.text_back = false;
+    _in.text_del = false;
+    return true;
+}
+
+function pp_input_text_active() {
+    var _in = global.pp_input;
+    if (!is_struct(_in) || !variable_struct_exists(_in, "text_mode")) return false;
+    return (_in.text_mode == true);
+}
+
+/// The shift map for the marked digits and the two marks the sheet carries. Keyed by the unshifted ASCII code.
+function pp_input_text_shift(_code) {
+    switch (_code) {
+        case 49: return "!";
+        case 50: return "\"";
+        case 51: return "";      // # is not on the sheet, so the key types nothing rather than a hole
+        case 52: return "";      // $
+        case 53: return "";      // %
+        case 54: return "";      // &
+        case 55: return "'";
+        case 56: return "(";
+        case 57: return ")";
+        case 59: return ":";     // ; shifted
+        case 47: return "?";     // / shifted
+    }
+    return "";
+}
+
+/// One sample per step, called from pp_input_sample. Everything is cleared every step, so a caller that reads
+/// text_char twice reads the same character and a caller that never reads it costs nothing.
+function pp_input_text_step() {
+    var _in = global.pp_input;
+    if (!is_struct(_in)) return;
+    if (!variable_struct_exists(_in, "text_mode")) _in.text_mode = false;
+    _in.text_char = "";
+    _in.text_send = false;
+    _in.text_back = false;
+    _in.text_del = false;
+    if (_in.text_mode != true) return;
+    if (_in.lock_steps > 0) return;
+
+    _in.text_send = keyboard_check_pressed(vk_enter);
+    _in.text_back = keyboard_check_pressed(vk_escape);
+    _in.text_del  = keyboard_check_pressed(vk_backspace);
+
+    var _shift = keyboard_check(vk_shift);
+
+    // Marks and digits first: every printable code that is not a letter.
+    for (var _code = 32; _code <= 126; _code++) {
+        if (_code >= 65 && _code <= 90) continue;                              // A to Z, handled below
+        if (_code >= 97 && _code <= 122) continue;                              // a to z, same keys
+        if (!keyboard_check_pressed(_code)) continue;
+        var _char = chr(_code);
+        if (_shift) {
+            var _marked = pp_input_text_shift(_code);
+            if (_marked != "") _char = _marked;
+        }
+        _in.text_char = _char;
+        return;
+    }
+
+    // Then the letters, once each, with the case the player is holding.
+    for (var _code = 65; _code <= 90; _code++) {
+        if (!keyboard_check_pressed(_code)) continue;
+        var _letter = chr(_code);
+        if (!_shift) _letter = string_lower(_letter);
+        _in.text_char = _letter;
+        return;
+    }
 }

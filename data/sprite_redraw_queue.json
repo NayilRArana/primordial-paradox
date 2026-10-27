@@ -5924,7 +5924,7 @@
       "q_for_gamedev": [
         "a 16 frame cycle where the two frames of a direction are a real step, and whether the 1 px outline may eat into the 16 x 24 cell the walk is built on"
       ],
-      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (GEMINI_API_KEY absent from the worker), so no eye score exists yet and nothing is promoted."
+      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (no Gemini key was present in the worker), so no eye score exists yet and nothing is promoted."
     },
     {
       "id": "cand_r18_kronos_ow",
@@ -6063,7 +6063,7 @@
       "q_for_gamedev": [
         "a stander only: no walk exists for him"
       ],
-      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (GEMINI_API_KEY absent from the worker), so no eye score exists yet and nothing is promoted."
+      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (no Gemini key was present in the worker), so no eye score exists yet and nothing is promoted."
     },
     {
       "id": "cand_r18_percy_ow",
@@ -6202,7 +6202,7 @@
       "q_for_gamedev": [
         "a stander only: no walk exists for him"
       ],
-      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (GEMINI_API_KEY absent from the worker), so no eye score exists yet and nothing is promoted."
+      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (no Gemini key was present in the worker), so no eye score exists yet and nothing is promoted."
     },
     {
       "id": "cand_r18_percy_man_1",
@@ -6340,7 +6340,7 @@
       "q_for_gamedev": [
         "whether three men of one watch read as three people"
       ],
-      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (GEMINI_API_KEY absent from the worker), so no eye score exists yet and nothing is promoted."
+      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (no Gemini key was present in the worker), so no eye score exists yet and nothing is promoted."
     },
     {
       "id": "cand_r18_percy_man_2",
@@ -6479,7 +6479,7 @@
       "q_for_gamedev": [
         "as the first man"
       ],
-      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (GEMINI_API_KEY absent from the worker), so no eye score exists yet and nothing is promoted."
+      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (no Gemini key was present in the worker), so no eye score exists yet and nothing is promoted."
     },
     {
       "id": "cand_r18_percy_man_3",
@@ -6618,7 +6618,7 @@
       "q_for_gamedev": [
         "as the first man"
       ],
-      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (GEMINI_API_KEY absent from the worker), so no eye score exists yet and nothing is promoted."
+      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (no Gemini key was present in the worker), so no eye score exists yet and nothing is promoted."
     },
     {
       "id": "cand_r18_ouranos_ow",
@@ -6757,7 +6757,7 @@
       "q_for_gamedev": [
         "a stander only, and whether the staff survives a 3 colour cell"
       ],
-      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (GEMINI_API_KEY absent from the worker), so no eye score exists yet and nothing is promoted."
+      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (no Gemini key was present in the worker), so no eye score exists yet and nothing is promoted."
     },
     {
       "id": "cand_r18_portrait_zeus",
@@ -6896,7 +6896,7 @@
       "q_for_gamedev": [
         "a 32 x 32 face in three entries: whether a portrait this small may spend a fourth row"
       ],
-      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (GEMINI_API_KEY absent from the worker), so no eye score exists yet and nothing is promoted."
+      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (no Gemini key was present in the worker), so no eye score exists yet and nothing is promoted."
     },
     {
       "id": "cand_r18_portrait_kronos",
@@ -7035,7 +7035,7 @@
       "q_for_gamedev": [
         "as the Zeus portrait"
       ],
-      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (GEMINI_API_KEY absent from the worker), so no eye score exists yet and nothing is promoted."
+      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (no Gemini key was present in the worker), so no eye score exists yet and nothing is promoted."
     },
     {
       "id": "cand_r18_portrait_percy",
@@ -7174,7 +7174,7 @@
       "q_for_gamedev": [
         "as the Zeus portrait, against the 48 x 48 row spr_pp_portrait_percy that already sits queued_by_eye"
       ],
-      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (GEMINI_API_KEY absent from the worker), so no eye score exists yet and nothing is promoted."
+      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (no Gemini key was present in the worker), so no eye score exists yet and nothing is promoted."
     }
   ],
   "evidence": {

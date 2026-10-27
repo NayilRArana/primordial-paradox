@@ -69,6 +69,15 @@
     },
     {
       "$GMIncludedFile": "",
+      "%Name": "counterpoint_targets.json",
+      "CopyToMask": -1,
+      "filePath": "datafiles",
+      "name": "counterpoint_targets.json",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
       "%Name": "credits.json",
       "CopyToMask": -1,
       "filePath": "datafiles",
@@ -109,6 +118,15 @@
       "CopyToMask": -1,
       "filePath": "datafiles",
       "name": "flags.json",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "hod_dissonance_devices.json",
+      "CopyToMask": -1,
+      "filePath": "datafiles",
+      "name": "hod_dissonance_devices.json",
       "resourceType": "GMIncludedFile",
       "resourceVersion": "2.0"
     },

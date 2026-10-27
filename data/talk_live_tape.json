@@ -1,0 +1,122 @@
+{
+  "format": 1,
+  "kind": "talk_live_tape",
+  "version": 1,
+  "owner": "gamedev",
+  "card": "t_ee178652 (W2 LIVE-TALK)",
+  "rule": "This is the demo's recording. In replay mode the game reads an answer here and sends nothing: no socket, no bridge, no key. An answer saved here is byte shaped like tools/ai_bridge.py's /talk answer, because a replay that is a different shape from a live answer is a second code path and two code paths is two bugs. 'recorded_against' names the data/talk_live.json version and the judge version the answers were captured with; a bump means this file is re-recorded, not edited.",
+  "recorded_against": {
+    "talk_live": 1,
+    "judge": 1,
+    "bridge": "tools/ai_bridge.py, /talk shape as documented in its module header",
+    "when": "2026-10-26",
+    "how": "shaped from the Navy Sailor card's weak and strong topics in data/talk_cards.json and the verdict map in data/talk/sailor_judge.json, and written to be replaced by a real capture: run tools\\ai_bridge.py --selftest, play the three demo lines live, then paste the answers back here with source set to the rung that answered"
+  },
+
+  "hear": [
+    {
+      "id": "sailor_watch",
+      "wav_seconds": 4.2,
+      "transcript": "You have been on watch all night. Get some sleep.",
+      "model": "faster-whisper tiny",
+      "note": "What /hear returns for the demo's first voice take. The transcript fills the same box the keyboard fills, and the player edits it before sending."
+    },
+    {
+      "id": "sailor_smoke",
+      "wav_seconds": 3.1,
+      "transcript": "Want a smoke? The sea can wait.",
+      "model": "faster-whisper tiny",
+      "note": "The second voice take."
+    }
+  ],
+
+  "exchanges": [
+    {
+      "enemy": "navy_sailor",
+      "line": "You have been on watch all night. Get some sleep.",
+      "note": "Two weak topics in the sailor's own card (the long watch, tiredness), so the verdict is the soften row: +20, which is exactly the authored option's row. The first try of the demo.",
+      "answer": {
+        "verdict": "persuaded",
+        "will_delta": 20,
+        "reply": ["TWENTY TWO YEARS", "OF THIS. GO ON,", "BEFORE I CHANGE MY MIND."],
+        "source": "replay",
+        "origin": "meta",
+        "mood": "warm",
+        "cached": true,
+        "latency_ms": 412
+      }
+    },
+    {
+      "enemy": "navy_sailor",
+      "line": "Want a smoke? The sea can wait.",
+      "note": "A smoke is on the card's wants and is a weak topic, so soften again. The second try of the demo: WILL reaches 40 of 60.",
+      "answer": {
+        "verdict": "persuaded",
+        "will_delta": 20,
+        "reply": ["A SMOKE. AFTER THE", "WATCH ENDS. NOT", "BEFORE."],
+        "source": "replay",
+        "origin": "open-weights",
+        "mood": "calm",
+        "cached": true,
+        "latency_ms": 738
+      }
+    },
+    {
+      "enemy": "navy_sailor",
+      "line": "Is the bridge going to report you for this?",
+      "note": "The bridge is a strong topic, and asking about it is not the same as the sailor fearing it: unmoved, 0. The third try of the demo, and the one that shows the WILL bar not moving on a line that earns nothing.",
+      "answer": {
+        "verdict": "unmoved",
+        "will_delta": 0,
+        "reply": ["THE LIST DOES NOT", "CARE HOW POLITE", "YOU ARE."],
+        "source": "replay",
+        "origin": "meta",
+        "mood": "guarded",
+        "cached": true,
+        "latency_ms": 505
+      }
+    },
+    {
+      "enemy": "navy_sailor",
+      "line": "Move or I move you, and I do not care about your list.",
+      "note": "Two strong topics at once, so the answer hardens the fight rather than ending it. A player who swears at the watch pays for it, which is what makes the WILL bar a decision and not a button.",
+      "answer": {
+        "verdict": "angered",
+        "will_delta": -10,
+        "reply": ["SAY THAT AGAIN AND", "THIS GETS LOUD."],
+        "source": "replay",
+        "origin": "meta",
+        "mood": "angry",
+        "cached": true,
+        "latency_ms": 377
+      }
+    },
+    {
+      "enemy": "navy_sailor",
+      "line": "Hello. Where is your home port?",
+      "note": "A greeting and a weak topic, but no name and no fear, so a nudge rather than a soften: +5. The row that keeps a polite but empty line from being worth a full weak topic.",
+      "answer": {
+        "verdict": "persuaded",
+        "will_delta": 5,
+        "reply": ["PORTSIDE. LONG WAY", "FROM HERE."],
+        "source": "replay",
+        "origin": "open-weights",
+        "mood": "calm",
+        "cached": true,
+        "latency_ms": 690
+      }
+    }
+  ],
+
+  "miss": {
+    "verdict": "unmoved",
+    "will_delta": 0,
+    "reply": ["YOU ARE NOT ON", "THE LIST."],
+    "source": "fallback",
+    "origin": "fallback",
+    "mood": "guarded",
+    "cached": false,
+    "latency_ms": 0,
+    "note": "A line the tape has never heard still answers: the miss row, which is the same shape as an answer so nothing downstream tests for 'no answer'. The fight never stalls on a line nobody recorded."
+  }
+}

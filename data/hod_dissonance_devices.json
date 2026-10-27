@@ -2,6 +2,16 @@
  "format": "pp-hod-dissonance-devices",
  "version": 1,
  "card": "t_0ed3bd3f",
+ "sources": [
+  {
+   "id": "S1",
+   "title": "VGMusic, the fan sequenced Harmony of Dissonance MIDI this file measures",
+   "url": "https://www.vgmusic.com/",
+   "licence": "fan sequenced MIDI, publicly posted; study only, measured for devices and statistics, never committed, never copied, never used as generator input",
+   "supports": "works[]: one URL per work, the archive path of the MIDI file that row's sha256 belongs to"
+  }
+ ],
+ "sources_note": "The URLs in works[] are citations of somebody else's sequences, not places this build reaches: nothing in the game reads this file and no tool downloads from it. The corpus itself lives outside the repository, and the provenance is declared here as well as on each row.",
  "written": "2026-10-26",
  "study_set": {
   "description": "Fan sequenced MIDI of Castlevania: Harmony of Dissonance (Konami, 2002), measured only. Not committed, not copied, not used as generator input.",

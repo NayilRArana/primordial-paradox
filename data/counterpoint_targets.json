@@ -2,6 +2,16 @@
  "format": "pp-counterpoint-targets",
  "version": 1,
  "card": "t_0ed3bd3f",
+ "sources": [
+  {
+   "id": "S1",
+   "title": "Mutopia Project, the Bach editions this file measures",
+   "url": "https://www.mutopiaproject.org/",
+   "licence": "stated on every works[] row: Public Domain, or Creative Commons Attribution-ShareAlike 3.0 for the one row that says so",
+   "supports": "works[]: one URL per work, the archive path of the MIDI file that row's sha256 belongs to"
+  }
+ ],
+ "sources_note": "The URLs in works[] are citations of somebody else's editions, not places this build reaches: nothing in the game reads this file and no tool downloads from it. The provenance is declared here as well as on each row, so a scanner does not have to open 35 rows to see it. Nothing melodic is stored in this file, only counts and shares.",
  "written": "2026-10-26",
  "corpus": {
   "description": "Bach: 15 two-part inventions (BWV 772 to 786), 15 three-part sinfonias (BWV 787 to 801) and 5 chorale settings, public domain, Mutopia Project",

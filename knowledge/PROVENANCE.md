@@ -78,6 +78,7 @@ Every file that ships is listed here, and tools\check_provenance.py refuses a mo
 | game/scripts/pp_look/pp_look.gml | the 8 bit look: one scale, one palette set per room | 03, 13 |
 | game/scripts/pp_rng/pp_rng.gml | specs alone | 09 |
 | game/scripts/pp_save/pp_save.gml | save, load and resume | 01, 10, 11 |
+| game/scripts/pp_talk_live/pp_talk_live.gml | the live TALK entry and the local AI bridge | 16, 19, 21 |
 | game/objects/obj_pp_game | specs alone | 01, 02 |
 | game/objects/obj_pp_debug_overlay | specs alone | 10 |
 | game/objects/obj_pp_title | specs alone | 14 (proposed) |
@@ -314,6 +315,44 @@ timings as macros in pp_config, a save point as a trigger of kind "save" in map 
 ids all coming from data\. The title line, the backup rotation, the panel timing and the save point are spec 11's own
 decisions. The buffer fields hold a handle or undefined and never a number, the existence test is the async pair's own
 status rather than a path guess, and the length prefix is read with is_numeric.
+
+Copied expression: none.
+
+## the live TALK entry and the local AI bridge (2026-10-26, card t_ee178652)
+
+Status: the live entry for card t_ee178652: game\scripts\pp_talk_live\pp_talk_live.gml, the three event files it is
+called from (game\objects\obj_pp_game\Other_62.gml, Other_69.gml and Other_73.gml), and the data it reads
+(data\talk_live.json, data\talk_live_tape.json). It owns the pp_talk_live row of the module map above and no other row.
+
+Studied: no decompiled, ripped, fan ported or commercial material of any kind was read, opened, searched, fetched or
+reasoned from for this entry, and no other game's code, text or audio informed it. The written sources were this
+repository's specs\21-live-talk.md (written for this card), specs\16-talk-command.md sections 1, 2 and 12, and
+specs\19-llm-talk.md; plus these official GameMaker manual pages, read at the source: the Async HTTP Request and
+Save/Load asynchronous event pages, http_request, json_parse, json_stringify, audio_start_recording,
+audio_stop_recording, audio_get_recorder_count and the Audio Recording asynchronous event. The one fact the manual does
+not print, the arity of the two recording calls, was read out of the runtime's own GmlSpec.xml at
+runtime-2026.0.0.23 (audio_start_recording(recorder_index) returns a channel, audio_stop_recording(channel_index) takes
+it), and the first version of this module failed the build because it was guessed instead.
+
+Mechanics learned (public mechanics and our own decisions, not a studied design):
+- http_request takes a URL, a method, a header map and a body string, and its answer arrives in an asynchronous event
+  whose async_load carries the id the call returned, plus status and the result. One call in flight and an id match is
+  what turns a late answer into a no op instead of a wrong turn.
+- A recording is a channel: audio_start_recording(source_index) returns the channel to stop, and the buffer arrives in
+  the Audio Recording event. audio_get_recorder_count() answers whether a device exists before a channel is opened.
+- An on-screen keyboard for a pad is a grid with a cursor, a confirm that appends and a delete that removes one
+  character; the alphabetical 11 by 4 layout with DEL and END at the end is the console genre's own convention, which is
+  the design studied here. The line it builds is the same string the PC keyboard builds.
+- Our own rules from the specs: 60 characters shown over two rows of 28 and a 120 character cap, three free text tries
+  and then the authored options carry the fight, one answer per turn with a step budget, and replay (the default) reading
+  a recorded tape with no socket opened.
+
+Our implementation differs by: the whole path is data driven. The bridge's five address fields, the limits, the timings,
+the strings, the 44 cell grid and the verdict deltas live in data\talk_live.json, and the recorded exchanges in
+data\talk_live_tape.json in the same byte shape the bridge answers with, so a replay is not a second code path. The
+address is assembled at call time and no shipped module holds a URL literal. The fallback is a tape miss row rather than
+an error, and the WILL meter is the same talk_mercy the authored options move, clamped, so a live answer can never move
+it further than the authored row it stands in for.
 
 Copied expression: none.
 

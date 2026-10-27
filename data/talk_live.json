@@ -1,0 +1,87 @@
+{
+  "format": 1,
+  "kind": "talk_live",
+  "version": 1,
+  "owner": "gamedev",
+  "card": "t_ee178652 (W2 LIVE-TALK)",
+  "rule": "The live TALK path's numbers live here, not in GML. pp_talk_live reads this file once through pp_data_json and a missing key falls back to the GETTER default in the GML, never to a crash. Bump 'version' when a value that changes what the player sees changes, because data/talk_live_tape.json records which version it was captured against.",
+  "what_this_is": "The first fight's TALK command gains a fifth entry, SAY IT YOURSELF. It opens an NES style text box: the player types on the PC keyboard, or builds the same line on a letter grid with the d-pad, or holds the voice key and edits the transcript. The line goes to tools/ai_bridge.py (127.0.0.1 only) and the answer moves the enemy's WILL bar. After three free text tries the fifth entry closes and the fight ends on the authored options, so the fight can always end.",
+
+  "bridge": {
+    "scheme": "http",
+    "host": "127.0.0.1",
+    "port": 8791,
+    "talk_path": "/talk",
+    "hear_path": "/hear",
+    "loopback_note": "The host is a loopback literal and tools/check_data.py plus tests/test_talk_live.py refuse anything else. The engine builds the address from these four fields (scheme, host, port, path) at call time; no address string and no http:// literal is written in GML, because a shipped GML file that holds an address is a file a scanner has to guess about.",
+    "encounter_field": "encounter_id",
+    "player_field": "player_text",
+    "will_field": "will",
+    "mood_field": "mood",
+    "history_field": "history",
+    "history_max": 3
+  },
+
+  "mode": {
+    "default": "replay",
+    "modes": ["live", "replay"],
+    "note": "replay is the demo's mode and the default: every exchange comes from data/talk_live_tape.json and nothing is sent. live asks the bridge. The build switch is the PP_TALK_LIVE_MODE macro in pp_config.gml and a debug key (F6) flips it at run time, so the demo can be recorded both ways without a rebuild."
+  },
+
+  "limits": {
+    "chars_max": 120,
+    "chars_shown_rows": 2,
+    "cols_per_row": 28,
+    "shown_max": 60,
+    "tries_max": 3,
+    "history_max": 3,
+    "note": "60 shown is two full rows of 28 plus the 4 columns spec 05 leaves at the window edge; a longer line scrolls in a two row window up to chars_max. The code refuses a fourth free text try and says why on screen (strings.tries_note)."
+  },
+
+  "timings": {
+    "timeout_steps": 420,
+    "cursor_blink_steps": 30,
+    "dots_step_steps": 15,
+    "after_reply_steps": 8,
+    "note": "420 steps is 7 seconds at 60 steps a second: tools/ai_bridge.py gives its whole rung ladder PP_TALK_TIMEOUT seconds (default 6) and a game that gave up before the bridge would turn every slow but good answer into a fallback. The budget must exceed the bridge's deadline, and this is the one number to retune if the bridge's own timeout moves."
+  },
+
+  "voice": {
+    "enabled": true,
+    "sample_rate": 16000,
+    "channels": 1,
+    "bits": 16,
+    "hold_steps_min": 15,
+    "file": "cache/talk_voice.wav",
+    "note": "/hear takes 16000 Hz mono 16 bit PCM wav bytes. The engine's recording device rate is not exposed by the engine, so the file is written at the rate named here and the rate is a data value with one home. A recording shorter than hold_steps_min is refused with the low blip rather than transcribed."
+  },
+
+  "grid": {
+    "cols": 11,
+    "rows": 4,
+    "cells": ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
+              "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V",
+              "W", "X", "Y", "Z", "0", "1", "2", "3", "4", "5", "6",
+              "7", "8", "9", " ", ".", ",", "!", "?", "'", "DEL", "END"],
+    "note": "44 cells, the classic NES letter grid order Nayil asked for: capitals, digits, space, five marks the sheet carries, then DEL and END. Every cell is either one glyph of spr_pp_font8 or one of the two commands, and tests/test_talk_live.py refuses a cell the sheet cannot draw."
+  },
+
+  "strings": {
+    "prompt": "SAY IT YOURSELF",
+    "hint_keys": "TYPE  ENTER SEND  ESC BACK",
+    "hint_grid": "D PAD MOVE  A TYPE  B DEL",
+    "hint_voice": "HOLD F5 TO SPEAK",
+    "hint_wait": "HE IS LISTENING",
+    "tries_note": "That is enough talking.",
+    "empty_note": "Say something first.",
+    "note": "Every string the box draws. 28 columns at most, checked by the test: the sheet is 8 pixels a glyph and the window is 224 interior pixels. The strings are capitals because the sheet's capitals are the shape the first fight's authored options already use."
+  },
+
+  "will": {
+    "max": 100,
+    "bar_width": 64,
+    "bar_height": 4,
+    "label": "MERCY",
+    "note": "The enemy's MERCY bar is the same meter the authored options move (battle.talk_mercy 0 to 100, spare at the encounter's mercy_to_spare). The bridge's will_delta (20, 5, 0, -10) is applied clamped to the meter, so a live answer can never move it further than the authored row it stands in for. It is labelled MERCY and not WILL because the player's own will is printed at y 156 and two things called WILL on one screen is one thing too many. The value is not printed beside the bar: at 64 pixels the digits would have left a 12 pixel fill, and the meter's job on screen is to be seen moving."
+  }
+}

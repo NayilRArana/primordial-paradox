@@ -466,13 +466,18 @@ def test_the_draw_spends_the_hint_inside_the_box_on_its_own_row(talk_code, direc
 
 def test_the_option_panel_draws_three_labels_in_the_command_band(talk_code, bake, encounter, dialogue_rows, cards):
     panel = function_body(talk_code, "pp_talk_draw_options")
-    assert "PP_MENU_TOP + 10 + i * 16" in panel, panel
+    # Card t_ee178652 (spec 16 section 1, amendment, spec 21 section 0 item 1): the panel draws four rows now, the
+    # three authored options and the fifth fixed entry SAY IT YOURSELF, so the pitch moved from 16 to 13 and the
+    # first row to PP_MENU_TOP + 8. At 16 the fourth row lands on 234 and prints over the band's border at 232.
+    assert "PP_MENU_TOP + 8 + i * 13" in panel, panel
     assert "array_length(_battle.talk_options)" in panel, panel
     labels = [option["label"] for option in options_of(bake, encounter, dialogue_rows, cards)]
     assert len(labels) == 3
     assert all(1 <= len(label) <= 28 for label in labels), labels
-    last_y = 168 + 10 + 2 * 16
-    assert last_y + 8 <= 240, "the third option leaves the frame"
+    rows = 4
+    last_y = 168 + 8 + (rows - 1) * 13
+    assert last_y + 8 <= 240, "the fourth row leaves the frame"
+    assert last_y + 8 <= 232, "the fourth row prints over the command band's border"
 
 
 @pytest.fixture(scope="module")
@@ -551,19 +556,38 @@ def game_files() -> list:
 
 
 def test_no_gml_builds_a_request_or_holds_an_address():
+    """Card t_ee178652 adds ONE exception, counted out loud: http_request in the live TALK module, and only there.
+
+    Spec 21 is the one place a shipped module may open a socket, because the mechanic is a model judging a line the
+    player wrote. It is named by file and by function so the exception cannot widen, and the address rule stays
+    absolute: no GML holds a URL of any kind, because the live module builds its address from data at call time.
+    """
     files = game_files()
     assert files, "no GML found under game/"
+    allowed = (os.path.join("game", "scripts", "pp_talk_live", "pp_talk_live.gml"), "http_request")
     offenders = []
+    allowed_seen = 0
     for path in files:
+        rel = os.path.relpath(path, ROOT)
         text = _read(path)
         for line_number, line in enumerate(text.split("\n"), start=1):
+            if line.lstrip().startswith("//"):
+                # A comment is not code, and tools/ tests/test_no_network_in_build.py strips comments the same way.
+                # Other_62.gml's own header names http_request in prose, which is the whole reason this rule is
+                # about the code a module runs.
+                continue
             code = line.split("//")[0] if "\"" not in line else line
             for name in NETWORK_CALLS + KEY_NAMES:
-                if name in code:
-                    offenders.append("%s:%d names %s" % (os.path.relpath(path, ROOT), line_number, name))
+                if name not in code:
+                    continue
+                if rel == allowed[0] and name == allowed[1]:
+                    allowed_seen += 1
+                    continue
+                offenders.append("%s:%d names %s" % (rel, line_number, name))
             for match in URL_RE.finditer(code):
-                offenders.append("%s:%d holds an address" % (os.path.relpath(path, ROOT), line_number))
+                offenders.append("%s:%d holds an address" % (rel, line_number))
     assert not offenders, "\n".join(offenders[:10])
+    assert allowed_seen > 0, "the one allowed request call is gone, so this exemption now hides nothing and is stale"
 
 
 def test_the_talk_module_reads_one_local_file_through_the_data_door(talk_code):

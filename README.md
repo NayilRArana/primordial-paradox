@@ -24,7 +24,7 @@ git diff --stat hackathon-baseline-2026-10-25..HEAD
 
 ## Meta AI in this game
 
-- **`muse-spark-1.3`:** `tools/bake_meta.py` calls it to judge dialogue, and `tools/ai_bridge.py` calls it for live talk. `tools/eye_critic.py` also sends it frames for art review.
+- **`muse-spark-1.3`:** `tools/bake_meta.py` calls it to judge dialogue. `tools/eye_critic.py` also sends it frames for art review. The live TALK path asks the same model through a local bridge this repository does not ship.
 - **`muse-image-1.0`:** `tools/meta_client.py` calls `generate_image()` for concept art and `edit_image()` for revisions.
 - **`sam-3.1`:** `tools/meta_client.py` calls `segment()` to separate a subject from its background.
 

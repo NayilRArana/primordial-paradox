@@ -29,7 +29,10 @@ review's method: the "clean-room re-review 2026-10-19" section at the end of `kn
 | game/objects/obj_pp_drive/Step_0.gml | reviewed | code-review | 2026-10-23 |
 | game/objects/obj_pp_game/Create_0.gml | reviewed | gamedev | 2026-10-21 |
 | game/objects/obj_pp_game/Draw_0.gml | confirmed | code-review | 2026-10-19 |
+| game/objects/obj_pp_game/Other_62.gml | reviewed | gamedev | 2026-10-26 |
+| game/objects/obj_pp_game/Other_69.gml | reviewed | gamedev | 2026-10-26 |
 | game/objects/obj_pp_game/Other_72.gml | confirmed | code-review | 2026-10-22 |
+| game/objects/obj_pp_game/Other_73.gml | reviewed | gamedev | 2026-10-26 |
 | game/objects/obj_pp_game/Step_0.gml | confirmed | code-review | 2026-10-22 |
 | game/objects/obj_pp_game/Step_1.gml | confirmed | code-review | 2026-10-19 |
 | game/objects/obj_pp_title/Create_0.gml | reviewed | gamedev | 2026-10-21 |
@@ -58,6 +61,7 @@ review's method: the "clean-room re-review 2026-10-19" section at the end of `kn
 | game/scripts/pp_overworld/pp_overworld.gml | rewritten | code-review | 2026-10-19 |
 | game/scripts/pp_rng/pp_rng.gml | confirmed | code-review | 2026-10-19 |
 | game/scripts/pp_save/pp_save.gml | confirmed | gamedev review | 2026-10-22 |
+| game/scripts/pp_talk_live/pp_talk_live.gml | reviewed | gamedev | 2026-10-26 |
 | game/scripts/pp_scene/pp_scene.gml | confirmed | code-review | 2026-10-22 |
 | game/scripts/pp_text/pp_text.gml | confirmed | gamedev review | 2026-10-22 |
 | game/scripts/pp_title/pp_title.gml | reviewed | gamedev | 2026-10-21 |
@@ -310,6 +314,29 @@ What this review did not establish, and does not claim: that the write path work
 module wrote is on disk (`pp_save_01.json`, 314 bytes, a count of 309, the sixteen spec keys and no `fight_exits`), and
 the read path and the event number have been measured on a real run, but the write through a save point reached on foot,
 the `.bak` rotation, the refusal of a document larger than the slot and the panel timing are still unproven by a run.
+
+## The live TALK entry and its three events (2026-10-26, card t_ee178652)
+
+Rows raised: `game/scripts/pp_talk_live/pp_talk_live.gml`, `game/objects/obj_pp_game/Other_62.gml`,
+`game/objects/obj_pp_game/Other_69.gml`, `game/objects/obj_pp_game/Other_73.gml`, all `reviewed` by `gamedev` on
+2026-10-26. That is this lane's own read of the four files it wrote, the same shape as the `reviewed | gamedev` rows
+that already sit above for `pp_art`, `pp_title` and `pp_input`; no independent second reviewer has seen them, and none
+is claimed here.
+
+Read in full, and why each is genre level. `pp_talk_live.gml` is a small state machine over four stage names, a line
+buffer with a capacity and a character filter, a two row scrolling window, a 44 cell letter grid, an asynchronous
+request with one in flight and a timeout, and a tape lookup. Every part is a line of spec 21 (written for this card) or
+of spec 16 sections 1, 2 and 12, and the letter grid is the classic console on-screen keyboard as a genre device: the
+alphabetical 11 by 4 layout, `DEL` and `END` at the end, the d-pad moving and the confirm key typing, which is design
+studied from how console text entry works rather than any one screen's pixels or code. The address is assembled from
+five data fields at call time and no shipped module holds a URL literal. The three event files are one call each into
+that module: `Other_62` and `Other_69` are the two Async HTTP slots, `Other_73` is the Audio Recording slot.
+
+What this review did not establish, and does not claim: that the three event numbers are the ones the IDE's slots
+actually carry. The manual names those events and does not print their numbers, so the code is written to survive being
+wrong three ways (both HTTP slots call one id matched handler, a request that never reports times out at the data
+file's budget with the fallback answering, and the voice leg reports "no recording" while the keyboard and the grid
+keep working). A running build is what confirms them, and no capture of one exists for this module.
 
 ## What the rows do not claim
 

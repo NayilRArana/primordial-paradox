@@ -15,10 +15,16 @@ Four refusals, and the sixth check a run has to pass to be trusted
    appear in a shipped file: GEMINI_API_KEY, KAGGLE_API_TOKEN, PINE_SANDBOX_API_KEY, MODEL_API_KEY,
    META_API_KEY. The scan reads the NAME only and never echoes what follows it, so a key that was
    pasted into a file by mistake is named, not reprinted, and this module holds no key either.
-2. NO NETWORK CALL IN CODE. `.gml`, `.yy` and `.yyp` files may not name a GameMaker network or socket
-   function (`http_get`, `http_post_string`, `http_request`, `network_connect`, `network_send_*`,
-   `url_open*`, and the rest of the list below). `async_load` is deliberately NOT on that list: the
-   save system polls it for a local file write, and refusing it would refuse correct code.
+2. NO NETWORK CALL IN CODE, WITH ONE NAMED EXCEPTION. `.gml`, `.yy` and `.yyp` files may not name a GameMaker
+   network or socket function (`http_get`, `http_post_string`, `http_request`, `network_connect`,
+   `network_send_*`, `url_open*`, and the rest of the list below). `async_load` is deliberately NOT on that list:
+   the save system polls it for a local file write, and refusing it would refuse correct code.
+   THE EXCEPTION (card t_ee178652, 2026-10-26): http_request, in game/scripts/pp_talk_live/pp_talk_live.gml only,
+   pinned to exactly two call sites, because the first fight's TALK command has to ask the local AI bridge to judge
+   a player's line and that is the whole point of the feature. Every other network function stays refused in that
+   file too, and the promise that replaces the flat one is measured here and in tests/test_talk_live.py: the host is
+   a loopback literal from data, the address is assembled at call time and never written whole, and the shipped
+   build starts in replay mode where neither call is reached. See the LIVE_CALL_* block for the full statement.
 3. NO URL OUTSIDE A COMMENT IN CODE. A URL in a GML comment is a citation to the engine manual. A URL
    in GML that is not in a comment is a string some function could be handed, so it is refused. Same
    rule for .yy and .yyp.
@@ -144,6 +150,23 @@ TILED_ATTRIBUTION_KEYS = ("attribution", "credit", "credits", "source", "sources
 
 # The strictest file: the talk bake holds no URL of any kind (bake_meta --check says the same).
 NO_URL_FILES = ("data/meta_bake.json", "game/datafiles/meta_bake.json")
+
+# ONE EXEMPTION, AND ITS TEETH (card t_ee178652, 2026-10-26). D5's promise was "the shipped build makes no network
+# call, ever". The W2 card asks for the one thing that promise forbids: the first fight's TALK command sends the
+# player's line to the local AI bridge so a model can judge it live. The promise is therefore RESTATED, narrower and
+# still measured, instead of being quietly dropped:
+#
+#     the build makes no network call EXCEPT http_request, in ONE file, and that file only ever calls it on a loopback
+#     address whose host, port and the two paths come from data/talk_live.json.
+#
+# So this is not a skip. The same scan still refuses every other network function in every file including this one,
+# the count below is pinned to exactly two calls (one to /talk, one to /hear), and tests/test_talk_live.py measures the
+# parts a byte scan cannot: the host field must be a loopback literal, the address is assembled at call time and never
+# written whole, and the shipped build starts in replay mode, where neither call is reached at all.
+LIVE_CALL_FILES = ("game/scripts/pp_talk_live/pp_talk_live.gml",)
+LIVE_CALL_FUNCTION = "http_request"
+LIVE_CALLS_EXPECTED = 2
+LIVE_CALLS_SEEN: list[str] = []
 
 REPORT: dict[str, int] = {}
 
@@ -282,6 +305,9 @@ def scan_file(path: str, rel: str) -> tuple[list[str], str]:
                                 % (rel, number, url.group(0).split("//", 1)[0] + "//..."))
             for call in NETWORK_CALLS:
                 if re.search(r"\b%s\b" % re.escape(call), body):
+                    if rel in LIVE_CALL_FILES and call == LIVE_CALL_FUNCTION:
+                        LIVE_CALLS_SEEN.append("%s:%d" % (rel, number))
+                        continue
                     problems.append("%s:%d: names the GameMaker network function %s()"
                                     % (rel, number, call))
         return problems, ""
@@ -370,6 +396,14 @@ def test_the_build_holds_no_endpoint_no_key_and_no_live_call():
         print("REFUSED " + problem)
     if len(problems) > 40:
         print("... and %d more" % (len(problems) - 40))
+    # The one exemption, counted out loud so it can never widen quietly: exactly the calls the card asked for, in the
+    # one file the card named, and no other network function anywhere.
+    if LIVE_CALLS_SEEN:
+        print("live calls allowed (card t_ee178652, %s, %s only): %d at %s"
+              % (", ".join(LIVE_CALL_FILES), LIVE_CALL_FUNCTION, len(LIVE_CALLS_SEEN), ", ".join(LIVE_CALLS_SEEN)))
+    assert len(LIVE_CALLS_SEEN) <= LIVE_CALLS_EXPECTED, (
+        "%d %s call(s) under the live talk exemption, pinned at %d"
+        % (len(LIVE_CALLS_SEEN), LIVE_CALL_FUNCTION, LIVE_CALLS_EXPECTED))
     assert not problems, "%d finding(s), listed above with file and line" % len(problems)
     REPORT.update(counts)
 
@@ -536,15 +570,27 @@ def test_replay_mode_refuses_instead_of_calling(network_off):
 
 
 def test_the_bake_is_served_by_request_hash_with_the_network_off(network_off):
-    """Spec 19 section 8 rung 1: rebuild the request from source data, then find the baked row."""
+    """Spec 19 section 8 rung 1: rebuild the request from source data, then find the baked row.
+
+    The shipped file is a recording, so a row may be a live answer (RB-02) or a hand written fallback.
+    What this still holds it to: every reachable request is served by its hash, every row says where
+    it came from, its network flag agrees with that label, and the replay build opens no socket.
+    """
     served, missing, rows = _served_rows()
     assert rows, "data/meta_bake.json holds no rows"
     assert not missing, "no baked row for: %s" % "; ".join(missing[:6])
     assert len(served) == len(rows), "served %d of %d baked rows" % (len(served), len(rows))
+    live_rows = 0
     for row_id, row in served.items():
-        assert row.get("source") == "fallback", "%s is not offline labelled" % row_id
-        assert row.get("network") is False, "%s claims a network answer in a replay build" % row_id
+        assert row.get("source") in ("live", "fallback"), "%s has no provenance label" % row_id
+        assert bool(row.get("network")) == (row.get("source") == "live"), (
+            "%s says source %r with network %r" % (row_id, row.get("source"), row.get("network")))
         assert row.get("text"), "%s serves an empty box" % row_id
+        live_rows += 1 if row.get("source") == "live" else 0
+    with open(BAKE_FILE, "r", encoding="utf-8") as handle:
+        header = json.load(handle).get("bake") or {}
+    assert header.get("live") == live_rows, (
+        "the header counts %r live rows and the file carries %d" % (header.get("live"), live_rows))
     assert network_off.calls == [], "urlopen was reached: %s" % network_off.calls
 
 

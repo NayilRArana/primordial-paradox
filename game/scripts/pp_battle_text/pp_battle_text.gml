@@ -525,6 +525,22 @@ function pp_talk_options(_battle) {
         }
         array_push(_out, _record);
     }
+
+    // The fifth entry (card t_ee178652, spec 16 section 1 step 1): SAY IT YOURSELF. Fixed, never conditional, drawn
+    // at the bottom of the list after the panel's one pixel rule. It carries no effect and no delta of its own,
+    // because the answer decides both; the panel still draws it when the tries are spent, so the player sees the
+    // reason rather than a row that vanished (spec 07 rule 1).
+    array_push(_out, {
+        label: pp_talk_cut(pp_talk_live_data().prompt, 28),
+        source: "",
+        baked: false,
+        effect: "live",
+        mood: "guarded",
+        delta: 0,
+        lines: [],
+        hint: "",
+        live: true
+    });
     return _out;
 }
 
@@ -580,6 +596,25 @@ function pp_talk_step(_battle) {
     if (!pp_pressed("confirm")) return;
 
     var _record = _battle.talk_options[_battle.talk_cursor];
+
+    // Card t_ee178652: the fifth entry opens the live box instead of applying a row. It spends no turn and no mercy
+    // here: the answer arrives asynchronously and pp_talk_live_answer is the only thing that moves the meter, so a
+    // pick that only opens a box cannot move it at all.
+    if (variable_struct_exists(_record, "live") && _record.live == true) {
+        pp_audio_play("menu_select");
+        show_debug_message("PP: talk pick, option " + string(_battle.talk_cursor) + ", effect live, mercy "
+            + string(_battle.talk_mercy) + ", trust " + string(_battle.trust));
+        var _opened = pp_talk_live_open(_battle);
+        if (!_opened) {
+            // The tries are spent: the panel stays open and the note says why, so the player picks an authored line.
+            _battle.talk_hint = _battle.live_note;
+            return;
+        }
+        _battle.talk_stage = "";
+        _battle.talk_reply = false;
+        return;
+    }
+
     pp_talk_apply(_battle, _record);
     // Card t_27aa179e: the pick names the option, the effect and the meter it moved to. This is the line a capture
     // reads to prove the mercy the three talks earned, instead of inferring it from the spare happening at all.
@@ -655,9 +690,17 @@ function pp_talk_draw_options(_battle) {
     draw_set_colour(pp_role_colour("dim"));
     draw_rectangle(8, PP_MENU_TOP, PP_FRAME_W - 8, PP_FRAME_H - 8, true);
 
+    // Card t_ee178652: four rows now, the enemy's own lines plus SAY IT YOURSELF (spec 16 section 1 step 1), so the
+    // pitch is 13 and the first row sits at PP_MENU_TOP + 8: 176, 189, 202, 215, the last glyph bottom at 223, inside
+    // the band's own border at 232. At the old 16 pitch the fourth row landed on 234 and printed over the border.
     var _count = array_length(_battle.talk_options);
     for (var i = 0; i < _count; i++) {
-        var _y = PP_MENU_TOP + 10 + i * 16;
+        var _y = PP_MENU_TOP + 8 + i * 13;
+        // The one pixel rule spec 16 asks for, on the row above the fixed entry.
+        if (i == _count - 1 && _count > 1) {
+            draw_set_colour(pp_role_colour("dim"));
+            draw_rectangle(24, _y - 3, PP_FRAME_W - 24, _y - 3, false);
+        }
         pp_font_draw(_battle.talk_options[i].label, 24, _y, 1);
         if (i == _battle.talk_cursor) {
             draw_set_colour(pp_role_colour("text"));
