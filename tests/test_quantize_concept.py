@@ -43,6 +43,33 @@ def concept_image(path, size=(32, 32)):
     return path
 
 
+def test_the_colour_count_never_asks_pillow_for_a_table_bigger_than_the_frame(monkeypatch):
+    """QUANTIZE-OOM (t_f4d1c2d1, 2026-10-27): the count is a set over the pixel bytes, not a table ask.
+
+    Pillow sizes the table behind getcolors() from maxcolors rather than from the picture, so the old
+    `getcolors(maxcolors=1 << 24)` measured 539 MB of peak working set on a 256x240 frame and raised MemoryError
+    on a box with little free memory. A 16x16 frame holds at most 256 distinct colours, so any limit this row asks
+    for above that is allocation the frame cannot use. This watches the call: it may be made, but not with a
+    limit the frame could not fill.
+    """
+    limits = []
+    original = Image.Image.getcolors
+
+    def watched(self, maxcolors=256):
+        limits.append((self.width * self.height, maxcolors))
+        return original(self, maxcolors)
+
+    monkeypatch.setattr(Image.Image, "getcolors", watched)
+    image = Image.new("RGBA", (16, 16))
+    pixels = image.load()
+    for y in range(16):
+        for x in range(16):
+            pixels[x, y] = (x * 15, y * 15, (x * y) % 256, 255)
+    assert quantize_concept.colour_count(image) == 256, "the fixture has one colour per pixel"
+    for capacity, maxcolors in limits:
+        assert maxcolors <= capacity, "getcolors asked for %d entries on a %d colour frame" % (maxcolors, capacity)
+
+
 def test_delta_e_is_zero_for_a_colour_against_itself_and_grows_with_distance():
     assert quantize_concept.delta_e((10, 120, 200), (10, 120, 200)) == 0.0
     near = quantize_concept.delta_e((0, 0, 0), (40, 40, 40))
@@ -102,7 +129,10 @@ def test_convert_writes_the_suffixed_png_and_the_sheet_and_leaves_the_source_alo
     assert os.path.isfile(out_path) and os.path.isfile(sheet_path)
     allowed = scene.bg_colours() | scene.sprite_colours() | {scene.backdrop}
     with Image.open(out_path) as image:
-        for pixel in image.convert("RGBA").getcolors(maxcolors=1 << 24):
+        # QUANTIZE-OOM (t_f4d1c2d1): a fixed 1 << 24 asks Pillow for a 16,777,216 entry table whatever the frame
+        # is (539 MB of peak working set) and is a MemoryError on a box with little free memory. A picture cannot
+        # hold more distinct colours than it has pixels, so the bound is its own size and the count is the same.
+        for pixel in image.convert("RGBA").getcolors(maxcolors=image.width * image.height):
             colour = pixel[1]
             if colour[3]:
                 assert scene.entry_of(colour[:3]) in allowed
@@ -124,9 +154,9 @@ def test_ordered_dither_is_off_by_default_and_honoured_when_asked(tmp_path):
     dithered = quantize_concept.convert(ROOT, source, "title", dither=True)
     assert dithered["dither"] is True
     with Image.open(os.path.join(ROOT, plain["out"])) as image:
-        plain_colours = image.convert("RGB").getcolors(maxcolors=1 << 24)
+        plain_colours = image.convert("RGB").getcolors(maxcolors=image.width * image.height)
     with Image.open(os.path.join(ROOT, dithered["out"])) as image:
-        dithered_colours = image.convert("RGB").getcolors(maxcolors=1 << 24)
+        dithered_colours = image.convert("RGB").getcolors(maxcolors=image.width * image.height)
     assert len(dithered_colours) >= len(plain_colours)
 
 
@@ -230,7 +260,7 @@ def test_convert_reports_both_numbers_and_accepts_on_the_frame_that_ships(tmp_pa
     assert stats["mean_delta_e"] >= 0.0 and stats["free_mean_delta_e"] >= 0.0
     assert stats["accepted"] is True
     with Image.open(os.path.join(ROOT, stats["out"])) as image:
-        for _, colour in image.convert("RGBA").getcolors(maxcolors=1 << 24):
+        for _, colour in image.convert("RGBA").getcolors(maxcolors=image.width * image.height):
             if colour[3]:
                 assert colour[:3] in written, colour
 

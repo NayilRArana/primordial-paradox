@@ -133,9 +133,18 @@ def shown(root: str, path: str) -> str:
 
 
 def colour_count(image: Image.Image) -> int:
-    """Distinct opaque RGB colours, counted without Image.getdata (deprecated in Pillow 12)."""
-    counts = image.convert("RGBA").getcolors(maxcolors=1 << 24) or []
-    return sum(1 for count, colour in counts if count and colour[3])
+    """Distinct opaque RGB colours, counted over the pixel bytes.
+
+    Card QUANTIZE-OOM (t_f4d1c2d1, 2026-10-27): this used to be
+    `image.convert("RGBA").getcolors(maxcolors=1 << 24)`. Pillow sizes the table it builds from maxcolors and not
+    from the picture, so a 16x16 frame asked for a 16,777,216 entry table. Measured on this box, peak working set
+    around that one call was 539.1 MB for a 256x240 frame and 544.6 MB for a 1024x768 frame, and on a box with a
+    few hundred MB free it is a MemoryError instead of a colour count. A set over the pixel bytes asks for room in
+    proportion to the distinct colours the picture actually has, so the answer cannot depend on free memory.
+    tobytes() is used rather than getdata(), which Pillow 12 deprecates.
+    """
+    raw = image.convert("RGBA").tobytes()
+    return len({raw[index:index + 3] for index in range(0, len(raw), 4) if raw[index + 3]})
 
 
 def quantise(image: Image.Image, scene, dither: bool = False, allowed=None) -> tuple:
