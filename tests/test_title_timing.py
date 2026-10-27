@@ -86,3 +86,78 @@ def test_the_game_derives_the_star_sky_from_the_bar():
     assert "_out.twinkle_period = _d.stars.steps" in source
     code = "\n".join(line for line in source.splitlines() if not line.strip().startswith("//"))
     assert "twinkle_beats" not in code
+
+
+def macros(name: str) -> dict:
+    """Every `#macro NAME VALUE` in a gml file, as the text of the value."""
+    with open(name, "r", encoding="utf-8") as handle:
+        source = handle.read()
+    found = {}
+    for line in source.splitlines():
+        stripped = line.strip()
+        if stripped.startswith("#macro "):
+            parts = stripped.split()
+            if len(parts) >= 3:
+                found[parts[1]] = parts[2]
+    return found
+
+
+def test_the_intro_shot_macros_are_that_json_s_copy():
+    """The intro's five timings are the json's numbers, not five values typed into the gml beside it.
+
+    Card INTRO-POLISH asked where the shot's timing lives. It lives in data\\title_timing.json's intro block: that
+    file is declared the source of truth for the title's timing, and pp_title reads its stars.steps for the twinkle.
+    The pan, the two fades, the crawl start and the leaving hold were the one set of numbers that was only copied by
+    hand, so this test is the copy's proof: change the json and the gml has to follow or the suite is red.
+    """
+    data = timing()
+    intro = data["intro"]
+    fps = data["fps"]
+    gml = macros(TITLE_GML)
+    config = macros(os.path.join(ROOT, "game", "scripts", "pp_config", "pp_config.gml"))
+
+    # The pan is the seconds the card names, and the camera rises one whole native frame height, so the sky that
+    # sat above the road fills the shot when it settles.
+    pan = round(intro["pan_seconds"] * fps)
+    assert int(gml["PP_TITLE_INTRO_PAN_STEPS"]) == pan
+    assert int(gml["PP_TITLE_INTRO_PAN_PX"]) == int(config["PP_FRAME_H"]) == 240
+
+    # The fade is four NES brightness rows to black (tests/test_intro.py holds one step to one row), so the depth is
+    # the count of fade strips the art lane ships, not a number this test makes up.
+    art = os.path.join(ROOT, "game", "datafiles", "art")
+    depth = len([n for n in os.listdir(art) if n.startswith("title_L1_sky_fade")])
+    assert depth == 4
+    step = int(intro["world_fade_steps_per_palette_step"])
+    assert step == int(intro["sky_fade_steps_per_palette_step"])
+    assert int(gml["PP_TITLE_INTRO_FADE_STEP_STEPS"]) == step
+
+    # The world fades while the camera settles, the sky fades four rows after it, the stars are held, then the crawl.
+    world = int(gml["PP_TITLE_INTRO_WORLD_FADE"])
+    sky = int(gml["PP_TITLE_INTRO_SKY_FADE"])
+    text = int(gml["PP_TITLE_INTRO_TEXT"])
+    assert world == pan
+    assert sky == world + depth * step
+    assert text == sky + depth * step + round(intro["star_hold_seconds"] * fps)
+    assert int(gml["PP_TITLE_INTRO_HOLD"]) == round(intro["hold_before_leaving_seconds"] * fps)
+
+    # And why the evidence frames are not all inside the first five seconds: the crawl starts after 9 s, so the
+    # frames that prove it legible are later than the frames that prove the pan and the twinkle.
+    assert text > 5 * fps
+
+
+def test_the_intro_timings_have_one_home():
+    """data\\intro_stars.json carries positions and no timing, so it cannot fork the json that does.
+
+    The card's output path named this file for the shot's timings. It holds star positions and nothing reads a
+    timing key here, so a timing block added to it would be dead data that says something different from the file
+    the game does read. This test refuses the second home outright rather than trusting the next editor to know.
+    """
+    with open(os.path.join(ROOT, "data", "intro_stars.json"), "r", encoding="utf-8") as handle:
+        stars = json.load(handle)
+    assert stars["kind"] == "intro_stars"
+    for key in stars:
+        low = key.lower()
+        for word in ("timing", "second", "steps", "fade", "pan", "hold", "duration"):
+            assert word not in low, "intro_stars.json carries %r, so the timing has a second home" % key
+    # The one file that does carry it, and the one pp_title reads for the twinkle, is the timing json.
+    assert "intro" in timing()
