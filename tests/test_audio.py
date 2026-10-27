@@ -299,9 +299,13 @@ def test_the_three_cues_the_card_left_out_are_rows_with_the_musicians_own_assets
     row now, with the title the note's table writes and the asset name the loader will append .ogg to.
     PP-04 is the tutorial fight cue, so the encounter points at it instead of the old sound id."""
     rows = {row["id"]: row for row in _cue_rows()}
+    # The card pin moved once, on 2026-10-26 (card t_120dc9f2, W5 SCORE-FINAL, musician). PP-03 and PP-04
+    # were re-pointed at the box's final mixes: pp_03_harbor_master1 and pp_04_navy_sailors_master1, which are
+    # the same renders at -14 LUFS integrated under a -0.5 dBTP ceiling, with the loop trim recorded in each
+    # folder's own sidecar. The title is unchanged, so a rename is still what this test catches.
     wanted = {
-        "PP-03": ("Harbor", "pp_03_harbor"),
-        "PP-04": ("Navy Sailors", "pp_04_navy_sailors"),
+        "PP-03": ("Harbor", "pp_03_harbor_master1"),
+        "PP-04": ("Navy Sailors", "pp_04_navy_sailors_master1"),
         "PP-13": ("Titan Employees", "pp_13_titan_employees"),
     }
     for cue, (title, asset) in wanted.items():

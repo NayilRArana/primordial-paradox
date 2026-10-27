@@ -2247,6 +2247,15 @@
     },
     {
       "$GMIncludedFile": "",
+      "%Name": "pp_03_harbor_master1.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "pp_03_harbor_master1.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
       "%Name": "pp_03_harbor_v2.ogg",
       "CopyToMask": -1,
       "filePath": "datafiles/streams",
@@ -2278,6 +2287,15 @@
       "CopyToMask": -1,
       "filePath": "datafiles/streams",
       "name": "pp_04_navy_sailors.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "pp_04_navy_sailors_master1.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "pp_04_navy_sailors_master1.ogg",
       "resourceType": "GMIncludedFile",
       "resourceVersion": "2.0"
     },
@@ -2373,6 +2391,15 @@
     },
     {
       "$GMIncludedFile": "",
+      "%Name": "pp_boarding_master1.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "pp_boarding_master1.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
       "%Name": "pp_boarding_v2.ogg",
       "CopyToMask": -1,
       "filePath": "datafiles/streams",
@@ -2395,6 +2422,15 @@
       "CopyToMask": -1,
       "filePath": "datafiles/streams",
       "name": "pp_drive.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "pp_drive_master1.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "pp_drive_master1.ogg",
       "resourceType": "GMIncludedFile",
       "resourceVersion": "2.0"
     },
