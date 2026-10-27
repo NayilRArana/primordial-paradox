@@ -56,21 +56,45 @@ def build():
     return found
 
 
+def slice_log_paths(exe_path: str) -> list[str]:
+    """Where PP_SLICE_LOG lands, most engine likely first.
+
+    Measured 2026-10-26: the engine writes `file_text_*` output into its own save folder,
+    %LOCALAPPDATA%\\<runner name>\\, NOT beside the runner, so the file this tool used to wait on never appeared and a
+    slice capture timed out while the walk was running correctly. The save folder is named for the game, and the
+    runner's file name is the game's name, so the folder is derivable. Both places are watched, because the engine's
+    rule has moved before and a missing log should cost a wait, never a wrong guess at which file to read.
+    """
+    base = os.path.dirname(os.path.abspath(exe_path))
+    name = os.path.splitext(os.path.basename(exe_path))[0]
+    paths = [os.path.join(base, SLICE_LOG)]
+    local = os.environ.get("LOCALAPPDATA")
+    if local:
+        paths.append(os.path.join(local, name, SLICE_LOG))
+    return paths
+
+
 def slice_log_path(exe_path: str) -> str:
-    """The walk's log sits beside the runner, because the game's working directory is its own folder."""
-    return os.path.join(os.path.dirname(os.path.abspath(exe_path)), SLICE_LOG)
+    """The one path the engine is expected to write: its save folder when this host has one."""
+    return slice_log_paths(exe_path)[-1]
 
 
-def wait_for_fight(log_path: str, timeout_s: float) -> str:
+def wait_for_fight(log_path: str | list[str], timeout_s: float) -> str:
     """Wait for the walk to enter the fight step, and return the line it said.
 
     The line is pp_slice_walk_step's own: "PP slice: step 6 of 8 fight (the first fight): ...". Matching on " fight ("
     keeps the wait on the walk rather than on the word fight appearing anywhere in a log.
+
+    `log_path` is one path or a list of them; a list is watched in order and the first file that exists is read, so a
+    caller that knows both the save folder and the runner folder does not have to pick one.
     """
+    paths = [log_path] if isinstance(log_path, str) else list(log_path)
     deadline = time.time() + timeout_s
     while time.time() < deadline:
-        if os.path.isfile(log_path):
-            with open(log_path, "r", encoding="utf-8", errors="replace") as handle:
+        for path in paths:
+            if not os.path.isfile(path):
+                continue
+            with open(path, "r", encoding="utf-8", errors="replace") as handle:
                 for line in handle:
                     if " fight (" in line:
                         return line.strip()
