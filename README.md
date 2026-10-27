@@ -8,6 +8,12 @@ A retro role playing game about Greek gods in modern England, where you can win 
 
 A father drives his son south to Southampton as the veil between the gods' world and ours wears thin. This is a GameMaker adventure at 256 by 240 pixels, with 8 by 8 tiles, limited palettes and checks against NES picture chip rules. In a battle, you can type or speak your own reply to a sailor instead of choosing a written line. His answer and his mercy meter react to what you said.
 
+## Architecture
+
+![The pipeline, the Meta calls it makes, the local bridge, Muse Glimmer and the replay cache, with what actually answered beside each one](docs/architecture.png)
+
+Every box in that picture names a file in this repository: the game at 256 by 240, the tools that enforce the picture chip's limits, the loopback bridge the game talks through, the Meta models with the state of their recorded answers beside them, Muse Glimmer running here under open weights, and the replay cache that lets the demo run with no network. `python tools/make_architecture_diagram.py` redraws it from those files, `--check-modules` proves every named path exists, and `--check-reproducible` builds it twice and compares the bytes.
+
 ## Built during the event
 
 The event runs from 26 October to 4 November 2026. Work since the frozen baseline includes:
@@ -28,12 +34,12 @@ git diff --stat hackathon-baseline-2026-10-25..HEAD
 - **`muse-image-1.0`:** `tools/meta_client.py` calls `generate_image()` for concept art and `edit_image()` for revisions.
 - **`sam-3.1`:** `tools/meta_client.py` calls `segment()` to separate a subject from its background.
 
-Live and replayed, measured on 2026-10-27 10:13 UTC. These integrations use the Meta Model API through `tools/meta_client.py`, and the recorded cache is the evidence:
+Live and replayed, measured on 2026-10-27 20:35 UTC. These integrations use the Meta Model API through `tools/meta_client.py`, and the recorded cache is the evidence:
 
-- **Recorded against the live API:** 274 of the 285 entries in `data/ai_cache`, covering every kind: 250 chat, 17 vision, 2 image, 1 edit and 4 segmentation calls. `python tools\meta_client.py --cache-status` recomputes that count from the entries themselves, and the 11 entries that are not live are labelled mock.
-- **The TALK verdicts are live:** 13 of the 18 rows in `data/meta_bake.json` are answers from `muse-spark-1.3`, and the other 5 are the card's own weak-topic line, each one labelled with its reason in the row and counted in the bake block (baked 2026-10-27T03:45:20Z, 0 unlabelled rows). A row falls back when the answer's effect is not the one that option is authored to move, which is what keeps the fight winnable by picking options; the row keeps the authored effect and says so.
+- **Recorded against the live API:** 279 of the 290 entries in `data/ai_cache`, covering every kind: 250 chat, 22 vision, 2 image, 1 edit and 4 segmentation calls. `python tools\meta_client.py --cache-status` recomputes that count from the entries themselves, and the 11 entries that are not live are labelled mock.
+- **The TALK rows are recorded, not fetched:** 9 of the 18 rows in `data/meta_bake.json` are `muse-spark-1.3` answers read back from `data/ai_cache`, every one of them a recorded entry with `network: true` between 2026-10-27T02:12:30Z and 03:46:38Z, and the other 9 are the card's own pool line, each one labelled with its reason in the row and counted in the bake block (baked 2026-10-27T20:28:49Z, mode replay, network false, 0 unlabelled rows). The bake asks each request from the current data and serves it by request hash, so the 7 rows whose request text the voice punch-up changed (the percy and deck_hound option lines) no longer match a recorded answer and serve their authored line labelled `no live answer`, and 2 recorded answers are still refused for moving an effect their option is not authored to move; the row keeps the authored effect and says so.
 - **The eye critic is live:** `muse-spark-1.3` scored the six frames of the newest nightly run, 2026-10-26, and `data/eye_ledger.csv` holds one row per call naming the frame it read. The frames and the review text are generated output and are not tracked; the ledger is.
-- **Measured spend:** 3.2068 USD at the documented list prices for every live call in the cache, itemised in [knowledge/META-SPEND.md](knowledge/META-SPEND.md).
+- **Measured spend:** 3.3372 USD at the documented list prices for every live call in the cache, itemised in [knowledge/META-SPEND.md](knowledge/META-SPEND.md).
 
 The demo never needs the network. For every Python tool, `PP_AI_MODE=replay` reads the recorded answers in `data/ai_cache` and makes no request, so it needs no key; `record` is the mode that writes a new answer and `live` calls without writing. The game itself defaults to replay, reading `data/talk_live_tape.json` without opening a network connection, and F6 switches between replay and live mode.
 
@@ -71,6 +77,22 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools\run.ps1
 python -m pip install -r tools/requirements.txt
 python tools/check_data.py
 ```
+
+## Checks on this tree
+
+These are the four commands the submission checklist tells a reader to run. None of the badges is typed by hand: `python tools/readme_badges.py --write` runs every gate, renders each badge from that run, and rewrites the table, and `--verify` refuses a README that disagrees with the tree. A red badge is a gate that is failing today, and it is left red on purpose.
+
+<!-- README-BADGES:START -->
+
+| gate | badge | command | result |
+| --- | --- | --- | --- |
+| check_data | ![check_data](docs/badges/check_data.svg) | `python tools/check_data.py` | PASS |
+| check_cleanroom | ![check_cleanroom](docs/badges/check_cleanroom.svg) | `python tools/check_cleanroom.py` | PASS |
+| nes_audit_all | ![nes_audit_all](docs/badges/nes_audit_all.svg) | `python tools/nes_audit_all.py` | PASS |
+| play_demo --check | ![play_demo --check](docs/badges/play_demo_check.svg) | `python tools/play_demo.py --check` | FAIL |
+
+Written by `python tools/readme_badges.py --write`, which reruns every gate above and renders the badges from that run; `python tools/readme_badges.py --verify` refuses a README that disagrees with the tree.
+<!-- README-BADGES:END -->
 
 ## How it was made
 

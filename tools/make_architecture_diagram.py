@@ -21,10 +21,12 @@ hand where a file can answer:
 
     MOCKED      data/ai_cache holds a recorded answer whose backend field is "mock"
     FALLBACK    data/meta_bake.json row written offline, source field "fallback"
-    LIVE        a real Meta answer. Count today: 0, and the badge says 0.
+    LIVE        a real Meta answer, and the badge carries the count this run read
 
-No box claims a live Meta call. The one real model that has produced a frame in this project is an
-image model run on the Kaggle GPU node, which is not a Meta model and is labelled as such.
+The same rule holds for the local bridge and for Muse Glimmer: the bridge card is a file in this
+repository, and the Glimmer card names the bench that measured it and the record it wrote, so a
+reader can check either one without taking the picture on trust. Nothing on the page is typed from
+memory: counts come from data/ai_cache, data/meta_bake.json and knowledge/NES-AUDIT.md at draw time.
 
 Usage
     python tools\\make_architecture_diagram.py                  write docs\\architecture.svg and .png
@@ -314,14 +316,25 @@ def scene(root=ROOT):
         ),
         card(
             "m5",
-            "ear review",
+            "Muse Glimmer 30B",
             [
-                "vision() on a spectrogram",
-                "tools\\ear_critic.py",
-                "cache entries: 0, no model is named for it",
+                "open weights, ran on this PC",
+                "tools\\bench_open_weights.py, 20 lines",
+                "record: knowledge\\OPEN-WEIGHTS-2026-10-26.md",
             ],
-            MUTED,
-            badge=("NOT CALLED", MUTED),
+            NODE_C,
+            badge=("OPEN WEIGHTS", NODE_C),
+        ),
+        card(
+            "m6",
+            "tools\\ai_bridge.py",
+            [
+                "the local bridge, loopback only",
+                "127.0.0.1:8791, started by tools\\run.ps1",
+                "spark, then Glimmer, then the cache",
+            ],
+            ACCENT,
+            badge=("LOOPBACK", ACCENT),
         ),
     ]
 
@@ -334,7 +347,7 @@ def scene(root=ROOT):
         ),
         card(
             "s2",
-            "data\\ai_cache",
+            "data\\ai_cache, the replay cache",
             ["{} recorded answer(s), backend mock {}".format(cache["entries"], mock_n), "live entries: {}".format(live_n)],
             ACCENT,
         ),
@@ -367,6 +380,8 @@ def scene(root=ROOT):
         "cache": cache,
         "audit": audit,
         "demo": demo,
+        "live_n": live_n,
+        "mock_n": mock_n,
     }
 
 
@@ -384,7 +399,10 @@ def columns(count, y, height, margin=40, gap=20, width=W):
 GEOM = {
     "nodes": columns(3, 150, 140),
     "stages": columns(5, 340, 190),
-    "calls": columns(5, 570, 132),
+    # Six columns since card t_4f984c7b put the local bridge and Muse Glimmer in this band beside
+    # the four Meta calls: at 256 px a card still wraps inside its three lines, and 156 px of height
+    # holds five wrapped lines, which is what the longest line here needs.
+    "calls": columns(6, 566, 156),
     "stores": columns(4, 752, 100),
 }
 
@@ -417,7 +435,7 @@ def ops_for(data):
 
     # legend
     legend = [
-        ("LIVE Meta call: 0", LIVE_C),
+        ("LIVE Meta answer, {} call(s) recorded".format(data["live_n"]), LIVE_C),
         ("MOCKED: recorded under the mock backend", MOCK_C),
         ("FALLBACK: written offline, no model answered", FALLBACK_C),
         ("NODE: a machine the work runs on", NODE_C),
@@ -431,7 +449,7 @@ def ops_for(data):
     band_labels = [
         ("WHERE THE WORK RUNS", "nodes"),
         ("THE PIPELINE, LEFT TO RIGHT", "stages"),
-        ("META MODEL API CALLS, AND WHAT ANSWERED (read from data\\ai_cache and data\\meta_bake.json)", "calls"),
+        ("META MODEL CALLS, THE LOCAL BRIDGE, AND WHAT ANSWERED (read from data\\ai_cache and data\\meta_bake.json)", "calls"),
         ("WHAT THE PIPELINE LEAVES ON DISK", "stores"),
     ]
     for label, key in band_labels:
@@ -442,7 +460,14 @@ def ops_for(data):
         colour = card_data["colour"]
         ops.append(("rect", box["x"], box["y"], box["w"], box["h"], PANEL, colour, 1))
         ops.append(("rect", box["x"], box["y"], 4, box["h"], colour, None, 0))
-        ops.append(("text", box["x"] + 16, box["y"] + 24, card_data["title"], HEAD, INK, "start", True))
+        # A title that does not fit is shrunk until it does, rather than drawn over its neighbour.
+        # Measured on the six column calls band (card t_4f984c7b): a 37 character title at 18 px
+        # runs about 400 px in a 256 px card, and the overflow lands on the next card, which reads
+        # as a drawing fault and not as a long file name.
+        size = HEAD
+        while size > 11 and len(card_data["title"]) * (size * 0.62) > box["w"] - 30:
+            size -= 1
+        ops.append(("text", box["x"] + 16, box["y"] + 24, card_data["title"], size, INK, "start", True))
         badge = card_data.get("badge")
         if badge:
             text, bcol = badge
@@ -470,15 +495,17 @@ def ops_for(data):
 
     # the model lane points at the gate, the gate points at the game
     ops.append(("text", GEOM["calls"][0]["x"], GEOM["calls"][0]["y"] - 32,
-                "each call below lands in the stage above it; none of them is live today", 12, MUTED, "start", False))
+                "each call below lands in the stage above it; the badge says what answered, and where it ran", 12, MUTED, "start", False))
 
     # the honesty strip
     strip_y = 856
-    ops.append(("rect", 40, strip_y, W - 80, 100, PANEL_2, FALLBACK_C, 1))
+    ops.append(("rect", 40, strip_y, W - 80, 100, PANEL_2, LIVE_C if data["live_n"] else FALLBACK_C, 1))
     lines = [
-        "No Meta model call has been made from this repository: data\\ai_cache holds {} entries, every one recorded under the mock backend, and".format(data["cache"]["entries"]),
-        "data\\meta_bake.json holds {} rows whose source is fallback, with live {}.".format(data["bake"]["rows"], data["bake"]["live"]),
-        "The one real model that has produced a frame here is an image model on the Kaggle GPU node, and it is not a Meta model (r7_manifest.json names it).",
+        "data\\ai_cache holds {} recorded answer(s): {} came back from the Meta API and {} were recorded under the mock backend.".format(
+            data["cache"]["entries"], data["live_n"], data["mock_n"]),
+        "data\\meta_bake.json holds {} rows: {} are answers from {}, the other {} are the authored fallback, each labelled with its reason.".format(
+            data["bake"]["rows"], data["bake"]["live"], data["bake"]["model"], data["bake"]["rows"] - data["bake"]["live"]),
+        "Muse Glimmer is open weights and was measured on this PC; the local bridge answers only on loopback, so no audio and no frame leaves the machine.",
         "The art audit verdict today is {}: {}. It is regenerated by its own tool, never edited by hand.".format(
             data["audit"].get("verdict", "?"), data["audit"].get("line", "no verdict read")),
     ]
