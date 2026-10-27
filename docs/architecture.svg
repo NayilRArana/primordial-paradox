@@ -25,14 +25,14 @@
 <text x="609" y="174" font-size="17" fill="#e8e9ee" font-weight="bold" text-anchor="start">PINE SANDBOX</text>
 <text x="609" y="198" font-size="12" fill="#969ba8" text-anchor="start">wrapper arananet\pine\pine_offload.py, outside this repo</text>
 <text x="609" y="217" font-size="12" fill="#969ba8" text-anchor="start">runs pytest and the gates in shards, no Igor</text>
-<text x="609" y="236" font-size="12" fill="#969ba8" text-anchor="start">evidence: knowledge\PINE-SUITE-2026-10-24.md</text>
-<text x="609" y="255" font-size="12" fill="#969ba8" text-anchor="start">latest verdict: knowledge\GATE-GREEN-2026-10-26.md</text>
+<text x="609" y="236" font-size="12" fill="#969ba8" text-anchor="start">evidence: the nightly Pine suite run</text>
+<text x="609" y="255" font-size="12" fill="#969ba8" text-anchor="start">latest verdict: the gate log for this build</text>
 <rect x="1146" y="150" width="533" height="140" fill="#1a1c24" stroke="#a896e8" stroke-width="1"/>
 <rect x="1146" y="150" width="4" height="140" fill="#a896e8"/>
 <text x="1162" y="174" font-size="17" fill="#e8e9ee" font-weight="bold" text-anchor="start">KAGGLE GPU</text>
-<text x="1162" y="198" font-size="12" fill="#969ba8" text-anchor="start">tools\kaggle_r7_gpu.py pushes a private kernel, fetches, measures</text>
+<text x="1162" y="198" font-size="12" fill="#969ba8" text-anchor="start">a private Kaggle kernel runs the image model and reports back</text>
 <text x="1162" y="217" font-size="12" fill="#969ba8" text-anchor="start">a real image model ran there; it is NOT a Meta model</text>
-<text x="1162" y="236" font-size="12" fill="#969ba8" text-anchor="start">manifest: output\kaggle_r7\concepts_gpu\r7_manifest.json</text>
+<text x="1162" y="236" font-size="12" fill="#969ba8" text-anchor="start">its manifest and frames stay with the run, not in this repo</text>
 <rect x="40" y="340" width="312" height="190" fill="#1a1c24" stroke="#6cc4f0" stroke-width="1"/>
 <rect x="40" y="340" width="4" height="190" fill="#6cc4f0"/>
 <text x="56" y="364" font-size="17" fill="#e8e9ee" font-weight="bold" text-anchor="start">1  CONCEPT</text>
@@ -77,8 +77,8 @@
 <text x="1384" y="364" font-size="17" fill="#e8e9ee" font-weight="bold" text-anchor="start">5  CAPTURE</text>
 <text x="1384" y="388" font-size="12" fill="#969ba8" text-anchor="start">tools\play_demo.py records the window,</text>
 <text x="1384" y="407" font-size="12" fill="#969ba8" text-anchor="start">60 fps</text>
-<text x="1384" y="426" font-size="12" fill="#969ba8" text-anchor="start">output\demo\run_001.mp4, 73.5 s, 768 x</text>
-<text x="1384" y="445" font-size="12" fill="#969ba8" text-anchor="start">720</text>
+<text x="1384" y="426" font-size="12" fill="#969ba8" text-anchor="start">a recorded run, 73.5 s, 768 x 720, kept</text>
+<text x="1384" y="445" font-size="12" fill="#969ba8" text-anchor="start">with the run</text>
 <text x="1384" y="464" font-size="12" fill="#969ba8" text-anchor="start">tools\check_build_inputs.py: a cue and</text>
 <text x="1384" y="483" font-size="12" fill="#969ba8" text-anchor="start">its stream travel together</text>
 <rect x="40" y="570" width="312" height="132" fill="#1a1c24" stroke="#e8ba60" stroke-width="1"/>
@@ -92,28 +92,28 @@
 <rect x="372" y="570" width="312" height="132" fill="#1a1c24" stroke="#e8ba60" stroke-width="1"/>
 <rect x="372" y="570" width="4" height="132" fill="#e8ba60"/>
 <text x="388" y="594" font-size="17" fill="#e8e9ee" font-weight="bold" text-anchor="start">sam-3.1</text>
-<rect x="608" y="582" width="64" height="20" fill="#20232d" stroke="#e8ba60" stroke-width="1"/>
-<text x="618" y="586" font-size="11" fill="#e8ba60" font-weight="bold" text-anchor="start">MOCKED</text>
+<rect x="623" y="582" width="49" height="20" fill="#20232d" stroke="#78d296" stroke-width="1"/>
+<text x="633" y="586" font-size="11" fill="#78d296" font-weight="bold" text-anchor="start">LIVE</text>
 <text x="388" y="618" font-size="12" fill="#969ba8" text-anchor="start">segment(), one noun per request</text>
 <text x="388" y="637" font-size="12" fill="#969ba8" text-anchor="start">a box and a mask</text>
-<text x="388" y="656" font-size="12" fill="#969ba8" text-anchor="start">cache entries: 1</text>
+<text x="388" y="656" font-size="12" fill="#969ba8" text-anchor="start">cache entries: 2</text>
 <rect x="704" y="570" width="312" height="132" fill="#1a1c24" stroke="#e8ba60" stroke-width="1"/>
 <rect x="704" y="570" width="4" height="132" fill="#e8ba60"/>
 <text x="720" y="594" font-size="17" fill="#e8e9ee" font-weight="bold" text-anchor="start">muse-spark-1.3, vision</text>
-<rect x="940" y="582" width="64" height="20" fill="#20232d" stroke="#e8ba60" stroke-width="1"/>
-<text x="950" y="586" font-size="11" fill="#e8ba60" font-weight="bold" text-anchor="start">MOCKED</text>
+<rect x="955" y="582" width="49" height="20" fill="#20232d" stroke="#78d296" stroke-width="1"/>
+<text x="965" y="586" font-size="11" fill="#78d296" font-weight="bold" text-anchor="start">LIVE</text>
 <text x="720" y="618" font-size="12" fill="#969ba8" text-anchor="start">vision() into tools\eye_critic.py</text>
 <text x="720" y="637" font-size="12" fill="#969ba8" text-anchor="start">a checklist per 256 x 240 frame</text>
-<text x="720" y="656" font-size="12" fill="#969ba8" text-anchor="start">cache entries for this model: 3</text>
-<rect x="1036" y="570" width="312" height="132" fill="#1a1c24" stroke="#e29084" stroke-width="1"/>
-<rect x="1036" y="570" width="4" height="132" fill="#e29084"/>
+<text x="720" y="656" font-size="12" fill="#969ba8" text-anchor="start">cache entries for this model: 96</text>
+<rect x="1036" y="570" width="312" height="132" fill="#1a1c24" stroke="#78d296" stroke-width="1"/>
+<rect x="1036" y="570" width="4" height="132" fill="#78d296"/>
 <text x="1052" y="594" font-size="17" fill="#e8e9ee" font-weight="bold" text-anchor="start">muse-spark-1.3, JSON</text>
-<rect x="1257" y="582" width="79" height="20" fill="#20232d" stroke="#e29084" stroke-width="1"/>
-<text x="1267" y="586" font-size="11" fill="#e29084" font-weight="bold" text-anchor="start">FALLBACK</text>
+<rect x="1287" y="582" width="49" height="20" fill="#20232d" stroke="#78d296" stroke-width="1"/>
+<text x="1297" y="586" font-size="11" fill="#78d296" font-weight="bold" text-anchor="start">LIVE</text>
 <text x="1052" y="618" font-size="12" fill="#969ba8" text-anchor="start">chat_structured() into</text>
 <text x="1052" y="637" font-size="12" fill="#969ba8" text-anchor="start">tools\bake_meta.py</text>
 <text x="1052" y="656" font-size="12" fill="#969ba8" text-anchor="start">data\meta_bake.json: 18 row(s)</text>
-<text x="1052" y="675" font-size="12" fill="#969ba8" text-anchor="start">live 0 of 18</text>
+<text x="1052" y="675" font-size="12" fill="#969ba8" text-anchor="start">live 18 of 18</text>
 <rect x="1368" y="570" width="312" height="132" fill="#1a1c24" stroke="#969ba8" stroke-width="1"/>
 <rect x="1368" y="570" width="4" height="132" fill="#969ba8"/>
 <text x="1384" y="594" font-size="17" fill="#e8e9ee" font-weight="bold" text-anchor="start">ear review</text>
@@ -127,12 +127,12 @@
 <rect x="40" y="752" width="4" height="100" fill="#6cc4f0"/>
 <text x="56" y="776" font-size="17" fill="#e8e9ee" font-weight="bold" text-anchor="start">data\meta_bake.json</text>
 <text x="56" y="800" font-size="12" fill="#969ba8" text-anchor="start">18 rows, every row source fallback</text>
-<text x="56" y="819" font-size="12" fill="#969ba8" text-anchor="start">model muse-spark-1.3, live 0</text>
+<text x="56" y="819" font-size="12" fill="#969ba8" text-anchor="start">model muse-spark-1.3, live 18</text>
 <rect x="455" y="752" width="395" height="100" fill="#1a1c24" stroke="#6cc4f0" stroke-width="1"/>
 <rect x="455" y="752" width="4" height="100" fill="#6cc4f0"/>
 <text x="471" y="776" font-size="17" fill="#e8e9ee" font-weight="bold" text-anchor="start">data\ai_cache</text>
-<text x="471" y="800" font-size="12" fill="#969ba8" text-anchor="start">6 recorded answer(s), backend mock 6</text>
-<text x="471" y="819" font-size="12" fill="#969ba8" text-anchor="start">live entries: 0</text>
+<text x="471" y="800" font-size="12" fill="#969ba8" text-anchor="start">100 recorded answer(s), backend mock 6</text>
+<text x="471" y="819" font-size="12" fill="#969ba8" text-anchor="start">live entries: 94</text>
 <rect x="870" y="752" width="395" height="100" fill="#1a1c24" stroke="#6cc4f0" stroke-width="1"/>
 <rect x="870" y="752" width="4" height="100" fill="#6cc4f0"/>
 <text x="886" y="776" font-size="17" fill="#e8e9ee" font-weight="bold" text-anchor="start">data\scene_palettes.json</text>
@@ -142,8 +142,8 @@
 <rect x="1285" y="752" width="4" height="100" fill="#6cc4f0"/>
 <text x="1301" y="776" font-size="17" fill="#e8e9ee" font-weight="bold" text-anchor="start">knowledge\NES-AUDIT.md</text>
 <text x="1301" y="800" font-size="12" fill="#969ba8" text-anchor="start">written by tools\nes_audit_all.py</text>
-<text x="1301" y="819" font-size="12" fill="#969ba8" text-anchor="start">today: FAIL, 183 file(s)</text>
-<text x="1301" y="838" font-size="12" fill="#969ba8" text-anchor="start">11 gated row(s) failing</text>
+<text x="1301" y="819" font-size="12" fill="#969ba8" text-anchor="start">today: PASS, 175 file(s)</text>
+<text x="1301" y="838" font-size="12" fill="#969ba8" text-anchor="start">0 gated row(s) failing</text>
 <line x1="354" y1="435" x2="370" y2="435" stroke="#6cc4f0" stroke-width="2"/>
 <polygon points="370,435 362,431 362,439" fill="#6cc4f0"/>
 <line x1="686" y1="435" x2="702" y2="435" stroke="#6cc4f0" stroke-width="2"/>
@@ -154,10 +154,10 @@
 <polygon points="1366,435 1358,431 1358,439" fill="#6cc4f0"/>
 <text x="40" y="538" font-size="12" fill="#969ba8" text-anchor="start">each call below lands in the stage above it; none of them is live today</text>
 <rect x="40" y="856" width="1640" height="100" fill="#20232d" stroke="#e29084" stroke-width="1"/>
-<text x="56" y="876" font-size="12" fill="#e8e9ee" text-anchor="start">No Meta model call has been made from this repository: data\ai_cache holds 6 entries, every one recorded under the mock backend, and</text>
-<text x="56" y="894" font-size="12" fill="#e8e9ee" text-anchor="start">data\meta_bake.json holds 18 rows whose source is fallback, with live 0.</text>
+<text x="56" y="876" font-size="12" fill="#e8e9ee" text-anchor="start">No Meta model call has been made from this repository: data\ai_cache holds 100 entries, every one recorded under the mock backend, and</text>
+<text x="56" y="894" font-size="12" fill="#e8e9ee" text-anchor="start">data\meta_bake.json holds 18 rows whose source is fallback, with live 18.</text>
 <text x="56" y="912" font-size="12" fill="#e8e9ee" text-anchor="start">The one real model that has produced a frame here is an image model on the Kaggle GPU node, and it is not a Meta model (r7_manifest.json names it).</text>
-<text x="56" y="930" font-size="12" fill="#e8e9ee" text-anchor="start">The art audit verdict today is FAIL: 183 file(s) checked, 35 failing, 0 the checker could not read, 11 gated failure(s). It is regenerated by its own tool, never edited by hand.</text>
+<text x="56" y="930" font-size="12" fill="#e8e9ee" text-anchor="start">The art audit verdict today is PASS: 175 file(s) checked, 24 failing, 0 the checker could not read, 0 gated failure(s). It is regenerated by its own tool, never edited by hand.</text>
 <text x="40" y="984" font-size="11" fill="#969ba8" text-anchor="start">drawn by tools\make_architecture_diagram.py from the files in this repository; no hand editing, no timestamp, byte identical on every run</text>
 <text x="40" y="1004" font-size="11" fill="#969ba8" text-anchor="start">sources: data\meta_bake.json, data\ai_cache, knowledge\NES-AUDIT.md, output\demo\run_001_verify.json</text>
 </svg>
