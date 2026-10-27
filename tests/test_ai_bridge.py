@@ -52,6 +52,9 @@ def talk(cache_dir, judge, monkeypatch):
     monkeypatch.delenv("MODEL_API_KEY", raising=False)
     monkeypatch.delenv("META_API_KEY", raising=False)
     monkeypatch.setenv("PP_AI_MODE", "record")
+    # Isolate the open-weights bake too, so a committed data/ai_bake_open/replies.json never changes what
+    # these tests assert about the recorded-cache and fallback rungs.
+    monkeypatch.setenv("PP_BAKE_FILE", os.path.join(os.path.dirname(cache_dir), "no_bake.json"))
     return ai_bridge.TalkJudge(cache=ai_bridge.Cache(cache_dir), judge=judge)
 
 
@@ -674,4 +677,63 @@ def test_a_replay_selftest_does_not_touch_the_model(talk, monkeypatch, capsys):
     code = ai_bridge.selftest(talk=talk, wav_path="")
     assert "WARM UP" not in capsys.readouterr().out
     assert code in (0, 1), "replay with an empty cache answers from the encounter fallback, which is a failure"
+
+
+# ------------------------------------------------------------------ the open-weights bake (card t_354f4e8a)
+
+def test_classify_intent_uses_the_cards_own_keywords():
+    sailor = ai_bridge.load_cards()["navy_sailor"]
+    assert ai_bridge.classify_intent(sailor, "you look wrecked") == "weak"
+    assert ai_bridge.classify_intent(sailor, "the bridge will hear about this") == "strong"
+    assert ai_bridge.classify_intent(sailor, "nothing much to say") == "neutral"
+    # A short keyword must not fire inside a longer word: "sea" is a weak keyword for navy_sailor, but
+    # "season" is a different word.
+    assert ai_bridge.classify_intent(sailor, "the season is changing") == "neutral"
+
+
+def test_a_baked_reply_serves_offline_when_meta_and_cache_miss(cache_dir, judge, monkeypatch, tmp_path):
+    """The bake is the offline rung's second source: Meta and the recorded cache both miss, the bake answers."""
+    bake_file = tmp_path / "bake.json"
+    bake_file.write_text(json.dumps({
+        "format": 1,
+        "kind": "bake_open",
+        "model": "Qwen/Qwen2.5-7B-Instruct",
+        "cards": {
+            "navy_sailor": {
+                "neutral": [{"text": ["STATE YOUR BUSINESS."], "mood": "guarded", "effect": "none"}],
+            },
+        },
+    }), encoding="utf-8")
+    monkeypatch.setenv("PP_BAKE_FILE", str(bake_file))
+    monkeypatch.setenv("PP_AI_MODE", "record")
+    monkeypatch.delenv("MODEL_API_KEY", raising=False)
+    monkeypatch.delenv("META_API_KEY", raising=False)
+    monkeypatch.delenv("PP_LOCAL_MODEL", raising=False)
+    talk = ai_bridge.TalkJudge(cache=ai_bridge.Cache(cache_dir), judge=judge)
+    talk._injected = [("meta", unavailable("no key")), ("open-weights", unavailable("no endpoint")),
+                      ("cache", talk._rung_cache), ("fallback", talk._rung_fallback)]
+    answer = talk.judge_talk({"player_text": "nothing much to say"})
+    assert answer["source"] == "replay"
+    assert answer["origin"] == "bake", "a baked reply must say it came from the bake, not a live recording"
+    assert answer["cached"] is True
+    assert answer["reply"] == ["STATE YOUR BUSINESS."]
+    assert answer["model"] == "Qwen/Qwen2.5-7B-Instruct"
+
+
+def test_a_recorded_cache_answer_still_wins_over_the_bake(talk, monkeypatch, tmp_path):
+    """An exact-line recorded answer is served before any bake lookup, so the ladder order is unchanged."""
+    bake_file = tmp_path / "bake.json"
+    bake_file.write_text(json.dumps({
+        "cards": {"navy_sailor": {"neutral": [{"text": ["BAKED LINE."], "mood": "guarded",
+                                               "effect": "none"}]}},
+    }), encoding="utf-8")
+    monkeypatch.setenv("PP_BAKE_FILE", str(bake_file))
+    payload = {"player_text": "nothing much to say"}
+    seed_answer(talk, payload, source="meta", text=("RECORDED LINE.",), effect="soften")
+    talk._injected = [("meta", unavailable("no key")), ("open-weights", unavailable("no endpoint")),
+                      ("cache", talk._rung_cache), ("fallback", talk._rung_fallback)]
+    answer = talk.judge_talk(payload)
+    assert answer["origin"] == "meta", "the recorded exact-line answer must beat the bake"
+    assert answer["reply"] == ["RECORDED LINE."]
+
 

@@ -142,6 +142,12 @@ CARDS_FILE = os.path.join(DATA, "talk_cards.json")
 PERSONAS_FILE = os.path.join(DATA, "talk_personas.json")
 ENCOUNTERS_FILE = os.path.join(DATA, "encounters", "all.json")
 DEFAULT_CACHE = os.path.join(DATA, "ai_cache", "bridge")
+# The baked open-weights replies (card t_354f4e8a), keyed by talk card then player intent. This is a second
+# source for the replay rung: when a player line was never recorded to the exact-line cache, and the bake holds
+# an accepted reply for the card and the intent the line's keywords classify as, the replay rung serves that
+# instead of dropping straight to the encounter's own fallback line. Read lazily, so a machine with no bake
+# behaves exactly as before.
+DEFAULT_BAKE = os.path.join(DATA, "ai_bake_open", "replies.json")
 
 LOOPBACK_HOST = "127.0.0.1"
 DEFAULT_PORT = 8791
@@ -410,6 +416,58 @@ def load_encounters(root=None):
     if not isinstance(rows, list):
         raise ConfigError("data/encounters/all.json has no encounters array")
     return {str(row.get("id")): row for row in rows if isinstance(row, dict)}
+
+
+def load_bake(root=None, path=None):
+    """The baked open-weights replies, keyed by card then intent, plus the bake's model.
+
+    Returns {"model": "...", "cards": {card_id: {intent: [entry, ...]}}}, or an empty cards dict when the
+    bake file is missing or unusable. A missing bake is not an error, because the offline rung must behave
+    exactly as before on a machine that has not run the bake (card t_354f4e8a). PP_BAKE_FILE overrides the
+    path, which is what the tests use to isolate it.
+    """
+    root = root or ROOT
+    if path is None:
+        path = env("PP_BAKE_FILE", DEFAULT_BAKE)
+    if not os.path.isfile(path):
+        return {"model": "", "cards": {}}
+    try:
+        doc = read_json(path)
+    except ConfigError:
+        return {"model": "", "cards": {}}
+    rows = doc.get("cards") if isinstance(doc, dict) else None
+    out = {}
+    if isinstance(rows, dict):
+        for card_id, intents in rows.items():
+            if not isinstance(intents, dict):
+                continue
+            bucket = {}
+            for intent, entries in intents.items():
+                if isinstance(entries, list):
+                    kept = [e for e in entries if isinstance(e, dict) and e.get("text")]
+                    if kept:
+                        bucket[str(intent)] = kept
+            if bucket:
+                out[str(card_id)] = bucket
+    return {"model": str(doc.get("model") or "") if isinstance(doc, dict) else "", "cards": out}
+
+
+def classify_intent(card, player_text):
+    """weak / strong / neutral, from the card's own topic keywords (data/talk_cards.json).
+
+    The bake is keyed by intent, so the offline rung needs a deterministic classifier to pick which bucket a
+    player line belongs in. Weak topics land first (a soft spot the character names), then strong topics
+    (a subject the character guards), and anything else is neutral. A whole-word match keeps a short keyword
+    like "end" from firing inside "weekend"; the card's keywords are data, never instructions.
+    """
+    text = " %s " % str(player_text or "").lower()
+    for pool in ("weak_topics", "strong_topics"):
+        for topic in card.get(pool) or []:
+            for keyword in topic.get("keywords") or []:
+                keyword = str(keyword).strip().lower()
+                if keyword and re.search(r"(?<![a-z0-9])%s(?![a-z0-9])" % re.escape(keyword), text):
+                    return "weak" if pool == "weak_topics" else "strong"
+    return "neutral"
 
 
 def character_block(card, name=None):
@@ -957,6 +1015,15 @@ class TalkJudge:
                                                                        DEFAULT_TALK_TIMEOUT))
         self._injected = sources
         self._lock = threading.Lock()
+        self._bake = None
+        self._bake_loaded = False
+
+    def bake_index(self):
+        """The baked open-weights replies, read once and cached (card t_354f4e8a)."""
+        if not self._bake_loaded:
+            self._bake = load_bake(self.root)
+            self._bake_loaded = True
+        return self._bake
 
     # -- rung list
 
@@ -1227,6 +1294,9 @@ class TalkJudge:
     def _rung_cache(self, task, deadline):
         entry = self.cache.read(task["key"])
         if entry is None:
+            baked = self._rung_bake(task)
+            if baked is not None:
+                return baked
             raise SourceUnavailable("no recorded answer for this line")
         stored = entry.get("answer") or {}
         lines, repairs = clean_lines(stored.get("text") or [], task["limits"]["max_lines"],
@@ -1247,6 +1317,45 @@ class TalkJudge:
         return {"effect": effect, "text": lines, "mood": mood,
                 "repaired": repairs, "source": "replay", "origin": entry.get("source") or "unknown",
                 "cached": True, "model": entry.get("model", "")}
+
+    def _rung_bake(self, task):
+        """A baked open-weights reply for this card and the intent the player's line classifies as.
+
+        This is the offline rung's second source (card t_354f4e8a): when a player line was never recorded to
+        the exact-line cache, and data/ai_bake_open holds an accepted reply for the card and the intent the
+        line's own keywords classify as, serve one of those replies instead of dropping to the encounter's
+        fallback line. The answer is labelled origin "bake" so a baked reply is never mistaken for a live
+        recording. Returns None when the bake has nothing for this card and intent.
+        """
+        index = self.bake_index()
+        bucket = index.get("cards", {}).get(str(task.get("npc") or "")) or {}
+        if not bucket:
+            return None
+        card = self.cards.get(str(task.get("npc") or ""))
+        intent = classify_intent(card or {}, task.get("player_text") or "")
+        entries = bucket.get(intent) or []
+        if not entries:
+            return None
+        pick = int(sha256_text(task.get("player_text") or "")[:8], 16) % len(entries)
+        entry = entries[pick]
+        lines, repairs = clean_lines(entry.get("text") or [], task["limits"]["max_lines"],
+                                     task["limits"]["max_chars"], task["alphabet"])
+        effect = effect_of(entry, task["allowed"])
+        mood = entry.get("mood") or "guarded"
+        if mood not in self.judge.moods:
+            mood = "guarded"
+        guards = task.get("guards")
+        if guards:
+            hit = banned_hit(lines, guards)
+            if hit:
+                return None
+            lines, mood, more = apply_persona_guards(lines, mood, guards)
+            repairs = sorted(set(repairs) | set(more))
+            if not lines:
+                return None
+        return {"effect": effect, "text": lines, "mood": mood, "repaired": sorted(set(repairs)),
+                "source": "replay", "origin": "bake", "cached": True,
+                "model": index.get("model") or ""}
 
     # -- rung 4: the encounter's own line
 
