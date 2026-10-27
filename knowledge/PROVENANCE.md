@@ -79,6 +79,7 @@ Every file that ships is listed here, and tools\check_provenance.py refuses a mo
 | game/scripts/pp_rng/pp_rng.gml | specs alone | 09 |
 | game/scripts/pp_save/pp_save.gml | save, load and resume | 01, 10, 11 |
 | game/scripts/pp_talk_live/pp_talk_live.gml | the live TALK entry and the local AI bridge | 16, 19, 21 |
+| game/scripts/pp_touch/pp_touch.gml | specs alone | 22 |
 | game/objects/obj_pp_game | specs alone | 01, 02 |
 | game/objects/obj_pp_debug_overlay | specs alone | 10 |
 | game/objects/obj_pp_title | specs alone | 14 (proposed) |

@@ -65,6 +65,7 @@ review's method: the "clean-room re-review 2026-10-19" section at the end of `kn
 | game/scripts/pp_scene/pp_scene.gml | confirmed | code-review | 2026-10-22 |
 | game/scripts/pp_text/pp_text.gml | confirmed | gamedev review | 2026-10-22 |
 | game/scripts/pp_title/pp_title.gml | reviewed | gamedev | 2026-10-21 |
+| game/scripts/pp_touch/pp_touch.gml | reviewed | gamedev | 2026-10-27 |
 
 The two rows that were `pending` were reviewed by gamedev on 2026-10-21 and raised to `confirmed` by code-review on
 2026-10-22 (card t_edf0aafe, the gate on the save work and its tests), so each row names its own reviewer and date

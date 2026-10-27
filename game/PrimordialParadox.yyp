@@ -2771,6 +2771,12 @@
     },
     {
       "id": {
+        "name": "pp_touch",
+        "path": "scripts/pp_touch/pp_touch.yy"
+      }
+    },
+    {
+      "id": {
         "name": "obj_pp_debug_overlay",
         "path": "objects/obj_pp_debug_overlay/obj_pp_debug_overlay.yy"
       }

@@ -59,6 +59,7 @@ function pp_app_boot() {
     };
 
     global.pp_input = pp_input_init();
+    global.pp_touch = pp_touch_init();
     global.pp_data = pp_data_load();
     // The look is built before the camera and before any mode can draw, because it owns the frame and the palette set
     // that every draw call resolves a role through (spec 13).
@@ -255,6 +256,9 @@ function pp_app_draw() {
     if (!is_undefined(_mode) && variable_struct_exists(_mode, "draw")) {
         _mode.draw(_app.mode_params);
     }
+    // The touch overlay sits over the mode and under the save panel and the fade, so a transition or a save still
+    // covers it and it never hides a modal (spec 22 rule 5).
+    pp_touch_draw();
     // The save panel sits over the mode and under the fade, so a save never flashes through a transition (spec 11).
     pp_save_draw_panel();
     if (_app.fade_alpha > 0) {

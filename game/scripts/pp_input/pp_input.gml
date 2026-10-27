@@ -84,6 +84,9 @@ function pp_input_init() {
 /// One sample per step. Call from Begin Step only (spec 02, event order).
 function pp_input_sample() {
     var _in = global.pp_input;
+    // The touch controls are sampled first, so their held map is ready when the action loop merges it below. They
+    // publish the same seven actions the keys and the pad write, and they only run on a touch target (spec 22).
+    pp_touch_sample();
     var _keys = variable_struct_get_names(_in.actions);
     for (var i = 0; i < array_length(_keys); i++) {
         var _a = _in.actions[$ _keys[i]];
@@ -94,6 +97,9 @@ function pp_input_sample() {
         for (var p = 0; p < array_length(_a.pads); p++) {
             if (gamepad_is_connected(0) && gamepad_button_check(0, _a.pads[p])) { _down = true; break; }
         }
+        // A finger on a touch control holds the same action its key holds, so the walk vector, the menus and the
+        // dialogue all read one source (spec 22 rule 2).
+        if (!_down && pp_touch_held(_keys[i])) _down = true;
 
         _a.prev = _a.held;
         _a.held = _down;
