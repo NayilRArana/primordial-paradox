@@ -12,7 +12,9 @@ What it does, in one launch (one window, muted, closed on request, ruling D9):
   2. drives the real title screen with key presses the game already reads (no debug key and no environment
      flag): Enter to open the menu, Enter to start, Enter past the crawl, then the route a player takes.
   3. records the window with ffmpeg gdigrab, cuts the recording to the true 3x viewport, and cuts the frame
-     sample out of that recording at one frame a second;
+     sample out of that recording at one frame a second. The recording is written at 4:4:4 (FAITHFUL_PIX_FMT):
+     the battle screen's dim is a one pixel dither, and 4:2:0 averages it into a colour no palette file names, so a
+     4:2:0 file cannot answer the colour question this verifier asks (the measurement is at FAITHFUL_PIX_FMT);
   4. checks its own output: the mp4 is the game's 3x viewport, and the frame sample contains the battle box,
      the FIGHT command on the command row and the victory panel with its outcome word, each measured against the
      role colours in data/palette.json and data/room_palettes.json, never against a guess.
@@ -104,6 +106,29 @@ FPS = 60
 WATCHDOG_S = 480.0
 WINDOW_TIMEOUT_S = 25.0
 SETTLE_S = 2.5
+
+# Card t_f3b7c557, measured on this host 2026-10-27: the recording's pixel format, not the art, is what made the
+# picture gate red. The battle screen's dim is a ONE PIXEL checker of the ink role over the field (pp_arena_draw, a
+# dither and not a blend, card t_06ef8607), and 4:2:0 stores chroma at a quarter of the luma resolution, so every
+# pair of one ink pixel and one strip pixel is averaged into a colour neither palette file names. The averaged value
+# is the deep blue FIRST-FIGHT-FINDING finding 3 reported as an art defect: ink (11,11,15) over the deck strip's
+# #0000bc (0,0,188) averages to about (6,5,101), which is the finding's (6,5,108) within the encoder's own drift.
+#
+# Measured here on a 256x240 frame built from game/datafiles/art/bg_battle_deck_night.png at the game's own colours
+# (union share 1.0000 before any encoder), run through BOTH stages this tool runs, sampled the way video_checks
+# samples (union of data/palette.json and data/nes_palette.json, tolerance 12):
+#
+#   frame                                    source   stage 1 only    both stages
+#                                                   420     444     420     444
+#   deck strip, no dim                       1.0000  0.9478  0.9997  0.9457  0.9916
+#   deck strip + the arena's one pixel dim   1.0000  0.8441  0.9997  0.8393  0.9642
+#   southampton quay screen, panned 1 px a frame, 60 fps    0.9413  0.9978   (one stage)
+#
+# A real dodge frame of the 2026-10-26 capture, recorded at 4:2:0, measures 0.7879. So the art is inside the
+# palette and the recorder was not: the file is written at 4:4:4 at BOTH stages (the cut re-encodes, so stage 1
+# alone would not hold) and no threshold moves. The video gate stays 0.90 (VIDEO_PICTURE_MIN) and the frame
+# reader's snap stays 12 (PALETTE_SNAP_TOLERANCE).
+FAITHFUL_PIX_FMT = "yuv444p"
 # The recording starts a little before the first key and runs past the last one, so the run on video includes the
 # title screen it started from and the map it ends on.
 RECORD_LEAD_S = 1.0
@@ -374,7 +399,7 @@ def start_recorder(rect, out_path):
         "-i", "desktop",
         "-t", "%.2f" % RECORD_SECONDS,
         "-vf", "scale=trunc(iw/2)*2:trunc(ih/2)*2",
-        "-r", str(FPS), "-c:v", "libx264", "-preset", "ultrafast", "-crf", "20", "-pix_fmt", "yuv420p",
+        "-r", str(FPS), "-c:v", "libx264", "-preset", "ultrafast", "-crf", "20", "-pix_fmt", FAITHFUL_PIX_FMT,
         out_path,
     ]
     process = subprocess.Popen([ffmpeg, "-hide_banner", "-y"] + arguments,
@@ -491,7 +516,8 @@ def run_capture(policy, show=False):
             return 1
         ok, note = play_demo.cut_and_scale(RAW_PATH, box, {"record": {"width": SCREEN_W * SCALE,
                                                                      "height": SCREEN_H * SCALE,
-                                                                     "fps": FPS}}, MP4_PATH, None)
+                                                                     "fps": FPS}}, MP4_PATH, None,
+                                          pix_fmt=FAITHFUL_PIX_FMT)
         print("P: cut and scale: %s (%s)" % ("ok" if ok else "failed", note))
         if not ok:
             return 1
@@ -929,6 +955,9 @@ def video_checks(path):
         checks["height"] = int(stream.get("height", 0))
         checks["fps"] = stream.get("avg_frame_rate") or stream.get("r_frame_rate")
         checks["duration_s"] = round(cap.probe_duration(ffprobe, path) or 0.0, 2)
+        # Card t_f3b7c557: what the encoder kept, named in the report. A 4:2:0 file averages the battle dim's one
+        # pixel checker into a colour no palette holds, so the format is part of the measurement and not a detail.
+        checks["pix_fmt"] = stream.get("pix_fmt")
     nes_allowed = play_demo.palette_entries() or []
     game_allowed = game_palette()
     both_allowed = game_allowed + [c for c in nes_allowed if c not in game_allowed]
@@ -1166,8 +1195,9 @@ def print_report(report):
                      scores["victory_panel_paper"], scores["victory_word_width"],
                      scores["victory_press_width"], scores["message_text_rows"]))
     video = checks["video"]
-    print("P: video %sx%s %s fps %.2f s, samples %s"
-          % (video.get("width"), video.get("height"), video.get("fps"), video.get("duration_s") or 0.0,
+    print("P: video %sx%s %s fps %s %s, %.2f s, samples %s"
+          % (video.get("width"), video.get("height"), video.get("fps"), video.get("pix_fmt"),
+             video.get("codec") or "", video.get("duration_s") or 0.0,
              [(s["at_s"], s["game_share"], s["nes_share"]) for s in video.get("samples", [])]))
     print("P: look rule (not this card's gate) %s" % {k: v for k, v in report["look_rule"].items()
                                                       if k in ("ok", "min_share", "measured")})

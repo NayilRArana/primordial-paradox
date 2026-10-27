@@ -1096,8 +1096,16 @@ def audio_check(audio, has_audio):
                    % ((audio.get("why") or "no reason recorded"), LOOPBACK_INSTALL))
 
 
-def cut_and_scale(raw_path, viewport, script, out_path, audio_path, audio_comment=None):
-    """Crop the raw window recording to the viewport and scale it to a true 3x of the 256x240 screen."""
+def cut_and_scale(raw_path, viewport, script, out_path, audio_path, audio_comment=None, pix_fmt="yuv420p"):
+    """Crop the raw window recording to the viewport and scale it to a true 3x of the 256x240 screen.
+
+    `pix_fmt` is the encoder's pixel format and it defaults to the 4:2:0 every player decodes, which is what the demo
+    takes and the talk take have always written. Card t_f3b7c557 found the one caller that must not: a verifier that
+    measures whether every pixel of the picture is a colour the game's palette files name cannot survive chroma stored
+    at a quarter of the luma resolution, because the battle screen's dim is a one pixel checker and 4:2:0 averages each
+    pair into a colour the palette does not hold. tools/capture_first_fight.py passes "yuv444p" and keeps every
+    threshold it had; no other caller changes.
+    """
     cap = capture_module()
     FFMPEG = ffmpeg_path()
     record = script["record"]
@@ -1108,7 +1116,7 @@ def cut_and_scale(raw_path, viewport, script, out_path, audio_path, audio_commen
     if audio_path:
         arguments += ["-i", audio_path]
     arguments += ["-filter:v", ",".join(filters), "-r", str(record["fps"]),
-                  "-c:v", "libx264", "-preset", "medium", "-crf", "18", "-pix_fmt", "yuv420p"]
+                  "-c:v", "libx264", "-preset", "medium", "-crf", "18", "-pix_fmt", pix_fmt]
     if audio_path:
         # Card DEMO-AUDIO-CAPTURE: the mp4 says in its own words which of the two honest answers it carries, so a
         # viewer who reads the metadata is never told a rebuilt track is a capture of the sound card.
@@ -1501,12 +1509,16 @@ def frame_luma(path):
 
 
 def video_stream(ffprobe, path):
-    """The first video stream's width, height, fps and codec, or None."""
+    """The first video stream's width, height, fps, codec and pixel format, or None.
+
+    pix_fmt is asked for because a capture whose verifier measures colours has to say what the encoder kept: card
+    t_f3b7c557 records the first fight at yuv444p, and the report names it so a 4:2:0 file is never mistaken for one.
+    """
     if not ffprobe:
         return None
     try:
         result = subprocess.run([ffprobe, "-v", "error", "-select_streams", "v:0",
-                                 "-show_entries", "stream=width,height,r_frame_rate,codec_name",
+                                 "-show_entries", "stream=width,height,r_frame_rate,codec_name,pix_fmt",
                                  "-of", "json", path],
                                 capture_output=True, text=True, timeout=60, stdin=subprocess.DEVNULL)
         data = json.loads(result.stdout or "{}")

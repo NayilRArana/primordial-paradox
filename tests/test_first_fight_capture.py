@@ -228,3 +228,106 @@ def test_the_border_step_needs_paper_inside_the_window_not_only_picture_above_it
     assert scores["battle_box_border"] == 0.0
     assert not tool.is_battle_frame(scores)
 
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Card t_f3b7c557: the recording's pixel format, at both stages, not only at the one the card happened to look at.
+#
+# The battle screen's dodge dim is a ONE PIXEL checker of the ink role over the field (pp_arena_draw, card t_06ef8607).
+# 4:2:0 stores chroma at a quarter of the luma resolution, so each pair of one dimmed and one undimmed pixel is
+# averaged into a colour neither palette file names, and the picture gate goes red on a correct picture. Measured on
+# this host 2026-10-27 on a frame built from game/datafiles/art/bg_battle_deck_night.png at the game's own colours
+# (union share 1.0000 before encoding), through start_recorder's settings and then cut_and_scale's:
+#
+#   the deck strip with the arena's dim           4:2:0 0.8393   4:4:4 0.9642
+#   the deck strip without it                     4:2:0 0.9457   4:4:4 0.9916
+#
+# so the format is what the 0.90 gate turns on. These rows keep it at 4:4:4 in the tool. They do not re-measure the
+# encoder (that needs ffmpeg and a frame); they refuse the two edits that would undo the fix silently: the recorder
+# going back to a subsampled format, and run_capture cutting at the cut's own 4:2:0 default instead of passing the
+# format through.
+
+
+def test_the_recorder_keeps_full_chroma_so_the_dims_checker_survives_the_encoder():
+    """The recorder's own argument list: the format after -pix_fmt is the tool's faithful one, and it is 4:4:4."""
+    tool = load_tool()
+    seen = {}
+
+    class FakeProcess:
+        returncode = None
+
+        def poll(self):
+            return None
+
+        def kill(self):
+            pass
+
+        def wait(self, timeout=None):
+            return 0
+
+    def fake_popen(arguments, **kwargs):
+        seen["arguments"] = list(arguments)
+        return FakeProcess()
+
+    real_popen = tool.subprocess.Popen
+    real_ffmpeg = tool.play_demo.ffmpeg_path
+    tool.subprocess.Popen = fake_popen
+    tool.play_demo.ffmpeg_path = lambda: "ffmpeg"
+    try:
+        process, handle, _log = tool.start_recorder((0, 0, 768, 720), "out.mp4")
+        handle.close()
+    finally:
+        tool.subprocess.Popen = real_popen
+        tool.play_demo.ffmpeg_path = real_ffmpeg
+    assert process is not None
+
+    arguments = seen["arguments"]
+    assert "-pix_fmt" in arguments, arguments
+    chosen = arguments[arguments.index("-pix_fmt") + 1]
+    assert chosen == tool.FAITHFUL_PIX_FMT
+    assert chosen.startswith("yuv444"), ("the recorder writes %r: chroma is subsampled, so the arena's one pixel dim "
+                                        "is averaged off the palette and the picture gate fails on a correct picture"
+                                        % chosen)
+
+
+def test_the_capture_cuts_at_the_recorders_format_not_the_cut_helpers_default():
+    """run_capture's own call: the cut is given FAITHFUL_PIX_FMT, because the cut re-encodes and can undo stage one."""
+    with open(TOOL, "r", encoding="utf-8") as handle:
+        text = handle.read()
+    assert "pix_fmt=FAITHFUL_PIX_FMT" in text, (
+        "tools/capture_first_fight.py cuts the recording without naming its pixel format, so play_demo.cut_and_scale "
+        "writes the cut at its 4:2:0 default and discards the full chroma the recorder kept")
+
+
+def test_the_cut_helper_still_defaults_to_the_format_every_player_decodes():
+    """The default stays 4:2:0: the demo and the talk takes are not this card, and no other caller changes."""
+    demo = pytest.importorskip("play_demo")
+    seen = {}
+    real_capture_module = demo.capture_module
+    real_ffmpeg_path = demo.ffmpeg_path
+
+    class FakeCap:
+        @staticmethod
+        def run_ffmpeg(ffmpeg, arguments, timeout=900):
+            seen["arguments"] = list(arguments)
+            return True, "fake"
+
+    demo.capture_module = lambda: FakeCap
+    demo.ffmpeg_path = lambda: "ffmpeg"
+    try:
+        ok, _note = demo.cut_and_scale("raw.mp4", (0, 0, 768, 720),
+                                       {"record": {"width": 768, "height": 720, "fps": 60}}, "out.mp4", None)
+        assert ok
+        default_arguments = seen["arguments"]
+        ok, _note = demo.cut_and_scale("raw.mp4", (0, 0, 768, 720),
+                                       {"record": {"width": 768, "height": 720, "fps": 60}}, "out.mp4", None,
+                                       pix_fmt="yuv444p")
+        assert ok
+        passed_arguments = seen["arguments"]
+    finally:
+        demo.capture_module = real_capture_module
+        demo.ffmpeg_path = real_ffmpeg_path
+
+    assert default_arguments[default_arguments.index("-pix_fmt") + 1] == "yuv420p"
+    assert passed_arguments[passed_arguments.index("-pix_fmt") + 1] == "yuv444p"
+    assert "-c:v" in default_arguments and "libx264" in default_arguments
+
