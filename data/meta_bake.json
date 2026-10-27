@@ -17,21 +17,22 @@
     "angry"
   ],
   "bake": {
-    "created_at": "2026-10-27T03:45:20Z",
-    "mode": "live",
-    "offline": false,
+    "created_at": "2026-10-27T20:28:49Z",
+    "mode": "replay",
+    "offline": true,
     "backend": "meta",
-    "network": true,
+    "network": false,
     "model": "muse-spark-1.3",
     "system_chars": 2408,
     "calls_attempted": 18,
     "rows": 18,
-    "live": 13,
-    "fallback": 5,
+    "live": 9,
+    "fallback": 9,
     "fallback_reasons": {
-      "refused": 5
+      "refused": 2,
+      "no live answer": 7
     },
-    "note": "live: 13 of 18 rows are answers from the Meta client, each one schema validated before it was written; the other 5 are the hand written fallback"
+    "note": "cached: 9 of 18 rows are answers read back from the recorded cache, so no request left this machine; the other 9 are the hand written fallback"
   },
   "coverage": {
     "talk_cards_in_data": 10,
@@ -108,7 +109,7 @@
       "id": "npc/morgan/turn_1",
       "scene": "npc",
       "text": [
-        "GATE IS CLOSED.",
+        "HALT. GATE IS SHUT.",
         "STATE YOUR BUSINESS."
       ],
       "mood": "guarded",
@@ -116,7 +117,7 @@
       "hint": "THE RAIN",
       "model": "muse-spark-1.3",
       "request_hash": "257c54d95a763e3f64190e3c3250222824c499ef4995f6bb0a0a4cf7adc3dc2d",
-      "created_at": "2026-10-27T03:45:20Z",
+      "created_at": "2026-10-27T20:28:49Z",
       "source": "live",
       "network": true,
       "reason": "",
@@ -196,15 +197,15 @@
       "id": "npc/morgan/turn_2",
       "scene": "npc",
       "text": [
-        "NO ANSWER. STILL CLOSED.",
-        "STATE IT OR STAND IN RAIN."
+        "SILENCE CLOSES NOTHING.",
+        "STATE BUSINESS OR STEP BACK."
       ],
       "mood": "guarded",
       "effect": "none",
-      "hint": "THE LONG WATCH, THE RAIN",
+      "hint": "THE RAIN, THE LONG WATCH",
       "model": "muse-spark-1.3",
-      "request_hash": "d5602105e5c8a5e847a10035e58d39a8f64a341636b2f74c50ab24cb8074a003",
-      "created_at": "2026-10-27T03:45:20Z",
+      "request_hash": "6d83e40226bef106007958ccd6c9908295941431da25004f4b37a4ace619c468",
+      "created_at": "2026-10-27T20:28:49Z",
       "source": "live",
       "network": true,
       "reason": "",
@@ -255,7 +256,7 @@
           "place": "southampton_dock",
           "turn": 2,
           "mood": "guarded",
-          "last_reply": "GATE IS CLOSED. STATE YOUR BUSINESS.",
+          "last_reply": "HALT. GATE IS SHUT. STATE YOUR BUSINESS.",
           "allowed": [
             "none",
             "end"
@@ -284,15 +285,15 @@
       "id": "npc/morgan/turn_3",
       "scene": "npc",
       "text": [
-        "STILL HERE. STILL WET.",
-        "STATE BUSINESS OR STEP BACK."
+        "STANDING SILENT WETS US",
+        "BOTH. STATE IT OR GO."
       ],
       "mood": "guarded",
       "effect": "none",
-      "hint": "BUSINESS, ORDERS, CLIPBOARD",
+      "hint": "THE LONG WATCH",
       "model": "muse-spark-1.3",
-      "request_hash": "310c916c781b67bd88991d552d9c1181f1430b08dabe1e85826dcd5a41fb61b9",
-      "created_at": "2026-10-27T03:45:20Z",
+      "request_hash": "45d8cddd388cd7abac940e1894d198f815fb0b4fb1c1f9699f8001322b6dce3c",
+      "created_at": "2026-10-27T20:28:49Z",
       "source": "live",
       "network": true,
       "reason": "",
@@ -343,7 +344,7 @@
           "place": "southampton_dock",
           "turn": 3,
           "mood": "guarded",
-          "last_reply": "NO ANSWER. STILL CLOSED. STATE IT OR STAND IN RAIN.",
+          "last_reply": "SILENCE CLOSES NOTHING. STATE BUSINESS OR STEP BACK.",
           "allowed": [
             "none",
             "end"
@@ -372,16 +373,16 @@
       "id": "npc/nye/turn_1",
       "scene": "npc",
       "text": [
-        "GOOD EVENING. DOCK OFFICE.",
-        "NYE, CLERK. I COUNT TWICE.",
-        "STATE YOUR BERTH. PLEASE."
+        "DOCK OFFICE IS OPEN.",
+        "LINE UP. BOOK READY.",
+        "SPEAK CLEAR. I COUNT."
       ],
       "mood": "guarded",
       "effect": "none",
-      "hint": "ASK OF THE LEDGER",
+      "hint": "THE LEDGER",
       "model": "muse-spark-1.3",
       "request_hash": "968c6ca4398290e5b0795ab70f9cc58d4390674b967364dfe44d3c46a58bc5b9",
-      "created_at": "2026-10-27T03:45:20Z",
+      "created_at": "2026-10-27T20:28:49Z",
       "source": "live",
       "network": true,
       "reason": "",
@@ -461,15 +462,15 @@
       "id": "npc/nye/turn_2",
       "scene": "npc",
       "text": [
-        "SILENCE IS NOT ON MY LIST.",
-        "STATE BERTH. I RECORD."
+        "NO NAME GIVEN. I WAIT.",
+        "PLEASE STATE NAME CLEAR."
       ],
       "mood": "guarded",
       "effect": "none",
-      "hint": "THE MANIFEST",
+      "hint": "THE LEDGER",
       "model": "muse-spark-1.3",
-      "request_hash": "6a23f5583d9562df0cb9825b813654746e1c59da5945c784c0e53bf32087b8ed",
-      "created_at": "2026-10-27T03:45:20Z",
+      "request_hash": "c900f8de868ec5906a3a7fdcbfefc115f62743a27307a98737a169ad65e0e5d2",
+      "created_at": "2026-10-27T20:28:49Z",
       "source": "live",
       "network": true,
       "reason": "",
@@ -520,7 +521,7 @@
           "place": "quay_dock_office",
           "turn": 2,
           "mood": "guarded",
-          "last_reply": "GOOD EVENING. DOCK OFFICE. NYE, CLERK. I COUNT TWICE. STATE YOUR BERTH. PLEASE.",
+          "last_reply": "DOCK OFFICE IS OPEN. LINE UP. BOOK READY. SPEAK CLEAR. I COUNT.",
           "allowed": [
             "none",
             "end"
@@ -549,15 +550,15 @@
       "id": "npc/nye/turn_3",
       "scene": "npc",
       "text": [
-        "NO ENTRY MADE. NO MARK.",
-        "STATE NAME FOR LEDGER."
+        "NO ENTRY MADE. I WAIT.",
+        "STATE NAME FOR MANIFEST."
       ],
       "mood": "guarded",
       "effect": "none",
-      "hint": "THE LEDGER, THE LAST LINE.",
+      "hint": "NAME FOR THE LEDGER",
       "model": "muse-spark-1.3",
-      "request_hash": "3b222a2de98473295b157a9183401a9db2a36469b19640e646ca3e3f1e9f181c",
-      "created_at": "2026-10-27T03:45:20Z",
+      "request_hash": "e8c69aa492dd3d2b7d88638d8cfcfb289961f780a904aca0252e7dffda25cfae",
+      "created_at": "2026-10-27T20:28:49Z",
       "source": "live",
       "network": true,
       "reason": "",
@@ -608,7 +609,7 @@
           "place": "quay_dock_office",
           "turn": 3,
           "mood": "guarded",
-          "last_reply": "SILENCE IS NOT ON MY LIST. STATE BERTH. I RECORD.",
+          "last_reply": "NO NAME GIVEN. I WAIT. PLEASE STATE NAME CLEAR.",
           "allowed": [
             "none",
             "end"
@@ -644,7 +645,7 @@
       "hint": "THE ROPE.",
       "model": "muse-spark-1.3",
       "request_hash": "5c9a8ddb99896c8091f9d50e6987d93dd48b23d49ba28171ca473486e40ce382",
-      "created_at": "2026-10-27T03:45:20Z",
+      "created_at": "2026-10-27T20:28:49Z",
       "source": "fallback",
       "network": false,
       "reason": "refused: effect 'none' where option 1 is authored to move 'soften'",
@@ -741,7 +742,7 @@
       "hint": "SALT ON HANDS, ROPE END",
       "model": "muse-spark-1.3",
       "request_hash": "4e025edd0384c580c12243c6828ff8f7333cf2fff8bf2a590f10273593e21257",
-      "created_at": "2026-10-27T03:45:20Z",
+      "created_at": "2026-10-27T20:28:49Z",
       "source": "live",
       "network": true,
       "reason": "",
@@ -839,11 +840,11 @@
       "effect": "setback",
       "hint": "",
       "model": "muse-spark-1.3",
-      "request_hash": "0fda292a458b31f42f978138d96fdf6171765be63d14c5e29c231621f1baf087",
-      "created_at": "2026-10-27T03:45:20Z",
+      "request_hash": "f966cf8abaf830dcccf95a9b139b806f6d9741583cf170062e6ba1a987a6c46d",
+      "created_at": "2026-10-27T20:28:49Z",
       "source": "fallback",
       "network": false,
-      "reason": "refused: effect 'none' where option 3 is authored to move 'setback'",
+      "reason": "no live answer: no recorded answer for chat with model muse-spark-1.3 (looked for 6762098d52ac07c8d1f4784d3c305b8e214957cff1c4274f66ac49abf6ededab.json). Record it with PP_AI_M",
       "request": {
         "system_sha256": "7beca544a167f7f213fb0a74259f67e33722be8237cad3d5cccdfde8c323da9d",
         "system_chars": 2408,
@@ -901,7 +902,7 @@
             "setback"
           ]
         },
-        "player_line": "It waits for you to move first."
+        "player_line": "It waits. You have the knife."
       },
       "npc": "",
       "card": "deck_hound",
@@ -910,7 +911,7 @@
       "option": 3,
       "turn": 3,
       "options_dialogue": "talk_deck_hound",
-      "player_line": "It waits for you to move first.",
+      "player_line": "It waits. You have the knife.",
       "fallback": {
         "source": "talk_cards",
         "id": "deck_hound:strong:2",
@@ -938,7 +939,7 @@
       "hint": "THE LONG WATCH.",
       "model": "muse-spark-1.3",
       "request_hash": "883c9fd746e02f459788abb2c084ba58a31304e14f1ee717b919e451ca826448",
-      "created_at": "2026-10-27T03:45:20Z",
+      "created_at": "2026-10-27T20:28:49Z",
       "source": "fallback",
       "network": false,
       "reason": "refused: effect 'setback' where option 1 is authored to move 'soften'",
@@ -1046,7 +1047,7 @@
       "hint": "THE LONG WATCH",
       "model": "muse-spark-1.3",
       "request_hash": "c90cc1555a668d661445ec8cb3161ae014fe27c11fdb6a076195dc564e47070d",
-      "created_at": "2026-10-27T03:45:20Z",
+      "created_at": "2026-10-27T20:28:49Z",
       "source": "live",
       "network": true,
       "reason": "",
@@ -1155,7 +1156,7 @@
       "hint": "HIS NAME, HOME PORT",
       "model": "muse-spark-1.3",
       "request_hash": "1676076c51519699267fc782cd54591c046938b8604a6050f77dab1a06d79a40",
-      "created_at": "2026-10-27T03:45:20Z",
+      "created_at": "2026-10-27T20:28:49Z",
       "source": "live",
       "network": true,
       "reason": "",
@@ -1262,11 +1263,11 @@
       "effect": "soften",
       "hint": "PLAIN SPEECH.",
       "model": "muse-spark-1.3",
-      "request_hash": "fbec244f026366665917def9005e427b519aaf359b0769c2214b7287ccfab3c0",
-      "created_at": "2026-10-27T03:45:20Z",
+      "request_hash": "d1b3f43aba0729c1e69d6b0011a73704d55e2aac3efa2f23f11e3a96a093d83d",
+      "created_at": "2026-10-27T20:28:49Z",
       "source": "fallback",
       "network": false,
-      "reason": "refused: effect 'setback' where option 1 is authored to move 'soften'",
+      "reason": "no live answer: no recorded answer for chat with model muse-spark-1.3 (looked for 3755142dca67bffcb0404b6b91fe1fca1a22e5b5c23fe1da566703595280cc78.json). Record it with PP_AI_M",
       "request": {
         "system_sha256": "7beca544a167f7f213fb0a74259f67e33722be8237cad3d5cccdfde8c323da9d",
         "system_chars": 2408,
@@ -1334,7 +1335,7 @@
             "setback"
           ]
         },
-        "player_line": "You still talk. How dull."
+        "player_line": "STILL TALKING. NOTED."
       },
       "npc": "",
       "card": "percy",
@@ -1343,7 +1344,7 @@
       "option": 1,
       "turn": 1,
       "options_dialogue": "talk_percy",
-      "player_line": "You still talk. How dull.",
+      "player_line": "STILL TALKING. NOTED.",
       "fallback": {
         "source": "talk_cards",
         "id": "percy:weak:0",
@@ -1363,18 +1364,17 @@
       "id": "fight/percy/2",
       "scene": "fight",
       "text": [
-        "ASK WHAT YOU MEAN.",
-        "VEIL KEEPS ITS OWN."
+        "WORDS. THE SEA HEARS WORSE."
       ],
-      "mood": "guarded",
+      "mood": "calm",
       "effect": "nudge",
-      "hint": "HE ANSWERS TO PERCY",
+      "hint": "",
       "model": "muse-spark-1.3",
-      "request_hash": "8f1cffebc3a6360f15c9b4c3104c716af8faf741665361ec19deec30d7175905",
-      "created_at": "2026-10-27T03:45:20Z",
-      "source": "live",
-      "network": true,
-      "reason": "",
+      "request_hash": "9b0e42fb4729fe84f76755accdd259ec1ffd3987fcdc685fd0ed9f13eea10ab3",
+      "created_at": "2026-10-27T20:28:49Z",
+      "source": "fallback",
+      "network": false,
+      "reason": "no live answer: no recorded answer for chat with model muse-spark-1.3 (looked for 55b418339d067b724fb6e128e04104d388cb673c40215dde5f0df54bf47ace65.json). Record it with PP_AI_M",
       "request": {
         "system_sha256": "7beca544a167f7f213fb0a74259f67e33722be8237cad3d5cccdfde8c323da9d",
         "system_chars": 2408,
@@ -1442,7 +1442,7 @@
             "setback"
           ]
         },
-        "player_line": "Ask what the veil is."
+        "player_line": "THE VEIL. YOUR QUESTION."
       },
       "npc": "",
       "card": "percy",
@@ -1451,7 +1451,7 @@
       "option": 2,
       "turn": 2,
       "options_dialogue": "talk_percy",
-      "player_line": "Ask what the veil is.",
+      "player_line": "THE VEIL. YOUR QUESTION.",
       "fallback": {
         "source": "talk_cards",
         "id": "percy:neutral:1",
@@ -1471,17 +1471,17 @@
       "id": "fight/percy/3",
       "scene": "fight",
       "text": [
-        "NO ORDERS HERE. SPEAK PLAIN."
+        "DO NOT DRESS ME IN TITLES."
       ],
       "mood": "angry",
       "effect": "setback",
-      "hint": "HIS OWN NAME",
+      "hint": "",
       "model": "muse-spark-1.3",
-      "request_hash": "6c49d157269d5a43450798051301959d08e6b224c4908967aaf3833873d5d5e6",
-      "created_at": "2026-10-27T03:45:20Z",
-      "source": "live",
-      "network": true,
-      "reason": "",
+      "request_hash": "9d814dfcf32c124e4a590e1cf80f50ee6146800b920fbc5534935f26d5bef356",
+      "created_at": "2026-10-27T20:28:49Z",
+      "source": "fallback",
+      "network": false,
+      "reason": "no live answer: no recorded answer for chat with model muse-spark-1.3 (looked for 95ef398aee286fbd142ad6b8adb45ff260e1ef1bf77dde1cedabe0c129ac0138.json). Record it with PP_AI_M",
       "request": {
         "system_sha256": "7beca544a167f7f213fb0a74259f67e33722be8237cad3d5cccdfde8c323da9d",
         "system_chars": 2408,
@@ -1540,7 +1540,7 @@
           "mercy": 40,
           "mood": "guarded",
           "last_effect": "none",
-          "last_reply": "ASK WHAT YOU MEAN. VEIL KEEPS ITS OWN.",
+          "last_reply": "WORDS. THE SEA HEARS WORSE.",
           "required_effect": "setback",
           "allowed": [
             "none",
@@ -1549,7 +1549,7 @@
             "setback"
           ]
         },
-        "player_line": "Ask it plainly."
+        "player_line": "PLAINLY."
       },
       "npc": "",
       "card": "percy",
@@ -1558,7 +1558,7 @@
       "option": 3,
       "turn": 3,
       "options_dialogue": "talk_percy",
-      "player_line": "Ask it plainly.",
+      "player_line": "PLAINLY.",
       "fallback": {
         "source": "talk_cards",
         "id": "percy:strong:0",
@@ -1584,11 +1584,11 @@
       "effect": "soften",
       "hint": "THE VEIL ANSWERED.",
       "model": "muse-spark-1.3",
-      "request_hash": "cf20bb8aa90d25c19020e49a6b51ca77480f0df217935f882106b69d8e47e3d8",
-      "created_at": "2026-10-27T03:45:20Z",
+      "request_hash": "2a63f4e6f3ead18cef66f12bc298a986ebb24bb18f6fce766b42d87a215ad79c",
+      "created_at": "2026-10-27T20:28:49Z",
       "source": "fallback",
       "network": false,
-      "reason": "refused: effect 'none' where option 1 is authored to move 'soften'",
+      "reason": "no live answer: no recorded answer for chat with model muse-spark-1.3 (looked for 70cdea3e937dc290cc7bcf5b263366afda86a38d575df89dddb49651fb47f629.json). Record it with PP_AI_M",
       "request": {
         "system_sha256": "7beca544a167f7f213fb0a74259f67e33722be8237cad3d5cccdfde8c323da9d",
         "system_chars": 2408,
@@ -1656,7 +1656,7 @@
             "setback"
           ]
         },
-        "player_line": "The tide turns anyway."
+        "player_line": "THE TIDE TURNS. LOG IT."
       },
       "npc": "",
       "card": "percy_phase2",
@@ -1665,7 +1665,7 @@
       "option": 1,
       "turn": 1,
       "options_dialogue": "talk_percy_phase2",
-      "player_line": "The tide turns anyway.",
+      "player_line": "THE TIDE TURNS. LOG IT.",
       "fallback": {
         "source": "talk_cards",
         "id": "percy_phase2:weak:0",
@@ -1685,18 +1685,17 @@
       "id": "fight/percy_phase2/2",
       "scene": "fight",
       "text": [
-        "QUESTION STANDS.",
-        "ANSWER PLAIN."
+        "WORDS. THE SEA HEARS WORSE."
       ],
-      "mood": "guarded",
+      "mood": "calm",
       "effect": "nudge",
-      "hint": "PLAIN SPEECH, HIS NAME",
+      "hint": "",
       "model": "muse-spark-1.3",
-      "request_hash": "3a3dc9fc62e8df7c4ed4d2fc35d6e4f4d7f9d57a6ef4966025422b7d34a09e5f",
-      "created_at": "2026-10-27T03:45:20Z",
-      "source": "live",
-      "network": true,
-      "reason": "",
+      "request_hash": "c1b4c37718c5f068d31e8eede9a9dd0310a9a74f812b0a30a6ec761860f2257b",
+      "created_at": "2026-10-27T20:28:49Z",
+      "source": "fallback",
+      "network": false,
+      "reason": "no live answer: no recorded answer for chat with model muse-spark-1.3 (looked for 85f7afe026ef2e315f835404a349f545c90a8973795deefbd840740ce14d5f60.json). Record it with PP_AI_M",
       "request": {
         "system_sha256": "7beca544a167f7f213fb0a74259f67e33722be8237cad3d5cccdfde8c323da9d",
         "system_chars": 2408,
@@ -1755,7 +1754,7 @@
           "mercy": 20,
           "mood": "guarded",
           "last_effect": "none",
-          "last_reply": "WINDED. DO NOT MISTAKE IT FOR SOFT.",
+          "last_reply": "WINDED. DO NOT CALL IT SOFT.",
           "required_effect": "nudge",
           "allowed": [
             "none",
@@ -1764,7 +1763,7 @@
             "setback"
           ]
         },
-        "player_line": "You asked about the veil."
+        "player_line": "THE VEIL. AGAIN."
       },
       "npc": "",
       "card": "percy_phase2",
@@ -1773,7 +1772,7 @@
       "option": 2,
       "turn": 2,
       "options_dialogue": "talk_percy_phase2",
-      "player_line": "You asked about the veil.",
+      "player_line": "THE VEIL. AGAIN.",
       "fallback": {
         "source": "talk_cards",
         "id": "percy_phase2:neutral:1",
@@ -1793,18 +1792,18 @@
       "id": "fight/percy_phase2/3",
       "scene": "fight",
       "text": [
-        "TAUTOLOGY.",
-        "SPEAK PLAIN, SAILOR."
+        "A WOUND DOES NOT MAKE YOU",
+        "RIGHT."
       ],
       "mood": "angry",
       "effect": "setback",
-      "hint": "HIS NAME, THE SEA",
+      "hint": "",
       "model": "muse-spark-1.3",
-      "request_hash": "694cebcdbd521262d905a19f02bc7c78ee1c79dc5717456705bd5a0bec465479",
-      "created_at": "2026-10-27T03:45:20Z",
-      "source": "live",
-      "network": true,
-      "reason": "",
+      "request_hash": "b27d9166ba7d06214b91c91d3aaf7fd14f15c72278681fc74ad1ad3a3fb0627b",
+      "created_at": "2026-10-27T20:28:49Z",
+      "source": "fallback",
+      "network": false,
+      "reason": "no live answer: no recorded answer for chat with model muse-spark-1.3 (looked for b564584049678849a4b5f5cbbb6050988bb1889718a4d746594dbfacc18a6ac4.json). Record it with PP_AI_M",
       "request": {
         "system_sha256": "7beca544a167f7f213fb0a74259f67e33722be8237cad3d5cccdfde8c323da9d",
         "system_chars": 2408,
@@ -1863,7 +1862,7 @@
           "mercy": 40,
           "mood": "guarded",
           "last_effect": "none",
-          "last_reply": "QUESTION STANDS. ANSWER PLAIN.",
+          "last_reply": "WORDS. THE SEA HEARS WORSE.",
           "required_effect": "setback",
           "allowed": [
             "none",
@@ -1872,7 +1871,7 @@
             "setback"
           ]
         },
-        "player_line": "That is the veil."
+        "player_line": "THAT IS THE VEIL."
       },
       "npc": "",
       "card": "percy_phase2",
@@ -1881,7 +1880,7 @@
       "option": 3,
       "turn": 3,
       "options_dialogue": "talk_percy_phase2",
-      "player_line": "That is the veil.",
+      "player_line": "THAT IS THE VEIL.",
       "fallback": {
         "source": "talk_cards",
         "id": "percy_phase2:strong:0",

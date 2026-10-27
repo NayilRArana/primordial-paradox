@@ -25,7 +25,7 @@ Measured on 2026-10-27 03:49 UTC from the repository itself, not from a plan.
 
 | what | model | live or replayed | evidence |
 | --- | --- | --- | --- |
-| TALK verdicts the game reads | `muse-spark-1.3` | live: 13 of 18 rows, the other 5 the card's own weak-topic line, each labelled with its reason, baked 2026-10-27T03:45:20Z | the bake block of `data/meta_bake.json` says mode live and network true |
+| TALK rows the game reads | `muse-spark-1.3` | replayed: 9 of 18 rows are its recorded answers, read back from `data/ai_cache` with the network off, the other 9 the card's own pool line, each labelled with its reason, baked 2026-10-27T20:28:49Z | the bake block of `data/meta_bake.json` says mode replay and network false, and each of the 9 live rows matches one cache entry recorded 2026-10-27T02:12:30Z to 03:46:38Z with `network: true` (measured 2026-10-27T20:28Z) |
 | Art review of the newest nightly run | `muse-spark-1.3` | live: six calls, one per frame of the 2026-10-26 nightly run | `data/eye_ledger.csv`, one row per call naming the frame it read; the frames and the review text are generated output, untracked |
 | Concept art and a revision | `muse-image-1.0` | live: 1 image, 1 edit | `data/ai_cache` |
 | Silhouette cut | `sam-3.1` | live: 3 calls | `data/ai_cache` |

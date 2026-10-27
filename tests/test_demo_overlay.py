@@ -86,6 +86,13 @@ def live_bake_file(tmp_path, overlay):
             row["source"] = "live"
             row["network"] = True
             row["reason"] = ""
+    # The header is set to match the rows this fixture just made live. It used to be inherited from
+    # the committed file, which only worked while that file happened to be a live, networked bake;
+    # the card t_2c698fe6 rebake is a replay read from data/ai_cache (network false), so the fixture
+    # now states its own header the way the offline fixture below already does.
+    data["bake"]["mode"] = "live"
+    data["bake"]["offline"] = False
+    data["bake"]["network"] = True
     return write_bake(tmp_path / "live_bake.json", data)
 
 
