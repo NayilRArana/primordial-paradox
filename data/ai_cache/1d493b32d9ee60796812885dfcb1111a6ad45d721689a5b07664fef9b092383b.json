@@ -1,0 +1,73 @@
+{
+  "backend": "meta",
+  "key": "1d493b32d9ee60796812885dfcb1111a6ad45d721689a5b07664fef9b092383b",
+  "kind": "vision",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "recorded_at": "2026-10-27T00:34:49Z",
+  "request": {
+    "messages": [
+      {
+        "content": [
+          {
+            "text": "<sha256:2e1b40d3aa8465c4:6771 chars>",
+            "type": "text"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:b55b2cf14a9f79c6:301638 chars>"
+            },
+            "type": "image_url"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:3edcecfeee835bf0:9750 chars>"
+            },
+            "type": "image_url"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:3d276bb22c28dd19:68006 chars>"
+            },
+            "type": "image_url"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:647d5e063ad30bd6:488346 chars>"
+            },
+            "type": "image_url"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:af953c531bf74721:130470 chars>"
+            },
+            "type": "image_url"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:11afffaa3d5b74eb:130562 chars>"
+            },
+            "type": "image_url"
+          }
+        ],
+        "role": "user"
+      }
+    ],
+    "model": "muse-spark-1.3"
+  },
+  "response": {
+    "text": "### What the video shows\nAt 6.1s the judge sees a PRIMORDIAL PARADOX title with a car on a road, then at 18.4s a near black starfield, then at 30.6s white crawl text reading THEY WERE FORGOTTEN and listing a scientist a student a sailor and a CEO, then at 42.9s 55.1s and 67.4s the same frozen green field with road and fence and a small blue sprite stuck top left. Missing for a 3 minute demo is everything from S5 and S6, meaning no person talking to the game, no Meta verdict in a NES textbox, no TALK fight, no boarding pass, no save or game over, plus no burned in captions, no bake rows, no network line and no title card saying what this is. I cannot see the full motion video, the audio content beyond presence, the README or the repo beyond the run logs provided.\n\n### The four scores\nImpact: 2 - None of the 6 frames shows talking, a verdict, or the S5 dock office and S6 TALK fight Meta shots.\nUse of Meta AI tooling: 2 - No bake row, network line, or caption is visible and the log records 0 footstep cues with Right reaching dialogue not walk.\nTechnical depth: 3 - The last three frames are identical and frozen with nes_audit_all FAIL on 35 of 183 files and pine FAIL with 3 reds.\nDemo: 2 - Measured 73.483s versus planned 180s with 2 of 6 frames over 90 percent one colour and no explainer card.\n\n### Five fixes, ranked\n1. Recut nightly to full 180s with dock, TALK fight and save ending - Criterion: Impact - Lane: gamedev - Body: Extend scripts/play_demo.py and the S5 dock office plus S6 TALK fight scenes to play the full 180 second shot table through ship log save and game over. Record live player speech to the local bridge and render the model verdict inside the NES textbox during the walk and the fight. A judge will watch the talking exchange, the single command win and the talking win without narration explaining it.\n2. Render Meta verdict live in NES textbox with bake overlay - Criterion: Use of Meta AI tooling - Lane: assistant - Body: Add the bake row overlay and network line rendering to the S5 and S6 caption system in the demo overlay code. Show model name, bake time and offline dead network badge while the verdict types in the textbox. A judge will read the bake rows on screen and see the offline shot prove the model ran locally.\n3. Fix walk input so Right steps play footsteps to dock office - Criterion: Technical depth - Lane: testing - Body: Fix the input routing in the Town Quay walk update so Right presses leave dialogue and drive the walk state with footstep cues. Repair output/demo/nightly-2026-10-26.mp4 generation to reach the dock office instead of stalling on the field. A judge will hear footsteps and watch the blue sprite cross the field to the dock in the video.\n4. Burn in shot captions and title card explaining the build - Criterion: Demo - Lane: builder - Body: Burn in the six verbatim shot captions and an opening title card stating Meta models plus NES hardware limits in the video builder. Use the same caption font over S1 title, S2 crawl, S3 drive and S4 gate through S6 fight. A judge will understand the claim of each shot without being told what to see.\n5. Commit missing theme audio and clear audit and pine reds - Criterion: Technical depth - Lane: audit - Body: Commit datafiles/streams/percy_theme_v3.ogg and assets/audio/percy_theme_v3/percy_theme_v3.ogg and fix the 35 failing nes_audit files. Rerun nes_audit_all and the pine suite until check_data, check_cleanroom and play_demo check all pass and document it in the README. A judge will see PASS badges in the README and hear the intended music in the video.\n\n```json\n{\"impact\": 2, \"impact_reason\": \"None of the 6 frames shows talking, a verdict, or the S5 dock office and S6 TALK fight Meta shots.\", \"meta_tooling\": 2, \"meta_tooling_reason\": \"No bake row, network line, or caption is visible and the log records 0 footstep cues with Right reaching dialogue not walk.\", \"technical_depth\": 3, \"technical_depth_reason\": \"The last three frames are identical and frozen with nes_audit_all FAIL on 35 of 183 files and pine FAIL with 3 reds.\", \"demo\": 2, \"demo_reason\": \"Measured 73.483s versus planned 180s with 2 of 6 frames over 90 percent one colour and no explainer card.\", \"fixes\": [{\"title\": \"Recut nightly to full 180s with dock, TALK fight and save ending\", \"criterion\": \"Impact\", \"lane\": \"gamedev\", \"body\": \"Extend scripts/play_demo.py and the S5 dock office plus S6 TALK fight scenes to play the full 180 second shot table through ship log save and game over. Record live player speech to the local bridge and render the model verdict inside the NES textbox during the walk and the fight. A judge will watch the talking exchange, the single command win and the talking win without narration explaining it.\"}, {\"title\": \"Render Meta verdict live in NES textbox with bake overlay\", \"criterion\": \"Use of Meta AI tooling\", \"lane\": \"assistant\", \"body\": \"Add the bake row overlay and network line rendering to the S5 and S6 caption system in the demo overlay code. Show model name, bake time and offline dead network badge while the verdict types in the textbox. A judge will read the bake rows on screen and see the offline shot prove the model ran locally.\"}, {\"title\": \"Fix walk input so Right steps play footsteps to dock office\", \"criterion\": \"Technical depth\", \"lane\": \"testing\", \"body\": \"Fix the input routing in the Town Quay walk update so Right presses leave dialogue and drive the walk state with footstep cues. Repair output/demo/nightly-2026-10-26.mp4 generation to reach the dock office instead of stalling on the field. A judge will hear footsteps and watch the blue sprite cross the field to the dock in the video.\"}, {\"title\": \"Burn in shot captions and title card explaining the build\", \"criterion\": \"Demo\", \"lane\": \"builder\", \"body\": \"Burn in the six verbatim shot captions and an opening title card stating Meta models plus NES hardware limits in the video builder. Use the same caption font over S1 title, S2 crawl, S3 drive and S4 gate through S6 fight. A judge will understand the claim of each shot without being told what to see.\"}, {\"title\": \"Commit missing theme audio and clear audit and pine reds\", \"criterion\": \"Technical depth\", \"lane\": \"audit\", \"body\": \"Commit datafiles/streams/percy_theme_v3.ogg and assets/audio/percy_theme_v3/percy_theme_v3.ogg and fix the 35 failing nes_audit files. Rerun nes_audit_all and the pine suite until check_data, check_cleanroom and play_demo check all pass and document it in the README. A judge will see PASS badges in the README and hear the intended music in the video.\"}]}\n```",
+    "usage": {
+      "completion_tokens": 7549,
+      "completion_tokens_details": {
+        "reasoning_tokens": 5966
+      },
+      "prompt_tokens": 6253,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 13802
+    }
+  }
+}

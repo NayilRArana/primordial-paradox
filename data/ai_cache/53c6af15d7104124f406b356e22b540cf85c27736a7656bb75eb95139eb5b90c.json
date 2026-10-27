@@ -1,0 +1,85 @@
+{
+  "backend": "meta",
+  "key": "53c6af15d7104124f406b356e22b540cf85c27736a7656bb75eb95139eb5b90c",
+  "kind": "chat",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "recorded_at": "2026-10-27T01:43:42Z",
+  "request": {
+    "messages": [
+      {
+        "content": "<sha256:7beca544a167f7f2:2408 chars>",
+        "role": "system"
+      },
+      {
+        "content": "<sha256:097ce7520562311e:1686 chars>",
+        "role": "user"
+      }
+    ],
+    "model": "muse-spark-1.3",
+    "response_format": {
+      "json_schema": {
+        "name": "answer",
+        "schema": {
+          "additionalProperties": false,
+          "properties": {
+            "effect": {
+              "enum": [
+                "none",
+                "end"
+              ]
+            },
+            "hint": {
+              "maxLength": 28,
+              "type": "string"
+            },
+            "mood": {
+              "enum": [
+                "calm",
+                "guarded",
+                "rattled",
+                "warm",
+                "angry"
+              ]
+            },
+            "text": {
+              "items": {
+                "maxLength": 28,
+                "minLength": 1,
+                "pattern": "^[ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 \\.,:!\\?'\\(\\)]+$",
+                "type": "string"
+              },
+              "maxItems": 2,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "text",
+            "mood",
+            "effect",
+            "hint"
+          ],
+          "type": "object"
+        },
+        "strict": true
+      },
+      "type": "json_schema"
+    }
+  },
+  "response": {
+    "text": "{\"effect\": \"none\", \"hint\": \"THE FERRY, THE TIDE\", \"mood\": \"rattled\", \"text\": [\"IS IT OVER THE RAIL?\", \"IS IT OVER THE RAIL?\"]}",
+    "usage": {
+      "completion_tokens": 2837,
+      "completion_tokens_details": {
+        "reasoning_tokens": 2782
+      },
+      "prompt_tokens": 1212,
+      "prompt_tokens_details": {
+        "cached_tokens": 753
+      },
+      "total_tokens": 4049
+    }
+  }
+}

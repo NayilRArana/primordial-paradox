@@ -19,6 +19,22 @@ The rules say only work done during the event counts and that judges must be abl
 
 The baseline is a vertical slice under construction: the GameMaker project and its rooms, the engine specs in `specs/`, the Python gate and pipeline tools in `tools/`, the data in `data/`, the test suite in `tests/`, and the art and audio produced so far. Its own README (in the baseline commit) states its condition plainly, including what did not work yet. Nothing from before the event is presented as event work.
 
+## Which Meta model calls produced what is here
+
+Measured on 2026-10-27 03:49 UTC from the repository itself, not from a plan.
+
+| what | model | live or replayed | evidence |
+| --- | --- | --- | --- |
+| TALK verdicts the game reads | `muse-spark-1.3` | live: 13 of 18 rows, the other 5 the card's own weak-topic line, each labelled with its reason, baked 2026-10-27T03:45:20Z | the bake block of `data/meta_bake.json` says mode live and network true |
+| Art review of the newest nightly run | `muse-spark-1.3` | live: six calls, one per frame of the 2026-10-26 nightly run | `data/eye_ledger.csv`, one row per call naming the frame it read; the frames and the review text are generated output, untracked |
+| Concept art and a revision | `muse-image-1.0` | live: 1 image, 1 edit | `data/ai_cache` |
+| Silhouette cut | `sam-3.1` | live: 3 calls | `data/ai_cache` |
+| Every call the demo and the tests make | whichever model recorded the answer | replayed from `data/ai_cache` with the network off | `PP_AI_MODE=replay` |
+
+`python tools\meta_client.py --cache-status` is the counter: on 2026-10-27 03:49 UTC it reported 203 entries recorded against the live API out of 209, covering chat (186), vision (12), image (1), edit (1) and segmentation (3). The total measured list price of those calls is 2.39 USD, itemised in [knowledge/META-SPEND.md](knowledge/META-SPEND.md), which `tools/meta_spend_ledger.py` regenerates from the cache.
+
+This page replaces the earlier claim that no live Meta model call had been made from this repository. That claim was true when it was written and is not true now, which is why the counts above are dated and measured rather than asserted.
+
 ## What is not in this public repository
 
 Internal planning notes, agent task records and research studies of other games are kept private, so that no third party's material is redistributed and the agent setup stays private. Nothing the game needs to build, run or be tested is left out. Rights and attributions for everything that is here are in [LICENCE](LICENCE) and [CREDITS.md](CREDITS.md).

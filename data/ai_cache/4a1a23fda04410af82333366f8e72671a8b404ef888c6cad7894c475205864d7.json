@@ -1,0 +1,85 @@
+{
+  "backend": "meta",
+  "key": "4a1a23fda04410af82333366f8e72671a8b404ef888c6cad7894c475205864d7",
+  "kind": "chat",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "recorded_at": "2026-10-27T01:06:21Z",
+  "request": {
+    "messages": [
+      {
+        "content": "<sha256:7beca544a167f7f2:2408 chars>",
+        "role": "system"
+      },
+      {
+        "content": "<sha256:84be76549536ba91:1655 chars>",
+        "role": "user"
+      }
+    ],
+    "model": "muse-spark-1.3",
+    "response_format": {
+      "json_schema": {
+        "name": "answer",
+        "schema": {
+          "additionalProperties": false,
+          "properties": {
+            "effect": {
+              "enum": [
+                "none",
+                "end"
+              ]
+            },
+            "hint": {
+              "maxLength": 28,
+              "type": "string"
+            },
+            "mood": {
+              "enum": [
+                "calm",
+                "guarded",
+                "rattled",
+                "warm",
+                "angry"
+              ]
+            },
+            "text": {
+              "items": {
+                "maxLength": 28,
+                "minLength": 1,
+                "pattern": "^[ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 \\.,:!\\?'\\(\\)]+$",
+                "type": "string"
+              },
+              "maxItems": 2,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "text",
+            "mood",
+            "effect",
+            "hint"
+          ],
+          "type": "object"
+        },
+        "strict": true
+      },
+      "type": "json_schema"
+    }
+  },
+  "response": {
+    "text": "{\"effect\": \"none\", \"hint\": \"GETTING OFF THE QUAY\", \"mood\": \"rattled\", \"text\": [\"OVER THE RAIL?\", \"OVER THE RAIL?\"]}",
+    "usage": {
+      "completion_tokens": 4163,
+      "completion_tokens_details": {
+        "reasoning_tokens": 4113
+      },
+      "prompt_tokens": 1208,
+      "prompt_tokens_details": {
+        "cached_tokens": 1137
+      },
+      "total_tokens": 5371
+    }
+  }
+}

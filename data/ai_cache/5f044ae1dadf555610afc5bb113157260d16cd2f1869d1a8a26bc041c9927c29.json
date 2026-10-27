@@ -1,0 +1,91 @@
+{
+  "backend": "meta",
+  "key": "5f044ae1dadf555610afc5bb113157260d16cd2f1869d1a8a26bc041c9927c29",
+  "kind": "chat",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "recorded_at": "2026-10-27T00:29:57Z",
+  "request": {
+    "messages": [
+      {
+        "content": "<sha256:7beca544a167f7f2:2408 chars>",
+        "role": "system"
+      },
+      {
+        "content": "<sha256:e3815cbaa512f3e7:925 chars>",
+        "role": "user"
+      }
+    ],
+    "model": "muse-spark-1.3",
+    "response_format": {
+      "json_schema": {
+        "name": "answer",
+        "schema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "additionalProperties": false,
+          "properties": {
+            "effect": {
+              "enum": [
+                "none",
+                "nudge",
+                "soften",
+                "setback",
+                "end"
+              ]
+            },
+            "hint": {
+              "maxLength": 28,
+              "pattern": "^([A-Z0-9 .,:!?'()]*)$",
+              "type": "string"
+            },
+            "mood": {
+              "enum": [
+                "calm",
+                "guarded",
+                "rattled",
+                "warm",
+                "angry"
+              ]
+            },
+            "text": {
+              "items": {
+                "maxLength": 28,
+                "minLength": 1,
+                "pattern": "^[A-Z0-9 .,:!?'()]+$",
+                "type": "string"
+              },
+              "maxItems": 4,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "text",
+            "mood",
+            "effect",
+            "hint"
+          ],
+          "title": "Primordial Paradox LLM talk reply",
+          "type": "object"
+        },
+        "strict": true
+      },
+      "type": "json_schema"
+    }
+  },
+  "response": {
+    "text": "{\"effect\": \"none\", \"hint\": \"THE CLIPBOARD\", \"mood\": \"guarded\", \"text\": [\"NOTHING SAID. NOTHING DOWN.\", \"STEP BACK FROM THE GATE.\"]}",
+    "usage": {
+      "completion_tokens": 1345,
+      "completion_tokens_details": {
+        "reasoning_tokens": 1293
+      },
+      "prompt_tokens": 1061,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 2406
+    }
+  }
+}

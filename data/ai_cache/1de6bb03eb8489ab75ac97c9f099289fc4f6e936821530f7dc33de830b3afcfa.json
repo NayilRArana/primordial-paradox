@@ -1,0 +1,85 @@
+{
+  "backend": "meta",
+  "key": "1de6bb03eb8489ab75ac97c9f099289fc4f6e936821530f7dc33de830b3afcfa",
+  "kind": "chat",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "recorded_at": "2026-10-27T00:54:49Z",
+  "request": {
+    "messages": [
+      {
+        "content": "<sha256:7beca544a167f7f2:2408 chars>",
+        "role": "system"
+      },
+      {
+        "content": "<sha256:7100b368e646c5a1:1611 chars>",
+        "role": "user"
+      }
+    ],
+    "model": "muse-spark-1.3",
+    "response_format": {
+      "json_schema": {
+        "name": "answer",
+        "schema": {
+          "additionalProperties": false,
+          "properties": {
+            "effect": {
+              "enum": [
+                "none",
+                "end"
+              ]
+            },
+            "hint": {
+              "maxLength": 28,
+              "type": "string"
+            },
+            "mood": {
+              "enum": [
+                "calm",
+                "guarded",
+                "rattled",
+                "warm",
+                "angry"
+              ]
+            },
+            "text": {
+              "items": {
+                "maxLength": 28,
+                "minLength": 1,
+                "pattern": "^[ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 \\.,:!\\?'\\(\\)]+$",
+                "type": "string"
+              },
+              "maxItems": 2,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "text",
+            "mood",
+            "effect",
+            "hint"
+          ],
+          "type": "object"
+        },
+        "strict": true
+      },
+      "type": "json_schema"
+    }
+  },
+  "response": {
+    "text": "{\"effect\": \"none\", \"hint\": \"FIRSTS, DESK, DRIVE HOME\", \"mood\": \"guarded\", \"text\": [\"THAT IS ONE WAY TO PUT IT.\", \"I HAD HOPED FOR A FIRST.\"]}",
+    "usage": {
+      "completion_tokens": 2988,
+      "completion_tokens_details": {
+        "reasoning_tokens": 2928
+      },
+      "prompt_tokens": 1203,
+      "prompt_tokens_details": {
+        "cached_tokens": 753
+      },
+      "total_tokens": 4191
+    }
+  }
+}

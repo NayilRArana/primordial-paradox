@@ -1,0 +1,85 @@
+{
+  "backend": "meta",
+  "key": "726b6d6f682658b4174f0025bd5839dac52936c8d22baed7ab063b1faf7a1571",
+  "kind": "chat",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "recorded_at": "2026-10-27T00:53:49Z",
+  "request": {
+    "messages": [
+      {
+        "content": "<sha256:7beca544a167f7f2:2408 chars>",
+        "role": "system"
+      },
+      {
+        "content": "<sha256:1e6183b1280d0a81:1614 chars>",
+        "role": "user"
+      }
+    ],
+    "model": "muse-spark-1.3",
+    "response_format": {
+      "json_schema": {
+        "name": "answer",
+        "schema": {
+          "additionalProperties": false,
+          "properties": {
+            "effect": {
+              "enum": [
+                "none",
+                "end"
+              ]
+            },
+            "hint": {
+              "maxLength": 28,
+              "type": "string"
+            },
+            "mood": {
+              "enum": [
+                "calm",
+                "guarded",
+                "rattled",
+                "warm",
+                "angry"
+              ]
+            },
+            "text": {
+              "items": {
+                "maxLength": 28,
+                "minLength": 1,
+                "pattern": "^[ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 \\.,:!\\?'\\(\\)]+$",
+                "type": "string"
+              },
+              "maxItems": 2,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "text",
+            "mood",
+            "effect",
+            "hint"
+          ],
+          "type": "object"
+        },
+        "strict": true
+      },
+      "type": "json_schema"
+    }
+  },
+  "response": {
+    "text": "{\"effect\": \"none\", \"hint\": \"THE DRIVE DOWN\", \"mood\": \"guarded\", \"text\": [\"IT WAS A LONG DRIVE DOWN.\", \"I HOPE IT WAS WORTH IT.\"]}",
+    "usage": {
+      "completion_tokens": 1897,
+      "completion_tokens_details": {
+        "reasoning_tokens": 1845
+      },
+      "prompt_tokens": 1204,
+      "prompt_tokens_details": {
+        "cached_tokens": 753
+      },
+      "total_tokens": 3101
+    }
+  }
+}

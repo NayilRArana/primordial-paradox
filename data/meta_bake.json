@@ -17,21 +17,21 @@
     "angry"
   ],
   "bake": {
-    "created_at": "2026-10-23T05:04:32Z",
-    "mode": "offline",
-    "offline": true,
-    "backend": "",
-    "network": false,
+    "created_at": "2026-10-27T03:45:20Z",
+    "mode": "live",
+    "offline": false,
+    "backend": "meta",
+    "network": true,
     "model": "muse-spark-1.3",
     "system_chars": 2408,
-    "calls_attempted": 0,
+    "calls_attempted": 18,
     "rows": 18,
-    "live": 0,
-    "fallback": 18,
+    "live": 13,
+    "fallback": 5,
     "fallback_reasons": {
-      "offline": 18
+      "refused": 5
     },
-    "note": "offline: --offline was asked for, so every row is the fallback"
+    "note": "live: 13 of 18 rows are answers from the Meta client, each one schema validated before it was written; the other 5 are the hand written fallback"
   },
   "coverage": {
     "talk_cards_in_data": 10,
@@ -108,17 +108,18 @@
       "id": "npc/morgan/turn_1",
       "scene": "npc",
       "text": [
-        "NOTHING IN THE BOOK TONIGHT."
+        "GATE IS CLOSED.",
+        "STATE YOUR BUSINESS."
       ],
       "mood": "guarded",
       "effect": "none",
-      "hint": "THE WATCH AND THE RAIN.",
+      "hint": "THE RAIN",
       "model": "muse-spark-1.3",
       "request_hash": "257c54d95a763e3f64190e3c3250222824c499ef4995f6bb0a0a4cf7adc3dc2d",
-      "created_at": "2026-10-23T05:04:32Z",
-      "source": "fallback",
-      "network": false,
-      "reason": "offline: --offline was asked for, so every row is the fallback",
+      "created_at": "2026-10-27T03:45:20Z",
+      "source": "live",
+      "network": true,
+      "reason": "",
       "request": {
         "system_sha256": "7beca544a167f7f213fb0a74259f67e33722be8237cad3d5cccdfde8c323da9d",
         "system_chars": 2408,
@@ -195,17 +196,18 @@
       "id": "npc/morgan/turn_2",
       "scene": "npc",
       "text": [
-        "DO NOT READ THE CLIPBOARD."
+        "NO ANSWER. STILL CLOSED.",
+        "STATE IT OR STAND IN RAIN."
       ],
       "mood": "guarded",
       "effect": "none",
-      "hint": "THE CLIPBOARD.",
+      "hint": "THE LONG WATCH, THE RAIN",
       "model": "muse-spark-1.3",
-      "request_hash": "f78eb416c201745978da5bb4342a24a49474f745aa8dc1a119fd429e621efe14",
-      "created_at": "2026-10-23T05:04:32Z",
-      "source": "fallback",
-      "network": false,
-      "reason": "offline: --offline was asked for, so every row is the fallback",
+      "request_hash": "d5602105e5c8a5e847a10035e58d39a8f64a341636b2f74c50ab24cb8074a003",
+      "created_at": "2026-10-27T03:45:20Z",
+      "source": "live",
+      "network": true,
+      "reason": "",
       "request": {
         "system_sha256": "7beca544a167f7f213fb0a74259f67e33722be8237cad3d5cccdfde8c323da9d",
         "system_chars": 2408,
@@ -253,7 +255,7 @@
           "place": "southampton_dock",
           "turn": 2,
           "mood": "guarded",
-          "last_reply": "NOTHING IN THE BOOK TONIGHT.",
+          "last_reply": "GATE IS CLOSED. STATE YOUR BUSINESS.",
           "allowed": [
             "none",
             "end"
@@ -282,17 +284,18 @@
       "id": "npc/morgan/turn_3",
       "scene": "npc",
       "text": [
-        "GO ON. BEFORE I WRITE YOU."
+        "STILL HERE. STILL WET.",
+        "STATE BUSINESS OR STEP BACK."
       ],
-      "mood": "calm",
-      "effect": "end",
-      "hint": "",
+      "mood": "guarded",
+      "effect": "none",
+      "hint": "BUSINESS, ORDERS, CLIPBOARD",
       "model": "muse-spark-1.3",
-      "request_hash": "b6d189aa1adfde879aba5d42c637a3022ae1e87b6fd4349340c15c2978d5c897",
-      "created_at": "2026-10-23T05:04:32Z",
-      "source": "fallback",
-      "network": false,
-      "reason": "offline: --offline was asked for, so every row is the fallback",
+      "request_hash": "310c916c781b67bd88991d552d9c1181f1430b08dabe1e85826dcd5a41fb61b9",
+      "created_at": "2026-10-27T03:45:20Z",
+      "source": "live",
+      "network": true,
+      "reason": "",
       "request": {
         "system_sha256": "7beca544a167f7f213fb0a74259f67e33722be8237cad3d5cccdfde8c323da9d",
         "system_chars": 2408,
@@ -340,7 +343,7 @@
           "place": "southampton_dock",
           "turn": 3,
           "mood": "guarded",
-          "last_reply": "DO NOT READ THE CLIPBOARD.",
+          "last_reply": "NO ANSWER. STILL CLOSED. STATE IT OR STAND IN RAIN.",
           "allowed": [
             "none",
             "end"
@@ -369,17 +372,19 @@
       "id": "npc/nye/turn_1",
       "scene": "npc",
       "text": [
-        "I COUNT WHAT I AM GIVEN."
+        "GOOD EVENING. DOCK OFFICE.",
+        "NYE, CLERK. I COUNT TWICE.",
+        "STATE YOUR BERTH. PLEASE."
       ],
       "mood": "guarded",
       "effect": "none",
-      "hint": "THE LEDGER. THE LAST LINE.",
+      "hint": "ASK OF THE LEDGER",
       "model": "muse-spark-1.3",
       "request_hash": "968c6ca4398290e5b0795ab70f9cc58d4390674b967364dfe44d3c46a58bc5b9",
-      "created_at": "2026-10-23T05:04:32Z",
-      "source": "fallback",
-      "network": false,
-      "reason": "offline: --offline was asked for, so every row is the fallback",
+      "created_at": "2026-10-27T03:45:20Z",
+      "source": "live",
+      "network": true,
+      "reason": "",
       "request": {
         "system_sha256": "7beca544a167f7f213fb0a74259f67e33722be8237cad3d5cccdfde8c323da9d",
         "system_chars": 2408,
@@ -456,17 +461,18 @@
       "id": "npc/nye/turn_2",
       "scene": "npc",
       "text": [
-        "THE LAST LINE IS NOT MINE."
+        "SILENCE IS NOT ON MY LIST.",
+        "STATE BERTH. I RECORD."
       ],
       "mood": "guarded",
       "effect": "none",
-      "hint": "BERTH NINE.",
+      "hint": "THE MANIFEST",
       "model": "muse-spark-1.3",
-      "request_hash": "e694472f4c4097f62e5a91b7b1628d657e8eb555992cdf4219bd7de244731e25",
-      "created_at": "2026-10-23T05:04:32Z",
-      "source": "fallback",
-      "network": false,
-      "reason": "offline: --offline was asked for, so every row is the fallback",
+      "request_hash": "6a23f5583d9562df0cb9825b813654746e1c59da5945c784c0e53bf32087b8ed",
+      "created_at": "2026-10-27T03:45:20Z",
+      "source": "live",
+      "network": true,
+      "reason": "",
       "request": {
         "system_sha256": "7beca544a167f7f213fb0a74259f67e33722be8237cad3d5cccdfde8c323da9d",
         "system_chars": 2408,
@@ -514,7 +520,7 @@
           "place": "quay_dock_office",
           "turn": 2,
           "mood": "guarded",
-          "last_reply": "I COUNT WHAT I AM GIVEN.",
+          "last_reply": "GOOD EVENING. DOCK OFFICE. NYE, CLERK. I COUNT TWICE. STATE YOUR BERTH. PLEASE.",
           "allowed": [
             "none",
             "end"
@@ -543,17 +549,18 @@
       "id": "npc/nye/turn_3",
       "scene": "npc",
       "text": [
-        "GOODNIGHT. SHUT THE DOOR."
+        "NO ENTRY MADE. NO MARK.",
+        "STATE NAME FOR LEDGER."
       ],
-      "mood": "calm",
-      "effect": "end",
-      "hint": "",
+      "mood": "guarded",
+      "effect": "none",
+      "hint": "THE LEDGER, THE LAST LINE.",
       "model": "muse-spark-1.3",
-      "request_hash": "6b87e6bae0a7f426c2b915eb12f27e4110a3ec12d486f69bb232c4dbae0e2365",
-      "created_at": "2026-10-23T05:04:32Z",
-      "source": "fallback",
-      "network": false,
-      "reason": "offline: --offline was asked for, so every row is the fallback",
+      "request_hash": "3b222a2de98473295b157a9183401a9db2a36469b19640e646ca3e3f1e9f181c",
+      "created_at": "2026-10-27T03:45:20Z",
+      "source": "live",
+      "network": true,
+      "reason": "",
       "request": {
         "system_sha256": "7beca544a167f7f213fb0a74259f67e33722be8237cad3d5cccdfde8c323da9d",
         "system_chars": 2408,
@@ -601,7 +608,7 @@
           "place": "quay_dock_office",
           "turn": 3,
           "mood": "guarded",
-          "last_reply": "THE LAST LINE IS NOT MINE.",
+          "last_reply": "SILENCE IS NOT ON MY LIST. STATE BERTH. I RECORD.",
           "allowed": [
             "none",
             "end"
@@ -636,11 +643,11 @@
       "effect": "soften",
       "hint": "THE ROPE.",
       "model": "muse-spark-1.3",
-      "request_hash": "d4afcf1a375c9fca2c6694676058154e1a00ad331766fe1cac57263843738be1",
-      "created_at": "2026-10-23T05:04:32Z",
+      "request_hash": "5c9a8ddb99896c8091f9d50e6987d93dd48b23d49ba28171ca473486e40ce382",
+      "created_at": "2026-10-27T03:45:20Z",
       "source": "fallback",
       "network": false,
-      "reason": "offline: --offline was asked for, so every row is the fallback",
+      "reason": "refused: effect 'none' where option 1 is authored to move 'soften'",
       "request": {
         "system_sha256": "7beca544a167f7f213fb0a74259f67e33722be8237cad3d5cccdfde8c323da9d",
         "system_chars": 2408,
@@ -690,6 +697,7 @@
           "mood": "guarded",
           "last_effect": "none",
           "last_reply": "",
+          "required_effect": "soften",
           "allowed": [
             "none",
             "nudge",
@@ -726,18 +734,17 @@
       "id": "fight/deck_hound/2",
       "scene": "fight",
       "text": [
-        "IT SNIFFS THE SALT ON YOUR",
-        "HANDS."
+        "IT SNIFFS YOUR HAND."
       ],
-      "mood": "calm",
+      "mood": "guarded",
       "effect": "nudge",
-      "hint": "",
+      "hint": "SALT ON HANDS, ROPE END",
       "model": "muse-spark-1.3",
-      "request_hash": "b9553cbff7b8f7f266a1effab51f700490280541bc14bb897e6ee028f5f29f46",
-      "created_at": "2026-10-23T05:04:32Z",
-      "source": "fallback",
-      "network": false,
-      "reason": "offline: --offline was asked for, so every row is the fallback",
+      "request_hash": "4e025edd0384c580c12243c6828ff8f7333cf2fff8bf2a590f10273593e21257",
+      "created_at": "2026-10-27T03:45:20Z",
+      "source": "live",
+      "network": true,
+      "reason": "",
       "request": {
         "system_sha256": "7beca544a167f7f213fb0a74259f67e33722be8237cad3d5cccdfde8c323da9d",
         "system_chars": 2408,
@@ -787,6 +794,7 @@
           "mood": "guarded",
           "last_effect": "none",
           "last_reply": "ITS EARS COME UP.",
+          "required_effect": "nudge",
           "allowed": [
             "none",
             "nudge",
@@ -831,11 +839,11 @@
       "effect": "setback",
       "hint": "",
       "model": "muse-spark-1.3",
-      "request_hash": "ac5080c5316562ec81808c0b50855d45b0e4bd5ee3dd4619f85ce0bb998d2fab",
-      "created_at": "2026-10-23T05:04:32Z",
+      "request_hash": "0fda292a458b31f42f978138d96fdf6171765be63d14c5e29c231621f1baf087",
+      "created_at": "2026-10-27T03:45:20Z",
       "source": "fallback",
       "network": false,
-      "reason": "offline: --offline was asked for, so every row is the fallback",
+      "reason": "refused: effect 'none' where option 3 is authored to move 'setback'",
       "request": {
         "system_sha256": "7beca544a167f7f213fb0a74259f67e33722be8237cad3d5cccdfde8c323da9d",
         "system_chars": 2408,
@@ -884,7 +892,8 @@
           "mercy": 40,
           "mood": "guarded",
           "last_effect": "none",
-          "last_reply": "IT SNIFFS THE SALT ON YOUR HANDS.",
+          "last_reply": "IT SNIFFS YOUR HAND.",
+          "required_effect": "setback",
           "allowed": [
             "none",
             "nudge",
@@ -928,11 +937,11 @@
       "effect": "soften",
       "hint": "THE LONG WATCH.",
       "model": "muse-spark-1.3",
-      "request_hash": "d11f8a247f7c6e9829fd6a9802508f16b87f46ccf04f50d121a92aef5ce73e17",
-      "created_at": "2026-10-23T05:04:32Z",
+      "request_hash": "883c9fd746e02f459788abb2c084ba58a31304e14f1ee717b919e451ca826448",
+      "created_at": "2026-10-27T03:45:20Z",
       "source": "fallback",
       "network": false,
-      "reason": "offline: --offline was asked for, so every row is the fallback",
+      "reason": "refused: effect 'setback' where option 1 is authored to move 'soften'",
       "request": {
         "system_sha256": "7beca544a167f7f213fb0a74259f67e33722be8237cad3d5cccdfde8c323da9d",
         "system_chars": 2408,
@@ -992,6 +1001,7 @@
           "mood": "guarded",
           "last_effect": "none",
           "last_reply": "",
+          "required_effect": "soften",
           "allowed": [
             "none",
             "nudge",
@@ -1028,18 +1038,18 @@
       "id": "fight/navy_sailor/2",
       "scene": "fight",
       "text": [
-        "THE WATCH IS LONG. THAT IS",
-        "ALL."
+        "YEAH. THEY SEE.",
+        "I STILL STAND HERE."
       ],
-      "mood": "calm",
+      "mood": "guarded",
       "effect": "nudge",
-      "hint": "",
+      "hint": "THE LONG WATCH",
       "model": "muse-spark-1.3",
-      "request_hash": "75e11e84ce8bfce2d890b754342072d5641e706accded3f5ec3ecb4877d9e508",
-      "created_at": "2026-10-23T05:04:32Z",
-      "source": "fallback",
-      "network": false,
-      "reason": "offline: --offline was asked for, so every row is the fallback",
+      "request_hash": "c90cc1555a668d661445ec8cb3161ae014fe27c11fdb6a076195dc564e47070d",
+      "created_at": "2026-10-27T03:45:20Z",
+      "source": "live",
+      "network": true,
+      "reason": "",
       "request": {
         "system_sha256": "7beca544a167f7f213fb0a74259f67e33722be8237cad3d5cccdfde8c323da9d",
         "system_chars": 2408,
@@ -1099,6 +1109,7 @@
           "mood": "guarded",
           "last_effect": "none",
           "last_reply": "A SMOKE? AFTER THIS, MAYBE.",
+          "required_effect": "nudge",
           "allowed": [
             "none",
             "nudge",
@@ -1136,18 +1147,18 @@
       "id": "fight/navy_sailor/3",
       "scene": "fight",
       "text": [
-        "SAY THAT AGAIN AND THIS GETS",
-        "LOUD."
+        "WATCH YOUR MOUTH.",
+        "I STAND IT. YOU DO NOT."
       ],
       "mood": "angry",
       "effect": "setback",
-      "hint": "",
+      "hint": "HIS NAME, HOME PORT",
       "model": "muse-spark-1.3",
-      "request_hash": "a79dd3f86debc67373d2fa1ff12e0c7f0ffa7854cc1f4c9c3d8fa92d2b66496d",
-      "created_at": "2026-10-23T05:04:32Z",
-      "source": "fallback",
-      "network": false,
-      "reason": "offline: --offline was asked for, so every row is the fallback",
+      "request_hash": "1676076c51519699267fc782cd54591c046938b8604a6050f77dab1a06d79a40",
+      "created_at": "2026-10-27T03:45:20Z",
+      "source": "live",
+      "network": true,
+      "reason": "",
       "request": {
         "system_sha256": "7beca544a167f7f213fb0a74259f67e33722be8237cad3d5cccdfde8c323da9d",
         "system_chars": 2408,
@@ -1206,7 +1217,8 @@
           "mercy": 40,
           "mood": "guarded",
           "last_effect": "none",
-          "last_reply": "THE WATCH IS LONG. THAT IS ALL.",
+          "last_reply": "YEAH. THEY SEE. I STILL STAND HERE.",
+          "required_effect": "setback",
           "allowed": [
             "none",
             "nudge",
@@ -1250,11 +1262,11 @@
       "effect": "soften",
       "hint": "PLAIN SPEECH.",
       "model": "muse-spark-1.3",
-      "request_hash": "3f8dd4157564192ab99739e4415390035c975730b3f773b171df39fb6a66ef56",
-      "created_at": "2026-10-23T05:04:32Z",
+      "request_hash": "fbec244f026366665917def9005e427b519aaf359b0769c2214b7287ccfab3c0",
+      "created_at": "2026-10-27T03:45:20Z",
       "source": "fallback",
       "network": false,
-      "reason": "offline: --offline was asked for, so every row is the fallback",
+      "reason": "refused: effect 'setback' where option 1 is authored to move 'soften'",
       "request": {
         "system_sha256": "7beca544a167f7f213fb0a74259f67e33722be8237cad3d5cccdfde8c323da9d",
         "system_chars": 2408,
@@ -1314,6 +1326,7 @@
           "mood": "guarded",
           "last_effect": "none",
           "last_reply": "",
+          "required_effect": "soften",
           "allowed": [
             "none",
             "nudge",
@@ -1350,18 +1363,18 @@
       "id": "fight/percy/2",
       "scene": "fight",
       "text": [
-        "WORDS. THE SEA HAS HEARD",
-        "WORSE."
+        "ASK WHAT YOU MEAN.",
+        "VEIL KEEPS ITS OWN."
       ],
-      "mood": "calm",
+      "mood": "guarded",
       "effect": "nudge",
-      "hint": "",
+      "hint": "HE ANSWERS TO PERCY",
       "model": "muse-spark-1.3",
-      "request_hash": "d9e269e01376359aeacff06fdcb1a0874a61eb5d280da25830f2ada0d799830b",
-      "created_at": "2026-10-23T05:04:32Z",
-      "source": "fallback",
-      "network": false,
-      "reason": "offline: --offline was asked for, so every row is the fallback",
+      "request_hash": "8f1cffebc3a6360f15c9b4c3104c716af8faf741665361ec19deec30d7175905",
+      "created_at": "2026-10-27T03:45:20Z",
+      "source": "live",
+      "network": true,
+      "reason": "",
       "request": {
         "system_sha256": "7beca544a167f7f213fb0a74259f67e33722be8237cad3d5cccdfde8c323da9d",
         "system_chars": 2408,
@@ -1421,6 +1434,7 @@
           "mood": "guarded",
           "last_effect": "none",
           "last_reply": "THE SEA HEARS YOU. SO DO I.",
+          "required_effect": "nudge",
           "allowed": [
             "none",
             "nudge",
@@ -1458,17 +1472,17 @@
       "id": "fight/percy/3",
       "scene": "fight",
       "text": [
-        "DO NOT DRESS ME IN TITLES."
+        "NO ORDERS HERE. SPEAK PLAIN."
       ],
       "mood": "angry",
       "effect": "setback",
-      "hint": "",
+      "hint": "HIS OWN NAME",
       "model": "muse-spark-1.3",
-      "request_hash": "5fe77be57cb1a33f8d234f676fdcc7802fefd008f0f7bcc98cc937a54a0e6410",
-      "created_at": "2026-10-23T05:04:32Z",
-      "source": "fallback",
-      "network": false,
-      "reason": "offline: --offline was asked for, so every row is the fallback",
+      "request_hash": "6c49d157269d5a43450798051301959d08e6b224c4908967aaf3833873d5d5e6",
+      "created_at": "2026-10-27T03:45:20Z",
+      "source": "live",
+      "network": true,
+      "reason": "",
       "request": {
         "system_sha256": "7beca544a167f7f213fb0a74259f67e33722be8237cad3d5cccdfde8c323da9d",
         "system_chars": 2408,
@@ -1527,7 +1541,8 @@
           "mercy": 40,
           "mood": "guarded",
           "last_effect": "none",
-          "last_reply": "WORDS. THE SEA HAS HEARD WORSE.",
+          "last_reply": "ASK WHAT YOU MEAN. VEIL KEEPS ITS OWN.",
+          "required_effect": "setback",
           "allowed": [
             "none",
             "nudge",
@@ -1571,11 +1586,11 @@
       "effect": "soften",
       "hint": "THE VEIL ANSWERED.",
       "model": "muse-spark-1.3",
-      "request_hash": "a2787e79432b9b29192b81fc8f3b3c0eba3f84e2872e126652f3d96b54ccfc19",
-      "created_at": "2026-10-23T05:04:32Z",
+      "request_hash": "cf20bb8aa90d25c19020e49a6b51ca77480f0df217935f882106b69d8e47e3d8",
+      "created_at": "2026-10-27T03:45:20Z",
       "source": "fallback",
       "network": false,
-      "reason": "offline: --offline was asked for, so every row is the fallback",
+      "reason": "refused: effect 'none' where option 1 is authored to move 'soften'",
       "request": {
         "system_sha256": "7beca544a167f7f213fb0a74259f67e33722be8237cad3d5cccdfde8c323da9d",
         "system_chars": 2408,
@@ -1635,6 +1650,7 @@
           "mood": "guarded",
           "last_effect": "none",
           "last_reply": "",
+          "required_effect": "soften",
           "allowed": [
             "none",
             "nudge",
@@ -1672,18 +1688,18 @@
       "id": "fight/percy_phase2/2",
       "scene": "fight",
       "text": [
-        "WORDS. THE SEA HAS HEARD",
-        "WORSE."
+        "QUESTION STANDS.",
+        "ANSWER PLAIN."
       ],
-      "mood": "calm",
+      "mood": "guarded",
       "effect": "nudge",
-      "hint": "",
+      "hint": "PLAIN SPEECH, HIS NAME",
       "model": "muse-spark-1.3",
-      "request_hash": "0461a48f81bc21bb99ef3cd5398c67384dfb09d60e78082a14e794ca1c6082ee",
-      "created_at": "2026-10-23T05:04:32Z",
-      "source": "fallback",
-      "network": false,
-      "reason": "offline: --offline was asked for, so every row is the fallback",
+      "request_hash": "3a3dc9fc62e8df7c4ed4d2fc35d6e4f4d7f9d57a6ef4966025422b7d34a09e5f",
+      "created_at": "2026-10-27T03:45:20Z",
+      "source": "live",
+      "network": true,
+      "reason": "",
       "request": {
         "system_sha256": "7beca544a167f7f213fb0a74259f67e33722be8237cad3d5cccdfde8c323da9d",
         "system_chars": 2408,
@@ -1743,6 +1759,7 @@
           "mood": "guarded",
           "last_effect": "none",
           "last_reply": "WINDED. DO NOT MISTAKE IT FOR SOFT.",
+          "required_effect": "nudge",
           "allowed": [
             "none",
             "nudge",
@@ -1780,18 +1797,18 @@
       "id": "fight/percy_phase2/3",
       "scene": "fight",
       "text": [
-        "A WOUND DOES NOT MAKE YOU",
-        "RIGHT."
+        "TAUTOLOGY.",
+        "SPEAK PLAIN, SAILOR."
       ],
       "mood": "angry",
       "effect": "setback",
-      "hint": "",
+      "hint": "HIS NAME, THE SEA",
       "model": "muse-spark-1.3",
-      "request_hash": "5d634ead4ec2ddc48455ecf532c5db34db50af732b9f884958f99d698ae3253d",
-      "created_at": "2026-10-23T05:04:32Z",
-      "source": "fallback",
-      "network": false,
-      "reason": "offline: --offline was asked for, so every row is the fallback",
+      "request_hash": "694cebcdbd521262d905a19f02bc7c78ee1c79dc5717456705bd5a0bec465479",
+      "created_at": "2026-10-27T03:45:20Z",
+      "source": "live",
+      "network": true,
+      "reason": "",
       "request": {
         "system_sha256": "7beca544a167f7f213fb0a74259f67e33722be8237cad3d5cccdfde8c323da9d",
         "system_chars": 2408,
@@ -1850,7 +1867,8 @@
           "mercy": 40,
           "mood": "guarded",
           "last_effect": "none",
-          "last_reply": "WORDS. THE SEA HAS HEARD WORSE.",
+          "last_reply": "QUESTION STANDS. ANSWER PLAIN.",
+          "required_effect": "setback",
           "allowed": [
             "none",
             "nudge",

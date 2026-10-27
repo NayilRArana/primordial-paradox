@@ -142,6 +142,11 @@ def test_role_model_override(monkeypatch):
 
 
 def test_missing_key_raises_clear_error(monkeypatch):
+    # Pin the door this test is about: with PP_AI_MODE=replay exported (the demo and CI setting)
+    # a call would stop at the cache lookup with CacheMiss before the key was ever consulted, so
+    # the key advice this test asserts would never be produced.
+    monkeypatch.setenv("PP_AI_MODE", "live")
+    monkeypatch.setenv("PP_AI_BACKEND", "meta")
     monkeypatch.delenv("MODEL_API_KEY", raising=False)
     monkeypatch.delenv("META_API_KEY", raising=False)
     with pytest.raises(meta_client.MetaKeyMissing) as caught:
@@ -153,6 +158,8 @@ def test_missing_key_raises_clear_error(monkeypatch):
 
 
 def test_blank_key_is_missing(monkeypatch, sleeps):
+    monkeypatch.setenv("PP_AI_MODE", "live")
+    monkeypatch.setenv("PP_AI_BACKEND", "meta")
     monkeypatch.setenv("MODEL_API_KEY", "   ")
     monkeypatch.setenv("META_API_KEY", "")
     assert meta_client.key_present() is False
@@ -219,8 +226,25 @@ def test_chat_with_schema_sets_response_format(tmp_path, sleeps, monkeypatch):
     assert verdict["refusal"] is False
     sent = transport.calls[0]["payload"]["response_format"]
     assert sent["type"] == "json_schema"
-    assert sent["json_schema"]["schema"] == schema
+    assert sent["json_schema"]["schema"] == meta_client.strict_schema(schema)
+    assert sent["json_schema"]["schema"]["additionalProperties"] is False
     assert sent["json_schema"]["strict"] is True
+
+
+def test_strict_schema_supplies_the_flag_the_api_demands():
+    # Measured 2026-10-26: the live API answers 400 "'additionalProperties' is required to be
+    # supplied and to be false" for an object that omits it, so the client adds it everywhere.
+    schema = {"type": "object",
+              "properties": {"line": {"type": "string"},
+                             "effect": {"type": "object",
+                                        "properties": {"name": {"type": "string"}}}},
+              "required": ["line"]}
+    out = meta_client.strict_schema(schema)
+    assert out["additionalProperties"] is False
+    assert out["properties"]["effect"]["additionalProperties"] is False
+    assert "additionalProperties" not in schema, "the caller's dict must not be mutated"
+    kept = {"type": "object", "additionalProperties": True, "properties": {}}
+    assert meta_client.strict_schema(kept)["additionalProperties"] is True
 
 
 def test_chat_structured_rejects_a_non_json_answer(sleeps, monkeypatch):
@@ -325,7 +349,25 @@ def test_segment_reads_boxes_and_masks(png, sleeps, monkeypatch):
     assert cut["boxes"] == [[10, 20, 30, 40], [1, 2, 3, 4]]
     assert len(cut["masks"]) == 1
     assert "knight" in cut["text"]
-    assert "UNKNOWN" in cut["note"]
+    assert "read 2026-10-26" in cut["note"] and "reading-segmentation" in cut["note"]
+
+
+def test_segment_returns_the_documented_records_with_their_mask_size(png, sleeps, monkeypatch,
+                                                                    tmp_path):
+    """The grammar the docs publish since 2026-10-26: object id, box, then mask with H and W."""
+    text = ('<0f>0<|box;x1=2;y1=3;x2=7;y2=6;w=12;h=10|>'
+            '<|mask;x=0;y=0;data=4,6,!!!!!)Hl)NMQxcU|>')
+    monkeypatch.setattr(meta_client, "TRANSPORT", FakeTransport(segmentation_body(text)))
+    cut = meta_client.segment(png, "knight")
+    assert cut["boxes"] == [[2, 3, 7, 6]]
+    assert cut["masks"] == ["!!!!!)Hl)NMQxcU"]
+    assert cut["objects"] == [{"object_id": 0, "box": [2, 3, 7, 6], "frame": [12, 10],
+                               "mask": {"height": 4, "width": 6, "encoding": "one_bit",
+                                        "payload": "!!!!!)Hl)NMQxcU"}}]
+    written = entries(tmp_path)
+    assert len(written) == 1
+    assert written[0]["response"]["objects"] == cut["objects"], (
+        "the recorded entry must carry the same records the caller gets")
 
 
 def test_segment_zero_objects_is_not_an_error(png, sleeps, monkeypatch):
@@ -606,6 +648,17 @@ def _committed_entries():
     return out
 
 
+def _shrunk(entry):
+    """True when the stored request replaced a long string with its digest (see _shrink()).
+
+    The cache keeps entries small by storing `<sha256:...:N chars>` in place of any string over
+    512 characters, so the payload the key was computed from is deliberately not recoverable from
+    the entry. Measured 2026-10-27: a live talk bake stores the 2408 character system message that
+    way, and every such entry failed a recomputed-key assertion that assumed the preimage was kept.
+    """
+    return "<sha256:" in json.dumps(entry.get("request"), sort_keys=True)
+
+
 def test_committed_cache_is_keyed_correctly_and_replays_offline(monkeypatch):
     recorded = _committed_entries()
     if not recorded:
@@ -617,12 +670,17 @@ def test_committed_cache_is_keyed_correctly_and_replays_offline(monkeypatch):
     monkeypatch.delenv("MODEL_API_KEY", raising=False)
     monkeypatch.delenv("META_API_KEY", raising=False)
     replayed = 0
+    recomputed = 0
     for entry in recorded:
+        if _shrunk(entry):
+            continue
         key = meta_client.request_key(entry["kind"], entry["model"], entry["request"],
                                       extra=str(entry["backend"]))
         assert key == entry["key"], "cache file name does not match its own key"
+        recomputed += 1
+    assert recomputed >= 1, "no entry in the committed cache can have its key recomputed"
     for entry in recorded:
-        if entry["kind"] != "chat" or "response_format" in entry["request"]:
+        if entry["kind"] != "chat" or "response_format" in entry["request"] or _shrunk(entry):
             continue
         monkeypatch.setenv("PP_AI_BACKEND", str(entry["backend"]))
         text = meta_client.chat(entry["request"]["messages"], model=entry["model"])

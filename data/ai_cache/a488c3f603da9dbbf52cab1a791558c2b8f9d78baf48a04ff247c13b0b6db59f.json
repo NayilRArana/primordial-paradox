@@ -1,0 +1,85 @@
+{
+  "backend": "meta",
+  "key": "a488c3f603da9dbbf52cab1a791558c2b8f9d78baf48a04ff247c13b0b6db59f",
+  "kind": "chat",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "recorded_at": "2026-10-27T01:44:42Z",
+  "request": {
+    "messages": [
+      {
+        "content": "<sha256:7beca544a167f7f2:2408 chars>",
+        "role": "system"
+      },
+      {
+        "content": "<sha256:4677ce8c7ff172f1:1675 chars>",
+        "role": "user"
+      }
+    ],
+    "model": "muse-spark-1.3",
+    "response_format": {
+      "json_schema": {
+        "name": "answer",
+        "schema": {
+          "additionalProperties": false,
+          "properties": {
+            "effect": {
+              "enum": [
+                "none",
+                "end"
+              ]
+            },
+            "hint": {
+              "maxLength": 28,
+              "type": "string"
+            },
+            "mood": {
+              "enum": [
+                "calm",
+                "guarded",
+                "rattled",
+                "warm",
+                "angry"
+              ]
+            },
+            "text": {
+              "items": {
+                "maxLength": 28,
+                "minLength": 1,
+                "pattern": "^[ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 \\.,:!\\?'\\(\\)]+$",
+                "type": "string"
+              },
+              "maxItems": 2,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "text",
+            "mood",
+            "effect",
+            "hint"
+          ],
+          "type": "object"
+        },
+        "strict": true
+      },
+      "type": "json_schema"
+    }
+  },
+  "response": {
+    "text": "{\"effect\": \"none\", \"hint\": \"WIND, TIDE, WAY OFF QUAY\", \"mood\": \"rattled\", \"text\": [\"WHERE ARE THEY?\", \"WHERE ARE THEY?\"]}",
+    "usage": {
+      "completion_tokens": 3288,
+      "completion_tokens_details": {
+        "reasoning_tokens": 3234
+      },
+      "prompt_tokens": 1210,
+      "prompt_tokens_details": {
+        "cached_tokens": 753
+      },
+      "total_tokens": 4498
+    }
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "backend": "meta",
+  "key": "33400c42de435a6b74cfcb96c3b3ab349b4f2b5868b506d08760e233b5dca4e1",
+  "kind": "chat",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "recorded_at": "2026-10-27T01:54:51Z",
+  "request": {
+    "messages": [
+      {
+        "content": "TALK verdict for Zeus: 'I did not come to fight, I came to be remembered.'",
+        "role": "user"
+      }
+    ],
+    "model": "muse-spark-1.3",
+    "response_format": {
+      "json_schema": {
+        "name": "answer",
+        "schema": {
+          "additionalProperties": false,
+          "properties": {
+            "line": {
+              "type": "string"
+            },
+            "mercy_delta": {
+              "type": "integer"
+            },
+            "refusal": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "mercy_delta",
+            "refusal",
+            "line"
+          ],
+          "type": "object"
+        },
+        "strict": true
+      },
+      "type": "json_schema"
+    }
+  },
+  "response": {
+    "text": "{\"line\":\"I did not come to fight, I came to be remembered.\",\"mercy_delta\":20,\"refusal\":false}",
+    "usage": {
+      "completion_tokens": 1916,
+      "completion_tokens_details": {
+        "reasoning_tokens": 1880
+      },
+      "prompt_tokens": 28,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 1944
+    }
+  }
+}

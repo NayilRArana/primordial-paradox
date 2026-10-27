@@ -1,0 +1,85 @@
+{
+  "backend": "meta",
+  "key": "7b938a9187a30eec1543bf758671a2d3f20eb30e95eb1ee353fd26a7e4c74291",
+  "kind": "chat",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "recorded_at": "2026-10-27T01:42:45Z",
+  "request": {
+    "messages": [
+      {
+        "content": "<sha256:7beca544a167f7f2:2408 chars>",
+        "role": "system"
+      },
+      {
+        "content": "<sha256:6ed15f76295b41f4:1651 chars>",
+        "role": "user"
+      }
+    ],
+    "model": "muse-spark-1.3",
+    "response_format": {
+      "json_schema": {
+        "name": "answer",
+        "schema": {
+          "additionalProperties": false,
+          "properties": {
+            "effect": {
+              "enum": [
+                "none",
+                "end"
+              ]
+            },
+            "hint": {
+              "maxLength": 28,
+              "type": "string"
+            },
+            "mood": {
+              "enum": [
+                "calm",
+                "guarded",
+                "rattled",
+                "warm",
+                "angry"
+              ]
+            },
+            "text": {
+              "items": {
+                "maxLength": 28,
+                "minLength": 1,
+                "pattern": "^[ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 \\.,:!\\?'\\(\\)]+$",
+                "type": "string"
+              },
+              "maxItems": 2,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "text",
+            "mood",
+            "effect",
+            "hint"
+          ],
+          "type": "object"
+        },
+        "strict": true
+      },
+      "type": "json_schema"
+    }
+  },
+  "response": {
+    "text": "{\"effect\": \"none\", \"hint\": \"ASK OF RAIN OR BUSES\", \"mood\": \"warm\", \"text\": [\"SANDWICHES! NOW YOU TALK.\", \"LOVELY DAY FOR A BITE, EH?\"]}",
+    "usage": {
+      "completion_tokens": 1909,
+      "completion_tokens_details": {
+        "reasoning_tokens": 1848
+      },
+      "prompt_tokens": 1196,
+      "prompt_tokens_details": {
+        "cached_tokens": 753
+      },
+      "total_tokens": 3105
+    }
+  }
+}

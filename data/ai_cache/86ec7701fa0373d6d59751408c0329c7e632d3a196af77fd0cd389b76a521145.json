@@ -1,0 +1,85 @@
+{
+  "backend": "meta",
+  "key": "86ec7701fa0373d6d59751408c0329c7e632d3a196af77fd0cd389b76a521145",
+  "kind": "chat",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "recorded_at": "2026-10-27T01:40:35Z",
+  "request": {
+    "messages": [
+      {
+        "content": "<sha256:7beca544a167f7f2:2408 chars>",
+        "role": "system"
+      },
+      {
+        "content": "<sha256:3c80d987545a7ffb:1631 chars>",
+        "role": "user"
+      }
+    ],
+    "model": "muse-spark-1.3",
+    "response_format": {
+      "json_schema": {
+        "name": "answer",
+        "schema": {
+          "additionalProperties": false,
+          "properties": {
+            "effect": {
+              "enum": [
+                "none",
+                "end"
+              ]
+            },
+            "hint": {
+              "maxLength": 28,
+              "type": "string"
+            },
+            "mood": {
+              "enum": [
+                "calm",
+                "guarded",
+                "rattled",
+                "warm",
+                "angry"
+              ]
+            },
+            "text": {
+              "items": {
+                "maxLength": 28,
+                "minLength": 1,
+                "pattern": "^[ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 \\.,:!\\?'\\(\\)]+$",
+                "type": "string"
+              },
+              "maxItems": 2,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "text",
+            "mood",
+            "effect",
+            "hint"
+          ],
+          "type": "object"
+        },
+        "strict": true
+      },
+      "type": "json_schema"
+    }
+  },
+  "response": {
+    "text": "{\"effect\": \"none\", \"hint\": \"THE DESK AND THE ROOM\", \"mood\": \"guarded\", \"text\": [\"NO. THE DRIVE BACK IS LONG.\", \"YOU HAVE WORK TO SET UP.\"]}",
+    "usage": {
+      "completion_tokens": 1518,
+      "completion_tokens_details": {
+        "reasoning_tokens": 1463
+      },
+      "prompt_tokens": 1209,
+      "prompt_tokens_details": {
+        "cached_tokens": 753
+      },
+      "total_tokens": 2727
+    }
+  }
+}

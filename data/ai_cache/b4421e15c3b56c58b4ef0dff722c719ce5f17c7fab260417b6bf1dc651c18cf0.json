@@ -1,0 +1,85 @@
+{
+  "backend": "meta",
+  "key": "b4421e15c3b56c58b4ef0dff722c719ce5f17c7fab260417b6bf1dc651c18cf0",
+  "kind": "chat",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "recorded_at": "2026-10-27T01:41:21Z",
+  "request": {
+    "messages": [
+      {
+        "content": "<sha256:7beca544a167f7f2:2408 chars>",
+        "role": "system"
+      },
+      {
+        "content": "<sha256:ce31dddc7be58a40:1631 chars>",
+        "role": "user"
+      }
+    ],
+    "model": "muse-spark-1.3",
+    "response_format": {
+      "json_schema": {
+        "name": "answer",
+        "schema": {
+          "additionalProperties": false,
+          "properties": {
+            "effect": {
+              "enum": [
+                "none",
+                "end"
+              ]
+            },
+            "hint": {
+              "maxLength": 28,
+              "type": "string"
+            },
+            "mood": {
+              "enum": [
+                "calm",
+                "guarded",
+                "rattled",
+                "warm",
+                "angry"
+              ]
+            },
+            "text": {
+              "items": {
+                "maxLength": 28,
+                "minLength": 1,
+                "pattern": "^[ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 \\.,:!\\?'\\(\\)]+$",
+                "type": "string"
+              },
+              "maxItems": 2,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "text",
+            "mood",
+            "effect",
+            "hint"
+          ],
+          "type": "object"
+        },
+        "strict": true
+      },
+      "type": "json_schema"
+    }
+  },
+  "response": {
+    "text": "{\"effect\": \"none\", \"hint\": \"THE DESK, THE DRIVE HOME\", \"mood\": \"guarded\", \"text\": [\"I HAD ONE.\", \"YOU HAD THREE.\"]}",
+    "usage": {
+      "completion_tokens": 2412,
+      "completion_tokens_details": {
+        "reasoning_tokens": 2362
+      },
+      "prompt_tokens": 1208,
+      "prompt_tokens_details": {
+        "cached_tokens": 1137
+      },
+      "total_tokens": 3620
+    }
+  }
+}

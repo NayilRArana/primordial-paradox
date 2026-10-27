@@ -93,10 +93,14 @@ OpenAI-compatible ones, and the test suite drives them through a fake transport.
                        file_id; this client sends an inline data URL there. UNVERIFIED which
                        of the two field names the server prefers for inline bytes.
     segmentation       SAM 3.1 is called over POST /responses with one noun phrase plus one
-                       image part, and answers special token text with a box and a one bit
-                       mask. The exact token grammar is NOT in the docs we hold, so
-                       parse_segmentation() is tolerant, returns the raw text every time and
-                       reports boxes as [] rather than inventing a box it did not read.
+                       image part, and answers special token text with a box and a mask per
+                       object. The grammar was documented on 2026-10-26 (reading-segmentation)
+                       and is read by segmentation_records(); the raw text is returned every
+                       time and a line it cannot read reports [] rather than inventing a box.
+                       MEASURED 2026-10-26 on the desktop: one live call on a 256x240 concept
+                       returned two records, both boxes and both one_bit masks, and the masks
+                       decoded to the exact box size (76x59 and 58x106). The mask payload is
+                       decoded by tools\\sam_mask.py, not here.
     vision token cost  about 3 tokens for a 1x1 and 1,300 to 1,500 for a 1280 px image, so a
                        256x240 frame is a few hundred tokens: documented.
     audio in chat      Muse Spark takes audio input, but the OpenAI-compatible part type for
@@ -174,11 +178,17 @@ DEFAULT_TIMEOUT = 120
 MODE_CHOICES = ("record", "replay", "live")
 BACKEND_CHOICES = ("meta", "gemini", "mock")
 
-# The exact SAM 3.1 token grammar is not in the docs we hold; this sentence is what segment()
-# says about a text answer it could not turn into boxes, so a caller is never told a mask
-# exists when it does not.
-SAM_PARSE_NOTE = ("boxes parsed from the documented special token text; the token grammar is "
-                  "UNKNOWN in the docs read 2026-10-21, so raw text is always returned")
+# The SAM 3.1 token grammar, read from https://dev.meta.ai/docs/sam/reading-segmentation on
+# 2026-10-26: one line is a frame marker then comma separated records, and a record is an object
+# id, a box token and a mask token. This sentence is what segment() reports about how it read the
+# answer, so a caller is never told a mask exists when it does not.
+SAM_PARSE_NOTE = ("box and mask parsed from the documented special token grammar "
+                  "(dev.meta.ai/docs/sam/reading-segmentation, read 2026-10-26); the raw text is "
+                  "always returned, and a line the parser cannot read yields [] rather than a guess")
+SAM_FRAME_PATTERN = re.compile(r"<(\d+)f>")
+SAM_BOX_PATTERN = re.compile(r"<\|box;x1=(\d+);y1=(\d+);x2=(\d+);y2=(\d+);w=(\d+);h=(\d+)\|>")
+SAM_MASK_PATTERN = re.compile(r"<\|mask;x=0;y=0;data=(\d+),(\d+),([~!])([^<>|]*)\|>")
+SAM_RECORD_PATTERN = re.compile(r"(\d+)(<\|box;[^|]*\|>)(<\|mask;[^|]*\|>)")
 MOCK_PALETTE = ((15, 15, 15), (252, 252, 252), (60, 60, 200), (220, 60, 60),
                 (60, 190, 60), (240, 200, 60), (150, 80, 200), (60, 200, 200))
 CREDENTIAL_MARKERS = ("token", "secret", "credential", "password", "apikey", "api_key",
@@ -779,7 +789,9 @@ def _normalise(kind, data):
     if kind == "segment":
         text = segmentation_text(data)
         boxes, masks = parse_segmentation(text, data)
-        return {"text": text, "boxes": boxes, "masks": masks, "note": SAM_PARSE_NOTE}
+        objects = segmentation_records(text)
+        return {"text": text, "boxes": boxes, "masks": masks, "objects": objects,
+                "note": SAM_PARSE_NOTE}
     raise NotConfigured("cannot normalise kind %r" % kind)
 
 
@@ -803,14 +815,43 @@ def segmentation_text(data):
     return "".join(chunks)
 
 
+def segmentation_records(text):
+    """The records in a sam-3.1 answer, in source order, as plain dicts.
+
+    One line per frame, and a record is an object id, one box then one mask. The box is
+    [x1, y1, x2, y2] in source pixels with x2 and y2 inclusive, `frame` is the source media size
+    the box repeats on every record, and the mask carries its own raster size (the box's size)
+    plus the payload verbatim, still encoded. Nothing is decoded here: tools\\sam_mask.py decodes
+    a payload, so a recorded answer stays exactly what the API sent.
+    """
+    records = []
+    body = str(text or "")
+    for object_id, box_token, mask_token in SAM_RECORD_PATTERN.findall(body):
+        box_hit = SAM_BOX_PATTERN.search(box_token)
+        mask_hit = SAM_MASK_PATTERN.search(mask_token)
+        if not box_hit or not mask_hit:
+            continue
+        x1, y1, x2, y2, frame_w, frame_h = (int(value) for value in box_hit.groups())
+        mask_h, mask_w, marker, payload = mask_hit.groups()
+        records.append({
+            "object_id": int(object_id),
+            "box": [x1, y1, x2, y2],
+            "frame": [frame_w, frame_h],
+            "mask": {"height": int(mask_h), "width": int(mask_w),
+                     "encoding": "one_bit" if marker == "!" else "lossless",
+                     "payload": marker + payload},
+        })
+    return records
+
+
 def parse_segmentation(text, data=None):
     """(boxes, masks) from a SAM answer. Tolerant, and empty rather than guessed.
 
-    The docs say the answer is special token text with, per object, a box in source pixels and
-    a one bit mask raster, and we do not hold the token grammar. So this reads the shapes it
-    can recognise: any box a server chooses to send as JSON in the body, then four integers
-    that follow a box marker in the text. Anything else yields [] and the caller keeps the raw
-    text. Zero objects is a documented valid outcome, so [] is not an error.
+    Per object the docs promise a box in source pixels and a mask raster, and since 2026-10-26 the
+    token grammar that carries them is documented and is read here first. The older tolerant lanes
+    stay: any box a server sends as JSON in the body, four commented integers after a box marker,
+    and a mask token whose payload is kept verbatim. A line this cannot read yields [] and the
+    caller keeps the raw text. Zero objects is a documented valid outcome, so [] is not an error.
     """
     boxes = []
     masks = []
@@ -829,6 +870,10 @@ def parse_segmentation(text, data=None):
                 masks.extend(found)
             elif isinstance(found, str):
                 masks.append(found)
+    for record in segmentation_records(text):
+        if record["box"] not in boxes:
+            boxes.append(record["box"])
+        masks.append(record["mask"]["payload"])
     body = str(text or "")
     if body:
         for match in re.finditer(r"(?i)(?:box|bbox)[^\d\n]{0,24}?(-?\d+)\s*[, ]\s*(-?\d+)\s*[, ]"
@@ -853,6 +898,24 @@ def _finish(kind, model, response, cached, backend, chosen_mode, **extra):
     return out
 
 
+def strict_schema(schema):
+    """A copy of `schema` with `additionalProperties: false` on every object, recursively.
+
+    Measured against the live API on 2026-10-26: a `json_schema` response_format whose object
+    omits the field is refused with 400, "'additionalProperties' is required to be supplied and
+    to be false." The API mandates it, so the client supplies it rather than trusting every
+    caller to remember. A schema that already declares the field keeps its own value.
+    """
+    if isinstance(schema, dict):
+        out = {key: strict_schema(value) for key, value in schema.items()}
+        if out.get("type") == "object" and "additionalProperties" not in out:
+            out["additionalProperties"] = False
+        return out
+    if isinstance(schema, list):
+        return [strict_schema(item) for item in schema]
+    return schema
+
+
 def chat(messages, model=None, json_schema=None, sleep=None, transport=None):
     """A chat completion. Returns the text, or the JSON string when a schema was asked for.
 
@@ -865,6 +928,7 @@ def chat(messages, model=None, json_schema=None, sleep=None, transport=None):
     turns = normalise_messages(messages)
     payload = {"model": model, "messages": turns}
     if json_schema:
+        json_schema = strict_schema(json_schema)
         payload["response_format"] = {"type": "json_schema",
                                       "json_schema": {"name": "answer", "strict": True,
                                                       "schema": json_schema}}

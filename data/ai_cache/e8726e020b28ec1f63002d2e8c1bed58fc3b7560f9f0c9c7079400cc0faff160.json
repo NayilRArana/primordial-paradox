@@ -1,0 +1,85 @@
+{
+  "backend": "meta",
+  "key": "e8726e020b28ec1f63002d2e8c1bed58fc3b7560f9f0c9c7079400cc0faff160",
+  "kind": "chat",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "recorded_at": "2026-10-27T01:41:30Z",
+  "request": {
+    "messages": [
+      {
+        "content": "<sha256:7beca544a167f7f2:2408 chars>",
+        "role": "system"
+      },
+      {
+        "content": "<sha256:a30d64b45e4b4f9e:1630 chars>",
+        "role": "user"
+      }
+    ],
+    "model": "muse-spark-1.3",
+    "response_format": {
+      "json_schema": {
+        "name": "answer",
+        "schema": {
+          "additionalProperties": false,
+          "properties": {
+            "effect": {
+              "enum": [
+                "none",
+                "end"
+              ]
+            },
+            "hint": {
+              "maxLength": 28,
+              "type": "string"
+            },
+            "mood": {
+              "enum": [
+                "calm",
+                "guarded",
+                "rattled",
+                "warm",
+                "angry"
+              ]
+            },
+            "text": {
+              "items": {
+                "maxLength": 28,
+                "minLength": 1,
+                "pattern": "^[ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 \\.,:!\\?'\\(\\)]+$",
+                "type": "string"
+              },
+              "maxItems": 2,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "text",
+            "mood",
+            "effect",
+            "hint"
+          ],
+          "type": "object"
+        },
+        "strict": true
+      },
+      "type": "json_schema"
+    }
+  },
+  "response": {
+    "text": "{\"effect\": \"none\", \"hint\": \"THE DESK AND THE ROOM\", \"mood\": \"guarded\", \"text\": [\"YES. IT IS IN YOUR BAG.\", \"DO TRY TO EAT PROPERLY.\"]}",
+    "usage": {
+      "completion_tokens": 2678,
+      "completion_tokens_details": {
+        "reasoning_tokens": 2621
+      },
+      "prompt_tokens": 1209,
+      "prompt_tokens_details": {
+        "cached_tokens": 753
+      },
+      "total_tokens": 3887
+    }
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "backend": "meta",
+  "key": "9c84fc586a5d2c556ee9ba12d4fc082e5a414ee76877e12b8f0b4fa1a763fba3",
+  "kind": "segment",
+  "mode": "record",
+  "model": "sam-3.1",
+  "network": true,
+  "recorded_at": "2026-10-27T01:55:32Z",
+  "request": {
+    "image_bytes": 1650038,
+    "image_sha256": "eb208f492f35fcfbe8bd9e88e380a6185cccdcb9644e680c468a15eb349e2ea6",
+    "mask_encoding": "one_bit",
+    "model": "sam-3.1",
+    "prompt": "knight"
+  },
+  "response": {
+    "boxes": [
+      [
+        331,
+        151,
+        1171,
+        1454
+      ]
+    ],
+    "masks": [
+      "!!!!)F?MmlTpu&jFr/VuM({.y=Gcp6ulzsEYwhiaN5BncHQQ{Dz#7GfFwpf+#y8oKtxhOV`vllsz7CK[yPzdAS3ddX2[HWW:KfU8tO8YXV3{$YqG3bOyJ^:^LjP84tSc()BTqS9VhN71&o2.+=QcDBb`v4W`bEoGeLpw?6Zw2uVP9/6G^C3=]-g.yal-_1t94%=L'i$/+2)_E:2e=9^%:4/z1*R:FOBl+.agkDY$Y2`Lmy283jgmI0`Rp_1j3{+i3z4`p_jkdCM2u'26[9DNV@nx*+3/c(J-j=-lkcnB=YC'OK%yi:%_R[e37)bgfQHb3nol-0a($^@=w%4G6Xx[cG=O*d]3$*cB`fK*c_D?a+3`28E0qIZQtAymTGBNtmvPQ4gx1cCxiH.IKKgHs/LW7)*ts%g4=SFy[zLipRPgPZ*bKmdHyfC2UUJNK_a^AIEQT*yT!gI-u3P^SK8+OdOsvqr`.A^VxhBH%&ecK4&+t.E(bYA-[oBteq#zD&s-a]Ac=m:{&vFr8QcOjdeHhAhw-HMG7kIFg=A7enh:UX%83eq#2ylnQ0ZWmMfK[7c/a?KKv'Rb{.k'IxTN&*8XdC/mZR//PtbyY@BtB`IA(bYLE6vMyA%V(_-/ktU5Y2tm3mTUXn-jYhBSE&I@B#Q_80]Vd*R?RUShd5]l=wo?Ly(eT=Rdyo.#elQh`9q2y$gJJx-i`VbCx7k`.Tq:rbyt8r7vJbtc&E-u8PHH_*'={ttiTPRb7eLjSBK:Nx&{v9:PQzD*4[1Yy=wC!!!!!Fg)y(Hy]0"
+    ],
+    "note": "box and mask parsed from the documented special token grammar (dev.meta.ai/docs/sam/reading-segmentation, read 2026-10-26); the raw text is always returned, and a line the parser cannot read yields [] rather than a guess",
+    "objects": [
+      {
+        "box": [
+          331,
+          151,
+          1171,
+          1454
+        ],
+        "frame": [
+          1600,
+          1600
+        ],
+        "mask": {
+          "encoding": "one_bit",
+          "height": 1024,
+          "payload": "!!!!)F?MmlTpu&jFr/VuM({.y=Gcp6ulzsEYwhiaN5BncHQQ{Dz#7GfFwpf+#y8oKtxhOV`vllsz7CK[yPzdAS3ddX2[HWW:KfU8tO8YXV3{$YqG3bOyJ^:^LjP84tSc()BTqS9VhN71&o2.+=QcDBb`v4W`bEoGeLpw?6Zw2uVP9/6G^C3=]-g.yal-_1t94%=L'i$/+2)_E:2e=9^%:4/z1*R:FOBl+.agkDY$Y2`Lmy283jgmI0`Rp_1j3{+i3z4`p_jkdCM2u'26[9DNV@nx*+3/c(J-j=-lkcnB=YC'OK%yi:%_R[e37)bgfQHb3nol-0a($^@=w%4G6Xx[cG=O*d]3$*cB`fK*c_D?a+3`28E0qIZQtAymTGBNtmvPQ4gx1cCxiH.IKKgHs/LW7)*ts%g4=SFy[zLipRPgPZ*bKmdHyfC2UUJNK_a^AIEQT*yT!gI-u3P^SK8+OdOsvqr`.A^VxhBH%&ecK4&+t.E(bYA-[oBteq#zD&s-a]Ac=m:{&vFr8QcOjdeHhAhw-HMG7kIFg=A7enh:UX%83eq#2ylnQ0ZWmMfK[7c/a?KKv'Rb{.k'IxTN&*8XdC/mZR//PtbyY@BtB`IA(bYLE6vMyA%V(_-/ktU5Y2tm3mTUXn-jYhBSE&I@B#Q_80]Vd*R?RUShd5]l=wo?Ly(eT=Rdyo.#elQh`9q2y$gJJx-i`VbCx7k`.Tq:rbyt8r7vJbtc&E-u8PHH_*'={ttiTPRb7eLjSBK:Nx&{v9:PQzD*4[1Yy=wC!!!!!Fg)y(Hy]0",
+          "width": 660
+        },
+        "object_id": 0
+      }
+    ],
+    "text": "<0f>0<|box;x1=331;y1=151;x2=1171;y2=1454;w=1600;h=1600|><|mask;x=0;y=0;data=1024,660,!!!!)F?MmlTpu&jFr/VuM({.y=Gcp6ulzsEYwhiaN5BncHQQ{Dz#7GfFwpf+#y8oKtxhOV`vllsz7CK[yPzdAS3ddX2[HWW:KfU8tO8YXV3{$YqG3bOyJ^:^LjP84tSc()BTqS9VhN71&o2.+=QcDBb`v4W`bEoGeLpw?6Zw2uVP9/6G^C3=]-g.yal-_1t94%=L'i$/+2)_E:2e=9^%:4/z1*R:FOBl+.agkDY$Y2`Lmy283jgmI0`Rp_1j3{+i3z4`p_jkdCM2u'26[9DNV@nx*+3/c(J-j=-lkcnB=YC'OK%yi:%_R[e37)bgfQHb3nol-0a($^@=w%4G6Xx[cG=O*d]3$*cB`fK*c_D?a+3`28E0qIZQtAymTGBNtmvPQ4gx1cCxiH.IKKgHs/LW7)*ts%g4=SFy[zLipRPgPZ*bKmdHyfC2UUJNK_a^AIEQT*yT!gI-u3P^SK8+OdOsvqr`.A^VxhBH%&ecK4&+t.E(bYA-[oBteq#zD&s-a]Ac=m:{&vFr8QcOjdeHhAhw-HMG7kIFg=A7enh:UX%83eq#2ylnQ0ZWmMfK[7c/a?KKv'Rb{.k'IxTN&*8XdC/mZR//PtbyY@BtB`IA(bYLE6vMyA%V(_-/ktU5Y2tm3mTUXn-jYhBSE&I@B#Q_80]Vd*R?RUShd5]l=wo?Ly(eT=Rdyo.#elQh`9q2y$gJJx-i`VbCx7k`.Tq:rbyt8r7vJbtc&E-u8PHH_*'={ttiTPRb7eLjSBK:Nx&{v9:PQzD*4[1Yy=wC!!!!!Fg)y(Hy]0|>\n"
+  }
+}

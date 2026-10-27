@@ -569,6 +569,15 @@ def attempt(reply_builder, base, fallback, mode, state, scene, glyphs, tokens):
                         "cannot say where it came from" % base["id"])
     ok, problems = validate_reply(answer, "npc" if scene.get("scene") == "npc" else "fight",
                                   glyphs, tokens)
+    # An authored option carries the effect it is meant to move (spec 19 section 6's ladder and
+    # spec 16 section 2's rows), so a live answer that moves something else cannot be the row for
+    # it: measured 2026-10-27, a live bake answered "none" for all three of the first fight's
+    # options, which leaves the authored ladder dead and the fight unwinnable by picking them.
+    required = scene.get("required_effect")
+    if ok and required and answer.get("effect") != required:
+        ok = False
+        problems = ["effect %r where option %s is authored to move %r"
+                    % (answer.get("effect"), scene.get("turn"), required)]
     if not ok:
         state["refused"] += 1
         return bake_row(base, reply_builder(fallback), fallback, "fallback",
@@ -610,7 +619,11 @@ def build_rows(mode, state, glyphs, tokens, plans):
                          tokens)
         row["fallback"] = fallback
         rows.append(row)
-        plans["last_npc_reply"][npc["id"]] = " ".join(text)[:MAX_LAST_REPLY]
+        # The chain the next turn's scene carries is the line the game will actually show, so a live
+        # answer is what the next request is built from. Chaining the fallback here instead would make
+        # the stored request echo of turn 2 a request nobody ever sent (the served text differs) and
+        # test_no_network_in_build's rebuild from committed sources would miss every row after the first.
+        plans["last_npc_reply"][npc["id"]] = " ".join(row["text"])[:MAX_LAST_REPLY]
     for unit in plans["fight"]:
         card = unit["card"]
         character = character_block(card, unit["enemy"])
@@ -629,6 +642,7 @@ def build_rows(mode, state, glyphs, tokens, plans):
             scene = {"scene": "fight", "turn": index, "enemy_hp_band": "unhurt",
                      "player_hp_band": "steady", "mercy": (index - 1) * 20, "mood": "guarded",
                      "last_effect": "none", "last_reply": plans["last_fight_reply"].get(card["id"], ""),
+                     "required_effect": effect,
                      "allowed": list(FIGHT_EFFECTS)}
             player_line = unit["option_lines"][index - 1]
             echo, digest = build_request("chat", mode["model"], mode["system"], character, scene,
@@ -642,7 +656,7 @@ def build_rows(mode, state, glyphs, tokens, plans):
                              tokens)
             row["fallback"] = fallback
             rows.append(row)
-            plans["last_fight_reply"][card["id"]] = " ".join(text)[:MAX_LAST_REPLY]
+            plans["last_fight_reply"][card["id"]] = " ".join(row["text"])[:MAX_LAST_REPLY]
     return rows
 
 

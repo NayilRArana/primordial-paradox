@@ -1,0 +1,91 @@
+{
+  "backend": "meta",
+  "key": "47d9a9296f3c1c534910f03be61457f8dc4d7e2b6710a229d695de15b179d98f",
+  "kind": "chat",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "recorded_at": "2026-10-27T02:04:04Z",
+  "request": {
+    "messages": [
+      {
+        "content": "<sha256:7beca544a167f7f2:2408 chars>",
+        "role": "system"
+      },
+      {
+        "content": "<sha256:afbeb28ab7015a8e:925 chars>",
+        "role": "user"
+      }
+    ],
+    "model": "muse-spark-1.3",
+    "response_format": {
+      "json_schema": {
+        "name": "answer",
+        "schema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "additionalProperties": false,
+          "properties": {
+            "effect": {
+              "enum": [
+                "none",
+                "nudge",
+                "soften",
+                "setback",
+                "end"
+              ]
+            },
+            "hint": {
+              "maxLength": 28,
+              "pattern": "^([A-Z0-9 .,:!?'()]*)$",
+              "type": "string"
+            },
+            "mood": {
+              "enum": [
+                "calm",
+                "guarded",
+                "rattled",
+                "warm",
+                "angry"
+              ]
+            },
+            "text": {
+              "items": {
+                "maxLength": 28,
+                "minLength": 1,
+                "pattern": "^[A-Z0-9 .,:!?'()]+$",
+                "type": "string"
+              },
+              "maxItems": 4,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "text",
+            "mood",
+            "effect",
+            "hint"
+          ],
+          "title": "Primordial Paradox LLM talk reply",
+          "type": "object"
+        },
+        "strict": true
+      },
+      "type": "json_schema"
+    }
+  },
+  "response": {
+    "text": "{\"effect\": \"none\", \"hint\": \"CLIPBOARD, ORDERS\", \"mood\": \"guarded\", \"text\": [\"NOTHING TO LOG.\", \"STEP BACK FROM GATE.\"]}",
+    "usage": {
+      "completion_tokens": 2810,
+      "completion_tokens_details": {
+        "reasoning_tokens": 2761
+      },
+      "prompt_tokens": 1060,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3870
+    }
+  }
+}

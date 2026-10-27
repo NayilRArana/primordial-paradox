@@ -1,0 +1,78 @@
+{
+  "backend": "meta",
+  "key": "33101a9973cd1398980b986c5479e95d4b17fea3327a24f529df0a9b405dec5b",
+  "kind": "segment",
+  "mode": "record",
+  "model": "sam-3.1",
+  "network": true,
+  "recorded_at": "2026-10-27T00:59:26Z",
+  "request": {
+    "image_bytes": 47263,
+    "image_sha256": "7ee47548795ba47d2090ad95e29aefd0b16daba5efb34ca4ea651155fdc60e26",
+    "mask_encoding": "one_bit",
+    "model": "sam-3.1",
+    "prompt": "ship"
+  },
+  "response": {
+    "boxes": [
+      [
+        144,
+        105,
+        219,
+        163
+      ],
+      [
+        35,
+        39,
+        92,
+        144
+      ]
+    ],
+    "masks": [
+      "!!!!!aHl$xNvS=##'bsn4pd`EVWgJA[?3y^1v^[DqHh5[*okotDM$1r5erPlr`mbvF?gDINKJ5kmro9",
+      "!!!!#=EI+e!^oOH3m'b1Sn{=^ZUAiHqD35iOR[.2*]4j27?^Af?gP=#JxWfkQGK$IF8MX[v&%&A]f$:{W.zT#jVYtCPf&s2Zo0VhydN7/y&O?AI7TA.j:nI3LhuS{X1'{_P/D&_sG[)6T!!"
+    ],
+    "note": "box and mask parsed from the documented special token grammar (dev.meta.ai/docs/sam/reading-segmentation, read 2026-10-26); the raw text is always returned, and a line the parser cannot read yields [] rather than a guess",
+    "objects": [
+      {
+        "box": [
+          144,
+          105,
+          219,
+          163
+        ],
+        "frame": [
+          256,
+          240
+        ],
+        "mask": {
+          "encoding": "one_bit",
+          "height": 59,
+          "payload": "!!!!!aHl$xNvS=##'bsn4pd`EVWgJA[?3y^1v^[DqHh5[*okotDM$1r5erPlr`mbvF?gDINKJ5kmro9",
+          "width": 76
+        },
+        "object_id": 0
+      },
+      {
+        "box": [
+          35,
+          39,
+          92,
+          144
+        ],
+        "frame": [
+          256,
+          240
+        ],
+        "mask": {
+          "encoding": "one_bit",
+          "height": 106,
+          "payload": "!!!!#=EI+e!^oOH3m'b1Sn{=^ZUAiHqD35iOR[.2*]4j27?^Af?gP=#JxWfkQGK$IF8MX[v&%&A]f$:{W.zT#jVYtCPf&s2Zo0VhydN7/y&O?AI7TA.j:nI3LhuS{X1'{_P/D&_sG[)6T!!",
+          "width": 58
+        },
+        "object_id": 1
+      }
+    ],
+    "text": "<0f>0<|box;x1=144;y1=105;x2=219;y2=163;w=256;h=240|><|mask;x=0;y=0;data=59,76,!!!!!aHl$xNvS=##'bsn4pd`EVWgJA[?3y^1v^[DqHh5[*okotDM$1r5erPlr`mbvF?gDINKJ5kmro9|>,1<|box;x1=35;y1=39;x2=92;y2=144;w=256;h=240|><|mask;x=0;y=0;data=106,58,!!!!#=EI+e!^oOH3m'b1Sn{=^ZUAiHqD35iOR[.2*]4j27?^Af?gP=#JxWfkQGK$IF8MX[v&%&A]f$:{W.zT#jVYtCPf&s2Zo0VhydN7/y&O?AI7TA.j:nI3LhuS{X1'{_P/D&_sG[)6T!!|>\n"
+  }
+}

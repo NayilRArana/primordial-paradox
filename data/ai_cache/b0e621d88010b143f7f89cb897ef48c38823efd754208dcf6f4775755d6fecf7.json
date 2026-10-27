@@ -1,0 +1,85 @@
+{
+  "backend": "meta",
+  "key": "b0e621d88010b143f7f89cb897ef48c38823efd754208dcf6f4775755d6fecf7",
+  "kind": "chat",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "recorded_at": "2026-10-27T00:56:11Z",
+  "request": {
+    "messages": [
+      {
+        "content": "<sha256:7beca544a167f7f2:2408 chars>",
+        "role": "system"
+      },
+      {
+        "content": "<sha256:e7a15b9f07cd1986:1663 chars>",
+        "role": "user"
+      }
+    ],
+    "model": "muse-spark-1.3",
+    "response_format": {
+      "json_schema": {
+        "name": "answer",
+        "schema": {
+          "additionalProperties": false,
+          "properties": {
+            "effect": {
+              "enum": [
+                "none",
+                "end"
+              ]
+            },
+            "hint": {
+              "maxLength": 28,
+              "type": "string"
+            },
+            "mood": {
+              "enum": [
+                "calm",
+                "guarded",
+                "rattled",
+                "warm",
+                "angry"
+              ]
+            },
+            "text": {
+              "items": {
+                "maxLength": 28,
+                "minLength": 1,
+                "pattern": "^[ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 \\.,:!\\?'\\(\\)]+$",
+                "type": "string"
+              },
+              "maxItems": 2,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "text",
+            "mood",
+            "effect",
+            "hint"
+          ],
+          "type": "object"
+        },
+        "strict": true
+      },
+      "type": "json_schema"
+    }
+  },
+  "response": {
+    "text": "{\"effect\": \"none\", \"hint\": \"ASK ABOUT THE RAIN\", \"mood\": \"warm\", \"text\": [\"SHOP CAN WAIT,\", \"LOOK AT THAT SKY!\"]}",
+    "usage": {
+      "completion_tokens": 1461,
+      "completion_tokens_details": {
+        "reasoning_tokens": 1413
+      },
+      "prompt_tokens": 1204,
+      "prompt_tokens_details": {
+        "cached_tokens": 753
+      },
+      "total_tokens": 2665
+    }
+  }
+}

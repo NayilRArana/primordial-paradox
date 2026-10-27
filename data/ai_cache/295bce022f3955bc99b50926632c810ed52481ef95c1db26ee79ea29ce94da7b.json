@@ -1,0 +1,85 @@
+{
+  "backend": "meta",
+  "key": "295bce022f3955bc99b50926632c810ed52481ef95c1db26ee79ea29ce94da7b",
+  "kind": "chat",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "recorded_at": "2026-10-27T00:56:06Z",
+  "request": {
+    "messages": [
+      {
+        "content": "<sha256:7beca544a167f7f2:2408 chars>",
+        "role": "system"
+      },
+      {
+        "content": "<sha256:8b4dc1387af43d9f:1643 chars>",
+        "role": "user"
+      }
+    ],
+    "model": "muse-spark-1.3",
+    "response_format": {
+      "json_schema": {
+        "name": "answer",
+        "schema": {
+          "additionalProperties": false,
+          "properties": {
+            "effect": {
+              "enum": [
+                "none",
+                "end"
+              ]
+            },
+            "hint": {
+              "maxLength": 28,
+              "type": "string"
+            },
+            "mood": {
+              "enum": [
+                "calm",
+                "guarded",
+                "rattled",
+                "warm",
+                "angry"
+              ]
+            },
+            "text": {
+              "items": {
+                "maxLength": 28,
+                "minLength": 1,
+                "pattern": "^[ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 \\.,:!\\?'\\(\\)]+$",
+                "type": "string"
+              },
+              "maxItems": 2,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "text",
+            "mood",
+            "effect",
+            "hint"
+          ],
+          "type": "object"
+        },
+        "strict": true
+      },
+      "type": "json_schema"
+    }
+  },
+  "response": {
+    "text": "{\"effect\": \"none\", \"hint\": \"RAIN, BUSES, FERRY\", \"mood\": \"warm\", \"text\": [\"AH, LATE AGAIN, EH?\", \"GOOD RAIN COMING THOUGH!\"]}",
+    "usage": {
+      "completion_tokens": 1730,
+      "completion_tokens_details": {
+        "reasoning_tokens": 1672
+      },
+      "prompt_tokens": 1200,
+      "prompt_tokens_details": {
+        "cached_tokens": 1137
+      },
+      "total_tokens": 2930
+    }
+  }
+}

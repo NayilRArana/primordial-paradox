@@ -648,6 +648,12 @@ def _served_rows():
                      "player_hp_band": "steady", "mercy": (index - 1) * 20, "mood": "guarded",
                      "last_effect": "none",
                      "last_reply": last_reply.get(card["id"], ""),
+                     # The producer sends the effect the authored option is meant to move, so a
+                     # live answer that moves a different one cannot become the row for it. The
+                     # rebuild has to carry it too, or every fight hash here is a request nobody
+                     # sent (measured 2026-10-27: six fight rows reported missing against a live
+                     # bake written by tools/bake_meta.py).
+                     "required_effect": bake_meta.OPTION_EFFECTS[index - 1],
                      "allowed": list(bake_meta.FIGHT_EFFECTS)}
             player_line = unit["option_lines"][index - 1]
             _echo, digest = bake_meta.build_request("chat", model, system, character, scene,

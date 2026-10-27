@@ -1,0 +1,85 @@
+{
+  "backend": "meta",
+  "key": "dfca5061e3da5deac2e07b57a41b52f8926575589b38640674b4c077b0ced8ca",
+  "kind": "chat",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "recorded_at": "2026-10-27T01:43:13Z",
+  "request": {
+    "messages": [
+      {
+        "content": "<sha256:7beca544a167f7f2:2408 chars>",
+        "role": "system"
+      },
+      {
+        "content": "<sha256:fcf4ff748635295b:1654 chars>",
+        "role": "user"
+      }
+    ],
+    "model": "muse-spark-1.3",
+    "response_format": {
+      "json_schema": {
+        "name": "answer",
+        "schema": {
+          "additionalProperties": false,
+          "properties": {
+            "effect": {
+              "enum": [
+                "none",
+                "end"
+              ]
+            },
+            "hint": {
+              "maxLength": 28,
+              "type": "string"
+            },
+            "mood": {
+              "enum": [
+                "calm",
+                "guarded",
+                "rattled",
+                "warm",
+                "angry"
+              ]
+            },
+            "text": {
+              "items": {
+                "maxLength": 28,
+                "minLength": 1,
+                "pattern": "^[ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 \\.,:!\\?'\\(\\)]+$",
+                "type": "string"
+              },
+              "maxItems": 2,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "text",
+            "mood",
+            "effect",
+            "hint"
+          ],
+          "type": "object"
+        },
+        "strict": true
+      },
+      "type": "json_schema"
+    }
+  },
+  "response": {
+    "text": "{\"effect\":\"none\",\"hint\":\"TRY RAIN, BUSES, FERRY\",\"mood\":\"warm\",\"text\":[\"AH, YOU FEEL IT TOO.\", \"RAIN IS ON ITS WAY.\"]}",
+    "usage": {
+      "completion_tokens": 1762,
+      "completion_tokens_details": {
+        "reasoning_tokens": 1713
+      },
+      "prompt_tokens": 1196,
+      "prompt_tokens_details": {
+        "cached_tokens": 753
+      },
+      "total_tokens": 2958
+    }
+  }
+}

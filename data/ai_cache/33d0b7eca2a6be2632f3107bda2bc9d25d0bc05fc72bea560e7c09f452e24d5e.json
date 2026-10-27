@@ -1,0 +1,85 @@
+{
+  "backend": "meta",
+  "key": "33d0b7eca2a6be2632f3107bda2bc9d25d0bc05fc72bea560e7c09f452e24d5e",
+  "kind": "chat",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "recorded_at": "2026-10-27T01:06:47Z",
+  "request": {
+    "messages": [
+      {
+        "content": "<sha256:7beca544a167f7f2:2408 chars>",
+        "role": "system"
+      },
+      {
+        "content": "<sha256:311c97f134087fd4:1645 chars>",
+        "role": "user"
+      }
+    ],
+    "model": "muse-spark-1.3",
+    "response_format": {
+      "json_schema": {
+        "name": "answer",
+        "schema": {
+          "additionalProperties": false,
+          "properties": {
+            "effect": {
+              "enum": [
+                "none",
+                "end"
+              ]
+            },
+            "hint": {
+              "maxLength": 28,
+              "type": "string"
+            },
+            "mood": {
+              "enum": [
+                "calm",
+                "guarded",
+                "rattled",
+                "warm",
+                "angry"
+              ]
+            },
+            "text": {
+              "items": {
+                "maxLength": 28,
+                "minLength": 1,
+                "pattern": "^[ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 \\.,:!\\?'\\(\\)]+$",
+                "type": "string"
+              },
+              "maxItems": 2,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "text",
+            "mood",
+            "effect",
+            "hint"
+          ],
+          "type": "object"
+        },
+        "strict": true
+      },
+      "type": "json_schema"
+    }
+  },
+  "response": {
+    "text": "{\"effect\": \"none\", \"hint\": \"WIND, TIDE, WAY OFF QUAY\", \"mood\": \"rattled\", \"text\": [\"WHERE IS THE GATE?\", \"WHERE IS THE GATE?\"]}",
+    "usage": {
+      "completion_tokens": 3399,
+      "completion_tokens_details": {
+        "reasoning_tokens": 3345
+      },
+      "prompt_tokens": 1206,
+      "prompt_tokens_details": {
+        "cached_tokens": 1137
+      },
+      "total_tokens": 4605
+    }
+  }
+}

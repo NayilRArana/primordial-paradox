@@ -62,6 +62,28 @@ def copy_of_the_file(tmp_path):
     return write
 
 
+@pytest.fixture()
+def offline_copy(tmp_path, baked):
+    """A writable copy of a real offline bake, for the checks that need a fallback row.
+
+    The committed file can now be a live bake (RB-02 ships rows a Meta model answered), so a check
+    about a fallback row builds its own offline document instead of assuming the committed one is
+    offline. The mutation and the refusal under test are unchanged.
+    """
+    path = tmp_path / "meta_bake_offline.json"
+
+    def write(mutate=None):
+        data = json.loads(json.dumps(baked["document"]))
+        if mutate:
+            mutate(data)
+        with open(path, "w", encoding="utf-8", newline="\n") as handle:
+            json.dump(data, handle, indent=2, ensure_ascii=True)
+            handle.write("\n")
+        return str(path)
+
+    return write
+
+
 # ----------------------------------------------------------------- the offline bake is total
 
 def test_offline_writes_every_row_from_the_hand_written_fallback(baked):
@@ -210,13 +232,13 @@ def test_check_refuses_a_hash_that_does_not_recompute(copy_of_the_file):
     assert bake_meta.check_file(copy_of_the_file(mutate)) > 0
 
 
-def test_check_refuses_an_offline_row_that_claims_a_live_answer(copy_of_the_file):
+def test_check_refuses_an_offline_row_that_claims_a_live_answer(offline_copy):
     def mutate(document):
         document["rows"][0]["source"] = "live"
         document["rows"][0]["network"] = True
         document["rows"][0]["reason"] = ""
 
-    assert bake_meta.check_file(copy_of_the_file(mutate)) > 0
+    assert bake_meta.check_file(offline_copy(mutate)) > 0
 
 
 def test_check_refuses_a_dropped_option_row(copy_of_the_file):
@@ -301,6 +323,28 @@ def test_an_npc_row_refuses_an_effect_that_only_a_fight_allows(monkeypatch):
     assert all("not legal in the npc scene" in row["reason"] for row in npc)
 
 
+def test_an_answer_that_moves_another_effect_cannot_be_the_row_for_an_authored_option(monkeypatch):
+    """The authored option carries the effect it must move, so a model answer cannot answer it away.
+
+    Measured 2026-10-27 on a live bake: muse-spark answered the wrong effect for option 1 of every
+    fight card, which leaves the authored soften step dead and the fight unwinnable by picking
+    options. The refusal is per option, so the options this answer does move stay live.
+    """
+    answer = {"text": ["IT SNIFFS YOUR HAND."], "mood": "guarded", "effect": "soften",
+              "hint": "THE ROPE."}
+    document, _state = _live_document(monkeypatch, answer)
+    fight = [row for row in document["rows"] if row["scene"] == "fight"]
+    firsts = [row for row in fight if row["turn"] == 1]
+    later = [row for row in fight if row["turn"] != 1]
+    assert firsts and later
+    assert all(row["source"] == "live" for row in firsts), "option 1 is authored to move soften"
+    assert all(row["source"] == "fallback" for row in later)
+    assert all("authored to move" in row["reason"] for row in later), later[0]["reason"]
+    assert all(row["network"] is False for row in later)
+    assert all(row["effect"] == row["fallback"]["effect"] for row in later), (
+        "a refused row keeps the effect its option is authored to move")
+
+
 # ----------------------------------------------------------------- R43 B1: the header is the calls
 
 def _dump(path, document):
@@ -375,19 +419,19 @@ def test_a_live_answer_the_door_cannot_place_stops_the_bake(monkeypatch):
 
 # ----------------------------------------------------------------- R43 B2: a fallback row shows its fallback
 
-def test_check_refuses_a_fallback_row_whose_text_no_fallback_holds(copy_of_the_file):
+def test_check_refuses_a_fallback_row_whose_text_no_fallback_holds(offline_copy):
     """R43 B2, measured the way the review measured it: a live looking sentence over a fallback."""
     def mutate(document):
         row = document["rows"][0]
-        assert row["source"] == "fallback", "the committed file is an offline bake"
+        assert row["source"] == "fallback", "the document under test is an offline bake"
         row["text"] = ["A LIVE LOOKING SENTENCE."]
 
     emitted = io.StringIO()
-    assert bake_meta.check_file(copy_of_the_file(mutate), stream=emitted) > 0
+    assert bake_meta.check_file(offline_copy(mutate), stream=emitted) > 0
     assert "is a fallback and its text is" in emitted.getvalue(), emitted.getvalue()
 
 
-def test_check_refuses_a_fallback_row_whose_mood_or_hint_is_not_its_fallback(copy_of_the_file):
+def test_check_refuses_a_fallback_row_whose_mood_or_hint_is_not_its_fallback(offline_copy):
     def mutate_mood(document):
         document["rows"][0]["mood"] = "warm"
 
@@ -396,17 +440,17 @@ def test_check_refuses_a_fallback_row_whose_mood_or_hint_is_not_its_fallback(cop
 
     for mutate, field in ((mutate_mood, "mood"), (mutate_hint, "hint")):
         emitted = io.StringIO()
-        assert bake_meta.check_file(copy_of_the_file(mutate), stream=emitted) > 0
+        assert bake_meta.check_file(offline_copy(mutate), stream=emitted) > 0
         assert "is a fallback and its %s is" % field in emitted.getvalue(), emitted.getvalue()
 
 
-def test_check_refuses_a_fallback_reason_that_names_no_cause(copy_of_the_file):
+def test_check_refuses_a_fallback_reason_that_names_no_cause(offline_copy):
     """R43's smaller item: "because" was a reason only because it was non empty."""
     def mutate(document):
         document["rows"][0]["reason"] = "because"
 
     emitted = io.StringIO()
-    assert bake_meta.check_file(copy_of_the_file(mutate), stream=emitted) > 0
+    assert bake_meta.check_file(offline_copy(mutate), stream=emitted) > 0
     assert "is none of the bake's causes" in emitted.getvalue(), emitted.getvalue()
 
 

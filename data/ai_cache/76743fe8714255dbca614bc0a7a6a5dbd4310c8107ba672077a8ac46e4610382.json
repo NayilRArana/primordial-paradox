@@ -1,0 +1,85 @@
+{
+  "backend": "meta",
+  "key": "76743fe8714255dbca614bc0a7a6a5dbd4310c8107ba672077a8ac46e4610382",
+  "kind": "chat",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "recorded_at": "2026-10-27T00:54:17Z",
+  "request": {
+    "messages": [
+      {
+        "content": "<sha256:7beca544a167f7f2:2408 chars>",
+        "role": "system"
+      },
+      {
+        "content": "<sha256:e7a0e275cf453c08:1609 chars>",
+        "role": "user"
+      }
+    ],
+    "model": "muse-spark-1.3",
+    "response_format": {
+      "json_schema": {
+        "name": "answer",
+        "schema": {
+          "additionalProperties": false,
+          "properties": {
+            "effect": {
+              "enum": [
+                "none",
+                "end"
+              ]
+            },
+            "hint": {
+              "maxLength": 28,
+              "type": "string"
+            },
+            "mood": {
+              "enum": [
+                "calm",
+                "guarded",
+                "rattled",
+                "warm",
+                "angry"
+              ]
+            },
+            "text": {
+              "items": {
+                "maxLength": 28,
+                "minLength": 1,
+                "pattern": "^[ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 \\.,:!\\?'\\(\\)]+$",
+                "type": "string"
+              },
+              "maxItems": 2,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "text",
+            "mood",
+            "effect",
+            "hint"
+          ],
+          "type": "object"
+        },
+        "strict": true
+      },
+      "type": "json_schema"
+    }
+  },
+  "response": {
+    "text": "{\"effect\":\"none\",\"hint\":\"THE DRIVE DOWN\",\"mood\":\"guarded\",\"text\":[\"NO. YOU HAVE WORK TO DO.\"]}",
+    "usage": {
+      "completion_tokens": 2643,
+      "completion_tokens_details": {
+        "reasoning_tokens": 2607
+      },
+      "prompt_tokens": 1203,
+      "prompt_tokens_details": {
+        "cached_tokens": 1137
+      },
+      "total_tokens": 3846
+    }
+  }
+}

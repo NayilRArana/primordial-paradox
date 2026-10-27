@@ -1,0 +1,43 @@
+{
+  "backend": "meta",
+  "key": "b29b51bcf6f518ec4a945723f2a50a10a5e582fff329cd0490d39cf32af302e6",
+  "kind": "vision",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "recorded_at": "2026-10-27T01:56:57Z",
+  "request": {
+    "messages": [
+      {
+        "content": [
+          {
+            "text": "<sha256:a9cf2e64ed6847c2:4051 chars>",
+            "type": "text"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:b55b2cf14a9f79c6:301638 chars>"
+            },
+            "type": "image_url"
+          }
+        ],
+        "role": "user"
+      }
+    ],
+    "model": "muse-spark-1.3"
+  },
+  "response": {
+    "text": "### 1) What is on the screen\nThe frame is a title / attract mockup: big grey block text PRIMORDIAL / PARADOX over a bright blue sky, a small yellow comet icon above PARADOX, a light-blue lower sky with one white cloud, a black horizon strip with a tiny white quadruped and a white blob, a blocky green field below that, then a black bar, then a road at the bottom with a white station-wagon / police car firing a white dithered beam to the right, plus copyright text along the bottom. The eye goes first to the focal point: the grey PARADOX title in region x=192,y=130,w=408,h=88. The player is being asked to do nothing readable - there is no PRESS START, no HUD, no controllable character I can see. I cannot see gameplay, animation, scrolling, or OAM use beyond this one still.\n\n### 2) Does it look like a real NES game\n(a) the palette count reads as NES, not as a modern limited palette - FAIL: it pretends to be ~8 colours but measured distinct colours is 20915 vs hardware ceiling at most 25 colours on screen at once, and 20904 colours are NOT in the 64 entry NES palette.\n(b) shading is flat, one colour per shape, no gradient banding - FAIL: green field x=0,y=415,w=768,h=145 has stepped gradient shading, white cloud has grey soft shading, and car headlight beam x=455,y=602,w=310,h=75 is a halftone fade to transparent - no alpha / no gradients allowed.\n(c) sprites read at a glance against the background, with clear silhouettes and no muddy shared colours - FAIL: tiny white dog at x=250,y=340,w=66,h=30 is 3-4 melted pixels with no head/legs structure, car at x=214,y=576,w=240,h=90 has melted windows and X-shaped wheels and green bleed into black road, violates 8x8 or 8x16 clear silhouette rule.\n(d) no anti-aliasing and no soft edges anywhere, including text and window borders - FAIL: measured 20904 off-palette colours are almost always anti-aliasing, visible on all title glyph edges, road dashes x=0,y=605,w=768,h=35, and bottom text x=185,y=654,w=485,h=36.\n(e) colour changes in the background land on the 16x16 pixel boundary instead of drifting - FAIL: sky split blue to light-blue at y~195 cuts mid-tile across full width, horizon white blob x=478,y=340,w=288,h=38 and cloud x=425,y=242,w=82,h=38 have irregular 1-3 pixel edges that ignore the 16x16 attribute grid - a background can change palette only on a 16x16 pixel boundary.\n\nMeasured numbers contradict a charitable first glance: it looks limited until you count, then 20915 colours proves upscale + AA + gradients.\n\n### 3) Composition and text\nCrowded: top x=0,y=0,w=768,h=220 is crammed with two title rows + comet + star speckle; bottom x=0,y=576,w=768,h=144 is crammed with car + beam + road + copyright overlapping same scanlines. Empty: middle sky x=0,y=195,w=768,h=165 is a huge flat void with only one cloud, and green field x=0,y=415,w=768,h=145 is empty block rectangles. Focal point PARADOX title x=192,y=130,w=408,h=88 is not where the player needs it - no player, no goal, no prompt down where action would be at the road. Text regions: T1 PRIMORDIAL x=170,y=2,w=450,h=60, T2 PARADOX x=192,y=130,w=408,h=88, T3 BAS SOU box x=702,y=477,w=66,h=84 right-edge cropped, T4 (C) 2026 NAYILINIS x=185,y=654,w=485,h=36. Every piece would fail at 256x240 without guessing. Worst is T4: glyphs sit off the 8x8 glyph grid, wobble in weight, dissolve into dither, NAYILINIS is gibberish letterforms, (C) is broken, and it overlaps road sprite pixels so at 1x it is illegible mush.\n\n### 4) What looks AI generated or off\nBlunt: this looks like an AI / upscale mockup, not handmade tiles. Tells: text that is not on the glyph grid - O in PARADOX has stray yellow pixels inside the counter, I strokes vary width; borders that are not a whole number of tiles - BAS SOU box is cut mid-tile at the right edge and road dash spacing is irregular; detail without structure - dog has no skeleton, car windows melt and wheels are X scribbles, green drips hang off car chassis; stray pixels / speckle - dozens of single tan/white star pixels in blue sky with no 8x8 repeat; colours that do not belong - hundreds of in-between blues/greens/greys from anti-aliasing, none are NES $21/$2A/$30/$0F; composition that reads as a prompt instead of a design - title + wolf + green hill + police car + beam stacked with no tilemap logic, plus halftone alpha beam that hardware cannot do - sprites have no rotation, no alpha.\n\n### 5) Five concrete fixes\n1. Region x=192,y=130,w=408,h=88 PARADOX title: redraw both title rows on 8x8 tiles using one BG palette $0F black backdrop + $00 dark grey + $10 light grey + $28 yellow, solid 3px letters with 1px yellow bottom underline only, delete AA fringe and delete yellow pixels inside O/D counters.\n2. Region x=455,y=602,w=310,h=75 headlight beam: delete alpha fade, replace with hard 8x8 checker dither using only $30 white and transparency in 8-pixel steps tapering from 3 tiles tall to 1 tile tall, no grey in-betweens.\n3. Region x=214,y=576,w=240,h=90 car: rebuild as 8x16 sprites with one sprite palette $0F black + $30 white + $2C teal-blue, square body, 2 solid black square wheels, rectangular windows, delete green under-bleed and X marks, snap origin to multiple of 24 file pixels = 8 NES pixels.\n4. Region x=185,y=654,w=485,h=36 copyright row: redraw on 8x8 glyph grid in $30 white on $0F black, correct spelling to a real credit, move up by 24 file pixels = 8 NES pixels to clear road sprites, no overlap.\n5. Region x=0,y=195,w=768,h=165 mid-sky: flatten to single flat $21 blue, delete all 1px star speckle, keep one cloud rebuilt from 16x16 blocks in $30 white + $10 light grey shadow only on bottom row, snap cloud top-left to 48-pixel = 16 NES pixel attribute boundary.\n\n### 6) Scores and machine readable block\nNES authenticity: 2/10\nReadability: 3/10\nCharm: 4/10\n```json\n{\"nes_authenticity\": 2, \"readability\": 3, \"charm\": 4, \"focal_point\": \"grey PARADOX title over blue sky\", \"off_notes\": [\"20915 colours vs 25 max, 20904 off-NES colours = AA everywhere\", \"halftone alpha headlight beam, no alpha on NES\", \"glyphs off 8x8 grid with stray yellow in O counter and gibberish NAYILINIS\", \"melted dog and X-wheel car with detail without structure\", \"background colour changes ignore 16x16 grid and right-edge box cut mid-tile\"], \"fixes\": [{\"region\": [192, 130, 408, 88], \"change\": \"redraw PARADOX on 8x8 grid with BG palette $0F/$00/$10/$28, solid fill, remove AA and stray yellow in counters\"}, {\"region\": [455, 602, 310, 75], \"change\": \"replace gradient beam with hard $30 white checker dither tapering in 8px steps, no alpha\"}, {\"region\": [214, 576, 240, 90], \"change\": \"rebuild car as 8x16 sprites in $0F/$30/$2C, square body and wheels, delete green bleed, snap to 8px grid\"}, {\"region\": [185, 654, 485, 36], \"change\": \"redraw copyright row on 8x8 glyph grid in $30 on $0F with correct spelling, move up 8 NES px to clear road\"}, {\"region\": [0, 195, 768, 165], \"change\": \"flatten to flat $21 blue, delete speckle, rebuild cloud from 16x16 blocks in $30/$10 snapped to attribute grid\"}]}\n```",
+    "usage": {
+      "completion_tokens": 6070,
+      "completion_tokens_details": {
+        "reasoning_tokens": 4085
+      },
+      "prompt_tokens": 1778,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 7848
+    }
+  }
+}

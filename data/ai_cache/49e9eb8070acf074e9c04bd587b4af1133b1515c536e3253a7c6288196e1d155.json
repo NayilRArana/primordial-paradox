@@ -1,0 +1,22 @@
+{
+  "backend": "meta",
+  "key": "49e9eb8070acf074e9c04bd587b4af1133b1515c536e3253a7c6288196e1d155",
+  "kind": "segment",
+  "mode": "record",
+  "model": "sam-3.1",
+  "network": true,
+  "recorded_at": "2026-10-27T00:50:58Z",
+  "request": {
+    "image_bytes": 1723,
+    "image_sha256": "e494dbc4db4dcd9033ed137fc01f2582320f6fb971c550e9afc119b0169b40bb",
+    "mask_encoding": "one_bit",
+    "model": "sam-3.1",
+    "prompt": "character"
+  },
+  "response": {
+    "boxes": [],
+    "masks": [],
+    "note": "boxes parsed from the documented special token text; the token grammar is UNKNOWN in the docs read 2026-10-21, so raw text is always returned",
+    "text": ""
+  }
+}
