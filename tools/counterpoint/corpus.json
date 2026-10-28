@@ -1,0 +1,210 @@
+{
+ "format": "pp-counterpoint-corpus",
+ "version": 1,
+ "card": "t_836dbb1a",
+ "description": "Bach, used only to measure statistics and calibrate the checker: 16 works are public domain and 4 (BWV 772, 777, 780, 783) are Creative Commons Attribution-ShareAlike 3.0 as their Mutopia source states. The MIDI files are NOT in the repository; they live in the folder named by the --corpus option, and this file records where each one came from, its licence as the source states it, and the digest that was measured.",
+ "host": "https://www.mutopiaproject.org/ftp/BachJS",
+ "fetched": "2026-10-26",
+ "works": [
+  {
+   "file": "bwv_269.mid",
+   "title": "Aus meines Herzens Grunde",
+   "catalogue": "BWV 269",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV269/bwv_269/bwv_269.mid",
+   "licence": "Public Domain",
+   "licence_recorded_from": "https://www.mutopiaproject.org/ftp/BachJS/BWV269/bwv_269/bwv_269.ly",
+   "bytes": 2146,
+   "sha256": "783a5a944f28030876a84c753a47abeeff93c56adb6a3dd7c396d06e07184d10"
+  },
+  {
+   "file": "BWV-510.mid",
+   "title": "Chorale setting (title not in the source)",
+   "catalogue": "BWV 510",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV510/BWV-510/BWV-510.mid",
+   "licence": "Public Domain",
+   "licence_recorded_from": "https://www.mutopiaproject.org/ftp/BachJS/BWV510/BWV-510/BWV-510.ly",
+   "bytes": 1109,
+   "sha256": "e93083ac39271b0be37c7ee4c4885e7a9beb728a005e581d1a64139e157be500"
+  },
+  {
+   "file": "BWV-511.mid",
+   "title": "Chorale setting (title not in the source)",
+   "catalogue": "BWV 511",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV511/BWV-511/BWV-511.mid",
+   "licence": "Public Domain",
+   "licence_recorded_from": "https://www.mutopiaproject.org/ftp/BachJS/BWV511/BWV-511/BWV-511.ly",
+   "bytes": 1805,
+   "sha256": "a7513a1e8d877766e56be2466019c29d14e3283acc5b899c5b3b48e756a93d7c"
+  },
+  {
+   "file": "BWV-512.mid",
+   "title": "Chorale setting (title not in the source)",
+   "catalogue": "BWV 512",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV512/BWV-512/BWV-512.mid",
+   "licence": "Public Domain",
+   "licence_recorded_from": "https://www.mutopiaproject.org/ftp/BachJS/BWV512/BWV-512/BWV-512.ly",
+   "bytes": 1368,
+   "sha256": "5bca43e0037df5104a2f7b9498c8ff3bb694082febfd24c52d99913b5afbf762"
+  },
+  {
+   "file": "BWV772-invention-01.mid",
+   "title": "Invention 1",
+   "catalogue": "BWV 772",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV772/invention-01/invention-01.mid",
+   "licence": "Creative Commons Attribution-ShareAlike 3.0",
+   "licence_recorded_from": "https://www.mutopiaproject.org/ftp/BachJS/BWV772/invention-01/invention-01.ly",
+   "bytes": 3929,
+   "sha256": "9b9a6213941932d5171d9102d85912c3c1c61f8176ce02005cd2198881823c2d"
+  },
+  {
+   "file": "BWV773-invention-02.mid",
+   "title": "Invention 2",
+   "catalogue": "BWV 773",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV773/invention-02/invention-02.mid",
+   "licence": "Public Domain",
+   "licence_recorded_from": "https://www.mutopiaproject.org/ftp/BachJS/BWV773/invention-02/invention-02.ly",
+   "bytes": 5366,
+   "sha256": "b61e1e4d4a42ca70efd0eb8a65de3ed0ca0ee9c31556354608f6caa360e78e98"
+  },
+  {
+   "file": "BWV774-invention-03.mid",
+   "title": "Invention 3",
+   "catalogue": "BWV 774",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV774/invention-03/invention-03.mid",
+   "licence": "Public Domain",
+   "licence_recorded_from": "https://www.mutopiaproject.org/ftp/BachJS/BWV774/invention-03/invention-03.ly",
+   "bytes": 4231,
+   "sha256": "602579a39b5b0e13ab4740dcff36342302553dcbd3619066e678f0074890c268"
+  },
+  {
+   "file": "BWV775-invention-04.mid",
+   "title": "Invention 4",
+   "catalogue": "BWV 775",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV775/invention-04/invention-04.mid",
+   "licence": "Public Domain",
+   "licence_recorded_from": "https://www.mutopiaproject.org/ftp/BachJS/BWV775/invention-04/invention-04.ly",
+   "bytes": 3793,
+   "sha256": "5ecc06eb04d56ea40bd4db64bfd49ac9bff523e46d134912fa5bd07aea1db1c7"
+  },
+  {
+   "file": "BWV776-invention-05.mid",
+   "title": "Invention 5",
+   "catalogue": "BWV 776",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV776/invention-05/invention-05.mid",
+   "licence": "Public Domain",
+   "licence_recorded_from": "https://www.mutopiaproject.org/ftp/BachJS/BWV776/invention-05/invention-05.ly",
+   "bytes": 6239,
+   "sha256": "8085d87bd49012a20afd59f79fd8a9864c4634b6303a7606e2e7a61b9e007542"
+  },
+  {
+   "file": "BWV777-invention-06.mid",
+   "title": "Invention 6",
+   "catalogue": "BWV 777",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV777/invention-06/invention-06.mid",
+   "licence": "Creative Commons Attribution-ShareAlike 3.0",
+   "licence_recorded_from": "https://www.mutopiaproject.org/ftp/BachJS/BWV777/invention-06/invention-06.ly",
+   "bytes": 4774,
+   "sha256": "457fcba53879cd3902d421d5f37383b8fdd848ae7888597981f5f257a962b945"
+  },
+  {
+   "file": "BWV778-invention-07.mid",
+   "title": "Invention 7",
+   "catalogue": "BWV 778",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV778/invention-07/invention-07.mid",
+   "licence": "Public Domain",
+   "licence_recorded_from": "https://www.mutopiaproject.org/ftp/BachJS/BWV778/invention-07/invention-07.ly",
+   "bytes": 4088,
+   "sha256": "ee5e02d6a43cd9a45f6c10e3c6b3905190ed42521b1de7487fee8a98c3735eb6"
+  },
+  {
+   "file": "BWV779-invention-08.mid",
+   "title": "Invention 08",
+   "catalogue": "BWV 779",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV779/invention-08/invention-08.mid",
+   "licence": "Public Domain",
+   "licence_recorded_from": "https://www.mutopiaproject.org/ftp/BachJS/BWV779/invention-08/invention-08.ly",
+   "bytes": 5113,
+   "sha256": "07238719180171f76283756405ee43a0319226e869283bf29affb9e4c360e6f8"
+  },
+  {
+   "file": "BWV780-invention-09.mid",
+   "title": "Invention 9",
+   "catalogue": "BWV 780",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV780/invention-09/invention-09.mid",
+   "licence": "Creative Commons Attribution-ShareAlike 3.0",
+   "licence_recorded_from": "https://www.mutopiaproject.org/ftp/BachJS/BWV780/invention-09/invention-09.ly",
+   "bytes": 4746,
+   "sha256": "fcba8eaa630cec1e4207eb024ffe25e9ad03c4382a68c415b7162b6baa58b0b0"
+  },
+  {
+   "file": "BWV781-invention-10.mid",
+   "title": "Invention 10",
+   "catalogue": "BWV 781",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV781/invention-10/invention-10.mid",
+   "licence": "Public Domain",
+   "licence_recorded_from": "https://www.mutopiaproject.org/ftp/BachJS/BWV781/invention-10/invention-10.ly",
+   "bytes": 4147,
+   "sha256": "64eed7d404ddbf668bef6a7e1d227390081e13731b9f2bf6c07792d6562eb822"
+  },
+  {
+   "file": "BWV782-invention-11.mid",
+   "title": "Invention 11",
+   "catalogue": "BWV 782",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV782/invention-11/invention-11.mid",
+   "licence": "Public Domain",
+   "licence_recorded_from": "https://www.mutopiaproject.org/ftp/BachJS/BWV782/invention-11/invention-11.ly",
+   "bytes": 4834,
+   "sha256": "9f6fce0e5c6f4e8eb28c7decf45e1f1de4474771619bf22884bac12646c49a5e"
+  },
+  {
+   "file": "BWV783-invention-12.mid",
+   "title": "Invention 12",
+   "catalogue": "BWV 783",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV783/invention-12/invention-12.mid",
+   "licence": "Creative Commons Attribution-ShareAlike 3.0",
+   "licence_recorded_from": "https://www.mutopiaproject.org/ftp/BachJS/BWV783/invention-12/invention-12.ly",
+   "bytes": 5779,
+   "sha256": "321b93cc21097f960eb290067cb3e746c41e3d9f624f097d5339b4f6ac6f44c3"
+  },
+  {
+   "file": "BWV784-invention-13.mid",
+   "title": "Invention 13",
+   "catalogue": "BWV 784",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV784/invention-13/invention-13.mid",
+   "licence": "Public Domain",
+   "licence_recorded_from": "https://www.mutopiaproject.org/ftp/BachJS/BWV784/invention-13/invention-13.ly",
+   "bytes": 4863,
+   "sha256": "e5b4dd4790ee2f2fdadca75630790a373363e1f6cb4558838e34bbad907364f1"
+  },
+  {
+   "file": "BWV785-invention-14.mid",
+   "title": "Invention 14",
+   "catalogue": "BWV 785",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV785/invention-14/invention-14.mid",
+   "licence": "Public Domain",
+   "licence_recorded_from": "https://www.mutopiaproject.org/ftp/BachJS/BWV785/invention-14/invention-14.ly",
+   "bytes": 5015,
+   "sha256": "8ef3606dc2b71c51c7c0e4438080ed641963e1a8e69d7b82aba42a04ebc5e9b9"
+  },
+  {
+   "file": "BWV786-invention-15.mid",
+   "title": "Invention 15",
+   "catalogue": "BWV 786",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWV786/invention-15/invention-15.mid",
+   "licence": "Public Domain",
+   "licence_recorded_from": "https://www.mutopiaproject.org/ftp/BachJS/BWV786/invention-15/invention-15.ly",
+   "bytes": 4152,
+   "sha256": "4b629b29d815d9f253600836a2801444780f20718b74892c502a044da6f85a88"
+  },
+  {
+   "file": "BWV-691.mid",
+   "title": "Chorale prelude \u201cWer nur den lieben Gott l\u00e4\u00dft walten\u201d",
+   "catalogue": "BWV Anh. 691",
+   "source": "https://www.mutopiaproject.org/ftp/BachJS/BWVAnh691/BWV-691/BWV-691.mid",
+   "licence": "Public Domain",
+   "licence_recorded_from": "https://www.mutopiaproject.org/ftp/BachJS/BWVAnh691/BWV-691/BWV-691.ly",
+   "bytes": 1682,
+   "sha256": "d6e1dd6c2e8ac096cc7c37057eac7470eaf2f394c8730a4f9c950826e43a105f"
+  }
+ ]
+}
