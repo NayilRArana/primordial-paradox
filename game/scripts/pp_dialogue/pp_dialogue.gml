@@ -39,6 +39,14 @@ function pp_dialogue_rows(_text) {
     if (array_length(_current) > 0) array_push(_words, { items: _current, after: 0 });
 
     // Second pass: greedy fill.
+    //
+    // Card TEXT-BOX-FIX: the space between two words is an item like any other, and the first pass consumed it to find
+    // the word breaks. It has to be pushed back onto the row, or the box prints `Youarenotonthelist` for
+    // `You are not on the list`: the word items are concatenated with nothing between them. One space item goes
+    // between two words that share a row, and it costs one of the box's 28 columns, so the fit test below counts it
+    // (array_length(_row) + 1 + _wlen), which is the same number the plain string of the row would have.
+    // A space is never written at the end of a row or at the start of one: a row break IS the space, so the trailing
+    // item would only widen the row without printing anything a reader could see.
     var _rows = [];
     var _row = [];
     var _w = 0;
@@ -48,8 +56,18 @@ function pp_dialogue_rows(_text) {
         if (_wlen > PP_TEXT_CHARS) {
             show_debug_message("PP: a word longer than a row was split");
             var _pos = 0;
+            var _room = PP_TEXT_CHARS - array_length(_row);
+            if (array_length(_row) > 0) {
+                if (_room <= 1) {
+                    array_push(_rows, _row);
+                    _row = [];
+                    _room = PP_TEXT_CHARS;
+                } else {
+                    array_push(_row, { ch: " ", wait: 0, speed: -1 });
+                    _room -= 1;
+                }
+            }
             while (_pos < _wlen) {
-                var _room = PP_TEXT_CHARS - array_length(_row);
                 if (_room <= 0) {
                     array_push(_rows, _row);
                     _row = [];
@@ -62,10 +80,11 @@ function pp_dialogue_rows(_text) {
                 }
             }
         } else {
-            if (array_length(_row) > 0 && array_length(_row) + _wlen > PP_TEXT_CHARS) {
+            if (array_length(_row) > 0 && array_length(_row) + 1 + _wlen > PP_TEXT_CHARS) {
                 array_push(_rows, _row);
                 _row = [];
             }
+            if (array_length(_row) > 0) array_push(_row, { ch: " ", wait: 0, speed: -1 });
             var _j = 0;
             while (_j < _wlen) {
                 array_push(_row, _word[_j]);

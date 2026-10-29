@@ -285,6 +285,15 @@
     },
     {
       "$GMIncludedFile": "",
+      "%Name": "talk_personas_bake.json",
+      "CopyToMask": -1,
+      "filePath": "datafiles",
+      "name": "talk_personas_bake.json",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
       "%Name": "tile_classes_drive.json",
       "CopyToMask": -1,
       "filePath": "datafiles",
