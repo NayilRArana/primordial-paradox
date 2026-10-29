@@ -1,0 +1,659 @@
+{
+ "bars": 16,
+ "by_severity": {
+  "hard": 0,
+  "soft": 2,
+  "style": 0
+ },
+ "chord_fit": {
+  "1": {
+   "chosen": "i",
+   "next": [
+    [
+     "V7",
+     8.0
+    ],
+    [
+     "V",
+     11.0
+    ]
+   ]
+  },
+  "2": {
+   "chosen": "V7",
+   "next": [
+    [
+     "i",
+     10.0
+    ],
+    [
+     "V",
+     14.0
+    ]
+   ]
+  },
+  "3": {
+   "chosen": "i",
+   "next": [
+    [
+     "iv",
+     12.0
+    ],
+    [
+     "VI",
+     12.0
+    ]
+   ]
+  },
+  "4": {
+   "chosen": "i",
+   "next": [
+    [
+     "V7",
+     16.0
+    ],
+    [
+     "VI",
+     17.0
+    ]
+   ]
+  },
+  "5": {
+   "chosen": "i",
+   "next": [
+    [
+     "V7",
+     8.0
+    ],
+    [
+     "V",
+     11.0
+    ]
+   ]
+  },
+  "6": {
+   "chosen": "V7",
+   "next": [
+    [
+     "i",
+     10.0
+    ],
+    [
+     "V",
+     14.0
+    ]
+   ]
+  },
+  "7": {
+   "chosen": "V",
+   "next": [
+    [
+     "i",
+     6.0
+    ],
+    [
+     "iv",
+     6.0
+    ]
+   ]
+  },
+  "8": {
+   "chosen": "V",
+   "next": [
+    [
+     "i",
+     6.0
+    ],
+    [
+     "iv",
+     6.0
+    ]
+   ]
+  },
+  "9": {
+   "chosen": "i",
+   "next": [
+    [
+     "V7",
+     8.0
+    ],
+    [
+     "V",
+     11.0
+    ]
+   ]
+  },
+  "10": {
+   "chosen": "V7",
+   "next": [
+    [
+     "i",
+     10.0
+    ],
+    [
+     "V",
+     14.0
+    ]
+   ]
+  },
+  "11": {
+   "chosen": "i",
+   "next": [
+    [
+     "iv",
+     12.0
+    ],
+    [
+     "VI",
+     12.0
+    ]
+   ]
+  },
+  "12": {
+   "chosen": "i",
+   "next": [
+    [
+     "V7",
+     16.0
+    ],
+    [
+     "VI",
+     17.0
+    ]
+   ]
+  },
+  "13": {
+   "chosen": "V7",
+   "next": [
+    [
+     "V",
+     11.0
+    ],
+    [
+     "i",
+     12.0
+    ]
+   ]
+  },
+  "14": {
+   "chosen": "V7",
+   "next": [
+    [
+     "V",
+     14.0
+    ],
+    [
+     "i",
+     16.0
+    ]
+   ]
+  },
+  "15": {
+   "chosen": "V",
+   "next": [
+    [
+     "V7",
+     8.0
+    ],
+    [
+     "i",
+     12.0
+    ]
+   ]
+  },
+  "16": {
+   "chosen": "i",
+   "next": [
+    [
+     "V",
+     7.0
+    ],
+    [
+     "V7",
+     7.0
+    ]
+   ]
+  }
+ },
+ "clash": {
+  "by_class": {
+   "anticipation": 0,
+   "appoggiatura": 0,
+   "neighbour": 0,
+   "passing": 9,
+   "raw clash": 0,
+   "suspension": 1
+  },
+  "dissonances": 10,
+  "raw_total": 0,
+  "strong_raw": 0
+ },
+ "counterpoint": {
+  "check": "<repo>\\assets\\audio\\pp_04_fight_baroque_v1\\pp_04_fight_baroque_v1.mid: PASS hard 0, soft 2, style 0",
+  "check_humanized": "<repo>\\assets\\audio\\pp_04_fight_baroque_v1\\pp_04_fight_baroque_v1_humanized.mid: PASS hard 0, soft 2, style 0",
+  "cue_gate": {
+   "exit": 0,
+   "stderr": "",
+   "stdout": "assets/audio/pp_04_fight_baroque_v1/pp_04_fight_baroque_v1.mid: PASS"
+  },
+  "cue_gate_humanized": "assets/audio/pp_04_fight_baroque_v1/pp_04_fight_baroque_v1_humanized.mid: PASS"
+ },
+ "devices": {
+  "appoggiatura": 0,
+  "escape": 0,
+  "neighbour": 0,
+  "passing": 8,
+  "suspension": 1
+ },
+ "files": [
+  "pp_04_fight_baroque_v1.mid",
+  "pp_04_fight_baroque_v1.wav",
+  "pp_04_fight_baroque_v1_master.wav",
+  "pp_04_fight_baroque_v1.ogg",
+  "pp_04_fight_baroque_v1.mp3"
+ ],
+ "hard": 0,
+ "hook": {
+  "bars": 16,
+  "criteria": [
+   {
+    "criterion": "contour",
+    "fraction": 0.0,
+    "ideal": "every return arch or pedal",
+    "key": "contour",
+    "measured": "0 of 2 returns are arch or pedal (- -)",
+    "pass": false,
+    "points": 0.0,
+    "suggestion": "the phrase wanders; shape it as an arch (rise to one peak then fall) or hold a pedal pitch",
+    "weight": 10
+   },
+   {
+    "criterion": "motif coverage",
+    "fraction": 0.5435,
+    "ideal": "at least 60%",
+    "key": "motif_coverage",
+    "measured": "33% of 92 notes inside the motif",
+    "pass": false,
+    "points": 10.87,
+    "suggestion": "the motif leaves too many notes outside it; move material into the 2 bar phrase or drop the notes that do not belong",
+    "weight": 20
+   },
+   {
+    "criterion": "variation on the third return",
+    "fraction": 0.0,
+    "ideal": "30 to 85% the same as the first",
+    "key": "third_return",
+    "measured": "no third return",
+    "pass": false,
+    "points": 0.0,
+    "suggestion": "there is no third return to vary; the motif has to come back three times first",
+    "weight": 8
+   },
+   {
+    "criterion": "leaps per motif",
+    "fraction": 0.5,
+    "ideal": "exactly 1",
+    "key": "leaps_per_motif",
+    "measured": "2 leaps",
+    "pass": false,
+    "points": 4.0,
+    "suggestion": "the motif has 2 leaps; one leap (4 or more semitones) per motif is what makes it sing",
+    "weight": 8
+   },
+   {
+    "criterion": "motif returns",
+    "fraction": 0.6667,
+    "ideal": "at least 3",
+    "key": "motif_returns",
+    "measured": "2 returns",
+    "pass": false,
+    "points": 8.0,
+    "suggestion": "motif returns only 2 times; repeat the 2 bar phrase until it has been heard 3 times",
+    "weight": 12
+   },
+   {
+    "criterion": "hook cell",
+    "fraction": 1.0,
+    "ideal": "2 to 6 notes with a repeated rhythm cell",
+    "key": "hook_cell",
+    "measured": "6 notes, rhythm 2/2/2/2/2/8 repeated 2 times",
+    "pass": true,
+    "points": 10.0,
+    "suggestion": "",
+    "weight": 10
+   },
+   {
+    "criterion": "steps over leaps",
+    "fraction": 1.0,
+    "ideal": "at least 65% steps",
+    "key": "step_ratio",
+    "measured": "71% steps (10 of 14 intervals), 2 leaps",
+    "pass": true,
+    "points": 12.0,
+    "suggestion": "",
+    "weight": 12
+   },
+   {
+    "criterion": "range",
+    "fraction": 1.0,
+    "ideal": "at most 18 semitones",
+    "key": "range",
+    "measured": "18 semitones (59 to 77)",
+    "pass": true,
+    "points": 8.0,
+    "suggestion": "",
+    "weight": 8
+   },
+   {
+    "criterion": "repeated pitch",
+    "fraction": 1.0,
+    "ideal": "at least 1",
+    "key": "repeat_pitch",
+    "measured": "13 repeated pitches in a row",
+    "pass": true,
+    "points": 6.0,
+    "suggestion": "",
+    "weight": 6
+   },
+   {
+    "criterion": "loop length",
+    "fraction": 1.0,
+    "ideal": "8 or 16 or 32 bars",
+    "key": "loop_length",
+    "measured": "16 bars",
+    "pass": true,
+    "points": 6.0,
+    "suggestion": "",
+    "weight": 6
+   }
+  ],
+  "grammar": "defaults",
+  "grid": "sixteenth",
+  "melody_track": "pulse 1",
+  "midi_tracks": [
+   "pulse 1",
+   "pulse 2",
+   "triangle",
+   "noise",
+   "dpcm"
+  ],
+  "motif": {
+   "bars": 2,
+   "coverage": 0.3261,
+   "notes": 15,
+   "occurrence_bars": [
+    2,
+    10
+   ],
+   "returns": 2,
+   "start_bar": 1
+  },
+  "notes": 92,
+  "points": 64.87,
+  "score": 65,
+  "source": "<repo>\\assets\\audio\\pp_04_fight_baroque_v1\\pp_04_fight_baroque_v1.mid",
+  "suggestions": [
+   "the phrase wanders; shape it as an arch (rise to one peak then fall) or hold a pedal pitch",
+   "the motif leaves too many notes outside it; move material into the 2 bar phrase or drop the notes that do not belong",
+   "there is no third return to vary; the motif has to come back three times first",
+   "the motif has 2 leaps; one leap (4 or more semitones) per motif is what makes it sing",
+   "motif returns only 2 times; repeat the 2 bar phrase until it has been heard 3 times"
+  ],
+  "tempo_us": 357143,
+  "weakest": {
+   "criterion": "contour",
+   "fraction": 0.0,
+   "key": "contour",
+   "of": 10,
+   "points": 0.0
+  },
+  "weights_total": 100
+ },
+ "key": "A minor",
+ "leitmotif": {
+  "first_bar": 3,
+  "matches_constant": true,
+  "notes": 13,
+  "source": "v7 midi",
+  "track": "vrc6 pulse a"
+ },
+ "loudness": {
+  "before": {
+   "attempts": [
+    {
+     "gain_db": 0.0,
+     "limit_db": -1.9,
+     "ogg_dbtp": -0.98,
+     "ogg_lufs": -16.18,
+     "wav_dbtp": -1.16,
+     "wav_lufs": -16.21
+    },
+    {
+     "gain_db": 2.18,
+     "limit_db": -2.07,
+     "ogg_dbtp": -1.01,
+     "ogg_lufs": -14.51,
+     "wav_dbtp": -1.3,
+     "wav_lufs": -14.54
+    },
+    {
+     "gain_db": 2.69,
+     "limit_db": -2.07,
+     "ogg_dbtp": -1.02,
+     "ogg_lufs": -14.16,
+     "wav_dbtp": -1.3,
+     "wav_lufs": -14.19
+    },
+    {
+     "gain_db": 2.85,
+     "limit_db": -2.07,
+     "ogg_dbtp": -1.04,
+     "ogg_lufs": -14.05,
+     "wav_dbtp": -1.3,
+     "wav_lufs": -14.08
+    }
+   ],
+   "integrated_lufs": -16.11,
+   "lra_lu": 2.7,
+   "offset": 0.74,
+   "threshold": -26.11,
+   "true_peak_dbtp": -0.46
+  },
+  "ceiling_ok": true,
+  "delivered_ogg": {
+   "integrated_lufs": -14.05,
+   "lra_lu": 2.8,
+   "offset": -0.11,
+   "threshold": -24.05,
+   "true_peak_dbtp": -1.04
+  },
+  "level_ok": true,
+  "target": {
+   "ceiling_dbtp": -1.0,
+   "integrated_lufs": -14.0
+  }
+ },
+ "midi": "<repo>\\assets\\audio\\pp_04_fight_baroque_v1\\pp_04_fight_baroque_v1.mid",
+ "motif_answer": {
+  "line": [
+   "A4",
+   "G4",
+   "F4",
+   "E4",
+   "E4",
+   "A4",
+   "F4",
+   "G4",
+   "A4",
+   "E4",
+   "C4",
+   "D4"
+  ],
+  "present": true,
+  "statements": 2,
+  "voice": "pulse 2"
+ },
+ "motif_bass": {
+  "line": [
+   "E3",
+   "D3",
+   "C3",
+   "B2",
+   "B2",
+   "E3",
+   "C3",
+   "D3",
+   "E3",
+   "B2",
+   "G#2",
+   "A2"
+  ],
+  "present": true,
+  "statements": 2,
+  "voice": "triangle"
+ },
+ "motif_pulse1": {
+  "line": [
+   "E5",
+   "D5",
+   "C5",
+   "B4",
+   "B4",
+   "E5",
+   "C5",
+   "D5",
+   "E5",
+   "B4",
+   "G#4",
+   "A4"
+  ],
+  "present": true,
+  "statements": 2,
+  "voice": "pulse 1"
+ },
+ "notes": 240,
+ "notes_per_voice": {
+  "pulse 1": 92,
+  "pulse 2": 79,
+  "triangle": 69
+ },
+ "numerals": [
+  "i",
+  "V7",
+  "i",
+  "i",
+  "i",
+  "V7",
+  "V",
+  "V",
+  "i",
+  "V7",
+  "i",
+  "i",
+  "V7",
+  "V7",
+  "V",
+  "i"
+ ],
+ "piece": "PP-04 fight cue, Baroque exposition",
+ "polish": [
+  {
+   "bar": 6,
+   "beat": 1.0,
+   "from": "B4",
+   "rule": "CP-10",
+   "to": "B3",
+   "voice": "pulse 1"
+  },
+  {
+   "bar": 6,
+   "beat": 4.0,
+   "from": "E4",
+   "rule": "CP-15",
+   "to": "B3",
+   "voice": "pulse 2"
+  },
+  {
+   "bar": 15,
+   "beat": 2.0,
+   "from": "A4",
+   "rule": "CP-14",
+   "to": "C4",
+   "voice": "pulse 2"
+  }
+ ],
+ "rates_per_100_notes": {
+  "CP-01": 0.0,
+  "CP-02": 0.0,
+  "CP-04": 0.0,
+  "CP-05": 0.0,
+  "CP-06": 0.0,
+  "CP-07": 0.0,
+  "CP-08": 0.0,
+  "CP-09": 0.0,
+  "CP-10": 0.0,
+  "CP-11": 0.0,
+  "CP-12": 0.0,
+  "CP-13": 0.0,
+  "CP-14": 0.417,
+  "CP-15": 0.417,
+  "CP-16": 0.0,
+  "CP-17": 0.0,
+  "CP-18": 0.0
+ },
+ "render": {
+  "command": "render_chip.py pp_04_fight_baroque_v1.mid pp_04_fight_baroque_v1.wav --loop-bars 16",
+  "loop_line": "loop 16 bars | 1008000 samples | seam sample difference 0 | edge peak head 1967 tail 0",
+  "peak_line": "duration 22.857 s | peak 29203 (-1.00 dBFS) | rms 6383.9 (-14.21 dBFS)"
+ },
+ "repairs": [],
+ "rules": {
+  "CP-14": 1,
+  "CP-15": 1
+ },
+ "seed": 1,
+ "swap_check": null,
+ "tempo_bpm": 168,
+ "time_sig": "4/4",
+ "voices": [
+  {
+   "chord_slots": 0,
+   "declared_range": [
+    "G3",
+    "B5"
+   ],
+   "name": "pulse 1",
+   "notes": 92,
+   "range": [
+    "B3",
+    "F5"
+   ]
+  },
+  {
+   "chord_slots": 0,
+   "declared_range": [
+    "G2",
+    "C7"
+   ],
+   "name": "pulse 2",
+   "notes": 79,
+   "range": [
+    "B3",
+    "E5"
+   ]
+  },
+  {
+   "chord_slots": 0,
+   "declared_range": [
+    "C2",
+    "G3"
+   ],
+   "name": "triangle",
+   "notes": 69,
+   "range": [
+    "G#2",
+    "E3"
+   ]
+  }
+ ]
+}
