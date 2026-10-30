@@ -152,7 +152,7 @@ def test_the_same_score_writes_the_same_bytes_twice(built, tmp_path):
 
 
 def test_a_section_melody_may_reference_an_earlier_section():
-    """score_pp03 says "same notes as arrival" and "same notes as harbor light": prove both resolve."""
+    """score_pp03 says "same notes as arrival" and "same notes as harbor_light": prove both resolve."""
     score = committed_score()
     sections = score["sections"]
     assert BUILDER.section_melody(score, "return") == sections["arrival"]["melody"]

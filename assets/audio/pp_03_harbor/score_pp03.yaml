@@ -138,7 +138,7 @@ sections:
   light_again:
     bars: 8
     chords: [C, G/B, Am, Em, F, C, F, G]
-    melody: "same notes as harbor light"
+    melody: "same notes as harbor_light"        # the section is keyed harbor_light; arrange.py's V3_BASE_MELODY reads one word, so the key is spelled here
     texture: "the light returns with the full calm ensemble: eighths on the broken chord, the echo on, the walk in the last two bars"
     arp: eighths
     echo: 1
