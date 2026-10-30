@@ -1,0 +1,24 @@
+{
+  "backend": "mock",
+  "key": "cbee78c0e96e92a2d9bebbe7c3838de8c01e7fa4b9a6d694290ca78c56f9eddd",
+  "kind": "transcribe",
+  "mode": "record",
+  "model": "muse-voice-transcribe-1.0",
+  "network": false,
+  "recorded_at": "2026-10-30T00:17:40Z",
+  "request": {
+    "audio_bytes": 19244,
+    "audio_format": "wav",
+    "audio_sha256": "0d3c7ee990426c9681dc2eb90f0ea13f94a7dd3b2283c4adbb243926dd7df38c",
+    "model": "muse-voice-transcribe-1.0"
+  },
+  "response": {
+    "mock": true,
+    "text": "mock transcript eccb525c4db3 (wav, 19244 bytes): hold the line, sailor.",
+    "usage": {
+      "completion_tokens": 0,
+      "prompt_tokens": 0,
+      "total_tokens": 0
+    }
+  }
+}

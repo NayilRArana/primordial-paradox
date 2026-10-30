@@ -1,9 +1,11 @@
-"""One client for the Meta Model API: chat, vision, image, edit, segmentation (card META-CLIENT).
+"""One client for the Meta Model API: chat, vision, image, edit, segmentation, transcription.
 
-Primordial Paradox talks to Meta models in four places: the TALK judge (Muse Spark, structured
-verdict), the eye critic (Muse Spark vision on a 256x240 frame), concept art (Muse Image) and
-the silhouette cut (SAM 3.1). This module is the only place that knows the HTTP shapes, so a
-change of model, a rate limit, a cache replay or a missing key is fixed once.
+Primordial Paradox talks to Meta models in six places: the TALK judge (Muse Spark, structured
+verdict), the eye critic (Muse Spark vision on a 256x240 frame), concept art (Muse Image), the
+silhouette cut (SAM 3.1), the open weights rung for judge reruns (Muse Spark Open, served by a
+host such as Baseten) and the fight's spoken line (Muse Voice Transcribe). This module is the only
+place that knows the HTTP shapes, so a change of model, a rate limit, a cache replay or a missing
+key is fixed once.
 
 README
 ======
@@ -33,6 +35,8 @@ From Python:
     made = meta_client.generate_image("a flat 16 colour knight on a plain background")
     cut = meta_client.segment("output\\knight_concept.png", "knight")
     framed = meta_client.edit_image("output\\knight_concept.png", "same knight, front view")
+    heard = meta_client.transcribe("cache\\talk_voice.wav")            # Muse Voice Transcribe
+    answer = meta_client.chat(messages, model=meta_client.model_for("open"))
 
     # a schema enforced by the API instead of by a regex afterwards
     verdict = meta_client.chat_structured(messages, schema=TALK_SCHEMA)
@@ -164,6 +168,12 @@ DEFAULT_MODELS = {
     "image": "muse-image-1.0",
     "edit": "muse-image-1.0",
     "segment": "sam-3.1",
+    # The open weights rung (card META-MODEL-BREADTH). Muse Spark Open is 816B and serves from a
+    # host such as Baseten, so the id is the hosted name and the base URL is the provider's, not
+    # api.meta.ai. PP_META_MODEL_OPEN overrides it when a provider names it differently.
+    "open": "meta-models/muse-spark-open-1026",
+    # Spoken lines into the fight's /hear box, in place of the local whisper rung. Same card.
+    "voice": "muse-voice-transcribe-1.0",
 }
 # Documented per team RPM, from the pricing and rate limits page read 2026-10-21. Anything not
 # listed keeps DEFAULT_RPM. The gate is a courtesy, not a quota manager: the server's 429 is
@@ -407,6 +417,16 @@ def request_key(kind, model, payload, extra=""):
 
 def cache_path(key):
     return os.path.join(cache_dir(), "%s.json" % key)
+
+
+def receipt_path(kind, model, echo):
+    """The cache file a call with this request echo reads and writes: its receipt.
+
+    tools\\silhouette_cut.py and tools\\models_used.py name the file a call landed in, and they
+    must name the same one _dispatch used. Building the key in one place is what keeps a receipt
+    path from drifting when the echo grows a field.
+    """
+    return cache_path(request_key(kind, model, echo, extra=str(backend_name())))
 
 
 def _shrink(payload):
@@ -667,6 +687,13 @@ def _mock_answer(kind, model, payload, schema=None):
     if kind == "segment":
         return {"text": "mock segmentation %s: %s" % (short, payload.get("prompt") or ""),
                 "boxes": [[0, 0, 16, 16]], "masks": ["mock-mask-%s" % short], "mock": True}
+    if kind == "transcribe":
+        meta = payload.get("metadata") or {}
+        return {"text": "mock transcript %s (%s, %d bytes): hold the line, sailor."
+                        % (short, meta.get("audio_format") or "wav",
+                           int(meta.get("audio_bytes") or 0)),
+                "usage": {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0},
+                "mock": True}
     raise NotConfigured("no mock for kind %r" % kind)
 
 
@@ -757,6 +784,13 @@ def _live_call(kind, model, payload, sleep=None):
         return _post_with_retry("%s/images/edits" % url, payload, sleep=sleep)
     if kind == "segment":
         return _post_with_retry("%s/responses" % url, payload, sleep=sleep)
+    if kind == "transcribe":
+        # The Responses API, the same endpoint sam-3.1 answers on, because a spoken line is another
+        # non-chat modality. This shape has NOT been verified against a live server (no key for it
+        # in this environment, and META-MODEL-BREADTH was a no-network card), so a live call that
+        # fails here is a finding about the shape, not about the model. Every call this repository
+        # has actually made for this role is offline and says so in its own cache entry.
+        return _post_with_retry("%s/responses" % url, payload, sleep=sleep)
     raise NotConfigured("no endpoint for kind %r" % kind)
 
 
@@ -792,6 +826,11 @@ def _normalise(kind, data):
         objects = segmentation_records(text)
         return {"text": text, "boxes": boxes, "masks": masks, "objects": objects,
                 "note": SAM_PARSE_NOTE}
+    if kind == "transcribe":
+        text = segmentation_text(data)
+        if not str(text or "").strip():
+            raise BadResponse("the transcription answer carried no text")
+        return {"text": str(text), "usage": data.get("usage") or {}}
     raise NotConfigured("cannot normalise kind %r" % kind)
 
 
@@ -1049,6 +1088,40 @@ def segment(image_path, prompt, model=None, sleep=None):
                    prompt=str(prompt), image_path=str(image_path))
 
 
+def transcribe(audio_path, model=None, sleep=None):
+    """Muse Voice Transcribe: one spoken line in, its transcript out.
+
+    The game's /hear box takes 16000 Hz mono 16 bit PCM wav bytes and asks for the text back
+    (data/talk_live.json, voice block). This is the Meta rung for that box: the local whisper rung
+    stays as the offline fallback, so a missing key costs a transcript, never the demo.
+
+    The audio is passed inline as base64 in an input_audio content part, and the request echo that
+    the cache is keyed on carries the wav's own size and sha256 instead of the bytes, so a cache
+    file stays small and a different recording is still a different key.
+    """
+    _refuse_credential_path(audio_path)
+    if not os.path.exists(audio_path):
+        raise FileNotFoundError(audio_path)
+    model = model or model_for("voice")
+    with open(audio_path, "rb") as handle:
+        raw = handle.read()
+    digest = hashlib.sha256(raw).hexdigest()
+    fmt = os.path.splitext(str(audio_path))[1].lstrip(".").lower() or "wav"
+    content = [{"type": "input_text", "text": "Transcribe this line exactly."},
+               {"type": "input_audio", "input_audio": {
+                   "data": base64.b64encode(raw).decode("ascii"), "format": fmt}}]
+    payload = {"model": model,
+               "input": [{"role": "user", "content": content}],
+               "metadata": {"audio_format": fmt, "audio_bytes": len(raw),
+                            "audio_sha256": digest}}
+    echo = {"model": model, "audio_format": fmt, "audio_bytes": len(raw),
+            "audio_sha256": digest}
+    response, cached, backend, chosen_mode = _dispatch("transcribe", model, payload,
+                                                       request_echo=echo, sleep=sleep)
+    return _finish("transcribe", model, response, cached, backend, chosen_mode,
+                   audio_path=str(audio_path))
+
+
 # ---------------------------------------------------------------- critics adapter
 
 def gemini_compat_generate(model, payload, timeout=None, sleep=None):
@@ -1134,9 +1207,9 @@ def describe(role="chat"):
         "cache_entries": len(cache_entries()),
         "rpm": {name: rpm_for(model_for(name)) for name in DEFAULT_MODELS},
         "capabilities": {
-            "meta": ["chat", "vision", "image", "edit", "segment"],
+            "meta": ["chat", "vision", "image", "edit", "segment", "transcribe"],
             "gemini": ["chat", "vision"],
-            "mock": ["chat", "vision", "image", "edit", "segment"],
+            "mock": ["chat", "vision", "image", "edit", "segment", "transcribe"],
         }.get(backend, []),
     }
 

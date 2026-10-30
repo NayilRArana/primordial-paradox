@@ -1,0 +1,81 @@
+{
+  "backend": "meta",
+  "cache_entry": "data/ai_cache/33101a9973cd1398980b986c5479e95d4b17fea3327a24f529df0a9b405dec5b.json",
+  "checks": {
+    "alpha_pixels_equal_mask_set_pixels": true,
+    "bbox_within_box": true,
+    "bbox_within_frame": true,
+    "mask_size_is_box_size": true
+  },
+  "chosen_object": 1,
+  "cut": {
+    "alpha_bbox": [
+      35,
+      39,
+      92,
+      144
+    ],
+    "alpha_pixels": 3262,
+    "box_from_response": [
+      35,
+      39,
+      92,
+      144
+    ],
+    "bytes": 66379,
+    "height": 240,
+    "mask_extent": [
+      35,
+      39,
+      92,
+      144
+    ],
+    "path": "knowledge/silhouette_cut/ship_cut.png",
+    "sha256": "c9421e1c2f03b97e19117c1434683e0fa42c27b1f560e5320c4916c8d8e2976f",
+    "width": 256
+  },
+  "mode": "replay",
+  "model": "sam-3.1",
+  "network": true,
+  "objects": [
+    {
+      "box": [
+        144,
+        105,
+        219,
+        163
+      ],
+      "mask_size": [
+        76,
+        59
+      ],
+      "object_id": 0,
+      "set_pixels": 2673
+    },
+    {
+      "box": [
+        35,
+        39,
+        92,
+        144
+      ],
+      "mask_size": [
+        58,
+        106
+      ],
+      "object_id": 1,
+      "set_pixels": 3262
+    }
+  ],
+  "ok": true,
+  "prompt": "ship",
+  "recorded_at": "2026-10-27T00:59:26Z",
+  "source": {
+    "bytes": 47263,
+    "height": 240,
+    "path": "knowledge/silhouette_cut/source_concept_sdxl.png",
+    "sha256": "7ee47548795ba47d2090ad95e29aefd0b16daba5efb34ca4ea651155fdc60e26",
+    "width": 256
+  },
+  "what": "SAM 3.1 silhouette cut"
+}

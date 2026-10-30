@@ -1,0 +1,27 @@
+{
+  "backend": "mock",
+  "key": "02bc28340636361c37b8ebc3429bac801f1b512e548ac488e54ed2fb34e5af3f",
+  "kind": "chat",
+  "mode": "record",
+  "model": "meta-models/muse-spark-open-1026",
+  "network": false,
+  "recorded_at": "2026-10-30T00:17:40Z",
+  "request": {
+    "messages": [
+      {
+        "content": "TALK verdict for Zeus: 'I did not come to fight, I came to be remembered.'",
+        "role": "user"
+      }
+    ],
+    "model": "meta-models/muse-spark-open-1026"
+  },
+  "response": {
+    "mock": true,
+    "text": "mock chat b349b9e82ed1 (1 turns): TALK verdict for Zeus: 'I did not come to fight, I came to be remembered.'",
+    "usage": {
+      "completion_tokens": 0,
+      "prompt_tokens": 0,
+      "total_tokens": 0
+    }
+  }
+}
