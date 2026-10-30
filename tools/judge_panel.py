@@ -381,7 +381,11 @@ def script_facts(video=None):
                                    "has_audio": payload.get("has_audio"),
                                    "stream": payload.get("stream") or {},
                                    "failures": run.get("failures") or [],
-                                   "ok": payload.get("ok")}
+                                   "ok": payload.get("ok"),
+                                   # Card t_7450df91: the labelled Meta numbers travel with the measured
+                                   # facts, so the panel reads a label and a receipt for each one.
+                                   "meta_numbers": payload.get("meta_numbers") or [],
+                                   "meta_numbers_why": payload.get("meta_numbers_why")}
             except (OSError, ValueError) as exc:
                 facts["missing"].append("%s (unreadable: %s)" % (verify, exc))
         else:
@@ -438,6 +442,23 @@ def measured_lines(frames, info, script, video):
                         % (verify["planned_seconds"], verify.get("recorded_seconds") or 0.0))
         bits.append("audio is %s" % ("present" if verify.get("has_audio") else "absent"))
         lines.append("From the capture's own verify file: %s." % "; ".join(bits))
+        # Card t_7450df91: the panel is shown the labels, not the numbers alone, so it can tell a measured
+        # count from a reading of the plan and can say which one it is scoring.
+        meta = verify.get("meta_numbers") or []
+        for row in meta:
+            if not isinstance(row, dict):
+                continue
+            lines.append("Labelled Meta number: %s is %s, labelled %s, receipt %s."
+                         % (row.get("name"), row.get("value"), row.get("label"), row.get("receipt")))
+        if meta:
+            lines.append("Every Meta number above carries one of three labels (measured, computed or "
+                         "inferred) and a receipt in data/receipts/meta_receipts.jsonl, so no Meta number "
+                         "in this capture is a number a reader has to take on trust.")
+        elif verify.get("meta_numbers_why"):
+            lines.append("The capture's verify file labels no Meta number: %s." % verify["meta_numbers_why"])
+        else:
+            lines.append("The capture's verify file labels no Meta number, so nothing in it says which "
+                         "Meta figures were measured, computed or inferred.")
         for failure in (verify.get("failures") or [])[:4]:
             lines.append("Recorded failure in that run: %s." % failure)
     if script.get("nightly_line"):

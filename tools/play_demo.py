@@ -54,6 +54,9 @@ Usage:
     python tools\\play_demo.py --script data\\demo\\run_001.json --out output\\demo\\x.mp4
     python tools\\play_demo.py --check                re-check the mp4 the script names, without launching the game
     python tools\\play_demo.py --check --video P.mp4  check some other file the same way
+    python tools\\play_demo.py --check --final --video P.mp4
+                                                      the shipping question: a take with no verify file beside it
+                                                      fails its audio check instead of measuring UNMEASURED
     python tools\\play_demo.py --dry-run              validate the script and print the timeline in seconds
     python tools\\play_demo.py --audio-devices        print the capture devices, the loopback and the install, no run
 
@@ -101,6 +104,7 @@ if TOOLS_DIR not in sys.path:
     sys.path.insert(0, TOOLS_DIR)
 
 import idle_check  # noqa: E402  EXIT_REFUSED = 4, the harness's not-measured lane, imported instead of restated
+import receipts  # noqa: E402  card t_7450df91: the labels and the receipt ledger the verify file carries
 
 # Card PINE-HONEST: the two modules this tool draws and launches with are imported inside the functions that use
 # them, never here. tools/capture_title.py:39 and tools/pp_launch.py:41 each import ctypes.wintypes, which raises on a
@@ -1054,18 +1058,24 @@ def audio_summary(audio):
     return "unrecorded: this run has no account of where the audio came from"
 
 
-def audio_check(audio, has_audio):
+def audio_check(audio, has_audio, final=False):
     """The audio verdict for a take, as (ok, line): game or reconstructed pass, and nothing else does.
 
     Card DEMO-AUDIO-CAPTURE: a final take may carry the game's own captured output, or a track rebuilt from
     the game's own log, and it may carry neither a stand-in nor silence. `audio is None` is the --check path,
-    where a file on disk is read without the run that made it: then the answer is UNMEASURED either way,
-    because no verdict is a different thing from a wrong one.
+    where a file on disk is read without the run that made it: then the answer is UNMEASURED, because no
+    verdict is a different thing from a wrong one. `final=True` is the shipping question and it is stricter:
+    a take that is about to be submitted has to name its audio, so a file with no record beside it FAILS
+    rather than measuring UNMEASURED, which is the difference between "not measured" and "allowed to ship".
     """
     if audio is None:
         # No record of this take's audio at all: a file alone cannot say where its sound came from. The run path
         # always carries a record, so this shape is a video some other tool wrote, and saying "unmeasured" is
         # different from saying "wrong". A take this tool records always says game or reconstructed.
+        if final:
+            return False, ("FAIL this take carries no record of where its audio came from (no sibling verify "
+                           "file), and a final take may not ship on a guess: record it with tools/play_demo.py, "
+                           "which writes audio_source game or reconstructed into the verify file beside it")
         if has_audio:
             return True, ("UNMEASURED the file carries an audio stream and this run has no record of where it came "
                           "from: a take this tool records says game or reconstructed, and --check reads the sibling "
@@ -1542,7 +1552,7 @@ def audio_stream(ffprobe, path):
     return bool(data.get("streams"))
 
 
-def verify_video(path, script, report_path=None, pollution=None, cues=None, audio=None):
+def verify_video(path, script, report_path=None, pollution=None, cues=None, audio=None, final=False):
     """Check a finished mp4 against the script. Returns (ok, report).
 
     The four checks the card asks for, in the order a wrong recording shows up:
@@ -1631,10 +1641,14 @@ def verify_video(path, script, report_path=None, pollution=None, cues=None, audi
     report["has_audio"] = audio_stream(ffprobe, path)
     # Card DEMO-AUDIO-CAPTURE: the take says where its sound came from, and only two answers pass. `audio` is the
     # dict the run built; it is None on the --check path, where a file on disk is read without the run that made it.
-    ok_audio, audio_line = audio_check(audio, report["has_audio"])
+    ok_audio, audio_line = audio_check(audio, report["has_audio"], final=final)
     report["checks"]["audio"] = audio_line
     report["audio"] = audio_summary(audio)
     report["audio_source"] = (audio or {}).get("source")
+    if final:
+        # Card DEMO-AUDIO-CAPTURE: the verify file says this file was asked the shipping question, so a reader
+        # can tell an UNMEASURED-only check from one that would have refused to ship.
+        report["final_take"] = True
     if audio:
         detail = {}
         for key in ("device", "lines", "segments", "silent_cues", "notes", "track", "why", "mean_volume_db",
@@ -1845,6 +1859,16 @@ def verify_video(path, script, report_path=None, pollution=None, cues=None, audi
         ok_cues = True
     ok = bool(ok and ok_beats and ok_cues)
     report["ok"] = ok
+    # Card t_7450df91 (RECEIPTS-LABELS): every Meta number this take's record carries is named with one of
+    # three labels and one receipt in data/receipts/meta_receipts.jsonl, so a reader never meets a number
+    # without a place to check it. tools/check_receipts.py re-reads the block and re-hashes each source.
+    try:
+        report["meta_numbers"] = receipts.meta_numbers()
+    except receipts.ReceiptError as exc:
+        # A build whose own Meta numbers cannot be vouched for says so in the file rather than printing a
+        # number nobody can find; the receipts check then fails the take by name.
+        report["meta_numbers"] = []
+        report["meta_numbers_why"] = str(exc)
     # A jump is evidence and never a verdict (the game's own scene change measures as one), so only a cover or
     # a frame that is not the game's picture makes a take polluted.
     report["polluted"] = bool(covers) or bool(foreign_rows)
@@ -1880,6 +1904,12 @@ def print_report(report):
     talk = report.get("talk") or {}
     if talk.get("mode"):
         print("  talk leg: %s%s" % (talk["mode"], "" if not talk.get("why") else " (%s)" % talk["why"]))
+    meta = report.get("meta_numbers") or []
+    for row in meta:
+        print("  meta number: %s = %s (%s, receipt %s)"
+              % (row.get("name"), row.get("value"), row.get("label"), row.get("receipt")))
+    if report.get("meta_numbers_why"):
+        print("  meta numbers: none labelled, %s" % report["meta_numbers_why"])
     for note in report.get("notes") or []:
         print("  %s" % note)
     for row in report.get("samples", []):
@@ -2237,6 +2267,9 @@ def main():
     parser.add_argument("--check", action="store_true",
                         help="check an existing mp4 against the script instead of playing the game")
     parser.add_argument("--video", default=None, help="with --check, the mp4 to check")
+    parser.add_argument("--final", action="store_true",
+                        help="with --check, ask the shipping question: a take with no record of where its audio "
+                             "came from fails instead of measuring UNMEASURED")
     parser.add_argument("--dry-run", action="store_true",
                         help="validate the script and print its timeline in seconds, then stop")
     parser.add_argument("--keep-raw", action="store_true", help="keep the uncropped window recording")
@@ -2287,13 +2320,17 @@ def main():
         if args.check:
             path = os.path.abspath(args.video) if args.video else out_path_for(script)
             print("checking %s against %s" % (path, os.path.basename(script_path_used)))
+            if args.final:
+                # Card DEMO-AUDIO-CAPTURE: the shipping question. A cut with no verify file beside it cannot
+                # answer "is this the game's audio", and a take that cannot answer does not ship.
+                print("final take: a file with no record of its audio fails, it does not measure UNMEASURED")
             # The sidecar written at record time is what names the beats from the file alone (card t_785b61f0). A take
             # with none is checked, and the beats check says UNMEASURED in those words instead of passing.
             cues = read_cues(path)
             if cues is None:
                 print("no cue log beside this take (%s), so the beats it was made of cannot be named from the file"
                       % os.path.basename(cues_path(path)))
-            ok, report = verify_video(path, script, cues=cues, audio=read_audio_record(path))
+            ok, report = verify_video(path, script, cues=cues, audio=read_audio_record(path), final=args.final)
             print_report(report)
             return 0 if ok else 1
 
