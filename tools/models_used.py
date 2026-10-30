@@ -371,9 +371,12 @@ def render(rows_):
         "agent loop on Muse Spark Open, served by Baseten, \"for affordable rural-scale serving\"; "
         "Ankita (krish) and paper-bro (Aero) name the same host. The model is 816B total and 42B "
         "active, needs about 700 GB of GPU memory at NVFP4, so it is hosted, never local: see "
-        "`knowledge/OPEN-WEIGHTS-2026-10-26.md` and https://dev.meta.ai/docs/muse-spark-open. For "
-        "this entry it is the rung a judge rerun can be served on, off the paid API, with the "
-        "transcript cache as the fallback when no host is reachable.",
+        "`knowledge/OPEN-WEIGHTS-2026-10-26.md` and https://dev.meta.ai/docs/muse-spark-open. The id "
+        "in the table above is the hosted name a public entry uses in its own description "
+        "(`knowledge/scout-2026-10-27/repos_371.json`, captured 2026-10-27), because Meta's own "
+        "page does not publish a Baseten slug; `PP_META_MODEL_OPEN` overrides it for a host that "
+        "names it differently. For this entry it is the rung a judge rerun can be served on, off "
+        "the paid API, with the transcript cache as the fallback when no host is reachable.",
         "- **Muse Voice Transcribe.** Khet Saathi names it as the voice input for Bangla and Hindi; "
         "the fight's `/hear` box asks for exactly the same thing in English, and `data/talk_live.json` "
         "already fixes the contract it must meet: 16000 Hz mono 16 bit PCM in, a transcript out, "
