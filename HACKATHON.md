@@ -14,6 +14,7 @@ The rules say only work done during the event counts and that judges must be abl
       git log --reverse --format="%ad  %s" --date=iso hackathon-baseline-2026-10-25..HEAD
 
 - [EVENT-LOG.md](EVENT-LOG.md) lists the same commits one line each. Its commit ids come from the private monorepo the project is developed in; this repository is an exact filtered export of that history, so ids differ. `python tools/event_log.py` prints the log again with this repository's ids.
+- [WINDOW-LEDGER.md](WINDOW-LEDGER.md) is the demo's side of the same rule: one row per thing the cut shows, the commit that built it, and whether the baseline already had it. Its ids are this repository's, printed by `python tools/window_ledger.py`, which also fails when a shot in the cut has no row behind it.
 
 ## What the baseline already contained
 
