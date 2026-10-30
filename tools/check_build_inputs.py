@@ -73,6 +73,12 @@ ART_SOURCES = (
     # Card PP-KNIFE (t_503707c8): the weapon sheet folder is mirrored too (tools/sync_art.py WEAPON_SRC), and the two
     # lists are held together by tests/test_battle_draw.py's folder test, so it is named here.
     os.path.join(ROOT, "game", "sprites_src", "weapons"),
+    # Card ART-B-MAPS (t_d0566ebc): the halls, street and quay_storm sets are one folder each beside the quay
+    # (tools/sync_art.py ENV_HALLS_SRC, ENV_STREET_SRC, ENV_QUAY_STORM_SRC). Unnamed here, their three Included Files
+    # would resolve to no committed source, so they are named and the same folder test holds them.
+    os.path.join(ROOT, "game", "sprites_src", "env", "halls"),
+    os.path.join(ROOT, "game", "sprites_src", "env", "street"),
+    os.path.join(ROOT, "game", "sprites_src", "env", "quay_storm"),
 )
 SFX_FOLDER = "sfx"
 # Direction C's vocabulary. Kept apart from the two older words on purpose; see the docstring.

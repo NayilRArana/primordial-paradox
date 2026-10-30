@@ -8,12 +8,12 @@ Ground rule this audit serves: every asset in this project is original work draw
 
 | class | files | pass | fail | unmeasured | gated | what a red here means |
 |---|---|---|---|---|---|---|
-| frame | 16 | 16 | 0 | 0 | 16 of 16 | a finished 256x240 screen, GATED |
-| asset | 130 | 130 | 0 | 0 | 130 of 130 | a shipped art source under game/sprites_src, GATED |
+| frame | 22 | 22 | 0 | 0 | 22 of 22 | a finished 256x240 screen, GATED |
+| asset | 142 | 142 | 0 | 0 | 142 of 142 | a shipped art source under game/sprites_src, GATED |
 | sheet | 21 | 1 | 20 | 0 | 0 of 21 | a contact sheet built to be looked at, advisory |
 | capture | 8 | 4 | 4 | 0 | 0 of 8 | a window capture of the running game, advisory |
 
-Verdict: **PASS**. 175 file(s) checked, 24 failing, 0 the checker could not read, 0 gated failure(s).
+Verdict: **PASS**. 193 file(s) checked, 24 failing, 0 the checker could not read, 0 gated failure(s).
 
 Failures by class: **sheet 20, capture 4**. One red number is not one kind of red, so it is never printed as one: a `frame` or an `asset` red is shipped art and it gates, while a `sheet` or a `capture` red is a viewing aid and it is advisory. The table above is that split, and a class with no files in this run is left out rather than printed as a zero.
 
@@ -47,7 +47,7 @@ Sheets and window captures. These measure a viewing aid and the capture path bef
 | 1 | `output/music_style_bible_preview.png` | sheet | 11,571,120 | 100.0% | background_area x9694, grid x2, palette x61, screen_colours x1 | background_area at [976, 656] |
 | 2 | `output/render2_demo_preview.png` | sheet | 3,889,920 | 100.0% | background_area x186, grid x1, palette x538, screen_colours x1 | background_area at [352, 1696] |
 | 3 | `output/title_theme_v2_preview_3x.png` | sheet | 3,847,680 | 100.0% | background_area x181, grid x1, palette x530, screen_colours x1 | background_area at [352, 1696] |
-| 4 | `output/sfx_preview_3x.png` | sheet | 2,779,920 | 100.0% | background_area x1303, grid x1, palette x539, screen_colours x1 | background_area at [912, 1008] |
+| 4 | `output/sfx_preview_3x.png` | sheet | 3,790,800 | 100.0% | background_area x1766, grid x1, palette x547, screen_colours x1 | background_area at [816, 2304] |
 | 5 | `output/title_ui_preview.png` | sheet | 1,488,817 | 98.9% | background_area x301, palette x7 | background_area at [496, 208] |
 | 6 | `output/icons_preview.png` | sheet | 576,091 | 81.1% | background_area x613, grid x2, palette x418, screen_colours x1 | background_area at [176, 528] |
 | 7 | `output/title_car_preview.png` | sheet | 297,312 | 99.9% | background_area x28, palette x16 | background_area at [176, 64] |
@@ -56,8 +56,8 @@ Sheets and window captures. These measure a viewing aid and the capture path bef
 | 10 | `output/title_run_1_marks_overlay.png` | capture | 14,776 | 2.7% | background_area x39, palette x11, screen_colours x1 | background_area at [240, 608] |
 | 11 | `output/winchester_sample_preview_2x.png` | sheet | 7,140 | 0.7% | background_area x241 | background_area at [0, 0] |
 | 12 | `output/southampton_sample_preview_2x.png` | sheet | 4,456 | 0.5% | background_area x150 | background_area at [384, 32] |
-| 13 | `output/westminster_sample_preview_2x.png` | sheet | 4,000 | 0.4% | background_area x152 | background_area at [224, 64] |
-| 14 | `output/bg_battle_preview.png` | sheet | 2,458 | 2.0% | background_area x118 | background_area at [304, 16] |
+| 13 | `output/bg_battle_preview.png` | sheet | 4,099 | 3.4% | background_area x183 | background_area at [288, 48] |
+| 14 | `output/westminster_sample_preview_2x.png` | sheet | 4,000 | 0.4% | background_area x152 | background_area at [224, 64] |
 | 15 | `output/env_ship_preview.png` | sheet | 2,258 | 0.2% | background_area x131, grid x2 | background_area at [256, 112] |
 | 16 | `output/chars_preview_3x.png` | sheet | 438 | 0.0% | background_area x33, grid x1 | background_area at [208, 320] |
 | 17 | `output/ts_exterior_preview_3x.png` | sheet | 172 | 1.0% | background_area x11 | background_area at [208, 32] |
@@ -167,37 +167,37 @@ Proposed fix:
 - merge colours: #767688 is not a PPU output (off palette at 111 pixels). Repaint it with #7c7c7c, the nearest of the 64, and this problem goes to zero.
 - ... and 701 more fix(es) of the same kind: the whole list is in `output/nes_audit/output__title_theme_v2_preview_3x.png.json`.
 
-### 4. `output/sfx_preview_3x.png` (sheet, advisory, 1560x1782, 539 colours)
+### 4. `output/sfx_preview_3x.png` (sheet, advisory, 1560x2430, 547 colours)
 
 Checker: `tools/nes_check.py check()`. a preview that is neither a 256x240 frame nor a 3x sheet, read at 1x
 
-- pixels to repaint: 2,779,920 of 2,779,920 visible (100.0%)
-- rules: background_area x1303, grid x1, palette x539, screen_colours x1
+- pixels to repaint: 3,790,800 of 3,790,800 visible (100.0%)
+- rules: background_area x1766, grid x1, palette x547, screen_colours x1
 - backdrop: #101018 (guessed from the pixels, shared by every background area)
-- 1303 block(s) over the limit; worst five:
+- 1766 block(s) over the limit; worst five:
+  - background_area at [816, 2304] size 16x16 carries 85 colours besides the backdrop, 99 pixel(s) to repaint: #111119 #12121a #12121b #13131b #13141c #14151e #15151e #161720 (and 77 more, see the JSON)
+  - background_area at [96, 1472] size 16x16 carries 79 colours besides the backdrop, 98 pixel(s) to repaint: #12121a #16161f #191921 #1a1a23 #1b1b24 #21212a #22222b #24242d (and 71 more, see the JSON)
   - background_area at [912, 1008] size 16x16 carries 63 colours besides the backdrop, 97 pixel(s) to repaint: #111119 #12121a #12121b #13141c #14151e #15151e #161720 #171822 (and 55 more, see the JSON)
   - background_area at [912, 1168] size 16x16 carries 63 colours besides the backdrop, 97 pixel(s) to repaint: #111119 #12121a #12121b #13141c #14151e #15151e #161720 #171822 (and 55 more, see the JSON)
-  - background_area at [128, 1008] size 16x16 carries 63 colours besides the backdrop, 94 pixel(s) to repaint: #111119 #12121a #12121b #13141c #14151e #15151e #161720 #171822 (and 55 more, see the JSON)
-  - background_area at [128, 1168] size 16x16 carries 63 colours besides the backdrop, 94 pixel(s) to repaint: #111119 #12121a #12121b #13141c #14151e #15151e #161720 #171822 (and 55 more, see the JSON)
-  - background_area at [912, 32] size 16x16 carries 57 colours besides the backdrop, 87 pixel(s) to repaint: #111119 #12121a #12121b #14151e #15151e #161720 #171822 #1b1c26 (and 49 more, see the JSON)
-- off-palette or semi-transparent pixels: 2,779,920
-- colours beyond the 25 a frame can show: 32,591 pixel(s) sit on colours past the 25 most common
+  - background_area at [912, 2304] size 16x16 carries 63 colours besides the backdrop, 97 pixel(s) to repaint: #111119 #12121a #12121b #13141c #14151e #15151e #161720 #171822 (and 55 more, see the JSON)
+- off-palette or semi-transparent pixels: 3,790,800
+- colours beyond the 25 a frame can show: 45,466 pixel(s) sit on colours past the 25 most common
 
 Proposed fix:
 
-- align to the 8 pixel grid: height 1782 is not a multiple of 8, so the image cannot be cut into 8x8 tiles. Recrop or repaint to the nearest multiple of 8.
-- merge colours: #101018 is not a PPU output (off palette at 2492852 pixels). Repaint it with #000000, the nearest of the 64, and this problem goes to zero.
-- merge colours: #78dca0 is not a PPU output (off palette at 118955 pixels). Repaint it with #58f898, the nearest of the 64, and this problem goes to zero.
-- merge colours: #3c3c5a is not a PPU output (off palette at 39383 pixels). Repaint it with #004058, the nearest of the 64, and this problem goes to zero.
-- merge colours: #28283c is not a PPU output (off palette at 33836 pixels). Repaint it with #004058, the nearest of the 64, and this problem goes to zero.
-- merge colours: #f0be78 is not a PPU output (off palette at 27875 pixels). Repaint it with #f8d878, the nearest of the 64, and this problem goes to zero.
-- merge colours: #96aac8 is not a PPU output (off palette at 16134 pixels). Repaint it with #bcbcbc, the nearest of the 64, and this problem goes to zero.
-- merge colours: #dcdcf0 is not a PPU output (off palette at 7352 pixels). Repaint it with #f8d8f8, the nearest of the 64, and this problem goes to zero.
-- merge colours: #8495b0 is not a PPU output (off palette at 1127 pixels). Repaint it with #7c7c7c, the nearest of the 64, and this problem goes to zero.
-- merge colours: #90a3c0 is not a PPU output (off palette at 1118 pixels). Repaint it with #bcbcbc, the nearest of the 64, and this problem goes to zero.
-- merge colours: #404857 is not a PPU output (off palette at 916 pixels). Repaint it with #004058, the nearest of the 64, and this problem goes to zero.
-- merge colours: #111119 is not a PPU output (off palette at 901 pixels). Repaint it with #000000, the nearest of the 64, and this problem goes to zero.
-- ... and 1832 more fix(es) of the same kind: the whole list is in `output/nes_audit/output__sfx_preview_3x.png.json`.
+- align to the 8 pixel grid: height 2430 is not a multiple of 8, so the image cannot be cut into 8x8 tiles. Recrop or repaint to the nearest multiple of 8.
+- merge colours: #101018 is not a PPU output (off palette at 3433524 pixels). Repaint it with #000000, the nearest of the 64, and this problem goes to zero.
+- merge colours: #78dca0 is not a PPU output (off palette at 128191 pixels). Repaint it with #58f898, the nearest of the 64, and this problem goes to zero.
+- merge colours: #3c3c5a is not a PPU output (off palette at 53501 pixels). Repaint it with #004058, the nearest of the 64, and this problem goes to zero.
+- merge colours: #28283c is not a PPU output (off palette at 46140 pixels). Repaint it with #004058, the nearest of the 64, and this problem goes to zero.
+- merge colours: #f0be78 is not a PPU output (off palette at 36411 pixels). Repaint it with #f8d878, the nearest of the 64, and this problem goes to zero.
+- merge colours: #96aac8 is not a PPU output (off palette at 21329 pixels). Repaint it with #bcbcbc, the nearest of the 64, and this problem goes to zero.
+- merge colours: #dcdcf0 is not a PPU output (off palette at 11298 pixels). Repaint it with #f8d8f8, the nearest of the 64, and this problem goes to zero.
+- merge colours: #8495b0 is not a PPU output (off palette at 1484 pixels). Repaint it with #7c7c7c, the nearest of the 64, and this problem goes to zero.
+- merge colours: #90a3c0 is not a PPU output (off palette at 1464 pixels). Repaint it with #bcbcbc, the nearest of the 64, and this problem goes to zero.
+- merge colours: #111119 is not a PPU output (off palette at 1233 pixels). Repaint it with #000000, the nearest of the 64, and this problem goes to zero.
+- merge colours: #404857 is not a PPU output (off palette at 1217 pixels). Repaint it with #004058, the nearest of the 64, and this problem goes to zero.
+- ... and 2303 more fix(es) of the same kind: the whole list is in `output/nes_audit/output__sfx_preview_3x.png.json`.
 
 ### 5. `output/title_ui_preview.png` (sheet, advisory, 1920x784, 9 colours)
 
@@ -449,7 +449,37 @@ Proposed fix:
 - merge colours inside the attribute area at [320, 432]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #000000 #881400 #e45c10 #f8b800, or move the band so the colours fall into different areas.
 - ... and 138 more fix(es) of the same kind: the whole list is in `output/nes_audit/output__southampton_sample_preview_2x.png.json`.
 
-### 13. `output/westminster_sample_preview_2x.png` (sheet, advisory, 1024x960, 11 colours)
+### 13. `output/bg_battle_preview.png` (sheet, advisory, 520x232, 16 colours)
+
+Checker: `tools/nes_check.py check()`. a 3x contact sheet, downsampled by nearest to its 1x art before the background rules run
+
+- pixels to repaint: 4,099 of 120,640 visible (3.4%)
+- rules: background_area x183
+- backdrop: #0000bc (guessed from the pixels, shared by every background area)
+- 183 block(s) over the limit; worst five:
+  - background_area at [288, 48] size 16x16 carries 6 colours besides the backdrop, 76 pixel(s) to repaint: #000000 #881400 #bcbcbc #e45c10 #f8b800 #fcfcfc
+  - background_area at [400, 144] size 16x16 carries 6 colours besides the backdrop, 61 pixel(s) to repaint: #000000 #0000fc #0078f8 #f83800 #f87858 #f8b800
+  - background_area at [384, 16] size 16x16 carries 6 colours besides the backdrop, 58 pixel(s) to repaint: #000000 #0000fc #881400 #e45c10 #f8b800 #fcfcfc
+  - background_area at [400, 16] size 16x16 carries 6 colours besides the backdrop, 53 pixel(s) to repaint: #000000 #0000fc #881400 #e45c10 #f8b800 #fcfcfc
+  - background_area at [48, 16] size 16x16 carries 4 colours besides the backdrop, 52 pixel(s) to repaint: #000000 #0058f8 #bcbcbc #fcfcfc
+
+Proposed fix:
+
+- merge colours inside the attribute area at [0, 16]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #000000 #0058f8 #bcbcbc #fcfcfc, or move the band so the colours fall into different areas.
+- merge colours inside the attribute area at [0, 144]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #0000fc #0078f8 #3cbcfc #fcfcfc, or move the band so the colours fall into different areas.
+- merge colours inside the attribute area at [0, 176]: it carries 6 colours besides the backdrop and the limit is 3. Keep 3 of #000000 #0000fc #0078f8 #3cbcfc #7c7c7c #fcfcfc, or move the band so the colours fall into different areas.
+- merge colours inside the attribute area at [16, 16]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #000000 #0058f8 #bcbcbc #fcfcfc, or move the band so the colours fall into different areas.
+- merge colours inside the attribute area at [16, 144]: it carries 5 colours besides the backdrop and the limit is 3. Keep 3 of #000000 #0000fc #0078f8 #3cbcfc #7c7c7c, or move the band so the colours fall into different areas.
+- merge colours inside the attribute area at [16, 176]: it carries 6 colours besides the backdrop and the limit is 3. Keep 3 of #000000 #0000fc #0078f8 #3cbcfc #7c7c7c #fcfcfc, or move the band so the colours fall into different areas.
+- merge colours inside the attribute area at [32, 16]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #000000 #0058f8 #bcbcbc #fcfcfc, or move the band so the colours fall into different areas.
+- merge colours inside the attribute area at [32, 144]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #0000fc #0078f8 #3cbcfc #fcfcfc, or move the band so the colours fall into different areas.
+- merge colours inside the attribute area at [32, 176]: it carries 6 colours besides the backdrop and the limit is 3. Keep 3 of #000000 #0000fc #0078f8 #3cbcfc #7c7c7c #fcfcfc, or move the band so the colours fall into different areas.
+- merge colours inside the attribute area at [48, 16]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #000000 #0058f8 #bcbcbc #fcfcfc, or move the band so the colours fall into different areas.
+- merge colours inside the attribute area at [48, 144]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #0000fc #0078f8 #3cbcfc #fcfcfc, or move the band so the colours fall into different areas.
+- merge colours inside the attribute area at [48, 176]: it carries 6 colours besides the backdrop and the limit is 3. Keep 3 of #000000 #0000fc #0078f8 #3cbcfc #7c7c7c #fcfcfc, or move the band so the colours fall into different areas.
+- ... and 171 more fix(es) of the same kind: the whole list is in `output/nes_audit/output__bg_battle_preview.png.json`.
+
+### 14. `output/westminster_sample_preview_2x.png` (sheet, advisory, 1024x960, 11 colours)
 
 Checker: `tools/nes_check.py check()`. a preview that is neither a 256x240 frame nor a 3x sheet, read at 1x
 
@@ -478,36 +508,6 @@ Proposed fix:
 - merge colours inside the attribute area at [64, 736]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #000000 #881400 #e45c10 #f8b800, or move the band so the colours fall into different areas.
 - merge colours inside the attribute area at [80, 144]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #000000 #881400 #e45c10 #f8b800, or move the band so the colours fall into different areas.
 - ... and 140 more fix(es) of the same kind: the whole list is in `output/nes_audit/output__westminster_sample_preview_2x.png.json`.
-
-### 14. `output/bg_battle_preview.png` (sheet, advisory, 520x232, 16 colours)
-
-Checker: `tools/nes_check.py check()`. a 3x contact sheet, downsampled by nearest to its 1x art before the background rules run
-
-- pixels to repaint: 2,458 of 120,640 visible (2.0%)
-- rules: background_area x118
-- backdrop: #7c7c7c (guessed from the pixels, shared by every background area)
-- 118 block(s) over the limit; worst five:
-  - background_area at [304, 16] size 16x16 carries 6 colours besides the backdrop, 65 pixel(s) to repaint: #0000bc #0000fc #881400 #e45c10 #f8b800 #fcfcfc
-  - background_area at [400, 16] size 16x16 carries 6 colours besides the backdrop, 65 pixel(s) to repaint: #0000bc #0000fc #881400 #e45c10 #f8b800 #fcfcfc
-  - background_area at [480, 16] size 16x16 carries 6 colours besides the backdrop, 65 pixel(s) to repaint: #0000bc #0000fc #881400 #e45c10 #f8b800 #fcfcfc
-  - background_area at [288, 48] size 16x16 carries 5 colours besides the backdrop, 55 pixel(s) to repaint: #881400 #bcbcbc #e45c10 #f8b800 #fcfcfc
-  - background_area at [288, 16] size 16x16 carries 6 colours besides the backdrop, 51 pixel(s) to repaint: #0000bc #0000fc #881400 #e45c10 #f8b800 #fcfcfc
-
-Proposed fix:
-
-- merge colours inside the attribute area at [0, 16]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #000000 #0058f8 #bcbcbc #fcfcfc, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [0, 144]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #0000bc #0000fc #0078f8 #3cbcfc, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [0, 176]: it carries 5 colours besides the backdrop and the limit is 3. Keep 3 of #0000bc #0000fc #0078f8 #3cbcfc #fcfcfc, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [16, 16]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #000000 #0058f8 #bcbcbc #fcfcfc, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [16, 144]: it carries 5 colours besides the backdrop and the limit is 3. Keep 3 of #000000 #0000bc #0000fc #0078f8 #3cbcfc, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [16, 176]: it carries 5 colours besides the backdrop and the limit is 3. Keep 3 of #0000bc #0000fc #0078f8 #3cbcfc #fcfcfc, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [32, 16]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #000000 #0058f8 #bcbcbc #fcfcfc, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [32, 144]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #0000bc #0000fc #0078f8 #3cbcfc, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [32, 176]: it carries 5 colours besides the backdrop and the limit is 3. Keep 3 of #0000bc #0000fc #0078f8 #3cbcfc #fcfcfc, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [48, 16]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #000000 #0058f8 #bcbcbc #fcfcfc, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [48, 144]: it carries 4 colours besides the backdrop and the limit is 3. Keep 3 of #0000bc #0000fc #0078f8 #3cbcfc, or move the band so the colours fall into different areas.
-- merge colours inside the attribute area at [48, 176]: it carries 5 colours besides the backdrop and the limit is 3. Keep 3 of #0000bc #0000fc #0078f8 #3cbcfc #fcfcfc, or move the band so the colours fall into different areas.
-- ... and 106 more fix(es) of the same kind: the whole list is in `output/nes_audit/output__bg_battle_preview.png.json`.
 
 ### 15. `output/env_ship_preview.png` (sheet, advisory, 996x1092, 10 colours)
 
@@ -743,9 +743,15 @@ Every file below passes every rule that applies to it. A pass is a rules pass on
 - `game/sprites_src/chars/konrad_god_battle.png` (asset, 168x32, 9 colours)
 - `game/sprites_src/chars/konrad_ow.png` (asset, 128x16, 6 colours)
 - `game/sprites_src/chars/konrad_ow_v2.png` (asset, 128x16, 3 colours)
+- `game/sprites_src/chars/kronos_ow24.png` (asset, 16x24, 3 colours)
+- `game/sprites_src/chars/ouranos_ow24.png` (asset, 16x24, 3 colours)
 - `game/sprites_src/chars/percy_battle.png` (asset, 168x32, 3 colours)
 - `game/sprites_src/chars/percy_god_battle.png` (asset, 168x32, 11 colours)
+- `game/sprites_src/chars/percy_man_1_ow24.png` (asset, 16x24, 3 colours)
+- `game/sprites_src/chars/percy_man_2_ow24.png` (asset, 16x24, 3 colours)
+- `game/sprites_src/chars/percy_man_3_ow24.png` (asset, 16x24, 3 colours)
 - `game/sprites_src/chars/percy_ow.png` (asset, 128x16, 5 colours)
+- `game/sprites_src/chars/percy_ow24.png` (asset, 16x24, 3 colours)
 - `game/sprites_src/chars/percy_ow_v2.png` (asset, 128x16, 3 colours)
 - `game/sprites_src/chars/sailor_ow.png` (asset, 128x16, 2 colours)
 - `game/sprites_src/chars/sailor_ow_v2.png` (asset, 128x16, 3 colours)
@@ -756,6 +762,7 @@ Every file below passes every rule that applies to it. A pass is a rules pass on
 - `game/sprites_src/chars/zander_god_battle.png` (asset, 168x32, 9 colours)
 - `game/sprites_src/chars/zander_ow.png` (asset, 128x16, 7 colours)
 - `game/sprites_src/chars/zander_ow_v2.png` (asset, 128x16, 3 colours)
+- `game/sprites_src/chars/zeus_ow_walk8.png` (asset, 256x24, 3 colours)
 - `game/sprites_src/enemies/bilge_slime.png` (asset, 96x32, 3 colours)
 - `game/sprites_src/enemies/deck_rat.png` (asset, 96x32, 3 colours)
 - `game/sprites_src/enemies/gull.png` (asset, 96x32, 3 colours)
@@ -763,7 +770,11 @@ Every file below passes every rule that applies to it. A pass is a rules pass on
 - `game/sprites_src/enemies/petty_officer.png` (asset, 96x32, 3 colours)
 - `game/sprites_src/enemies/rogue_wave.png` (asset, 96x32, 3 colours)
 - `game/sprites_src/enemies/rope_knot.png` (asset, 96x32, 3 colours)
+- `game/sprites_src/env/halls/halls_tiles.png` (asset, 128x192, 9 colours)
 - `game/sprites_src/env/quay/quay_tiles.png` (asset, 128x48, 11 colours)
+- `game/sprites_src/env/quay/quay_v2_tiles.png` (asset, 256x64, 24 colours)
+- `game/sprites_src/env/quay_storm/quay_storm_tiles.png` (asset, 128x48, 11 colours)
+- `game/sprites_src/env/street/street_tiles.png` (asset, 128x96, 10 colours)
 - `game/sprites_src/env/ts_exterior.png` (asset, 256x64, 13 colours)
 - `game/sprites_src/env/ts_ship.png` (asset, 256x48, 10 colours)
 - `game/sprites_src/icons/spr_pp_icon_cursor_16.png` (asset, 32x16, 3 colours)
@@ -809,20 +820,20 @@ Every file below passes every rule that applies to it. A pass is a rules pass on
 - `game/sprites_src/title/spr_title_star.png` (asset, 24x8, 3 colours)
 - `game/sprites_src/title/spr_title_wheel.png` (asset, 64x16, 3 colours)
 - `game/sprites_src/title/spr_title_zander.png` (asset, 128x16, 5 colours)
-- `game/sprites_src/title/title_BG_bigben.png` (asset, 256x240, 5 colours)
-- `game/sprites_src/title/title_BG_bigben_flash.png` (asset, 256x240, 4 colours)
-- `game/sprites_src/title/title_L1_sky.png` (asset, 1024x120, 5 colours)
-- `game/sprites_src/title/title_L1_sky_fade1.png` (asset, 1024x120, 4 colours)
-- `game/sprites_src/title/title_L1_sky_fade2.png` (asset, 1024x120, 2 colours)
+- `game/sprites_src/title/title_BG_bigben.png` (asset, 256x240, 6 colours)
+- `game/sprites_src/title/title_BG_bigben_flash.png` (asset, 256x240, 5 colours)
+- `game/sprites_src/title/title_L1_sky.png` (asset, 1024x120, 4 colours)
+- `game/sprites_src/title/title_L1_sky_fade1.png` (asset, 1024x120, 3 colours)
+- `game/sprites_src/title/title_L1_sky_fade2.png` (asset, 1024x120, 1 colours)
 - `game/sprites_src/title/title_L1_sky_fade3.png` (asset, 1024x120, 1 colours)
 - `game/sprites_src/title/title_L1_sky_fade4.png` (asset, 1024x120, 1 colours)
 - `game/sprites_src/title/title_L1_sky_flash.png` (asset, 1024x120, 4 colours)
-- `game/sprites_src/title/title_L2_clouds.png` (asset, 512x120, 2 colours)
-- `game/sprites_src/title/title_L2_clouds_fade1.png` (asset, 512x120, 1 colours)
+- `game/sprites_src/title/title_L2_clouds.png` (asset, 512x120, 3 colours)
+- `game/sprites_src/title/title_L2_clouds_fade1.png` (asset, 512x120, 3 colours)
 - `game/sprites_src/title/title_L2_clouds_fade2.png` (asset, 512x120, 1 colours)
 - `game/sprites_src/title/title_L2_clouds_fade3.png` (asset, 512x120, 1 colours)
 - `game/sprites_src/title/title_L2_clouds_fade4.png` (asset, 512x120, 1 colours)
-- `game/sprites_src/title/title_L2_clouds_flash.png` (asset, 512x120, 3 colours)
+- `game/sprites_src/title/title_L2_clouds_flash.png` (asset, 512x120, 2 colours)
 - `game/sprites_src/title/title_L3_downs.png` (asset, 512x48, 4 colours)
 - `game/sprites_src/title/title_L3_downs_fade1.png` (asset, 512x48, 3 colours)
 - `game/sprites_src/title/title_L3_downs_fade2.png` (asset, 512x48, 2 colours)
@@ -857,10 +868,16 @@ Every file below passes every rule that applies to it. A pass is a rules pass on
 - `game/sprites_src/ui/screens/ui_dialogue.png` (asset, 256x240, 5 colours)
 - `game/sprites_src/ui/screens/ui_menu.png` (asset, 256x240, 4 colours)
 - `game/sprites_src/ui/spr_pp_ui_cursor.png` (asset, 16x8, 1 colours)
-- `game/sprites_src/ui/spr_pp_ui_enemy.png` (asset, 32x32, 2 colours)
+- `game/sprites_src/ui/spr_pp_ui_enemy.png` (asset, 32x32, 3 colours)
 - `game/sprites_src/ui/spr_pp_ui_party.png` (asset, 24x32, 3 colours)
-- `game/sprites_src/ui/spr_pp_ui_tab.png` (asset, 72x8, 2 colours)
-- `game/sprites_src/ui/spr_pp_ui_window.png` (asset, 72x8, 2 colours)
+- `game/sprites_src/ui/spr_pp_ui_tab.png` (asset, 72x8, 3 colours)
+- `game/sprites_src/ui/spr_pp_ui_window.png` (asset, 72x8, 3 colours)
+- `game/sprites_src/weapons/spr_pp_knife.png` (asset, 64x16, 3 colours)
+- `output/art_plates_r17_deck_night_plate_preview.png` (frame, 256x240, 7 colours)
+- `output/art_plates_r17_quay_dusk_plate_preview.png` (frame, 256x240, 9 colours)
+- `output/art_plates_r17_ship_corridor_preview.png` (frame, 256x240, 9 colours)
+- `output/art_plates_r17_ship_wardroom_preview.png` (frame, 256x240, 9 colours)
+- `output/art_plates_r17_title_attract_preview.png` (frame, 256x240, 8 colours)
 - `output/bg_battle_corridor_field_preview.png` (frame, 256x240, 9 colours)
 - `output/bg_battle_deck_night_field_preview.png` (frame, 256x240, 8 colours)
 - `output/bg_battle_quay_dusk_field_preview.png` (frame, 256x240, 9 colours)
@@ -871,13 +888,14 @@ Every file below passes every rule that applies to it. A pass is a rules pass on
 - `output/nes_ui_preview.png` (sheet advisory, 1184x760, 3 colours)
 - `output/quay_block_preview.png` (frame, 256x240, 11 colours)
 - `output/quay_office_preview.png` (frame, 256x240, 6 colours)
+- `output/quay_storm_block_preview.png` (frame, 256x240, 11 colours)
 - `output/quay_tile_frame_preview.png` (frame, 256x240, 7 colours)
 - `output/ship_deck_preview.png` (frame, 256x240, 10 colours)
 - `output/title_run_1_nes.png` (capture advisory, 256x240, 10 colours)
 - `output/title_run_1_nes_3x.png` (capture advisory, 256x240, 9 colours)
 - `output/title_run_1_nes_3x_preview.png` (capture advisory, 256x240, 10 colours)
 - `output/title_run_1_nes_diff.png` (capture advisory, 256x240, 10 colours)
-- `output/ts2_bigben_preview.png` (frame, 256x240, 5 colours)
+- `output/ts2_bigben_preview.png` (frame, 256x240, 6 colours)
 - `output/ts2_world_preview.png` (frame, 256x240, 8 colours)
 - `output/ui_battle_preview.png` (frame, 256x240, 5 colours)
 - `output/ui_dialogue_preview.png` (frame, 256x240, 5 colours)
@@ -894,7 +912,7 @@ Every file below passes every rule that applies to it. A pass is a rules pass on
 | scene | background | verdict | failures | rules | first failure |
 |---|---|---|---|---|---|
 | battle_corridor | `output/bg_battle_corridor_frame.png` | PASS (advisory) | 0 | - | - |
-| battle_corridor | `output/bg_battle_corridor_frame.png` | FAIL (advisory) | 17 | set_member, sprite_tile | sprite colour #fcfcfc ($30) is not in any of the scene's 4 sprite palettes |
+| battle_corridor | `output/bg_battle_corridor_frame.png` | FAIL (advisory) | 216 | set_member, sprite_tile | sprite colour #fcfcfc ($30) is not in any of the scene's 4 sprite palettes |
 | battle_deck_night | `output/bg_battle_deck_night_frame.png` | PASS (advisory) | 0 | - | - |
 | ship | `game/sprites_src/env/ts_ship.png` | PASS (advisory) | 0 | - | - |
 | ship | `output/nes_title_frame.png` | FAIL (advisory) | 245 | body_ground, palette_count, set_member, white_blob | background area 0,16 needs colours $0C $12, which no single background palette carries, so the frame needs a fifth background palette |

@@ -1,0 +1,33 @@
+{
+  "format": "pp-cue-ear-approvals",
+  "version": 1,
+  "card": "t_aa3ab04e",
+  "written": "2026-10-27",
+  "note": "Cues Nayil's ear has already settled. The M4 cue gate must not block one of these: it prints the counts and what he said, and leaves the call where it belongs, which is with him. An entry here is a record of a human verdict, never a machine exemption, and the quote is what he actually said rather than a summary of it. A cue nobody has heard has no entry, so the gate blocks it until the ear or the data answers.",
+  "entries": [
+    {
+      "path": "assets/audio/pp_01_title_v7/pp_01_title_v7.mid",
+      "cue": "PP-01 title, v7",
+      "approved_by": "Nayil's ear",
+      "date": "2026-10-26",
+      "heard": true,
+      "verdict": "a bit dissonant",
+      "quote": "the top-scoring titles (pp_01_title_v7 and v8) \"are a bit dissonant\"",
+      "source": "knowledge/COUNTERPOINT-PLAN-2026-10-26.md lines 3 to 4",
+      "grandfathered": true,
+      "note": "Heard and ruled on before this gate existed. The gate prints its two CP-01 raw clashes at bar 11 beat 1 and stops there: a cue the ear has already judged is not a machine's to block. knowledge/TITLE-DISSONANCE-2026-10-26.md measures the same dissonance from the other side, and pp_01_title_v9 is the repair the critique asked for."
+    },
+    {
+      "path": "assets/audio/pp_01_title_v8/pp_01_title_v8.mid",
+      "cue": "PP-01 title, v8",
+      "approved_by": "Nayil's ear",
+      "date": "2026-10-26",
+      "heard": true,
+      "verdict": "a bit dissonant",
+      "quote": "the top-scoring titles (pp_01_title_v7 and v8) \"are a bit dissonant\"",
+      "source": "knowledge/COUNTERPOINT-PLAN-2026-10-26.md lines 3 to 4",
+      "grandfathered": true,
+      "note": "The pedal build, with the same two raw clashes on a strong beat and the extra raw clashes M0 counted in bars 41 to 48. Grandfathered for the same reason as v7: the ear that is supposed to judge it already has."
+    }
+  ]
+}

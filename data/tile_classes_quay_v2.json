@@ -1,0 +1,498 @@
+{
+  "format": 1,
+  "kind": "tile_classes",
+  "name": "quay_v2",
+  "sheet": "assets/tiles/quay_v2/quay_v2_tiles.png",
+  "columns": 16,
+  "tile_size": 16,
+  "classes": {
+    "^": {
+      "index": 0,
+      "name": "roof_ridge_a",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "r": {
+      "index": 1,
+      "name": "roof_eave_a",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "Q": {
+      "index": 2,
+      "name": "roof_ridge_b",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "q": {
+      "index": 3,
+      "name": "roof_eave_b",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "C": {
+      "index": 4,
+      "name": "chimney_a",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "E": {
+      "index": 5,
+      "name": "chimney_b",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "W": {
+      "index": 6,
+      "name": "wall",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "V": {
+      "index": 7,
+      "name": "wall_boards",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "P": {
+      "index": 8,
+      "name": "pilaster",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "w": {
+      "index": 9,
+      "name": "window_lit",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "x": {
+      "index": 10,
+      "name": "window_dark",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "D": {
+      "index": 11,
+      "name": "door",
+      "solid": false,
+      "walkable": true,
+      "trigger": true,
+      "plane": "props"
+    },
+    "S": {
+      "index": 12,
+      "name": "sign_board",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "above"
+    },
+    "A": {
+      "index": 13,
+      "name": "awning",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "G": {
+      "index": 14,
+      "name": "gable_clock",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "t": {
+      "index": 15,
+      "name": "ticket_window",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "+": {
+      "index": 16,
+      "name": "finial",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "k": {
+      "index": 17,
+      "name": "band_stripe",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    ".": {
+      "index": 18,
+      "name": "open_ground",
+      "solid": false,
+      "walkable": true,
+      "trigger": false,
+      "plane": "ground"
+    },
+    ":": {
+      "index": 19,
+      "name": "paving",
+      "solid": false,
+      "walkable": true,
+      "trigger": false,
+      "plane": "ground"
+    },
+    ",": {
+      "index": 20,
+      "name": "paving_alt",
+      "solid": false,
+      "walkable": true,
+      "trigger": false,
+      "plane": "ground"
+    },
+    ";": {
+      "index": 21,
+      "name": "paving_drain",
+      "solid": false,
+      "walkable": true,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "T": {
+      "index": 22,
+      "name": "tree_canopy_a",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "above"
+    },
+    "Y": {
+      "index": 23,
+      "name": "tree_canopy_b",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "above"
+    },
+    "Z": {
+      "index": 24,
+      "name": "tree_canopy_c",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "above"
+    },
+    "f": {
+      "index": 25,
+      "name": "fence_rail",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "F": {
+      "index": 26,
+      "name": "fence_post",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "*": {
+      "index": 27,
+      "name": "plaza_centrepiece",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "~": {
+      "index": 28,
+      "name": "water_mid",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "_": {
+      "index": 29,
+      "name": "water_deep",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "-": {
+      "index": 30,
+      "name": "water_foam",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "=": {
+      "index": 31,
+      "name": "coping",
+      "solid": false,
+      "walkable": true,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "#": {
+      "index": 32,
+      "name": "quay_wall_face",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "p": {
+      "index": 33,
+      "name": "pier_plank_light",
+      "solid": false,
+      "walkable": true,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "j": {
+      "index": 34,
+      "name": "pier_plank_dark",
+      "solid": false,
+      "walkable": true,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "b": {
+      "index": 35,
+      "name": "bollard",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "props"
+    },
+    "s": {
+      "index": 36,
+      "name": "step_light",
+      "solid": false,
+      "walkable": true,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "e": {
+      "index": 37,
+      "name": "step_mid",
+      "solid": false,
+      "walkable": true,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "u": {
+      "index": 38,
+      "name": "step_dark",
+      "solid": false,
+      "walkable": true,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "|": {
+      "index": 39,
+      "name": "pier_rail",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "L": {
+      "index": 40,
+      "name": "lamp_head",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "above"
+    },
+    "l": {
+      "index": 41,
+      "name": "lamp_pole",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "h": {
+      "index": 42,
+      "name": "bench",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "props"
+    },
+    "v": {
+      "index": 43,
+      "name": "market_counter",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "props"
+    },
+    "o": {
+      "index": 44,
+      "name": "crate",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "props"
+    },
+    "O": {
+      "index": 45,
+      "name": "barrel",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "props"
+    },
+    "X": {
+      "index": 46,
+      "name": "container_blue",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "props"
+    },
+    "I": {
+      "index": 47,
+      "name": "container_green",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "props"
+    },
+    "n": {
+      "index": 48,
+      "name": "tarp_pile",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "props"
+    },
+    "H": {
+      "index": 49,
+      "name": "hull",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "d": {
+      "index": 50,
+      "name": "deck_plank",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "c": {
+      "index": 51,
+      "name": "cabin",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "m": {
+      "index": 52,
+      "name": "mast",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "N": {
+      "index": 53,
+      "name": "funnel",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    ">": {
+      "index": 54,
+      "name": "bow",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "g": {
+      "index": 55,
+      "name": "gangway",
+      "solid": false,
+      "walkable": true,
+      "trigger": false,
+      "plane": "props"
+    },
+    "M": {
+      "index": 56,
+      "name": "crane_mast",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "J": {
+      "index": 57,
+      "name": "crane_jib",
+      "solid": false,
+      "walkable": false,
+      "trigger": false,
+      "plane": "above"
+    },
+    "U": {
+      "index": 58,
+      "name": "crane_hook",
+      "solid": false,
+      "walkable": false,
+      "trigger": false,
+      "plane": "above"
+    },
+    "K": {
+      "index": 59,
+      "name": "crane_base",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "Λ": {
+      "index": 60,
+      "name": "lighthouse_gallery",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    }
+  }
+}

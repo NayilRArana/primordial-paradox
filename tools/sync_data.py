@@ -54,6 +54,12 @@ NOT_RUNTIME = frozenset({
     # judge prompt in data\talk\. Keep it here until a card wires a persona scene into GML; that card moves this
     # line out and lets the mirror carry the file, and tests\test_talk_personas.py names both halves.
     "talk_personas.json",
+    # talk_personas_bake.json is the report tools/bake_personas.py writes about its own run (card t_acae7c0a,
+    # spec 21 section 11): which line went where, what came back, and which cache file replays it. That tool's
+    # --check and tests\test_talk_personas.py read it; the game does not, because a persona answer is replayed
+    # through the bridge's cache over loopback, not out of the bundle. Mirroring it put a tool report with a
+    # card number and a bake timestamp inside the build, so it stays here.
+    "talk_personas_bake.json",
     # audio_cues_source.json is the cue table's source rows, copied inside the game so the audio tests
     # read only files inside the project (card t_a6fb94f8, manager decision A on t_41553cc5). No GML
     # module names it and no loader opens it: the runtime table is data\audio.json, which pp_data loads
@@ -81,9 +87,14 @@ NOT_RUNTIME = frozenset({
 #
 # authoring/ holds dormant scene drafts and their flag handoffs (card t_31079972). PP-SCENES-WIRE merges the
 # approved rows into the live registries. Mirroring them before that merge would add unregistered Included Files.
+#
+# ai_bake_open/ holds the baked open-weights talk replies (card t_354f4e8a, data/ai_bake_open/replies.json).
+# The bridge's offline rung reads it by path over loopback, exactly like ai_cache/, and no GML names it, so it
+# stays out of the bundle for the same reason as the recorded cache.
 NOT_RUNTIME_DIRS = (
     "schemas/",
     "ai_cache/",
+    "ai_bake_open/",
     "talk/",
     "authoring/",
 )

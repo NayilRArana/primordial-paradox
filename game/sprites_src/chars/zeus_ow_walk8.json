@@ -1,0 +1,21 @@
+{
+  "name": "zeus_ow_walk8",
+  "frame_w": 16,
+  "frame_h": 24,
+  "frames": 16,
+  "fps": 6.0,
+  "art_style": "B, late NES polish (card t_fa15f496)",
+  "directions": [
+    "down",
+    "down_left",
+    "left",
+    "up_left",
+    "up",
+    "up_right",
+    "right",
+    "down_right"
+  ],
+  "frames_per_direction": 2,
+  "layout": "one row, direction major: frame = direction_index * 2 + step, step 0 stands",
+  "for_card": "t_1741b1bf (free movement, 8 directions)"
+}

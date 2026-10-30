@@ -1,0 +1,323 @@
+{
+  "room": "southampton_town_quay",
+  "source": "OpenStreetMap contributors, ODbL 1.0, https://www.openstreetmap.org/copyright",
+  "extract": "data/maps/osm/southampton_town_quay_base.json (the OSM traced room, 53 by 56 at 8 m a tile) is the source of street order and landmark order; the v2 room redraws it from the style guide (Part D)",
+  "not_used": "No Google Maps data, tiles, imagery or screenshots.",
+  "design_notes": "v2 (2026-10-27): street graph order, landmark order and names kept from OSM; every building is a clean archetype, streets are widened to the standard classes, the shore is one straight quay with a pier, steps and a gangway. The layout is tools/quay_town_layout.txt, started from Appendix A of knowledge/MAP-STYLE-GUIDE.md.",
+  "v1_osm_doors": {
+    "(11,0)": "Southampton Register Office",
+    "(8,5)": "Dancing Man",
+    "(51,5)": "Oceana Boulevard",
+    "(26,6)": "Telephone House",
+    "(1,11)": "Kuti's Brasserie",
+    "(10,20)": "Red Funnel Terminal 1",
+    "(23,22)": "Playhouse (not named on screen)",
+    "(18,25)": "Town Quay Offices"
+  },
+  "v1_osm_landmarks": [
+    {
+      "name": "Canute's Palace",
+      "way": 262730631,
+      "tile": [
+        19,
+        11
+      ],
+      "sign_tile": [
+        19,
+        14
+      ],
+      "approach_tile": [
+        19,
+        15
+      ]
+    },
+    {
+      "name": "The Watergate Ruin",
+      "way": 262730624,
+      "tile": [
+        21,
+        14
+      ],
+      "sign_tile": [
+        21,
+        15
+      ],
+      "approach_tile": [
+        21,
+        16
+      ]
+    },
+    {
+      "name": "St. Julians Chapel",
+      "way": 183691408,
+      "tile": [
+        29,
+        17
+      ],
+      "sign_tile": [
+        29,
+        20
+      ],
+      "approach_tile": [
+        29,
+        21
+      ]
+    },
+    {
+      "name": "God's House Tower",
+      "way": 519439070,
+      "tile": [
+        39,
+        20
+      ],
+      "sign_tile": [
+        39,
+        20
+      ],
+      "approach_tile": [
+        39,
+        21
+      ]
+    },
+    {
+      "name": "Southampton Old Bowling Green",
+      "way": 30476350,
+      "tile": [
+        43,
+        12
+      ],
+      "sign_tile": [
+        41,
+        15
+      ],
+      "approach_tile": [
+        41,
+        16
+      ]
+    }
+  ],
+  "v2": {
+    "layout": "tools/quay_town_layout.txt",
+    "generator": "tools/make_quay_town.py",
+    "tiles": "assets/tiles/quay_v2/quay_v2_tiles.png with data/tile_classes_quay_v2.json (glyph = tile character)",
+    "streets": "arrival street 4 wide runs north to south into the north lane (3 wide, east to west); a 4 wide gate passage and two 4 wide alleys carry the lane down to the quay road (4 wide, along the water); the forecourt, the coping and the pier follow, as in the OSM order road, terminal, quay, pier",
+    "osm_link": {
+      "osm_frame": [
+        53,
+        56
+      ],
+      "layout_frame": [
+        48,
+        45
+      ],
+      "compression": "x * 47 / 52, y * 44 / 55, rounded",
+      "landmarks": [
+        {
+          "name": "Southampton Register Office",
+          "archetype": "A1",
+          "osm_door_tile": [
+            11,
+            0
+          ],
+          "osm_compressed_tile": [
+            10,
+            0
+          ],
+          "layout_door_tile": [
+            9,
+            7
+          ],
+          "distance_tiles": 8
+        },
+        {
+          "name": "Kuti's Brasserie",
+          "archetype": "A3",
+          "osm_door_tile": [
+            1,
+            11
+          ],
+          "osm_compressed_tile": [
+            1,
+            9
+          ],
+          "layout_door_tile": [
+            15,
+            7
+          ],
+          "distance_tiles": 16
+        },
+        {
+          "name": "Oceana Boulevard",
+          "archetype": "A1",
+          "osm_door_tile": [
+            51,
+            5
+          ],
+          "osm_compressed_tile": [
+            46,
+            4
+          ],
+          "layout_door_tile": [
+            42,
+            7
+          ],
+          "distance_tiles": 7
+        },
+        {
+          "name": "Dancing Man (Wool House)",
+          "archetype": "A9",
+          "osm_door_tile": [
+            8,
+            5
+          ],
+          "osm_compressed_tile": [
+            7,
+            4
+          ],
+          "layout_door_tile": [
+            4,
+            14
+          ],
+          "distance_tiles": 13
+        },
+        {
+          "name": "Telephone House",
+          "archetype": "A6",
+          "osm_door_tile": [
+            26,
+            6
+          ],
+          "osm_compressed_tile": [
+            24,
+            5
+          ],
+          "layout_door_tile": [
+            13,
+            14
+          ],
+          "distance_tiles": 20
+        },
+        {
+          "name": "Red Funnel Terminal 1",
+          "archetype": "A5",
+          "osm_door_tile": [
+            10,
+            20
+          ],
+          "osm_compressed_tile": [
+            9,
+            16
+          ],
+          "layout_door_tile": [
+            23,
+            16
+          ],
+          "distance_tiles": 14
+        },
+        {
+          "name": "Playhouse",
+          "archetype": "A4",
+          "osm_door_tile": [
+            23,
+            22
+          ],
+          "osm_compressed_tile": [
+            21,
+            18
+          ],
+          "layout_door_tile": [
+            37,
+            25
+          ],
+          "distance_tiles": 23
+        },
+        {
+          "name": "Town Quay Offices",
+          "archetype": "A6",
+          "osm_door_tile": [
+            18,
+            25
+          ],
+          "osm_compressed_tile": [
+            16,
+            20
+          ],
+          "layout_door_tile": [
+            30,
+            25
+          ],
+          "distance_tiles": 19
+        }
+      ]
+    },
+    "dropped_to_props": [
+      "Canute's Palace",
+      "The Watergate Ruin",
+      "Old Bowling Green",
+      "Red Jet ticket office (the terminal's ticket windows)"
+    ],
+    "landmark_roles": {
+      "St Julians Chapel": "the chapel A8 at the head of the arrival street (door 29,7)",
+      "God's House Tower": "the tower A7 at the west end of the quay (door 3,28)",
+      "Town Quay pier": "the boarding pier A10 on the axis x22..24",
+      "Red Funnel Terminal 1": "the terminal A5"
+    },
+    "anchors": {
+      "spawns": {
+        "start": {
+          "x": 24,
+          "y": 1
+        },
+        "from_gate": {
+          "x": 8,
+          "y": 10
+        },
+        "from_office": {
+          "x": 30,
+          "y": 26
+        },
+        "from_pier": {
+          "x": 23,
+          "y": 39
+        }
+      },
+      "dock_office_door": {
+        "x": 30,
+        "y": 25,
+        "kind": "map",
+        "id": "quay_dock_office",
+        "spawn": "from_quay",
+        "once": false,
+        "condition": ""
+      },
+      "boarding_triggers": [
+        {
+          "x": 23,
+          "y": 40,
+          "kind": "map",
+          "id": "ship_small",
+          "spawn": "start",
+          "once": false,
+          "condition": ""
+        },
+        {
+          "x": 24,
+          "y": 40,
+          "kind": "map",
+          "id": "ship_small",
+          "spawn": "start",
+          "once": false,
+          "condition": ""
+        }
+      ],
+      "fight_spots": [
+        {
+          "id": "dock_petty_officer",
+          "x": 30,
+          "y": 27
+        }
+      ]
+    },
+    "changes_against_appendix_a": 323
+  }
+}

@@ -47,6 +47,12 @@ CHARS_SRC = os.path.join(ROOT, "game", "sprites_src", "chars")
 # because it is one set of its own and the art lane keeps its generator and its TILES.md page with it. The mirror
 # therefore reads that subfolder too, so a set written there still reaches the build with no hand copy.
 ENV_QUAY_SRC = os.path.join(ENV_SRC, "quay")
+# Card ART-B-MAPS (t_d0566ebc): the three places of the new scenes keep the same one set, one folder rule as the quay,
+# so each is named here beside ENV_QUAY_SRC. The mirror reads folders, not the tree, so a set in an unnamed subfolder
+# would ship its page and its sidecar and none of its pixels.
+ENV_HALLS_SRC = os.path.join(ENV_SRC, "halls")
+ENV_STREET_SRC = os.path.join(ENV_SRC, "street")
+ENV_QUAY_STORM_SRC = os.path.join(ENV_SRC, "quay_storm")
 # Card t_af836a62: the drive tile set (DRIVE-TILES, t_d0e73725) is written into assets\tiles\drive\ and its own TILES.md
 # fixes that as the place to look, so the map row that names drive_tiles reaches the build from here. The sheet stays
 # where its card put it: this mirror reads the card's folder rather than the card moving its sheet into sprites_src.
@@ -62,7 +68,8 @@ ENEMY_SRC = os.path.join(ROOT, "game", "sprites_src", "enemies")
 # game\sprites_src\weapons\. They are mirrored like every other animation, so the battle screen asks for
 # pp_art_has("spr_pp_knife") and gets a frame count instead of a hardcoded path.
 WEAPON_SRC = os.path.join(ROOT, "game", "sprites_src", "weapons")
-SOURCES = (SRC, ENV_SRC, CHARS_SRC, ENV_QUAY_SRC, DRIVE_SRC, BG_SRC, ENEMY_SRC, WEAPON_SRC)
+SOURCES = (SRC, ENV_SRC, CHARS_SRC, ENV_QUAY_SRC, ENV_HALLS_SRC, ENV_STREET_SRC, ENV_QUAY_STORM_SRC,
+           DRIVE_SRC, BG_SRC, ENEMY_SRC, WEAPON_SRC)
 DST = os.path.join(ROOT, "game", "datafiles", "art")
 INDEX = "title_manifest.json"
 

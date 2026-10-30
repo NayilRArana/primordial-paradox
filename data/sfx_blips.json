@@ -1,0 +1,128 @@
+{
+  "format": 1,
+  "kind": "sfx_blips",
+  "spec": "specs/12-audio.md",
+  "notes": [
+    "PP-BLIPS (card t_c9232c57, musician). The speaker to blip map a talk box reads. The game side is a separate gamedev card: nothing in game/ was edited here, and pp_audio_blip_cue still answers text_blip_a, text_blip_b and text_blip_c until that card lands.",
+    "Every id in this file is a row in data/audio.json and a file in assets/audio/sfx, so a wiring that reads this map cannot name a sound the build does not ship. tests/test_sfx.py holds both halves.",
+    "letters_per_blip is 2, which is the card's number and NOT spec 12 rule 6 (three) or spec 05 rule 3 (three). The map is the card's number; the spec is Nayil's to change, and the gamedev card is the place the two numbers become one.",
+    "never_on lists the characters that may never blip. A space is already skipped by game/scripts/pp_text/pp_text.gml line 150, so this list records the rule rather than adding it.",
+    "Punctuation still blips. The reveal holds the text at a comma and a full stop, and the blip fires on the character that was just revealed, so a comma blips once before the pause.",
+    "Aliases exist because the dialogue data's speaker strings are lowercase and do not all match the five voices the card names: narrator 51 lines, guard 9, percy 8, clerk 3, sailor 2, prometheus 1, hound 1, measured 2026-10-26 in data/dialogue, data/talk and data/talk_cards.json. The old game mapping sent sailor and prometheus to text_blip_b, percy to text_blip_c and everything else to text_blip_a.",
+    "Q: for gamedev, which existing speaker string is Zeus, which is Kronos, and which is the old man. No string in the data matches those three today, so their voices are built, registered and unassigned; the alias table's choices are proposals with a reason each, not story decisions."
+  ],
+  "letters_per_blip": 2,
+  "never_on": [" "],
+  "default": "text_blip_narrator",
+  "speakers": [
+    {
+      "speaker": "zeus",
+      "name": "Zeus (Zander Skye)",
+      "blip": "text_blip_zeus",
+      "timbre": "mid square",
+      "pitch_midi": 69,
+      "pitch": "A4",
+      "voices": ["pulse_25"],
+      "length_seconds": 0.07,
+      "volume": 0.9,
+      "why": "A mid register and a 25 percent duty: the plainest of the five, because he is the one who talks most in the party scenes."
+    },
+    {
+      "speaker": "kronos",
+      "name": "Kronos (Konrad Skye)",
+      "blip": "text_blip_kronos",
+      "timbre": "low triangle with slight delay",
+      "pitch_midi": 45,
+      "pitch": "A2",
+      "voices": ["triangle"],
+      "length_seconds": 0.2,
+      "volume": 0.9,
+      "delay_ms": 40,
+      "delay_gain": 0.45,
+      "why": "Two octaves under Zeus and on the chip's only triangle, with its own 40 ms repeat: the delay is inside the file, so the bus needs no per speaker timing, which would be a game script change."
+    },
+    {
+      "speaker": "percy",
+      "name": "Lt. Percy",
+      "blip": "text_blip_percy",
+      "timbre": "harsh noise burst",
+      "pitch_midi": null,
+      "pitch": "noise, 420 to 1500 cycles",
+      "voices": ["noise_short", "pulse_50"],
+      "length_seconds": 0.085,
+      "volume": 0.9,
+      "why": "The only blip made of noise. On a small speaker it is the one that can still be told apart after the pulses have all blurred together."
+    },
+    {
+      "speaker": "old_man",
+      "name": "the old man",
+      "blip": "text_blip_oldman",
+      "timbre": "soft high square",
+      "pitch_midi": 88,
+      "pitch": "E6",
+      "voices": ["pulse_50"],
+      "length_seconds": 0.075,
+      "volume": 0.55,
+      "why": "A high 50 percent square with a 6 ms attack instead of 2, and the row plays it at 0.55: soft is an attack and a level, since every file is normalised to the same peak."
+    },
+    {
+      "speaker": "narrator",
+      "name": "narrator",
+      "blip": "text_blip_narrator",
+      "timbre": "neutral tick",
+      "pitch_midi": 64,
+      "pitch": "E4",
+      "voices": ["pulse_12.5"],
+      "length_seconds": 0.055,
+      "volume": 0.9,
+      "why": "The driest of the five: 12.5 percent duty, 55 ms, a 12 ms decay. It is also the default, so an unwired speaker is neutral rather than wrong."
+    }
+  ],
+  "aliases": [
+    {
+      "alias": "narrator",
+      "speaker": "narrator",
+      "why": "The same word, kept explicit so a reader can see it is mapped rather than defaulted."
+    },
+    {
+      "alias": "guard",
+      "speaker": "narrator",
+      "why": "A nameless guard gets the neutral tick: the card names five voices and none of them is a guard."
+    },
+    {
+      "alias": "clerk",
+      "speaker": "narrator",
+      "why": "Same reason as guard: a one scene speaker, no voice of his own in the card."
+    },
+    {
+      "alias": "sailor",
+      "speaker": "narrator",
+      "why": "Was text_blip_b in pp_audio_blip_cue. A sailor is a crowd voice, so the neutral tick is closer than borrowing Zeus's."
+    },
+    {
+      "alias": "hound",
+      "speaker": "narrator",
+      "why": "A dog that prints text is the narrator's joke, not a voice; the neutral tick keeps it dry."
+    },
+    {
+      "alias": "prometheus",
+      "speaker": "kronos",
+      "why": "A Titan, so the low triangle rather than the neutral tick. Proposal only: the card did not name him, and Q above asks gamedev to rule."
+    },
+    {
+      "alias": "percy",
+      "speaker": "percy",
+      "why": "The one string the card and the dialogue data agree on."
+    }
+  ],
+  "feel_sounds": [
+    { "role": "footstep_left", "id": "footstep_a", "volume": 0.35, "alternates_with": "footstep_right" },
+    { "role": "footstep_right", "id": "footstep_b", "volume": 0.35, "alternates_with": "footstep_left" },
+    { "role": "menu_move", "id": "menu_move", "volume": 0.9 },
+    { "role": "menu_confirm", "id": "menu_select", "volume": 0.9 },
+    { "role": "knife_slash", "id": "knife_slash", "volume": 0.9 },
+    { "role": "hit", "id": "hit_light", "volume": 0.9 },
+    { "role": "door", "id": "door_hatch", "volume": 0.9 },
+    { "role": "item_pickup", "id": "item_get", "volume": 0.9 }
+  ]
+}

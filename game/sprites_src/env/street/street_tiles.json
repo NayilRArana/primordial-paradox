@@ -1,0 +1,1225 @@
+{
+  "format": 1,
+  "kind": "tileset",
+  "name": "street_tiles",
+  "image": "street_tiles.png",
+  "card": "ART-B-MAPS (t_d0566ebc)",
+  "direction": "B, late NES polish: bold dark outlines, three tone shading lit from the top left",
+  "columns": 8,
+  "rows": 6,
+  "frames": 42,
+  "frame_w": 16,
+  "frame_h": 16,
+  "imagewidth": 128,
+  "imageheight": 96,
+  "tilecount": 42,
+  "tile_size": 16,
+  "margin": 0,
+  "spacing": 0,
+  "backdrop": {
+    "role": "ink",
+    "entry": 15,
+    "hex": "#000000"
+  },
+  "rule": "NES: one shared backdrop $0F, four background palettes of three entries, a 16x16 area carries at most three colours besides the backdrop, at most 25 colours on screen; every pixel is a 2C02 output and the tool refuses anything else",
+  "map": "southampton_high_street",
+  "room_palette": "street_rain",
+  "roles": {
+    "blood_3": {
+      "entry": 7,
+      "hex": "#881400",
+      "why": "$07 #881400, the dark brick face and iron after dark"
+    },
+    "blood_4": {
+      "entry": 23,
+      "hex": "#e45c10",
+      "why": "$17 #e45c10, the brick face under the lamp and painted rail"
+    },
+    "gold_2": {
+      "entry": 24,
+      "hex": "#ac7c00",
+      "why": "$18 #ac7c00, the olive gold of a board in the middle of its ramp"
+    },
+    "gold_4": {
+      "entry": 40,
+      "hex": "#f8b800",
+      "why": "$28 #f8b800, pale gold: a lit board and lamp glass"
+    },
+    "gold_5": {
+      "entry": 56,
+      "hex": "#f8d878",
+      "why": "$38 #f8d878, the hot core of a window and lit lettering"
+    },
+    "grey_3": {
+      "entry": 45,
+      "hex": "#787878",
+      "why": "$2D #787878, the darker neutral the road's tarmac spends"
+    },
+    "grey_4": {
+      "entry": 0,
+      "hex": "#7c7c7c",
+      "why": "$00 #7c7c7c, the one neutral mid grey in the 2C02: plaster in shade and wet stone"
+    },
+    "grey_5": {
+      "entry": 16,
+      "hex": "#bcbcbc",
+      "why": "$10 #bcbcbc, the lighter neutral: lit plaster and a wet slab's sheen"
+    },
+    "ink": {
+      "entry": 15,
+      "hex": "#000000",
+      "why": "the canonical black $0F, the shared backdrop of every area"
+    },
+    "paper": {
+      "entry": 32,
+      "hex": "#f8f8f8",
+      "why": "$20 #f8f8f8, the white of a mullion, lane paint and a shirt"
+    },
+    "sea_1": {
+      "entry": 12,
+      "hex": "#004058",
+      "why": "$0C #004058, the darkest cool output: joints, shadow, deep water"
+    },
+    "sea_2": {
+      "entry": 28,
+      "hex": "#008888",
+      "why": "$1C #008888, the harbour's mid swell"
+    },
+    "sea_3": {
+      "entry": 33,
+      "hex": "#3cbcfc",
+      "why": "$21 #3cbcfc, azure: the shaded sky in a window"
+    },
+    "sea_4": {
+      "entry": 49,
+      "hex": "#a4e4fc",
+      "why": "$31 #a4e4fc, pale azure: the lit sky in a window"
+    },
+    "stone_2": {
+      "entry": 8,
+      "hex": "#503000",
+      "why": "$08 #503000, the brown one step under brick: mortar, joints, dark wood"
+    }
+  },
+  "sets": {
+    "street_rain": {
+      "roles": [
+        "ink",
+        "paper",
+        "dim",
+        "text",
+        "grey_3",
+        "grey_4",
+        "grey_5",
+        "sea_1",
+        "blood_3",
+        "blood_4",
+        "stone_2",
+        "sea_3",
+        "sea_4"
+      ],
+      "note": "the high street in the rain: wet stone, brick frontage, a wet road and two lit windows"
+    }
+  },
+  "palettes": [
+    {
+      "name": "bg0_street_stone",
+      "roles": [
+        "grey_4",
+        "grey_5",
+        "sea_1"
+      ],
+      "ramp": [
+        "sea_1",
+        "grey_4",
+        "grey_5"
+      ],
+      "entries": [
+        0,
+        16,
+        12
+      ],
+      "hex": [
+        "#7c7c7c",
+        "#bcbcbc",
+        "#004058"
+      ],
+      "note": "wet paving and the kerb, with the puddles in the same cool ramp"
+    },
+    {
+      "name": "bg1_street_brick",
+      "roles": [
+        "blood_3",
+        "stone_2",
+        "blood_4"
+      ],
+      "ramp": [
+        "stone_2",
+        "blood_3",
+        "blood_4"
+      ],
+      "entries": [
+        7,
+        8,
+        23
+      ],
+      "hex": [
+        "#881400",
+        "#503000",
+        "#e45c10"
+      ],
+      "note": "the brick frontage, its mortar, doors and the wood of a shop front"
+    },
+    {
+      "name": "bg2_street_glass",
+      "roles": [
+        "sea_3",
+        "sea_4",
+        "paper"
+      ],
+      "ramp": [
+        "sea_3",
+        "sea_4",
+        "paper"
+      ],
+      "entries": [
+        33,
+        49,
+        32
+      ],
+      "hex": [
+        "#3cbcfc",
+        "#a4e4fc",
+        "#f8f8f8"
+      ],
+      "note": "shop windows and the sky above the roofline"
+    },
+    {
+      "name": "bg3_street_road",
+      "roles": [
+        "grey_3",
+        "grey_5",
+        "paper"
+      ],
+      "ramp": [
+        "grey_3",
+        "grey_5",
+        "paper"
+      ],
+      "entries": [
+        45,
+        16,
+        32
+      ],
+      "hex": [
+        "#787878",
+        "#bcbcbc",
+        "#f8f8f8"
+      ],
+      "note": "the road: tarmac, wet kerb sheen and lane paint in paper"
+    }
+  ],
+  "tiles": [
+    {
+      "index": 0,
+      "name": "street_00",
+      "character": "0",
+      "palette": "bg1_street_brick",
+      "roles": [
+        "blood_3",
+        "blood_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        0,
+        0
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "blood_4",
+        "lightest_share_percent": 44.9,
+        "rows_without_dark": 10,
+        "horizontal_dark_runs": 7,
+        "interior_dark_pixels": 43
+      }
+    },
+    {
+      "index": 1,
+      "name": "street_01",
+      "character": "1",
+      "palette": "bg1_street_brick",
+      "roles": [
+        "blood_3",
+        "blood_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        1,
+        0
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "blood_4",
+        "lightest_share_percent": 62.5,
+        "rows_without_dark": 12,
+        "horizontal_dark_runs": 4,
+        "interior_dark_pixels": 42
+      }
+    },
+    {
+      "index": 2,
+      "name": "street_02",
+      "character": "2",
+      "palette": "bg1_street_brick",
+      "roles": [
+        "blood_3",
+        "blood_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        2,
+        0
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "blood_4",
+        "lightest_share_percent": 63.3,
+        "rows_without_dark": 12,
+        "horizontal_dark_runs": 5,
+        "interior_dark_pixels": 40
+      }
+    },
+    {
+      "index": 3,
+      "name": "street_03",
+      "character": "3",
+      "palette": "bg1_street_brick",
+      "roles": [
+        "blood_3",
+        "blood_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        3,
+        0
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "blood_4",
+        "lightest_share_percent": 43.8,
+        "rows_without_dark": 10,
+        "horizontal_dark_runs": 6,
+        "interior_dark_pixels": 44
+      }
+    },
+    {
+      "index": 4,
+      "name": "street_04",
+      "character": "4",
+      "palette": "bg0_street_stone",
+      "roles": [
+        "grey_4",
+        "grey_5",
+        "sea_1"
+      ],
+      "first_cell": [
+        4,
+        0
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "grey_5",
+        "lightest_share_percent": 7.0,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 16,
+        "interior_dark_pixels": 0
+      }
+    },
+    {
+      "index": 5,
+      "name": "street_05",
+      "character": "5",
+      "palette": "bg0_street_stone",
+      "roles": [
+        "grey_4",
+        "grey_5",
+        "sea_1"
+      ],
+      "first_cell": [
+        5,
+        0
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "grey_5",
+        "lightest_share_percent": 19.1,
+        "rows_without_dark": 15,
+        "horizontal_dark_runs": 1,
+        "interior_dark_pixels": 0
+      }
+    },
+    {
+      "index": 6,
+      "name": "street_06",
+      "character": "6",
+      "palette": "bg3_street_road",
+      "roles": [
+        "grey_3",
+        "grey_5",
+        "paper"
+      ],
+      "first_cell": [
+        6,
+        0
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "paper",
+        "lightest_share_percent": 13.7,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 16,
+        "interior_dark_pixels": 14
+      }
+    },
+    {
+      "index": 7,
+      "name": "street_07",
+      "character": "7",
+      "palette": "bg3_street_road",
+      "roles": [
+        "grey_5",
+        "paper"
+      ],
+      "first_cell": [
+        7,
+        0
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 2,
+        "lightest_role": "paper",
+        "lightest_share_percent": 13.7,
+        "rows_without_dark": 16,
+        "horizontal_dark_runs": 0,
+        "interior_dark_pixels": 0
+      }
+    },
+    {
+      "index": 8,
+      "name": "street_08",
+      "character": "8",
+      "palette": "bg3_street_road",
+      "roles": [
+        "grey_5",
+        "paper"
+      ],
+      "first_cell": [
+        8,
+        0
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 2,
+        "lightest_role": "paper",
+        "lightest_share_percent": 13.3,
+        "rows_without_dark": 16,
+        "horizontal_dark_runs": 0,
+        "interior_dark_pixels": 0
+      }
+    },
+    {
+      "index": 9,
+      "name": "street_09",
+      "character": "9",
+      "palette": "bg3_street_road",
+      "roles": [
+        "grey_3",
+        "grey_5",
+        "paper"
+      ],
+      "first_cell": [
+        9,
+        0
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "paper",
+        "lightest_share_percent": 13.7,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 16,
+        "interior_dark_pixels": 14
+      }
+    },
+    {
+      "index": 10,
+      "name": "street_10",
+      "character": "a",
+      "palette": "bg0_street_stone",
+      "roles": [
+        "grey_4",
+        "grey_5",
+        "sea_1"
+      ],
+      "first_cell": [
+        10,
+        0
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "grey_5",
+        "lightest_share_percent": 19.1,
+        "rows_without_dark": 15,
+        "horizontal_dark_runs": 1,
+        "interior_dark_pixels": 0
+      }
+    },
+    {
+      "index": 11,
+      "name": "street_11",
+      "character": "b",
+      "palette": "bg0_street_stone",
+      "roles": [
+        "grey_4",
+        "grey_5",
+        "sea_1"
+      ],
+      "first_cell": [
+        11,
+        0
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "grey_5",
+        "lightest_share_percent": 7.0,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 16,
+        "interior_dark_pixels": 0
+      }
+    },
+    {
+      "index": 12,
+      "name": "street_12",
+      "character": "c",
+      "palette": "bg1_street_brick",
+      "roles": [
+        "blood_3",
+        "blood_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        0,
+        1
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "blood_4",
+        "lightest_share_percent": 26.2,
+        "rows_without_dark": 8,
+        "horizontal_dark_runs": 8,
+        "interior_dark_pixels": 44
+      }
+    },
+    {
+      "index": 13,
+      "name": "street_13",
+      "character": "d",
+      "palette": "bg2_street_glass",
+      "roles": [
+        "paper",
+        "sea_4"
+      ],
+      "first_cell": [
+        1,
+        1
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 2,
+        "lightest_role": "paper",
+        "lightest_share_percent": 60.2,
+        "rows_without_dark": 16,
+        "horizontal_dark_runs": 0,
+        "interior_dark_pixels": 0
+      }
+    },
+    {
+      "index": 14,
+      "name": "street_14",
+      "character": "e",
+      "palette": "bg2_street_glass",
+      "roles": [
+        "paper",
+        "sea_4"
+      ],
+      "first_cell": [
+        2,
+        1
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 2,
+        "lightest_role": "paper",
+        "lightest_share_percent": 30.1,
+        "rows_without_dark": 16,
+        "horizontal_dark_runs": 0,
+        "interior_dark_pixels": 0
+      }
+    },
+    {
+      "index": 15,
+      "name": "street_15",
+      "character": "f",
+      "palette": "bg1_street_brick",
+      "roles": [
+        "blood_3",
+        "blood_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        3,
+        1
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "blood_4",
+        "lightest_share_percent": 44.1,
+        "rows_without_dark": 9,
+        "horizontal_dark_runs": 8,
+        "interior_dark_pixels": 43
+      }
+    },
+    {
+      "index": 16,
+      "name": "street_16",
+      "character": "g",
+      "palette": "bg0_street_stone",
+      "roles": [
+        "grey_4",
+        "grey_5",
+        "sea_1"
+      ],
+      "first_cell": [
+        5,
+        1
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "grey_5",
+        "lightest_share_percent": 23.4,
+        "rows_without_dark": 7,
+        "horizontal_dark_runs": 14,
+        "interior_dark_pixels": 74
+      }
+    },
+    {
+      "index": 17,
+      "name": "street_17",
+      "character": "h",
+      "palette": "bg1_street_brick",
+      "roles": [
+        "blood_3",
+        "blood_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        12,
+        1
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "blood_4",
+        "lightest_share_percent": 44.9,
+        "rows_without_dark": 9,
+        "horizontal_dark_runs": 7,
+        "interior_dark_pixels": 44
+      }
+    },
+    {
+      "index": 18,
+      "name": "street_18",
+      "character": "i",
+      "palette": "bg2_street_glass",
+      "roles": [
+        "paper",
+        "sea_4"
+      ],
+      "first_cell": [
+        13,
+        1
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 2,
+        "lightest_role": "paper",
+        "lightest_share_percent": 29.3,
+        "rows_without_dark": 16,
+        "horizontal_dark_runs": 0,
+        "interior_dark_pixels": 0
+      }
+    },
+    {
+      "index": 19,
+      "name": "street_19",
+      "character": "j",
+      "palette": "bg2_street_glass",
+      "roles": [
+        "paper",
+        "sea_4"
+      ],
+      "first_cell": [
+        14,
+        1
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 2,
+        "lightest_role": "paper",
+        "lightest_share_percent": 61.3,
+        "rows_without_dark": 16,
+        "horizontal_dark_runs": 0,
+        "interior_dark_pixels": 0
+      }
+    },
+    {
+      "index": 20,
+      "name": "street_20",
+      "character": "k",
+      "palette": "bg1_street_brick",
+      "roles": [
+        "blood_3",
+        "blood_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        15,
+        1
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "blood_4",
+        "lightest_share_percent": 25.4,
+        "rows_without_dark": 8,
+        "horizontal_dark_runs": 9,
+        "interior_dark_pixels": 43
+      }
+    },
+    {
+      "index": 21,
+      "name": "street_21",
+      "character": "l",
+      "palette": "bg1_street_brick",
+      "roles": [
+        "blood_3",
+        "blood_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        0,
+        2
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "blood_4",
+        "lightest_share_percent": 26.2,
+        "rows_without_dark": 8,
+        "horizontal_dark_runs": 8,
+        "interior_dark_pixels": 44
+      }
+    },
+    {
+      "index": 22,
+      "name": "street_22",
+      "character": "m",
+      "palette": "bg1_street_brick",
+      "roles": [
+        "blood_3",
+        "blood_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        3,
+        2
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "blood_4",
+        "lightest_share_percent": 43.4,
+        "rows_without_dark": 2,
+        "horizontal_dark_runs": 26,
+        "interior_dark_pixels": 39
+      }
+    },
+    {
+      "index": 23,
+      "name": "street_23",
+      "character": "n",
+      "palette": "bg3_street_road",
+      "roles": [
+        "grey_3",
+        "grey_5",
+        "paper"
+      ],
+      "first_cell": [
+        6,
+        2
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "paper",
+        "lightest_share_percent": 18.0,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 18,
+        "interior_dark_pixels": 75
+      }
+    },
+    {
+      "index": 24,
+      "name": "street_24",
+      "character": "o",
+      "palette": "bg0_street_stone",
+      "roles": [
+        "grey_5"
+      ],
+      "first_cell": [
+        7,
+        2
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 1,
+        "lightest_role": "grey_5",
+        "lightest_share_percent": 100.0,
+        "rows_without_dark": 16,
+        "horizontal_dark_runs": 0,
+        "interior_dark_pixels": 0
+      }
+    },
+    {
+      "index": 25,
+      "name": "street_25",
+      "character": "p",
+      "palette": "bg1_street_brick",
+      "roles": [
+        "blood_3",
+        "blood_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        12,
+        2
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "blood_4",
+        "lightest_share_percent": 42.6,
+        "rows_without_dark": 2,
+        "horizontal_dark_runs": 27,
+        "interior_dark_pixels": 40
+      }
+    },
+    {
+      "index": 26,
+      "name": "street_26",
+      "character": "q",
+      "palette": "bg1_street_brick",
+      "roles": [
+        "blood_3",
+        "blood_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        15,
+        2
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "blood_4",
+        "lightest_share_percent": 25.4,
+        "rows_without_dark": 8,
+        "horizontal_dark_runs": 9,
+        "interior_dark_pixels": 43
+      }
+    },
+    {
+      "index": 27,
+      "name": "street_27",
+      "character": "r",
+      "palette": "bg1_street_brick",
+      "roles": [
+        "blood_3",
+        "blood_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        1,
+        3
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "blood_4",
+        "lightest_share_percent": 51.6,
+        "rows_without_dark": 5,
+        "horizontal_dark_runs": 19,
+        "interior_dark_pixels": 24
+      }
+    },
+    {
+      "index": 28,
+      "name": "street_28",
+      "character": "s",
+      "palette": "bg1_street_brick",
+      "roles": [
+        "blood_3",
+        "blood_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        2,
+        3
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "blood_4",
+        "lightest_share_percent": 52.3,
+        "rows_without_dark": 5,
+        "horizontal_dark_runs": 19,
+        "interior_dark_pixels": 24
+      }
+    },
+    {
+      "index": 29,
+      "name": "street_29",
+      "character": "t",
+      "palette": "bg1_street_brick",
+      "roles": [
+        "blood_3",
+        "blood_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        3,
+        3
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "blood_4",
+        "lightest_share_percent": 43.8,
+        "rows_without_dark": 2,
+        "horizontal_dark_runs": 26,
+        "interior_dark_pixels": 39
+      }
+    },
+    {
+      "index": 30,
+      "name": "street_30",
+      "character": "u",
+      "palette": "bg0_street_stone",
+      "roles": [
+        "grey_4",
+        "grey_5",
+        "sea_1"
+      ],
+      "first_cell": [
+        4,
+        3
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "grey_5",
+        "lightest_share_percent": 7.0,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 20,
+        "interior_dark_pixels": 4
+      }
+    },
+    {
+      "index": 31,
+      "name": "street_31",
+      "character": "v",
+      "palette": "bg1_street_brick",
+      "roles": [
+        "blood_3",
+        "blood_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        12,
+        3
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "blood_4",
+        "lightest_share_percent": 43.0,
+        "rows_without_dark": 2,
+        "horizontal_dark_runs": 27,
+        "interior_dark_pixels": 40
+      }
+    },
+    {
+      "index": 32,
+      "name": "street_32",
+      "character": "w",
+      "palette": "bg1_street_brick",
+      "roles": [
+        "blood_3",
+        "blood_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        1,
+        4
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "blood_4",
+        "lightest_share_percent": 13.7,
+        "rows_without_dark": 4,
+        "horizontal_dark_runs": 14,
+        "interior_dark_pixels": 137
+      }
+    },
+    {
+      "index": 33,
+      "name": "street_33",
+      "character": "x",
+      "palette": "bg1_street_brick",
+      "roles": [
+        "blood_3",
+        "blood_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        2,
+        4
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "blood_4",
+        "lightest_share_percent": 13.7,
+        "rows_without_dark": 4,
+        "horizontal_dark_runs": 13,
+        "interior_dark_pixels": 139
+      }
+    },
+    {
+      "index": 34,
+      "name": "street_34",
+      "character": "y",
+      "palette": "bg1_street_brick",
+      "roles": [
+        "blood_3",
+        "blood_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        3,
+        4
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "blood_4",
+        "lightest_share_percent": 37.9,
+        "rows_without_dark": 10,
+        "horizontal_dark_runs": 7,
+        "interior_dark_pixels": 43
+      }
+    },
+    {
+      "index": 35,
+      "name": "street_35",
+      "character": "z",
+      "palette": "bg0_street_stone",
+      "roles": [
+        "grey_4",
+        "grey_5",
+        "sea_1"
+      ],
+      "first_cell": [
+        4,
+        4
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "grey_5",
+        "lightest_share_percent": 24.2,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 28,
+        "interior_dark_pixels": 37
+      }
+    },
+    {
+      "index": 36,
+      "name": "street_36",
+      "character": "A",
+      "palette": "bg0_street_stone",
+      "roles": [
+        "grey_4",
+        "grey_5",
+        "sea_1"
+      ],
+      "first_cell": [
+        11,
+        4
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "grey_5",
+        "lightest_share_percent": 24.2,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 28,
+        "interior_dark_pixels": 37
+      }
+    },
+    {
+      "index": 37,
+      "name": "street_37",
+      "character": "B",
+      "palette": "bg1_street_brick",
+      "roles": [
+        "blood_3",
+        "blood_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        12,
+        4
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "blood_4",
+        "lightest_share_percent": 38.7,
+        "rows_without_dark": 10,
+        "horizontal_dark_runs": 6,
+        "interior_dark_pixels": 44
+      }
+    },
+    {
+      "index": 38,
+      "name": "street_38",
+      "character": "C",
+      "palette": "bg1_street_brick",
+      "roles": [
+        "blood_3",
+        "blood_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        1,
+        5
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "blood_4",
+        "lightest_share_percent": 26.2,
+        "rows_without_dark": 8,
+        "horizontal_dark_runs": 8,
+        "interior_dark_pixels": 44
+      }
+    },
+    {
+      "index": 39,
+      "name": "street_39",
+      "character": "D",
+      "palette": "bg1_street_brick",
+      "roles": [
+        "blood_3",
+        "blood_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        2,
+        5
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "blood_4",
+        "lightest_share_percent": 25.8,
+        "rows_without_dark": 8,
+        "horizontal_dark_runs": 8,
+        "interior_dark_pixels": 44
+      }
+    },
+    {
+      "index": 40,
+      "name": "street_40",
+      "character": "E",
+      "palette": "bg1_street_brick",
+      "roles": [
+        "blood_3",
+        "blood_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        1,
+        6
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "blood_4",
+        "lightest_share_percent": 43.8,
+        "rows_without_dark": 10,
+        "horizontal_dark_runs": 6,
+        "interior_dark_pixels": 42
+      }
+    },
+    {
+      "index": 41,
+      "name": "street_41",
+      "character": "F",
+      "palette": "bg1_street_brick",
+      "roles": [
+        "blood_3",
+        "blood_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        2,
+        6
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "blood_4",
+        "lightest_share_percent": 44.5,
+        "rows_without_dark": 10,
+        "horizontal_dark_runs": 7,
+        "interior_dark_pixels": 40
+      }
+    }
+  ],
+  "animation": []
+}

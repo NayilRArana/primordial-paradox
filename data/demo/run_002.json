@@ -1,0 +1,773 @@
+{
+  "version": 1,
+  "name": "run_002",
+  "written": "2026-10-27",
+  "why": "The full 180 second shot table of knowledge/DEMO-SCRIPT.md section 3, played in one take on the build: the title, the crawl, the drive, the walk to the quay checkpoint, the gate and its three replies, the dock office and the boarding pass, the TALK fight won by talking, the deck hound won by one FIGHT, the ship's log save, and the defeat that opens the game over. Card t_785b61f0. It is not run_001: that one is 71 s and is pinned as the walk take, and this one is the submission take.",
+  "beat_source": "knowledge/mechanics/PACING-AND-CUTSCENES.md section 9 (the 32 beat sheet) and knowledge/DEMO-SCRIPT.md section 3 (S1 to S6, second by second)",
+  "game": {
+    "exe": "PrimordialParadox.exe",
+    "window_title": "Primordial Paradox",
+    "launch_args": [
+      "-game",
+      "{win}"
+    ],
+    "env": {},
+    "env_note": "No PP_ROUTE_HOLD and no PP_SLICE: this run follows data/slice.json as a player does. The crawl hands to the drive, the drive to the arrival, the arrival's map trigger to the gate, the gate to the office, the office to the boarding, and the boarding to the deck, where the map's own touch triggers start the three fights."
+  },
+  "clock": {
+    "fps": 60,
+    "settle_steps": 180,
+    "max_steps": 11000,
+    "note": "180 s is 10,800 steps at 60 a second, the game's own step rate (spec 05, spec 07)"
+  },
+  "seeds": {
+    "title_flash": 20261021,
+    "rng_mod": 2147483647,
+    "note": "title_flash is PP_TITLE_FLASH_SEED, so the attract's lightning flashes on the same steps. The encounter stream is the encounter row's own seed (data/encounters/all.json: tutorial_sailors 20261019, deck_hound 20261022, percy 771), which the build pins by data and not by this file."
+  },
+  "talk": {
+    "mode": "auto",
+    "timeout_s": 12,
+    "note": "The TALK fight's replies are baked rows in this build (data/meta_bake.json, the replay leg of spec 19) unless tools/ai_bridge.py is up on 127.0.0.1:8791 with a model key in the environment. The run records whichever leg it actually took and says which in the verify file."
+  },
+  "record": {
+    "fps": 60,
+    "scale": 3,
+    "width": 768,
+    "height": 720,
+    "min_seconds": 170.0,
+    "out": "output/demo/run_002.mp4",
+    "audio": "auto",
+    "note": "768x720 is 3x the 256x240 screen. min_seconds 170 is the bottom of the card's 170 to 190 band and the end step is 10,800, which is 180.0 s: the middle of the band."
+  },
+  "checks": {
+    "end_step": 10800,
+    "min_lit_frames": 4,
+    "palette_share_min": 0.55,
+    "palette_tolerance": 12,
+    "min_on_palette_frames": 4,
+    "min_distinct_colours": 6,
+    "frame_diff_min": 0.001,
+    "required_beats": [
+      "S1 title",
+      "S2 crawl",
+      "S3 drive",
+      "S4 gate",
+      "S5 office",
+      "S5 boarding",
+      "S6 talk fight",
+      "S6 hound fight",
+      "S6 ship log save",
+      "S6 defeat"
+    ],
+    "required_footsteps": 1,
+    "note": "palette_share_min is 0.55 and not run_001's 0.90: the quay and the battle field are drawn with roles the room palette set does not carry, and the measured fight frames sit at 0.39 to 0.40. The checks that catch a wrong take are the beats, the footsteps and the run's own failures."
+  },
+  "events": [
+    {
+      "id": "r001",
+      "step": 0,
+      "kind": "note",
+      "beat": 1,
+      "note": "attract: the sky, the moon, the two star layers, the storm over the car, the logo; title_theme starts",
+      "marker": "PP title: room rm_pp_title live",
+      "marker_delay_steps": 0
+    },
+    {
+      "id": "r002",
+      "step": 420,
+      "kind": "key",
+      "beat": 2,
+      "note": "Enter: PRESS START, the logo blinks and the menu opens",
+      "key": "enter"
+    },
+    {
+      "id": "r003",
+      "step": 540,
+      "kind": "key",
+      "beat": 2,
+      "note": "Enter: NEW GAME, the circle wipes and the crawl starts",
+      "key": "enter"
+    },
+    {
+      "id": "r004",
+      "step": 600,
+      "kind": "note",
+      "beat": 3,
+      "note": "the circle wipes to the star field of the crawl machine, 24 stars from data/intro_stars.json"
+    },
+    {
+      "id": "r005",
+      "step": 620,
+      "kind": "note",
+      "beat": 4,
+      "note": "the crawl types over the star field; the held confirm is not needed, one press finishes it",
+      "marker": "PP title: intro started",
+      "marker_delay_steps": 6
+    },
+    {
+      "id": "r006",
+      "step": 1380,
+      "kind": "key",
+      "beat": 5,
+      "note": "Enter: the crawl finishes and hands to the route's drive step",
+      "key": "enter"
+    },
+    {
+      "id": "r007",
+      "step": 1450,
+      "kind": "note",
+      "beat": 7,
+      "note": "the drive fades in: the verge, the gantry sign, the night layers, PP-02",
+      "marker": "PP: music PP-02 requested",
+      "marker_delay_steps": 0
+    },
+    {
+      "id": "r008",
+      "step": 2300,
+      "kind": "hold",
+      "beat": 7,
+      "note": "cancel held: the drive is skipped the way a player skips it",
+      "key": "cancel",
+      "steps": 40
+    },
+    {
+      "id": "r009",
+      "step": 2360,
+      "kind": "note",
+      "beat": 18,
+      "note": "the drive's own line that the player skipped it",
+      "marker": "PP scene: drive_to_southampton skipped",
+      "marker_delay_steps": 4
+    },
+    {
+      "id": "r010",
+      "step": 2400,
+      "kind": "note",
+      "beat": 20,
+      "note": "the quay loads at the spawn tile 24,1 and the gate trigger is at 8,10, so the walk is nine tile rows down and then sixteen tiles west along row 10, where the checkpoint tile sits",
+      "marker": "PP: music PP-03 requested",
+      "marker_delay_steps": 6
+    },
+    {
+      "id": "r011",
+      "step": 2430,
+      "kind": "hold",
+      "beat": 20,
+      "note": "down held 69 steps: nine tile rows, landing the feet in row 10 at py 154 (75 steps lands him in row 11 and the gate is never touched, which is what the 07:46 take did)",
+      "key": "down",
+      "steps": 69
+    },
+    {
+      "id": "r012",
+      "step": 2530,
+      "kind": "hold",
+      "beat": 20,
+      "note": "left held 128 steps: sixteen tiles west along row 10 from the spawn column 24 (px 384), stopping ON the checkpoint tile 8,10 (px 128, py 154), because quay_gate_checkpoint is a scene trigger and a scene trigger fires on confirm, never on the walk over it: 24 steps stopped on 21,10 after the map moved the start spawn west to 24,1, and the confirm there found no trigger underfoot and the route stalled on the field. The leg is 104 steps longer than the 2026-10-27 take, so the firing confirm lands at 44.73 s and not at 43.00 s, still inside S4's beat window (knowledge/DEMO-SCRIPT.md line 125, 0:39.03 to 1:19.03)",
+      "key": "left",
+      "steps": 128
+    },
+    {
+      "id": "r013",
+      "step": 2684,
+      "kind": "note",
+      "beat": 20,
+      "note": "the feet are on the checkpoint tile and the hero faces west along row 10, so the reach box covers 7,10 (no trigger) and the tile underfoot (quay_gate_checkpoint). No marker is named here: a map step never hands on (pp_route_take_next is called only by a scene or a fight ending), so 'step arrival handed to step gate' was a line this build can never print, and naming it made every later marker report a failure"
+    },
+    {
+      "id": "r013b",
+      "step": 2684,
+      "kind": "key",
+      "beat": 20,
+      "note": "Confirm standing on the checkpoint: this is the press that fires quay_gate_checkpoint, so the gate scene and its box start here and the six page presses below turn what it opened (13 confirms at this beat, one more than the 12 the 07:46 take sent, which left the bluff reply's last page unturned and the scene never ended)",
+      "key": "confirm"
+    },
+    {
+      "id": "r014",
+      "step": 2729,
+      "kind": "key",
+      "beat": 20,
+      "note": "checkpoint page 1 to 3 (two presses a page): press 1 of 6, which completes the typing of the page the firing press opened",
+      "key": "confirm"
+    },
+    {
+      "id": "r015",
+      "step": 2774,
+      "kind": "key",
+      "beat": 20,
+      "note": "checkpoint page 1 to 3 (two presses a page): press 2 of 6, which turns to page 2",
+      "key": "confirm"
+    },
+    {
+      "id": "r016",
+      "step": 2819,
+      "kind": "key",
+      "beat": 20,
+      "note": "checkpoint page 1 to 3 (two presses a page): press 3 of 6",
+      "key": "confirm"
+    },
+    {
+      "id": "r017",
+      "step": 2864,
+      "kind": "key",
+      "beat": 20,
+      "note": "checkpoint page 1 to 3 (two presses a page): press 4 of 6, which turns to page 3",
+      "key": "confirm"
+    },
+    {
+      "id": "r018",
+      "step": 2909,
+      "kind": "key",
+      "beat": 20,
+      "note": "checkpoint page 1 to 3 (two presses a page): press 5 of 6",
+      "key": "confirm"
+    },
+    {
+      "id": "r019",
+      "step": 2954,
+      "kind": "key",
+      "beat": 20,
+      "note": "checkpoint page 1 to 3 (two presses a page): press 6 of 6, which closes the checkpoint box and lets the scene open the choice",
+      "key": "confirm"
+    },
+    {
+      "id": "r020",
+      "step": 2999,
+      "kind": "key",
+      "beat": 20,
+      "note": "the choice page: complete the typing",
+      "key": "confirm"
+    },
+    {
+      "id": "r021",
+      "step": 3044,
+      "kind": "key",
+      "beat": 20,
+      "note": "Down: the cursor moves from No pass. to Crew list.",
+      "key": "down"
+    },
+    {
+      "id": "r022",
+      "step": 3089,
+      "kind": "key",
+      "beat": 20,
+      "note": "Confirm: Crew list. is taken, gate_passed and gate_bluff are set, the branch opens",
+      "key": "confirm"
+    },
+    {
+      "id": "r023",
+      "step": 3134,
+      "kind": "key",
+      "beat": 20,
+      "note": "the bluff reply, two pages (two presses a page): press 1 of 4",
+      "key": "confirm"
+    },
+    {
+      "id": "r024",
+      "step": 3179,
+      "kind": "key",
+      "beat": 20,
+      "note": "the bluff reply, two pages (two presses a page): press 2 of 4",
+      "key": "confirm"
+    },
+    {
+      "id": "r025",
+      "step": 3224,
+      "kind": "key",
+      "beat": 20,
+      "note": "the bluff reply, two pages (two presses a page): press 3 of 4",
+      "key": "confirm"
+    },
+    {
+      "id": "r026",
+      "step": 3269,
+      "kind": "key",
+      "beat": 20,
+      "note": "the bluff reply, two pages (two presses a page): press 4 of 4",
+      "key": "confirm"
+    },
+    {
+      "id": "r027",
+      "step": 3334,
+      "kind": "note",
+      "beat": 22,
+      "note": "the office loads: a counter, a lamp, a ledger, the clerk and the Navy man",
+      "marker": "PP route: step gate handed to step office",
+      "marker_delay_steps": 6
+    },
+    {
+      "id": "r028",
+      "step": 3374,
+      "kind": "key",
+      "beat": 22,
+      "note": "the office's two three page lines (two presses a page): press 1 of 12",
+      "key": "confirm"
+    },
+    {
+      "id": "r029",
+      "step": 3419,
+      "kind": "key",
+      "beat": 22,
+      "note": "the office's two three page lines (two presses a page): press 2 of 12",
+      "key": "confirm"
+    },
+    {
+      "id": "r030",
+      "step": 3464,
+      "kind": "key",
+      "beat": 22,
+      "note": "the office's two three page lines (two presses a page): press 3 of 12",
+      "key": "confirm"
+    },
+    {
+      "id": "r031",
+      "step": 3509,
+      "kind": "key",
+      "beat": 22,
+      "note": "the office's two three page lines (two presses a page): press 4 of 12",
+      "key": "confirm"
+    },
+    {
+      "id": "r032",
+      "step": 3554,
+      "kind": "key",
+      "beat": 22,
+      "note": "the office's two three page lines (two presses a page): press 5 of 12",
+      "key": "confirm"
+    },
+    {
+      "id": "r033",
+      "step": 3599,
+      "kind": "key",
+      "beat": 22,
+      "note": "the office's two three page lines (two presses a page): press 6 of 12",
+      "key": "confirm"
+    },
+    {
+      "id": "r034",
+      "step": 3644,
+      "kind": "key",
+      "beat": 22,
+      "note": "the office's two three page lines (two presses a page): press 7 of 12",
+      "key": "confirm"
+    },
+    {
+      "id": "r035",
+      "step": 3689,
+      "kind": "key",
+      "beat": 22,
+      "note": "the office's two three page lines (two presses a page): press 8 of 12",
+      "key": "confirm"
+    },
+    {
+      "id": "r036",
+      "step": 3734,
+      "kind": "key",
+      "beat": 22,
+      "note": "the office's two three page lines (two presses a page): press 9 of 12",
+      "key": "confirm"
+    },
+    {
+      "id": "r037",
+      "step": 3779,
+      "kind": "key",
+      "beat": 22,
+      "note": "the office's two three page lines (two presses a page): press 10 of 12",
+      "key": "confirm"
+    },
+    {
+      "id": "r038",
+      "step": 3824,
+      "kind": "key",
+      "beat": 22,
+      "note": "the office's two three page lines (two presses a page): press 11 of 12",
+      "key": "confirm"
+    },
+    {
+      "id": "r039",
+      "step": 3869,
+      "kind": "key",
+      "beat": 22,
+      "note": "the office's two three page lines (two presses a page): press 12 of 12",
+      "key": "confirm"
+    },
+    {
+      "id": "r040",
+      "step": 3934,
+      "kind": "note",
+      "beat": 25,
+      "note": "the boarding scene: the horn shakes the deck, the camera moves to the door",
+      "marker": "PP route: step office handed to step boarding",
+      "marker_delay_steps": 6
+    },
+    {
+      "id": "r041",
+      "step": 4174,
+      "kind": "key",
+      "beat": 25,
+      "note": "the gangway page (two presses): press 1 of 2",
+      "key": "confirm"
+    },
+    {
+      "id": "r042",
+      "step": 4219,
+      "kind": "key",
+      "beat": 25,
+      "note": "the gangway page (two presses): press 2 of 2",
+      "key": "confirm"
+    },
+    {
+      "id": "r043",
+      "step": 4284,
+      "kind": "note",
+      "beat": 26,
+      "note": "the hero steps onto the deck at 3,7 and the route parks on the fight row"
+    },
+    {
+      "id": "r044",
+      "step": 4344,
+      "kind": "hold",
+      "beat": 28,
+      "note": "right held 14 steps: one tile east onto the Deck Watch's trigger at 4,7",
+      "key": "right",
+      "steps": 14
+    },
+    {
+      "id": "r045",
+      "step": 4384,
+      "kind": "note",
+      "beat": 28,
+      "note": "the battle frame opens on the Deck Watch",
+      "marker": "PP: battle start tutorial_sailors",
+      "marker_delay_steps": 6
+    },
+    {
+      "id": "r046",
+      "step": 4644,
+      "kind": "key",
+      "beat": 28,
+      "note": "Down: the cursor leaves FIGHT",
+      "key": "down"
+    },
+    {
+      "id": "r047",
+      "step": 4674,
+      "kind": "key",
+      "beat": 28,
+      "note": "Down: the cursor sits on TALK",
+      "key": "down"
+    },
+    {
+      "id": "r048",
+      "step": 4704,
+      "kind": "key",
+      "beat": 28,
+      "note": "Confirm: TALK opens the three context options",
+      "key": "confirm"
+    },
+    {
+      "id": "r049",
+      "step": 4824,
+      "kind": "key",
+      "beat": 28,
+      "note": "TALK turn 1: the first option is taken, the panel reads the reply",
+      "key": "confirm"
+    },
+    {
+      "id": "r050",
+      "step": 4974,
+      "kind": "key",
+      "beat": 28,
+      "note": "Down: the second context option",
+      "key": "down"
+    },
+    {
+      "id": "r051",
+      "step": 5004,
+      "kind": "key",
+      "beat": 28,
+      "note": "TALK turn 2: the second option is taken",
+      "key": "confirm"
+    },
+    {
+      "id": "r052",
+      "step": 5154,
+      "kind": "key",
+      "beat": 28,
+      "note": "Down: the third context option",
+      "key": "down"
+    },
+    {
+      "id": "r053",
+      "step": 5184,
+      "kind": "key",
+      "beat": 28,
+      "note": "TALK turn 3: the third option is taken, the mercy is in the high band",
+      "key": "confirm"
+    },
+    {
+      "id": "r054",
+      "step": 5334,
+      "kind": "key",
+      "beat": 28,
+      "note": "Down: the cursor moves from TALK to SPARE",
+      "key": "down"
+    },
+    {
+      "id": "r055",
+      "step": 5364,
+      "kind": "key",
+      "beat": 28,
+      "note": "Confirm: SPARE. The fight is won by talking and no blow is thrown",
+      "key": "confirm"
+    },
+    {
+      "id": "r056",
+      "step": 5604,
+      "kind": "note",
+      "beat": 28,
+      "note": "the result panel names the outcome the game chose"
+    },
+    {
+      "id": "r057",
+      "step": 5644,
+      "kind": "key",
+      "beat": 28,
+      "note": "Confirm: the closing board",
+      "key": "confirm"
+    },
+    {
+      "id": "r058",
+      "step": 5704,
+      "kind": "key",
+      "beat": 28,
+      "note": "Confirm: leave the panel and stand on the deck again",
+      "key": "confirm"
+    },
+    {
+      "id": "r059",
+      "step": 5754,
+      "kind": "note",
+      "beat": 23,
+      "note": "the deck hound's trigger tile is at 6,7 and the hero stands at 4,7 after the fight"
+    },
+    {
+      "id": "r060",
+      "step": 5774,
+      "kind": "hold",
+      "beat": 23,
+      "note": "right held 22 steps: two tiles east onto the hound's trigger at 6,7",
+      "key": "right",
+      "steps": 22
+    },
+    {
+      "id": "r061",
+      "step": 5814,
+      "kind": "note",
+      "beat": 23,
+      "note": "the hound's own line that the fight started",
+      "marker": "PP: battle start deck_hound",
+      "marker_delay_steps": 6
+    },
+    {
+      "id": "r062",
+      "step": 6074,
+      "kind": "key",
+      "beat": 23,
+      "note": "Confirm: FIGHT, with the cursor already on it",
+      "key": "confirm"
+    },
+    {
+      "id": "r063",
+      "step": 6374,
+      "kind": "note",
+      "beat": 23,
+      "note": "one blow, and the result panel says which outcome the game chose"
+    },
+    {
+      "id": "r064",
+      "step": 6414,
+      "kind": "key",
+      "beat": 23,
+      "note": "Confirm: the win board",
+      "key": "confirm"
+    },
+    {
+      "id": "r065",
+      "step": 6474,
+      "kind": "key",
+      "beat": 23,
+      "note": "Confirm: leave the panel",
+      "key": "confirm"
+    },
+    {
+      "id": "r066",
+      "step": 6524,
+      "kind": "note",
+      "beat": 27,
+      "note": "left along the corridor to the log's door tile at 3,6"
+    },
+    {
+      "id": "r067",
+      "step": 6544,
+      "kind": "hold",
+      "beat": 27,
+      "note": "left held 22 steps: two tiles west from 6,7 to 4,7",
+      "key": "left",
+      "steps": 22
+    },
+    {
+      "id": "r068",
+      "step": 6574,
+      "kind": "hold",
+      "beat": 27,
+      "note": "left held 14 steps: one more tile west to the door tile 3,7",
+      "key": "left",
+      "steps": 14
+    },
+    {
+      "id": "r069",
+      "step": 6604,
+      "kind": "hold",
+      "beat": 27,
+      "note": "up held 16 steps: through the doorway to 3,6, which fires the ship's log scene",
+      "key": "up",
+      "steps": 16
+    },
+    {
+      "id": "r070",
+      "step": 6724,
+      "kind": "key",
+      "beat": 27,
+      "note": "the ship's log, two pages (two presses a page): press 1 of 4",
+      "key": "confirm"
+    },
+    {
+      "id": "r071",
+      "step": 6769,
+      "kind": "key",
+      "beat": 27,
+      "note": "the ship's log, two pages (two presses a page): press 2 of 4",
+      "key": "confirm"
+    },
+    {
+      "id": "r072",
+      "step": 6814,
+      "kind": "key",
+      "beat": 27,
+      "note": "the ship's log, two pages (two presses a page): press 3 of 4",
+      "key": "confirm"
+    },
+    {
+      "id": "r073",
+      "step": 6859,
+      "kind": "key",
+      "beat": 27,
+      "note": "the ship's log, two pages (two presses a page): press 4 of 4",
+      "key": "confirm"
+    },
+    {
+      "id": "r074",
+      "step": 6934,
+      "kind": "hold",
+      "beat": 27,
+      "note": "down held 14 steps: off the save tile, because a trigger fires on a touch",
+      "key": "down",
+      "steps": 14
+    },
+    {
+      "id": "r075",
+      "step": 6964,
+      "kind": "hold",
+      "beat": 27,
+      "note": "up held 14 steps: back onto 3,2, and the save writes",
+      "key": "up",
+      "steps": 14
+    },
+    {
+      "id": "r076",
+      "step": 7024,
+      "kind": "note",
+      "beat": 27,
+      "note": "the game's own line that the log wrote the save",
+      "marker": "PP: ship's log",
+      "marker_delay_steps": 6
+    },
+    {
+      "id": "r077",
+      "step": 7064,
+      "kind": "hold",
+      "beat": 29,
+      "note": "down held 14 steps: back to the corridor floor at 3,7",
+      "key": "down",
+      "steps": 14
+    },
+    {
+      "id": "r078",
+      "step": 7094,
+      "kind": "hold",
+      "beat": 29,
+      "note": "right held 56 steps: six tiles east along the corridor to 9,7",
+      "key": "right",
+      "steps": 56
+    },
+    {
+      "id": "r079",
+      "step": 7164,
+      "kind": "note",
+      "beat": 29,
+      "note": "Percy's trigger fires as his feet enter 9,7",
+      "marker": "PP: battle start percy",
+      "marker_delay_steps": 6
+    },
+    {
+      "id": "r080",
+      "step": 7424,
+      "kind": "key",
+      "beat": 29,
+      "note": "turn 1: FIGHT, and then the run stands still in the dodge",
+      "key": "confirm"
+    },
+    {
+      "id": "r081",
+      "step": 7754,
+      "kind": "key",
+      "beat": 29,
+      "note": "turn 2: FIGHT, and then the run stands still in the dodge",
+      "key": "confirm"
+    },
+    {
+      "id": "r082",
+      "step": 8084,
+      "kind": "key",
+      "beat": 29,
+      "note": "turn 3: FIGHT, and then the run stands still in the dodge",
+      "key": "confirm"
+    },
+    {
+      "id": "r083",
+      "step": 8414,
+      "kind": "key",
+      "beat": 29,
+      "note": "turn 4: FIGHT, and then the run stands still in the dodge",
+      "key": "confirm"
+    },
+    {
+      "id": "r084",
+      "step": 8744,
+      "kind": "key",
+      "beat": 29,
+      "note": "turn 5: FIGHT, and then the run stands still in the dodge",
+      "key": "confirm"
+    },
+    {
+      "id": "r085",
+      "step": 9074,
+      "kind": "note",
+      "beat": 29,
+      "note": "the fight's own line that the run lost, which is the frame the game over opens from",
+      "marker": "PP: fight result defeat",
+      "marker_delay_steps": 8
+    }
+  ]
+}

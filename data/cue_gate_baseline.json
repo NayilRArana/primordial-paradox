@@ -1,0 +1,1158 @@
+{
+ "card": "t_aa3ab04e",
+ "counters": [
+  "cp01",
+  "cp09",
+  "raw_clash",
+  "strong_raw"
+ ],
+ "entries": {
+  "assets/audio/baroque_demo/baroque_demo.mid": {
+   "bars": 20,
+   "cp01": 4,
+   "cp09": 1,
+   "m1a_verdict": "PASS",
+   "notes": 383,
+   "raw_clash": 54,
+   "strong_raw": 10
+  },
+  "assets/audio/baroque_demo/score_baroque_demo.yaml": {
+   "bars": 20,
+   "cp01": 4,
+   "cp09": 1,
+   "m1a_verdict": "PASS",
+   "notes": 383,
+   "raw_clash": null,
+   "strong_raw": null
+  },
+  "assets/audio/hadrian_theme/hadrian_theme.mid": {
+   "bars": 32,
+   "cp01": 8,
+   "cp09": 0,
+   "m1a_verdict": "FAIL",
+   "notes": 638,
+   "raw_clash": 277,
+   "strong_raw": 15
+  },
+  "assets/audio/hadrian_theme/score_hadrian.yaml": {
+   "bars": 32,
+   "cp01": 8,
+   "cp09": 0,
+   "m1a_verdict": "FAIL",
+   "notes": 638,
+   "raw_clash": null,
+   "strong_raw": null
+  },
+  "assets/audio/percy_theme/percy_theme.mid": {
+   "bars": 32,
+   "cp01": 10,
+   "cp09": 0,
+   "m1a_verdict": "FAIL",
+   "notes": 641,
+   "raw_clash": 153,
+   "strong_raw": 20
+  },
+  "assets/audio/percy_theme/score_percy.yaml": {
+   "bars": 32,
+   "cp01": 10,
+   "cp09": 0,
+   "m1a_verdict": "FAIL",
+   "notes": 641,
+   "raw_clash": null,
+   "strong_raw": null
+  },
+  "assets/audio/percy_theme_v2/percy_theme_v2.mid": {
+   "bars": 32,
+   "cp01": 9,
+   "cp09": 0,
+   "m1a_verdict": "FAIL",
+   "notes": 680,
+   "raw_clash": 242,
+   "strong_raw": 27
+  },
+  "assets/audio/percy_theme_v3/percy_theme_v3.mid": {
+   "bars": 32,
+   "cp01": 21,
+   "cp09": 0,
+   "m1a_verdict": "FAIL",
+   "notes": 680,
+   "raw_clash": 303,
+   "strong_raw": 40
+  },
+  "assets/audio/percy_theme_v4/percy_theme_v4.mid": {
+   "bars": 32,
+   "cp01": 21,
+   "cp09": 0,
+   "m1a_verdict": "FAIL",
+   "notes": 680,
+   "raw_clash": 303,
+   "strong_raw": 40
+  },
+  "assets/audio/pp_01_title/pp_01_title.mid": {
+   "bars": 52,
+   "cp01": 1,
+   "cp09": 0,
+   "m1a_verdict": "PASS",
+   "notes": 814,
+   "raw_clash": 154,
+   "strong_raw": 32
+  },
+  "assets/audio/pp_01_title_v6/pp_01_title_v6.mid": {
+   "bars": 52,
+   "cp01": 2,
+   "cp09": 0,
+   "m1a_verdict": "PASS",
+   "notes": 805,
+   "raw_clash": 194,
+   "strong_raw": 30
+  },
+  "assets/audio/pp_01_title_v6/pp_01_title_v6_humanized.mid": {
+   "bars": 52,
+   "cp01": 2,
+   "cp09": 0,
+   "m1a_verdict": "PASS",
+   "notes": 808,
+   "raw_clash": 189,
+   "strong_raw": 25
+  },
+  "assets/audio/pp_01_title_v7/pp_01_title_v7.mid": {
+   "bars": 52,
+   "cp01": 2,
+   "cp09": 0,
+   "m1a_verdict": "PASS",
+   "notes": 808,
+   "raw_clash": 196,
+   "strong_raw": 30
+  },
+  "assets/audio/pp_01_title_v7/pp_01_title_v7_humanized.mid": {
+   "bars": 52,
+   "cp01": 2,
+   "cp09": 1,
+   "m1a_verdict": "PASS",
+   "notes": 811,
+   "raw_clash": 191,
+   "strong_raw": 25
+  },
+  "assets/audio/pp_01_title_v8/pp_01_title_v8.mid": {
+   "bars": 52,
+   "cp01": 2,
+   "cp09": 0,
+   "m1a_verdict": "PASS",
+   "notes": 804,
+   "raw_clash": 204,
+   "strong_raw": 35
+  },
+  "assets/audio/pp_01_title_v8/pp_01_title_v8_humanized.mid": {
+   "bars": 52,
+   "cp01": 2,
+   "cp09": 1,
+   "m1a_verdict": "PASS",
+   "notes": 807,
+   "raw_clash": 199,
+   "strong_raw": 30
+  },
+  "assets/audio/pp_01_title_v9/pp_01_title_v9.mid": {
+   "bars": 52,
+   "cp01": 0,
+   "cp09": 1,
+   "m1a_verdict": "PASS",
+   "notes": 797,
+   "raw_clash": 2,
+   "strong_raw": 0
+  },
+  "assets/audio/pp_01_title_v9/pp_01_title_v9_humanized.mid": {
+   "bars": 52,
+   "cp01": 0,
+   "cp09": 2,
+   "m1a_verdict": "PASS",
+   "notes": 800,
+   "raw_clash": 2,
+   "strong_raw": 0
+  },
+  "assets/audio/pp_03_harbor/pp_03_harbor.mid": {
+   "bars": 64,
+   "cp01": 9,
+   "cp09": 1,
+   "m1a_verdict": "FAIL",
+   "notes": 1105,
+   "raw_clash": 101,
+   "strong_raw": 19
+  },
+  "assets/audio/pp_03_harbor_v2/pp_03_harbor_v2.mid": {
+   "bars": 64,
+   "cp01": 15,
+   "cp09": 1,
+   "m1a_verdict": "FAIL",
+   "notes": 1197,
+   "raw_clash": 192,
+   "strong_raw": 30
+  },
+  "assets/audio/pp_03_harbor_v2/score_pp03_v2.yaml": {
+   "bars": 64,
+   "cp01": 4,
+   "cp09": 6,
+   "m1a_verdict": "FAIL",
+   "notes": 852,
+   "raw_clash": null,
+   "strong_raw": null
+  },
+  "assets/audio/pp_03_harbor_v3/pp_03_harbor_v3.mid": {
+   "bars": 32,
+   "cp01": 8,
+   "cp09": 2,
+   "m1a_verdict": "FAIL",
+   "notes": 585,
+   "raw_clash": 115,
+   "strong_raw": 4
+  },
+  "assets/audio/pp_03_harbor_v3/pp_03_harbor_v3_humanized.mid": {
+   "bars": 32,
+   "cp01": 8,
+   "cp09": 1,
+   "m1a_verdict": "FAIL",
+   "notes": 592,
+   "raw_clash": 115,
+   "strong_raw": 4
+  },
+  "assets/audio/pp_03_harbor_v3/score_pp03_v3.yaml": {
+   "bars": 33,
+   "cp01": 2,
+   "cp09": 2,
+   "m1a_verdict": "FAIL",
+   "notes": 427,
+   "raw_clash": null,
+   "strong_raw": null
+  },
+  "assets/audio/pp_03_harbor_v4/pp_03_harbor_v4.mid": {
+   "bars": 32,
+   "cp01": 8,
+   "cp09": 2,
+   "m1a_verdict": "FAIL",
+   "notes": 570,
+   "raw_clash": 114,
+   "strong_raw": 4
+  },
+  "assets/audio/pp_03_harbor_v4/pp_03_harbor_v4_humanized.mid": {
+   "bars": 32,
+   "cp01": 8,
+   "cp09": 1,
+   "m1a_verdict": "FAIL",
+   "notes": 577,
+   "raw_clash": 114,
+   "strong_raw": 4
+  },
+  "assets/audio/pp_03_harbor_v4/pp_03_harbor_v4b.mid": {
+   "bars": 32,
+   "cp01": 8,
+   "cp09": 2,
+   "m1a_verdict": "FAIL",
+   "notes": 570,
+   "raw_clash": 114,
+   "strong_raw": 4
+  },
+  "assets/audio/pp_03_harbor_v4/pp_03_harbor_v4b_humanized.mid": {
+   "bars": 32,
+   "cp01": 8,
+   "cp09": 1,
+   "m1a_verdict": "FAIL",
+   "notes": 577,
+   "raw_clash": 114,
+   "strong_raw": 4
+  },
+  "assets/audio/pp_03_harbor_v4/score_pp03_v4.yaml": {
+   "bars": 33,
+   "cp01": 2,
+   "cp09": 2,
+   "m1a_verdict": "FAIL",
+   "notes": 427,
+   "raw_clash": null,
+   "strong_raw": null
+  },
+  "assets/audio/pp_03_harbor_v4/score_pp03_v4b.yaml": {
+   "bars": 33,
+   "cp01": 2,
+   "cp09": 2,
+   "m1a_verdict": "FAIL",
+   "notes": 427,
+   "raw_clash": null,
+   "strong_raw": null
+  },
+  "assets/audio/pp_04_navy_sailors/pp_04_navy_sailors.mid": {
+   "bars": 32,
+   "cp01": 0,
+   "cp09": 1,
+   "m1a_verdict": "FAIL",
+   "notes": 926,
+   "raw_clash": 61,
+   "strong_raw": 0
+  },
+  "assets/audio/pp_04_navy_sailors_v2/pp_04_navy_sailors_v2.mid": {
+   "bars": 32,
+   "cp01": 10,
+   "cp09": 5,
+   "m1a_verdict": "FAIL",
+   "notes": 930,
+   "raw_clash": 159,
+   "strong_raw": 0
+  },
+  "assets/audio/pp_04_navy_sailors_v2/pp_04_navy_sailors_v2_humanized.mid": {
+   "bars": 32,
+   "cp01": 10,
+   "cp09": 5,
+   "m1a_verdict": "FAIL",
+   "notes": 933,
+   "raw_clash": 158,
+   "strong_raw": 0
+  },
+  "assets/audio/pp_04_navy_sailors_v3/pp_04_navy_sailors_v3.mid": {
+   "bars": 32,
+   "cp01": 10,
+   "cp09": 5,
+   "m1a_verdict": "FAIL",
+   "notes": 934,
+   "raw_clash": 159,
+   "strong_raw": 0
+  },
+  "assets/audio/pp_04_navy_sailors_v3/pp_04_navy_sailors_v3_humanized.mid": {
+   "bars": 32,
+   "cp01": 10,
+   "cp09": 5,
+   "m1a_verdict": "FAIL",
+   "notes": 937,
+   "raw_clash": 159,
+   "strong_raw": 0
+  },
+  "assets/audio/pp_05_small_ship/pp_05_small_ship.mid": {
+   "bars": 24,
+   "cp01": 4,
+   "cp09": 0,
+   "m1a_verdict": "FAIL",
+   "notes": 483,
+   "raw_clash": 114,
+   "strong_raw": 8
+  },
+  "assets/audio/pp_05_small_ship/score_pp_05.yaml": {
+   "bars": 24,
+   "cp01": 4,
+   "cp09": 0,
+   "m1a_verdict": "FAIL",
+   "notes": 483,
+   "raw_clash": null,
+   "strong_raw": null
+  },
+  "assets/audio/pp_05_small_ship_v2/pp_05_small_ship_v2.mid": {
+   "bars": 24,
+   "cp01": 6,
+   "cp09": 0,
+   "m1a_verdict": "FAIL",
+   "notes": 493,
+   "raw_clash": 131,
+   "strong_raw": 9
+  },
+  "assets/audio/pp_05_small_ship_v2/pp_05_small_ship_v2_raw.mid": {
+   "bars": 24,
+   "cp01": 6,
+   "cp09": 0,
+   "m1a_verdict": "FAIL",
+   "notes": 493,
+   "raw_clash": 131,
+   "strong_raw": 9
+  },
+  "assets/audio/pp_05_small_ship_v3/pp_05_small_ship_v3.mid": {
+   "bars": 24,
+   "cp01": 6,
+   "cp09": 1,
+   "m1a_verdict": "FAIL",
+   "notes": 539,
+   "raw_clash": 117,
+   "strong_raw": 8
+  },
+  "assets/audio/pp_05_small_ship_v3/pp_05_small_ship_v3_raw.mid": {
+   "bars": 24,
+   "cp01": 6,
+   "cp09": 1,
+   "m1a_verdict": "FAIL",
+   "notes": 536,
+   "raw_clash": 117,
+   "strong_raw": 8
+  },
+  "assets/audio/pp_05_small_ship_v4/pp_05_small_ship_v4.mid": {
+   "bars": 24,
+   "cp01": 0,
+   "cp09": 0,
+   "m1a_verdict": "FAIL",
+   "notes": 454,
+   "raw_clash": 31,
+   "strong_raw": 0
+  },
+  "assets/audio/pp_05_small_ship_v5/pp_05_small_ship_v5.mid": {
+   "bars": 32,
+   "cp01": 1,
+   "cp09": 0,
+   "m1a_verdict": "FAIL",
+   "notes": 615,
+   "raw_clash": 60,
+   "strong_raw": 3
+  },
+  "assets/audio/pp_05_small_ship_v5/pp_05_small_ship_v5_humanized.mid": {
+   "bars": 32,
+   "cp01": 1,
+   "cp09": 0,
+   "m1a_verdict": "FAIL",
+   "notes": 620,
+   "raw_clash": 61,
+   "strong_raw": 3
+  },
+  "assets/audio/pp_05_small_ship_v6/pp_05_small_ship_v6.mid": {
+   "bars": 32,
+   "cp01": 1,
+   "cp09": 0,
+   "m1a_verdict": "FAIL",
+   "notes": 673,
+   "raw_clash": 74,
+   "strong_raw": 3
+  },
+  "assets/audio/pp_05_small_ship_v6/pp_05_small_ship_v6_humanized.mid": {
+   "bars": 32,
+   "cp01": 1,
+   "cp09": 0,
+   "m1a_verdict": "FAIL",
+   "notes": 678,
+   "raw_clash": 76,
+   "strong_raw": 3
+  },
+  "assets/audio/pp_arrival/pp_arrival.mid": {
+   "bars": 48,
+   "cp01": 8,
+   "cp09": 0,
+   "m1a_verdict": "FAIL",
+   "notes": 843,
+   "raw_clash": 107,
+   "strong_raw": 17
+  },
+  "assets/audio/pp_arrival/score_pp_arrival.yaml": {
+   "bars": 48,
+   "cp01": 2,
+   "cp09": 4,
+   "m1a_verdict": "FAIL",
+   "notes": 658,
+   "raw_clash": null,
+   "strong_raw": null
+  },
+  "assets/audio/pp_arrival_v2/pp_arrival_v2.mid": {
+   "bars": 32,
+   "cp01": 13,
+   "cp09": 0,
+   "m1a_verdict": "FAIL",
+   "notes": 600,
+   "raw_clash": 111,
+   "strong_raw": 15
+  },
+  "assets/audio/pp_arrival_v2/pp_arrival_v2_humanized.mid": {
+   "bars": 32,
+   "cp01": 13,
+   "cp09": 0,
+   "m1a_verdict": "FAIL",
+   "notes": 607,
+   "raw_clash": 115,
+   "strong_raw": 15
+  },
+  "assets/audio/pp_arrival_v2/score_pp_arrival_v2.yaml": {
+   "bars": 32,
+   "cp01": 6,
+   "cp09": 1,
+   "m1a_verdict": "PASS",
+   "notes": 441,
+   "raw_clash": null,
+   "strong_raw": null
+  },
+  "assets/audio/pp_boarding/pp_boarding.mid": {
+   "bars": 16,
+   "cp01": 23,
+   "cp09": 0,
+   "m1a_verdict": "FAIL",
+   "notes": 290,
+   "raw_clash": 225,
+   "strong_raw": 19
+  },
+  "assets/audio/pp_boarding_v2/pp_boarding_v2.mid": {
+   "bars": 16,
+   "cp01": 22,
+   "cp09": 0,
+   "m1a_verdict": "FAIL",
+   "notes": 289,
+   "raw_clash": 211,
+   "strong_raw": 17
+  },
+  "assets/audio/pp_boarding_v2/pp_boarding_v2_humanized_humanized.mid": {
+   "bars": 16,
+   "cp01": 21,
+   "cp09": 0,
+   "m1a_verdict": "FAIL",
+   "notes": 294,
+   "raw_clash": 155,
+   "strong_raw": 16
+  },
+  "assets/audio/pp_boarding_v3/pp_boarding_v3.mid": {
+   "bars": 16,
+   "cp01": 17,
+   "cp09": 0,
+   "m1a_verdict": "FAIL",
+   "notes": 292,
+   "raw_clash": 189,
+   "strong_raw": 13
+  },
+  "assets/audio/pp_boarding_v3/pp_boarding_v3_humanized.mid": {
+   "bars": 16,
+   "cp01": 16,
+   "cp09": 0,
+   "m1a_verdict": "FAIL",
+   "notes": 297,
+   "raw_clash": 134,
+   "strong_raw": 12
+  },
+  "assets/audio/pp_drive/pp_drive.mid": {
+   "bars": 125,
+   "cp01": 48,
+   "cp09": 20,
+   "m1a_verdict": "FAIL",
+   "notes": 2129,
+   "raw_clash": 286,
+   "strong_raw": 106
+  },
+  "assets/audio/pp_drive/pp_drive_v3.mid": {
+   "bars": 125,
+   "cp01": 55,
+   "cp09": 10,
+   "m1a_verdict": "FAIL",
+   "notes": 2257,
+   "raw_clash": 878,
+   "strong_raw": 115
+  },
+  "assets/audio/pp_drive/pp_drive_v3_humanized_humanized.mid": {
+   "bars": 125,
+   "cp01": 55,
+   "cp09": 2,
+   "m1a_verdict": "FAIL",
+   "notes": 2260,
+   "raw_clash": 879,
+   "strong_raw": 115
+  },
+  "assets/audio/pp_drive/score_pp_drive.yaml": {
+   "bars": 125,
+   "cp01": 48,
+   "cp09": 20,
+   "m1a_verdict": "FAIL",
+   "notes": 2129,
+   "raw_clash": null,
+   "strong_raw": null
+  },
+  "assets/audio/pp_drive/score_pp_drive_v3.yaml": {
+   "bars": 125,
+   "cp01": 55,
+   "cp09": 10,
+   "m1a_verdict": "FAIL",
+   "notes": 2257,
+   "raw_clash": null,
+   "strong_raw": null
+  },
+  "assets/audio/pp_drive_v2/pp_drive_v2.mid": {
+   "bars": 125,
+   "cp01": 55,
+   "cp09": 10,
+   "m1a_verdict": "FAIL",
+   "notes": 2257,
+   "raw_clash": 878,
+   "strong_raw": 115
+  },
+  "assets/audio/pp_drive_v2/pp_drive_v2_humanized_humanized.mid": {
+   "bars": 125,
+   "cp01": 55,
+   "cp09": 2,
+   "m1a_verdict": "FAIL",
+   "notes": 2260,
+   "raw_clash": 879,
+   "strong_raw": 115
+  },
+  "assets/audio/pp_drive_v2/score_pp_drive_v2.yaml": {
+   "bars": 125,
+   "cp01": 55,
+   "cp09": 10,
+   "m1a_verdict": "FAIL",
+   "notes": 2257,
+   "raw_clash": null,
+   "strong_raw": null
+  },
+  "assets/audio/pp_drive_v4/pp_drive_v4.mid": {
+   "bars": 125,
+   "cp01": 64,
+   "cp09": 4,
+   "m1a_verdict": "PASS",
+   "notes": 2257,
+   "raw_clash": 780,
+   "strong_raw": 101
+  },
+  "assets/audio/pp_drive_v4/pp_drive_v4_humanized.mid": {
+   "bars": 125,
+   "cp01": 64,
+   "cp09": 2,
+   "m1a_verdict": "PASS",
+   "notes": 2260,
+   "raw_clash": 780,
+   "strong_raw": 101
+  },
+  "assets/audio/pp_drive_v4/score_pp_drive_v4.yaml": {
+   "bars": 125,
+   "cp01": 64,
+   "cp09": 4,
+   "m1a_verdict": "PASS",
+   "notes": 2257,
+   "raw_clash": null,
+   "strong_raw": null
+  },
+  "assets/audio/pp_fight/pp_fight_calm.mid": {
+   "bars": 16,
+   "cp01": 3,
+   "cp09": 0,
+   "m1a_verdict": "FAIL",
+   "notes": 98,
+   "raw_clash": 46,
+   "strong_raw": 6
+  },
+  "assets/audio/pp_fight/pp_fight_fight.mid": {
+   "bars": 16,
+   "cp01": 18,
+   "cp09": 0,
+   "m1a_verdict": "FAIL",
+   "notes": 356,
+   "raw_clash": 175,
+   "strong_raw": 43
+  },
+  "assets/audio/pp_fight/pp_fight_states.mid": {
+   "bars": 32,
+   "cp01": 21,
+   "cp09": 1,
+   "m1a_verdict": "FAIL",
+   "notes": 454,
+   "raw_clash": 221,
+   "strong_raw": 49
+  },
+  "assets/audio/pp_fight_v2/pp_fight_v2_calm.mid": {
+   "bars": 16,
+   "cp01": 11,
+   "cp09": 0,
+   "m1a_verdict": "FAIL",
+   "notes": 130,
+   "raw_clash": 126,
+   "strong_raw": 18
+  },
+  "assets/audio/pp_fight_v2/pp_fight_v2_fight.mid": {
+   "bars": 16,
+   "cp01": 16,
+   "cp09": 1,
+   "m1a_verdict": "FAIL",
+   "notes": 435,
+   "raw_clash": 272,
+   "strong_raw": 30
+  },
+  "assets/audio/pp_fight_v2/pp_fight_v2_states.mid": {
+   "bars": 32,
+   "cp01": 27,
+   "cp09": 1,
+   "m1a_verdict": "FAIL",
+   "notes": 565,
+   "raw_clash": 398,
+   "strong_raw": 48
+  },
+  "assets/audio/pp_fight_v3/pp_fight_v3_calm.mid": {
+   "bars": 16,
+   "cp01": 21,
+   "cp09": 0,
+   "m1a_verdict": "FAIL",
+   "notes": 265,
+   "raw_clash": 235,
+   "strong_raw": 61
+  },
+  "assets/audio/pp_fight_v3/pp_fight_v3_calm_humanized.mid": {
+   "bars": 16,
+   "cp01": 21,
+   "cp09": 0,
+   "m1a_verdict": "FAIL",
+   "notes": 268,
+   "raw_clash": 156,
+   "strong_raw": 41
+  },
+  "assets/audio/pp_fight_v3/pp_fight_v3_fight.mid": {
+   "bars": 16,
+   "cp01": 16,
+   "cp09": 1,
+   "m1a_verdict": "FAIL",
+   "notes": 435,
+   "raw_clash": 305,
+   "strong_raw": 63
+  },
+  "assets/audio/pp_fight_v3/pp_fight_v3_fight_humanized.mid": {
+   "bars": 16,
+   "cp01": 15,
+   "cp09": 1,
+   "m1a_verdict": "FAIL",
+   "notes": 440,
+   "raw_clash": 229,
+   "strong_raw": 29
+  },
+  "assets/audio/pp_fight_v3/pp_fight_v3_states.mid": {
+   "bars": 32,
+   "cp01": 37,
+   "cp09": 1,
+   "m1a_verdict": "FAIL",
+   "notes": 700,
+   "raw_clash": 540,
+   "strong_raw": 124
+  },
+  "assets/audio/pp_fight_v4/pp_fight_v4_calm.mid": {
+   "bars": 16,
+   "cp01": 21,
+   "cp09": 0,
+   "m1a_verdict": "FAIL",
+   "notes": 265,
+   "raw_clash": 235,
+   "strong_raw": 61
+  },
+  "assets/audio/pp_fight_v4/pp_fight_v4_fight.mid": {
+   "bars": 16,
+   "cp01": 16,
+   "cp09": 1,
+   "m1a_verdict": "FAIL",
+   "notes": 435,
+   "raw_clash": 305,
+   "strong_raw": 63
+  },
+  "assets/audio/pp_fight_v4/pp_fight_v4_states.mid": {
+   "bars": 32,
+   "cp01": 37,
+   "cp09": 1,
+   "m1a_verdict": "FAIL",
+   "notes": 700,
+   "raw_clash": 540,
+   "strong_raw": 124
+  },
+  "assets/audio/pp_fight_v5/pp_fight_v5_calm.mid": {
+   "bars": 16,
+   "cp01": 21,
+   "cp09": 0,
+   "m1a_verdict": "FAIL",
+   "notes": 265,
+   "raw_clash": 235,
+   "strong_raw": 61
+  },
+  "assets/audio/pp_fight_v5/pp_fight_v5_fight.mid": {
+   "bars": 16,
+   "cp01": 16,
+   "cp09": 1,
+   "m1a_verdict": "FAIL",
+   "notes": 435,
+   "raw_clash": 305,
+   "strong_raw": 63
+  },
+  "assets/audio/pp_fight_v5/pp_fight_v5_states.mid": {
+   "bars": 32,
+   "cp01": 37,
+   "cp09": 1,
+   "m1a_verdict": "FAIL",
+   "notes": 700,
+   "raw_clash": 540,
+   "strong_raw": 124
+  },
+  "assets/audio/pp_fight_v6/pp_fight_v6_calm.mid": {
+   "bars": 16,
+   "cp01": 21,
+   "cp09": 0,
+   "m1a_verdict": "FAIL",
+   "notes": 265,
+   "raw_clash": 235,
+   "strong_raw": 61
+  },
+  "assets/audio/pp_fight_v6/pp_fight_v6_calm_humanized.mid": {
+   "bars": 16,
+   "cp01": 21,
+   "cp09": 0,
+   "m1a_verdict": "FAIL",
+   "notes": 268,
+   "raw_clash": 156,
+   "strong_raw": 41
+  },
+  "assets/audio/pp_fight_v6/pp_fight_v6_fight.mid": {
+   "bars": 16,
+   "cp01": 15,
+   "cp09": 1,
+   "m1a_verdict": "FAIL",
+   "notes": 439,
+   "raw_clash": 301,
+   "strong_raw": 61
+  },
+  "assets/audio/pp_fight_v6/pp_fight_v6_fight_humanized.mid": {
+   "bars": 16,
+   "cp01": 14,
+   "cp09": 1,
+   "m1a_verdict": "FAIL",
+   "notes": 444,
+   "raw_clash": 222,
+   "strong_raw": 29
+  },
+  "assets/audio/pp_fight_v6/pp_fight_v6_states.mid": {
+   "bars": 32,
+   "cp01": 36,
+   "cp09": 1,
+   "m1a_verdict": "FAIL",
+   "notes": 704,
+   "raw_clash": 536,
+   "strong_raw": 122
+  },
+  "assets/audio/pp_fight_v6/pp_fight_v6_states_humanized.mid": {
+   "bars": 32,
+   "cp01": 35,
+   "cp09": 1,
+   "m1a_verdict": "FAIL",
+   "notes": 709,
+   "raw_clash": 377,
+   "strong_raw": 64
+  },
+  "assets/audio/pp_fight_v6/ref_v5_fight_humanized_humanized.mid": {
+   "bars": 16,
+   "cp01": 15,
+   "cp09": 1,
+   "m1a_verdict": "FAIL",
+   "notes": 440,
+   "raw_clash": 229,
+   "strong_raw": 29
+  },
+  "assets/audio/render2_demo/render2_demo.mid": {
+   "bars": 4,
+   "cp01": 3,
+   "cp09": 0,
+   "m1a_verdict": "FAIL",
+   "notes": 47,
+   "raw_clash": 12,
+   "strong_raw": 4
+  },
+  "assets/audio/title_theme/title_theme.mid": {
+   "bars": 32,
+   "cp01": 0,
+   "cp09": 1,
+   "m1a_verdict": "FAIL",
+   "notes": 213,
+   "raw_clash": 11,
+   "strong_raw": 0
+  },
+  "assets/audio/title_theme_v2/title_theme_v2.mid": {
+   "bars": 52,
+   "cp01": 34,
+   "cp09": 7,
+   "m1a_verdict": "FAIL",
+   "notes": 681,
+   "raw_clash": 224,
+   "strong_raw": 94
+  },
+  "assets/audio/title_theme_v3/score_v3.yaml": {
+   "bars": 52,
+   "cp01": 16,
+   "cp09": 0,
+   "m1a_verdict": "PASS",
+   "notes": 829,
+   "raw_clash": null,
+   "strong_raw": null
+  },
+  "assets/audio/title_theme_v3/spice/title_theme_v3_126_spice_d1.mid": {
+   "bars": 52,
+   "cp01": 16,
+   "cp09": 0,
+   "m1a_verdict": "PASS",
+   "notes": 841,
+   "raw_clash": 110,
+   "strong_raw": 27
+  },
+  "assets/audio/title_theme_v3/spice/title_theme_v3_126_spice_d2.mid": {
+   "bars": 52,
+   "cp01": 16,
+   "cp09": 0,
+   "m1a_verdict": "PASS",
+   "notes": 847,
+   "raw_clash": 113,
+   "strong_raw": 27
+  },
+  "assets/audio/title_theme_v3/spice/title_theme_v3_126_spice_d3.mid": {
+   "bars": 52,
+   "cp01": 16,
+   "cp09": 0,
+   "m1a_verdict": "PASS",
+   "notes": 840,
+   "raw_clash": 117,
+   "strong_raw": 28
+  },
+  "assets/audio/title_theme_v3/spice/title_theme_v3_126_spice_d3_humanized.mid": {
+   "bars": 52,
+   "cp01": 16,
+   "cp09": 1,
+   "m1a_verdict": "PASS",
+   "notes": 849,
+   "raw_clash": 129,
+   "strong_raw": 28
+  },
+  "assets/audio/title_theme_v3/title_theme_v3.mid": {
+   "bars": 52,
+   "cp01": 16,
+   "cp09": 0,
+   "m1a_verdict": "PASS",
+   "notes": 829,
+   "raw_clash": 110,
+   "strong_raw": 27
+  },
+  "assets/audio/title_theme_v3/title_theme_v3_126.mid": {
+   "bars": 52,
+   "cp01": 16,
+   "cp09": 0,
+   "m1a_verdict": "PASS",
+   "notes": 829,
+   "raw_clash": 110,
+   "strong_raw": 27
+  },
+  "assets/audio/title_theme_v4/score_v4.yaml": {
+   "bars": 52,
+   "cp01": 17,
+   "cp09": 0,
+   "m1a_verdict": "PASS",
+   "notes": 829,
+   "raw_clash": null,
+   "strong_raw": null
+  },
+  "assets/audio/title_theme_v4/title_theme_v4_base.mid": {
+   "bars": 52,
+   "cp01": 17,
+   "cp09": 0,
+   "m1a_verdict": "PASS",
+   "notes": 829,
+   "raw_clash": 108,
+   "strong_raw": 26
+  },
+  "assets/audio/title_theme_v4/title_theme_v4_medium.mid": {
+   "bars": 52,
+   "cp01": 2,
+   "cp09": 0,
+   "m1a_verdict": "PASS",
+   "notes": 812,
+   "raw_clash": 152,
+   "strong_raw": 31
+  },
+  "assets/audio/title_theme_v4/title_theme_v4_medium_spice.mid": {
+   "bars": 52,
+   "cp01": 17,
+   "cp09": 0,
+   "m1a_verdict": "PASS",
+   "notes": 805,
+   "raw_clash": 142,
+   "strong_raw": 31
+  },
+  "assets/audio/title_theme_v4/title_theme_v4_spicy.mid": {
+   "bars": 52,
+   "cp01": 0,
+   "cp09": 0,
+   "m1a_verdict": "PASS",
+   "notes": 833,
+   "raw_clash": 157,
+   "strong_raw": 32
+  },
+  "assets/audio/title_theme_v4/title_theme_v4_spicy_spice.mid": {
+   "bars": 52,
+   "cp01": 17,
+   "cp09": 0,
+   "m1a_verdict": "PASS",
+   "notes": 805,
+   "raw_clash": 145,
+   "strong_raw": 32
+  },
+  "assets/audio/title_theme_v4/title_theme_v4_subtle.mid": {
+   "bars": 52,
+   "cp01": 3,
+   "cp09": 0,
+   "m1a_verdict": "PASS",
+   "notes": 836,
+   "raw_clash": 145,
+   "strong_raw": 31
+  },
+  "assets/audio/title_theme_v4/title_theme_v4_subtle_spice.mid": {
+   "bars": 52,
+   "cp01": 17,
+   "cp09": 0,
+   "m1a_verdict": "PASS",
+   "notes": 829,
+   "raw_clash": 135,
+   "strong_raw": 31
+  },
+  "assets/audio/title_theme_v5/score_v5.yaml": {
+   "bars": 52,
+   "cp01": 17,
+   "cp09": 0,
+   "m1a_verdict": "PASS",
+   "notes": 829,
+   "raw_clash": null,
+   "strong_raw": null
+  },
+  "assets/audio/title_theme_v5/title_theme_v5.mid": {
+   "bars": 52,
+   "cp01": 1,
+   "cp09": 0,
+   "m1a_verdict": "PASS",
+   "notes": 814,
+   "raw_clash": 154,
+   "strong_raw": 32
+  },
+  "assets/audio/title_theme_v5/title_theme_v5_base.mid": {
+   "bars": 52,
+   "cp01": 17,
+   "cp09": 0,
+   "m1a_verdict": "PASS",
+   "notes": 829,
+   "raw_clash": 108,
+   "strong_raw": 26
+  },
+  "assets/audio/title_theme_v5/title_theme_v5_pre.mid": {
+   "bars": 52,
+   "cp01": 17,
+   "cp09": 0,
+   "m1a_verdict": "PASS",
+   "notes": 805,
+   "raw_clash": 142,
+   "strong_raw": 32
+  },
+  "assets/audio/title_theme_v5_melded/score_v5.yaml": {
+   "bars": 52,
+   "cp01": 18,
+   "cp09": 0,
+   "m1a_verdict": "PASS",
+   "notes": 840,
+   "raw_clash": null,
+   "strong_raw": null
+  },
+  "assets/audio/title_theme_v5_melded/title_theme_v5.mid": {
+   "bars": 52,
+   "cp01": 18,
+   "cp09": 0,
+   "m1a_verdict": "PASS",
+   "notes": 840,
+   "raw_clash": 135,
+   "strong_raw": 30
+  },
+  "assets/audio/title_theme_v5_melded/title_theme_v5_medium.mid": {
+   "bars": 52,
+   "cp01": 18,
+   "cp09": 0,
+   "m1a_verdict": "PASS",
+   "notes": 816,
+   "raw_clash": 161,
+   "strong_raw": 35
+  },
+  "assets/audio/title_theme_v6/score_v6.yaml": {
+   "bars": 52,
+   "cp01": 17,
+   "cp09": 0,
+   "m1a_verdict": "PASS",
+   "notes": 829,
+   "raw_clash": null,
+   "strong_raw": null
+  },
+  "assets/audio/title_theme_v6/title_theme_v6.mid": {
+   "bars": 52,
+   "cp01": 0,
+   "cp09": 1,
+   "m1a_verdict": "PASS",
+   "notes": 812,
+   "raw_clash": 152,
+   "strong_raw": 32
+  },
+  "assets/audio/title_theme_v6/title_theme_v6_base.mid": {
+   "bars": 52,
+   "cp01": 17,
+   "cp09": 0,
+   "m1a_verdict": "PASS",
+   "notes": 829,
+   "raw_clash": 108,
+   "strong_raw": 26
+  },
+  "assets/audio/title_theme_v6/title_theme_v6_pre.mid": {
+   "bars": 52,
+   "cp01": 17,
+   "cp09": 0,
+   "m1a_verdict": "PASS",
+   "notes": 805,
+   "raw_clash": 142,
+   "strong_raw": 32
+  },
+  "assets/audio/title_theme_v6/title_theme_v6_round1.mid": {
+   "bars": 52,
+   "cp01": 0,
+   "cp09": 1,
+   "m1a_verdict": "PASS",
+   "notes": 812,
+   "raw_clash": 153,
+   "strong_raw": 32
+  },
+  "assets/audio/title_theme_v6/title_theme_v6r2.mid": {
+   "bars": 52,
+   "cp01": 0,
+   "cp09": 0,
+   "m1a_verdict": "PASS",
+   "notes": 812,
+   "raw_clash": 152,
+   "strong_raw": 32
+  },
+  "assets/audio/title_theme_v6/title_theme_v6r2_base.mid": {
+   "bars": 52,
+   "cp01": 17,
+   "cp09": 0,
+   "m1a_verdict": "PASS",
+   "notes": 829,
+   "raw_clash": 108,
+   "strong_raw": 26
+  },
+  "assets/audio/title_theme_v6/title_theme_v6r2_pre.mid": {
+   "bars": 52,
+   "cp01": 17,
+   "cp09": 0,
+   "m1a_verdict": "PASS",
+   "notes": 805,
+   "raw_clash": 142,
+   "strong_raw": 32
+  },
+  "assets/audio/title_theme_v6/v6_probe.mid": {
+   "bars": 52,
+   "cp01": 17,
+   "cp09": 0,
+   "m1a_verdict": "PASS",
+   "notes": 829,
+   "raw_clash": 108,
+   "strong_raw": 26
+  }
+ },
+ "format": "pp-cue-gate-baseline",
+ "note": "Counts measured when the M4 cue gate was introduced. A cue in this file is reported with its numbers and never called clean; a cue that gets worse than its row is refused. A new cue must land clean.",
+ "unmeasured": [
+  {
+   "path": "assets/audio/pp_03_harbor/score_pp03.yaml",
+   "why": "cannot read assets/audio/pp_03_harbor/score_pp03.yaml: section 'light_again' repeats section 'harbor', which is not readable"
+  },
+  {
+   "path": "assets/audio/pp_04_navy_sailors/score_pp04.yaml",
+   "why": "cannot read assets/audio/pp_04_navy_sailors/score_pp04.yaml: int() argument must be a string, a bytes-like object or a real number, not 'list'"
+  },
+  {
+   "path": "assets/audio/pp_04_navy_sailors_v2/score_pp04_v2.yaml",
+   "why": "cannot read assets/audio/pp_04_navy_sailors_v2/score_pp04_v2.yaml: int() argument must be a string, a bytes-like object or a real number, not 'list'"
+  },
+  {
+   "path": "assets/audio/pp_04_navy_sailors_v3/score_pp04_v3.yaml",
+   "why": "cannot read assets/audio/pp_04_navy_sailors_v3/score_pp04_v3.yaml: int() argument must be a string, a bytes-like object or a real number, not 'list'"
+  }
+ ],
+ "version": 1,
+ "written": "2026-10-27"
+}

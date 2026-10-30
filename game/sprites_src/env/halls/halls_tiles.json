@@ -1,0 +1,2366 @@
+{
+  "format": 1,
+  "kind": "tileset",
+  "name": "halls_tiles",
+  "image": "halls_tiles.png",
+  "card": "ART-B-MAPS (t_d0566ebc)",
+  "direction": "B, late NES polish: bold dark outlines, three tone shading lit from the top left",
+  "columns": 8,
+  "rows": 12,
+  "frames": 91,
+  "frame_w": 16,
+  "frame_h": 16,
+  "imagewidth": 128,
+  "imageheight": 192,
+  "tilecount": 91,
+  "tile_size": 16,
+  "margin": 0,
+  "spacing": 0,
+  "backdrop": {
+    "role": "ink",
+    "entry": 15,
+    "hex": "#000000"
+  },
+  "rule": "NES: one shared backdrop $0F, four background palettes of three entries, a 16x16 area carries at most three colours besides the backdrop, at most 25 colours on screen; every pixel is a 2C02 output and the tool refuses anything else",
+  "map": "wessex_lane_montefiore",
+  "room_palette": "halls_day",
+  "roles": {
+    "blood_3": {
+      "entry": 7,
+      "hex": "#881400",
+      "why": "$07 #881400, the dark brick face and iron after dark"
+    },
+    "blood_4": {
+      "entry": 23,
+      "hex": "#e45c10",
+      "why": "$17 #e45c10, the brick face under the lamp and painted rail"
+    },
+    "gold_2": {
+      "entry": 24,
+      "hex": "#ac7c00",
+      "why": "$18 #ac7c00, the olive gold of a board in the middle of its ramp"
+    },
+    "gold_4": {
+      "entry": 40,
+      "hex": "#f8b800",
+      "why": "$28 #f8b800, pale gold: a lit board and lamp glass"
+    },
+    "gold_5": {
+      "entry": 56,
+      "hex": "#f8d878",
+      "why": "$38 #f8d878, the hot core of a window and lit lettering"
+    },
+    "grey_3": {
+      "entry": 45,
+      "hex": "#787878",
+      "why": "$2D #787878, the darker neutral the road's tarmac spends"
+    },
+    "grey_4": {
+      "entry": 0,
+      "hex": "#7c7c7c",
+      "why": "$00 #7c7c7c, the one neutral mid grey in the 2C02: plaster in shade and wet stone"
+    },
+    "grey_5": {
+      "entry": 16,
+      "hex": "#bcbcbc",
+      "why": "$10 #bcbcbc, the lighter neutral: lit plaster and a wet slab's sheen"
+    },
+    "ink": {
+      "entry": 15,
+      "hex": "#000000",
+      "why": "the canonical black $0F, the shared backdrop of every area"
+    },
+    "paper": {
+      "entry": 32,
+      "hex": "#f8f8f8",
+      "why": "$20 #f8f8f8, the white of a mullion, lane paint and a shirt"
+    },
+    "sea_1": {
+      "entry": 12,
+      "hex": "#004058",
+      "why": "$0C #004058, the darkest cool output: joints, shadow, deep water"
+    },
+    "sea_2": {
+      "entry": 28,
+      "hex": "#008888",
+      "why": "$1C #008888, the harbour's mid swell"
+    },
+    "sea_3": {
+      "entry": 33,
+      "hex": "#3cbcfc",
+      "why": "$21 #3cbcfc, azure: the shaded sky in a window"
+    },
+    "sea_4": {
+      "entry": 49,
+      "hex": "#a4e4fc",
+      "why": "$31 #a4e4fc, pale azure: the lit sky in a window"
+    },
+    "stone_2": {
+      "entry": 8,
+      "hex": "#503000",
+      "why": "$08 #503000, the brown one step under brick: mortar, joints, dark wood"
+    }
+  },
+  "sets": {
+    "halls_day": {
+      "roles": [
+        "ink",
+        "paper",
+        "dim",
+        "text",
+        "grey_4",
+        "grey_5",
+        "sea_3",
+        "sea_4",
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "note": "the Montefiore halls room in daylight: cold plaster, pale boards, the sky in two windows"
+    }
+  },
+  "palettes": [
+    {
+      "name": "bg0_hall_wall",
+      "roles": [
+        "grey_4",
+        "grey_5",
+        "paper"
+      ],
+      "ramp": [
+        "grey_4",
+        "grey_5",
+        "paper"
+      ],
+      "entries": [
+        0,
+        16,
+        32
+      ],
+      "hex": [
+        "#7c7c7c",
+        "#bcbcbc",
+        "#f8f8f8"
+      ],
+      "note": "cold plaster, the dado rail, the skirting and the door: one grey ramp, lit from the top left"
+    },
+    {
+      "name": "bg1_hall_glass",
+      "roles": [
+        "sea_3",
+        "sea_4",
+        "paper"
+      ],
+      "ramp": [
+        "sea_3",
+        "sea_4",
+        "paper"
+      ],
+      "entries": [
+        33,
+        49,
+        32
+      ],
+      "hex": [
+        "#3cbcfc",
+        "#a4e4fc",
+        "#f8f8f8"
+      ],
+      "note": "the window: the frame in paper, the lit sky in pale azure, the shaded sky in azure"
+    },
+    {
+      "name": "bg2_hall_floor",
+      "roles": [
+        "stone_2",
+        "gold_2",
+        "gold_4"
+      ],
+      "ramp": [
+        "stone_2",
+        "gold_2",
+        "gold_4"
+      ],
+      "entries": [
+        8,
+        24,
+        40
+      ],
+      "hex": [
+        "#503000",
+        "#ac7c00",
+        "#f8b800"
+      ],
+      "note": "the boards, the rug, the cartons and the chair: one warm ramp so the floor spends one group"
+    }
+  ],
+  "tiles": [
+    {
+      "index": 0,
+      "name": "halls_00",
+      "character": "0",
+      "palette": "bg0_hall_wall",
+      "roles": [
+        "grey_4",
+        "grey_5",
+        "paper"
+      ],
+      "first_cell": [
+        0,
+        0
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "paper",
+        "lightest_share_percent": 18.8,
+        "rows_without_dark": 15,
+        "horizontal_dark_runs": 1,
+        "interior_dark_pixels": 14
+      }
+    },
+    {
+      "index": 1,
+      "name": "halls_01",
+      "character": "1",
+      "palette": "bg0_hall_wall",
+      "roles": [
+        "grey_4",
+        "grey_5",
+        "paper"
+      ],
+      "first_cell": [
+        0,
+        1
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "paper",
+        "lightest_share_percent": 6.2,
+        "rows_without_dark": 14,
+        "horizontal_dark_runs": 2,
+        "interior_dark_pixels": 1
+      }
+    },
+    {
+      "index": 2,
+      "name": "halls_02",
+      "character": "2",
+      "palette": "bg0_hall_wall",
+      "roles": [
+        "grey_4",
+        "grey_5",
+        "paper"
+      ],
+      "first_cell": [
+        6,
+        1
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "paper",
+        "lightest_share_percent": 47.3,
+        "rows_without_dark": 2,
+        "horizontal_dark_runs": 30,
+        "interior_dark_pixels": 40
+      }
+    },
+    {
+      "index": 3,
+      "name": "halls_03",
+      "character": "3",
+      "palette": "bg0_hall_wall",
+      "roles": [
+        "paper"
+      ],
+      "first_cell": [
+        1,
+        2
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 1,
+        "lightest_role": "paper",
+        "lightest_share_percent": 100.0,
+        "rows_without_dark": 16,
+        "horizontal_dark_runs": 0,
+        "interior_dark_pixels": 0
+      }
+    },
+    {
+      "index": 4,
+      "name": "halls_04",
+      "character": "4",
+      "palette": "bg1_hall_glass",
+      "roles": [
+        "paper",
+        "sea_4"
+      ],
+      "first_cell": [
+        2,
+        2
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 2,
+        "lightest_role": "paper",
+        "lightest_share_percent": 25.0,
+        "rows_without_dark": 16,
+        "horizontal_dark_runs": 0,
+        "interior_dark_pixels": 0
+      }
+    },
+    {
+      "index": 5,
+      "name": "halls_05",
+      "character": "5",
+      "palette": "bg1_hall_glass",
+      "roles": [
+        "paper",
+        "sea_4"
+      ],
+      "first_cell": [
+        3,
+        2
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 2,
+        "lightest_role": "paper",
+        "lightest_share_percent": 34.4,
+        "rows_without_dark": 16,
+        "horizontal_dark_runs": 0,
+        "interior_dark_pixels": 0
+      }
+    },
+    {
+      "index": 6,
+      "name": "halls_06",
+      "character": "6",
+      "palette": "bg1_hall_glass",
+      "roles": [
+        "paper",
+        "sea_3",
+        "sea_4"
+      ],
+      "first_cell": [
+        5,
+        2
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "paper",
+        "lightest_share_percent": 25.0,
+        "rows_without_dark": 4,
+        "horizontal_dark_runs": 12,
+        "interior_dark_pixels": 22
+      }
+    },
+    {
+      "index": 7,
+      "name": "halls_07",
+      "character": "7",
+      "palette": "bg0_hall_wall",
+      "roles": [
+        "grey_4",
+        "grey_5",
+        "paper"
+      ],
+      "first_cell": [
+        6,
+        2
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "paper",
+        "lightest_share_percent": 12.1,
+        "rows_without_dark": 9,
+        "horizontal_dark_runs": 7,
+        "interior_dark_pixels": 8
+      }
+    },
+    {
+      "index": 8,
+      "name": "halls_08",
+      "character": "8",
+      "palette": "bg0_hall_wall",
+      "roles": [
+        "grey_4",
+        "grey_5",
+        "paper"
+      ],
+      "first_cell": [
+        7,
+        2
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "paper",
+        "lightest_share_percent": 37.5,
+        "rows_without_dark": 14,
+        "horizontal_dark_runs": 2,
+        "interior_dark_pixels": 15
+      }
+    },
+    {
+      "index": 9,
+      "name": "halls_09",
+      "character": "9",
+      "palette": "bg1_hall_glass",
+      "roles": [
+        "paper",
+        "sea_4"
+      ],
+      "first_cell": [
+        1,
+        3
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 2,
+        "lightest_role": "paper",
+        "lightest_share_percent": 25.0,
+        "rows_without_dark": 16,
+        "horizontal_dark_runs": 0,
+        "interior_dark_pixels": 0
+      }
+    },
+    {
+      "index": 10,
+      "name": "halls_10",
+      "character": "a",
+      "palette": "bg1_hall_glass",
+      "roles": [
+        "sea_4"
+      ],
+      "first_cell": [
+        2,
+        3
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 1,
+        "lightest_role": "sea_4",
+        "lightest_share_percent": 100.0,
+        "rows_without_dark": 16,
+        "horizontal_dark_runs": 0,
+        "interior_dark_pixels": 0
+      }
+    },
+    {
+      "index": 11,
+      "name": "halls_11",
+      "character": "b",
+      "palette": "bg1_hall_glass",
+      "roles": [
+        "paper",
+        "sea_4"
+      ],
+      "first_cell": [
+        3,
+        3
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 2,
+        "lightest_role": "paper",
+        "lightest_share_percent": 12.5,
+        "rows_without_dark": 16,
+        "horizontal_dark_runs": 0,
+        "interior_dark_pixels": 0
+      }
+    },
+    {
+      "index": 12,
+      "name": "halls_12",
+      "character": "c",
+      "palette": "bg1_hall_glass",
+      "roles": [
+        "sea_3",
+        "sea_4"
+      ],
+      "first_cell": [
+        5,
+        3
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 2,
+        "lightest_role": "sea_4",
+        "lightest_share_percent": 87.5,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 16,
+        "interior_dark_pixels": 28
+      }
+    },
+    {
+      "index": 13,
+      "name": "halls_13",
+      "character": "d",
+      "palette": "bg0_hall_wall",
+      "roles": [
+        "grey_4",
+        "grey_5",
+        "paper"
+      ],
+      "first_cell": [
+        6,
+        3
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "paper",
+        "lightest_share_percent": 23.4,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 17,
+        "interior_dark_pixels": 15
+      }
+    },
+    {
+      "index": 14,
+      "name": "halls_14",
+      "character": "e",
+      "palette": "bg0_hall_wall",
+      "roles": [
+        "grey_4",
+        "grey_5"
+      ],
+      "first_cell": [
+        7,
+        3
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 2,
+        "lightest_role": "grey_5",
+        "lightest_share_percent": 56.2,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 16,
+        "interior_dark_pixels": 75
+      }
+    },
+    {
+      "index": 15,
+      "name": "halls_15",
+      "character": "f",
+      "palette": "bg0_hall_wall",
+      "roles": [
+        "grey_4",
+        "grey_5",
+        "paper"
+      ],
+      "first_cell": [
+        8,
+        3
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "paper",
+        "lightest_share_percent": 25.0,
+        "rows_without_dark": 11,
+        "horizontal_dark_runs": 5,
+        "interior_dark_pixels": 48
+      }
+    },
+    {
+      "index": 16,
+      "name": "halls_16",
+      "character": "g",
+      "palette": "bg0_hall_wall",
+      "roles": [
+        "grey_4",
+        "grey_5"
+      ],
+      "first_cell": [
+        9,
+        3
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 2,
+        "lightest_role": "grey_5",
+        "lightest_share_percent": 56.2,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 16,
+        "interior_dark_pixels": 75
+      }
+    },
+    {
+      "index": 17,
+      "name": "halls_17",
+      "character": "h",
+      "palette": "bg1_hall_glass",
+      "roles": [
+        "ink",
+        "paper",
+        "sea_4"
+      ],
+      "first_cell": [
+        1,
+        4
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "paper",
+        "lightest_share_percent": 24.2,
+        "rows_without_dark": 4,
+        "horizontal_dark_runs": 16,
+        "interior_dark_pixels": 124
+      }
+    },
+    {
+      "index": 18,
+      "name": "halls_18",
+      "character": "i",
+      "palette": "bg1_hall_glass",
+      "roles": [
+        "ink",
+        "paper",
+        "sea_4"
+      ],
+      "first_cell": [
+        2,
+        4
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "paper",
+        "lightest_share_percent": 10.9,
+        "rows_without_dark": 4,
+        "horizontal_dark_runs": 16,
+        "interior_dark_pixels": 124
+      }
+    },
+    {
+      "index": 19,
+      "name": "halls_19",
+      "character": "j",
+      "palette": "bg1_hall_glass",
+      "roles": [
+        "ink",
+        "paper",
+        "sea_4"
+      ],
+      "first_cell": [
+        3,
+        4
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "paper",
+        "lightest_share_percent": 13.3,
+        "rows_without_dark": 4,
+        "horizontal_dark_runs": 16,
+        "interior_dark_pixels": 124
+      }
+    },
+    {
+      "index": 20,
+      "name": "halls_20",
+      "character": "k",
+      "palette": "bg1_hall_glass",
+      "roles": [
+        "ink",
+        "paper",
+        "sea_3",
+        "sea_4"
+      ],
+      "first_cell": [
+        5,
+        4
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 4,
+        "lightest_role": "paper",
+        "lightest_share_percent": 8.6,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 20,
+        "interior_dark_pixels": 130
+      }
+    },
+    {
+      "index": 21,
+      "name": "halls_21",
+      "character": "l",
+      "palette": "bg0_hall_wall",
+      "roles": [
+        "grey_4",
+        "grey_5",
+        "paper"
+      ],
+      "first_cell": [
+        7,
+        4
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "paper",
+        "lightest_share_percent": 10.9,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 16,
+        "interior_dark_pixels": 42
+      }
+    },
+    {
+      "index": 22,
+      "name": "halls_22",
+      "character": "m",
+      "palette": "bg0_hall_wall",
+      "roles": [
+        "grey_5",
+        "paper"
+      ],
+      "first_cell": [
+        8,
+        4
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 2,
+        "lightest_role": "paper",
+        "lightest_share_percent": 12.5,
+        "rows_without_dark": 16,
+        "horizontal_dark_runs": 0,
+        "interior_dark_pixels": 0
+      }
+    },
+    {
+      "index": 23,
+      "name": "halls_23",
+      "character": "n",
+      "palette": "bg0_hall_wall",
+      "roles": [
+        "grey_4",
+        "grey_5",
+        "paper"
+      ],
+      "first_cell": [
+        9,
+        4
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "paper",
+        "lightest_share_percent": 10.9,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 16,
+        "interior_dark_pixels": 42
+      }
+    },
+    {
+      "index": 24,
+      "name": "halls_24",
+      "character": "o",
+      "palette": "bg1_hall_glass",
+      "roles": [
+        "ink",
+        "paper",
+        "sea_4"
+      ],
+      "first_cell": [
+        1,
+        5
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "paper",
+        "lightest_share_percent": 23.4,
+        "rows_without_dark": 10,
+        "horizontal_dark_runs": 10,
+        "interior_dark_pixels": 52
+      }
+    },
+    {
+      "index": 25,
+      "name": "halls_25",
+      "character": "p",
+      "palette": "bg1_hall_glass",
+      "roles": [
+        "ink",
+        "paper",
+        "sea_4"
+      ],
+      "first_cell": [
+        2,
+        5
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "paper",
+        "lightest_share_percent": 3.1,
+        "rows_without_dark": 10,
+        "horizontal_dark_runs": 10,
+        "interior_dark_pixels": 52
+      }
+    },
+    {
+      "index": 26,
+      "name": "halls_26",
+      "character": "q",
+      "palette": "bg1_hall_glass",
+      "roles": [
+        "ink",
+        "paper",
+        "sea_4"
+      ],
+      "first_cell": [
+        3,
+        5
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "paper",
+        "lightest_share_percent": 10.9,
+        "rows_without_dark": 10,
+        "horizontal_dark_runs": 10,
+        "interior_dark_pixels": 52
+      }
+    },
+    {
+      "index": 27,
+      "name": "halls_27",
+      "character": "r",
+      "palette": "bg1_hall_glass",
+      "roles": [
+        "ink",
+        "paper",
+        "sea_3",
+        "sea_4"
+      ],
+      "first_cell": [
+        5,
+        5
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 4,
+        "lightest_role": "paper",
+        "lightest_share_percent": 3.1,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 20,
+        "interior_dark_pixels": 70
+      }
+    },
+    {
+      "index": 28,
+      "name": "halls_28",
+      "character": "s",
+      "palette": "bg0_hall_wall",
+      "roles": [
+        "grey_4",
+        "grey_5",
+        "paper"
+      ],
+      "first_cell": [
+        7,
+        5
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "paper",
+        "lightest_share_percent": 4.7,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 17,
+        "interior_dark_pixels": 48
+      }
+    },
+    {
+      "index": 29,
+      "name": "halls_29",
+      "character": "t",
+      "palette": "bg0_hall_wall",
+      "roles": [
+        "grey_4",
+        "grey_5"
+      ],
+      "first_cell": [
+        8,
+        5
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 2,
+        "lightest_role": "grey_5",
+        "lightest_share_percent": 93.8,
+        "rows_without_dark": 15,
+        "horizontal_dark_runs": 1,
+        "interior_dark_pixels": 14
+      }
+    },
+    {
+      "index": 30,
+      "name": "halls_30",
+      "character": "u",
+      "palette": "bg0_hall_wall",
+      "roles": [
+        "grey_4",
+        "grey_5",
+        "paper"
+      ],
+      "first_cell": [
+        9,
+        5
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "paper",
+        "lightest_share_percent": 4.7,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 17,
+        "interior_dark_pixels": 48
+      }
+    },
+    {
+      "index": 31,
+      "name": "halls_31",
+      "character": "v",
+      "palette": "bg1_hall_glass",
+      "roles": [
+        "paper",
+        "sea_3",
+        "sea_4"
+      ],
+      "first_cell": [
+        1,
+        6
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "paper",
+        "lightest_share_percent": 18.8,
+        "rows_without_dark": 8,
+        "horizontal_dark_runs": 8,
+        "interior_dark_pixels": 92
+      }
+    },
+    {
+      "index": 32,
+      "name": "halls_32",
+      "character": "w",
+      "palette": "bg1_hall_glass",
+      "roles": [
+        "paper",
+        "sea_3",
+        "sea_4"
+      ],
+      "first_cell": [
+        2,
+        6
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "paper",
+        "lightest_share_percent": 6.2,
+        "rows_without_dark": 8,
+        "horizontal_dark_runs": 8,
+        "interior_dark_pixels": 98
+      }
+    },
+    {
+      "index": 33,
+      "name": "halls_33",
+      "character": "x",
+      "palette": "bg1_hall_glass",
+      "roles": [
+        "paper",
+        "sea_3",
+        "sea_4"
+      ],
+      "first_cell": [
+        3,
+        6
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "paper",
+        "lightest_share_percent": 9.4,
+        "rows_without_dark": 8,
+        "horizontal_dark_runs": 8,
+        "interior_dark_pixels": 98
+      }
+    },
+    {
+      "index": 34,
+      "name": "halls_34",
+      "character": "y",
+      "palette": "bg1_hall_glass",
+      "roles": [
+        "paper",
+        "sea_3",
+        "sea_4"
+      ],
+      "first_cell": [
+        5,
+        6
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "paper",
+        "lightest_share_percent": 12.5,
+        "rows_without_dark": 4,
+        "horizontal_dark_runs": 12,
+        "interior_dark_pixels": 98
+      }
+    },
+    {
+      "index": 35,
+      "name": "halls_35",
+      "character": "z",
+      "palette": "bg0_hall_wall",
+      "roles": [
+        "grey_4",
+        "grey_5",
+        "paper"
+      ],
+      "first_cell": [
+        7,
+        6
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "paper",
+        "lightest_share_percent": 8.6,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 16,
+        "interior_dark_pixels": 42
+      }
+    },
+    {
+      "index": 36,
+      "name": "halls_36",
+      "character": "A",
+      "palette": "bg0_hall_wall",
+      "roles": [
+        "grey_5",
+        "paper"
+      ],
+      "first_cell": [
+        8,
+        6
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 2,
+        "lightest_role": "paper",
+        "lightest_share_percent": 12.5,
+        "rows_without_dark": 16,
+        "horizontal_dark_runs": 0,
+        "interior_dark_pixels": 0
+      }
+    },
+    {
+      "index": 37,
+      "name": "halls_37",
+      "character": "B",
+      "palette": "bg0_hall_wall",
+      "roles": [
+        "grey_4",
+        "grey_5",
+        "paper"
+      ],
+      "first_cell": [
+        9,
+        6
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "paper",
+        "lightest_share_percent": 12.1,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 17,
+        "interior_dark_pixels": 47
+      }
+    },
+    {
+      "index": 38,
+      "name": "halls_38",
+      "character": "C",
+      "palette": "bg0_hall_wall",
+      "roles": [
+        "grey_4",
+        "grey_5",
+        "paper"
+      ],
+      "first_cell": [
+        0,
+        7
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "paper",
+        "lightest_share_percent": 50.0,
+        "rows_without_dark": 14,
+        "horizontal_dark_runs": 2,
+        "interior_dark_pixels": 14
+      }
+    },
+    {
+      "index": 39,
+      "name": "halls_39",
+      "character": "D",
+      "palette": "bg0_hall_wall",
+      "roles": [
+        "grey_4",
+        "grey_5",
+        "paper"
+      ],
+      "first_cell": [
+        6,
+        7
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "paper",
+        "lightest_share_percent": 56.2,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 16,
+        "interior_dark_pixels": 25
+      }
+    },
+    {
+      "index": 40,
+      "name": "halls_40",
+      "character": "E",
+      "palette": "bg0_hall_wall",
+      "roles": [
+        "grey_4",
+        "grey_5",
+        "paper"
+      ],
+      "first_cell": [
+        7,
+        7
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "paper",
+        "lightest_share_percent": 5.5,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 17,
+        "interior_dark_pixels": 48
+      }
+    },
+    {
+      "index": 41,
+      "name": "halls_41",
+      "character": "F",
+      "palette": "bg0_hall_wall",
+      "roles": [
+        "grey_4",
+        "grey_5"
+      ],
+      "first_cell": [
+        8,
+        7
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 2,
+        "lightest_role": "grey_5",
+        "lightest_share_percent": 93.8,
+        "rows_without_dark": 15,
+        "horizontal_dark_runs": 1,
+        "interior_dark_pixels": 14
+      }
+    },
+    {
+      "index": 42,
+      "name": "halls_42",
+      "character": "G",
+      "palette": "bg0_hall_wall",
+      "roles": [
+        "grey_4",
+        "grey_5",
+        "paper"
+      ],
+      "first_cell": [
+        9,
+        7
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "paper",
+        "lightest_share_percent": 5.5,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 17,
+        "interior_dark_pixels": 48
+      }
+    },
+    {
+      "index": 43,
+      "name": "halls_43",
+      "character": "H",
+      "palette": "bg0_hall_wall",
+      "roles": [
+        "grey_4",
+        "grey_5",
+        "paper"
+      ],
+      "first_cell": [
+        0,
+        8
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "paper",
+        "lightest_share_percent": 43.8,
+        "rows_without_dark": 14,
+        "horizontal_dark_runs": 2,
+        "interior_dark_pixels": 14
+      }
+    },
+    {
+      "index": 44,
+      "name": "halls_44",
+      "character": "I",
+      "palette": "bg0_hall_wall",
+      "roles": [
+        "grey_4",
+        "grey_5",
+        "paper"
+      ],
+      "first_cell": [
+        6,
+        8
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "paper",
+        "lightest_share_percent": 51.6,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 16,
+        "interior_dark_pixels": 25
+      }
+    },
+    {
+      "index": 45,
+      "name": "halls_45",
+      "character": "J",
+      "palette": "bg0_hall_wall",
+      "roles": [
+        "grey_4",
+        "grey_5"
+      ],
+      "first_cell": [
+        7,
+        8
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 2,
+        "lightest_role": "grey_5",
+        "lightest_share_percent": 28.1,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 16,
+        "interior_dark_pixels": 152
+      }
+    },
+    {
+      "index": 46,
+      "name": "halls_46",
+      "character": "K",
+      "palette": "bg0_hall_wall",
+      "roles": [
+        "grey_4",
+        "grey_5"
+      ],
+      "first_cell": [
+        8,
+        8
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 2,
+        "lightest_role": "grey_5",
+        "lightest_share_percent": 37.5,
+        "rows_without_dark": 6,
+        "horizontal_dark_runs": 10,
+        "interior_dark_pixels": 140
+      }
+    },
+    {
+      "index": 47,
+      "name": "halls_47",
+      "character": "L",
+      "palette": "bg0_hall_wall",
+      "roles": [
+        "grey_4",
+        "grey_5"
+      ],
+      "first_cell": [
+        9,
+        8
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 2,
+        "lightest_role": "grey_5",
+        "lightest_share_percent": 28.1,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 16,
+        "interior_dark_pixels": 152
+      }
+    },
+    {
+      "index": 48,
+      "name": "halls_48",
+      "character": "M",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        0,
+        9
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 19.1,
+        "rows_without_dark": 4,
+        "horizontal_dark_runs": 13,
+        "interior_dark_pixels": 64
+      }
+    },
+    {
+      "index": 49,
+      "name": "halls_49",
+      "character": "N",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        1,
+        9
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 37.5,
+        "rows_without_dark": 9,
+        "horizontal_dark_runs": 7,
+        "interior_dark_pixels": 57
+      }
+    },
+    {
+      "index": 50,
+      "name": "halls_50",
+      "character": "O",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        2,
+        9
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 26.2,
+        "rows_without_dark": 4,
+        "horizontal_dark_runs": 12,
+        "interior_dark_pixels": 62
+      }
+    },
+    {
+      "index": 51,
+      "name": "halls_51",
+      "character": "P",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        3,
+        9
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 18.8,
+        "rows_without_dark": 9,
+        "horizontal_dark_runs": 7,
+        "interior_dark_pixels": 58
+      }
+    },
+    {
+      "index": 52,
+      "name": "halls_52",
+      "character": "Q",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        4,
+        9
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 18.8,
+        "rows_without_dark": 10,
+        "horizontal_dark_runs": 6,
+        "interior_dark_pixels": 56
+      }
+    },
+    {
+      "index": 53,
+      "name": "halls_53",
+      "character": "R",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        0,
+        10
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 22.7,
+        "rows_without_dark": 1,
+        "horizontal_dark_runs": 15,
+        "interior_dark_pixels": 52
+      }
+    },
+    {
+      "index": 54,
+      "name": "halls_54",
+      "character": "S",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        1,
+        10
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 5.9,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 16,
+        "interior_dark_pixels": 14
+      }
+    },
+    {
+      "index": 55,
+      "name": "halls_55",
+      "character": "T",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        2,
+        10
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 15.6,
+        "rows_without_dark": 1,
+        "horizontal_dark_runs": 15,
+        "interior_dark_pixels": 34
+      }
+    },
+    {
+      "index": 56,
+      "name": "halls_56",
+      "character": "U",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        3,
+        10
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 25.0,
+        "rows_without_dark": 12,
+        "horizontal_dark_runs": 4,
+        "interior_dark_pixels": 42
+      }
+    },
+    {
+      "index": 57,
+      "name": "halls_57",
+      "character": "V",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        5,
+        10
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 25.0,
+        "rows_without_dark": 11,
+        "horizontal_dark_runs": 5,
+        "interior_dark_pixels": 44
+      }
+    },
+    {
+      "index": 58,
+      "name": "halls_58",
+      "character": "W",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        12,
+        10
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 26.6,
+        "rows_without_dark": 7,
+        "horizontal_dark_runs": 10,
+        "interior_dark_pixels": 51
+      }
+    },
+    {
+      "index": 59,
+      "name": "halls_59",
+      "character": "X",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        13,
+        10
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 25.0,
+        "rows_without_dark": 8,
+        "horizontal_dark_runs": 9,
+        "interior_dark_pixels": 42
+      }
+    },
+    {
+      "index": 60,
+      "name": "halls_60",
+      "character": "Y",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        14,
+        10
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 24.6,
+        "rows_without_dark": 7,
+        "horizontal_dark_runs": 9,
+        "interior_dark_pixels": 52
+      }
+    },
+    {
+      "index": 61,
+      "name": "halls_61",
+      "character": "Z",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        0,
+        11
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 34.8,
+        "rows_without_dark": 1,
+        "horizontal_dark_runs": 15,
+        "interior_dark_pixels": 41
+      }
+    },
+    {
+      "index": 62,
+      "name": "halls_62",
+      "character": ".",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        1,
+        11
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 52.7,
+        "rows_without_dark": 8,
+        "horizontal_dark_runs": 8,
+        "interior_dark_pixels": 26
+      }
+    },
+    {
+      "index": 63,
+      "name": "halls_63",
+      "character": ",",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        2,
+        11
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 50.0,
+        "rows_without_dark": 15,
+        "horizontal_dark_runs": 1,
+        "interior_dark_pixels": 14
+      }
+    },
+    {
+      "index": 64,
+      "name": "halls_64",
+      "character": ":",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        3,
+        11
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 25.4,
+        "rows_without_dark": 1,
+        "horizontal_dark_runs": 15,
+        "interior_dark_pixels": 53
+      }
+    },
+    {
+      "index": 65,
+      "name": "halls_65",
+      "character": ";",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        5,
+        11
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 32.8,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 16,
+        "interior_dark_pixels": 47
+      }
+    },
+    {
+      "index": 66,
+      "name": "halls_66",
+      "character": "~",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        6,
+        11
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 21.1,
+        "rows_without_dark": 13,
+        "horizontal_dark_runs": 3,
+        "interior_dark_pixels": 42
+      }
+    },
+    {
+      "index": 67,
+      "name": "halls_67",
+      "character": "*",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        10,
+        11
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 32.8,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 16,
+        "interior_dark_pixels": 47
+      }
+    },
+    {
+      "index": 68,
+      "name": "halls_68",
+      "character": "+",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        12,
+        11
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 26.6,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 20,
+        "interior_dark_pixels": 47
+      }
+    },
+    {
+      "index": 69,
+      "name": "halls_69",
+      "character": "=",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        13,
+        11
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 21.9,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 20,
+        "interior_dark_pixels": 39
+      }
+    },
+    {
+      "index": 70,
+      "name": "halls_70",
+      "character": "#",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        14,
+        11
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 23.4,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 16,
+        "interior_dark_pixels": 53
+      }
+    },
+    {
+      "index": 71,
+      "name": "halls_71",
+      "character": "%",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        0,
+        12
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 12.5,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 17,
+        "interior_dark_pixels": 37
+      }
+    },
+    {
+      "index": 72,
+      "name": "halls_72",
+      "character": "@",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        1,
+        12
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 5.9,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 16,
+        "interior_dark_pixels": 28
+      }
+    },
+    {
+      "index": 73,
+      "name": "halls_73",
+      "character": "&",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "stone_2"
+      ],
+      "first_cell": [
+        2,
+        12
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 2,
+        "lightest_role": "gold_2",
+        "lightest_share_percent": 93.8,
+        "rows_without_dark": 15,
+        "horizontal_dark_runs": 1,
+        "interior_dark_pixels": 0
+      }
+    },
+    {
+      "index": 74,
+      "name": "halls_74",
+      "character": "$",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        3,
+        12
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 21.9,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 17,
+        "interior_dark_pixels": 55
+      }
+    },
+    {
+      "index": 75,
+      "name": "halls_75",
+      "character": "?",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        5,
+        12
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 18.8,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 16,
+        "interior_dark_pixels": 36
+      }
+    },
+    {
+      "index": 76,
+      "name": "halls_76",
+      "character": "!",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        6,
+        12
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 2.3,
+        "rows_without_dark": 14,
+        "horizontal_dark_runs": 2,
+        "interior_dark_pixels": 28
+      }
+    },
+    {
+      "index": 77,
+      "name": "halls_77",
+      "character": "^",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        10,
+        12
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 18.8,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 16,
+        "interior_dark_pixels": 36
+      }
+    },
+    {
+      "index": 78,
+      "name": "halls_78",
+      "character": "/",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        12,
+        12
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 24.6,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 20,
+        "interior_dark_pixels": 50
+      }
+    },
+    {
+      "index": 79,
+      "name": "halls_79",
+      "character": "|",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        13,
+        12
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 17.2,
+        "rows_without_dark": 6,
+        "horizontal_dark_runs": 13,
+        "interior_dark_pixels": 40
+      }
+    },
+    {
+      "index": 80,
+      "name": "halls_80",
+      "character": "<",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        14,
+        12
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 21.5,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 16,
+        "interior_dark_pixels": 59
+      }
+    },
+    {
+      "index": 81,
+      "name": "halls_81",
+      "character": ">",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        5,
+        13
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 32.8,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 16,
+        "interior_dark_pixels": 47
+      }
+    },
+    {
+      "index": 82,
+      "name": "halls_82",
+      "character": "[",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        6,
+        13
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 21.1,
+        "rows_without_dark": 13,
+        "horizontal_dark_runs": 3,
+        "interior_dark_pixels": 42
+      }
+    },
+    {
+      "index": 83,
+      "name": "halls_83",
+      "character": "]",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        10,
+        13
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 32.8,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 16,
+        "interior_dark_pixels": 47
+      }
+    },
+    {
+      "index": 84,
+      "name": "halls_84",
+      "character": "{",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        12,
+        13
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 23.0,
+        "rows_without_dark": 4,
+        "horizontal_dark_runs": 14,
+        "interior_dark_pixels": 58
+      }
+    },
+    {
+      "index": 85,
+      "name": "halls_85",
+      "character": "}",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        13,
+        13
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 22.7,
+        "rows_without_dark": 4,
+        "horizontal_dark_runs": 14,
+        "interior_dark_pixels": 55
+      }
+    },
+    {
+      "index": 86,
+      "name": "halls_86",
+      "character": "(",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        14,
+        13
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 22.3,
+        "rows_without_dark": 4,
+        "horizontal_dark_runs": 12,
+        "interior_dark_pixels": 57
+      }
+    },
+    {
+      "index": 87,
+      "name": "halls_87",
+      "character": ")",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        0,
+        14
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 25.0,
+        "rows_without_dark": 11,
+        "horizontal_dark_runs": 5,
+        "interior_dark_pixels": 56
+      }
+    },
+    {
+      "index": 88,
+      "name": "halls_88",
+      "character": "-",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        1,
+        14
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 25.0,
+        "rows_without_dark": 10,
+        "horizontal_dark_runs": 6,
+        "interior_dark_pixels": 58
+      }
+    },
+    {
+      "index": 89,
+      "name": "halls_89",
+      "character": "_",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        5,
+        14
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 28.1,
+        "rows_without_dark": 11,
+        "horizontal_dark_runs": 5,
+        "interior_dark_pixels": 56
+      }
+    },
+    {
+      "index": 90,
+      "name": "halls_90",
+      "character": "`",
+      "palette": "bg2_hall_floor",
+      "roles": [
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ],
+      "first_cell": [
+        7,
+        14
+      ],
+      "note": "the first cell of the frame this tile appears in, at 16 px a cell",
+      "blob": {
+        "distinct_colours": 3,
+        "lightest_role": "gold_4",
+        "lightest_share_percent": 28.1,
+        "rows_without_dark": 10,
+        "horizontal_dark_runs": 6,
+        "interior_dark_pixels": 58
+      }
+    }
+  ],
+  "animation": []
+}

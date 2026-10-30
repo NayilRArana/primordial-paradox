@@ -87,6 +87,24 @@
     },
     {
       "$GMIncludedFile": "",
+      "%Name": "cue_ear_approvals.json",
+      "CopyToMask": -1,
+      "filePath": "datafiles",
+      "name": "cue_ear_approvals.json",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "cue_gate_baseline.json",
+      "CopyToMask": -1,
+      "filePath": "datafiles",
+      "name": "cue_gate_baseline.json",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
       "%Name": "dissonance_rules.json",
       "CopyToMask": -1,
       "filePath": "datafiles",
@@ -231,6 +249,15 @@
     },
     {
       "$GMIncludedFile": "",
+      "%Name": "sfx_blips.json",
+      "CopyToMask": -1,
+      "filePath": "datafiles",
+      "name": "sfx_blips.json",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
       "%Name": "slice.json",
       "CopyToMask": -1,
       "filePath": "datafiles",
@@ -285,19 +312,19 @@
     },
     {
       "$GMIncludedFile": "",
-      "%Name": "talk_personas_bake.json",
+      "%Name": "tile_classes_drive.json",
       "CopyToMask": -1,
       "filePath": "datafiles",
-      "name": "talk_personas_bake.json",
+      "name": "tile_classes_drive.json",
       "resourceType": "GMIncludedFile",
       "resourceVersion": "2.0"
     },
     {
       "$GMIncludedFile": "",
-      "%Name": "tile_classes_drive.json",
+      "%Name": "tile_classes_quay_v2.json",
       "CopyToMask": -1,
       "filePath": "datafiles",
-      "name": "tile_classes_drive.json",
+      "name": "tile_classes_quay_v2.json",
       "resourceType": "GMIncludedFile",
       "resourceVersion": "2.0"
     },
@@ -456,6 +483,15 @@
     },
     {
       "$GMIncludedFile": "",
+      "%Name": "halls_tiles.png",
+      "CopyToMask": -1,
+      "filePath": "datafiles/art",
+      "name": "halls_tiles.png",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
       "%Name": "konrad_battle.png",
       "CopyToMask": -1,
       "filePath": "datafiles/art",
@@ -492,10 +528,28 @@
     },
     {
       "$GMIncludedFile": "",
+      "%Name": "kronos_ow24.png",
+      "CopyToMask": -1,
+      "filePath": "datafiles/art",
+      "name": "kronos_ow24.png",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
       "%Name": "navy_sailor.png",
       "CopyToMask": -1,
       "filePath": "datafiles/art",
       "name": "navy_sailor.png",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "ouranos_ow24.png",
+      "CopyToMask": -1,
+      "filePath": "datafiles/art",
+      "name": "ouranos_ow24.png",
       "resourceType": "GMIncludedFile",
       "resourceVersion": "2.0"
     },
@@ -519,10 +573,46 @@
     },
     {
       "$GMIncludedFile": "",
+      "%Name": "percy_man_1_ow24.png",
+      "CopyToMask": -1,
+      "filePath": "datafiles/art",
+      "name": "percy_man_1_ow24.png",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "percy_man_2_ow24.png",
+      "CopyToMask": -1,
+      "filePath": "datafiles/art",
+      "name": "percy_man_2_ow24.png",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "percy_man_3_ow24.png",
+      "CopyToMask": -1,
+      "filePath": "datafiles/art",
+      "name": "percy_man_3_ow24.png",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
       "%Name": "percy_ow.png",
       "CopyToMask": -1,
       "filePath": "datafiles/art",
       "name": "percy_ow.png",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "percy_ow24.png",
+      "CopyToMask": -1,
+      "filePath": "datafiles/art",
+      "name": "percy_ow24.png",
       "resourceType": "GMIncludedFile",
       "resourceVersion": "2.0"
     },
@@ -546,10 +636,28 @@
     },
     {
       "$GMIncludedFile": "",
+      "%Name": "quay_storm_tiles.png",
+      "CopyToMask": -1,
+      "filePath": "datafiles/art",
+      "name": "quay_storm_tiles.png",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
       "%Name": "quay_tiles.png",
       "CopyToMask": -1,
       "filePath": "datafiles/art",
       "name": "quay_tiles.png",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "quay_v2_tiles.png",
+      "CopyToMask": -1,
+      "filePath": "datafiles/art",
+      "name": "quay_v2_tiles.png",
       "resourceType": "GMIncludedFile",
       "resourceVersion": "2.0"
     },
@@ -955,6 +1063,15 @@
       "CopyToMask": -1,
       "filePath": "datafiles/art",
       "name": "spr_title_zander.png",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "street_tiles.png",
+      "CopyToMask": -1,
+      "filePath": "datafiles/art",
+      "name": "street_tiles.png",
       "resourceType": "GMIncludedFile",
       "resourceVersion": "2.0"
     },
@@ -1419,6 +1536,15 @@
     },
     {
       "$GMIncludedFile": "",
+      "%Name": "zeus_ow_walk8.png",
+      "CopyToMask": -1,
+      "filePath": "datafiles/art",
+      "name": "zeus_ow_walk8.png",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
       "%Name": "party.json",
       "CopyToMask": -1,
       "filePath": "datafiles/characters",
@@ -1441,6 +1567,15 @@
       "CopyToMask": -1,
       "filePath": "datafiles/demo",
       "name": "run_001.json",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "run_002.json",
+      "CopyToMask": -1,
+      "filePath": "datafiles/demo",
+      "name": "run_002.json",
       "resourceType": "GMIncludedFile",
       "resourceVersion": "2.0"
     },
@@ -1482,10 +1617,28 @@
     },
     {
       "$GMIncludedFile": "",
+      "%Name": "LEVEL-PROVENANCE.json",
+      "CopyToMask": -1,
+      "filePath": "datafiles/maps",
+      "name": "LEVEL-PROVENANCE.json",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
       "%Name": "all.json",
       "CopyToMask": -1,
       "filePath": "datafiles/maps",
       "name": "all.json",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "all_v1_osm.json",
+      "CopyToMask": -1,
+      "filePath": "datafiles/maps",
+      "name": "all_v1_osm.json",
       "resourceType": "GMIncludedFile",
       "resourceVersion": "2.0"
     },
@@ -1549,6 +1702,15 @@
       "CopyToMask": -1,
       "filePath": "datafiles/maps/osm",
       "name": "southampton_town_quay.json",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "southampton_town_quay_base.json",
+      "CopyToMask": -1,
+      "filePath": "datafiles/maps/osm",
+      "name": "southampton_town_quay_base.json",
       "resourceType": "GMIncludedFile",
       "resourceVersion": "2.0"
     },
@@ -2076,6 +2238,24 @@
     },
     {
       "$GMIncludedFile": "",
+      "%Name": "footstep_a.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "footstep_a.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "footstep_b.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "footstep_b.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
       "%Name": "game_over.ogg",
       "CopyToMask": -1,
       "filePath": "datafiles/streams",
@@ -2116,6 +2296,15 @@
       "CopyToMask": -1,
       "filePath": "datafiles/streams",
       "name": "item_get.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "knife_slash.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "knife_slash.ogg",
       "resourceType": "GMIncludedFile",
       "resourceVersion": "2.0"
     },
@@ -2220,6 +2409,24 @@
     },
     {
       "$GMIncludedFile": "",
+      "%Name": "pp_01_title_v10.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "pp_01_title_v10.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "pp_01_title_v11.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "pp_01_title_v11.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
       "%Name": "pp_01_title_v6.ogg",
       "CopyToMask": -1,
       "filePath": "datafiles/streams",
@@ -2242,6 +2449,15 @@
       "CopyToMask": -1,
       "filePath": "datafiles/streams",
       "name": "pp_01_title_v8.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "pp_01_title_v9.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "pp_01_title_v9.ogg",
       "resourceType": "GMIncludedFile",
       "resourceVersion": "2.0"
     },
@@ -2287,6 +2503,24 @@
       "CopyToMask": -1,
       "filePath": "datafiles/streams",
       "name": "pp_03_harbor_v4b.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "pp_04_fight_baroque_v1.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "pp_04_fight_baroque_v1.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "pp_04_fight_baroque_v2.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "pp_04_fight_baroque_v2.ogg",
       "resourceType": "GMIncludedFile",
       "resourceVersion": "2.0"
     },
@@ -2368,6 +2602,15 @@
       "CopyToMask": -1,
       "filePath": "datafiles/streams",
       "name": "pp_05_small_ship_v5.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "pp_05_small_ship_v6.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "pp_05_small_ship_v6.ogg",
       "resourceType": "GMIncludedFile",
       "resourceVersion": "2.0"
     },
@@ -2571,6 +2814,51 @@
     },
     {
       "$GMIncludedFile": "",
+      "%Name": "text_blip_kronos.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "text_blip_kronos.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "text_blip_narrator.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "text_blip_narrator.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "text_blip_oldman.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "text_blip_oldman.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "text_blip_percy.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "text_blip_percy.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "text_blip_zeus.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "text_blip_zeus.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
       "%Name": "thunder_soft.ogg",
       "CopyToMask": -1,
       "filePath": "datafiles/streams",
@@ -2647,6 +2935,15 @@
       "CopyToMask": -1,
       "filePath": "datafiles/streams",
       "name": "title_theme_v5.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "title_theme_v6.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "title_theme_v6.ogg",
       "resourceType": "GMIncludedFile",
       "resourceVersion": "2.0"
     },
