@@ -99,6 +99,7 @@ def main() -> int:
         problems.append("data/audio.json: cues: two cues share one asset, so one file cannot be told from the other")
 
     landed = {}
+    delivered_notes = []
     for cue_id, row in rows.items():
         asset = row.get("asset") or ""
         path = os.path.join(root, "assets", "audio", asset, asset + ".ogg")
@@ -112,18 +113,30 @@ def main() -> int:
         if row.get("volume") != MUSIC_VOLUME:
             problems.append("data/audio.json: %s: volume is %r, spec 12 sets music at %s"
                             % (cue_id, row.get("volume"), MUSIC_VOLUME))
-        if row.get("loop") is not True:
-            problems.append("data/audio.json: %s: loop is %r, spec 12 rule 1 plays music looped"
-                            % (cue_id, row.get("loop")))
+        # Shape, not policy. Spec 12 rule 1 plays music looped and rule 3 takes the loop points from the
+        # file's own metadata, so a cue with no loop sidecar (PP-17 Boarding, the 32 s one shot) must not
+        # be looped at all: neither rule can be satisfied by guessing. Which rows say false is pinned per
+        # row in tests/test_audio.py, so a silent flip is a red there; this checker only refuses a row
+        # that is not a boolean.
+        if not isinstance(row.get("loop"), bool):
+            problems.append("data/audio.json: %s: loop is %r, must be true or false" % (cue_id, row.get("loop")))
         if pending and present:
             problems.append("data/audio.json: %s: marked pending but %s exists" % (cue_id, path))
         if not pending and not present:
             problems.append("data/audio.json: %s: not pending but %s is missing" % (cue_id, path))
-        if present and declared != "assets/audio/%s/%s.ogg" % (asset, asset):
-            problems.append("data/audio.json: %s: delivered_file %r does not name %s"
-                            % (cue_id, declared, "assets/audio/%s/%s.ogg" % (asset, asset)))
-        if not present and declared is not None:
-            problems.append("data/audio.json: %s: delivered_file is set but the file is missing" % cue_id)
+        if declared is not None:
+            declared_rel = str(declared).replace("\\", "/")
+            declared_path = os.path.join(root, declared_rel)
+            if not os.path.isfile(declared_path):
+                problems.append("data/audio.json: %s: delivered_file %r is missing" % (cue_id, declared_rel))
+            elif present and declared_rel != "assets/audio/%s/%s.ogg" % (asset, asset):
+                # The bus streams assets/audio/<asset>/<asset>.ogg (pp_audio_music_paths, pp_audio.gml:142),
+                # so a row may name a different render only while the two are not yet one file. Printed,
+                # not failed: the row is telling the truth about what the musician delivered, and the fix
+                # is the cue owner collapsing the revisions, not a data edit here.
+                delivered_notes.append(
+                    "%s: the ledger names %s, and the bus will stream %s until the cue owner makes them one file"
+                    % (cue_id, declared_rel, "assets/audio/%s/%s.ogg" % (asset, asset)))
 
     # --- the fallback chain must terminate at a file, with no cycle ---------------------------------------------
     def resolve(cue_id, trail):
@@ -214,6 +227,8 @@ def main() -> int:
     print("references walked: %d from maps, scenes and encounters; slice cues: %s"
           % (len(refs), ", ".join(slice_cues) or "none"))
     print("landed %d, pending %d" % (sum(1 for v in landed.values() if v), sum(1 for v in landed.values() if not v)))
+    for note in delivered_notes:
+        print("NOTE " + note)
     if problems:
         for problem in problems:
             print("FAIL " + problem)

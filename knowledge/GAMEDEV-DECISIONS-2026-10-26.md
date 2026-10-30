@@ -23,6 +23,8 @@ Decision, one line: `SHIP-DECK-MAP` keeps its 32 s and `data/scenes/all.json` `s
 1920 steps; the row keeps the 542 steps it costs today, gains cue `PP-17` (`pp_boarding`, one shot, 32.000 s) as its
 only music track at the opening, and its last music command hands back to `PP-05` with spec 12's 30 step crossfade, so
 no separate fallback row is needed.
+Amendment `D1a` below, 2026-10-29, re measured this on HEAD `9375051b`: the dialogue floor is 173 and the row is 539
+steps, 8.983 s; the decision on this page does not change.
 
 Why: `208 steps` is a draft figure from a row that commit 5f5180b (SHIP-CAPTIONS) has already replaced. The row in the
 tree today is `shake 40`, `wait 120`, `camera 24`, `wait 90`, `say ship_gangway`, `camera 24`, `move 1 tile`, `wait 60`,
@@ -166,3 +168,57 @@ it is naming which file owns the number.
 Provenance: no external source studied for this card. Every measurement is this repository's own files and tools, run on
 the desktop node in this session; nothing was read from any decompilation, nothing copied, nothing pushed and nothing
 published.
+
+---
+
+## D1a. Amendment, 2026-10-29: the row prices at 539 steps today, and the cue cannot pass its own clean room while three boarding revisions sit in `assets/audio`
+
+Card `t_9275989a` (the Q that D1 answered) was requeued by the dispatcher and re measured today on this node at HEAD
+`9375051b`, from `git show HEAD:./data/scenes/all.json` and `git show HEAD:./data/dialogue/all.json` rather than from the
+working copy, because both files are dirty in this tree.
+
+D1's decision stands unchanged: `SHIP-DECK-MAP` keeps 32 s, the row is not authored to 1920 steps, the cue ships one shot
+at 32.000 s as `PP-17`, and the last music command hands back to `PP-05` with spec 12 rule 4's 30 step crossfade. Two of
+D1's numbers have moved, both smaller than D1 said:
+
+| number | D1, 2026-10-26 | today |
+| --- | --- | --- |
+| `ship_gangway` dialogue floor | 176 steps, three lines at 25, 25 and 23 characters | 173 steps; lines 1 and 2 unchanged, line 3 is now `* The mop has seen worse.`, 23 characters with no comma, 46 + 8 = 54 |
+| `ship_boarding` total | 542 steps, 9.033 s | 539 steps, 8.983 s (366 fixed + 173 dialogue) |
+| dead wait if the row were padded to 1920 | 1378 steps | 1381 steps, 23.017 s |
+
+The fixed 366 is unchanged and prices off the specs: `shake 40` is its own steps, `wait 120` and `wait 60` are their steps,
+two `camera` moves at 24 each, a railed `move 1 tile` at 8 (spec 04 line 16, `PP_WALK_STEPS_RAIL`, 8 a tile since the
+2026-10-26 free walk change), `setflag` and `end` at 0, and `music` at 0 because its 30 step crossfade runs under the scene
+instead of blocking it.
+
+The cue's own checker is wrong about the row, and its owner should fix it, not a data card:
+`assets/audio/pp_boarding/check_pp_boarding.py` prints `row today: 282 steps / 60 = 4.700 s`. It prices `say ship_gangway`
+at 0 steps, prices `move 1 tiles` at the retired 12 a tile, and prices neither `shake` nor either `camera`. 282 is not a
+number the row has ever had; it is the same class of error as the 208 in the card body, a row that no file holds.
+
+New blocker found while re measuring, and it gates D1's wiring:
+
+    python assets/audio/pp_boarding/check_pp_boarding.py       -> check 8 FAILED
+    python assets/audio/pp_boarding_v2/check_pp_boarding_v2.py -> check 8 FAILED
+    python tools/melody_guard.py <each of the three mids> assets/audio
+
+All three boarding revisions now fail `tools/melody_guard.py` (run limit 8) against their own siblings and against nothing
+else: v1 measures run 32 against v2 and v3, v2 measures run 66 against v3 (the two lead lines are the same melody, 5-gram
+Jaccard 1.0000), and every one of the other 115 references in `assets/audio` sits at run 4 or below. The guard skips only
+the exact file under test (`tools/melody_guard.py:308`), so full revisions of one cue count as independent references and
+a cue with a revision history cannot pass its own clean room.
+
+Ruling, so the wiring card is not held on a lane question: `PP-17`'s `delivered_file` names
+`assets/audio/pp_boarding_v2/pp_boarding_v2_humanized.ogg`, which is 32.000000 s by ffprobe on this node and carries no loop
+json. `pp_boarding_v3` holds the newest ear read (33 of 60 against v2 humanized's 28) but has no OGG render, only wav and
+mp3, and it ships a `pp_boarding_v3_loop.json` that contradicts the one shot brief; it does not ship until it renders to
+OGG and passes the nine checks with one reference per cue. That swap is D4's rule: edit `PP-17`'s `delivered_file`, no
+re-cut. The cue's owner then moves the two losing revisions out of `assets/audio`, into a `_revisions/` folder the guard
+does not scan or an archive outside the repo, so the guard sees one reference per cue, and re runs the checkers to green.
+
+Provenance: no external source. Every number above is this repository's own files and tools run on this node today:
+`git show HEAD:./data/scenes/all.json`, `git show HEAD:./data/dialogue/all.json`, `data/mechanics/pacing_recipes.json`
+line 736 (beat 25, `gangway_deck_horn`, 32 s), `ffprobe` on the three renders, `tools/melody_guard.py`, and
+`measure_boarding.py` in card `t_9275989a`'s workspace.
+

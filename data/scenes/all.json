@@ -8,7 +8,7 @@
       "map": "ship_small",
       "start": { "x": 2, "y": 7 },
       "commands": [
-        { "cmd": "music", "id": "PP-05" },
+        { "cmd": "music", "id": "PP-17" },
         { "cmd": "shake", "steps": 40, "strength": 1 },
         { "cmd": "wait", "steps": 120 },
         { "cmd": "camera", "x": 18, "y": 7 },
@@ -17,6 +17,7 @@
         { "cmd": "camera", "actor": "hero" },
         { "cmd": "move", "actor": "hero", "dir": "right", "tiles": 1 },
         { "cmd": "wait", "steps": 60 },
+        { "cmd": "music", "id": "PP-05" },
         { "cmd": "setflag", "name": "ship_deck_seen", "value": true },
         { "cmd": "end" }
       ]

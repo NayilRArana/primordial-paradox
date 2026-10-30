@@ -321,18 +321,29 @@ def test_angle_to_gm_mirrors_and_wraps():
 # --- the music cue registry (spec 12, card G0-2) ----------------------------------------------------------------
 
 CUE_IDS = ["PP-01", "PP-02", "PP-03", "PP-04", "PP-05", "PP-06", "PP-07", "PP-08", "PP-09",
-           "PP-10", "PP-11", "PP-12", "PP-13", "PP-14", "PP-15a", "PP-15b", "PP-16"]
+           "PP-10", "PP-11", "PP-12", "PP-13", "PP-14", "PP-15a", "PP-15b", "PP-16",
+           # PP-17 Boarding is gamedev's own row (ruling D1, amended by D1a on 2026-10-29): the
+           # boarding scene needs its own cue and hands back to PP-05. It is the only id here the
+           # musician did not write, and it is the only row whose placeholder flag is false.
+           "PP-17"]
 ROOT_DATA = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data")
 
 
 def test_cue_registry_uses_the_musicians_own_ids_and_count_is_pinned(read_json):
-    """The cue ids come from the musician's list, not from a name invented in code, and there are seventeen of them.
-    Pinning the count means a cue that is quietly dropped from the table fails here instead of failing as silence."""
+    """The cue ids come from the musician's list, not from a name invented in code, and there are eighteen
+    rows: his seventeen plus the one gamedev row with its reason written beside it. Pinning the count means a
+    cue that is quietly dropped from the table fails here instead of failing as silence."""
     data = read_json(os.path.join(ROOT_DATA, "audio.json"))
     assert [row["id"] for row in data["cues"]] == CUE_IDS
-    assert len(data["cues"]) == 17
+    assert len(data["cues"]) == 18
     for row in data["cues"]:
-        assert row["placeholder"] is True, "no OGG exists yet, so every cue must say so"
+        if row["id"] == "PP-17":
+            # The one row that claims a real delivered take, so it must be able to prove it.
+            assert row["placeholder"] is False
+            assert os.path.isfile(os.path.join(ROOT_DATA, os.pardir, row["delivered_file"])), \
+                "PP-17 names a delivered file that is not on disk"
+        else:
+            assert row["placeholder"] is True, "no ear approved take exists yet, so every step row must say so"
         assert row["loop"] in (True, False)
         assert row["asset"] and not row["asset"].endswith(".ogg"), "the loader adds the extension itself"
 

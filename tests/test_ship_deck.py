@@ -726,7 +726,11 @@ def test_both_ship_scenes_use_only_commands_the_runner_implements(scenes):
         assert scene["map"] == DECK, "scene %r runs on map %r, not on the deck" % (scene["id"], scene["map"])
     problems = unknown_command_problems(ship, implemented)
     assert problems == [], problems
-    assert len(scenes[BOARDING_SCENE]["commands"]) == 11, (
+    # The boarding scene gained one command on 2026-10-29 (card t_a1cb4af0, ruling D1/D1a): the handback
+    # { "cmd": "music", "id": "PP-05" } after the final wait, so the opening PP-17 cue crossfades back to
+    # the ship ambience instead of being cut. 11 commands are 12 now, and the count is still pinned because
+    # an extra command the runner silently skips is exactly what this pin exists to catch.
+    assert len(scenes[BOARDING_SCENE]["commands"]) == 12, (
         "the boarding scene authors %d commands" % len(scenes[BOARDING_SCENE]["commands"]))
     # The log scene gained the one `say ship_log_open` that reads the ship's log before the jingle (card t_4c7368fb),
     # so the S5 measurement of 8 is 9 now: the two pages of words are the beat's, and the move commands are unchanged.

@@ -31,7 +31,8 @@
     { "id": "PP-14", "title": "Kronos", "asset": "pp_14_kronos", "delivered_file": null, "loop": true, "volume": 0.7, "pending": true, "fallback": "PP-06", "pending_reason": "not composed; no assets/audio/pp_14_kronos folder; falls back to the boss cue so the fight keeps priority 12", "placeholder": true, "placeholder_sound": null, "boss": true },
     { "id": "PP-15a", "title": "Entropy", "asset": "pp_15a_entropy", "delivered_file": null, "loop": true, "volume": 0.7, "pending": true, "fallback": "PP-01", "pending_reason": "not composed; no assets/audio/pp_15a_entropy folder; the ending bookends the title waltz", "placeholder": true, "placeholder_sound": null, "route": "genocide" },
     { "id": "PP-15b", "title": "Mercy", "asset": "pp_15b_mercy", "delivered_file": null, "loop": true, "volume": 0.7, "pending": true, "fallback": "PP-01", "pending_reason": "not composed; no assets/audio/pp_15b_mercy folder; the ending bookends the title waltz", "placeholder": true, "placeholder_sound": null, "route": "mercy" },
-    { "id": "PP-16", "title": "Ouranos", "asset": "pp_16_ouranos", "delivered_file": null, "loop": true, "volume": 0.7, "pending": true, "fallback": "PP-01", "pending_reason": "not composed; no assets/audio/pp_16_ouranos folder", "placeholder": true, "placeholder_sound": null }
+    { "id": "PP-16", "title": "Ouranos", "asset": "pp_16_ouranos", "delivered_file": null, "loop": true, "volume": 0.7, "pending": true, "fallback": "PP-01", "pending_reason": "not composed; no assets/audio/pp_16_ouranos folder", "placeholder": true, "placeholder_sound": null },
+    { "id": "PP-17", "title": "Boarding", "asset": "pp_boarding", "delivered_file": "assets/audio/pp_boarding_v2/pp_boarding_v2_humanized.ogg", "loop": false, "volume": 0.7, "pending": false, "fallback": "PP-05", "placeholder": false }
   ],
   "sounds": [
     { "id": "ship_ambient", "kind": "music", "file": "ship_ambient.ogg" },

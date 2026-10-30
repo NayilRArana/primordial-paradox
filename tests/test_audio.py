@@ -1,9 +1,9 @@
 """Tests for the audio bus contract: data\\audio.json, game\\scripts\\pp_audio\\pp_audio.gml and the checker.
 
 What is pinned here, and why each pin earns its place:
-  - the cue table holds exactly the musician's seventeen ids, one row each, with a title, an asset
-    name, a loop flag and a placeholder flag, so a rename cannot detach the musician's music
-    from the game without a red test;
+  - the cue table holds the musician's seventeen ids plus gamedev's recorded PP-17 Boarding row,
+    one row each, with a title, an asset name, a loop flag and a placeholder flag, so a rename
+    cannot detach the musician's music from the game without a red test;
   - every cue id asked for by a map, a scene or an encounter is a row in that table, and the
     rows nothing asks for are the recorded list, not an accident;
   - the crossfade is the macro 30, not three literals, and the priorities are the spec numbers;
@@ -57,6 +57,13 @@ CUE_IDS = [
     "PP-01", "PP-02", "PP-03", "PP-04", "PP-05", "PP-06", "PP-07", "PP-08", "PP-09",
     "PP-10", "PP-11", "PP-12", "PP-13", "PP-14", "PP-15a", "PP-15b", "PP-16",
 ]
+
+# The one row in the table the musician never wrote. PP-17 Boarding was ruled in by gamedev, ruling D1
+# of knowledge/GAMEDEV-DECISIONS-2026-10-26.md (amended by D1a on 2026-10-29): the boarding scene has its
+# own 32 s cue, and it hands back to PP-05 with spec 12 rule 4's 30 step crossfade, so the cue needs an
+# id of its own. Recorded here so a cue id can still never arrive in the table unnoticed: anything
+# beyond these seventeen plus PP-17 still fails the invented-id pin below.
+GAMEDEV_CUE_IDS = ["PP-17"]
 
 # The rows no map, scene or encounter asks for today. Pinned exactly so a row added to or dropped
 # from the table cannot slip into or out of this list unnoticed. This is a recorded gap, not an
@@ -202,21 +209,29 @@ def _music_references():
 
 # --- item 1: the table is exactly the ids the card names, fully filled in ---------------------------------------
 
-def test_cue_table_is_exactly_the_seventeen_ids_the_musician_wrote():
+def test_cue_table_is_the_musicians_ids_plus_the_boarding_row():
     """No more and no fewer. Sorting on both sides means a reordered table is fine and a renamed,
     added or dropped id is not: that is the failure a silent detach of the musician's music from
-    the game would otherwise be."""
+    the game would otherwise be. PP-17 is counted, not absorbed: it is named in GAMEDEV_CUE_IDS
+    and every one of the musician's seventeen must still be present."""
     ids = _cue_ids()
-    assert len(ids) == 17
-    assert sorted(ids) == sorted(CUE_IDS)
-    assert sorted(ids) == sorted(_musician_ids()), "the table and the musician's own list disagree"
+    assert len(ids) == 18
+    assert sorted(ids) == sorted(CUE_IDS + GAMEDEV_CUE_IDS)
+    missing = sorted(_musician_ids() - set(ids))
+    assert missing == [], "the table and the musician's own list disagree: %s missing" % missing
+    assert sorted(set(ids) - _musician_ids()) == GAMEDEV_CUE_IDS, \
+        "a cue id arrived that is neither the musician's nor a recorded gamedev row"
     assert all(CUE_ID_RE.match(row_id) for row_id in ids), "every id must look like PP-01 or PP-15a"
 
 
 def test_every_cue_row_carries_title_asset_loop_and_placeholder():
     """The four fields the bus and the loader read. An asset is a bare lowercase name because the
-    loader appends .ogg, and placeholder is required because no cue has a file yet: a row without
-    it would claim an OGG the build does not ship."""
+    loader appends .ogg. The placeholder flag is required on every row, and the one row that clears
+    it has to prove the claim: PP-17 says placeholder false, so it must name a delivered OGG that is
+    on disk (measured 32.000000 s by ffprobe, ruling D1a). The flag's meaning in this data, written
+    plainly because the old docstring read it the other way: true means "the take this row ships is
+    a stand-in until the ear approves the final mix", which is still the honest state of PP-01 to
+    PP-06, all of which have a file AND the flag."""
     for row in _cue_rows():
         where = row.get("id", "<no id>")
         assert isinstance(row.get("title"), str) and row["title"].strip(), "%s has no title" % where
@@ -226,9 +241,18 @@ def test_every_cue_row_carries_title_asset_loop_and_placeholder():
         assert re.fullmatch(r"[a-z0-9_]+", asset), "%s asset is not a lowercase name" % where
         assert isinstance(row.get("loop"), bool), "%s loop must be a boolean" % where
         assert isinstance(row.get("placeholder"), bool), "%s placeholder must be a boolean" % where
-        assert row["placeholder"] is True, "%s claims a delivered OGG and none exists" % where
+        if row["placeholder"] is False:
+            declared = row.get("delivered_file")
+            assert isinstance(declared, str) and declared.lower().endswith(".ogg"), \
+                "%s clears the placeholder flag and names no OGG" % where
+            assert os.path.isfile(os.path.join(ROOT, declared.replace("/", os.sep))), \
+                "%s names %s, which is not on disk" % (where, declared)
     assets = [row["asset"] for row in _cue_rows()]
     assert len(set(assets)) == len(assets), "two cues would load the same file"
+    # Spec 12 rule 3 says loop points come from the file's own metadata, never a code side guess, so a
+    # cue with no loop sidecar must not be played looped. Exactly one row is built that way today.
+    one_shot = [row["id"] for row in _cue_rows() if row["loop"] is False]
+    assert one_shot == ["PP-17"], "the one shot set moved: %s" % one_shot
 
 
 def test_the_bus_reads_that_table_and_refuses_an_id_it_does_not_hold():
@@ -243,10 +267,11 @@ def test_the_bus_reads_that_table_and_refuses_an_id_it_does_not_hold():
 
 
 def test_no_cue_id_was_invented_against_the_musicians_note():
-    """Every id in the table is one the musician actually wrote in his round 1 note, which is the
-    point of using his labels: a code side name would be a name he never chose."""
+    """Every id in the table is one the musician actually wrote in his round 1 note, with one recorded
+    exception: PP-17 Boarding, ruled in by gamedev D1 and D1a. A code side name he never chose is still
+    a red, so the exception list is exact, not a wildcard."""
     invented = sorted(set(_cue_ids()) - _musician_ids())
-    assert invented == [], "cue ids the musician never wrote: %s" % invented
+    assert invented == GAMEDEV_CUE_IDS, "cue ids the musician never wrote: %s" % invented
 
 
 def test_the_copied_cue_table_lives_in_the_game_and_stays_out_of_the_build_bundle():
@@ -350,6 +375,29 @@ def test_unreferenced_cue_rows_are_the_recorded_debt_list():
         "the unreferenced set moved: newly unreferenced %s, newly referenced %s"
         % (sorted(set(unreferenced) - set(RECORDED_UNREFERENCED)),
            sorted(set(RECORDED_UNREFERENCED) - set(unreferenced))))
+
+
+def test_the_boarding_scene_opens_on_its_own_cue_and_hands_back_to_pp_05():
+    """Ruling D1 and D1a, wired: `ship_boarding` opens on PP-17 Boarding and its LAST music command is
+    PP-05, placed after the final wait and before the setflag. That last command is the handback, and
+    spec 12 rule 4's 30 step crossfade is what it costs: no fallback row, no second track, and no
+    silence when the 32 s cue runs under a 539 step scene. Written as the whole music sequence, in
+    order, so a dropped handback or a re-pointed opening fails here instead of failing as silence at
+    the deck door."""
+    scenes = {scene.get("id"): scene for scene in _read(os.path.join(DATA, "scenes", "all.json"))["scenes"]}
+    commands = scenes["ship_boarding"]["commands"]
+    played = [(index, command.get("id")) for index, command in enumerate(commands)
+              if isinstance(command, dict) and command.get("cmd") == "music"]
+    assert [cue for _index, cue in played] == ["PP-17", "PP-05"], played
+    opening_at = played[0][0]
+    assert opening_at == 0, "PP-17 must be the scene's opening command, found it at %d" % opening_at
+    handback_at = played[-1][0]
+    assert commands[handback_at - 1] == {"cmd": "wait", "steps": 60}, \
+        "the handback must follow the final wait, found %r before it" % (commands[handback_at - 1],)
+    assert commands[handback_at + 1].get("cmd") == "setflag", \
+        "the handback must sit before the setflag, found %r after it" % (commands[handback_at + 1],)
+    # Spec 12 rule 1: one track at a time, so no third music command may appear between them.
+    assert len(played) == 2, "the scene asks for %d music cues, spec 12 rule 1 allows one at a time" % len(played)
 
 
 # --- item 3: the crossfade is one macro of 30 steps -------------------------------------------------------------
