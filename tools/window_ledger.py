@@ -106,7 +106,7 @@ FEATURES = [
      "demo": "How it was built: one person, agent roles, and a checker that says no",
      "paths": ["BUILT-WITH-AGENTS.md", "README.md", "HACKATHON.md", "EVENT-LOG.md",
                "tools/event_log.py", "tools/window_ledger.py", "tests/"],
-     "showcase": r"BUILT-WITH-AGENTS|EVENT-LOG|HACKATHON|SUB-KIT"},
+     "showcase": r"BUILT-WITH-AGENTS|EVENT-LOG|^SUB-KIT"},
     {"id": "L13", "shots": "B1",
      "demo": "The frame itself: 256 by 240, every colour a 2C02 output",
      "paths": ["tools/check_runtime_palette.py", "tests/test_runtime_palette.py",
