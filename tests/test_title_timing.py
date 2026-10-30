@@ -200,3 +200,52 @@ def test_the_pan_lands_on_the_star_field_and_never_fades_it():
     assert "pp_title_fade_name(\"spr_title_star\"" not in source
     stars_draw = source.split("function pp_title_draw_stars", 1)[1].split("\nfunction ", 1)[0]
     assert "pp_title_fade_name" not in stars_draw
+
+
+def test_the_crawl_is_legible_at_one_x_because_it_is_one_eight_pixel_cell_per_glyph():
+    """The card's third check, "the crawl text legible at 1x", as arithmetic on the text that ships.
+
+    The capture on disk was taken 2026-10-23 03:57 and data/intro_text.json was rewritten on 2026-10-27 by
+    PP-VOICE-1 (six new beats, the longest 30 columns), so no frame in this tree shows the crawl a player now
+    reads. Legibility does not need that frame: the font draws every glyph in a fixed 8 pixel cell
+    (pp_font_width is string_length * 8, game/scripts/pp_font/pp_font.gml), the crawl centres each row on the
+    frame with no scale argument to get wrong (pp_title_draw_crawl), and so a row fits with its margin, and the
+    whole stack fits in the frame, or this test says which row does not.
+
+    It is the check that would go red the day a beat is written a word too long, which is the failure a screenshot
+    of older text cannot catch.
+    """
+    with open(os.path.join(ROOT, "game", "scripts", "pp_font", "pp_font.gml"), "r", encoding="utf-8") as handle:
+        font = handle.read()
+    # The cell is the font's own claim, not a number copied into this test: a font that stopped being 8 px wide
+    # would make every width below wrong, so the line that draws is read for its stride.
+    assert "return string_length(_text) * 8;" in font
+    assert "_cx += 8;" in font
+    cell = 8
+
+    config = macros(os.path.join(ROOT, "game", "scripts", "pp_config", "pp_config.gml"))
+    frame_w, frame_h = int(config["PP_FRAME_W"]), int(config["PP_FRAME_H"])
+
+    with open(os.path.join(ROOT, "data", "intro_text.json"), "r", encoding="utf-8") as handle:
+        beats = json.load(handle)["beats"]
+    lines = [line for beat in beats for line in beat]
+    widest = max(lines, key=lambda line: len(line) * cell)
+    assert len(widest) * cell <= frame_w - 2 * cell, (
+        "%r is %d px wide at %d px a glyph, which leaves no margin in a %d px frame"
+        % (widest, len(widest) * cell, cell, frame_w))
+
+    with open(TITLE_GML, "r", encoding="utf-8") as handle:
+        source = handle.read()
+    gml = macros(TITLE_GML)
+    crawl = source.split("function pp_title_draw_crawl", 1)[1].split("\nfunction ", 1)[0]
+    assert ("pp_font_draw_centre(_text, PP_FRAME_W / 2, PP_TITLE_INTRO_TEXT_Y + _at * PP_TITLE_INTRO_LINE_H, 1)"
+            in crawl)
+    # The stack: the last row shown on screen still ends inside the frame, at the 8 px cell height.
+    lines_on_screen = timing()["text"]["lines_on_screen"]
+    line_h = int(gml["PP_TITLE_INTRO_LINE_H"])
+    text_y = int(gml["PP_TITLE_INTRO_TEXT_Y"])
+    assert text_y + (lines_on_screen - 1) * line_h + cell <= frame_h, (
+        "%d rows at %d px from y %d run past the %d px frame" % (lines_on_screen, line_h, text_y, frame_h))
+    # And the rows the crawl can show at once are the rows the timing json says, so the stack checked above is the
+    # stack the game draws.
+    assert int(gml["PP_TITLE_INTRO_LINES"]) == lines_on_screen
