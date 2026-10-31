@@ -261,6 +261,7 @@
         "name",
         "family",
         "trigger",
+        "preparation",
         "recipe",
         "where",
         "duration_beats",
@@ -304,6 +305,34 @@
           "type": "string",
           "minLength": 20,
           "description": "The musical condition that must hold before the device may be written."
+        },
+        "preparation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "requires", "verdict_if_missing"],
+          "description": "How the ear is made ready for the dissonance before it sounds. Card t_aa3ab04e: a device that names neither a preparation nor a resolution is refused by the injector, and one that cannot say how it is prepared must say so in kind, which is none_needed, and say why in requires.",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "held_chord_tone",
+                "previous_chord_member",
+                "step_from_consonance",
+                "bass_step_approach",
+                "scale_approach",
+                "none_needed"
+              ]
+            },
+            "requires": {
+              "type": "string",
+              "minLength": 20,
+              "description": "What must be sounding, and for how long, before the device note. For kind none_needed it says why nothing is owed."
+            },
+            "verdict_if_missing": {
+              "type": "string",
+              "enum": ["reject", "warn"]
+            }
+          }
         },
         "recipe": {
           "type": "array",

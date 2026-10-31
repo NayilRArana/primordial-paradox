@@ -95,6 +95,11 @@
       "name": "Chromatic passing tone, rising",
       "family": "chromatic_passing",
       "trigger": "Two melody notes on the same chord are a whole tone apart and the lower one is at least a beat long, so one semitone can be inserted between them.",
+      "preparation": {
+        "kind": "held_chord_tone",
+        "requires": "the lower chord tone is held for at least a beat before the semitone is inserted, so the slide starts from a note the ear has already accepted",
+        "verdict_if_missing": "reject"
+      },
       "recipe": [
         "Take the lower chord tone on its beat.",
         "Insert a note one semitone below the upper chord tone on the second half of the beat or on the next eighth.",
@@ -129,6 +134,11 @@
       "name": "Chromatic lower neighbour",
       "family": "chromatic_neighbour",
       "trigger": "A melody note is held at least 2 beats and the bar has room for a dip and a return.",
+      "preparation": {
+        "kind": "held_chord_tone",
+        "requires": "the note the neighbour leaves is held for at least two beats, which is what makes the dip read as an ornament on a settled note rather than as an error",
+        "verdict_if_missing": "reject"
+      },
       "recipe": [
         "Keep the chord tone on its beat.",
         "On the next weak position, step down one semitone and hold for one eighth or one beat.",
@@ -163,6 +173,11 @@
       "name": "Appoggiatura on a strong beat, resolving down by step",
       "family": "appoggiatura",
       "trigger": "A phrase has a strong beat chord tone that can be approached by leap, and the next beat is available for the resolution.",
+      "preparation": {
+        "kind": "none_needed",
+        "requires": "no preparation is owed: the appoggiatura is entered by leap on a strong beat and the step down inside one beat is what makes it intentional, so the injector owes the leap and the resolution, not a held note before them",
+        "verdict_if_missing": "reject"
+      },
       "recipe": [
         "On beat 1 or beat 2, enter by a leap of a third to a seventh from a chord tone of the previous beat.",
         "Land on a note one semitone or one whole tone above the chord tone that belongs on that beat, so the strong beat carries the dissonance.",
@@ -197,6 +212,11 @@
       "name": "Suspension 4 to 3",
       "family": "suspension",
       "trigger": "The previous chord contains the note a fourth above the coming bass, so it can be prepared as a chord tone before the chord changes.",
+      "preparation": {
+        "kind": "previous_chord_member",
+        "requires": "the suspended note is a chord tone of the previous chord and sounds as one for at least a beat before the bass changes under it",
+        "verdict_if_missing": "reject"
+      },
       "recipe": [
         "Prepare the fourth above the coming bass as a chord tone in the previous bar.",
         "Tie or repeat that same pitch into the new chord, where it is now a dissonance against the bass.",
@@ -231,6 +251,11 @@
       "name": "Suspension 7 to 6",
       "family": "suspension",
       "trigger": "A seventh above the coming bass is available as a chord tone in the previous chord, which happens on any stepwise descending bass or a circle of fifths move.",
+      "preparation": {
+        "kind": "previous_chord_member",
+        "requires": "the seventh above the coming bass is a consonant member of the previous chord and is held across the change, which is what makes the 7-6 figure a suspension",
+        "verdict_if_missing": "reject"
+      },
       "recipe": [
         "Sound the seventh above the coming bass in the previous chord.",
         "Carry that pitch across the chord change, where it is a seventh against the new bass and not a chord tone.",
@@ -265,6 +290,11 @@
       "name": "Suspension 9 to 8 over a dominant",
       "family": "suspension",
       "trigger": "A dominant chord is held for at least 2 beats and the ninth above its root was a chord tone of the chord before it.",
+      "preparation": {
+        "kind": "previous_chord_member",
+        "requires": "the ninth is a chord tone of the chord before the dominant and is held into it, so only the harmony moves underneath the held note",
+        "verdict_if_missing": "reject"
+      },
       "recipe": [
         "Prepare the ninth above the dominant root as a chord tone in the previous chord, for example the fifth of the tonic chord.",
         "Hold it into the dominant, where it is a dissonant ninth above the bass.",
@@ -299,6 +329,11 @@
       "name": "Accented passing tone on beat 2 of a waltz bar",
       "family": "chromatic_passing",
       "trigger": "A 3/4 bar has a melody note on beat 1 and another on beat 3 with a whole tone between them.",
+      "preparation": {
+        "kind": "step_from_consonance",
+        "requires": "beat 1 sounds a chord tone and the passing note is entered from it by step, which is the only thing that makes a beat 2 dissonance read as motion",
+        "verdict_if_missing": "reject"
+      },
       "recipe": [
         "Keep the beat 1 note.",
         "Put the chromatic note that lies between beat 1 and beat 3 on beat 2 instead of the passing note of the scale, so the beat itself is the dissonance.",
@@ -333,6 +368,11 @@
       "name": "Escape tone",
       "family": "chromatic_neighbour",
       "trigger": "A weak position sits between two chord tones and the line can afford a skip back in the opposite direction.",
+      "preparation": {
+        "kind": "none_needed",
+        "requires": "no preparation is owed: the escape tone sits on a weak position between two chord tones and is left by a leap in the opposite direction, and that leap is the gesture that explains it",
+        "verdict_if_missing": "reject"
+      },
       "recipe": [
         "Approach the weak position by step from a chord tone.",
         "Place a note outside the chord there, either chromatic or a scale note that is not in the chord.",
@@ -367,6 +407,11 @@
       "name": "Anticipation of the next chord's third",
       "family": "anticipation",
       "trigger": "A bar line is one eighth away and the next chord's third is a semitone or a tone from the melody note being played.",
+      "preparation": {
+        "kind": "previous_chord_member",
+        "requires": "the anticipated note must be consonant with the chord still sounding in the bar being left; when it is not, it is a raw clash and not an anticipation, which is the defect measured on pp_01_title_v7 bar 36 (knowledge/TITLE-DISSONANCE-2026-10-26.md)",
+        "verdict_if_missing": "reject"
+      },
       "recipe": [
         "On the last eighth of the bar, play the next chord's third early.",
         "Hold or repeat that pitch across the bar line, where it becomes a chord tone.",
@@ -401,6 +446,11 @@
       "name": "Retardation 7 to 8",
       "family": "suspension",
       "trigger": "A tied note sits a tone below the coming chord tone and the upward resolution is the point of the gesture.",
+      "preparation": {
+        "kind": "previous_chord_member",
+        "requires": "the note is a chord tone of the previous chord and is tied over the change, so the upward resolution is the point of the gesture",
+        "verdict_if_missing": "reject"
+      },
       "recipe": [
         "Prepare the lower note as a chord tone of the previous chord.",
         "Tie it across the chord change, where it is a dissonance below the chord tone it will become.",
@@ -435,6 +485,11 @@
       "name": "Dominant seven flat nine",
       "family": "dominant_colour",
       "trigger": "A dominant chord lands on a strong beat and lasts at least 2 beats, and the tonic note is a semitone above its fifth.",
+      "preparation": {
+        "kind": "previous_chord_member",
+        "requires": "the flat nine is a held note of the previous harmony or is reached from it by step, so the semitone against the fifth is heard as colour on a chord already established",
+        "verdict_if_missing": "reject"
+      },
       "recipe": [
         "Write the dominant seventh as root, major third, fifth and minor seventh, which is the ordinary V7.",
         "Add the flat ninth above the root in the lead or the pad, not in both.",
@@ -469,6 +524,11 @@
       "name": "Tritone as a riff note",
       "family": "harmonic_colour",
       "trigger": "A bass or stab riff repeats over a static root and there is no third in the harmony, so the tritone is the only colour.",
+      "preparation": {
+        "kind": "scale_approach",
+        "requires": "the riff states its own root before the tritone arrives and repeats the figure, so the tritone is heard inside a shape the ear already has",
+        "verdict_if_missing": "reject"
+      },
       "recipe": [
         "Build the riff on the root plus the fifth, with no third, so the harmony stays open.",
         "Alternate the root with the note a tritone above it on the eighth notes or on the offbeats.",
@@ -503,6 +563,11 @@
       "name": "Neapolitan flat two in first inversion",
       "family": "modal_mixture",
       "trigger": "A minor key section needs a stronger subdominant before the dominant, and the melody note on the strong beat is the flat second or can be reached by step.",
+      "preparation": {
+        "kind": "bass_step_approach",
+        "requires": "the flat second is reached by step in the bass after the subdominant has sounded, so the ear hears a substitution rather than a slip",
+        "verdict_if_missing": "reject"
+      },
       "recipe": [
         "Replace the subdominant or the supertonic with a major chord on the flat second, in first inversion so the bass is the fourth degree.",
         "Hold it for one bar or for two beats.",
@@ -537,6 +602,11 @@
       "name": "Deceptive cadence",
       "family": "cadence",
       "trigger": "A phrase is written to end on the tonic and the melody's leading tone resolves upward as usual, so only the bass can be diverted.",
+      "preparation": {
+        "kind": "step_from_consonance",
+        "requires": "the dominant is prepared as the expected resolution and only the bass is diverted, with the leading tone still rising to the tonic in the melody",
+        "verdict_if_missing": "reject"
+      },
       "recipe": [
         "Keep the dominant on the beat before the expected tonic.",
         "Move the bass and the chord to the sixth degree instead of the tonic, or to the flat sixth in a minor key for a darker turn.",
@@ -571,6 +641,11 @@
       "name": "Secondary dominant",
       "family": "secondary_function",
       "trigger": "A diatonic chord lands on a strong beat and can be preceded by its own dominant for one beat or one bar.",
+      "preparation": {
+        "kind": "bass_step_approach",
+        "requires": "the chord being tonicised is already established in the phrase and the new dominant is reached by step or by fourth, so the chromatic third has somewhere to resolve",
+        "verdict_if_missing": "reject"
+      },
       "recipe": [
         "Pick the target chord inside the progression, usually the subdominant, the supertonic or the dominant.",
         "Write the dominant seventh of that target for one beat or one bar, which brings in one chromatic note, the raised third of the target.",
@@ -605,6 +680,11 @@
       "name": "Borrowed minor four from the parallel minor",
       "family": "modal_mixture",
       "trigger": "A major key section reaches the subdominant, which is the moment a borrowed minor subdominant can darken the phrase.",
+      "preparation": {
+        "kind": "previous_chord_member",
+        "requires": "the major subdominant has already sounded or the tonic is held, so the lowered sixth arrives against a chord the ear knows",
+        "verdict_if_missing": "reject"
+      },
       "recipe": [
         "Replace the major subdominant with the minor subdominant from the parallel minor, which lowers the third by a semitone.",
         "Hold it for one bar or for two beats.",
@@ -639,6 +719,11 @@
       "name": "Flat six to five approach",
       "family": "modal_mixture",
       "trigger": "A minor key phrase can walk down the bass from the flat sixth to the fifth before the dominant.",
+      "preparation": {
+        "kind": "bass_step_approach",
+        "requires": "the bass walks down into the flat sixth, so the semitone that follows is heard as the end of a descent rather than as an isolated note",
+        "verdict_if_missing": "reject"
+      },
       "recipe": [
         "Write the flat sixth chord for one beat or one bar, borrowed from the parallel minor of the relative major or drawn from harmonic minor.",
         "Move the bass down a semitone, or the melody down a semitone, to the fifth degree.",
@@ -673,6 +758,11 @@
       "name": "Cross voice minor second between echo and lead",
       "family": "cross_voice_clash",
       "trigger": "The echo channel is echoing the lead with a delay, and the lead moves to a note a semitone from the echo's held pitch.",
+      "preparation": {
+        "kind": "none_needed",
+        "requires": "the echo has already stated the pitch it holds, so the semitone is the lead arriving on a note the ear already has; the resolution within one beat is what keeps it a clash and not a wrong note",
+        "verdict_if_missing": "reject"
+      },
       "recipe": [
         "Let the echo channel hold the lead's previous note.",
         "Move the lead to a note one semitone above or below the echo's held pitch, on a weak or a strong position the forbidden list allows.",
@@ -707,6 +797,11 @@
       "name": "Augmented chord on a pickup",
       "family": "harmonic_colour",
       "trigger": "A phrase or a section begins on a downbeat and the bar before it has an eighth or a beat free.",
+      "preparation": {
+        "kind": "scale_approach",
+        "requires": "the chord of the bar being left anchors the ear and the raised fifth is entered from the pickup by step, so the augmented chord is heard as a leading harmony",
+        "verdict_if_missing": "reject"
+      },
       "recipe": [
         "On the pickup, play an augmented triad built on the root a semitone below the coming chord's root, or on the same root with a raised fifth.",
         "Hold it for one eighth or one beat only.",
@@ -741,6 +836,11 @@
       "name": "Wrong note then resolve gag",
       "family": "gag",
       "trigger": "A cue needs one moment of humour or panic, once, and the phrase has a note the listener already expects.",
+      "preparation": {
+        "kind": "none_needed",
+        "requires": "no preparation is owed and none should be given: the gag depends on the note being unexpected, and the resolution one or two semitones away is what turns it into a joke instead of a mistake",
+        "verdict_if_missing": "reject"
+      },
       "recipe": [
         "On a weak position, play a note a semitone away from the expected note, or a tritone away from the bass.",
         "Hold it for one eighth at most, then correct it to the expected note within one beat.",
@@ -775,6 +875,11 @@
       "name": "Pedal tone against changing chords",
       "family": "pedal",
       "trigger": "A section holds its root for 2 bars or the dominant for 2 bars while the chords above move.",
+      "preparation": {
+        "kind": "previous_chord_member",
+        "requires": "the pedal note is a chord tone of the chord that starts the pedal, so the ear hears a held note; v8 removed the third of a chord and added 8 raw clashes with it (knowledge/TITLE-DISSONANCE-2026-10-26.md)",
+        "verdict_if_missing": "reject"
+      },
       "recipe": [
         "Choose the tonic or the dominant as the pedal.",
         "Hold it in the triangle or in a low pulse for 2 to 4 bars, repeated on every beat or held as one long note.",
@@ -809,6 +914,11 @@
       "name": "Cluster stab",
       "family": "cluster",
       "trigger": "A downbeat or a section start needs a hit rather than a chord, and the noise channel can carry the attack.",
+      "preparation": {
+        "kind": "none_needed",
+        "requires": "the attack is the preparation: it lands on a downbeat as rhythm, lasts a beat at most and is followed by a chord tone, so nothing is owed in front of it",
+        "verdict_if_missing": "reject"
+      },
       "recipe": [
         "Choose a chord tone and add the note a semitone or a whole tone above it in a second voice.",
         "Play both together for one to four frames, staccato, with a sharp release.",
@@ -843,6 +953,11 @@
       "name": "Secondary leading tone chord",
       "family": "secondary_function",
       "trigger": "A chord on a strong beat can be approached from a semitone below in the bass.",
+      "preparation": {
+        "kind": "bass_step_approach",
+        "requires": "the bass arrives from a semitone below, which is the device itself, and the target chord is already expected in the phrase",
+        "verdict_if_missing": "reject"
+      },
       "recipe": [
         "Write the diminished seventh or the diminished triad on the leading tone of the target chord.",
         "Put its root, a semitone below the target root, in the bass.",
@@ -877,6 +992,11 @@
       "name": "Tritone substitution at a cadence approach",
       "family": "dominant_colour",
       "trigger": "A dominant is approaching the tonic and the bass can fall a semitone instead of rising a fourth.",
+      "preparation": {
+        "kind": "bass_step_approach",
+        "requires": "the dominant is expected at that point, so the substituted bass note is heard against that expectation before it falls a semitone into the tonic",
+        "verdict_if_missing": "reject"
+      },
       "recipe": [
         "Replace the dominant seventh with the dominant seventh whose root is a tritone away, which shares the same tritone between third and seventh.",
         "Keep the two tritone notes in the same voices, so the resolution is unchanged.",
@@ -911,6 +1031,11 @@
       "name": "Suspension chain",
       "family": "suspension",
       "trigger": "The bass descends stepwise for 3 or 4 bars and each chord change can carry a prepared dissonance.",
+      "preparation": {
+        "kind": "previous_chord_member",
+        "requires": "each suspended note is a chord tone of the chord before it, which is what makes three bars of suspensions a chain rather than three separate mistakes",
+        "verdict_if_missing": "reject"
+      },
       "recipe": [
         "Prepare each suspension as a chord tone of the chord before it.",
         "Tie it across each bar line so every chord change begins with a dissonance on beat 1.",
@@ -945,6 +1070,11 @@
       "name": "Changing tones around a chord tone",
       "family": "chromatic_neighbour",
       "trigger": "A melody note is repeated or held and the bar has room for a two note ornament that leaves the harmony and returns.",
+      "preparation": {
+        "kind": "held_chord_tone",
+        "requires": "the chord tone is repeated or held first, so the two nonchord tones are heard as an ornament around a note already established",
+        "verdict_if_missing": "reject"
+      },
       "recipe": [
         "Start on a chord tone.",
         "Step to a note outside the chord, then leap to a second note outside the chord, usually on the other side of the chord tone.",
@@ -979,6 +1109,11 @@
       "name": "Chromatic bass descent under a held melody",
       "family": "chromatic_passing",
       "trigger": "A melody note is held for 2 bars and the bass can walk down by semitones beneath it.",
+      "preparation": {
+        "kind": "held_chord_tone",
+        "requires": "the melody note above is held for two bars, so the chromatic descent is measured against one sustained pitch and not against a moving line",
+        "verdict_if_missing": "reject"
+      },
       "recipe": [
         "Choose a bass line that descends by semitones for 2 to 4 beats, from a chord tone to a chord tone.",
         "Hold the melody constant above it, so each bass note turns the held pitch into a different interval.",
@@ -1013,6 +1148,11 @@
       "name": "Major seventh held over the tonic, resolving down",
       "family": "harmonic_colour",
       "trigger": "A tonic chord is held at the end of a phrase and the leading tone can be sustained above it.",
+      "preparation": {
+        "kind": "previous_chord_member",
+        "requires": "the leading tone is already sounding in the phrase before the tonic arrives, so the seventh is heard as a held note rather than a wrong one",
+        "verdict_if_missing": "reject"
+      },
       "recipe": [
         "Hold the tonic chord with the major seventh above the root, so the chord sounds like a major seventh for one beat or one bar.",
         "Keep the seventh in the lead or the pad, never both.",
@@ -1047,6 +1187,11 @@
       "name": "Blue third slide",
       "family": "chromatic_passing",
       "trigger": "A major chord is held and the melody reaches for the minor third before settling on the major third.",
+      "preparation": {
+        "kind": "held_chord_tone",
+        "requires": "the chord is already established and the major third is the target, so the minor third reads as a slide into it",
+        "verdict_if_missing": "reject"
+      },
       "recipe": [
         "Play the minor third of the chord on a weak position.",
         "Hold it for an eighth or half a beat, at the same loudness as the major third that follows.",
@@ -1081,6 +1226,11 @@
       "name": "Tritone leap answered by step",
       "family": "gag",
       "trigger": "A melody can afford one wide, sour leap in a bar and the bar has a step left to answer it.",
+      "preparation": {
+        "kind": "none_needed",
+        "requires": "the leap is the preparation and the step back is the answer, so the bar must have the step free before the leap may be written",
+        "verdict_if_missing": "reject"
+      },
       "recipe": [
         "Leap a tritone from a chord tone on a weak or a strong position, exactly one beat before the bar's last note.",
         "Answer the leap by step in the opposite direction on the next note, onto a chord tone.",

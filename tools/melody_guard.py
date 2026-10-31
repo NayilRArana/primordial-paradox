@@ -6,6 +6,12 @@ set of that sequence, and compares it with every melody in a reference
 folder. It exits 1 when a reference shares a run of 8 or more identical
 intervals with the melody under test.
 
+A melody is compared with the catalogue, never with its own earlier takes: the
+file under test is skipped, and so is every other revision of the same cue,
+because a cue's v1, v2 and v3 share a lineage name (the file name with its
+revision tag removed) and are not independent references. Pass --no-lineage to
+compare against them anyway.
+
 A reference folder may hold Standard MIDI Files, JSON note lists (a list of
 [pitch, duration] pairs, or a list of {"pitch": .., "duration": ..} objects)
 and text note lists (one "pitch duration" pair per line, pitch either a MIDI
@@ -19,6 +25,7 @@ Options:
     --run N          the run length that fails the check (default 8)
     --ngram N        the n-gram length used for the similarity score (default 5)
     --top N          how many closest references to print (default 10)
+    --no-lineage     compare against the cue's own revisions too
     --json OUT       write the full report as JSON
 """
 
@@ -27,6 +34,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import struct
 import sys
 from collections import defaultdict
@@ -203,6 +211,24 @@ def load_melody(path):
     return melody_from_notes(path)
 
 
+# A cue's revisions are one cue, not a catalogue. The lineage name is the file
+# name with its revision tag taken off: pp_boarding_v3 and
+# pp_boarding_v2_humanized_humanized are both pp_boarding.
+REVISION_TAG = re.compile(
+    r"(?:[ _-](?:v|rev|version|take|master|alt|loop|final|humanized|finalised)\d*)+$")
+
+
+def cue_lineage(path):
+    """The cue a file belongs to, ignoring its revision number and its master tag."""
+    stem = os.path.splitext(os.path.basename(path))[0].lower()
+    name = stem
+    while True:
+        stripped = REVISION_TAG.sub("", name)
+        if stripped == name or not stripped:
+            return name
+        name = stripped
+
+
 def intervals(notes):
     """(semitone interval, duration in ticks) between consecutive notes."""
     out = []
@@ -278,7 +304,8 @@ def reference_melodies(folder):
     return out
 
 
-def check(melody_path, folders, run_limit=DEFAULT_RUN, ngram=DEFAULT_NGRAM, top=10):
+def check(melody_path, folders, run_limit=DEFAULT_RUN, ngram=DEFAULT_NGRAM, top=10,
+          exclude_lineage=True):
     """Run the check and return (report dict, exit code)."""
     track_name, notes = load_melody(melody_path)
     pairs = intervals(notes)
@@ -289,9 +316,11 @@ def check(melody_path, folders, run_limit=DEFAULT_RUN, ngram=DEFAULT_NGRAM, top=
         "melody_track": track_name,
         "melody_notes": len(notes),
         "melody_intervals": len(pairs),
+        "melody_lineage": cue_lineage(melody_path),
         "ngram": ngram,
         "run_limit": run_limit,
         "references": 0,
+        "lineage_skipped": 0,
         "highest_jaccard": 0.0,
         "longest_identical_run": 0,
         "longest_interval_run": 0,
@@ -301,11 +330,18 @@ def check(melody_path, folders, run_limit=DEFAULT_RUN, ngram=DEFAULT_NGRAM, top=
 
     worst = []
     melody_key = os.path.normcase(os.path.abspath(melody_path))
+    melody_lineage = cue_lineage(melody_path)
     for folder in folders:
         for path, ref_pairs in reference_melodies(folder):
             # A melody is never evidence against itself: when the file under
             # test sits in a scanned folder, skip it.
             if os.path.normcase(os.path.abspath(path)) == melody_key:
+                continue
+            # Nor is another revision of the same cue: v1, v2 and v3 are one
+            # cue, so they cannot be the independent references it is
+            # checked against. See cue_lineage.
+            if exclude_lineage and cue_lineage(path) == melody_lineage:
+                report["lineage_skipped"] += 1
                 continue
             report["references"] += 1
             if len(ref_pairs) < 3:
@@ -342,6 +378,8 @@ def main(argv=None):
     parser.add_argument("--run", type=int, default=DEFAULT_RUN)
     parser.add_argument("--ngram", type=int, default=DEFAULT_NGRAM)
     parser.add_argument("--top", type=int, default=10)
+    parser.add_argument("--no-lineage", action="store_true",
+                        help="compare against the cue's own revisions too")
     parser.add_argument("--json", dest="json_out", help="write the report as JSON")
     args = parser.parse_args(argv)
 
@@ -351,7 +389,8 @@ def main(argv=None):
         print("melody_guard.py: a melody and at least one reference folder are needed")
         return 2
 
-    report, code = check(melody_path, args.folders, args.run, args.ngram, args.top)
+    report, code = check(melody_path, args.folders, args.run, args.ngram, args.top,
+                         exclude_lineage=not args.no_lineage)
 
     if args.json_out:
         directory = os.path.dirname(os.path.abspath(args.json_out))
@@ -360,11 +399,14 @@ def main(argv=None):
         with open(args.json_out, "w", encoding="utf-8") as handle:
             json.dump(report, handle, indent=2, sort_keys=True)
 
-    print("melody: %s (track %r)" % (report["melody"], report["melody_track"]))
+    print("melody: %s (track %r, lineage %r)"
+          % (report["melody"], report["melody_track"], report["melody_lineage"]))
     print("  notes: %d, intervals: %d, %d-grams: %d"
           % (report["melody_notes"], report["melody_intervals"],
              report["ngram"], report["ngram"]))
     print("  references compared: %d" % report["references"])
+    if report["lineage_skipped"]:
+        print("  skipped as this cue's own revisions: %d" % report["lineage_skipped"])
     print("  highest %d-gram Jaccard: %.4f" % (report["ngram"], report["highest_jaccard"]))
     print("  longest identical (interval, rhythm) run: %d" % report["longest_identical_run"])
     print("  longest identical interval run: %d" % report["longest_interval_run"])

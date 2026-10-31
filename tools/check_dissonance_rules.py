@@ -298,8 +298,83 @@ def check(root):
         if phrase not in md.lower():
             errors.append("%s: does not discuss %r" % (MD_REL, phrase))
 
+    # C8 every device names its preparation and its resolution (card t_aa3ab04e)
+    errors.extend(check_preparations(data))
+
+    # C9 the injector refuses a device whose rule names neither
+    errors.extend(check_injector_refuses(data))
+
     print("check_dissonance_rules: %d devices, %d forbidden rules, %d local sources, %d known sources, "
           "schema engine %s" % (len(rules), len(forbidden_ids), len(local_sources), len(known_sources), engine))
+    return errors
+
+
+def check_preparations(data):
+    """C8: a device that cannot say how the ear is made ready for it is not a device, it is a stab."""
+    errors = []
+    for rule in data["rules"]:
+        path = "rules.%s" % rule["id"]
+        preparation = rule.get("preparation")
+        if not isinstance(preparation, dict):
+            errors.append("%s.preparation: missing, so the device cannot say how it is prepared"
+                          % path)
+        else:
+            for field in ("kind", "requires", "verdict_if_missing"):
+                if field not in preparation:
+                    errors.append("%s.preparation: missing %r" % (path, field))
+            kinds = ("held_chord_tone", "previous_chord_member", "step_from_consonance",
+                     "bass_step_approach", "scale_approach", "none_needed")
+            if preparation.get("kind") not in kinds:
+                errors.append("%s.preparation.kind: %r is not one of %s"
+                              % (path, preparation.get("kind"), ", ".join(kinds)))
+            if len(str(preparation.get("requires") or "").strip()) < 20:
+                errors.append("%s.preparation.requires: too short to say what must sound first, "
+                              "or why nothing is owed" % path)
+            if preparation.get("verdict_if_missing") not in ("reject", "warn"):
+                errors.append("%s.preparation.verdict_if_missing: %r"
+                              % (path, preparation.get("verdict_if_missing")))
+        resolution = rule.get("resolution") or {}
+        if not str(resolution.get("target") or "").strip():
+            errors.append("%s.resolution.target: empty, so the device owes nothing in particular"
+                          % path)
+    return errors
+
+
+def check_injector_refuses(data):
+    """C9: the injector's own gate accepts every device it writes, and refuses a stripped rule."""
+    import copy
+
+    try:
+        import spice
+    except (ImportError, AttributeError) as error:  # noqa: BLE001 - reported, never skipped
+        return ["tools/spice.py: the injector could not be loaded, so its refusal is unproven: %s"
+                % error]
+    errors = []
+    allowed, refused = spice.device_gate(data)
+    for device in sorted(refused):
+        errors.append("tools/spice.py: the injector refuses %s, %s. Every device it writes needs a "
+                      "preparation and a resolution in this file" % (device, refused[device]))
+    for device in sorted(spice.DEVICE_RULES):
+        if device not in allowed and device not in refused:
+            errors.append("tools/spice.py: %s is in DEVICE_RULES and the gate says nothing about it"
+                          % device)
+    # The refusal has to be exercised, not just declared: strip one accepted device's rule of both
+    # blocks and require that the injector now refuses it.
+    probe = copy.deepcopy(data)
+    picked = next((name for name in sorted(allowed) if name in spice.DEVICE_RULES), None)
+    if picked:
+        rule_id = spice.DEVICE_RULES[picked][0]
+        for rule in probe["rules"]:
+            if rule["id"] == rule_id:
+                rule.pop("preparation", None)
+                rule.pop("resolution", None)
+        _allowed, refused_probe = spice.device_gate(probe)
+        if picked not in refused_probe:
+            errors.append("tools/spice.py: the injector would still write %s after its rule lost "
+                          "both its preparation and its resolution" % picked)
+    elif allowed:
+        errors.append("tools/spice.py: no accepted device matched DEVICE_RULES, so the refusal "
+                      "could not be exercised")
     return errors
 
 

@@ -157,6 +157,47 @@ def _read_json(path):
         return json.load(handle)
 
 
+PREPARED_FIELDS = (("preparation", "requires"), ("resolution", "target"))
+
+
+def device_gate(rules_data, device_map=None):
+    """Which devices this injector may write, and why it refuses the rest (card t_aa3ab04e).
+
+    The rule the card sets: a device must name its preparation and its resolution in
+    data/dissonance_rules.json, and the injector refuses a device that has neither. It is applied
+    here, at the only place a device becomes notes, so a rule that loses its preparation cannot be
+    injected by a data edit that nobody re-read.
+
+    Returns (allowed, refused). allowed maps a device to the rule it writes and the preparation it
+    owes; refused maps a device to one sentence naming what its rule does not say.
+    """
+    device_map = DEVICE_RULES if device_map is None else device_map
+    rules = {rule.get("id"): rule for rule in (rules_data or {}).get("rules") or []}
+    allowed, refused = {}, {}
+    for device in sorted(device_map):
+        rule_id, risk = device_map[device]
+        rule = rules.get(rule_id)
+        if not isinstance(rule, dict):
+            refused[device] = "rule %s is not in the rules file, so it says nothing" % rule_id
+            continue
+        missing = []
+        for block, field in PREPARED_FIELDS:
+            named = rule.get(block)
+            if not isinstance(named, dict) or not named:
+                missing.append(block)
+            elif not str(named.get(field) or "").strip():
+                missing.append("%s.%s" % (block, field))
+        if missing:
+            refused[device] = ("rule %s names no %s, so the injector refuses it"
+                               % (rule_id, " and no ".join(missing)))
+            continue
+        allowed[device] = {"rule": rule_id, "risk": risk,
+                           "preparation": rule["preparation"].get("kind"),
+                           "requires": rule["preparation"]["requires"],
+                           "resolves_to": rule["resolution"]["target"]}
+    return allowed, refused
+
+
 def _lazy(name):
     """Import a sibling tool at call time, so importing spice stays cheap."""
     module = __import__(name)
@@ -1422,15 +1463,23 @@ def spice_song(song_in, seed=DEFAULT_SEED, drums=DEFAULT_DRUMS,
                   "rejected": {}, "protected_bars": [bar + 1 for bar in sorted(frozen)],
                   "rules_source": (os.path.abspath(DEFAULT_DISSONANCE_DATA)
                                    if rules_data else None)}
+    allowed_devices, refused_devices = device_gate(rules_data)
+    if refused_devices:
+        dis_report["refused_devices"] = refused_devices
+        warnings.append("devices refused, their rule names no preparation or no resolution: %s"
+                        % "; ".join("%s (%s)" % pair for pair in sorted(refused_devices.items())))
     if dissonance:
         melody_track = track_of(song, MELODY_TRACK)
         config, _source = hook_score.load_grammar()
-        devices = STRENGTH_DEVICES.get(dissonance, ())
+        devices = tuple(name for name in STRENGTH_DEVICES.get(dissonance, ())
+                        if name in allowed_devices)
         candidates, _track = _device_candidates(song, sections, frozen_after, scale_pcs,
                                                 devices, int(song["division"]) // 4)
         accepted, rejected = select_devices(candidates, sections, dissonance, song,
                                             ceiling=peak_in)
         dis_report["rejected"] = rejected
+        dis_report["preparations"] = {name: allowed_devices[name]["preparation"]
+                                      for name in devices}
         if melody_track is not None:
             accepted = guard_hook_score(song, accepted, melody_track, config,
                                         dis_report, warnings,
@@ -1438,6 +1487,9 @@ def spice_song(song_in, seed=DEFAULT_SEED, drums=DEFAULT_DRUMS,
             dis_report = _apply_selected(song, accepted, dis_report)
         else:
             warnings.append("no melody track; nothing injected")
+        for item in dis_report["devices"]:
+            item.setdefault("preparation",
+                            (allowed_devices.get(item["device"]) or {}).get("preparation"))
         if rules_data:
             known = {rule["id"] for rule in rules_data.get("rules") or []}
             missing = sorted({DEVICE_RULES[item["device"]][0] for item in accepted}

@@ -428,3 +428,43 @@ def test_the_guard_finds_the_longest_run():
     assert melody_guard.longest_identical_run(a, b) == 5
     assert melody_guard.longest_identical_run(a, [pair] * 7) == 7
     assert melody_guard.longest_identical_run(a, [(3, 240)] * 9) == 0
+
+
+def test_a_cue_lineage_drops_its_revision_tag():
+    """v1, v2 and the humanized render of one cue are one lineage."""
+    lineage = melody_guard.cue_lineage
+    assert lineage("assets/audio/pp_boarding/pp_boarding.mid") == "pp_boarding"
+    assert lineage("assets/audio/pp_boarding_v2/pp_boarding_v2.mid") == "pp_boarding"
+    assert lineage("assets/audio/pp_boarding_v3/pp_boarding_v3_humanized.mid") == "pp_boarding"
+    assert lineage("pp_boarding_v2_humanized_humanized.mid") == "pp_boarding"
+    assert lineage("pp_boarding_master1.ogg") == "pp_boarding"
+    assert lineage("pp_05_small_ship_v6.mid") == "pp_05_small_ship"
+    # A name with no revision tag is its own lineage, so two different cues
+    # never collapse into one.
+    assert lineage("melody.mid") == "melody"
+    assert lineage("reference.mid") != lineage("melody.mid")
+
+
+def test_the_guard_skips_a_cue_s_own_revisions(tmp_path):
+    """A full revision is not an independent reference, but another cue is."""
+    melody = [(0, 240, 69), (240, 240, 72), (480, 240, 76), (720, 240, 77),
+              (960, 240, 76), (1200, 240, 74), (1440, 240, 72), (1680, 240, 69),
+              (1920, 240, 67), (2160, 240, 64)]
+    _write_midi(tmp_path / "pp_cue.mid", melody)
+    _write_midi(tmp_path / "pp_cue_v2.mid", melody)
+    report, code = melody_guard.check(str(tmp_path / "pp_cue.mid"), [str(tmp_path)])
+    assert code == 0, report["failures"]
+    assert report["lineage_skipped"] == 1
+    assert report["references"] == 0
+
+    # The same melody under another cue's name is still a copy.
+    _write_midi(tmp_path / "pp_other.mid", melody)
+    report, code = melody_guard.check(str(tmp_path / "pp_cue.mid"), [str(tmp_path)])
+    assert code == 1
+    assert [os.path.basename(row["path"]) for row in report["failures"]] == ["pp_other.mid"]
+
+    # --no-lineage compares against the cue's own revisions as it used to.
+    report, code = melody_guard.check(str(tmp_path / "pp_cue.mid"), [str(tmp_path)],
+                                      exclude_lineage=False)
+    assert code == 1
+    assert report["lineage_skipped"] == 0
