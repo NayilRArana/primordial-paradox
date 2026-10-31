@@ -1,0 +1,1799 @@
+2026-10-26T07:35:48  pin: allowed (idle 120 s)
+2026-10-26T07:35:48  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T07:35:48  pin: refused (idle 119 s)
+2026-10-26T07:38:09  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T07:38:09  allowed: idle 600 s >= 180 s
+2026-10-26T07:38:09  refused: idle time unreadable
+2026-10-26T07:38:09  allowed: idle 303 s >= 180 s
+2026-10-26T07:38:09  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T07:38:09  allowed: idle 200 s >= 180 s
+2026-10-26T07:38:09  overridden by --force
+2026-10-26T07:38:09  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T07:38:09  allowed: idle 180 s >= 180 s
+2026-10-26T07:38:09  allowed: idle 600 s >= 180 s
+2026-10-26T07:38:09  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T07:38:09  refused: idle time unreadable
+2026-10-26T07:38:09  overridden by --force
+2026-10-26T07:38:09  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T07:38:09  allowed: idle 200 s >= 180 s
+2026-10-26T07:38:09  allowed: idle 500 s >= 120 s
+2026-10-26T07:38:09  audio proof: allowed (idle 500 s)
+2026-10-26T07:38:09  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T07:38:09  capture: refused (idle 1 s)
+2026-10-26T07:38:09  allowed: idle 120 s >= 120 s
+2026-10-26T07:38:09  pin: allowed (idle 120 s)
+2026-10-26T07:38:09  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T07:38:09  pin: refused (idle 119 s)
+2026-10-26T07:42:15  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T07:42:15  allowed: idle 600 s >= 180 s
+2026-10-26T07:42:15  refused: idle time unreadable
+2026-10-26T07:42:15  allowed: idle 549 s >= 180 s
+2026-10-26T07:42:15  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T07:42:15  allowed: idle 200 s >= 180 s
+2026-10-26T07:42:15  overridden by --force
+2026-10-26T07:42:15  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T07:42:15  allowed: idle 180 s >= 180 s
+2026-10-26T07:42:15  allowed: idle 600 s >= 180 s
+2026-10-26T07:42:15  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T07:42:15  refused: idle time unreadable
+2026-10-26T07:42:15  overridden by --force
+2026-10-26T07:42:15  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T07:42:15  allowed: idle 200 s >= 180 s
+2026-10-26T07:42:15  allowed: idle 500 s >= 120 s
+2026-10-26T07:42:15  audio proof: allowed (idle 500 s)
+2026-10-26T07:42:15  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T07:42:15  capture: refused (idle 1 s)
+2026-10-26T07:42:15  allowed: idle 120 s >= 120 s
+2026-10-26T07:42:15  pin: allowed (idle 120 s)
+2026-10-26T07:42:15  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T07:42:15  pin: refused (idle 119 s)
+2026-10-26T07:47:21  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T07:47:21  allowed: idle 600 s >= 180 s
+2026-10-26T07:47:21  refused: idle time unreadable
+2026-10-26T07:47:21  allowed: idle 855 s >= 180 s
+2026-10-26T07:47:21  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T07:47:21  allowed: idle 200 s >= 180 s
+2026-10-26T07:47:21  overridden by --force
+2026-10-26T07:47:21  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T07:47:21  allowed: idle 180 s >= 180 s
+2026-10-26T07:47:21  allowed: idle 600 s >= 180 s
+2026-10-26T07:47:21  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T07:47:21  refused: idle time unreadable
+2026-10-26T07:47:21  overridden by --force
+2026-10-26T07:47:21  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T07:47:21  allowed: idle 200 s >= 180 s
+2026-10-26T07:47:21  allowed: idle 500 s >= 120 s
+2026-10-26T07:47:21  audio proof: allowed (idle 500 s)
+2026-10-26T07:47:21  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T07:47:21  capture: refused (idle 1 s)
+2026-10-26T07:47:21  allowed: idle 120 s >= 120 s
+2026-10-26T07:47:21  pin: allowed (idle 120 s)
+2026-10-26T07:47:21  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T07:47:21  pin: refused (idle 119 s)
+2026-10-26T07:49:01  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T07:49:01  allowed: idle 600 s >= 180 s
+2026-10-26T07:49:01  refused: idle time unreadable
+2026-10-26T07:49:01  allowed: idle 956 s >= 180 s
+2026-10-26T07:49:01  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T07:49:01  allowed: idle 200 s >= 180 s
+2026-10-26T07:49:01  overridden by --force
+2026-10-26T07:49:01  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T07:49:01  allowed: idle 180 s >= 180 s
+2026-10-26T07:49:01  allowed: idle 600 s >= 180 s
+2026-10-26T07:49:01  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T07:49:01  refused: idle time unreadable
+2026-10-26T07:49:01  overridden by --force
+2026-10-26T07:49:01  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T07:49:01  allowed: idle 200 s >= 180 s
+2026-10-26T07:49:01  allowed: idle 500 s >= 120 s
+2026-10-26T07:49:01  audio proof: allowed (idle 500 s)
+2026-10-26T07:49:01  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T07:49:01  capture: refused (idle 1 s)
+2026-10-26T07:49:02  allowed: idle 120 s >= 120 s
+2026-10-26T07:49:02  pin: allowed (idle 120 s)
+2026-10-26T07:49:02  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T07:49:02  pin: refused (idle 119 s)
+2026-10-26T07:50:48  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T07:50:48  allowed: idle 600 s >= 180 s
+2026-10-26T07:50:48  refused: idle time unreadable
+2026-10-26T07:50:48  allowed: idle 1062 s >= 180 s
+2026-10-26T07:50:48  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T07:50:48  allowed: idle 200 s >= 180 s
+2026-10-26T07:50:48  overridden by --force
+2026-10-26T07:50:48  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T07:50:48  allowed: idle 180 s >= 180 s
+2026-10-26T07:50:48  allowed: idle 600 s >= 180 s
+2026-10-26T07:50:48  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T07:50:48  refused: idle time unreadable
+2026-10-26T07:50:48  overridden by --force
+2026-10-26T07:50:48  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T07:50:48  allowed: idle 200 s >= 180 s
+2026-10-26T07:50:48  allowed: idle 500 s >= 120 s
+2026-10-26T07:50:48  audio proof: allowed (idle 500 s)
+2026-10-26T07:50:48  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T07:50:48  capture: refused (idle 1 s)
+2026-10-26T07:50:48  allowed: idle 120 s >= 120 s
+2026-10-26T07:50:48  pin: allowed (idle 120 s)
+2026-10-26T07:50:48  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T07:50:48  pin: refused (idle 119 s)
+2026-10-26T07:52:17  allowed: idle 1151 s >= 120 s
+2026-10-26T07:52:23  allowed: idle 1157 s >= 120 s
+2026-10-26T07:52:23  PARTY-STATS dodge sweep: allowed (idle 1157 s)
+2026-10-26T07:52:23  allowed: idle 1157 s >= 120 s
+2026-10-26T07:52:23  PARTY-STATS dodge sweep: allowed (idle 1157 s)
+2026-10-26T07:54:13  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T07:54:13  allowed: idle 600 s >= 180 s
+2026-10-26T07:54:13  refused: idle time unreadable
+2026-10-26T07:54:13  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T07:54:13  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T07:54:13  allowed: idle 200 s >= 180 s
+2026-10-26T07:54:13  overridden by --force
+2026-10-26T07:54:13  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T07:54:13  allowed: idle 180 s >= 180 s
+2026-10-26T07:54:13  allowed: idle 600 s >= 180 s
+2026-10-26T07:54:13  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T07:54:13  refused: idle time unreadable
+2026-10-26T07:54:13  overridden by --force
+2026-10-26T07:54:13  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T07:54:13  allowed: idle 200 s >= 180 s
+2026-10-26T07:54:13  allowed: idle 500 s >= 120 s
+2026-10-26T07:54:13  audio proof: allowed (idle 500 s)
+2026-10-26T07:54:13  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T07:54:13  capture: refused (idle 1 s)
+2026-10-26T07:54:13  allowed: idle 120 s >= 120 s
+2026-10-26T07:54:13  pin: allowed (idle 120 s)
+2026-10-26T07:54:13  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T07:54:13  pin: refused (idle 119 s)
+2026-10-26T07:56:39  skipped: idle 70 s < 120 s, waited 0 s
+2026-10-26T07:56:39  PARTY-STATS dodge sweep: refused (idle 70 s)
+2026-10-26T07:56:54  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T07:56:54  allowed: idle 600 s >= 180 s
+2026-10-26T07:56:54  refused: idle time unreadable
+2026-10-26T07:56:54  skipped: idle 86 s < 180 s, waited 0 s
+2026-10-26T07:56:54  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T07:56:54  allowed: idle 200 s >= 180 s
+2026-10-26T07:56:54  overridden by --force
+2026-10-26T07:56:54  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T07:56:54  allowed: idle 180 s >= 180 s
+2026-10-26T07:56:54  allowed: idle 600 s >= 180 s
+2026-10-26T07:56:54  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T07:56:54  refused: idle time unreadable
+2026-10-26T07:56:54  overridden by --force
+2026-10-26T07:56:54  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T07:56:54  allowed: idle 200 s >= 180 s
+2026-10-26T07:56:54  allowed: idle 500 s >= 120 s
+2026-10-26T07:56:54  audio proof: allowed (idle 500 s)
+2026-10-26T07:56:54  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T07:56:54  capture: refused (idle 1 s)
+2026-10-26T07:56:54  allowed: idle 120 s >= 120 s
+2026-10-26T07:56:54  pin: allowed (idle 120 s)
+2026-10-26T07:56:54  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T07:56:54  pin: refused (idle 119 s)
+2026-10-26T07:57:22  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T07:57:22  allowed: idle 600 s >= 180 s
+2026-10-26T07:57:22  refused: idle time unreadable
+2026-10-26T07:57:22  skipped: idle 113 s < 180 s, waited 0 s
+2026-10-26T07:57:22  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T07:57:22  allowed: idle 200 s >= 180 s
+2026-10-26T07:57:22  overridden by --force
+2026-10-26T07:57:22  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T07:57:22  allowed: idle 180 s >= 180 s
+2026-10-26T07:57:22  allowed: idle 600 s >= 180 s
+2026-10-26T07:57:22  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T07:57:22  refused: idle time unreadable
+2026-10-26T07:57:22  overridden by --force
+2026-10-26T07:57:22  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T07:57:22  allowed: idle 200 s >= 180 s
+2026-10-26T07:57:22  allowed: idle 500 s >= 120 s
+2026-10-26T07:57:22  audio proof: allowed (idle 500 s)
+2026-10-26T07:57:22  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T07:57:22  capture: refused (idle 1 s)
+2026-10-26T07:57:22  allowed: idle 120 s >= 120 s
+2026-10-26T07:57:22  pin: allowed (idle 120 s)
+2026-10-26T07:57:22  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T07:57:22  pin: refused (idle 119 s)
+2026-10-26T07:57:36  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T07:57:36  allowed: idle 600 s >= 180 s
+2026-10-26T07:57:36  refused: idle time unreadable
+2026-10-26T07:57:36  skipped: idle 128 s < 180 s, waited 0 s
+2026-10-26T07:57:36  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T07:57:36  allowed: idle 200 s >= 180 s
+2026-10-26T07:57:36  overridden by --force
+2026-10-26T07:57:36  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T07:57:36  allowed: idle 180 s >= 180 s
+2026-10-26T07:57:36  allowed: idle 600 s >= 180 s
+2026-10-26T07:57:36  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T07:57:36  refused: idle time unreadable
+2026-10-26T07:57:36  overridden by --force
+2026-10-26T07:57:36  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T07:57:36  allowed: idle 200 s >= 180 s
+2026-10-26T07:57:36  allowed: idle 500 s >= 120 s
+2026-10-26T07:57:36  audio proof: allowed (idle 500 s)
+2026-10-26T07:57:36  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T07:57:36  capture: refused (idle 1 s)
+2026-10-26T07:57:36  allowed: idle 120 s >= 120 s
+2026-10-26T07:57:36  pin: allowed (idle 120 s)
+2026-10-26T07:57:36  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T07:57:36  pin: refused (idle 119 s)
+2026-10-26T07:57:59  allowed: idle 151 s >= 120 s
+2026-10-26T07:57:59  PARTY-STATS dodge sweep: allowed (idle 151 s)
+2026-10-26T07:57:59  allowed: idle 151 s >= 120 s
+2026-10-26T07:57:59  PARTY-STATS dodge sweep: allowed (idle 151 s)
+2026-10-26T08:02:52  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T08:02:52  allowed: idle 600 s >= 180 s
+2026-10-26T08:02:52  refused: idle time unreadable
+2026-10-26T08:02:52  skipped: idle 110 s < 180 s, waited 0 s
+2026-10-26T08:02:52  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T08:02:52  allowed: idle 200 s >= 180 s
+2026-10-26T08:02:52  overridden by --force
+2026-10-26T08:02:52  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T08:02:52  allowed: idle 180 s >= 180 s
+2026-10-26T08:02:52  allowed: idle 600 s >= 180 s
+2026-10-26T08:02:52  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T08:02:52  refused: idle time unreadable
+2026-10-26T08:02:52  overridden by --force
+2026-10-26T08:02:52  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T08:02:52  allowed: idle 200 s >= 180 s
+2026-10-26T08:02:52  allowed: idle 500 s >= 120 s
+2026-10-26T08:02:52  audio proof: allowed (idle 500 s)
+2026-10-26T08:02:52  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T08:02:52  capture: refused (idle 1 s)
+2026-10-26T08:02:52  allowed: idle 120 s >= 120 s
+2026-10-26T08:02:52  pin: allowed (idle 120 s)
+2026-10-26T08:02:52  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T08:02:52  pin: refused (idle 119 s)
+2026-10-26T08:04:46  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T08:04:46  allowed: idle 600 s >= 180 s
+2026-10-26T08:04:46  refused: idle time unreadable
+2026-10-26T08:04:46  allowed: idle 224 s >= 180 s
+2026-10-26T08:04:46  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T08:04:46  allowed: idle 200 s >= 180 s
+2026-10-26T08:04:46  overridden by --force
+2026-10-26T08:04:46  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T08:04:46  allowed: idle 180 s >= 180 s
+2026-10-26T08:04:46  allowed: idle 600 s >= 180 s
+2026-10-26T08:04:46  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T08:04:46  refused: idle time unreadable
+2026-10-26T08:04:46  overridden by --force
+2026-10-26T08:04:46  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T08:04:46  allowed: idle 200 s >= 180 s
+2026-10-26T08:04:46  allowed: idle 500 s >= 120 s
+2026-10-26T08:04:46  audio proof: allowed (idle 500 s)
+2026-10-26T08:04:46  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T08:04:46  capture: refused (idle 1 s)
+2026-10-26T08:04:46  allowed: idle 120 s >= 120 s
+2026-10-26T08:04:46  pin: allowed (idle 120 s)
+2026-10-26T08:04:46  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T08:04:46  pin: refused (idle 119 s)
+2026-10-26T08:05:14  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T08:05:14  allowed: idle 600 s >= 180 s
+2026-10-26T08:05:14  refused: idle time unreadable
+2026-10-26T08:05:14  allowed: idle 252 s >= 180 s
+2026-10-26T08:05:14  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T08:05:14  allowed: idle 200 s >= 180 s
+2026-10-26T08:05:14  overridden by --force
+2026-10-26T08:05:14  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T08:05:14  allowed: idle 180 s >= 180 s
+2026-10-26T08:05:14  allowed: idle 600 s >= 180 s
+2026-10-26T08:05:14  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T08:05:14  refused: idle time unreadable
+2026-10-26T08:05:14  overridden by --force
+2026-10-26T08:05:14  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T08:05:14  allowed: idle 200 s >= 180 s
+2026-10-26T08:05:14  allowed: idle 500 s >= 120 s
+2026-10-26T08:05:14  audio proof: allowed (idle 500 s)
+2026-10-26T08:05:14  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T08:05:14  capture: refused (idle 1 s)
+2026-10-26T08:05:14  allowed: idle 120 s >= 120 s
+2026-10-26T08:05:14  pin: allowed (idle 120 s)
+2026-10-26T08:05:14  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T08:05:14  pin: refused (idle 119 s)
+2026-10-26T08:08:35  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T08:08:35  allowed: idle 600 s >= 180 s
+2026-10-26T08:08:35  refused: idle time unreadable
+2026-10-26T08:08:35  allowed: idle 453 s >= 180 s
+2026-10-26T08:08:35  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T08:08:35  allowed: idle 200 s >= 180 s
+2026-10-26T08:08:35  overridden by --force
+2026-10-26T08:08:35  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T08:08:35  allowed: idle 180 s >= 180 s
+2026-10-26T08:08:35  allowed: idle 600 s >= 180 s
+2026-10-26T08:08:35  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T08:08:35  refused: idle time unreadable
+2026-10-26T08:08:35  overridden by --force
+2026-10-26T08:08:35  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T08:08:35  allowed: idle 200 s >= 180 s
+2026-10-26T08:08:35  allowed: idle 500 s >= 120 s
+2026-10-26T08:08:35  audio proof: allowed (idle 500 s)
+2026-10-26T08:08:35  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T08:08:35  capture: refused (idle 1 s)
+2026-10-26T08:08:35  allowed: idle 120 s >= 120 s
+2026-10-26T08:08:35  pin: allowed (idle 120 s)
+2026-10-26T08:08:35  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T08:08:35  pin: refused (idle 119 s)
+2026-10-26T08:14:08  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T08:14:08  allowed: idle 600 s >= 180 s
+2026-10-26T08:14:08  refused: idle time unreadable
+2026-10-26T08:14:08  allowed: idle 786 s >= 180 s
+2026-10-26T08:14:08  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T08:14:08  allowed: idle 200 s >= 180 s
+2026-10-26T08:14:08  overridden by --force
+2026-10-26T08:14:08  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T08:14:08  allowed: idle 180 s >= 180 s
+2026-10-26T08:14:08  allowed: idle 600 s >= 180 s
+2026-10-26T08:14:08  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T08:14:08  refused: idle time unreadable
+2026-10-26T08:14:08  overridden by --force
+2026-10-26T08:14:08  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T08:14:08  allowed: idle 200 s >= 180 s
+2026-10-26T08:14:08  allowed: idle 500 s >= 120 s
+2026-10-26T08:14:08  audio proof: allowed (idle 500 s)
+2026-10-26T08:14:08  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T08:14:08  capture: refused (idle 1 s)
+2026-10-26T08:14:08  allowed: idle 120 s >= 120 s
+2026-10-26T08:14:08  pin: allowed (idle 120 s)
+2026-10-26T08:14:08  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T08:14:08  pin: refused (idle 119 s)
+2026-10-26T08:15:07  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T08:15:07  allowed: idle 600 s >= 180 s
+2026-10-26T08:15:07  refused: idle time unreadable
+2026-10-26T08:15:07  allowed: idle 845 s >= 180 s
+2026-10-26T08:15:07  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T08:15:07  allowed: idle 200 s >= 180 s
+2026-10-26T08:15:07  overridden by --force
+2026-10-26T08:15:07  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T08:15:07  allowed: idle 180 s >= 180 s
+2026-10-26T08:15:07  allowed: idle 600 s >= 180 s
+2026-10-26T08:15:07  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T08:15:07  refused: idle time unreadable
+2026-10-26T08:15:07  overridden by --force
+2026-10-26T08:15:07  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T08:15:07  allowed: idle 200 s >= 180 s
+2026-10-26T08:15:07  allowed: idle 500 s >= 120 s
+2026-10-26T08:15:07  audio proof: allowed (idle 500 s)
+2026-10-26T08:15:07  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T08:15:07  capture: refused (idle 1 s)
+2026-10-26T08:15:07  allowed: idle 120 s >= 120 s
+2026-10-26T08:15:07  pin: allowed (idle 120 s)
+2026-10-26T08:15:07  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T08:15:07  pin: refused (idle 119 s)
+2026-10-26T08:19:58  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T08:19:58  allowed: idle 600 s >= 180 s
+2026-10-26T08:19:58  refused: idle time unreadable
+2026-10-26T08:19:58  allowed: idle 1136 s >= 180 s
+2026-10-26T08:19:58  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T08:19:58  allowed: idle 200 s >= 180 s
+2026-10-26T08:19:58  overridden by --force
+2026-10-26T08:19:58  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T08:19:58  allowed: idle 180 s >= 180 s
+2026-10-26T08:19:58  allowed: idle 600 s >= 180 s
+2026-10-26T08:19:58  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T08:19:58  refused: idle time unreadable
+2026-10-26T08:19:58  overridden by --force
+2026-10-26T08:19:58  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T08:19:58  allowed: idle 200 s >= 180 s
+2026-10-26T08:19:58  allowed: idle 500 s >= 120 s
+2026-10-26T08:19:58  audio proof: allowed (idle 500 s)
+2026-10-26T08:19:58  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T08:19:58  capture: refused (idle 1 s)
+2026-10-26T08:19:58  allowed: idle 120 s >= 120 s
+2026-10-26T08:19:58  pin: allowed (idle 120 s)
+2026-10-26T08:19:58  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T08:19:58  pin: refused (idle 119 s)
+2026-10-26T08:25:48  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T08:25:48  allowed: idle 600 s >= 180 s
+2026-10-26T08:25:48  refused: idle time unreadable
+2026-10-26T08:25:48  skipped: idle 92 s < 180 s, waited 0 s
+2026-10-26T08:25:48  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T08:25:48  allowed: idle 200 s >= 180 s
+2026-10-26T08:25:48  overridden by --force
+2026-10-26T08:25:48  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T08:25:48  allowed: idle 180 s >= 180 s
+2026-10-26T08:25:48  allowed: idle 600 s >= 180 s
+2026-10-26T08:25:48  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T08:25:48  refused: idle time unreadable
+2026-10-26T08:25:48  overridden by --force
+2026-10-26T08:25:48  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T08:25:48  allowed: idle 200 s >= 180 s
+2026-10-26T08:25:48  allowed: idle 500 s >= 120 s
+2026-10-26T08:25:48  audio proof: allowed (idle 500 s)
+2026-10-26T08:25:48  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T08:25:48  capture: refused (idle 1 s)
+2026-10-26T08:25:48  allowed: idle 120 s >= 120 s
+2026-10-26T08:25:48  pin: allowed (idle 120 s)
+2026-10-26T08:25:48  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T08:25:48  pin: refused (idle 119 s)
+2026-10-26T08:26:15  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T08:26:15  first fight capture: refused (idle 119 s)
+2026-10-26T08:29:45  skipped: idle 95 s < 120 s, waited 0 s
+2026-10-26T08:29:45  first fight capture: refused (idle 95 s)
+2026-10-26T08:29:54  skipped: idle 105 s < 120 s, waited 0 s
+2026-10-26T08:30:23  allowed: idle 133 s >= 120 s
+2026-10-26T08:30:23  first fight capture: allowed (idle 133 s)
+2026-10-26T08:38:15  allowed: idle 137 s >= 120 s
+2026-10-26T08:38:15  first fight capture: allowed (idle 137 s)
+2026-10-26T08:42:59  allowed: idle 136 s >= 120 s
+2026-10-26T08:42:59  first fight capture: allowed (idle 136 s)
+2026-10-26T08:48:49  allowed: idle 203 s >= 120 s
+2026-10-26T08:50:23  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T08:50:23  allowed: idle 600 s >= 180 s
+2026-10-26T08:50:23  refused: idle time unreadable
+2026-10-26T08:50:23  allowed: idle 297 s >= 180 s
+2026-10-26T08:50:23  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T08:50:23  allowed: idle 200 s >= 180 s
+2026-10-26T08:50:23  overridden by --force
+2026-10-26T08:50:23  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T08:50:23  allowed: idle 180 s >= 180 s
+2026-10-26T08:50:23  allowed: idle 600 s >= 180 s
+2026-10-26T08:50:23  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T08:50:23  refused: idle time unreadable
+2026-10-26T08:50:23  overridden by --force
+2026-10-26T08:50:23  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T08:50:23  allowed: idle 200 s >= 180 s
+2026-10-26T08:50:23  allowed: idle 500 s >= 120 s
+2026-10-26T08:50:23  audio proof: allowed (idle 500 s)
+2026-10-26T08:50:23  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T08:50:23  capture: refused (idle 1 s)
+2026-10-26T08:50:23  allowed: idle 120 s >= 120 s
+2026-10-26T08:50:23  pin: allowed (idle 120 s)
+2026-10-26T08:50:23  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T08:50:23  pin: refused (idle 119 s)
+2026-10-26T08:51:39  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T08:51:39  allowed: idle 600 s >= 180 s
+2026-10-26T08:51:39  refused: idle time unreadable
+2026-10-26T08:51:39  allowed: idle 373 s >= 180 s
+2026-10-26T08:51:39  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T08:51:39  allowed: idle 200 s >= 180 s
+2026-10-26T08:51:39  overridden by --force
+2026-10-26T08:51:39  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T08:51:39  allowed: idle 180 s >= 180 s
+2026-10-26T08:51:39  allowed: idle 600 s >= 180 s
+2026-10-26T08:51:39  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T08:51:39  refused: idle time unreadable
+2026-10-26T08:51:39  overridden by --force
+2026-10-26T08:51:39  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T08:51:39  allowed: idle 200 s >= 180 s
+2026-10-26T08:51:39  allowed: idle 500 s >= 120 s
+2026-10-26T08:51:39  audio proof: allowed (idle 500 s)
+2026-10-26T08:51:39  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T08:51:39  capture: refused (idle 1 s)
+2026-10-26T08:51:39  allowed: idle 120 s >= 120 s
+2026-10-26T08:51:39  pin: allowed (idle 120 s)
+2026-10-26T08:51:39  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T08:51:39  pin: refused (idle 119 s)
+2026-10-26T08:51:53  allowed: idle 387 s >= 120 s
+2026-10-26T08:51:57  allowed: idle 391 s >= 120 s
+2026-10-26T08:51:57  demo recording: allowed (idle 391 s)
+2026-10-26T08:58:56  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T08:58:56  allowed: idle 600 s >= 180 s
+2026-10-26T08:58:56  refused: idle time unreadable
+2026-10-26T08:58:56  allowed: idle 312 s >= 180 s
+2026-10-26T08:58:56  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T08:58:56  allowed: idle 200 s >= 180 s
+2026-10-26T08:58:56  overridden by --force
+2026-10-26T08:58:56  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T08:58:56  allowed: idle 180 s >= 180 s
+2026-10-26T08:58:56  allowed: idle 600 s >= 180 s
+2026-10-26T08:58:56  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T08:58:56  refused: idle time unreadable
+2026-10-26T08:58:56  overridden by --force
+2026-10-26T08:58:56  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T08:58:56  allowed: idle 200 s >= 180 s
+2026-10-26T08:58:56  allowed: idle 500 s >= 120 s
+2026-10-26T08:58:56  audio proof: allowed (idle 500 s)
+2026-10-26T08:58:56  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T08:58:56  capture: refused (idle 1 s)
+2026-10-26T08:58:56  allowed: idle 120 s >= 120 s
+2026-10-26T08:58:56  pin: allowed (idle 120 s)
+2026-10-26T08:58:56  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T08:58:56  pin: refused (idle 119 s)
+2026-10-26T08:59:24  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T08:59:24  allowed: idle 600 s >= 180 s
+2026-10-26T08:59:24  refused: idle time unreadable
+2026-10-26T08:59:24  allowed: idle 340 s >= 180 s
+2026-10-26T08:59:24  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T08:59:24  allowed: idle 200 s >= 180 s
+2026-10-26T08:59:24  overridden by --force
+2026-10-26T08:59:24  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T08:59:24  allowed: idle 180 s >= 180 s
+2026-10-26T08:59:24  allowed: idle 600 s >= 180 s
+2026-10-26T08:59:24  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T08:59:24  refused: idle time unreadable
+2026-10-26T08:59:24  overridden by --force
+2026-10-26T08:59:24  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T08:59:24  allowed: idle 200 s >= 180 s
+2026-10-26T08:59:24  allowed: idle 500 s >= 120 s
+2026-10-26T08:59:24  audio proof: allowed (idle 500 s)
+2026-10-26T08:59:24  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T08:59:24  capture: refused (idle 1 s)
+2026-10-26T08:59:24  allowed: idle 120 s >= 120 s
+2026-10-26T08:59:24  pin: allowed (idle 120 s)
+2026-10-26T08:59:24  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T08:59:24  pin: refused (idle 119 s)
+2026-10-26T09:21:23  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T09:21:23  allowed: idle 600 s >= 180 s
+2026-10-26T09:21:23  refused: idle time unreadable
+2026-10-26T09:21:23  skipped: idle 45 s < 180 s, waited 0 s
+2026-10-26T09:21:23  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T09:21:23  allowed: idle 200 s >= 180 s
+2026-10-26T09:21:23  overridden by --force
+2026-10-26T09:21:23  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T09:21:23  allowed: idle 180 s >= 180 s
+2026-10-26T09:21:23  allowed: idle 600 s >= 180 s
+2026-10-26T09:21:23  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T09:21:23  refused: idle time unreadable
+2026-10-26T09:21:23  overridden by --force
+2026-10-26T09:21:23  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T09:21:23  allowed: idle 200 s >= 180 s
+2026-10-26T09:21:24  allowed: idle 500 s >= 120 s
+2026-10-26T09:21:24  audio proof: allowed (idle 500 s)
+2026-10-26T09:21:24  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T09:21:24  capture: refused (idle 1 s)
+2026-10-26T09:21:24  allowed: idle 120 s >= 120 s
+2026-10-26T09:21:24  pin: allowed (idle 120 s)
+2026-10-26T09:21:24  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T09:21:24  pin: refused (idle 119 s)
+2026-10-26T09:24:35  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T09:24:35  allowed: idle 600 s >= 180 s
+2026-10-26T09:24:35  refused: idle time unreadable
+2026-10-26T09:24:35  allowed: idle 236 s >= 180 s
+2026-10-26T09:24:35  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T09:24:35  allowed: idle 200 s >= 180 s
+2026-10-26T09:24:35  overridden by --force
+2026-10-26T09:24:35  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T09:24:35  allowed: idle 180 s >= 180 s
+2026-10-26T09:24:35  allowed: idle 600 s >= 180 s
+2026-10-26T09:24:35  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T09:24:35  refused: idle time unreadable
+2026-10-26T09:24:35  overridden by --force
+2026-10-26T09:24:35  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T09:24:35  allowed: idle 200 s >= 180 s
+2026-10-26T09:24:35  allowed: idle 500 s >= 120 s
+2026-10-26T09:24:35  audio proof: allowed (idle 500 s)
+2026-10-26T09:24:35  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T09:24:35  capture: refused (idle 1 s)
+2026-10-26T09:24:35  allowed: idle 120 s >= 120 s
+2026-10-26T09:24:35  pin: allowed (idle 120 s)
+2026-10-26T09:24:35  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T09:24:35  pin: refused (idle 119 s)
+2026-10-26T10:09:07  skipped: idle 0 s < 120 s, waited 0 s
+2026-10-26T10:09:07  demo recording: refused (idle 0 s)
+2026-10-26T10:25:47  allowed: idle 135 s >= 120 s
+2026-10-26T10:25:47  demo recording: allowed (idle 135 s)
+2026-10-26T10:49:31  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T10:49:31  allowed: idle 600 s >= 180 s
+2026-10-26T10:49:31  refused: idle time unreadable
+2026-10-26T10:49:31  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T10:49:31  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T10:49:31  allowed: idle 200 s >= 180 s
+2026-10-26T10:49:31  overridden by --force
+2026-10-26T10:49:31  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T10:49:31  allowed: idle 180 s >= 180 s
+2026-10-26T10:49:31  allowed: idle 600 s >= 180 s
+2026-10-26T10:49:31  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T10:49:31  refused: idle time unreadable
+2026-10-26T10:49:31  overridden by --force
+2026-10-26T10:49:31  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T10:49:31  allowed: idle 200 s >= 180 s
+2026-10-26T10:49:31  allowed: idle 500 s >= 120 s
+2026-10-26T10:49:31  audio proof: allowed (idle 500 s)
+2026-10-26T10:49:31  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T10:49:31  capture: refused (idle 1 s)
+2026-10-26T10:49:31  allowed: idle 120 s >= 120 s
+2026-10-26T10:49:31  pin: allowed (idle 120 s)
+2026-10-26T10:49:31  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T10:49:31  pin: refused (idle 119 s)
+2026-10-26T10:55:34  skipped: idle 0 s < 120 s, waited 1500 s
+2026-10-26T10:55:34  demo recording: refused (idle 0 s)
+2026-10-26T11:21:41  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T11:22:20  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T11:22:20  allowed: idle 600 s >= 180 s
+2026-10-26T11:22:20  refused: idle time unreadable
+2026-10-26T11:22:20  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T11:22:20  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T11:22:20  allowed: idle 200 s >= 180 s
+2026-10-26T11:22:20  overridden by --force
+2026-10-26T11:22:20  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T11:22:20  allowed: idle 180 s >= 180 s
+2026-10-26T11:22:20  allowed: idle 600 s >= 180 s
+2026-10-26T11:22:20  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T11:22:20  refused: idle time unreadable
+2026-10-26T11:22:20  overridden by --force
+2026-10-26T11:22:20  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T11:22:20  allowed: idle 200 s >= 180 s
+2026-10-26T11:22:20  allowed: idle 500 s >= 120 s
+2026-10-26T11:22:20  audio proof: allowed (idle 500 s)
+2026-10-26T11:22:20  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T11:22:20  capture: refused (idle 1 s)
+2026-10-26T11:22:21  allowed: idle 120 s >= 120 s
+2026-10-26T11:22:21  pin: allowed (idle 120 s)
+2026-10-26T11:22:21  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T11:22:21  pin: refused (idle 119 s)
+2026-10-26T11:23:29  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T11:23:29  allowed: idle 600 s >= 180 s
+2026-10-26T11:23:29  refused: idle time unreadable
+2026-10-26T11:23:29  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T11:23:29  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T11:23:29  allowed: idle 200 s >= 180 s
+2026-10-26T11:23:29  overridden by --force
+2026-10-26T11:23:29  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T11:23:29  allowed: idle 180 s >= 180 s
+2026-10-26T11:23:29  allowed: idle 600 s >= 180 s
+2026-10-26T11:23:29  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T11:23:29  refused: idle time unreadable
+2026-10-26T11:23:29  overridden by --force
+2026-10-26T11:23:29  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T11:23:29  allowed: idle 200 s >= 180 s
+2026-10-26T11:23:29  allowed: idle 500 s >= 120 s
+2026-10-26T11:23:29  audio proof: allowed (idle 500 s)
+2026-10-26T11:23:29  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T11:23:29  capture: refused (idle 1 s)
+2026-10-26T11:23:29  allowed: idle 120 s >= 120 s
+2026-10-26T11:23:29  pin: allowed (idle 120 s)
+2026-10-26T11:23:29  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T11:23:29  pin: refused (idle 119 s)
+2026-10-26T11:25:37  skipped: idle 0 s < 120 s, waited 1500 s
+2026-10-26T11:25:37  demo recording: refused (idle 0 s)
+2026-10-26T11:32:56  allowed: idle 120 s >= 120 s
+2026-10-26T11:32:56  held walk capture: allowed (idle 120 s)
+2026-10-26T11:42:56  skipped: idle 0 s < 120 s, waited 420 s
+2026-10-26T11:42:56  held walk capture: refused (idle 0 s)
+2026-10-26T11:44:17  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T11:44:17  allowed: idle 600 s >= 180 s
+2026-10-26T11:44:17  refused: idle time unreadable
+2026-10-26T11:44:17  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T11:44:17  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T11:44:17  allowed: idle 200 s >= 180 s
+2026-10-26T11:44:17  overridden by --force
+2026-10-26T11:44:17  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T11:44:17  allowed: idle 180 s >= 180 s
+2026-10-26T11:44:17  allowed: idle 600 s >= 180 s
+2026-10-26T11:44:17  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T11:44:17  refused: idle time unreadable
+2026-10-26T11:44:17  overridden by --force
+2026-10-26T11:44:17  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T11:44:17  allowed: idle 200 s >= 180 s
+2026-10-26T11:44:17  allowed: idle 500 s >= 120 s
+2026-10-26T11:44:17  audio proof: allowed (idle 500 s)
+2026-10-26T11:44:17  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T11:44:17  capture: refused (idle 1 s)
+2026-10-26T11:44:17  allowed: idle 120 s >= 120 s
+2026-10-26T11:44:17  pin: allowed (idle 120 s)
+2026-10-26T11:44:17  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T11:44:17  pin: refused (idle 119 s)
+2026-10-26T11:51:04  allowed: idle 125 s >= 120 s
+2026-10-26T11:51:04  held walk capture: allowed (idle 125 s)
+2026-10-26T12:07:31  allowed: idle 132 s >= 120 s
+2026-10-26T12:07:32  held walk capture: allowed (idle 132 s)
+2026-10-26T12:42:06  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T12:42:06  allowed: idle 600 s >= 180 s
+2026-10-26T12:42:06  refused: idle time unreadable
+2026-10-26T12:42:06  skipped: idle 129 s < 180 s, waited 0 s
+2026-10-26T12:42:06  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T12:42:06  allowed: idle 200 s >= 180 s
+2026-10-26T12:42:06  overridden by --force
+2026-10-26T12:42:06  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T12:42:06  allowed: idle 180 s >= 180 s
+2026-10-26T12:42:06  allowed: idle 600 s >= 180 s
+2026-10-26T12:42:06  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T12:42:06  refused: idle time unreadable
+2026-10-26T12:42:06  overridden by --force
+2026-10-26T12:42:06  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T12:42:06  allowed: idle 200 s >= 180 s
+2026-10-26T12:42:06  allowed: idle 500 s >= 120 s
+2026-10-26T12:42:06  audio proof: allowed (idle 500 s)
+2026-10-26T12:42:06  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T12:42:06  capture: refused (idle 1 s)
+2026-10-26T12:42:07  allowed: idle 120 s >= 120 s
+2026-10-26T12:42:07  pin: allowed (idle 120 s)
+2026-10-26T12:42:07  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T12:42:07  pin: refused (idle 119 s)
+2026-10-26T12:49:53  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T12:49:53  allowed: idle 600 s >= 180 s
+2026-10-26T12:49:53  refused: idle time unreadable
+2026-10-26T12:49:53  skipped: idle 141 s < 180 s, waited 0 s
+2026-10-26T12:49:54  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T12:49:54  allowed: idle 200 s >= 180 s
+2026-10-26T12:49:54  overridden by --force
+2026-10-26T12:49:54  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T12:49:54  allowed: idle 180 s >= 180 s
+2026-10-26T12:49:54  allowed: idle 600 s >= 180 s
+2026-10-26T12:49:54  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T12:49:54  refused: idle time unreadable
+2026-10-26T12:49:54  overridden by --force
+2026-10-26T12:49:54  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T12:49:54  allowed: idle 200 s >= 180 s
+2026-10-26T12:49:54  allowed: idle 500 s >= 120 s
+2026-10-26T12:49:54  audio proof: allowed (idle 500 s)
+2026-10-26T12:49:54  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T12:49:54  capture: refused (idle 1 s)
+2026-10-26T12:49:54  allowed: idle 120 s >= 120 s
+2026-10-26T12:49:54  pin: allowed (idle 120 s)
+2026-10-26T12:49:54  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T12:49:54  pin: refused (idle 119 s)
+2026-10-26T12:54:10  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T12:54:10  allowed: idle 600 s >= 180 s
+2026-10-26T12:54:10  refused: idle time unreadable
+2026-10-26T12:54:10  skipped: idle 172 s < 180 s, waited 0 s
+2026-10-26T12:54:10  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T12:54:10  allowed: idle 200 s >= 180 s
+2026-10-26T12:54:10  overridden by --force
+2026-10-26T12:54:10  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T12:54:10  allowed: idle 180 s >= 180 s
+2026-10-26T12:54:10  allowed: idle 600 s >= 180 s
+2026-10-26T12:54:10  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T12:54:10  refused: idle time unreadable
+2026-10-26T12:54:10  overridden by --force
+2026-10-26T12:54:10  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T12:54:10  allowed: idle 200 s >= 180 s
+2026-10-26T12:54:10  allowed: idle 500 s >= 120 s
+2026-10-26T12:54:10  audio proof: allowed (idle 500 s)
+2026-10-26T12:54:10  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T12:54:10  capture: refused (idle 1 s)
+2026-10-26T12:54:10  allowed: idle 120 s >= 120 s
+2026-10-26T12:54:10  pin: allowed (idle 120 s)
+2026-10-26T12:54:10  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T12:54:10  pin: refused (idle 119 s)
+2026-10-26T12:57:14  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T12:57:14  allowed: idle 600 s >= 180 s
+2026-10-26T12:57:14  refused: idle time unreadable
+2026-10-26T12:57:14  allowed: idle 356 s >= 180 s
+2026-10-26T12:57:14  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T12:57:14  allowed: idle 200 s >= 180 s
+2026-10-26T12:57:14  overridden by --force
+2026-10-26T12:57:14  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T12:57:14  allowed: idle 180 s >= 180 s
+2026-10-26T12:57:14  allowed: idle 600 s >= 180 s
+2026-10-26T12:57:14  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T12:57:14  refused: idle time unreadable
+2026-10-26T12:57:14  overridden by --force
+2026-10-26T12:57:14  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T12:57:14  allowed: idle 200 s >= 180 s
+2026-10-26T12:57:14  allowed: idle 500 s >= 120 s
+2026-10-26T12:57:14  audio proof: allowed (idle 500 s)
+2026-10-26T12:57:14  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T12:57:14  capture: refused (idle 1 s)
+2026-10-26T12:57:14  allowed: idle 120 s >= 120 s
+2026-10-26T12:57:14  pin: allowed (idle 120 s)
+2026-10-26T12:57:14  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T12:57:14  pin: refused (idle 119 s)
+2026-10-26T13:01:21  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T13:01:21  allowed: idle 600 s >= 180 s
+2026-10-26T13:01:21  refused: idle time unreadable
+2026-10-26T13:01:21  skipped: idle 1 s < 180 s, waited 0 s
+2026-10-26T13:01:21  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T13:01:21  allowed: idle 200 s >= 180 s
+2026-10-26T13:01:21  overridden by --force
+2026-10-26T13:01:21  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T13:01:21  allowed: idle 180 s >= 180 s
+2026-10-26T13:01:21  allowed: idle 600 s >= 180 s
+2026-10-26T13:01:21  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T13:01:21  refused: idle time unreadable
+2026-10-26T13:01:21  overridden by --force
+2026-10-26T13:01:21  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T13:01:21  allowed: idle 200 s >= 180 s
+2026-10-26T13:01:21  allowed: idle 500 s >= 120 s
+2026-10-26T13:01:21  audio proof: allowed (idle 500 s)
+2026-10-26T13:01:21  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T13:01:21  capture: refused (idle 1 s)
+2026-10-26T13:01:21  allowed: idle 120 s >= 120 s
+2026-10-26T13:01:21  pin: allowed (idle 120 s)
+2026-10-26T13:01:21  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T13:01:21  pin: refused (idle 119 s)
+2026-10-26T13:03:40  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T13:03:40  allowed: idle 180 s >= 180 s
+2026-10-26T13:03:40  allowed: idle 600 s >= 180 s
+2026-10-26T13:03:40  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T13:03:40  refused: idle time unreadable
+2026-10-26T13:03:40  overridden by --force
+2026-10-26T13:03:40  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T13:03:40  allowed: idle 200 s >= 180 s
+2026-10-26T13:04:15  skipped: idle 9 s < 180 s, waited 0 s
+2026-10-26T13:15:09  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T13:15:09  allowed: idle 180 s >= 180 s
+2026-10-26T13:15:09  allowed: idle 600 s >= 180 s
+2026-10-26T13:15:09  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T13:15:09  refused: idle time unreadable
+2026-10-26T13:15:09  overridden by --force
+2026-10-26T13:15:09  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T13:15:09  process list unreadable
+2026-10-26T13:15:09  allowed: idle 600 s >= 180 s
+2026-10-26T13:15:09  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T13:15:09  allowed: idle 200 s >= 180 s
+2026-10-26T13:15:11  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 8 s)
+2026-10-26T13:15:13  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 10 s)
+2026-10-26T13:16:19  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T13:16:20  allowed: idle 600 s >= 180 s
+2026-10-26T13:16:20  refused: idle time unreadable
+2026-10-26T13:16:20  skipped: idle 1 s < 180 s, waited 0 s
+2026-10-26T13:16:20  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T13:16:20  allowed: idle 200 s >= 180 s
+2026-10-26T13:16:20  overridden by --force
+2026-10-26T13:16:20  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T13:16:20  allowed: idle 180 s >= 180 s
+2026-10-26T13:16:20  allowed: idle 600 s >= 180 s
+2026-10-26T13:16:20  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T13:16:20  refused: idle time unreadable
+2026-10-26T13:16:20  overridden by --force
+2026-10-26T13:16:20  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T13:16:20  process list unreadable
+2026-10-26T13:16:20  allowed: idle 600 s >= 180 s
+2026-10-26T13:16:20  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T13:16:20  allowed: idle 200 s >= 180 s
+2026-10-26T13:16:20  allowed: idle 500 s >= 120 s
+2026-10-26T13:16:20  audio proof: allowed (idle 500 s)
+2026-10-26T13:16:20  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T13:16:20  capture: refused (idle 1 s)
+2026-10-26T13:17:03  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T13:17:03  allowed: idle 600 s >= 180 s
+2026-10-26T13:17:03  refused: idle time unreadable
+2026-10-26T13:17:03  skipped: idle 1 s < 180 s, waited 0 s
+2026-10-26T13:17:03  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T13:17:03  allowed: idle 200 s >= 180 s
+2026-10-26T13:17:03  overridden by --force
+2026-10-26T13:17:03  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T13:17:03  allowed: idle 180 s >= 180 s
+2026-10-26T13:17:03  allowed: idle 600 s >= 180 s
+2026-10-26T13:17:03  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T13:17:03  refused: idle time unreadable
+2026-10-26T13:17:03  overridden by --force
+2026-10-26T13:17:03  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T13:17:03  process list unreadable
+2026-10-26T13:17:03  allowed: idle 600 s >= 180 s
+2026-10-26T13:17:03  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T13:17:03  allowed: idle 200 s >= 180 s
+2026-10-26T13:17:03  allowed: idle 500 s >= 120 s
+2026-10-26T13:17:03  audio proof: allowed (idle 500 s)
+2026-10-26T13:17:03  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T13:17:03  capture: refused (idle 1 s)
+2026-10-26T13:17:07  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 120 s)
+2026-10-26T13:17:07  pin: refused (idle 120 s)
+2026-10-26T13:19:16  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-26T13:19:16  refused: desktop automation codex-computer-use-swift.exe is running (idle 9 s)
+2026-10-26T13:19:16  allowed: idle 600 s >= 180 s
+2026-10-26T13:19:16  process list unreadable
+2026-10-26T13:19:16  allowed: idle 600 s >= 180 s
+2026-10-26T13:19:16  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-26T13:19:16  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T13:19:16  allowed: idle 180 s >= 180 s
+2026-10-26T13:19:16  allowed: idle 600 s >= 180 s
+2026-10-26T13:19:16  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T13:19:16  refused: idle time unreadable
+2026-10-26T13:19:16  overridden by --force
+2026-10-26T13:19:16  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T13:19:16  process list unreadable
+2026-10-26T13:19:16  allowed: idle 600 s >= 180 s
+2026-10-26T13:19:16  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T13:19:16  allowed: idle 200 s >= 180 s
+2026-10-26T13:22:33  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-26T13:22:33  refused: desktop automation codex-computer-use-swift.exe is running (idle 9 s)
+2026-10-26T13:22:33  allowed: idle 600 s >= 180 s
+2026-10-26T13:22:33  process list unreadable
+2026-10-26T13:22:33  allowed: idle 600 s >= 180 s
+2026-10-26T13:22:33  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-26T13:22:33  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T13:22:33  allowed: idle 180 s >= 180 s
+2026-10-26T13:22:33  allowed: idle 600 s >= 180 s
+2026-10-26T13:22:33  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T13:22:33  refused: idle time unreadable
+2026-10-26T13:22:33  overridden by --force
+2026-10-26T13:22:33  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T13:22:33  process list unreadable
+2026-10-26T13:22:33  allowed: idle 600 s >= 180 s
+2026-10-26T13:22:33  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T13:22:33  allowed: idle 200 s >= 180 s
+2026-10-26T13:22:33  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T13:22:33  allowed: idle 600 s >= 180 s
+2026-10-26T13:22:33  refused: idle time unreadable
+2026-10-26T13:22:33  skipped: idle 1 s < 180 s, waited 0 s
+2026-10-26T13:22:33  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T13:22:33  allowed: idle 200 s >= 180 s
+2026-10-26T13:22:33  overridden by --force
+2026-10-26T13:22:33  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T13:22:33  allowed: idle 180 s >= 180 s
+2026-10-26T13:22:33  allowed: idle 600 s >= 180 s
+2026-10-26T13:22:33  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T13:22:33  refused: idle time unreadable
+2026-10-26T13:22:33  overridden by --force
+2026-10-26T13:22:33  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T13:22:33  process list unreadable
+2026-10-26T13:22:33  allowed: idle 600 s >= 180 s
+2026-10-26T13:22:33  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T13:22:33  allowed: idle 200 s >= 180 s
+2026-10-26T13:22:33  allowed: idle 500 s >= 120 s
+2026-10-26T13:22:33  audio proof: allowed (idle 500 s)
+2026-10-26T13:22:33  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T13:22:33  capture: refused (idle 1 s)
+2026-10-26T13:24:56  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-26T13:24:56  refused: desktop automation codex-computer-use-swift.exe is running (idle 9 s)
+2026-10-26T13:24:56  allowed: idle 600 s >= 180 s
+2026-10-26T13:24:56  process list unreadable
+2026-10-26T13:24:56  allowed: idle 600 s >= 180 s
+2026-10-26T13:24:56  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-26T13:24:56  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T13:24:56  allowed: idle 180 s >= 180 s
+2026-10-26T13:24:56  allowed: idle 600 s >= 180 s
+2026-10-26T13:24:56  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T13:24:56  refused: idle time unreadable
+2026-10-26T13:24:56  overridden by --force
+2026-10-26T13:24:56  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T13:24:56  process list unreadable
+2026-10-26T13:24:56  allowed: idle 600 s >= 180 s
+2026-10-26T13:24:56  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T13:24:56  allowed: idle 200 s >= 180 s
+2026-10-26T13:33:22  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T13:33:22  allowed: idle 600 s >= 180 s
+2026-10-26T13:33:22  refused: idle time unreadable
+2026-10-26T13:33:22  skipped: idle 15 s < 180 s, waited 0 s
+2026-10-26T13:33:22  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T13:33:22  allowed: idle 200 s >= 180 s
+2026-10-26T13:33:22  overridden by --force
+2026-10-26T13:33:22  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T13:33:22  allowed: idle 180 s >= 180 s
+2026-10-26T13:33:22  allowed: idle 600 s >= 180 s
+2026-10-26T13:33:22  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T13:33:22  refused: idle time unreadable
+2026-10-26T13:33:22  overridden by --force
+2026-10-26T13:33:22  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T13:33:22  process list unreadable
+2026-10-26T13:33:22  allowed: idle 600 s >= 180 s
+2026-10-26T13:33:22  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T13:33:22  allowed: idle 200 s >= 180 s
+2026-10-26T13:33:22  allowed: idle 500 s >= 120 s
+2026-10-26T13:33:22  audio proof: allowed (idle 500 s)
+2026-10-26T13:33:22  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T13:33:22  capture: refused (idle 1 s)
+2026-10-26T13:33:24  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 120 s)
+2026-10-26T13:33:24  pin: refused (idle 120 s)
+2026-10-26T13:33:49  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 120 s)
+2026-10-26T13:33:49  pin: refused (idle 120 s)
+2026-10-26T13:34:16  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 120 s)
+2026-10-26T13:34:16  pin: refused (idle 120 s)
+2026-10-26T13:34:37  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-26T13:34:37  refused: desktop automation codex-computer-use-swift.exe is running (idle 9 s)
+2026-10-26T13:34:37  allowed: idle 600 s >= 180 s
+2026-10-26T13:34:37  process list unreadable
+2026-10-26T13:34:37  allowed: idle 600 s >= 180 s
+2026-10-26T13:34:37  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-26T13:34:37  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T13:34:37  allowed: idle 180 s >= 180 s
+2026-10-26T13:34:37  allowed: idle 600 s >= 180 s
+2026-10-26T13:34:37  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T13:34:37  refused: idle time unreadable
+2026-10-26T13:34:37  overridden by --force
+2026-10-26T13:34:37  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T13:34:37  process list unreadable
+2026-10-26T13:34:37  allowed: idle 600 s >= 180 s
+2026-10-26T13:34:37  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T13:34:37  allowed: idle 200 s >= 180 s
+2026-10-26T13:34:42  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 120 s)
+2026-10-26T13:34:42  pin: refused (idle 120 s)
+2026-10-26T13:38:32  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T13:38:32  allowed: idle 600 s >= 180 s
+2026-10-26T13:38:32  refused: idle time unreadable
+2026-10-26T13:38:32  skipped: idle 12 s < 180 s, waited 0 s
+2026-10-26T13:38:32  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T13:38:32  allowed: idle 200 s >= 180 s
+2026-10-26T13:38:32  overridden by --force
+2026-10-26T13:38:32  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T13:38:32  allowed: idle 180 s >= 180 s
+2026-10-26T13:38:32  allowed: idle 600 s >= 180 s
+2026-10-26T13:38:32  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T13:38:32  refused: idle time unreadable
+2026-10-26T13:38:32  overridden by --force
+2026-10-26T13:38:32  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T13:38:32  process list unreadable
+2026-10-26T13:38:32  allowed: idle 600 s >= 180 s
+2026-10-26T13:38:32  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T13:38:32  allowed: idle 200 s >= 180 s
+2026-10-26T13:38:32  allowed: idle 500 s >= 120 s
+2026-10-26T13:38:32  audio proof: allowed (idle 500 s)
+2026-10-26T13:38:32  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T13:38:32  capture: refused (idle 1 s)
+2026-10-26T13:38:42  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 120 s)
+2026-10-26T13:38:42  pin: refused (idle 120 s)
+2026-10-26T13:41:54  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-26T13:41:54  refused: desktop automation codex-computer-use-swift.exe is running (idle 9 s)
+2026-10-26T13:41:54  allowed: idle 600 s >= 180 s
+2026-10-26T13:41:54  process list unreadable
+2026-10-26T13:41:54  allowed: idle 600 s >= 180 s
+2026-10-26T13:41:54  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-26T13:41:54  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T13:41:54  allowed: idle 180 s >= 180 s
+2026-10-26T13:41:54  allowed: idle 600 s >= 180 s
+2026-10-26T13:41:54  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T13:41:54  refused: idle time unreadable
+2026-10-26T13:41:54  overridden by --force
+2026-10-26T13:41:54  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T13:41:54  process list unreadable
+2026-10-26T13:41:54  allowed: idle 600 s >= 180 s
+2026-10-26T13:41:54  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T13:41:54  allowed: idle 200 s >= 180 s
+2026-10-26T13:42:45  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 120 s)
+2026-10-26T13:42:45  pin: refused (idle 120 s)
+2026-10-26T13:51:03  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T13:51:03  allowed: idle 600 s >= 180 s
+2026-10-26T13:51:03  refused: idle time unreadable
+2026-10-26T13:51:03  skipped: idle 147 s < 180 s, waited 0 s
+2026-10-26T13:51:03  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T13:51:03  allowed: idle 200 s >= 180 s
+2026-10-26T13:51:03  overridden by --force
+2026-10-26T13:51:03  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T13:51:03  allowed: idle 180 s >= 180 s
+2026-10-26T13:51:03  allowed: idle 600 s >= 180 s
+2026-10-26T13:51:03  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T13:51:03  refused: idle time unreadable
+2026-10-26T13:51:03  overridden by --force
+2026-10-26T13:51:03  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T13:51:03  process list unreadable
+2026-10-26T13:51:03  allowed: idle 600 s >= 180 s
+2026-10-26T13:51:03  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T13:51:03  allowed: idle 200 s >= 180 s
+2026-10-26T13:51:03  allowed: idle 500 s >= 120 s
+2026-10-26T13:51:03  audio proof: allowed (idle 500 s)
+2026-10-26T13:51:03  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T13:51:03  capture: refused (idle 1 s)
+2026-10-26T13:51:03  allowed: idle 120 s >= 120 s
+2026-10-26T13:51:03  pin: allowed (idle 120 s)
+2026-10-26T13:51:03  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T13:51:03  pin: refused (idle 119 s)
+2026-10-26T14:04:06  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T14:04:06  allowed: idle 600 s >= 180 s
+2026-10-26T14:04:06  refused: idle time unreadable
+2026-10-26T14:04:06  skipped: idle 20 s < 180 s, waited 0 s
+2026-10-26T14:04:06  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T14:04:06  allowed: idle 200 s >= 180 s
+2026-10-26T14:04:06  overridden by --force
+2026-10-26T14:04:06  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T14:04:06  allowed: idle 180 s >= 180 s
+2026-10-26T14:04:06  allowed: idle 600 s >= 180 s
+2026-10-26T14:04:06  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T14:04:06  refused: idle time unreadable
+2026-10-26T14:04:06  overridden by --force
+2026-10-26T14:04:06  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T14:04:06  process list unreadable
+2026-10-26T14:04:06  allowed: idle 600 s >= 180 s
+2026-10-26T14:04:06  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T14:04:06  allowed: idle 200 s >= 180 s
+2026-10-26T14:04:06  allowed: idle 500 s >= 120 s
+2026-10-26T14:04:06  audio proof: allowed (idle 500 s)
+2026-10-26T14:04:06  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T14:04:06  capture: refused (idle 1 s)
+2026-10-26T14:04:07  allowed: idle 120 s >= 120 s
+2026-10-26T14:04:07  pin: allowed (idle 120 s)
+2026-10-26T14:04:07  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T14:04:07  pin: refused (idle 119 s)
+2026-10-26T14:06:05  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-26T14:06:05  refused: desktop automation codex-computer-use-swift.exe is running (idle 9 s)
+2026-10-26T14:06:05  allowed: idle 600 s >= 180 s
+2026-10-26T14:06:05  process list unreadable
+2026-10-26T14:06:05  allowed: idle 600 s >= 180 s
+2026-10-26T14:06:05  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-26T14:06:05  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T14:06:05  allowed: idle 180 s >= 180 s
+2026-10-26T14:06:05  allowed: idle 600 s >= 180 s
+2026-10-26T14:06:05  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T14:06:05  refused: idle time unreadable
+2026-10-26T14:06:05  overridden by --force
+2026-10-26T14:06:05  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T14:06:05  process list unreadable
+2026-10-26T14:06:05  allowed: idle 600 s >= 180 s
+2026-10-26T14:06:05  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T14:06:05  allowed: idle 200 s >= 180 s
+2026-10-26T14:12:54  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 165 s)
+2026-10-26T14:14:12  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T14:14:12  allowed: idle 180 s >= 180 s
+2026-10-26T14:14:12  allowed: idle 600 s >= 180 s
+2026-10-26T14:14:12  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T14:14:12  refused: idle time unreadable
+2026-10-26T14:14:12  overridden by --force
+2026-10-26T14:14:12  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T14:14:12  process list unreadable
+2026-10-26T14:14:12  allowed: idle 600 s >= 180 s
+2026-10-26T14:14:12  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T14:14:12  allowed: idle 200 s >= 180 s
+2026-10-26T14:14:45  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-26T14:14:45  refused: desktop automation codex-computer-use-swift.exe is running (idle 9 s)
+2026-10-26T14:14:45  allowed: idle 600 s >= 180 s
+2026-10-26T14:14:45  process list unreadable
+2026-10-26T14:14:45  allowed: idle 600 s >= 180 s
+2026-10-26T14:14:45  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-26T14:14:45  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T14:14:45  allowed: idle 180 s >= 180 s
+2026-10-26T14:14:45  allowed: idle 600 s >= 180 s
+2026-10-26T14:14:45  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T14:14:45  refused: idle time unreadable
+2026-10-26T14:14:45  overridden by --force
+2026-10-26T14:14:45  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T14:14:45  process list unreadable
+2026-10-26T14:14:45  allowed: idle 600 s >= 180 s
+2026-10-26T14:14:45  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T14:14:45  allowed: idle 200 s >= 180 s
+2026-10-26T14:14:45  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T14:14:45  allowed: idle 600 s >= 180 s
+2026-10-26T14:14:45  refused: idle time unreadable
+2026-10-26T14:14:45  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T14:14:45  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T14:14:45  allowed: idle 200 s >= 180 s
+2026-10-26T14:14:45  overridden by --force
+2026-10-26T14:14:45  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T14:14:45  allowed: idle 180 s >= 180 s
+2026-10-26T14:14:45  allowed: idle 600 s >= 180 s
+2026-10-26T14:14:45  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T14:14:45  refused: idle time unreadable
+2026-10-26T14:14:45  overridden by --force
+2026-10-26T14:14:45  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T14:14:45  process list unreadable
+2026-10-26T14:14:45  allowed: idle 600 s >= 180 s
+2026-10-26T14:14:45  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T14:14:45  allowed: idle 200 s >= 180 s
+2026-10-26T14:14:45  allowed: idle 500 s >= 120 s
+2026-10-26T14:14:45  audio proof: allowed (idle 500 s)
+2026-10-26T14:14:45  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T14:14:45  capture: refused (idle 1 s)
+2026-10-26T14:14:45  allowed: idle 120 s >= 120 s
+2026-10-26T14:14:45  pin: allowed (idle 120 s)
+2026-10-26T14:14:45  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T14:14:45  pin: refused (idle 119 s)
+2026-10-26T15:33:04  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 379 s)
+2026-10-26T15:38:02  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T15:38:02  allowed: idle 600 s >= 180 s
+2026-10-26T15:38:02  refused: idle time unreadable
+2026-10-26T15:38:02  allowed: idle 680 s >= 180 s
+2026-10-26T15:38:02  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T15:38:02  allowed: idle 200 s >= 180 s
+2026-10-26T15:38:02  overridden by --force
+2026-10-26T15:38:02  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T15:38:02  allowed: idle 180 s >= 180 s
+2026-10-26T15:38:02  allowed: idle 600 s >= 180 s
+2026-10-26T15:38:02  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T15:38:02  refused: idle time unreadable
+2026-10-26T15:38:02  overridden by --force
+2026-10-26T15:38:02  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T15:38:02  process list unreadable
+2026-10-26T15:38:02  allowed: idle 600 s >= 180 s
+2026-10-26T15:38:02  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T15:38:02  allowed: idle 200 s >= 180 s
+2026-10-26T15:38:02  allowed: idle 500 s >= 120 s
+2026-10-26T15:38:02  audio proof: allowed (idle 500 s)
+2026-10-26T15:38:02  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T15:38:02  capture: refused (idle 1 s)
+2026-10-26T15:38:02  allowed: idle 120 s >= 120 s
+2026-10-26T15:38:02  pin: allowed (idle 120 s)
+2026-10-26T15:38:02  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T15:38:02  pin: refused (idle 119 s)
+2026-10-26T15:39:21  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-26T15:39:21  refused: desktop automation codex-computer-use-swift.exe is running (idle 9 s)
+2026-10-26T15:39:21  allowed: idle 600 s >= 180 s
+2026-10-26T15:39:21  process list unreadable
+2026-10-26T15:39:21  allowed: idle 600 s >= 180 s
+2026-10-26T15:39:21  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-26T15:39:21  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T15:39:21  allowed: idle 180 s >= 180 s
+2026-10-26T15:39:21  allowed: idle 600 s >= 180 s
+2026-10-26T15:39:21  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T15:39:21  refused: idle time unreadable
+2026-10-26T15:39:21  overridden by --force
+2026-10-26T15:39:21  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T15:39:21  process list unreadable
+2026-10-26T15:39:21  allowed: idle 600 s >= 180 s
+2026-10-26T15:39:21  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T15:39:21  allowed: idle 200 s >= 180 s
+2026-10-26T15:45:07  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T15:45:07  allowed: idle 600 s >= 180 s
+2026-10-26T15:45:07  refused: idle time unreadable
+2026-10-26T15:45:07  allowed: idle 1105 s >= 180 s
+2026-10-26T15:45:07  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T15:45:07  allowed: idle 200 s >= 180 s
+2026-10-26T15:45:07  overridden by --force
+2026-10-26T15:45:07  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T15:45:07  allowed: idle 180 s >= 180 s
+2026-10-26T15:45:07  allowed: idle 600 s >= 180 s
+2026-10-26T15:45:07  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T15:45:07  refused: idle time unreadable
+2026-10-26T15:45:07  overridden by --force
+2026-10-26T15:45:07  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T15:45:07  process list unreadable
+2026-10-26T15:45:07  allowed: idle 600 s >= 180 s
+2026-10-26T15:45:07  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T15:45:07  allowed: idle 200 s >= 180 s
+2026-10-26T15:45:07  allowed: idle 500 s >= 120 s
+2026-10-26T15:45:07  audio proof: allowed (idle 500 s)
+2026-10-26T15:45:07  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T15:45:07  capture: refused (idle 1 s)
+2026-10-26T15:45:07  allowed: idle 120 s >= 120 s
+2026-10-26T15:45:07  pin: allowed (idle 120 s)
+2026-10-26T15:45:07  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T15:45:07  pin: refused (idle 119 s)
+2026-10-26T15:46:27  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-26T15:46:27  refused: desktop automation codex-computer-use-swift.exe is running (idle 9 s)
+2026-10-26T15:46:27  allowed: idle 600 s >= 180 s
+2026-10-26T15:46:27  process list unreadable
+2026-10-26T15:46:27  allowed: idle 600 s >= 180 s
+2026-10-26T15:46:27  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-26T15:46:27  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T15:46:27  allowed: idle 180 s >= 180 s
+2026-10-26T15:46:27  allowed: idle 600 s >= 180 s
+2026-10-26T15:46:27  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T15:46:27  refused: idle time unreadable
+2026-10-26T15:46:27  overridden by --force
+2026-10-26T15:46:27  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T15:46:27  process list unreadable
+2026-10-26T15:46:27  allowed: idle 600 s >= 180 s
+2026-10-26T15:46:27  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T15:46:27  allowed: idle 200 s >= 180 s
+2026-10-26T16:04:37  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 2274 s)
+2026-10-26T16:04:37  walk: refused (idle 2274 s)
+2026-10-26T16:06:03  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 1 s)
+2026-10-26T16:17:57  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 3 s)
+2026-10-26T16:18:56  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T16:18:56  allowed: idle 600 s >= 180 s
+2026-10-26T16:18:56  refused: idle time unreadable
+2026-10-26T16:18:56  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T16:18:56  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T16:18:56  allowed: idle 200 s >= 180 s
+2026-10-26T16:18:56  overridden by --force
+2026-10-26T16:18:56  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T16:18:56  allowed: idle 180 s >= 180 s
+2026-10-26T16:18:56  allowed: idle 600 s >= 180 s
+2026-10-26T16:18:56  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T16:18:56  refused: idle time unreadable
+2026-10-26T16:18:56  overridden by --force
+2026-10-26T16:18:56  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T16:18:56  process list unreadable
+2026-10-26T16:18:56  allowed: idle 600 s >= 180 s
+2026-10-26T16:18:56  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T16:18:56  allowed: idle 200 s >= 180 s
+2026-10-26T16:18:56  allowed: idle 500 s >= 120 s
+2026-10-26T16:18:56  audio proof: allowed (idle 500 s)
+2026-10-26T16:18:56  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T16:18:56  capture: refused (idle 1 s)
+2026-10-26T16:18:56  allowed: idle 120 s >= 120 s
+2026-10-26T16:18:56  pin: allowed (idle 120 s)
+2026-10-26T16:18:56  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T16:18:56  pin: refused (idle 119 s)
+2026-10-26T16:20:12  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-26T16:20:12  refused: desktop automation codex-computer-use-swift.exe is running (idle 9 s)
+2026-10-26T16:20:12  allowed: idle 600 s >= 180 s
+2026-10-26T16:20:12  process list unreadable
+2026-10-26T16:20:12  allowed: idle 600 s >= 180 s
+2026-10-26T16:20:12  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-26T16:20:12  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T16:20:12  allowed: idle 180 s >= 180 s
+2026-10-26T16:20:12  allowed: idle 600 s >= 180 s
+2026-10-26T16:20:12  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T16:20:12  refused: idle time unreadable
+2026-10-26T16:20:12  overridden by --force
+2026-10-26T16:20:12  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T16:20:12  process list unreadable
+2026-10-26T16:20:12  allowed: idle 600 s >= 180 s
+2026-10-26T16:20:12  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T16:20:12  allowed: idle 200 s >= 180 s
+2026-10-26T16:20:59  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 111 s)
+2026-10-26T16:20:59  drive capture: refused (idle 111 s)
+2026-10-26T16:22:28  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T16:22:28  allowed: idle 600 s >= 180 s
+2026-10-26T16:22:28  refused: idle time unreadable
+2026-10-26T16:22:28  allowed: idle 203 s >= 180 s
+2026-10-26T16:22:28  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T16:22:28  allowed: idle 200 s >= 180 s
+2026-10-26T16:22:28  overridden by --force
+2026-10-26T16:22:28  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T16:22:28  allowed: idle 180 s >= 180 s
+2026-10-26T16:22:28  allowed: idle 600 s >= 180 s
+2026-10-26T16:22:28  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T16:22:28  refused: idle time unreadable
+2026-10-26T16:22:28  overridden by --force
+2026-10-26T16:22:28  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T16:22:28  process list unreadable
+2026-10-26T16:22:28  allowed: idle 600 s >= 180 s
+2026-10-26T16:22:28  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T16:22:28  allowed: idle 200 s >= 180 s
+2026-10-26T16:22:28  allowed: idle 500 s >= 120 s
+2026-10-26T16:22:28  audio proof: allowed (idle 500 s)
+2026-10-26T16:22:28  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T16:22:28  capture: refused (idle 1 s)
+2026-10-26T16:22:28  allowed: idle 120 s >= 120 s
+2026-10-26T16:22:28  pin: allowed (idle 120 s)
+2026-10-26T16:22:28  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T16:22:28  pin: refused (idle 119 s)
+2026-10-26T16:23:16  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-26T16:23:16  refused: desktop automation codex-computer-use-swift.exe is running (idle 9 s)
+2026-10-26T16:23:16  allowed: idle 600 s >= 180 s
+2026-10-26T16:23:16  process list unreadable
+2026-10-26T16:23:16  allowed: idle 600 s >= 180 s
+2026-10-26T16:23:16  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-26T16:23:16  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T16:23:16  allowed: idle 180 s >= 180 s
+2026-10-26T16:23:16  allowed: idle 600 s >= 180 s
+2026-10-26T16:23:16  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T16:23:16  refused: idle time unreadable
+2026-10-26T16:23:16  overridden by --force
+2026-10-26T16:23:16  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T16:23:16  process list unreadable
+2026-10-26T16:23:16  allowed: idle 600 s >= 180 s
+2026-10-26T16:23:16  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T16:23:16  allowed: idle 200 s >= 180 s
+2026-10-26T16:29:44  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T16:29:44  allowed: idle 600 s >= 180 s
+2026-10-26T16:29:44  refused: idle time unreadable
+2026-10-26T16:29:44  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T16:29:44  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T16:29:44  allowed: idle 200 s >= 180 s
+2026-10-26T16:29:44  overridden by --force
+2026-10-26T16:29:44  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T16:29:44  allowed: idle 180 s >= 180 s
+2026-10-26T16:29:44  allowed: idle 600 s >= 180 s
+2026-10-26T16:29:44  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T16:29:44  refused: idle time unreadable
+2026-10-26T16:29:44  overridden by --force
+2026-10-26T16:29:44  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T16:29:44  process list unreadable
+2026-10-26T16:29:44  allowed: idle 600 s >= 180 s
+2026-10-26T16:29:44  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T16:29:44  allowed: idle 200 s >= 180 s
+2026-10-26T16:29:44  allowed: idle 500 s >= 120 s
+2026-10-26T16:29:44  audio proof: allowed (idle 500 s)
+2026-10-26T16:29:44  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T16:29:44  capture: refused (idle 1 s)
+2026-10-26T16:29:44  allowed: idle 120 s >= 120 s
+2026-10-26T16:29:44  pin: allowed (idle 120 s)
+2026-10-26T16:29:44  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T16:29:44  pin: refused (idle 119 s)
+2026-10-26T16:31:03  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-26T16:31:03  refused: desktop automation codex-computer-use-swift.exe is running (idle 9 s)
+2026-10-26T16:31:03  allowed: idle 600 s >= 180 s
+2026-10-26T16:31:03  process list unreadable
+2026-10-26T16:31:03  allowed: idle 600 s >= 180 s
+2026-10-26T16:31:03  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-26T16:31:03  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T16:31:03  allowed: idle 180 s >= 180 s
+2026-10-26T16:31:03  allowed: idle 600 s >= 180 s
+2026-10-26T16:31:03  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T16:31:03  refused: idle time unreadable
+2026-10-26T16:31:03  overridden by --force
+2026-10-26T16:31:03  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T16:31:03  process list unreadable
+2026-10-26T16:31:03  allowed: idle 600 s >= 180 s
+2026-10-26T16:31:03  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T16:31:03  allowed: idle 200 s >= 180 s
+2026-10-26T16:35:18  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 0 s)
+2026-10-26T16:37:09  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 0 s)
+2026-10-26T16:49:49  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 21 s)
+2026-10-26T16:49:49  demo recording: refused (idle 21 s)
+2026-10-26T17:08:01  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 64 s)
+2026-10-26T17:08:01  demo recording: refused (idle 64 s)
+2026-10-26T17:30:32  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 3 s)
+2026-10-26T17:30:32  title capture: refused (idle 3 s)
+2026-10-26T18:02:20  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 0 s)
+2026-10-26T18:02:20  knife swing capture: refused (idle 0 s)
+2026-10-26T18:35:05  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-26T18:35:05  refused: desktop automation codex-computer-use-swift.exe is running (idle 9 s)
+2026-10-26T18:35:05  allowed: idle 600 s >= 180 s
+2026-10-26T18:35:05  process list unreadable
+2026-10-26T18:35:05  allowed: idle 600 s >= 180 s
+2026-10-26T18:35:05  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-26T18:35:05  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T18:35:05  allowed: idle 180 s >= 180 s
+2026-10-26T18:35:05  allowed: idle 600 s >= 180 s
+2026-10-26T18:35:05  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T18:35:05  refused: idle time unreadable
+2026-10-26T18:35:05  overridden by --force
+2026-10-26T18:35:05  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T18:35:05  process list unreadable
+2026-10-26T18:35:05  allowed: idle 600 s >= 180 s
+2026-10-26T18:35:05  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T18:35:05  allowed: idle 200 s >= 180 s
+2026-10-26T18:35:05  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T18:35:05  allowed: idle 600 s >= 180 s
+2026-10-26T18:35:05  refused: idle time unreadable
+2026-10-26T18:35:05  skipped: idle 62 s < 180 s, waited 0 s
+2026-10-26T18:35:05  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T18:35:05  allowed: idle 200 s >= 180 s
+2026-10-26T18:35:05  overridden by --force
+2026-10-26T18:35:05  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T18:35:05  allowed: idle 180 s >= 180 s
+2026-10-26T18:35:05  allowed: idle 600 s >= 180 s
+2026-10-26T18:35:05  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T18:35:05  refused: idle time unreadable
+2026-10-26T18:35:05  overridden by --force
+2026-10-26T18:35:05  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T18:35:05  process list unreadable
+2026-10-26T18:35:05  allowed: idle 600 s >= 180 s
+2026-10-26T18:35:05  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T18:35:05  allowed: idle 200 s >= 180 s
+2026-10-26T18:35:05  allowed: idle 500 s >= 120 s
+2026-10-26T18:35:05  audio proof: allowed (idle 500 s)
+2026-10-26T18:35:05  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T18:35:05  capture: refused (idle 1 s)
+2026-10-26T18:35:06  allowed: idle 120 s >= 120 s
+2026-10-26T18:35:06  pin: allowed (idle 120 s)
+2026-10-26T18:35:06  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T18:35:06  pin: refused (idle 119 s)
+2026-10-26T18:35:28  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-26T18:35:28  refused: desktop automation codex-computer-use-swift.exe is running (idle 9 s)
+2026-10-26T18:35:28  allowed: idle 600 s >= 180 s
+2026-10-26T18:35:28  process list unreadable
+2026-10-26T18:35:28  allowed: idle 600 s >= 180 s
+2026-10-26T18:35:28  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-26T18:35:28  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T18:35:28  allowed: idle 180 s >= 180 s
+2026-10-26T18:35:28  allowed: idle 600 s >= 180 s
+2026-10-26T18:35:28  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T18:35:28  refused: idle time unreadable
+2026-10-26T18:35:28  overridden by --force
+2026-10-26T18:35:28  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T18:35:28  process list unreadable
+2026-10-26T18:35:28  allowed: idle 600 s >= 180 s
+2026-10-26T18:35:28  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T18:35:28  allowed: idle 200 s >= 180 s
+2026-10-26T18:35:28  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T18:35:28  allowed: idle 600 s >= 180 s
+2026-10-26T18:35:28  refused: idle time unreadable
+2026-10-26T18:35:28  skipped: idle 85 s < 180 s, waited 0 s
+2026-10-26T18:35:28  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T18:35:28  allowed: idle 200 s >= 180 s
+2026-10-26T18:35:28  overridden by --force
+2026-10-26T18:35:28  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T18:35:28  allowed: idle 180 s >= 180 s
+2026-10-26T18:35:28  allowed: idle 600 s >= 180 s
+2026-10-26T18:35:28  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T18:35:28  refused: idle time unreadable
+2026-10-26T18:35:28  overridden by --force
+2026-10-26T18:35:28  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T18:35:28  process list unreadable
+2026-10-26T18:35:28  allowed: idle 600 s >= 180 s
+2026-10-26T18:35:28  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T18:35:28  allowed: idle 200 s >= 180 s
+2026-10-26T18:35:28  allowed: idle 500 s >= 120 s
+2026-10-26T18:35:28  audio proof: allowed (idle 500 s)
+2026-10-26T18:35:28  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T18:35:28  capture: refused (idle 1 s)
+2026-10-26T18:35:28  allowed: idle 120 s >= 120 s
+2026-10-26T18:35:28  pin: allowed (idle 120 s)
+2026-10-26T18:35:28  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T18:35:28  pin: refused (idle 119 s)
+2026-10-26T18:46:21  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 534 s)
+2026-10-26T18:53:28  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 961 s)
+2026-10-26T19:08:47  process list unreadable
+2026-10-26T19:08:47  allowed: idle 1853 s >= 120 s
+2026-10-26T19:08:47  knife swing capture: allowed (idle 1853 s)
+2026-10-26T19:20:34  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T19:20:34  allowed: idle 600 s >= 180 s
+2026-10-26T19:20:34  refused: idle time unreadable
+2026-10-26T19:20:34  allowed: idle 2591 s >= 180 s
+2026-10-26T19:20:34  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T19:20:34  allowed: idle 200 s >= 180 s
+2026-10-26T19:20:34  overridden by --force
+2026-10-26T19:20:34  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T19:20:34  allowed: idle 180 s >= 180 s
+2026-10-26T19:20:34  allowed: idle 600 s >= 180 s
+2026-10-26T19:20:34  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T19:20:34  refused: idle time unreadable
+2026-10-26T19:20:34  overridden by --force
+2026-10-26T19:20:34  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T19:20:34  process list unreadable
+2026-10-26T19:20:34  allowed: idle 600 s >= 180 s
+2026-10-26T19:20:34  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T19:20:34  allowed: idle 200 s >= 180 s
+2026-10-26T19:20:34  allowed: idle 500 s >= 120 s
+2026-10-26T19:20:34  audio proof: allowed (idle 500 s)
+2026-10-26T19:20:34  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T19:20:34  capture: refused (idle 1 s)
+2026-10-26T19:20:34  allowed: idle 120 s >= 120 s
+2026-10-26T19:20:34  pin: allowed (idle 120 s)
+2026-10-26T19:20:34  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T19:20:34  pin: refused (idle 119 s)
+2026-10-26T19:23:16  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-26T19:23:16  refused: desktop automation codex-computer-use-swift.exe is running (idle 9 s)
+2026-10-26T19:23:16  allowed: idle 600 s >= 180 s
+2026-10-26T19:23:16  process list unreadable
+2026-10-26T19:23:16  allowed: idle 600 s >= 180 s
+2026-10-26T19:23:16  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-26T19:23:16  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T19:23:16  allowed: idle 180 s >= 180 s
+2026-10-26T19:23:16  allowed: idle 600 s >= 180 s
+2026-10-26T19:23:16  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T19:23:16  refused: idle time unreadable
+2026-10-26T19:23:16  overridden by --force
+2026-10-26T19:23:16  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T19:23:16  process list unreadable
+2026-10-26T19:23:16  allowed: idle 600 s >= 180 s
+2026-10-26T19:23:16  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T19:23:16  allowed: idle 200 s >= 180 s
+2026-10-26T19:27:59  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 0 s)
+2026-10-26T19:27:59  knife swing capture: refused (idle 0 s)
+2026-10-26T19:47:28  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 0 s)
+2026-10-26T20:15:43  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T20:15:43  allowed: idle 600 s >= 180 s
+2026-10-26T20:15:43  refused: idle time unreadable
+2026-10-26T20:15:43  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T20:15:43  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T20:15:43  allowed: idle 200 s >= 180 s
+2026-10-26T20:15:43  overridden by --force
+2026-10-26T20:15:43  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T20:15:43  allowed: idle 180 s >= 180 s
+2026-10-26T20:15:43  allowed: idle 600 s >= 180 s
+2026-10-26T20:15:43  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T20:15:43  refused: idle time unreadable
+2026-10-26T20:15:43  overridden by --force
+2026-10-26T20:15:43  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T20:15:43  process list unreadable
+2026-10-26T20:15:43  allowed: idle 600 s >= 180 s
+2026-10-26T20:15:43  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T20:15:43  allowed: idle 200 s >= 180 s
+2026-10-26T20:15:43  allowed: idle 500 s >= 120 s
+2026-10-26T20:15:43  audio proof: allowed (idle 500 s)
+2026-10-26T20:15:43  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T20:15:43  capture: refused (idle 1 s)
+2026-10-26T20:15:44  allowed: idle 120 s >= 120 s
+2026-10-26T20:15:44  pin: allowed (idle 120 s)
+2026-10-26T20:15:44  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T20:15:44  pin: refused (idle 119 s)
+2026-10-26T20:18:14  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T20:18:14  allowed: idle 600 s >= 180 s
+2026-10-26T20:18:14  refused: idle time unreadable
+2026-10-26T20:18:14  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T20:18:14  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T20:18:14  allowed: idle 200 s >= 180 s
+2026-10-26T20:18:14  overridden by --force
+2026-10-26T20:18:14  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T20:18:14  allowed: idle 180 s >= 180 s
+2026-10-26T20:18:14  allowed: idle 600 s >= 180 s
+2026-10-26T20:18:14  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T20:18:14  refused: idle time unreadable
+2026-10-26T20:18:14  overridden by --force
+2026-10-26T20:18:14  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T20:18:14  process list unreadable
+2026-10-26T20:18:14  allowed: idle 600 s >= 180 s
+2026-10-26T20:18:14  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T20:18:14  allowed: idle 200 s >= 180 s
+2026-10-26T20:18:14  allowed: idle 500 s >= 120 s
+2026-10-26T20:18:14  audio proof: allowed (idle 500 s)
+2026-10-26T20:18:14  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T20:18:14  capture: refused (idle 1 s)
+2026-10-26T20:18:15  allowed: idle 120 s >= 120 s
+2026-10-26T20:18:15  pin: allowed (idle 120 s)
+2026-10-26T20:18:15  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T20:18:15  pin: refused (idle 119 s)
+2026-10-26T20:18:34  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T20:18:34  allowed: idle 600 s >= 180 s
+2026-10-26T20:18:34  refused: idle time unreadable
+2026-10-26T20:18:34  skipped: idle 1 s < 180 s, waited 0 s
+2026-10-26T20:18:34  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T20:18:34  allowed: idle 200 s >= 180 s
+2026-10-26T20:18:34  overridden by --force
+2026-10-26T20:18:34  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T20:18:34  allowed: idle 180 s >= 180 s
+2026-10-26T20:18:34  allowed: idle 600 s >= 180 s
+2026-10-26T20:18:34  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T20:18:34  refused: idle time unreadable
+2026-10-26T20:18:34  overridden by --force
+2026-10-26T20:18:34  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T20:18:34  process list unreadable
+2026-10-26T20:18:34  allowed: idle 600 s >= 180 s
+2026-10-26T20:18:34  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T20:18:34  allowed: idle 200 s >= 180 s
+2026-10-26T20:18:34  allowed: idle 500 s >= 120 s
+2026-10-26T20:18:34  audio proof: allowed (idle 500 s)
+2026-10-26T20:18:34  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T20:18:34  capture: refused (idle 1 s)
+2026-10-26T20:18:34  allowed: idle 120 s >= 120 s
+2026-10-26T20:18:34  pin: allowed (idle 120 s)
+2026-10-26T20:18:34  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T20:18:34  pin: refused (idle 119 s)
+2026-10-26T21:25:30  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T21:25:30  allowed: idle 600 s >= 180 s
+2026-10-26T21:25:30  refused: idle time unreadable
+2026-10-26T21:25:30  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T21:25:30  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-26T21:25:30  allowed: idle 200 s >= 180 s
+2026-10-26T21:25:30  overridden by --force
+2026-10-26T21:25:30  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T21:25:30  allowed: idle 180 s >= 180 s
+2026-10-26T21:25:30  allowed: idle 600 s >= 180 s
+2026-10-26T21:25:30  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T21:25:30  refused: idle time unreadable
+2026-10-26T21:25:30  overridden by --force
+2026-10-26T21:25:30  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T21:25:30  process list unreadable
+2026-10-26T21:25:30  allowed: idle 600 s >= 180 s
+2026-10-26T21:25:30  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T21:25:30  allowed: idle 200 s >= 180 s
+2026-10-26T21:25:30  allowed: idle 500 s >= 120 s
+2026-10-26T21:25:30  audio proof: allowed (idle 500 s)
+2026-10-26T21:25:30  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-26T21:25:30  capture: refused (idle 1 s)
+2026-10-26T21:25:30  allowed: idle 120 s >= 120 s
+2026-10-26T21:25:30  pin: allowed (idle 120 s)
+2026-10-26T21:25:30  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-26T21:25:30  pin: refused (idle 119 s)
+2026-10-26T21:27:37  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-26T21:27:37  refused: desktop automation codex-computer-use-swift.exe is running (idle 9 s)
+2026-10-26T21:27:37  allowed: idle 600 s >= 180 s
+2026-10-26T21:27:37  process list unreadable
+2026-10-26T21:27:37  allowed: idle 600 s >= 180 s
+2026-10-26T21:27:37  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-26T21:27:37  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-26T21:27:37  allowed: idle 180 s >= 180 s
+2026-10-26T21:27:37  allowed: idle 600 s >= 180 s
+2026-10-26T21:27:37  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-26T21:27:37  refused: idle time unreadable
+2026-10-26T21:27:37  overridden by --force
+2026-10-26T21:27:37  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-26T21:27:37  process list unreadable
+2026-10-26T21:27:37  allowed: idle 600 s >= 180 s
+2026-10-26T21:27:37  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-26T21:27:37  allowed: idle 200 s >= 180 s
+2026-10-26T21:29:48  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 174 s)
+2026-10-26T22:46:45  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 6 s)
+2026-10-26T22:47:26  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 5 s)
+2026-10-26T22:47:48  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 35 s)
+2026-10-26T22:48:27  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 30 s)
+2026-10-26T22:50:01  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 2 s)
+2026-10-26T22:51:38  process list unreadable
+2026-10-26T23:05:32  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 6 s)
+2026-10-26T23:05:32  demo recording: refused (idle 6 s)
+2026-10-26T23:15:05  process list unreadable
+2026-10-26T23:15:06  allowed: idle 376 s >= 120 s
+2026-10-26T23:15:06  demo recording: allowed (idle 376 s)
+2026-10-26T23:26:51  process list unreadable
+2026-10-26T23:26:52  allowed: idle 139 s >= 120 s
+2026-10-26T23:26:52  demo recording: allowed (idle 139 s)
+2026-10-26T23:42:46  process list unreadable
+2026-10-26T23:42:46  allowed: idle 250 s >= 120 s
+2026-10-26T23:42:46  QA window grabs: allowed (idle 250 s)
+2026-10-26T23:58:39  process list unreadable
+2026-10-27T00:11:07  process list unreadable
+2026-10-27T00:11:07  allowed: idle 433 s >= 120 s
+2026-10-27T00:11:07  QA window grabs: allowed (idle 433 s)
+2026-10-27T00:27:11  process list unreadable
+2026-10-27T00:27:11  allowed: idle 896 s >= 120 s
+2026-10-27T00:27:11  QA window grabs: allowed (idle 896 s)
+2026-10-27T00:40:37  process list unreadable
+2026-10-27T00:40:37  allowed: idle 545 s >= 120 s
+2026-10-27T00:40:37  QA window grabs: allowed (idle 545 s)
+2026-10-27T02:24:53  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 648 s)
+2026-10-27T02:35:12  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 1265 s)
+2026-10-27T02:35:12  knife swing capture: refused (idle 1265 s)
+2026-10-27T02:35:59  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 1313 s)
+2026-10-27T02:41:41  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 53 s)
+2026-10-27T02:46:35  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 208 s)
+2026-10-27T04:40:11  process list unreadable
+2026-10-27T04:40:11  allowed: idle 1948 s >= 180 s
+2026-10-27T04:53:01  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-27T04:53:01  allowed: idle 600 s >= 180 s
+2026-10-27T04:53:01  refused: idle time unreadable
+2026-10-27T04:53:01  allowed: idle 710 s >= 180 s
+2026-10-27T04:53:01  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-27T04:53:01  allowed: idle 200 s >= 180 s
+2026-10-27T04:53:01  overridden by --force
+2026-10-27T04:53:01  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-27T04:53:01  allowed: idle 180 s >= 180 s
+2026-10-27T04:53:01  allowed: idle 600 s >= 180 s
+2026-10-27T04:53:01  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-27T04:53:01  refused: idle time unreadable
+2026-10-27T04:53:01  overridden by --force
+2026-10-27T04:53:01  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-27T04:53:01  process list unreadable
+2026-10-27T04:53:01  allowed: idle 600 s >= 180 s
+2026-10-27T04:53:01  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-27T04:53:01  allowed: idle 200 s >= 180 s
+2026-10-27T04:53:01  allowed: idle 500 s >= 120 s
+2026-10-27T04:53:01  audio proof: allowed (idle 500 s)
+2026-10-27T04:53:01  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-27T04:53:01  capture: refused (idle 1 s)
+2026-10-27T04:53:01  allowed: idle 120 s >= 120 s
+2026-10-27T04:53:01  pin: allowed (idle 120 s)
+2026-10-27T04:53:01  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-27T04:53:01  pin: refused (idle 119 s)
+2026-10-27T04:54:53  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-27T04:54:53  refused: desktop automation codex-computer-use-swift.exe is running (idle 9 s)
+2026-10-27T04:54:53  allowed: idle 600 s >= 180 s
+2026-10-27T04:54:53  process list unreadable
+2026-10-27T04:54:53  allowed: idle 600 s >= 180 s
+2026-10-27T04:54:53  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-27T04:54:53  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-27T04:54:53  allowed: idle 180 s >= 180 s
+2026-10-27T04:54:53  allowed: idle 600 s >= 180 s
+2026-10-27T04:54:53  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-27T04:54:53  refused: idle time unreadable
+2026-10-27T04:54:53  overridden by --force
+2026-10-27T04:54:53  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-27T04:54:53  process list unreadable
+2026-10-27T04:54:53  allowed: idle 600 s >= 180 s
+2026-10-27T04:54:53  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-27T04:54:53  allowed: idle 200 s >= 180 s
+2026-10-27T05:41:30  process list unreadable
+2026-10-27T05:41:30  skipped: idle 0 s < 120 s, waited 30 s
+2026-10-27T05:41:30  knife swing capture: refused (idle 0 s)
+2026-10-27T05:44:45  process list unreadable
+2026-10-27T05:44:45  skipped: idle 30 s < 120 s, waited 30 s
+2026-10-27T05:44:45  knife swing capture: refused (idle 30 s)
+2026-10-27T05:53:00  process list unreadable
+2026-10-27T05:53:00  allowed: idle 524 s >= 120 s
+2026-10-27T05:53:00  knife swing capture: allowed (idle 524 s)
+2026-10-27T06:11:17  process list unreadable
+2026-10-27T06:11:17  allowed: idle 297 s >= 120 s
+2026-10-27T06:11:17  knife swing capture: allowed (idle 297 s)
+2026-10-27T06:17:14  process list unreadable
+2026-10-27T06:17:14  allowed: idle 242 s >= 120 s
+2026-10-27T06:17:14  knife swing capture: allowed (idle 242 s)
+2026-10-27T06:25:10  process list unreadable
+2026-10-27T06:25:10  allowed: idle 365 s >= 120 s
+2026-10-27T06:25:10  knife swing capture: allowed (idle 365 s)
+2026-10-27T06:31:43  process list unreadable
+2026-10-27T06:31:43  allowed: idle 279 s >= 120 s
+2026-10-27T06:31:43  knife swing capture: allowed (idle 279 s)
+2026-10-27T06:38:05  process list unreadable
+2026-10-27T06:38:05  allowed: idle 173 s >= 120 s
+2026-10-27T06:38:05  knife swing capture: allowed (idle 173 s)
+2026-10-27T06:43:30  process list unreadable
+2026-10-27T06:46:12  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 287 s)
+2026-10-27T06:46:12  knife swing capture: refused (idle 287 s)
+2026-10-27T07:01:16  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 1201 s)
+2026-10-27T07:04:16  process list unreadable
+2026-10-27T07:04:16  allowed: idle 1361 s >= 120 s
+2026-10-27T07:04:16  demo recording: allowed (idle 1361 s)
+2026-10-27T07:13:27  process list unreadable
+2026-10-27T07:13:27  skipped: idle 79 s < 180 s, waited 30 s
+2026-10-27T07:14:19  process list unreadable
+2026-10-27T07:14:19  allowed: idle 130 s >= 120 s
+2026-10-27T07:14:19  QA window grabs: allowed (idle 130 s)
+2026-10-27T07:27:57  process list unreadable
+2026-10-27T07:27:57  allowed: idle 300 s >= 120 s
+2026-10-27T07:27:57  QA window grabs: allowed (idle 300 s)
+2026-10-27T07:28:58  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 30 s)
+2026-10-27T07:28:58  demo recording: refused (idle 30 s)
+2026-10-27T07:29:16  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 2 s)
+2026-10-27T07:30:18  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-27T07:30:18  allowed: idle 600 s >= 180 s
+2026-10-27T07:30:18  refused: idle time unreadable
+2026-10-27T07:30:18  skipped: idle 70 s < 180 s, waited 0 s
+2026-10-27T07:30:18  skipped: idle 10 s < 180 s, waited 60 s
+2026-10-27T07:30:18  allowed: idle 200 s >= 180 s
+2026-10-27T07:30:18  overridden by --force
+2026-10-27T07:30:18  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-27T07:30:18  allowed: idle 180 s >= 180 s
+2026-10-27T07:30:18  allowed: idle 600 s >= 180 s
+2026-10-27T07:30:18  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-27T07:30:18  refused: idle time unreadable
+2026-10-27T07:30:18  overridden by --force
+2026-10-27T07:30:18  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-27T07:30:18  process list unreadable
+2026-10-27T07:30:18  allowed: idle 600 s >= 180 s
+2026-10-27T07:30:18  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-27T07:30:18  allowed: idle 200 s >= 180 s
+2026-10-27T07:30:18  allowed: idle 500 s >= 120 s
+2026-10-27T07:30:18  audio proof: allowed (idle 500 s)
+2026-10-27T07:30:18  skipped: idle 1 s < 120 s, waited 0 s
+2026-10-27T07:30:18  capture: refused (idle 1 s)
+2026-10-27T07:30:18  allowed: idle 120 s >= 120 s
+2026-10-27T07:30:18  pin: allowed (idle 120 s)
+2026-10-27T07:30:18  skipped: idle 119 s < 120 s, waited 0 s
+2026-10-27T07:30:18  pin: refused (idle 119 s)
+2026-10-27T07:31:47  process list unreadable
+2026-10-27T07:31:47  skipped: idle 129 s < 180 s, waited 30 s
+2026-10-27T07:33:26  process list unreadable
+2026-10-27T07:33:26  allowed: idle 228 s >= 120 s
+2026-10-27T07:33:26  demo recording: allowed (idle 228 s)
+2026-10-27T07:33:32  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-27T07:33:32  refused: desktop automation codex-computer-use-swift.exe is running (idle 9 s)
+2026-10-27T07:33:32  allowed: idle 600 s >= 180 s
+2026-10-27T07:33:32  process list unreadable
+2026-10-27T07:33:32  allowed: idle 600 s >= 180 s
+2026-10-27T07:33:32  refused: desktop automation codex.exe is running (idle 900 s)
+2026-10-27T07:33:32  skipped: idle 5 s < 180 s, waited 0 s
+2026-10-27T07:33:32  allowed: idle 180 s >= 180 s
+2026-10-27T07:33:32  allowed: idle 600 s >= 180 s
+2026-10-27T07:33:32  skipped: idle 0 s < 180 s, waited 0 s
+2026-10-27T07:33:32  refused: idle time unreadable
+2026-10-27T07:33:32  overridden by --force
+2026-10-27T07:33:32  refused: desktop automation codex.exe is running (idle 600 s)
+2026-10-27T07:33:32  process list unreadable
+2026-10-27T07:33:32  allowed: idle 600 s >= 180 s
+2026-10-27T07:33:32  skipped: idle 40 s < 180 s, waited 60 s
+2026-10-27T07:33:32  allowed: idle 200 s >= 180 s
+2026-10-27T07:41:39  refused: desktop automation codex-computer-use-swift.exe, codex.exe is running (idle 189 s)
+2026-10-27T07:41:58  process list unreadable
+2026-10-27T07:41:58  allowed: idle 204 s >= 180 s
