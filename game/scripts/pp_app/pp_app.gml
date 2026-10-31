@@ -445,6 +445,16 @@ function pp_mode_overworld() {
                 _map_id = _params.map_id;
                 _spawn = _params.spawn;
             }
+            // Card WIRE-V2 debug door: PP_WARP="map_id" or "map_id:spawn" opens the run on that map instead of the slice's, with no
+            // opening scene. Unset in every real launch, so this is one environment read when the overworld opens. It lets a capture
+            // run stand on any room (tools\capture_title.py --room ship, with PP_ROUTE_HOLD=drive).
+            var _warp = environment_get_variable(PP_WARP);
+            var _warped = (_warp != "");
+            if (_warped) {
+                var _warp_parts = string_split(_warp, ":");
+                _map_id = _warp_parts[0];
+                _spawn = (array_length(_warp_parts) > 1) ? _warp_parts[1] : "start";
+            }
             global.pp.world = pp_overworld_new(_map_id, _spawn);
             if (is_undefined(global.pp.world)) {
                 show_debug_message("PP: the slice names a map that does not load, staying in boot");
@@ -459,7 +469,7 @@ function pp_mode_overworld() {
             } else if (variable_struct_exists(_slice, "scene")) {
                 _scene_id = _slice.scene;
             }
-            if (_scene_id != "" && !_resumed) {
+            if (_scene_id != "" && !_resumed && !_warped) {
                 var _flag = "scene_" + string(_scene_id);
                 if (!pp_ledger_flag(global.pp_ledger, _flag)) {
                     pp_overworld_start_scene(global.pp.world, _scene_id);

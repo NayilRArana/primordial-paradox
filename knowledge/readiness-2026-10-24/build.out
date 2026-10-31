@@ -1,0 +1,7 @@
+building with C:\ProgramData\GameMakerStudio2-LTS2026\Cache\runtimes\runtime-2026.0.0.23\bin\igor\windows\x64\Igor.exe
+game: <repo>\game\PrimordialParadox.yyp
+gate log:  <repo>\build\last-build.log
+build log: <repo>\build\last-igor.log
+Igor finished. The game window is the only window that opened.
+BUILD PASS: Igor compiled the project and launched the game
+EXIT=0

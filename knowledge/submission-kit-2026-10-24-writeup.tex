@@ -1,0 +1,24 @@
+\documentclass[11pt]{article}
+\usepackage[letterpaper,margin=1in]{geometry}
+\pagestyle{empty}
+\setlength{\parskip}{6pt}
+\setlength{\parindent}{0pt}
+\begin{document}
+
+{\Large \textbf{Primordial Paradox: AI that obeys hardware limits}}
+
+Primordial Paradox is a 256 by 240 NES style adventure built in GameMaker. Kronos and Zeus wake on the M3 at night, drive south to Southampton, and reach a ship at the quay. Two encounters follow. The first is won with one FIGHT command. The second is won by talking past a sailor, and the reply inside the text box is a line baked ahead of time and accepted by my checker.
+
+One person cannot be an art department, a composer and a writers room. A small game dies of art cost long before it dies of code. A model that ignores the hardware makes it worse: art that is beautiful and impossible, two hundred colours, a portrait where the sprite has 16 pixels to work with.
+
+The pipeline has five stages and one rule. Concept art goes to muse-image-1.0, the silhouette to sam-3.1, and my own pixeliser cuts both to four colours a sprite, because a palette first sprite can be checked and a pretty one cannot. muse-spark-1.3 reads a drawn frame with vision and writes the TALK replies as JSON with a mercy delta and a refusal flag, so the battle never waits on a sentence. Music is rendered by my own chip engine and judged by a model reading a spectrogram. Each model hands its output to a checker, and the checker decides what reaches the screen.
+
+Two things here are mine. First, tools/nes\_audit\_all.py measures every frame against the limits of the Ricoh 2C02 and publishes its own failures, 35 of 183 files today, because a gate that only says yes is not a gate. Second, the shipped build holds no key and makes no call: model answers are baked into data/meta\_bake.json with a model name and a request hash, and the recording prints that row on screen.
+
+Where it stands, with nothing rounded up. The title and the crawl run from one build, 43.2 seconds of recording. The drive row and its map are in the tree, and the drive step opens there with cue PP-02 and five lines of radio; the twelve drive stills miss the palette. No footstep cue fired, so the walk is unproven. The nine route steps pass their own test, and play reaches the third. No live Meta call has produced a shipped pixel: the bake file's 18 rows all carry the written fallback.
+
+The video is one scripted run, 19 timed events in data/demo/run\_001.json, planned at 71.0 seconds and recorded at 73.483, from the real build at 60 frames a second in the game's own 3x pixels. It shows the title, the crawl and the drive's first thirty seconds, and stops before the gate. The gate, boarding, the first fight, the talk fight, the save and the defeat are not in it yet.
+
+It fits Build for Your World because my world is a one person NES cartridge: a 1989 chip, a 150 dollar credit grant, and a checker that says no. The nine days go on turning the twelve rows at 2 into rows at 3. Watch the 73 second recording and run tools/nes\_audit\_all.py, and you can check every number on this page without taking my word for it.
+
+\end{document}
