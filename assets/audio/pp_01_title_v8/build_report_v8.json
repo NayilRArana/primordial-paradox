@@ -1,0 +1,133 @@
+{
+  "source": "<repo>\\assets\\audio\\pp_01_title_v7\\pp_01_title_v7.mid",
+  "tempo_bpm": 126.000126000126,
+  "time_sig": [
+    3,
+    4
+  ],
+  "loop": "bar 5 for 48 bars",
+  "devices": [
+    {
+      "id": "DIS-21",
+      "risk": 2,
+      "voice": "triangle",
+      "span": "bars 41 to 43, 9 beats",
+      "pitch": "A2",
+      "resolution": {
+        "bar": 44,
+        "why": "the written line returns and A is a chord tone again"
+      },
+      "trigger": "trio cold half under the H statements, the review asked for a textural drop-out",
+      "removed_notes": 5,
+      "budget": "trio: 1 device in 8 bars, inside 1 to 2"
+    }
+  ],
+  "hook_before": {
+    "score": 83,
+    "weakest": {
+      "criterion": "contour",
+      "key": "contour",
+      "fraction": 0.1667,
+      "points": 1.67,
+      "of": 10
+    }
+  },
+  "drums": {
+    "noise_before": 266,
+    "noise_after": 335,
+    "ghost_hats": 40,
+    "snare_figure": "bars 21 to 24, falling velocity 92 to 60",
+    "open_hat_flams": "before bars 13, 21, 29, 37, 45",
+    "noise_kick_substitute": "8 offbeats at C#-1"
+  },
+  "human": {
+    "staggered": {
+      "vrc6 saw": 160,
+      "noise": 261,
+      "dpcm": 99
+    },
+    "melody_repeat_velocity_drops": 2,
+    "frame_ticks": 0.11
+  },
+  "hook_after_score": 83,
+  "hook_after": {
+    "contour": [
+      "2 of 12 returns are arch or pedal (pedal - - - - - - - pedal - - -)",
+      false
+    ],
+    "loop_length": [
+      "52 bars",
+      false
+    ],
+    "step_ratio": [
+      "50% steps (2 of 4 intervals), 1 leaps",
+      false
+    ],
+    "motif_coverage": [
+      "56% of 129 notes inside the motif",
+      false
+    ],
+    "motif_returns": [
+      "12 returns",
+      true
+    ],
+    "hook_cell": [
+      "6 notes, rhythm 2/2/2/12/6/2 repeated 5 times",
+      true
+    ],
+    "leaps_per_motif": [
+      "1 leaps",
+      true
+    ],
+    "third_return": [
+      "67% the same as the first return",
+      true
+    ],
+    "range": [
+      "17 semitones (64 to 81)",
+      true
+    ],
+    "repeat_pitch": [
+      "2 repeated pitches in a row",
+      true
+    ]
+  },
+  "tracks_out": [
+    {
+      "name": "meta",
+      "notes": 0
+    },
+    {
+      "name": "vrc6 pulse a",
+      "notes": 129
+    },
+    {
+      "name": "vrc6 pulse b",
+      "notes": 92
+    },
+    {
+      "name": "vrc6 saw",
+      "notes": 160
+    },
+    {
+      "name": "pulse 1",
+      "notes": 288
+    },
+    {
+      "name": "pulse 2",
+      "notes": 99
+    },
+    {
+      "name": "triangle",
+      "notes": 118
+    },
+    {
+      "name": "noise",
+      "notes": 335
+    },
+    {
+      "name": "dpcm",
+      "notes": 105
+    }
+  ]
+}

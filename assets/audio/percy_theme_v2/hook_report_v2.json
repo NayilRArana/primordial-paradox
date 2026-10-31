@@ -1,0 +1,164 @@
+{
+  "bars": 32,
+  "criteria": [
+    {
+      "criterion": "contour",
+      "fraction": 0.1,
+      "ideal": "every return arch or pedal",
+      "key": "contour",
+      "measured": "1 of 10 returns are arch or pedal (arch - - - - - - - - -)",
+      "pass": false,
+      "points": 1.0,
+      "suggestion": "the phrase wanders; shape it as an arch (rise to one peak then fall) or hold a pedal pitch",
+      "weight": 10
+    },
+    {
+      "criterion": "motif coverage",
+      "fraction": 1.0,
+      "ideal": "at least 60%",
+      "key": "motif_coverage",
+      "measured": "73% of 119 notes inside the motif",
+      "pass": true,
+      "points": 20.0,
+      "suggestion": "",
+      "weight": 20
+    },
+    {
+      "criterion": "motif returns",
+      "fraction": 1.0,
+      "ideal": "at least 3",
+      "key": "motif_returns",
+      "measured": "10 returns",
+      "pass": true,
+      "points": 12.0,
+      "suggestion": "",
+      "weight": 12
+    },
+    {
+      "criterion": "hook cell",
+      "fraction": 1.0,
+      "ideal": "2 to 6 notes with a repeated rhythm cell",
+      "key": "hook_cell",
+      "measured": "6 notes, rhythm 2/2/2/2/2/2 repeated 12 times",
+      "pass": true,
+      "points": 10.0,
+      "suggestion": "",
+      "weight": 10
+    },
+    {
+      "criterion": "steps over leaps",
+      "fraction": 1.0,
+      "ideal": "at least 65% steps",
+      "key": "step_ratio",
+      "measured": "88% steps (7 of 8 intervals), 1 leaps",
+      "pass": true,
+      "points": 12.0,
+      "suggestion": "",
+      "weight": 12
+    },
+    {
+      "criterion": "leaps per motif",
+      "fraction": 1.0,
+      "ideal": "exactly 1",
+      "key": "leaps_per_motif",
+      "measured": "1 leaps",
+      "pass": true,
+      "points": 8.0,
+      "suggestion": "",
+      "weight": 8
+    },
+    {
+      "criterion": "variation on the third return",
+      "fraction": 1.0,
+      "ideal": "30 to 85% the same",
+      "key": "third_return",
+      "measured": "80% the same as the first return",
+      "pass": true,
+      "points": 8.0,
+      "suggestion": "",
+      "weight": 8
+    },
+    {
+      "criterion": "range",
+      "fraction": 1.0,
+      "ideal": "at most 18 semitones",
+      "key": "range",
+      "measured": "8 semitones (66 to 74)",
+      "pass": true,
+      "points": 8.0,
+      "suggestion": "",
+      "weight": 8
+    },
+    {
+      "criterion": "repeated pitch",
+      "fraction": 1.0,
+      "ideal": "at least 1",
+      "key": "repeat_pitch",
+      "measured": "13 repeated pitches in a row",
+      "pass": true,
+      "points": 6.0,
+      "suggestion": "",
+      "weight": 6
+    },
+    {
+      "criterion": "loop length",
+      "fraction": 1.0,
+      "ideal": "8 or 16 or 32 bars",
+      "key": "loop_length",
+      "measured": "32 bars",
+      "pass": true,
+      "points": 6.0,
+      "suggestion": "",
+      "weight": 6
+    }
+  ],
+  "grammar": "<repo>\\knowledge\\MUSIC-HOOK-GRAMMAR.md",
+  "grid": "sixteenth",
+  "melody_track": "vrc6 pulse a",
+  "midi_tracks": [
+    "meta",
+    "vrc6 pulse a",
+    "vrc6 pulse b",
+    "vrc6 saw",
+    "pulse 1",
+    "pulse 2",
+    "triangle",
+    "noise",
+    "dpcm"
+  ],
+  "motif": {
+    "bars": 2,
+    "coverage": 0.7311,
+    "notes": 9,
+    "occurrence_bars": [
+      4,
+      6,
+      10,
+      12,
+      16,
+      18,
+      20,
+      22,
+      24,
+      28
+    ],
+    "returns": 10,
+    "start_bar": 5
+  },
+  "notes": 119,
+  "points": 91.0,
+  "score": 91,
+  "source": "<repo>\\assets\\audio\\percy_theme_v2\\percy_theme_v2.mid",
+  "suggestions": [
+    "the phrase wanders; shape it as an arch (rise to one peak then fall) or hold a pedal pitch"
+  ],
+  "tempo_us": 454545,
+  "weakest": {
+    "criterion": "contour",
+    "fraction": 0.1,
+    "key": "contour",
+    "of": 10,
+    "points": 1.0
+  },
+  "weights_total": 100
+}

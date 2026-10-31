@@ -1,0 +1,95 @@
+voice map, notes per module
+  dpcm             fight   95   calm   42
+  noise            fight   80   calm    0
+  pulse 1          fight   88   calm    0
+  pulse 2          fight   91   calm   52
+  triangle         fight  121   calm   16
+  vrc6 pulse a     fight  100   calm   54
+  vrc6 pulse b     fight   21   calm    0
+  vrc6 saw         fight   15   calm   16
+
+rendered files
+  tempo 168.000 bpm (the CUE-FIGHT card's 168), key D minor
+  pp_fight_v2_fight    .mid 6069 bytes, .mp3 549868 bytes, .ogg 302195 bytes, .wav 2016044 bytes
+  pp_fight_v2_calm     .mid 1887 bytes, .mp3 549868 bytes, .ogg 306981 bytes, .wav 2016044 bytes
+  pp_fight_v2_states   .mid 7791 bytes, .mp3 1097812 bytes, .ogg 593796 bytes, .wav 4029422 bytes
+  pp_fight_v2_fight    loop 16 bars, 1008000 samples, seam difference 0
+  pp_fight_v2_calm     loop 16 bars, 1008000 samples, seam difference 0
+
+phrase length
+  FIGHT  16 bars = 4 whole 4 bar phrases, 22.86 s, multiple of 4: True
+  CALM   16 bars = 4 whole 4 bar phrases, 22.86 s, multiple of 4: True
+  STATES 32 bars = 8 whole 4 bar phrases, 45.71 s, multiple of 4: True
+
+drum ladder: a change at every 4 bar line and again at every 8 bar line
+  bar  3 BAT-01  -> bar  4 FLF-01  : change True
+  bar  7 BAT-01  -> bar  8 FLT-01  : change True
+  bar 11 BAT-05  -> bar 12 FLR-01  : change True
+  bar 15 BAT-07  -> bar 16 BAT-09  : change True
+
+call and response: fight bar 16 against calm bar 1
+  vrc6 pulse a     fight [(0, 480, 74), (480, 480, 74)]
+                   calm  [(0, 480, 74), (480, 480, 74)]
+  triangle         fight [(0, 1880, 50)]
+                   calm  [(0, 1880, 50)]
+
+states render, the junction at bar 17
+  vrc6 pulse a     fight bar 16 [(0, 480, 74), (480, 480, 74)] | states bar 17 [(0, 480, 74), (480, 480, 74)] | equal True
+  triangle         fight bar 16 [(0, 1880, 50)] | states bar 17 [(0, 1880, 50)] | equal True
+  vrc6 saw         fight bar 16 [(0, 1880, 50), (0, 1880, 57)] | states bar 17 [(0, 1880, 50), (0, 1880, 57)] | equal True
+  pulse 1          fight bar 16 [] | states bar 17 [] | equal True
+  pulse 2          fight bar 16 [] | states bar 17 [] | equal True
+  the kit changes at the junction by design (BAT-09 rims to CLM-02 rim ticks):
+  noise            fight bar 16 1 hits | calm bar 1 0 hits
+  dpcm             fight bar 16 3 hits | calm bar 1 3 hits
+
+hook meter
+  pp_fight_v2_fight    100 of 100, failing: none
+  pp_fight_v2_calm     100 of 100, failing: none
+
+voice ranges, the table in tools/arrange.py VOICE_RANGES
+  fight vrc6 pulse a      67..84  in  60..84  : True
+  fight vrc6 pulse b      55..65  in  48..72  : True
+  fight vrc6 saw          50..58  in  48..71  : True
+  fight pulse 1           62..77  in  60..79  : True
+  fight pulse 2           67..84  in  60..84  : True
+  fight triangle          38..55  in  36..55  : True
+  fight noise              1..15  in   1..15  : True
+  fight dpcm              36..38  in  36..38  : True
+  calm  vrc6 pulse a      69..79  in  60..84  : True
+  calm  vrc6 saw          50..65  in  48..71  : True
+  calm  pulse 2           69..79  in  60..84  : True
+  calm  triangle          50..55  in  36..55  : True
+  calm  dpcm              36..38  in  36..38  : True
+
+writing rules
+  long dashes found: none
+
+checks
+  [pass] drum_change_at_12
+  [pass] drum_change_at_16
+  [pass] drum_change_at_4
+  [pass] drum_change_at_8
+  [pass] hook_calm
+  [pass] hook_fight
+  [pass] junction_pulse_1
+  [pass] junction_pulse_2
+  [pass] junction_triangle
+  [pass] junction_vrc6_pulse_a
+  [pass] junction_vrc6_saw
+  [pass] kit_changes_at_junction
+  [pass] loop_samples_pp_fight_v2_calm
+  [pass] loop_samples_pp_fight_v2_fight
+  [pass] loop_seam_zero_pp_fight_v2_calm
+  [pass] loop_seam_zero_pp_fight_v2_fight
+  [pass] multiple_of_4_CALM
+  [pass] multiple_of_4_FIGHT
+  [pass] multiple_of_4_STATES
+  [pass] no_long_dashes
+  [pass] renders_pp_fight_v2_calm
+  [pass] renders_pp_fight_v2_fight
+  [pass] renders_pp_fight_v2_states
+  [pass] seam_triangle
+  [pass] seam_vrc6_pulse_a
+  [pass] voice_ranges
+RESULT: PASS (26 checks)

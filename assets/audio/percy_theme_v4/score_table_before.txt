@@ -1,0 +1,24 @@
+TODAY 2026-10-26 calls per model: {'gemini-3.5-flash': 22, 'gemini-3.5-flash-lite': 10}
+
+cue                           ver hook drm ten hum var str  TOT  model                  at
+----------------------------------------------------------------------------------------------------------------------------
+ref_fight                      v5    6   4   5   3   6   5   29  gemini-3.5-flash-lite  2026-10-26T13:17:47Z
+pp_fight_fight                 v6    7   4   5   3   6   5   30  gemini-3.5-flash-lite  2026-10-26T13:16:30Z
+title_theme                    v5    7   5   4   3   6   6   31  gemini-3.5-flash-lite  2026-10-23T02:05:36Z
+percy_theme                    v2    6   4   5   3   7   6   31  gemini-3.5-flash-lite  2026-10-23T19:07:01Z
+pp_05_small_ship               v5    7   4   5   3   6   6   31  gemini-3.5-flash       2026-10-25T07:26:25Z
+pp_arrival                     v0    7   4   5   3   6   6   31  gemini-3.5-flash-lite  2026-10-23T09:43:34Z
+pp_fight_calm                  v5    7   4   5   3   6   6   31  gemini-3.5-flash-lite  2026-10-26T04:42:31Z
+title_theme_spicy              v4    7   4   5   4   6   6   32  gemini-3.5-flash       2026-10-22T06:51:55Z
+pp_04_navy_sailors             v3    7   4   5   3   7   6   32  gemini-3.5-flash-lite  2026-10-24T03:19:25Z
+pp_drive                       v4    7   4   5   3   7   6   32  gemini-3.5-flash       2026-10-25T03:20:15Z
+game_over                      v0    7   4   6   3   7   5   32  gemini-3.5-flash-lite  2026-10-23T02:06:42Z
+title_theme_126                v3    7   4   5   4   7   6   33  gemini-3.5-flash       2026-10-22T14:33:19Z
+pp_boarding                    v3    7   5   5   4   6   6   33  gemini-3.5-flash       2026-10-25T11:29:20Z
+pp_fight_states                v0    7   5   4   3   8   6   33  gemini-3.5-flash-lite  2026-10-23T09:43:48Z
+title_theme_subtle             v4    7   5   5   4   7   6   34  gemini-3.5-flash       2026-10-22T06:50:48Z
+title_theme_medium             v4    7   5   6   4   7   6   35  gemini-3.5-flash       2026-10-22T14:34:29Z
+hadrian_theme                  v0    7   5   6   4   7   6   35  gemini-3.5-flash       2026-10-22T14:29:55Z
+pp_03_harbor                  v4b    7   5   5   4   7   7   35  gemini-3.5-flash       2026-10-25T03:26:13Z
+save_jingle                    v0    7   5   6   3   8   6   35  gemini-3.5-flash-lite  2026-10-23T02:04:26Z
+pp_01_title                    v8    7   5   6   4   7   8   37  gemini-3.5-flash       2026-10-24T19:21:30Z

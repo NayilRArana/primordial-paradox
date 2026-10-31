@@ -1,0 +1,16 @@
+{
+  "round": "1",
+  "key_source": "the Windows user environment (HKCU\\Environment), read into this process and never printed",
+  "attempts": [
+    {
+      "file": "pp_fight_v2_fight.mp3",
+      "model": "gemini-3.5-flash-lite",
+      "ok": true
+    },
+    {
+      "file": "pp_fight_v2_calm.mp3",
+      "model": "gemini-3.5-flash-lite",
+      "ok": true
+    }
+  ]
+}

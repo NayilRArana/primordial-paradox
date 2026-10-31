@@ -1,0 +1,157 @@
+{
+  "bars": 14,
+  "criteria": [
+    {
+      "criterion": "loop length",
+      "fraction": 0.0,
+      "ideal": "8 or 16 or 32 bars",
+      "key": "loop_length",
+      "measured": "14 bars",
+      "pass": false,
+      "points": 0.0,
+      "suggestion": "14 bars does not loop cleanly; write 8, 16 or 32 bars so the cue can repeat without a seam",
+      "weight": 6
+    },
+    {
+      "criterion": "motif coverage",
+      "fraction": 0.796,
+      "ideal": "at least 60%",
+      "key": "motif_coverage",
+      "measured": "48% of 67 notes inside the motif",
+      "pass": false,
+      "points": 15.92,
+      "suggestion": "the motif leaves too many notes outside it; move material into the 2 bar phrase or drop the notes that do not belong",
+      "weight": 20
+    },
+    {
+      "criterion": "motif returns",
+      "fraction": 1.0,
+      "ideal": "at least 3",
+      "key": "motif_returns",
+      "measured": "3 returns",
+      "pass": true,
+      "points": 12.0,
+      "suggestion": "",
+      "weight": 12
+    },
+    {
+      "criterion": "hook cell",
+      "fraction": 1.0,
+      "ideal": "2 to 6 notes with a repeated rhythm cell",
+      "key": "hook_cell",
+      "measured": "6 notes, rhythm 2/2/2/2/4/4 repeated 5 times",
+      "pass": true,
+      "points": 10.0,
+      "suggestion": "",
+      "weight": 10
+    },
+    {
+      "criterion": "steps over leaps",
+      "fraction": 1.0,
+      "ideal": "at least 65% steps",
+      "key": "step_ratio",
+      "measured": "90% steps (9 of 10 intervals), 1 leaps",
+      "pass": true,
+      "points": 12.0,
+      "suggestion": "",
+      "weight": 12
+    },
+    {
+      "criterion": "leaps per motif",
+      "fraction": 1.0,
+      "ideal": "exactly 1",
+      "key": "leaps_per_motif",
+      "measured": "1 leaps",
+      "pass": true,
+      "points": 8.0,
+      "suggestion": "",
+      "weight": 8
+    },
+    {
+      "criterion": "contour",
+      "fraction": 1.0,
+      "ideal": "every return arch or pedal",
+      "key": "contour",
+      "measured": "3 of 3 returns are arch or pedal (arch arch arch)",
+      "pass": true,
+      "points": 10.0,
+      "suggestion": "",
+      "weight": 10
+    },
+    {
+      "criterion": "variation on the third return",
+      "fraction": 1.0,
+      "ideal": "30 to 85% the same",
+      "key": "third_return",
+      "measured": "73% the same as the first return",
+      "pass": true,
+      "points": 8.0,
+      "suggestion": "",
+      "weight": 8
+    },
+    {
+      "criterion": "range",
+      "fraction": 1.0,
+      "ideal": "at most 18 semitones",
+      "key": "range",
+      "measured": "17 semitones (64 to 81)",
+      "pass": true,
+      "points": 8.0,
+      "suggestion": "",
+      "weight": 8
+    },
+    {
+      "criterion": "repeated pitch",
+      "fraction": 1.0,
+      "ideal": "at least 1",
+      "key": "repeat_pitch",
+      "measured": "12 repeated pitches in a row",
+      "pass": true,
+      "points": 6.0,
+      "suggestion": "",
+      "weight": 6
+    }
+  ],
+  "grammar": "<repo>\\knowledge\\MUSIC-HOOK-GRAMMAR.md",
+  "grid": "sixteenth",
+  "melody_track": "vrc6 pulse a",
+  "midi_tracks": [
+    "vrc6 pulse a",
+    "vrc6 pulse b",
+    "pulse 1",
+    "pulse 2",
+    "vrc6 saw",
+    "triangle",
+    "noise",
+    "dpcm"
+  ],
+  "motif": {
+    "bars": 2,
+    "coverage": 0.4776,
+    "notes": 11,
+    "occurrence_bars": [
+      1,
+      3,
+      5
+    ],
+    "returns": 3,
+    "start_bar": 4
+  },
+  "notes": 67,
+  "points": 89.92,
+  "score": 90,
+  "source": "<repo>\\assets\\audio\\pp_boarding\\pp_boarding.mid",
+  "suggestions": [
+    "14 bars does not loop cleanly; write 8, 16 or 32 bars so the cue can repeat without a seam",
+    "the motif leaves too many notes outside it; move material into the 2 bar phrase or drop the notes that do not belong"
+  ],
+  "tempo_us": 500000,
+  "weakest": {
+    "criterion": "loop length",
+    "fraction": 0.0,
+    "key": "loop_length",
+    "of": 6,
+    "points": 0.0
+  },
+  "weights_total": 100
+}

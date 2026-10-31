@@ -1,0 +1,30 @@
+fight.mid exists and is not empty                    PASS 5965 bytes
+fight.wav exists and is not empty                    PASS 2016044 bytes
+fight.mp3 exists and is not empty                    PASS 549868 bytes
+calm.mid exists and is not empty                     PASS 3664 bytes
+calm.wav exists and is not empty                     PASS 2016044 bytes
+calm.mp3 exists and is not empty                     PASS 549868 bytes
+states.mid exists and is not empty                   PASS 9415 bytes
+states.wav exists and is not empty                   PASS 4027848 bytes
+states.mp3 exists and is not empty                   PASS 1097812 bytes
+fight wav length inside half a bar of 22.857 s       PASS 22.857 s
+calm wav length inside half a bar of 22.857 s        PASS 22.857 s
+states wav length inside half a bar of 45.714 s      PASS 45.667 s
+fight loop seam sample difference                    PASS 0
+calm loop seam sample difference                     PASS 0
+calm hook meter 100 of 100                           PASS 100, 5 returns
+fight hook meter 100 of 100                          PASS 100, 6 returns
+calm kit: at least eight different rungs             PASS 11 distinct
+calm kit: no run of three bars on one rung           PASS CLM-02,CLM-02,CLM-01,FLC-04,CLM-03,CLM-05,CLM-04,FLC-02,CLM-03,CLM-08,CLM-06,FLC-05,CLM-01,CLM-07,CLM-07,CLM-02
+calm kit: fills at bars 4, 8 and 12                  PASS FLC-04,FLC-02,FLC-05
+three devices, none in bar 1 or bar 16               PASS [6, 11, 14]
+devices carry a device id, a voice and a resolution  PASS DIS-02, DIS-06, DIS-17
+builder reported no voice or length problems         PASS []
+fight: three devices, counter voice only, not in bar 1 or 16 PASS DIS-09@8, DIS-11@12, DIS-02@15
+fight kit: at least eight different rungs            PASS 11 distinct
+fight kit: the 8 bar halves differ                   PASS h1 ['BAT-01', 'BAT-04', 'BAT-06', 'FLF-01', 'FLT-01']  h2 ['BAT-01', 'BAT-02', 'BAT-03', 'BAT-05', 'BAT-07', 'BAT-09', 'FLR-01']
+fight kit: the 4 bar phrases differ                  PASS phrase 2 ['BAT-04', 'BAT-06', 'FLT-01']
+fight articulation differs by phrase                 PASS {'1': 16, '2': 20, '3': 14, '4': 18}
+no long dashes in any text artifact                  PASS clean
+
+all checks passed

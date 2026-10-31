@@ -1,0 +1,106 @@
+{
+  "bpm": 120,
+  "tempo_us": 500000,
+  "key": "A minor",
+  "scene_seconds": 32.0,
+  "modules": [
+    {
+      "label": "BOARDING",
+      "file": "pp_boarding_v3.mid",
+      "bars": 16,
+      "bpm": 120,
+      "key": "A minor",
+      "metre": "4/4",
+      "seconds": 32.0,
+      "notes": 410,
+      "one_shot": true,
+      "hook": "bars 1 and 2, 11 notes, A4 to E5, one leap at bar 2 beat 3",
+      "voices": {
+        "vrc6 pulse a": 67,
+        "vrc6 pulse b": 20,
+        "pulse 1": 88,
+        "pulse 2": 42,
+        "vrc6 saw": 32,
+        "triangle": 59,
+        "noise": 46,
+        "dpcm": 56
+      },
+      "chords": [
+        "Am",
+        "Dm",
+        "Am",
+        "E7",
+        "F",
+        "Am",
+        "G",
+        "E7",
+        "Dm",
+        "Gm",
+        "A7",
+        "Dm",
+        "E",
+        "E",
+        "E",
+        "Am"
+      ],
+      "kit": {
+        "1": "MAR-15",
+        "2": "MAR-04",
+        "3": "MAR-01",
+        "4": "FLF-01",
+        "5": "CLM-02",
+        "6": "CLM-02",
+        "7": "MAR-14",
+        "8": "FLF-03",
+        "9": "MAR-13",
+        "10": "RCK-11",
+        "11": "RCK-06",
+        "12": "FLT-02",
+        "13": "CLM-01",
+        "14": "CLM-02"
+      },
+      "dissonance": [
+        {
+          "device": "DIS-02",
+          "bar": 10,
+          "voice": "vrc6 pulse b",
+          "note": "B4",
+          "beat": 3.5,
+          "resolves_to": "Bb4",
+          "why": "chromatic upper neighbour over Gm"
+        },
+        {
+          "device": "DIS-06",
+          "bar": 13,
+          "voice": "vrc6 pulse b",
+          "note": "F#5",
+          "beat": 1.0,
+          "resolves_to": "E5",
+          "why": "ninth over the dominant"
+        },
+        {
+          "device": "DIS-27",
+          "bar": 15,
+          "note": "E4 to A3",
+          "beat": 1.0,
+          "resolves_to": "A3",
+          "why": "chromatic bass descent"
+        }
+      ],
+      "secondary_dominants": [
+        {
+          "bar": 4,
+          "chord": "E7"
+        },
+        {
+          "bar": 8,
+          "chord": "E7"
+        },
+        {
+          "bar": 11,
+          "chord": "A7"
+        }
+      ]
+    }
+  ]
+}

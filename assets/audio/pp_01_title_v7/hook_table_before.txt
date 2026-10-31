@@ -1,0 +1,13 @@
+cue                      score  track          weakest
+PP-03 harbor               100  vrc6 pulse a   weakest: motif coverage (20.0 of 20): 66% of 107 notes inside the motif
+PP-04 navy                 100  vrc6 pulse a   weakest: motif coverage (20.0 of 20): 72% of 166 notes inside the motif
+PP-07 arrival              100  vrc6 pulse a   weakest: motif coverage (20.0 of 20): 67% of 135 notes inside the motif
+PP-FIGHT calm              100  vrc6 pulse a   weakest: motif coverage (20.0 of 20): 74% of 54 notes inside the motif
+PP-FIGHT fight             100  vrc6 pulse a   weakest: motif coverage (20.0 of 20): 78% of 100 notes inside the motif
+title_theme_v5_melded       59  vrc6 pulse a   weakest: motif coverage (7.1 of 20): 21% of 140 notes inside the motif
+hadrian_theme               81  vrc6 pulse a   weakest: contour (0.0 of 10): 0 of 7 returns are arch or pedal (- - - - - - -)
+PP-01 title                 83  vrc6 pulse a   weakest: contour (1.7 of 10): 2 of 12 returns are arch or pedal (pedal - - - - - - - pedal
+PP-02 drive                 83  vrc6 pulse a   weakest: loop length (0.0 of 6): 125 bars
+PP-?? boarding              90  vrc6 pulse a   weakest: loop length (0.0 of 6): 14 bars
+PP-05 small ship            91  vrc6 pulse a   weakest: variation on the third return (3.2 of 8): 100% the same as the first return
+percy_theme_v2              91  vrc6 pulse a   weakest: contour (1.0 of 10): 1 of 10 returns are arch or pedal (arch - - - - - - - - -)

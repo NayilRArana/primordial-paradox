@@ -1,0 +1,77 @@
+cue                             ver hook drm ten hum var str  TOT  model                 at
+--------------------------------------------------------------------------------------------------------------------------------
+pp_fight_fight                   v3    7   4   5   3   6   5   30  gemini-3.5-flash         2026-10-26T00:31:27Z
+title_theme                      v5    7   5   4   3   6   6   31  gemini-3.5-flash-lite    2026-10-23T02:05:36Z
+percy_theme                      v2    6   4   5   3   7   6   31  gemini-3.5-flash-lite    2026-10-23T19:07:01Z
+pp_05_small_ship                 v5    7   4   5   3   6   6   31  gemini-3.5-flash         2026-10-25T07:26:25Z
+pp_arrival                       v0    7   4   5   3   6   6   31  gemini-3.5-flash-lite    2026-10-23T09:43:34Z
+pp_fight_calm                    v5    7   4   5   3   6   6   31  gemini-3.5-flash-lite    2026-10-26T04:42:31Z
+title_theme_spicy                v4    7   4   5   4   6   6   32  gemini-3.5-flash         2026-10-22T06:51:55Z
+pp_04_navy_sailors               v3    7   4   5   3   7   6   32  gemini-3.5-flash-lite    2026-10-24T03:19:25Z
+pp_drive                         v4    7   4   5   3   7   6   32  gemini-3.5-flash         2026-10-25T03:20:15Z
+game_over                        v0    7   4   6   3   7   5   32  gemini-3.5-flash-lite    2026-10-23T02:06:42Z
+title_theme_126                  v3    7   4   5   4   7   6   33  gemini-3.5-flash         2026-10-22T14:33:19Z
+pp_boarding                      v3    7   5   5   4   6   6   33  gemini-3.5-flash         2026-10-25T11:29:20Z
+pp_fight_states                  v0    7   5   4   3   8   6   33  gemini-3.5-flash-lite    2026-10-23T09:43:48Z
+title_theme_subtle               v4    7   5   5   4   7   6   34  gemini-3.5-flash         2026-10-22T06:50:48Z
+title_theme_medium               v4    7   5   6   4   7   6   35  gemini-3.5-flash         2026-10-22T14:34:29Z
+hadrian_theme                    v0    7   5   6   4   7   6   35  gemini-3.5-flash         2026-10-22T14:29:55Z
+pp_03_harbor                    v4b    7   5   5   4   7   7   35  gemini-3.5-flash         2026-10-25T03:26:13Z
+save_jingle                      v0    7   5   6   3   8   6   35  gemini-3.5-flash-lite    2026-10-23T02:04:26Z
+pp_01_title                      v8    7   5   6   4   7   8   37  gemini-3.5-flash         2026-10-24T19:21:30Z
+
+FLOOR: (30, 'pp_fight_fight', '<repo>\\assets\\audio\\pp_fight_v3\\pp_fight_v3_fight.mp3')
+
+all latest summary rows per file, offline-file skipped:
+   32  v0    game_over.ogg                                 gemini-3.5-flash-lite    2026-10-23T02:06:42Z
+   35  v0    hadrian_theme.mp3                             gemini-3.5-flash         2026-10-22T14:29:55Z
+   25  v0    percy_theme.mp3                               gemini-3.5-flash-lite    2026-10-23T19:07:19Z
+   31  v2    percy_theme_v2.mp3                            gemini-3.5-flash-lite    2026-10-23T19:07:01Z
+   34  v0    pp_01_title.mp3                               gemini-3.5-flash-lite    2026-10-23T23:11:22Z
+   35  v6    pp_01_title_v6.mp3                            gemini-3.5-flash         2026-10-24T19:19:08Z
+   38  v7    pp_01_title_v7.mp3                            gemini-3.5-flash         2026-10-24T19:19:37Z
+   37  v8    pp_01_title_v8.mp3                            gemini-3.5-flash         2026-10-24T19:21:30Z
+   29  v0    pp_03_harbor.mp3                              gemini-3.5-flash-lite    2026-10-23T02:05:54Z
+   30  v2    pp_03_harbor_v2.mp3                           gemini-3.5-flash-lite    2026-10-24T07:17:51Z
+   30  v3    pp_03_harbor_v3.mp3                           gemini-3.5-flash         2026-10-25T03:24:19Z
+   32  v4    pp_03_harbor_v4.mp3                           gemini-3.5-flash         2026-10-25T03:23:56Z
+   35  v4 b  pp_03_harbor_v4b.mp3                          gemini-3.5-flash         2026-10-25T03:26:13Z
+   33  v0    pp_04_navy_sailors.mp3                        gemini-3.5-flash         2026-10-24T03:14:41Z
+   31  v2    pp_04_navy_sailors_v2.mp3                     gemini-3.5-flash-lite    2026-10-24T03:19:37Z
+   32  v3    pp_04_navy_sailors_v3.mp3                     gemini-3.5-flash-lite    2026-10-24T03:19:25Z
+   15  v0    pp_05_small_ship.mp3                          gemini-3.5-flash-lite    2026-10-23T02:05:46Z
+   25  v2    pp_05_small_ship_v2.mp3                       gemini-3.5-flash-lite    2026-10-23T05:38:12Z
+   30  v3    pp_05_small_ship_v3.mp3                       gemini-3.5-flash-lite    2026-10-23T15:09:26Z
+   29  v4    pp_05_small_ship_v4.mp3                       gemini-3.5-flash         2026-10-25T07:26:54Z
+   31  v5    pp_05_small_ship_v5.mp3                       gemini-3.5-flash         2026-10-25T07:26:25Z
+   31  v0    pp_arrival.mp3                                gemini-3.5-flash-lite    2026-10-23T09:43:34Z
+   29  v0    pp_boarding.mp3                               gemini-3.5-flash-lite    2026-10-23T09:43:41Z
+   30  v2    pp_boarding_v2.mp3                            gemini-3.5-flash-lite    2026-10-24T23:20:06Z
+   28  v2    pp_boarding_v2_humanized.mp3                  gemini-3.5-flash         2026-10-25T11:28:44Z
+   33  v3    pp_boarding_v3.mp3                            gemini-3.5-flash         2026-10-25T11:29:20Z
+   29  v2    pp_drive_v2_humanized.mp3                     gemini-3.5-flash-lite    2026-10-23T02:06:31Z
+   29  v3    pp_drive_v3_humanized.mp3                     gemini-3.5-flash-lite    2026-10-23T09:43:26Z
+   32  v4    pp_drive_v4.mp3                               gemini-3.5-flash         2026-10-25T03:20:15Z
+   27  v0    pp_fight_calm.mp3                             gemini-3.5-flash-lite    2026-10-24T15:19:56Z
+   29  v2    pp_fight_v2_calm.mp3                          gemini-3.5-flash         2026-10-26T00:40:36Z
+   29  v3    pp_fight_v3_calm.mp3                          gemini-3.5-flash         2026-10-26T00:30:17Z
+   30  v4    pp_fight_v4_calm.mp3                          gemini-3.5-flash         2026-10-26T04:43:35Z
+   31  v5    pp_fight_v5_calm.mp3                          gemini-3.5-flash-lite    2026-10-26T04:42:31Z
+   33  v0    pp_fight_fight.mp3                            gemini-3.5-flash-lite    2026-10-24T15:19:48Z
+   31  v2    pp_fight_v2_fight.mp3                         gemini-3.5-flash         2026-10-26T00:25:52Z
+   30  v3    pp_fight_v3_fight.mp3                         gemini-3.5-flash         2026-10-26T00:31:27Z
+   33  v0    pp_fight_states.mp3                           gemini-3.5-flash-lite    2026-10-23T09:43:48Z
+   35  v0    save_jingle.ogg                               gemini-3.5-flash-lite    2026-10-23T02:04:26Z
+   27  v0    title_theme.mp3                               gemini-3.5-flash         2026-10-22T14:27:52Z
+   27  v0    title_theme.ogg                               gemini-3.5-flash         2026-10-22T14:30:36Z
+   32  v2    title_theme_v2.mp3                            gemini-3.5-flash         2026-10-22T14:31:07Z
+   33  v2    title_theme_v2.ogg                            gemini-3.5-flash         2026-10-22T14:32:23Z
+   29  v3    title_theme_v3.mp3                            gemini-3.5-flash         2026-10-22T14:28:19Z
+   35  v3    title_theme_v3.ogg                            gemini-3.5-flash         2026-10-22T14:32:50Z
+   31  v5    title_theme_v5.mp3                            gemini-3.5-flash-lite    2026-10-23T02:05:36Z
+   33  v3    title_theme_v3_126.mp3                        gemini-3.5-flash         2026-10-22T14:33:19Z
+   36  v3    title_theme_v3_126.ogg                        gemini-3.5-flash         2026-10-22T14:33:50Z
+   35  v4    title_theme_v4_medium.mp3                     gemini-3.5-flash         2026-10-22T14:34:29Z
+   35  v4    title_theme_v4_medium.ogg                     gemini-3.5-flash         2026-10-22T14:35:04Z
+   32  v4    title_theme_v4_spicy.mp3                      gemini-3.5-flash         2026-10-22T06:51:55Z
+   34  v4    title_theme_v4_subtle.mp3                     gemini-3.5-flash         2026-10-22T06:50:48Z

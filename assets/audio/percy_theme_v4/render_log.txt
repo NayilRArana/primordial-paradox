@@ -1,0 +1,7 @@
+render_chip: percy_theme_v4.mid -> percy_theme_v4.wav
+  duration 43.636 s | peak 29203 (-1.00 dBFS) | rms 4987.0 (-16.35 dBFS)
+  loop 32 bars | 1924362 samples | seam sample difference 0 | edge peak head 614 tail 0
+  voices: dpcm=dpcm, noise=noise, pulse1=pulse 1, pulse2=pulse 2, triangle=triangle, vrc6_pulse_a=vrc6 pulse a, vrc6_pulse_b=vrc6 pulse b, vrc6_saw=vrc6 saw
+  renderer: v2 | limiter: soft (knee 0.80) | peak target -1.0 dBFS
+  mp3: <repo>\assets\audio\percy_theme_v4\percy_theme_v4.mp3
+  loop json: <repo>\assets\audio\percy_theme_v4\percy_theme_v4_loop.json

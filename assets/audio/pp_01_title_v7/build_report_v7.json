@@ -1,0 +1,186 @@
+{
+  "source": "<repo>\\assets\\audio\\pp_01_title_v6\\pp_01_title_v6.mid",
+  "tempo_bpm": 126.000126000126,
+  "time_sig": [
+    3,
+    4
+  ],
+  "loop": "bar 5 for 48 bars",
+  "tracks_in": [
+    {
+      "name": "meta",
+      "notes": 0
+    },
+    {
+      "name": "vrc6 pulse a",
+      "notes": 128
+    },
+    {
+      "name": "vrc6 pulse b",
+      "notes": 90
+    },
+    {
+      "name": "vrc6 saw",
+      "notes": 160
+    },
+    {
+      "name": "pulse 1",
+      "notes": 288
+    },
+    {
+      "name": "pulse 2",
+      "notes": 99
+    },
+    {
+      "name": "triangle",
+      "notes": 120
+    },
+    {
+      "name": "noise",
+      "notes": 270
+    },
+    {
+      "name": "dpcm",
+      "notes": 101
+    }
+  ],
+  "devices": [
+    {
+      "id": "DIS-09",
+      "risk": 1,
+      "voice": "vrc6 pulse a",
+      "bar": 36,
+      "beat": 3,
+      "eighth": 5,
+      "pitch": "G4",
+      "resolution": {
+        "bar": 37,
+        "beat": 1,
+        "pitch": "Em chord tone, G"
+      },
+      "trigger": "last eighth of the bar before the trio's Em, G is the third of that chord",
+      "budget": "B section: 1 device in 8 bars, inside 1 to 2"
+    },
+    {
+      "id": "DIS-04",
+      "risk": 1,
+      "voice": "vrc6 pulse b",
+      "bar": 39,
+      "beat": 1,
+      "pitch": "E5",
+      "preparation": {
+        "bar": 38,
+        "pitch": "E5",
+        "why": "the fourth above the new bass B"
+      },
+      "resolution": {
+        "bar": 39,
+        "beat": 2,
+        "pitch": "D#5"
+      },
+      "trigger": "Em to B7 at the trio, prepared in the bar before",
+      "uses": "vrc6 pulse b, silent in the trio in v6, so no motif statement is rewritten",
+      "budget": "trio: 1 device in 8 bars, inside 1 to 2",
+      "notes_before": 90,
+      "notes_after": 92
+    }
+  ],
+  "hook_before": {
+    "score": 83,
+    "weakest": {
+      "criterion": "contour",
+      "key": "contour",
+      "fraction": 0.1667,
+      "points": 1.67,
+      "of": 10
+    }
+  },
+  "kit": {
+    "noise_before": 270,
+    "noise_after": 266,
+    "dpcm_before": 101,
+    "dpcm_after": 105,
+    "rungs": "2 bar (hat density), 4 bar (open hat fill, second kick), 8 bar (five hit tom run, crash into 13, 21, 29, 37, 45), 16 bar (bars 16 and 32 go half time with no hats), ghost snares in B, three hit tom fill before bars 13, 21, 29, 37"
+  },
+  "hook_after_score": 83,
+  "hook_after": {
+    "contour": [
+      "2 of 12 returns are arch or pedal (pedal - - - - - - - pedal - - -)",
+      false
+    ],
+    "loop_length": [
+      "52 bars",
+      false
+    ],
+    "step_ratio": [
+      "50% steps (2 of 4 intervals), 1 leaps",
+      false
+    ],
+    "motif_coverage": [
+      "56% of 129 notes inside the motif",
+      false
+    ],
+    "motif_returns": [
+      "12 returns",
+      true
+    ],
+    "hook_cell": [
+      "6 notes, rhythm 2/2/2/12/6/2 repeated 5 times",
+      true
+    ],
+    "leaps_per_motif": [
+      "1 leaps",
+      true
+    ],
+    "third_return": [
+      "67% the same as the first return",
+      true
+    ],
+    "range": [
+      "17 semitones (64 to 81)",
+      true
+    ],
+    "repeat_pitch": [
+      "2 repeated pitches in a row",
+      true
+    ]
+  },
+  "tracks_out": [
+    {
+      "name": "meta",
+      "notes": 0
+    },
+    {
+      "name": "vrc6 pulse a",
+      "notes": 129
+    },
+    {
+      "name": "vrc6 pulse b",
+      "notes": 92
+    },
+    {
+      "name": "vrc6 saw",
+      "notes": 160
+    },
+    {
+      "name": "pulse 1",
+      "notes": 288
+    },
+    {
+      "name": "pulse 2",
+      "notes": 99
+    },
+    {
+      "name": "triangle",
+      "notes": 120
+    },
+    {
+      "name": "noise",
+      "notes": 266
+    },
+    {
+      "name": "dpcm",
+      "notes": 105
+    }
+  ]
+}

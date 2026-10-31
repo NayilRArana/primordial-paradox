@@ -1,0 +1,175 @@
+{
+  "source": "<repo>\\assets\\audio\\pp_05_small_ship\\pp_05_small_ship.mid",
+  "division": 480,
+  "tempo_us": 625000,
+  "tempo_bpm": 96.0,
+  "tracks_in": [
+    {
+      "name": "meta",
+      "notes": 0
+    },
+    {
+      "name": "vrc6 pulse a",
+      "notes": 43
+    },
+    {
+      "name": "vrc6 pulse b",
+      "notes": 8
+    },
+    {
+      "name": "vrc6 saw",
+      "notes": 24
+    },
+    {
+      "name": "pulse 1",
+      "notes": 0
+    },
+    {
+      "name": "pulse 2",
+      "notes": 384
+    },
+    {
+      "name": "triangle",
+      "notes": 24
+    },
+    {
+      "name": "noise",
+      "notes": 80
+    },
+    {
+      "name": "dpcm",
+      "notes": 48
+    }
+  ],
+  "counterline": {
+    "notes": 10,
+    "cc11": 5,
+    "hum_cc11": 4,
+    "bars": [
+      17,
+      18,
+      19,
+      20
+    ]
+  },
+  "noise": {
+    "cc11_before": [
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      2,
+      2,
+      2,
+      2
+    ],
+    "cc11_after": [
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      4,
+      4,
+      4,
+      4
+    ],
+    "velocity_scaled": 80
+  },
+  "rungs": {
+    "hat_offbeat": 18,
+    "snare_backbeat": 9,
+    "fill_4": 12,
+    "fill_8": 12,
+    "kick_var": 6
+  },
+  "rung_map": {
+    "backbeat_bars": [
+      5,
+      6,
+      7,
+      13,
+      14,
+      15
+    ],
+    "fill_4_bars": [
+      4,
+      8,
+      12,
+      16,
+      20,
+      24
+    ],
+    "fill_8_bars": [
+      8,
+      16,
+      24
+    ]
+  },
+  "hook": {
+    "lead_notes_before": 43,
+    "lead_notes_after": 86,
+    "cell": "A4 D5 C5 Bb4 A4 (bar 1 of the 2 bar phrase), F4 Bb4 A4 G4 F4 (bar 2)",
+    "cell_returns": [
+      1,
+      5,
+      9,
+      13,
+      17,
+      21
+    ],
+    "third_return_varied": "bars 13 and 14 the same phrase an octave up",
+    "leap": "A4 to D5, 5 semitones, one per cell",
+    "suspension_chain": "F4 ends bar 18 (fifth of Bb), F4 at bar 19 (seventh of Gm), F E D by step"
+  },
+  "kit": {
+    "ghost_snare": 12,
+    "swung_hats": 27,
+    "nudged": 27,
+    "noise_notes": 122,
+    "noise_velocity_steps": 36,
+    "dpcm_notes": 63,
+    "gates": "4 bar rung backbeat plus ghosts, 8 bar rung longer fill"
+  },
+  "notes_after_raw": 721,
+  "humanize": {
+    "seed": 20261021,
+    "bpm": 96.0,
+    "notes_in": 721,
+    "notes_out": 724,
+    "notes_changed": 709,
+    "fills": 0
+  },
+  "midi_out": "<repo>\\assets\\audio\\pp_05_small_ship_v3\\pp_05_small_ship_v3.mid"
+}

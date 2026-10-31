@@ -1,0 +1,120 @@
+{
+  "source": "<repo>\\assets\\audio\\pp_05_small_ship_v3\\pp_05_small_ship_v3.mid",
+  "division": 480,
+  "tempo_bpm": 96.0,
+  "tracks_in": [
+    {
+      "name": "meta",
+      "notes": 0
+    },
+    {
+      "name": "vrc6 pulse a",
+      "notes": 89
+    },
+    {
+      "name": "vrc6 pulse b",
+      "notes": 8
+    },
+    {
+      "name": "vrc6 saw",
+      "notes": 24
+    },
+    {
+      "name": "pulse 1",
+      "notes": 10
+    },
+    {
+      "name": "pulse 2",
+      "notes": 384
+    },
+    {
+      "name": "triangle",
+      "notes": 24
+    },
+    {
+      "name": "noise",
+      "notes": 122
+    },
+    {
+      "name": "dpcm",
+      "notes": 63
+    }
+  ],
+  "hook": {
+    "lead_notes_before": 89,
+    "lead_notes_after": 72,
+    "statement": "bar 1 F4 C5 D5 C5 rising to the peak, bar 2 Bb4 A4 G4 F4 falling",
+    "statements_at_bars": [
+      1,
+      5,
+      9,
+      13,
+      17,
+      21
+    ],
+    "third_return": "bars 13 and 14: bar 13 holds F4 and C5 as half notes, bar 14 turns the tail into quarters",
+    "leaps_per_statement": 1,
+    "leap": "F4 to C5, 7 semitones",
+    "lead_range": [
+      62,
+      74
+    ],
+    "chromatic_notes": "C#5 on bars 8, 12, 16 and 23, each resolving by step"
+  },
+  "arpeggio": {
+    "notes_before": 384,
+    "notes_after": 316,
+    "pitches_before": [
+      62
+    ],
+    "pitches_after": [
+      55,
+      56,
+      57,
+      58,
+      60,
+      61,
+      62,
+      64,
+      65,
+      67,
+      69
+    ],
+    "shape": "root fifth third fifth per bar, sixteenth swing, velocity arch",
+    "dropped_out": "bars 17 to 20 (bridge) and the last beat of bar 24"
+  },
+  "kit": {
+    "noise_notes": 223,
+    "dpcm_notes": 158,
+    "noise_velocity_steps": 49,
+    "dpcm_velocity_steps": 47,
+    "rungs": "2 bar kick/hat variant, 4 bar snare fill, 8 bar tom fill and open hat, bar 24 break",
+    "bars_with_snare_fill": [
+      4,
+      8,
+      12,
+      16,
+      20,
+      24
+    ],
+    "distinct_noise_pitches": [
+      3,
+      5,
+      7,
+      9,
+      11
+    ]
+  },
+  "bass": {
+    "bar_24_dropout_beats": 1,
+    "notes_shortened": 1
+  },
+  "human": {
+    "lead_micro_timing": "48 of 72 lead notes nudged by up to 10 ticks",
+    "bass_vibrato_delay": "cc 20 onset delay 1 to 3 eighths on every bass note",
+    "bar_17_pocket": "1 bass notes cut to two beats",
+    "arpeggio_swing": "the offbeat sixteenth leans 6 ticks at bar 1 to 20 ticks at bar 24"
+  },
+  "notes_out": 835,
+  "midi_out": "<repo>\\assets\\audio\\pp_05_small_ship_v4\\pp_05_small_ship_v4.mid"
+}

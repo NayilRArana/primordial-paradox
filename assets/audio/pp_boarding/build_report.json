@@ -1,0 +1,30 @@
+{
+  "bpm": 120,
+  "tempo_us": 500000,
+  "key": "A minor",
+  "scene_seconds": 32.0,
+  "modules": [
+    {
+      "label": "BOARDING",
+      "file": "pp_boarding.mid",
+      "bars": 16,
+      "bpm": 120,
+      "key": "A minor",
+      "metre": "4/4",
+      "seconds": 32.0,
+      "notes": 419,
+      "one_shot": true,
+      "hook": "bars 1 and 2, 11 notes, A4 to E5, one leap (E5 to A4 at bar 2 beat 3)",
+      "voices": {
+        "vrc6 pulse a": 67,
+        "vrc6 pulse b": 16,
+        "pulse 1": 96,
+        "pulse 2": 43,
+        "vrc6 saw": 32,
+        "triangle": 52,
+        "noise": 55,
+        "dpcm": 58
+      }
+    }
+  ]
+}

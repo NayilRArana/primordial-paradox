@@ -1,0 +1,30 @@
+{
+  "bpm": 120,
+  "tempo_us": 500000,
+  "key": "A minor",
+  "scene_seconds": 32.0,
+  "modules": [
+    {
+      "label": "BOARDING",
+      "file": "pp_boarding_v2.mid",
+      "bars": 16,
+      "bpm": 120,
+      "key": "A minor",
+      "metre": "4/4",
+      "seconds": 32.0,
+      "notes": 418,
+      "one_shot": true,
+      "hook": "bars 1 and 2, 11 notes, A4 to E5, one leap (E5 to A4 at bar 2 beat 3); stated at bars 1, 3, 5 and 7, and the lead closes on the stop stab in bar 16",
+      "voices": {
+        "vrc6 pulse a": 67,
+        "vrc6 pulse b": 16,
+        "pulse 1": 96,
+        "pulse 2": 42,
+        "vrc6 saw": 32,
+        "triangle": 52,
+        "noise": 55,
+        "dpcm": 58
+      }
+    }
+  ]
+}

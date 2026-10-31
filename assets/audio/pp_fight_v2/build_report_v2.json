@@ -1,0 +1,94 @@
+{
+  "bpm": 168,
+  "tempo_us": 357143,
+  "key": "D minor",
+  "v1": "../pp_fight (untouched)",
+  "seam": "the FIGHT's bar 16 is the CALM's bar 1, note for note",
+  "hook": "one bar cell D5 F5 G5 F5 E5 D5 A4, ten statements in the fight, ten in the calm at half values",
+  "humanize": {
+    "articulation_ticks": 18,
+    "lead_level_steps": {
+      "fight": [
+        11,
+        12,
+        13,
+        12
+      ],
+      "calm": [
+        6,
+        7,
+        8,
+        7
+      ]
+    },
+    "phrase_velocity": {
+      "fight": {
+        "1": 112,
+        "2": 106,
+        "3": 118,
+        "4": 110
+      },
+      "calm": {
+        "1": 94,
+        "2": 88,
+        "3": 92,
+        "4": 84
+      }
+    },
+    "echo_offset_ticks": 22
+  },
+  "modules": [
+    {
+      "label": "FIGHT",
+      "file": "pp_fight_v2_fight.mid",
+      "bars": 16,
+      "bar_multiple_of_4": true,
+      "seconds": 22.857,
+      "notes": 611,
+      "voices": {
+        "vrc6 pulse a": 100,
+        "vrc6 pulse b": 21,
+        "vrc6 saw": 15,
+        "pulse 1": 88,
+        "pulse 2": 91,
+        "triangle": 121,
+        "noise": 80,
+        "dpcm": 95
+      }
+    },
+    {
+      "label": "CALM",
+      "file": "pp_fight_v2_calm.mid",
+      "bars": 16,
+      "bar_multiple_of_4": true,
+      "seconds": 22.857,
+      "notes": 180,
+      "voices": {
+        "vrc6 pulse a": 54,
+        "vrc6 saw": 16,
+        "pulse 2": 52,
+        "triangle": 16,
+        "noise": 0,
+        "dpcm": 42
+      }
+    },
+    {
+      "label": "STATES",
+      "file": "pp_fight_v2_states.mid",
+      "bars": 32,
+      "bar_multiple_of_4": true,
+      "seconds": 45.714,
+      "notes": 791,
+      "voices": {
+        "vrc6 pulse a": 154,
+        "vrc6 pulse b": 21,
+        "vrc6 saw": 31,
+        "pulse 1": 88,
+        "pulse 2": 143,
+        "triangle": 137,
+        "noise": 80,
+        "dpcm": 137
+      }
+    }
+  ]
+}

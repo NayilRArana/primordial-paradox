@@ -1,0 +1,118 @@
+{
+  "bars": 20,
+  "beats_per_bar": 3,
+  "bpm": 100.0,
+  "chords_by_section": {
+    "B": [
+      "Dm",
+      "Gm",
+      "C",
+      "F",
+      "Bb",
+      "Em7b5",
+      "A7",
+      "Dm"
+    ],
+    "hook1": [
+      "Dm",
+      "Dm",
+      "Gm",
+      "A7"
+    ],
+    "hook2": [
+      "Dm",
+      "Dm",
+      "Gm",
+      "A7"
+    ],
+    "hook3": [
+      "Dm",
+      "Gm",
+      "A7",
+      "Dm"
+    ]
+  },
+  "chords_match_score": true,
+  "duration_seconds": 36.0,
+  "key": "D minor",
+  "loop_bars": 20,
+  "loop_end_bar": 20,
+  "loop_start_bar": 1,
+  "max_simultaneous_by_section": {
+    "B": 8,
+    "hook1": 6,
+    "hook2": 6,
+    "hook3": 7
+  },
+  "max_simultaneous_notes": 8,
+  "melody_checks": {
+    "A_bar_1": [],
+    "A_bar_2": [],
+    "A_prime_bar_1": [],
+    "A_return_bar_8": [],
+    "B_prime_bar_5": [],
+    "C_trio_bar_1": [],
+    "C_trio_bar_5": []
+  },
+  "midi": "<repo>\\assets\\audio\\baroque_demo\\baroque_demo.mid",
+  "midi_bpm": 100.0,
+  "midi_bytes": 5378,
+  "midi_division": 480,
+  "midi_duration_seconds": 36.0,
+  "midi_ntracks": 9,
+  "midi_tempo_us_per_qn": 600000,
+  "midi_time_signature": "3/4",
+  "midi_tracks": [
+    "meta",
+    "vrc6 pulse a",
+    "vrc6 pulse b",
+    "vrc6 saw",
+    "pulse 1",
+    "pulse 2",
+    "triangle",
+    "noise",
+    "dpcm"
+  ],
+  "notes": {
+    "dpcm": 0,
+    "noise": 55,
+    "pulse 1": 120,
+    "pulse 2": 46,
+    "triangle": 48,
+    "vrc6 pulse a": 113,
+    "vrc6 pulse b": 24,
+    "vrc6 saw": 64
+  },
+  "out_of_range": [],
+  "schema": "v3",
+  "score": "<repo>\\assets\\audio\\baroque_demo\\score_baroque_demo.yaml",
+  "section_bars": {
+    "B": 8,
+    "hook1": 4,
+    "hook2": 4,
+    "hook3": 4
+  },
+  "section_first_bar": {
+    "B": 9,
+    "hook1": 1,
+    "hook2": 5,
+    "hook3": 17
+  },
+  "sections": [
+    "hook1",
+    "hook2",
+    "B",
+    "hook3"
+  ],
+  "tempo_meta_matches_score": true,
+  "tracks": [
+    "vrc6 pulse a",
+    "vrc6 pulse b",
+    "vrc6 saw",
+    "pulse 1",
+    "pulse 2",
+    "triangle",
+    "noise",
+    "dpcm"
+  ]
+}

@@ -1,0 +1,154 @@
+# PP-ARRIVAL "Night Quay" v2: the arrival block's walking cue, 32 bar loop.
+# Card AUTO-MUSIC-NEXT (t_681609f2). v1 is untouched in assets/audio/pp_arrival/.
+#
+# Why 32 and not 48 bars: v1 was 48 bars, which the hook meter refuses as a loop
+# length (it accepts 8, 16 or 32) and which spread the cell so thin that only 19
+# percent of its notes sat inside the motif. Both were worth 30 points of 100.
+# The CUE-ARRIVAL card allowed 32 to 48 bars, so 32 is inside the same brief: the
+# same four textures, the same cell, the same seam rule, in the shortest form
+# the hook grammar accepts. 32 bars at 80 bpm is 96.000 s a loop.
+#
+#   quay        8 bars  the block itself, thin. Night water, a brushed pulse.
+#   lamplight   8 bars  the same walk with the lamps lit: echo, broken chord,
+#                       a walking bass, heartbeat kick.
+#   gate       12 bars  the B section: the line climbs, the kit moves to the
+#                       noise floor, the cadence is left open on the dominant.
+#   turn        4 bars  home again, and half a bar of air before the loop point.
+#
+# The cell is Q: A4 E5 D5 C5 A4, one leap up a fifth and three steps down,
+# answered by A4 G4 F4 E4, a stepwise descent onto the fifth. Two bars, one
+# leap, everything else by step. v2 states it ten times and each statement
+# changes one note (two on the third statement, bars 5 and 6), so the phrase is
+# recognised at once and never plays twice the same: the movement is carried by
+# the chords, the kit and the echo under it, which is what a walking bed needs.
+#
+# A minor, 4/4, 80 bpm, 32 bars. Durations are eighth notes; a 4/4 bar holds 8.
+
+meta:
+  profile: arrival
+  key: A minor
+  time: 4/4
+  bpm: 80
+  bars: 32
+  loop_start_bar: 1
+  loop_end_bar: 32
+  cue_id: PP-ARRIVAL
+  asset: pp_arrival_v2
+  version: v2
+  form: "quay 8, lamplight 8, gate 12, turn 4"
+  brief: "night quay walking bed under five to seven minutes of walking and talking; thin enough for text blips; B section when the gate is in sight; seam quiet so the loop does not tick"
+
+motifs:
+  Q:  "Quay: A4 E5 D5 C5 A4, a leap of a fifth up and then three steps down, answered by A4 G4 F4 E4, a stepwise descent onto the fifth. Two bars, one leap, everything else by step."
+  Q2: "The answer when the gate shows: F4 G4 A4 with the fifth held on top, then B4 A4 G4 with the fifth held below it. Two bars, it opens a phrase instead of closing one."
+
+voices:
+  vrc6_pulse_a:
+    duty: 3
+    level: 10
+    vibrato: {after_eighths: 1, min_note_eighths: 3, depth: 10}
+    phrase_end_rest_eighths: 1
+    humanize:
+      velocity: [0, 3, -2, 4, 1, -3, 2, -1]
+      micro_ticks: 2
+      gate_ticks: 3
+      duties: [3, 2]
+  vrc6_pulse_b: {duty: 3, level: 3}
+  vrc6_saw: {level: 5}
+  pulse_1: {duty: 0, level: 4}
+  pulse_2: {duty: 0, level: 3}
+  triangle: {level: 7}
+  noise: {level: 4}
+  dpcm: {level: 5}
+
+sections:
+  quay:
+    bars: 8
+    chords: [Am, Em/G, F, C, Dm, Am, E7, E7]
+    melody:
+      - [[A4, 2], [E5, 1], [D5, 1], [C5, 2], [A4, 2]]        # Q: the leap up a fifth, then steps down
+      - [[A4, 2], [G4, 1], [F4, 1], [E4, 2], [r, 2]]         # the answer, a descent onto the fifth
+      - [[A4, 2], [E5, 1], [D5, 1], [C5, 2], [C5, 2]]         # second statement, the tail held on C5
+      - [[A4, 2], [G4, 1], [F4, 1], [E4, 2], [r, 2]]          # the same answer, so the shape is fixed
+      - [[A4, 2], [E5, 1], [D5, 1], [B4, 2], [A4, 2]]         # third statement, the crest dropped to B4
+      - [[A4, 2], [G4, 1], [F4, 1], [D4, 2], [r, 2]]          # and the answer a step lower: two notes differ, the return is heard changed
+      - [[A4, 2], [E5, 1], [D5, 1], [C5, 2], [A4, 2]]         # Q plain again, the listener has it
+      - [[A4, 2], [G4, 1], [F4, 1], [E4, 2], [r, 2]]
+    texture: "thin. Lead at level 10 with duty 3 and late vibrato; the pad on the saw, root then fifth; the guide tone on vrc6 pulse b in half notes; the broken chord on pulse 1 in half notes only, level 3, so the middle of the bar stays empty; the bass on the triangle, root and fifth; the echo is silent here"
+    arp: open
+    arp_level: 3
+    saw_level: 5
+    echo: 0
+    guide: true
+    level_scale: 0.7
+    tension_bars: [7]
+    drums: {home: CLM-01, rungs: [0, 1, 0, 4, 0, 1, 2, 4], fill_beat: FLF-01, fill_end: FLX-10}
+
+  lamplight:
+    bars: 8
+    chords: [Am, Em/G, F, C, Dm, E7, Am, Am]
+    melody:
+      - [[A4, 2], [E5, 1], [D5, 1], [C5, 2], [A4, 2]]        # Q, unchanged, so the return is heard
+      - [[A4, 2], [G4, 1], [F4, 1], [E4, 2], [r, 2]]
+      - [[A4, 2], [E5, 1], [D5, 1], [C5, 2], [B4, 2]]        # the tail lifted to B4, one note changed
+      - [[A4, 2], [G4, 1], [F4, 1], [D4, 2], [r, 2]]         # the answer a step lower, onto the fourth
+      - [[A4, 2], [E5, 1], [D5, 1], [C5, 2], [C5, 2]]        # the tail held on C5, the lamps come up
+      - [[A4, 2], [G4, 1], [F4, 1], [E4, 2], [r, 2]]
+      - [[C5, 2], [B4, 1], [A4, 1], [G4, 2], [E4, 2]]        # the turn figure, falling by step to the fifth
+      - [[A4, 4], [E4, 2], [r, 2]]                            # the tonic, then air
+    texture: "the same walk with the lamps on. The echo is live on pulse 2, the broken chord moves to level 5 in half notes, the bass walks into the next chord on bars 3 and 7, and the pad rises one step. The drums move from the brushed pulse to the heartbeat kick"
+    arp: open
+    arp_level: 5
+    saw_level: 6
+    echo: 1
+    guide: true
+    level_scale: 0.9
+    tension_bars: [7]
+    walk_bars: [3, 7, 8]
+    drums: {home: CLM-03, rungs: [0, 1, 2, 6, 0, 1, 0, 6], fill_beat: FLF-01, fill_end: FLX-10}
+
+  gate:
+    bars: 12
+    chords: [F, G, Am, C, F, G, Am, Dm, F, G, E7, E7]
+    melody:
+      - [[A4, 2], [E5, 1], [D5, 1], [C5, 2], [B4, 2]]        # the cell at the crest of the section, tail on B4
+      - [[A4, 2], [G4, 1], [F4, 1], [E4, 2], [r, 2]]
+      - [[A4, 2], [E5, 1], [D5, 1], [C5, 2], [A4, 2]]        # Q plain, over the flat seventh
+      - [[A4, 2], [G4, 1], [F4, 1], [D4, 2], [r, 2]]
+      - [[A4, 2], [B4, 1], [C5, 1], [D5, 2], [C5, 2]]        # the climb: the widest point of the cue
+      - [[D5, 2], [C5, 1], [B4, 1], [G4, 2], [r, 2]]         # the descent that mirrors it
+      - [[F4, 2], [G4, 1], [A4, 1], [C5, 4]]                 # Q2: the stepwise climb, fifth held
+      - [[B4, 2], [A4, 1], [G4, 1], [D5, 4]]                 # the answer, fifth held below the third
+      - [[F4, 2], [A4, 1], [C5, 1], [E5, 2], [C5, 2]]        # the suspension, E over F, held on C
+      - [[D5, 2], [C5, 1], [B4, 1], [G4, 2], [r, 2]]
+      - [[B4, 2], [A4, 1], [G#4, 1], [E4, 2], [r, 2]]        # the dominant, walked down to its root
+      - [[G#4, 2], [B4, 3], [r, 3]]                          # half cadence, left open for the turn
+    texture: "the B section. The line climbs above the block theme and the broken chord moves to eighths at level 5, the drums change kit to the soft noise floor with a wash on the downbeat and a build up into bars 4, 8 and 12, and the bass walks on bars 4, 8 and 12, so the section drives without getting loud. It closes on the dominant, unresolved, which is what makes the turn read as a way home"
+    arp: eighths
+    arp_level: 5
+    saw_level: 6
+    echo: 1
+    guide: true
+    level_scale: 1.0
+    tension_bars: [9, 11]
+    walk_bars: [4, 8, 12]
+    drums: {home: CLM-08, rungs: [0, 2, 5, 3, 0, 1, 2, 5, 0, 2, 3, 5], fill_beat: FLT-01, fill_end: FLR-03, build_up: [4, 8, 12]}
+
+  turn:
+    bars: 4
+    chords: [Dm, Am, E7, Am]
+    melody:
+      - [[A4, 2], [E5, 1], [D5, 1], [C5, 2], [A4, 2]]        # Q, home, and the loop has taught it
+      - [[A4, 2], [G4, 1], [F4, 1], [E4, 2], [r, 2]]
+      - [[C5, 2], [B4, 1], [A4, 1], [G4, 2], [E4, 2]]        # falling by step to the fifth
+      - [[A4, 4], [r, 4]]                                    # the tonic, then four eighths of air
+    texture: "the way home. The pad and the bass drop to level 4 and 6, the broken chord goes back to half notes and leaves the last bar empty, and the drums are one brush on the downbeat, so the four eighths before the loop point hold no melody at all: the seam is air, not a cut"
+    arp: open
+    arp_level: 3
+    saw_level: 4
+    echo: 0
+    guide: true
+    level_scale: 0.6
+    tension_bars: [3]
+    arp_dropout_bars: [4]
+    drums: {home: CLM-01, rungs: [0, 1, 0, 1], fill_beat: FLF-01, fill_end: FLX-10}

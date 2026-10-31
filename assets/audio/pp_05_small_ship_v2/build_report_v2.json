@@ -1,0 +1,152 @@
+{
+  "source": "<repo>\\assets\\audio\\pp_05_small_ship\\pp_05_small_ship.mid",
+  "division": 480,
+  "tempo_us": 625000,
+  "tracks": [
+    {
+      "name": "meta",
+      "notes": 0
+    },
+    {
+      "name": "vrc6 pulse a",
+      "notes": 43
+    },
+    {
+      "name": "vrc6 pulse b",
+      "notes": 8
+    },
+    {
+      "name": "vrc6 saw",
+      "notes": 24
+    },
+    {
+      "name": "pulse 1",
+      "notes": 0
+    },
+    {
+      "name": "pulse 2",
+      "notes": 384
+    },
+    {
+      "name": "triangle",
+      "notes": 24
+    },
+    {
+      "name": "noise",
+      "notes": 80
+    },
+    {
+      "name": "dpcm",
+      "notes": 48
+    }
+  ],
+  "counterline": {
+    "notes": 10,
+    "cc11": 5,
+    "hum_cc11": 4,
+    "bars": [
+      17,
+      18,
+      19,
+      20
+    ]
+  },
+  "noise": {
+    "cc11_before": [
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      2,
+      2,
+      2,
+      2
+    ],
+    "cc11_after": [
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      4,
+      4,
+      4,
+      4
+    ],
+    "velocity_scaled": 80
+  },
+  "rungs": {
+    "hat_offbeat": 18,
+    "snare_backbeat": 9,
+    "fill_4": 12,
+    "fill_8": 12,
+    "kick_var": 6
+  },
+  "rung_map": {
+    "backbeat_bars": [
+      5,
+      6,
+      7,
+      13,
+      14,
+      15
+    ],
+    "fill_4_bars": [
+      4,
+      8,
+      12,
+      16,
+      20,
+      24
+    ],
+    "fill_8_bars": [
+      8,
+      16,
+      24
+    ]
+  },
+  "midi_raw": "<repo>\\assets\\audio\\pp_05_small_ship_v2\\pp_05_small_ship_v2_raw.mid",
+  "notes_before": 611,
+  "notes_after_raw": 666,
+  "humanize": {
+    "seed": 20261021,
+    "bpm": 96.0,
+    "notes_in": 666,
+    "notes_out": 669,
+    "notes_changed": 654,
+    "fills": 3,
+    "sha256_out": "d9bd47a1849c96835a8328bb494885d1d0bda3433af67b0e307e0138b65f5aa9"
+  },
+  "midi_out": "<repo>\\assets\\audio\\pp_05_small_ship_v2\\pp_05_small_ship_v2.mid"
+}

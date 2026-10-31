@@ -1,0 +1,124 @@
+{
+  "source": "<repo>\\assets\\audio\\pp_01_title\\pp_01_title.mid",
+  "division": 480,
+  "tempo_bpm": 126.000126000126,
+  "time_sig": [
+    3,
+    4
+  ],
+  "loop": "bar 5 for 48 bars",
+  "tracks_in": [
+    {
+      "name": "meta",
+      "notes": 0
+    },
+    {
+      "name": "vrc6 pulse a",
+      "notes": 137
+    },
+    {
+      "name": "vrc6 pulse b",
+      "notes": 90
+    },
+    {
+      "name": "vrc6 saw",
+      "notes": 160
+    },
+    {
+      "name": "pulse 1",
+      "notes": 288
+    },
+    {
+      "name": "pulse 2",
+      "notes": 99
+    },
+    {
+      "name": "triangle",
+      "notes": 120
+    },
+    {
+      "name": "noise",
+      "notes": 97
+    },
+    {
+      "name": "dpcm",
+      "notes": 96
+    }
+  ],
+  "hook_before": {
+    "score": 73,
+    "weakest": {
+      "criterion": "motif coverage",
+      "key": "motif_coverage",
+      "fraction": 0.365,
+      "points": 7.3,
+      "of": 20
+    }
+  },
+  "lead": {
+    "before_notes": 137,
+    "after_notes": 128,
+    "before_range_semitones": 29,
+    "after_range_semitones": 17,
+    "statements": 12
+  },
+  "kit": {
+    "noise_before": 97,
+    "noise_after": 270,
+    "dpcm_before": 96,
+    "dpcm_after": 101,
+    "noise_pitches": [
+      4,
+      6,
+      8,
+      10,
+      12,
+      38
+    ],
+    "rungs": "2 bar (hat density), 4 bar (open hat fill and a second kick on every 4th bar), 8 bar (five hit tom run, crash into 13, 21, 29, 37, 45), trio cold half one kick and no hats"
+  },
+  "hook_after": {
+    "contour": [
+      "2 of 12 returns are arch or pedal (pedal - - - - - - - pedal - - -)",
+      false
+    ],
+    "loop_length": [
+      "52 bars",
+      false
+    ],
+    "step_ratio": [
+      "50% steps (2 of 4 intervals), 1 leaps",
+      false
+    ],
+    "motif_coverage": [
+      "56% of 128 notes inside the motif",
+      false
+    ],
+    "motif_returns": [
+      "12 returns",
+      true
+    ],
+    "hook_cell": [
+      "6 notes, rhythm 2/2/2/12/6/2 repeated 5 times",
+      true
+    ],
+    "leaps_per_motif": [
+      "1 leaps",
+      true
+    ],
+    "third_return": [
+      "67% the same as the first return",
+      true
+    ],
+    "range": [
+      "17 semitones (64 to 81)",
+      true
+    ],
+    "repeat_pitch": [
+      "2 repeated pitches in a row",
+      true
+    ]
+  },
+  "hook_after_score": 83,
+  "midi_out": "<repo>\\assets\\audio\\pp_01_title_v6\\pp_01_title_v6.mid"
+}

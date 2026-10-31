@@ -1,0 +1,106 @@
+{
+  "source": "<repo>\\assets\\audio\\percy_theme\\percy_theme.mid",
+  "division": 480,
+  "tempo_bpm": 132.000132000132,
+  "time_sig": [
+    3,
+    4
+  ],
+  "tracks_in": [
+    {
+      "name": "meta",
+      "notes": 0,
+      "pitch_range": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "vrc6 pulse a",
+      "notes": 80,
+      "pitch_range": [
+        55,
+        86
+      ]
+    },
+    {
+      "name": "vrc6 pulse b",
+      "notes": 133,
+      "pitch_range": [
+        55,
+        84
+      ]
+    },
+    {
+      "name": "vrc6 saw",
+      "notes": 12,
+      "pitch_range": [
+        36,
+        48
+      ]
+    },
+    {
+      "name": "pulse 1",
+      "notes": 214,
+      "pitch_range": [
+        43,
+        82
+      ]
+    },
+    {
+      "name": "pulse 2",
+      "notes": 118,
+      "pitch_range": [
+        50,
+        81
+      ]
+    },
+    {
+      "name": "triangle",
+      "notes": 96,
+      "pitch_range": [
+        38,
+        55
+      ]
+    },
+    {
+      "name": "noise",
+      "notes": 28,
+      "pitch_range": [
+        5,
+        12
+      ]
+    },
+    {
+      "name": "dpcm",
+      "notes": 42,
+      "pitch_range": [
+        36,
+        38
+      ]
+    }
+  ],
+  "lead": {
+    "before_notes": 80,
+    "after_notes": 119,
+    "before_range": "55 to 86",
+    "after_range": "66 to 74",
+    "statements": 28
+  },
+  "kit": {
+    "noise_before": 28,
+    "noise_after": 130,
+    "dpcm_before": 42,
+    "dpcm_after": 60,
+    "noise_pitches": [
+      4,
+      6,
+      8,
+      10,
+      12
+    ],
+    "rungs": "2 bar (hat density, kick variant), 4 bar (open hat fill on 8, 12, 20, 24, 28), 8 bar (six hit tom fill on 8 and 24, crash into 13 and 29), break in the cadence"
+  },
+  "notes_out": 882,
+  "midi_out": "<repo>\\assets\\audio\\percy_theme_v2\\percy_theme_v2.mid"
+}

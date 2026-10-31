@@ -1,0 +1,132 @@
+{
+  "source": "<repo>\\assets\\audio\\pp_05_small_ship_v4\\pp_05_small_ship_v4.mid",
+  "division": 480,
+  "tempo_bpm": 128.0,
+  "bars": 32,
+  "seconds": 60.0,
+  "tracks_in": [
+    {
+      "name": "meta",
+      "notes": 0
+    },
+    {
+      "name": "vrc6 pulse a",
+      "notes": 72
+    },
+    {
+      "name": "vrc6 pulse b",
+      "notes": 8
+    },
+    {
+      "name": "vrc6 saw",
+      "notes": 24
+    },
+    {
+      "name": "pulse 1",
+      "notes": 10
+    },
+    {
+      "name": "pulse 2",
+      "notes": 316
+    },
+    {
+      "name": "triangle",
+      "notes": 24
+    },
+    {
+      "name": "noise",
+      "notes": 223
+    },
+    {
+      "name": "dpcm",
+      "notes": 158
+    }
+  ],
+  "lead": {
+    "notes_before": 72,
+    "notes_added": 29,
+    "notes_after": 101,
+    "bars_added": [
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32
+    ],
+    "statements": "bars 25, 29 and 30 restate the v4 arch in pitch; bar 31 is the rhythm variation",
+    "dissonance": [
+      "bar 26: C5 (9th of Bb) held and resolved to Bb4, a 9-8 suspension",
+      "bar 27: D5 (11th of A7) resolving down to C#5, an 11-3 resolution",
+      "bar 28: D5 upper neighbour of C#5, resolved on the fourth eighth"
+    ],
+    "range_added": [
+      65,
+      76
+    ]
+  },
+  "arpeggio": {
+    "notes_before": 316,
+    "notes_added": 96,
+    "bars": [
+      25,
+      26,
+      29,
+      30,
+      31,
+      32
+    ],
+    "space": "pulse 2 rests on bars 27 and 28, which is the build into the reprise",
+    "pitches_added": [
+      55,
+      57,
+      58,
+      61,
+      62,
+      64,
+      65,
+      69
+    ]
+  },
+  "bass": {
+    "saw_notes_added": 12,
+    "triangle_notes_added": 8,
+    "shape": "bars 25 to 28 half notes root then fifth; bars 29 to 32 whole note roots"
+  },
+  "inner_voice": {
+    "notes_before": 10,
+    "notes_added": 16,
+    "climb": "bars 27 and 28: G3 A3 Bb3 B3 C#4 D4 E4 G4, one chromatic step per eighth pair",
+    "thirds": "bars 29 to 32: offbeat eighth stabs on the chord third"
+  },
+  "kit": {
+    "noise_notes": 308,
+    "dpcm_notes": 207,
+    "noise_velocity_steps": 49,
+    "dpcm_velocity_steps": 50,
+    "rungs": {
+      "2_bar": 16,
+      "4_bar": 8,
+      "8_bar": 4,
+      "16_bar": 2
+    },
+    "distinct_noise_pitches": [
+      3,
+      5,
+      7,
+      9,
+      11
+    ],
+    "half_time_section": "bars 25 to 28: kick on beats 1 and 3, snare on beat 3 only"
+  },
+  "human": {
+    "lead_micro_timing": "10 lead notes nudged by up to 8 ticks",
+    "kit": "offbeat hats swing 8 to 14 ticks, backbeat slack 0 to 6 ticks, 49 velocity steps",
+    "vibrato": "depth 9 on the development, 11 on the reprise; onset delay 1 to 2 eighths"
+  },
+  "notes_out": 1130,
+  "voices": 8,
+  "midi_out": "<repo>\\assets\\audio\\pp_05_small_ship_v5\\pp_05_small_ship_v5.mid"
+}

@@ -1,0 +1,63 @@
+# Baroque demo, cue "baroque_demo". Written 2026-10-23 by the manager.
+# Brief: short baroque piece, NES style, built on a pop structured figure.
+# Why 3/4: tools\arrange.py's default (waltz) builder hardcodes three beats a bar,
+# and declares its own MIDI header 3/4. A 4/4 score here would render 25 percent fast
+# under a wrong time signature, so the piece is written in the time the builder honours.
+# Baroque triple time is idiomatic anyway (courante, passacaglia, gigue).
+#
+# Durations are in eighth notes; a 3/4 bar holds 6.
+# "X|Y" in a chord slot means X on beats 1 and 2, Y on beat 3.
+meta:
+  key: D minor
+  time: 3/4
+  bpm: 100
+  loop_start_section: hook1
+  loop_end_section: hook3
+  form: "hook1 4 + hook2 4 + B 8 + hook3 4 = 20 bars, about 36 s at 100 bpm; the loop returns to the start of hook1"
+
+motifs:
+  H:  "Hook, six eighths a bar: arpeggio climb to the octave and a fall back to the fifth. Pop phrasing, because the two bar phrase is stated twice before anything develops."
+  O:  "Turn at the close: upper neighbour, main note, lower neighbour, main note (written out, so the chip plays it)."
+  M:  "Motor: every melody bar is filled to six eighths with no rests, which is what makes it read as baroque keyboard writing rather than a pop vocal."
+
+sections:
+  hook1:
+    bars: 4
+    chords: [Dm, Dm, Gm, A7]
+    melody:
+      - [[D5, 1], [F5, 1], [A5, 1], [D6, 1], [C6, 1], [A5, 1]]      # H, up then back
+      - [[E5, 1], [F5, 1], [A5, 1], [D6, 1], [C6, 1], [F5, 1]]      # H answered a step lower
+      - [[G5, 1], [Bb5, 1], [D6, 1], [G6, 1], [F6, 1], [D6, 1]]     # same shape over the subdominant
+      - [[A5, 1], [G5, 1], [F5, 1], [E5, 1], [D5, 1], [C#5, 1]]     # stepwise home, half close
+    texture: "pulse 1 carries the hook, pulse 2 an octave down, triangle walks the fifths, saw pad holds the chord, soft noise hat on each eighth"
+  hook2:
+    bars: 4
+    chords: [Dm, Dm, Gm, A7]
+    melody:
+      - [[D5, 1], [F5, 1], [A5, 1], [D6, 1], [C6, 1], [A5, 1]]
+      - [[E5, 1], [F5, 1], [A5, 1], [D6, 1], [C6, 1], [F5, 1]]
+      - [[G5, 1], [Bb5, 1], [D6, 1], [G6, 1], [F6, 1], [D6, 1]]
+      - [[A5, 1], [G5, 1], [F5, 1], [E5, 1], [D5, 1], [C#5, 1]]
+    texture: "as hook1 plus a noise accent on beat 1 of each bar, so the repeat reads as the chorus"
+  B:
+    bars: 8
+    chords: [Dm, Gm, C, F, Bb, Em7b5, A7, Dm]     # circle of fifths, four bars down, four home
+    melody:
+      - [[A5, 1], [D6, 1], [C6, 1], [A5, 1], [F5, 1], [A5, 1]]
+      - [[Bb5, 1], [D6, 1], [C6, 1], [Bb5, 1], [G5, 1], [Bb5, 1]]
+      - [[E6, 1], [D6, 1], [C6, 1], [Bb5, 1], [A5, 1], [G5, 1]]
+      - [[F5, 1], [A5, 1], [C6, 1], [F6, 1], [E6, 1], [C6, 1]]
+      - [[D6, 1], [C6, 1], [Bb5, 1], [A5, 1], [G5, 1], [F5, 1]]
+      - [[E5, 1], [G5, 1], [Bb5, 1], [D6, 1], [C6, 1], [Bb5, 1]]
+      - [[A5, 2], [C#6, 2], [E6, 1], [G6, 1]]                        # dominant rise into the close
+      - [[D6, 1], [C6, 1], [Bb5, 1], [A5, 1], [G5, 1], [F5, 1]]
+    texture: "the motor moves to pulse 2 for the sequence so the section is a colour change; pad thickens; drums drop to beat 1 and 2"
+  hook3:
+    bars: 4
+    chords: [Dm, Gm, A7, Dm]
+    melody:
+      - [[D5, 1], [F5, 1], [A5, 1], [D6, 1], [C6, 1], [A5, 1]]
+      - [[G5, 1], [Bb5, 1], [D6, 1], [G6, 1], [F6, 1], [D6, 1]]
+      - [[A5, 1], [G5, 1], [F5, 1], [E5, 1], [C#5, 1], [E5, 1]]      # O: the turn, then the leading tone
+      - [[D5, 6]]                                                     # full cadence, held, so the loop breathes
+    texture: "full: both pulses, triangle, saw pad and noise, with the pad swelling into the last bar"

@@ -1,0 +1,25 @@
+fight.mid exists and is not empty                    PASS 6073 bytes
+fight.wav exists and is not empty                    PASS 2016044 bytes
+fight.mp3 exists and is not empty                    PASS 549868 bytes
+calm.mid exists and is not empty                     PASS 3616 bytes
+calm.wav exists and is not empty                     PASS 2016044 bytes
+calm.mp3 exists and is not empty                     PASS 549868 bytes
+states.mid exists and is not empty                   PASS 9475 bytes
+states.wav exists and is not empty                   PASS 4030736 bytes
+states.mp3 exists and is not empty                   PASS 1098439 bytes
+fight wav length inside half a bar of 22.857 s       PASS 22.857 s
+calm wav length inside half a bar of 22.857 s        PASS 22.857 s
+states wav length inside half a bar of 45.714 s      PASS 45.699 s
+fight loop seam sample difference                    PASS 0
+calm loop seam sample difference                     PASS 0
+calm hook meter 100 of 100                           PASS 100, 5 returns
+fight hook meter 100 of 100                          PASS 100, 6 returns
+calm kit: at least eight different rungs             PASS 11 distinct
+calm kit: no run of three bars on one rung           PASS CLM-02,CLM-02,CLM-01,FLC-04,CLM-03,CLM-05,CLM-04,FLC-02,CLM-03,CLM-08,CLM-06,FLC-05,CLM-01,CLM-07,CLM-02
+calm kit: fills at bars 4, 8 and 12                  PASS FLC-04,FLC-02,FLC-05
+three devices, none in bar 1 or bar 16               PASS [6, 11, 14]
+devices carry a device id, a voice and a resolution  PASS DIS-02, DIS-06, DIS-17
+builder reported no voice or length problems         PASS []
+no long dashes in any text artifact                  PASS clean
+
+all checks passed

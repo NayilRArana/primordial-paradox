@@ -105,3 +105,12 @@ Correction, 2026-10-22 (card t_8a45271e, musician): the 14 long dashes in
 `EAR_REVIEW_126.md` were rewritten with commas and hyphens, so that scan now passes. The
 scan prunes any directory named `study`, which is why `knowledge/study/ut_decomp` never
 appears in its output; only the pasted note was ever flagged.
+
+Correction, 2026-10-22 (card t_c2f2d561, musician): that 0.2 tick rounding edge was the
+smaller half of the defect, and it was repaired in `tools/humanize.py` rather than left in
+the test. The note off is now always a frame boundary the chip can play, chosen inside the
+note, with the 85 percent floor applied to it where the note holds a frame that late; the
+phrase breath may not cut below the floor either. Three notes were wrong, not one: the two
+the card measured (84.75 and 80.00 percent) and the noise hats written at 60 ticks, which
+the old clamp to the written end left off the frame grid at 16 ticks a frame. `tests/test_humanize.py`
+is 12 of 12 green and the full run is unchanged except for failures in other lanes.

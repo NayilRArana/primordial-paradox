@@ -1,0 +1,292 @@
+{
+  "bpm": 168,
+  "tempo_us": 357143,
+  "key": "D minor",
+  "v1": "../pp_fight (untouched)",
+  "v2": "../pp_fight_v2 (untouched)",
+  "seam": "the FIGHT's bar 16 is the CALM's bar 1, note for note, proved in this run",
+  "hook": "one bar cell D5 F5 G5 F5 E5 D5 A4, unchanged from v2",
+  "humanize": {
+    "frame_ticks": 22,
+    "lead_delay": [
+      0,
+      8,
+      4,
+      10,
+      2,
+      6,
+      8,
+      4
+    ],
+    "guide_delay": [
+      6,
+      4,
+      8,
+      4
+    ],
+    "drum_delay": {
+      "2": 4,
+      "3": -3,
+      "4": 2,
+      "5": -4,
+      "6": 3,
+      "7": -2,
+      "8": 5,
+      "9": -3,
+      "10": 2,
+      "11": -4,
+      "12": 4,
+      "13": -2,
+      "14": 3,
+      "15": 0,
+      "16": 0
+    },
+    "calm_articulation": {
+      "1": 10,
+      "2": 16,
+      "3": 12,
+      "4": 18
+    },
+    "calm_phrase_velocity": {
+      "1": 94,
+      "2": 88,
+      "3": 92,
+      "4": 84
+    },
+    "fight_phrase_velocity": {
+      "1": 112,
+      "2": 106,
+      "3": 118,
+      "4": 110
+    },
+    "echo_offset_ticks": 22
+  },
+  "dissonance": [
+    {
+      "device": "DIS-02",
+      "module": "calm",
+      "bar": 6,
+      "voice": "vrc6 pulse b",
+      "note": "A4",
+      "beat": 3.5,
+      "resolves_to": "Bb4",
+      "why": "chromatic lower neighbour, a semitone below the third of Gm",
+      "risk": 1
+    },
+    {
+      "device": "DIS-06",
+      "module": "calm",
+      "bar": 11,
+      "voice": "vrc6 pulse b",
+      "note": "B4",
+      "beat": 1.0,
+      "resolves_to": "A4",
+      "why": "ninth over A7 held a beat and a half, down a step to the dominant root",
+      "risk": 2
+    },
+    {
+      "device": "DIS-17",
+      "module": "calm",
+      "bar": 14,
+      "voice": "triangle",
+      "note": "Bb3 to A3",
+      "beat": 3.0,
+      "resolves_to": "A3",
+      "why": "flat six to five approach, a semitone onto the dominant root",
+      "risk": 1
+    }
+  ],
+  "fight_kit": {
+    "1": "BAT-01",
+    "2": "BAT-01",
+    "3": "BAT-01",
+    "4": "FLF-01",
+    "5": "BAT-04",
+    "6": "BAT-06",
+    "7": "BAT-04",
+    "8": "FLT-01",
+    "9": "BAT-02",
+    "10": "BAT-02",
+    "11": "BAT-05",
+    "12": "FLR-01",
+    "13": "BAT-03",
+    "14": "BAT-01",
+    "15": "BAT-07",
+    "16": "BAT-09"
+  },
+  "fight_kit_4_bar_states": {
+    "1": [
+      "BAT-01",
+      "FLF-01"
+    ],
+    "2": [
+      "BAT-04",
+      "BAT-06",
+      "FLT-01"
+    ],
+    "3": [
+      "BAT-02",
+      "BAT-05",
+      "FLR-01"
+    ],
+    "4": [
+      "BAT-01",
+      "BAT-03",
+      "BAT-07",
+      "BAT-09"
+    ]
+  },
+  "fight_kit_8_bar_states": {
+    "1": [
+      "BAT-01",
+      "BAT-04",
+      "BAT-06",
+      "FLF-01",
+      "FLT-01"
+    ],
+    "2": [
+      "BAT-01",
+      "BAT-02",
+      "BAT-03",
+      "BAT-05",
+      "BAT-07",
+      "BAT-09",
+      "FLR-01"
+    ]
+  },
+  "eight_bar_gain": {
+    "1": 1.0,
+    "2": 1.06
+  },
+  "eight_bar_timbre": {
+    "1": 0,
+    "2": -1
+  },
+  "fight_articulation_by_phrase": {
+    "1": 16,
+    "2": 20,
+    "3": 14,
+    "4": 18
+  },
+  "counter_accent": [
+    4,
+    -3,
+    2,
+    -4,
+    3,
+    -2
+  ],
+  "fight_dissonance": [
+    {
+      "device": "DIS-09",
+      "module": "fight",
+      "bar": 8,
+      "voice": "vrc6 pulse b",
+      "note": "Bb3",
+      "beat": 4.5,
+      "resolves_to": "Bb3 at bar 9, the third of Gm",
+      "why": "anticipation of the next chord's third on the last eighth",
+      "risk": 1
+    },
+    {
+      "device": "DIS-11",
+      "module": "fight",
+      "bar": 12,
+      "voice": "vrc6 pulse b",
+      "note": "Bb4",
+      "beat": 1.0,
+      "resolves_to": "A4, a chord tone a semitone below",
+      "why": "dominant flat nine over A7, prepared by the F4 at the end of bar 11",
+      "risk": 3
+    },
+    {
+      "device": "DIS-02",
+      "module": "fight",
+      "bar": 15,
+      "voice": "vrc6 pulse b",
+      "note": "A3",
+      "beat": 2.5,
+      "resolves_to": "Bb3, the third of Gm",
+      "why": "chromatic lower neighbour, a semitone below the third of Gm",
+      "risk": 1
+    }
+  ],
+  "calm_kit": {
+    "1": "CLM-02",
+    "2": "CLM-02",
+    "3": "CLM-01",
+    "4": "FLC-04",
+    "5": "CLM-03",
+    "6": "CLM-05",
+    "7": "CLM-04",
+    "8": "FLC-02",
+    "9": "CLM-03",
+    "10": "CLM-08",
+    "11": "CLM-06",
+    "12": "FLC-05",
+    "13": "CLM-01",
+    "14": "CLM-07",
+    "15": "CLM-07",
+    "16": "CLM-02"
+  },
+  "calm_kit_bars_without_kit": [],
+  "checks": {
+    "problems": []
+  },
+  "modules": [
+    {
+      "label": "FIGHT",
+      "file": "pp_fight_v6_fight.mid",
+      "bars": 16,
+      "bar_multiple_of_4": true,
+      "seconds": 22.857,
+      "notes": 603,
+      "voices": {
+        "vrc6 pulse a": 100,
+        "vrc6 pulse b": 25,
+        "vrc6 saw": 15,
+        "pulse 1": 88,
+        "pulse 2": 91,
+        "triangle": 121,
+        "noise": 68,
+        "dpcm": 95
+      }
+    },
+    {
+      "label": "CALM",
+      "file": "pp_fight_v6_calm.mid",
+      "bars": 16,
+      "bar_multiple_of_4": true,
+      "seconds": 22.857,
+      "notes": 351,
+      "voices": {
+        "vrc6 pulse a": 54,
+        "vrc6 pulse b": 15,
+        "vrc6 saw": 30,
+        "pulse 1": 96,
+        "pulse 2": 52,
+        "triangle": 32,
+        "noise": 30,
+        "dpcm": 42
+      }
+    },
+    {
+      "label": "STATES",
+      "file": "pp_fight_v6_states.mid",
+      "bars": 32,
+      "bar_multiple_of_4": true,
+      "seconds": 45.714,
+      "notes": 954,
+      "voices": {
+        "vrc6 pulse a": 154,
+        "vrc6 pulse b": 40,
+        "vrc6 saw": 45,
+        "pulse 1": 184,
+        "pulse 2": 143,
+        "triangle": 153,
+        "noise": 98,
+        "dpcm": 137
+      }
+    }
+  ]
+}

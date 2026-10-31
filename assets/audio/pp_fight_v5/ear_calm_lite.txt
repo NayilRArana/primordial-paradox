@@ -1,0 +1,8 @@
+env: GEMINI_API_KEY from HKCU
+file:    pp_fight_v5_calm.mp3
+model:   gemini-3.5-flash-lite
+scores:  hook 7, drums 4, tension 5, human 3, variety 6, structure 6
+review:  <repo>\assets\audio\ear_reviews\pp_fight_v5_calm_20261026T044231Z.md
+calls:   1
+Warning: the model is a rough listener. It can misdescribe details (channel names, bar counts, section times) and it hears the mix rather than the score. Treat these scores as a hint to check against Nayil, not as a verdict.
+
