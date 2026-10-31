@@ -48,6 +48,18 @@ ROWS = [
 
 DIRECTIONS = ("down", "down_left", "left", "up_left", "up", "up_right", "right", "down_right")
 
+# Card t_760a7325. The R18 row kept two candidates; the pack's OURANOS row shows the rank 2 one (seed 141), so a
+# per asset comparison has to be able to show the rank 1 one (seed 142) as its own frame. Using a candidate is only
+# allowed by the card "if one is genuinely better", and a score is how that gets decided rather than a memory.
+R18_CANDIDATES = {
+    "OURANOS": [
+        ("R18 seed141 (rank 2, the pack's before)",
+         "disk:output/art_candidates_r18/cast/kept/ouranos_ow_t2i_seed141_cell.png", (16, 24)),
+        ("R18 seed142 (rank 1)",
+         "disk:output/art_candidates_r18/cast/cells/ouranos_ow_t2i_seed142_cell.png", (16, 24)),
+    ],
+}
+
 # The two frames the eye critic reads: the same seven figures, before and after, each on its own 256 x 240 canvas.
 # A critic asked to score a tall strip complains, correctly, that a strip is not a frame; these are frames.
 FRAME_SHORT = {"ZEUS": "ZEUS", "KRONOS": "KRONOS", "LT. PERCY": "PERCY", "PERCY MAN 1": "MAN 1",
@@ -157,12 +169,94 @@ def zeus_cycle(scale):
     return path
 
 
+def find_row(label):
+    for row in ROWS:
+        if row[0] == label:
+            return row
+    raise SystemExit("no ROWS entry labelled %r; the labels are %s" % (label, ", ".join(r[0] for r in ROWS)))
+
+
+def per_asset_sheet(label, scale):
+    """One character, before and after, at 3x with a 1x copy under each: the per asset sheet the card asks for.
+
+    The scale is 3 because the card names 3x, and the 1x copy is under every 3x because a 3x copy can flatter a
+    drawing that disappears at the size the game actually runs it. The rank 1 R18 candidate sits in the middle
+    column, so a reader can see the third option the card allows instead of reading a claim about it.
+    """
+    _label, before_path, before_cell, after_name, after_cell = find_row(label)
+    columns = [("BEFORE", load(before_path, before_cell))]
+    columns += [(text, load(path, cell)) for text, path, cell in R18_CANDIDATES.get(label, [])]
+    columns.append(("AFTER", load(after_name, after_cell)))
+    cell_w, cell_h = 16 * scale, 24 * scale
+    margin, gap, header_h, label_h = 8, 16, 10, 8
+    width = margin * 2 + len(columns) * cell_w + (len(columns) - 1) * gap
+    height = margin * 2 + header_h + cell_h + label_h + cell_h + label_h
+    canvas = Image.new("RGBA", (width, height), BACKDROP)
+    draw = ImageDraw.Draw(canvas)
+    for index, (text, image) in enumerate(columns):
+        x = margin + index * (cell_w + gap)
+        label_text(draw, text[:24], x, margin, 1, INK)
+        top = margin + header_h
+        canvas.alpha_composite(image.resize((cell_w, cell_h), Image.NEAREST), (x, top))
+        label_text(draw, "3X", x, top + cell_h + 1, 1, INK)
+        small_top = top + cell_h + label_h
+        canvas.alpha_composite(image.convert("RGBA"), (x, small_top))
+        label_text(draw, "1X", x, small_top + 24, 1, INK)
+    path = os.path.join(OUT_DIR, "%s_before_after_3x.png" % label.lower().replace(" ", "_").replace(".", ""))
+    canvas.save(path, "PNG")
+    return path, [text for text, _image in columns]
+
+
+def per_asset_frame(label, side, scale_max=4):
+    """One 256 x 240 frame holding one figure at 1x, 2x, 3x and 4x, labelled, for the eye critic.
+
+    The pack's frames hold seven figures at 3x and the critic scored a roster there. This is the same question asked
+    of one character: the 1x copy is the shipping truth and the three larger ones are there so the critic can name
+    what it thinks it can see. Nothing is upsampled with any filter, so the palette it is asked about is the art's.
+    """
+    _label, before_path, before_cell, after_name, after_cell = find_row(label)
+    if side == "before":
+        image = load(before_path, before_cell)
+    elif side.startswith("r18"):
+        candidates = {text.split()[1]: (path, cell) for text, path, cell in R18_CANDIDATES.get(label, [])}
+        key = side.replace("r18_", "")
+        image = load(*candidates[key])
+    else:
+        image = load(after_name, after_cell)
+    width, height = 256, 240
+    canvas = Image.new("RGBA", (width, height), BACKDROP)
+    draw = ImageDraw.Draw(canvas)
+    scales = [1, 2, 3, scale_max]
+    total = sum(16 * s for s in scales) + 12 * (len(scales) - 1)
+    x = (width - total) // 2
+    for s in scales:
+        cell = image.resize((16 * s, 24 * s), Image.NEAREST)
+        base = height - 40
+        canvas.alpha_composite(cell, (x, base - cell.height))
+        label_text(draw, "%dX" % s, x, base + 4, 1, INK)
+        x += cell.width + 12
+    label_text(draw, FRAME_SHORT.get(label, label)[:16], (width - 8 * min(16, len(label))) // 2, 16, 2, INK)
+    path = os.path.join(OUT_DIR, "%s_%s_frame_256x240.png"
+                        % (label.lower().replace(" ", "_").replace(".", ""), side))
+    canvas.save(path, "PNG")
+    return path
+
+
 def main(argv=None):
     argv = list(sys.argv[1:] if argv is None else argv)
     scale = 3
     if "--scale" in argv:
         scale = int(argv[argv.index("--scale") + 1])
     os.makedirs(OUT_DIR, exist_ok=True)
+    if "--asset" in argv:
+        label = argv[argv.index("--asset") + 1].upper()
+        sheet, columns = per_asset_sheet(label, scale)
+        print("%s sheet %dx: %s" % (label, scale, os.path.relpath(sheet, ROOT)))
+        print("  columns: " + " | ".join(columns))
+        for side in ["before"] + ["r18_" + text.split()[1] for text, _p, _c in R18_CANDIDATES.get(label, [])
+                                  ] + ["after"]:
+            print("  frame:      " + os.path.relpath(per_asset_frame(label, side, scale_max=scale + 1), ROOT))
+        return 0
     sheet, rows = before_after_sheet(scale)
     cycle = zeus_cycle(scale)
     before_frame = frame("before", scale)

@@ -935,16 +935,17 @@ def style_b_figures():
                       "beard": 0, "accessory": None, "face_light": True},
         },
         {
-            # Queue row cand_r18_ouranos_ow: the old man on the high street (Urien, Ouranos).
+            # Queue row cand_r18_ouranos_ow: the old man on the high street (Urien, Ouranos). Hand authored as a
+            # whole cell, not through the parametric body: see the OLD_MAN_DOWN block below for the tone roles, the
+            # three age carriers, the row plan and the staff decision. Palette is the queue row's, unchanged:
+            # southampton sp0, $00 grey, $0F ink, $30 white.
             "id": "ouranos_ow24",
             "label": "OURANOS",
             "kind": "stand",
             "ground": "southampton sp0 {0, 15, 48}",
             "palette": old,
-            # Light trousers, because his ground is a grey street: measured, the grey mid entry on the street entry
-            # is the same value, and mid trousers would be an invisible pair of legs where he stands.
-            "build": {"torso_half": 4, "arm_w": 1, "hair": "bald", "leg_w": 2, "boot_w": 3,
-                      "beard": 4, "accessory": None, "leg_tone": "l"},
+            "grid": "OLD_MAN_DOWN",
+            "build": {},
         },
     ]
 
@@ -1250,6 +1251,151 @@ def _tall_accessory(grid, build, mirror=False):
             put(14, y, "l")
 
 
+# ================================================================================================================
+# THE OLD MAN ON THE HIGH STREET, ONE HAND AUTHORED CELL.
+#
+# Card t_760a7325. The queue row cand_r18_ouranos_ow (data/sprite_redraw_queue.json) asks for a 16 x 24 stander in
+# the southampton sp0 entries: grey $00, ink $0F, white $30. He was drawn first as a seventh figure through the same
+# parametric body as Zeus and the sailors, and the eye critic named the result on 2026-10-27: "OURANOS is the same
+# puppet in gray". The measurement agreed with it. That body gives every figure a LIGHT torso, and a white beard on
+# a white torso is not a beard, it is a bib: the two shapes share an entry and only the ink between them says where
+# one ends.
+#
+# So the tone ROLES are swapped for this one figure and nothing else:
+#
+#   head, hair and beard   the white entry, so the hair, the bald crown and the beard are one bright mass
+#   the long coat          the grey entry, so the white beard is read against a darker field rather than a lighter
+#   trousers               white again, because the walkable street is the two dark entries (card t_454c1876) and
+#                          white is the one entry that stands off it
+#   ink                    the outline, the eyes, the arm sockets, the cuffs, the hem, the jaw corners
+#
+# Age is carried by three things that survive a CRT and a 1x read, which is what the card asked for, and none of
+# them is facial detail:
+#
+#   posture   the coat's shoulder line is on row 8, one row under the jaw, and the beard covers the neck, so the
+#             head sits BETWEEN the shoulders instead of on a neck: no neck at all, which is the cheapest stoop a
+#             front view can draw. The knees are bent and the feet are close (rows 18 to 22 zigzag in one column
+#             each), which is a stance no young figure in this cast uses.
+#   hair      a bald crown (white over the whole skull, no hairline drawn) with a beard that is wider than the jaw
+#             at row 7 and tapers to a two pixel point on row 14: measured, the beard runs 9 rows below the jaw and
+#             is 51 white pixels of the cell's 384, so it is the largest single shape on the figure and cannot
+#             disappear at 1x.
+#   outline   the beard is separated from the coat by ink down both its sides, and the ink sits where the rest of the
+#             cast puts tone: the two jaw corners, the beard's two flanks, both arm sockets, both cuffs and the hem.
+#             Measured, that is 112 ink pixels of 280 drawn (40.0%). It is NOT the heaviest in the cast (Konrad is
+#             41.3%, Percy 48.8%) and the claim is not that it is: the weight is concentrated in the head, which is
+#             where a reader looks for the face, and the body is left as flat grey coat.
+#
+# The row plan is the shared one, so he stands in the same register as the rest of the cast: head rows 1 to 6, jaw
+# 6, beard 6 to 14, shoulders 8, coat 8 to 17, hem 17, trousers 18 to 20, boots 21 and 22, and an empty ring at
+# rows 0 and 23 for the outline pass. The eye row is 4, the same row every other figure's eyes are on.
+#
+# WHAT IS DELIBERATELY NOT HERE. No staff. The R18 row leaves the question open ("whether the staff survives a 3
+# colour cell") and the answer this card gives is no, for two measured reasons: a shaft needs its own column and
+# with the coat at cols 2 to 13 and the outline ring at 1 and 14 there is no column left inside the safe area, and
+# Percy already owns the "holds a thing beside him" silhouette in this cast (his trident is column 14), so a second
+# prop would read as a party of two carriers rather than one old man. The card names posture, hair and outline
+# weight, and this is drawn to those three.
+#
+# Codes, as everywhere in this file: k ink, l white, m grey, . empty. Nothing is drawn on the border ring; the
+# outline pass fills it, and _outline_leaks() refuses a cell where a drawn pixel has no line.
+# ================================================================================================================
+
+OLD_MAN_DOWN = (
+    "................",   # 0  the outline ring
+    ".....llllll.....",   # 1  bald crown
+    "....llllllll....",   # 2
+    "....llllllll....",   # 3
+    "....llkllkll....",   # 4  eyes, the shared eye row
+    "....llllllll....",   # 5
+    "...kllllllllk...",   # 6  jaw corners inked, the moustache between them
+    "..kllllllllllk..",   # 7  the beard at its widest: two pixels past the jaw on each side
+    "..mkllllllllkm..",   # 8  the coat's shoulders, one row under the jaw
+    "..mkllllllllkm..",   # 9
+    "..mkllllllllkm..",   # 10
+    "..mmkllllllkmm..",   # 11
+    "..mmkllllllkmm..",   # 12
+    "..mmmkllllkmmm..",   # 13
+    "..mmmmkllkmmmm..",   # 14 the beard's point
+    "..mmkmmmmmmkmm..",   # 15 the arm sockets
+    "..kkkmmmmmmkkk..",   # 16 the cuffs
+    "..kkkkkkkkkkkk..",   # 17 the hem
+    ".....ll..ll.....",   # 18 trousers, close feet
+    ".....ll..ll.....",   # 19
+    "....ll....ll....",   # 20 the knees bend out
+    "...mmmm..mmmm...",   # 21 boots
+    "...mmmm..mmmm...",   # 22
+    "................",   # 23 the outline ring
+)
+
+# The rows the mechanical shade pass is allowed to touch: the head and the beard. Each row's rightmost white pixel
+# becomes the mid entry, which is direction B's "the last pixel of every run is the shadow", applied to a figure
+# whose light shape is the head rather than the torso.
+OLD_MAN_SHADE_ROWS = range(1, 15)
+
+
+def old_man_frame(spec):
+    """The old man's cell: the authored grid, the shade pass, then the outline pass."""
+    grid = Grid(TALL_W, TALL_H)
+    for y, row in enumerate(OLD_MAN_DOWN):
+        if len(row) != TALL_W:
+            raise SystemExit("OLD_MAN_DOWN row %d is %d wide, not %d" % (y, len(row), TALL_W))
+        grid.text(y, row)
+    for y in OLD_MAN_SHADE_ROWS:
+        rightmost = None
+        for x in range(TALL_W):
+            if grid.get(x, y) == "l" and grid.get(x + 1, y) in ("k", None):
+                rightmost = x
+        if rightmost is not None:
+            grid.put(rightmost, y, "m")
+    grid.outline("k")
+    return grid
+
+
+def old_man_read(grid):
+    """The three claims the card makes about him, measured on the cell that ships, so they cannot rot.
+
+    Each rule is a number this function returns and a threshold build_tall() enforces, because a claim in a comment
+    is not a check:
+
+      beard_rows     the beard has to reach below the jaw, or it is a moustache. The jaw is row 6 and the beard's
+                     point is row 14, so 9 rows are measured from row 6 down.
+      head_vs_body   the head has to be narrower than the shoulders by at least two columns, or the figure is a
+                     chibi: direction B puts Zeus at 40 px with a head of a third, and this cell has to obey it.
+      ink_share      the outline weight: ink pixels as a share of drawn pixels. The card asks age to read through
+                     outline weight, so the number is reported rather than assumed.
+    """
+    jaw_row = 6
+    hem_row = 17
+    head_rows = range(1, jaw_row)      # the jaw row carries the beard's ink corners, so it is not head width
+    head_w = 0
+    for y in head_rows:
+        cols = [x for x in range(TALL_W) if grid.get(x, y) is not None]
+        if cols:
+            head_w = max(head_w, max(cols) - min(cols) + 1)
+    head_h = len(head_rows)
+    shoulder_cols = [x for x in range(TALL_W) if grid.get(x, 8) is not None]
+    shoulder_w = (max(shoulder_cols) - min(shoulder_cols) + 1) if shoulder_cols else 0
+    # The beard is the white above the hem: the trousers are white as well, so the scan stops at the coat's bottom
+    # or the measurement counts a pair of trousers as beard.
+    beard = [(x, y) for y in range(jaw_row, hem_row + 1) for x in range(TALL_W) if grid.get(x, y) == "l"]
+    beard_rows = (max(y for _x, y in beard) - jaw_row + 1) if beard else 0
+    drawn = sum(1 for (x, y), code in grid.px.items() if code is not None)
+    inked = sum(1 for (x, y), code in grid.px.items() if code == "k")
+    return {
+        "jaw_row": jaw_row,
+        "head_w": head_w,
+        "head_h": head_h,
+        "shoulder_w": shoulder_w,
+        "head_narrower_than_shoulders_by": shoulder_w - head_w,
+        "beard_rows": beard_rows,
+        "beard_px": len(beard),
+        "drawn_px": drawn,
+        "ink_px": inked,
+        "ink_share": round(100.0 * inked / drawn, 1) if drawn else 0.0,
+    }
+
+
 def tall_frame(spec, view, walk, accessory=True, mirror=False):
     """One frame, in the order direction B needs it: head, body, mirror, shade, seams, prop, outline.
 
@@ -1257,7 +1403,13 @@ def tall_frame(spec, view, walk, accessory=True, mirror=False):
     drawing, so a left facing frame has to be shaded after it is flipped or its shadow lands on the wrong side and
     the light direction check measures the flip rather than the art. That is also why the sheet's eight directions
     cost four drawings and not eight.
+
+    Two figures do not come through this path: the old man is hand authored as a whole cell (OLD_MAN_DOWN below),
+    because his read depends on which tone each shape is given, not only on its outline, and the shared body
+    routine gives every figure a light torso.
     """
+    if spec.get("grid") == "OLD_MAN_DOWN" and view == "down":
+        return old_man_frame(spec)
     build = spec["build"]
     grid = Grid(TALL_W, TALL_H)
     _tall_head(grid, view, build)
@@ -1467,6 +1619,22 @@ def build_tall(root, out_report=None):
             "silhouette_width_frame0": _silhouette(body_only),
             "face_skeleton_frame0": _face_skeleton(frames[0]),
         }
+        if spec.get("grid") == "OLD_MAN_DOWN":
+            # Card t_760a7325: the three claims the card makes about him, measured and enforced here, so a later
+            # edit to the grid cannot quietly turn him back into a man of no particular age.
+            read = old_man_read(frames[0])
+            if read["head_narrower_than_shoulders_by"] < 2:
+                raise SystemExit("%s: the head is %d wide against shoulders of %d, so he reads as a chibi; direction B"
+                                 " puts the head at a third of the figure" % (spec["id"], read["head_w"],
+                                                                              read["shoulder_w"]))
+            if read["beard_rows"] < 8:
+                raise SystemExit("%s: the beard only reaches %d rows below the jaw, which is a moustache and not the"
+                                 " shape that carries the age" % (spec["id"], read["beard_rows"]))
+            if read["ink_share"] < 25.0:
+                raise SystemExit("%s: ink is %.1f%% of the drawn pixels, which is lighter than the rest of the cast,"
+                                 " and the card asks age to read through outline weight" % (spec["id"],
+                                                                                           read["ink_share"]))
+            entry["old_man"] = read
         report["figures"].append(entry)
         rows.append((spec["label"], image))
 
@@ -1528,6 +1696,13 @@ def main(argv=None):
                   % (entry["id"], entry["frames"], entry["worst_tile_colours"], entry["ink_share_frame0"],
                      entry["light_correct"], entry["light_wrong"], entry["orphans"],
                      entry["outline_leaks"], entry["dither_patches"], entry["silhouette_width_frame0"]))
+            if "old_man" in entry:
+                read = entry["old_man"]
+                print("      old man read: beard %d rows / %d px, head %dx%d against shoulders %d (narrower by %d),"
+                      " ink %d px (%.1f%% of %d drawn)"
+                      % (read["beard_rows"], read["beard_px"], read["head_w"], read["head_h"], read["shoulder_w"],
+                         read["head_narrower_than_shoulders_by"], read["ink_px"], read["ink_share"],
+                         read["drawn_px"]))
         print("contact sheet 4x: " + os.path.join(root, report["contact_sheet"]))
         return 0
     report, sheet_path = build(root)
