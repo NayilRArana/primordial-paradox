@@ -70,9 +70,10 @@ checker reads. That keeps the unit gate runnable on a machine with no GPU window
 2. Find Igor under that runtime, with the OS and architecture subfolders.
 3. If Igor, the runtime or the licence is missing, print one clear plain sentence saying GameMaker is not installed
    or not logged in yet, and exit with a non-zero code without opening anything.
-4. Otherwise run the Run command with the project path quoted, a cache dir inside the project's build folder, and the
-   log tee'd to build\last-build.log. No visible console window for Nayil: the script is started hidden and the game
-   window is the only thing he sees.
+4. Otherwise run Igor with the project path quoted, a cache dir inside the project's build folder, and the log tee'd to
+   build\last-build.log. No visible console window for Nayil: the script is started hidden and the game window is the
+   only thing he sees. `-Compile` runs the build and stops without launching anything; that is the shape the push gate
+   uses (card `t_9d9b5b1d`), because Run would keep the step waiting on the game window.
 5. On failure, print the last 20 lines of the Igor output and the path to the full log.
 
 Verification status: VERIFIED 2026-10-25. GameMaker LTS2026 is installed on this PC (card t_4848159e measured it):
@@ -81,10 +82,12 @@ Verification status: VERIFIED 2026-10-25. GameMaker LTS2026 is installed on this
 `bin\igor\windows\x64\`, and the licence folder `tools\run.ps1` resolves is
 `%APPDATA%\GameMakerStudio2-LTS2026` (the product folder that holds `um.json`, because the LTS line keeps no named
 account folder). Measured that day: `tools\run.ps1 -SkipChecks -Compile` returned 0 with `Igor complete.` and wrote
-`output\PrimordialParadox\PrimordialParadox.win`, and `python tools\integration_build.py` printed
-`BUILD PASS: Igor compiled the project and launched the game`, exit 0.
+`output\PrimordialParadox\PrimordialParadox.win`. The gate step's own pass line was rewritten on 2026-10-25 (card
+`t_9d9b5b1d`) and now reads `BUILD PASS: Igor compiled the project (compile mode, the game was not run)`.
 
 One measured detail for the Run command: Igor WAITS for the launched game to exit, so `-- Windows Run` does not return
-while the window is open, and `tools\integration_build.py` (which calls run.ps1 without `-Compile`) therefore blocks
-until the game closes. The window title is `Primordial Paradox` and the process is `Runner.exe`. A command line check
-that only wants "did it compile and launch" can either pass `-Compile` or close the window when it is up.
+while the window is open. The window title is `Primordial Paradox` and the process is `Runner.exe`, and only a WM_CLOSE
+lets Igor finish. That is why the gate step asks for `-Compile` and not for a launch: a step that runs on every push
+cannot wait on a window nobody in CI will close. `-Compile` writes the same `.win`, prints `Igor complete.` and its
+`Stats : GMA` line, and returns in seconds on a warm cache (measured 3.6 s and 4.5 s on 2026-10-25), which is the
+evidence the gate reads. A launch check, when one is wanted, is a hand run: `tools\run.ps1` with no flags.

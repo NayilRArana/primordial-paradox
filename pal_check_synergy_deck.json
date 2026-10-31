@@ -1,0 +1,1198 @@
+{
+  "audit": {
+    "at": null,
+    "background": "output/bg_battle_deck_night_frame.png",
+    "frame": [
+      null,
+      null
+    ],
+    "sprites": [
+      "game/sprites_src/chars/percy_battle.png"
+    ]
+  },
+  "backdrop": "$0F",
+  "background": "output/bg_battle_deck_night_frame.png",
+  "exit_code": 1,
+  "fail_count": 20,
+  "gate": false,
+  "ok": false,
+  "problems": [
+    {
+      "colour": "#f0d0b0",
+      "detail": "sprite colour #f0d0b0 ($36) is not in any of the scene's 4 sprite palettes",
+      "frame": [
+        0,
+        0,
+        24,
+        32
+      ],
+      "rule": "set_member",
+      "sprite": "game/sprites_src/chars/percy_battle.png"
+    },
+    {
+      "colour": "#fca044",
+      "detail": "sprite colour #fca044 ($27) is not in any of the scene's 4 sprite palettes",
+      "frame": [
+        0,
+        0,
+        24,
+        32
+      ],
+      "rule": "set_member",
+      "sprite": "game/sprites_src/chars/percy_battle.png"
+    },
+    {
+      "body": "$02",
+      "detail": "the frame's body vs ground at 116,192: body $02 (row 0) and ground $0F (row 0) are 0 luminance row(s) apart, RULE 0 point 2 wants at least 2",
+      "frame": [
+        0,
+        0,
+        24,
+        32
+      ],
+      "ground": "$0F",
+      "rows": 0,
+      "rule": "body_ground",
+      "sprite": "game/sprites_src/chars/percy_battle.png"
+    },
+    {
+      "colour": "#f0d0b0",
+      "detail": "sprite colour #f0d0b0 ($36) is not in any of the scene's 4 sprite palettes",
+      "frame": [
+        24,
+        0,
+        48,
+        32
+      ],
+      "rule": "set_member",
+      "sprite": "game/sprites_src/chars/percy_battle.png"
+    },
+    {
+      "colour": "#fca044",
+      "detail": "sprite colour #fca044 ($27) is not in any of the scene's 4 sprite palettes",
+      "frame": [
+        24,
+        0,
+        48,
+        32
+      ],
+      "rule": "set_member",
+      "sprite": "game/sprites_src/chars/percy_battle.png"
+    },
+    {
+      "body": "$02",
+      "detail": "the frame's body vs ground at 116,192: body $02 (row 0) and ground $0F (row 0) are 0 luminance row(s) apart, RULE 0 point 2 wants at least 2",
+      "frame": [
+        24,
+        0,
+        48,
+        32
+      ],
+      "ground": "$0F",
+      "rows": 0,
+      "rule": "body_ground",
+      "sprite": "game/sprites_src/chars/percy_battle.png"
+    },
+    {
+      "colour": "#f0d0b0",
+      "detail": "sprite colour #f0d0b0 ($36) is not in any of the scene's 4 sprite palettes",
+      "frame": [
+        48,
+        0,
+        72,
+        32
+      ],
+      "rule": "set_member",
+      "sprite": "game/sprites_src/chars/percy_battle.png"
+    },
+    {
+      "colour": "#fca044",
+      "detail": "sprite colour #fca044 ($27) is not in any of the scene's 4 sprite palettes",
+      "frame": [
+        48,
+        0,
+        72,
+        32
+      ],
+      "rule": "set_member",
+      "sprite": "game/sprites_src/chars/percy_battle.png"
+    },
+    {
+      "body": "$02",
+      "detail": "the frame's body vs ground at 116,192: body $02 (row 0) and ground $0F (row 0) are 0 luminance row(s) apart, RULE 0 point 2 wants at least 2",
+      "frame": [
+        48,
+        0,
+        72,
+        32
+      ],
+      "ground": "$0F",
+      "rows": 0,
+      "rule": "body_ground",
+      "sprite": "game/sprites_src/chars/percy_battle.png"
+    },
+    {
+      "colour": "#f0d0b0",
+      "detail": "sprite colour #f0d0b0 ($36) is not in any of the scene's 4 sprite palettes",
+      "frame": [
+        72,
+        0,
+        96,
+        32
+      ],
+      "rule": "set_member",
+      "sprite": "game/sprites_src/chars/percy_battle.png"
+    },
+    {
+      "colour": "#f87858",
+      "detail": "sprite colour #f87858 ($26) is not in any of the scene's 4 sprite palettes",
+      "frame": [
+        72,
+        0,
+        96,
+        32
+      ],
+      "rule": "set_member",
+      "sprite": "game/sprites_src/chars/percy_battle.png"
+    },
+    {
+      "body": "$02",
+      "detail": "the frame's body vs ground at 116,192: body $02 (row 0) and ground $0F (row 0) are 0 luminance row(s) apart, RULE 0 point 2 wants at least 2",
+      "frame": [
+        72,
+        0,
+        96,
+        32
+      ],
+      "ground": "$0F",
+      "rows": 0,
+      "rule": "body_ground",
+      "sprite": "game/sprites_src/chars/percy_battle.png"
+    },
+    {
+      "colour": "#f0d0b0",
+      "detail": "sprite colour #f0d0b0 ($36) is not in any of the scene's 4 sprite palettes",
+      "frame": [
+        96,
+        0,
+        120,
+        32
+      ],
+      "rule": "set_member",
+      "sprite": "game/sprites_src/chars/percy_battle.png"
+    },
+    {
+      "colour": "#fca044",
+      "detail": "sprite colour #fca044 ($27) is not in any of the scene's 4 sprite palettes",
+      "frame": [
+        96,
+        0,
+        120,
+        32
+      ],
+      "rule": "set_member",
+      "sprite": "game/sprites_src/chars/percy_battle.png"
+    },
+    {
+      "colour": "#f87858",
+      "detail": "sprite colour #f87858 ($26) is not in any of the scene's 4 sprite palettes",
+      "frame": [
+        96,
+        0,
+        120,
+        32
+      ],
+      "rule": "set_member",
+      "sprite": "game/sprites_src/chars/percy_battle.png"
+    },
+    {
+      "body": "$02",
+      "detail": "the frame's body vs ground at 116,192: body $02 (row 0) and ground $0F (row 0) are 0 luminance row(s) apart, RULE 0 point 2 wants at least 2",
+      "frame": [
+        96,
+        0,
+        120,
+        32
+      ],
+      "ground": "$0F",
+      "rows": 0,
+      "rule": "body_ground",
+      "sprite": "game/sprites_src/chars/percy_battle.png"
+    },
+    {
+      "colour": "#f0d0b0",
+      "detail": "sprite colour #f0d0b0 ($36) is not in any of the scene's 4 sprite palettes",
+      "frame": [
+        120,
+        0,
+        144,
+        32
+      ],
+      "rule": "set_member",
+      "sprite": "game/sprites_src/chars/percy_battle.png"
+    },
+    {
+      "body": "$02",
+      "detail": "the frame's body vs ground at 116,192: body $02 (row 0) and ground $0F (row 0) are 0 luminance row(s) apart, RULE 0 point 2 wants at least 2",
+      "frame": [
+        120,
+        0,
+        144,
+        32
+      ],
+      "ground": "$0F",
+      "rows": 0,
+      "rule": "body_ground",
+      "sprite": "game/sprites_src/chars/percy_battle.png"
+    },
+    {
+      "colour": "#f0d0b0",
+      "detail": "sprite colour #f0d0b0 ($36) is not in any of the scene's 4 sprite palettes",
+      "frame": [
+        144,
+        0,
+        168,
+        32
+      ],
+      "rule": "set_member",
+      "sprite": "game/sprites_src/chars/percy_battle.png"
+    },
+    {
+      "body": "$02",
+      "detail": "the frame's body vs ground at 116,192: body $02 (row 0) and ground $0F (row 0) are 0 luminance row(s) apart, RULE 0 point 2 wants at least 2",
+      "frame": [
+        144,
+        0,
+        168,
+        32
+      ],
+      "ground": "$0F",
+      "rows": 0,
+      "rule": "body_ground",
+      "sprite": "game/sprites_src/chars/percy_battle.png"
+    }
+  ],
+  "rules": {
+    "background_area": "at most 3 colours besides the backdrop per 16x16 area",
+    "body_ground": "body and ground at least 2 luminance rows apart",
+    "palette_count": "at most 4 background and 4 sprite palettes per frame",
+    "same_hue_row": "body and ground not the same hue family on the same row",
+    "set_member": "every drawn colour is in the scene's palette set",
+    "sprite_tile": "at most 3 colours per 8x8 sprite tile",
+    "white_blob": "no near white body (0.60) on a light ground (0.25)"
+  },
+  "scene": "battle_deck_night",
+  "sprites": [
+    {
+      "frame": [
+        24,
+        32
+      ],
+      "frame_from": "data\\sprite_redraw_queue.json (sprite_percy_battle)",
+      "frames": [
+        {
+          "at": [
+            116,
+            192
+          ],
+          "body": "$02",
+          "body_hue": "hue_2",
+          "body_luminance": 0.036,
+          "body_row": 0,
+          "box": [
+            0,
+            0,
+            24,
+            32
+          ],
+          "colours": [
+            {
+              "entry": "$0F",
+              "hex": "#000000",
+              "on_master": true,
+              "pixels": 150
+            },
+            {
+              "entry": "$02",
+              "hex": "#0000bc",
+              "on_master": true,
+              "pixels": 129
+            },
+            {
+              "entry": "$36",
+              "hex": "#f0d0b0",
+              "on_master": true,
+              "pixels": 61
+            },
+            {
+              "entry": "$10",
+              "hex": "#bcbcbc",
+              "on_master": true,
+              "pixels": 53
+            },
+            {
+              "entry": "$17",
+              "hex": "#e45c10",
+              "on_master": true,
+              "pixels": 33
+            },
+            {
+              "entry": "$30",
+              "hex": "#fcfcfc",
+              "on_master": true,
+              "pixels": 12
+            },
+            {
+              "entry": "$27",
+              "hex": "#fca044",
+              "on_master": true,
+              "pixels": 8
+            },
+            {
+              "entry": "$12",
+              "hex": "#0058f8",
+              "on_master": true,
+              "pixels": 2
+            }
+          ],
+          "drawn": 448,
+          "pairs": [
+            {
+              "body": "$10",
+              "body_hue": "grey",
+              "body_row": 1,
+              "contrast": 11.06,
+              "fails": [
+                "body_ground"
+              ],
+              "ground": "$0F",
+              "ground_hue": "grey",
+              "ground_pixels": 768,
+              "ground_row": 0,
+              "ok": false,
+              "rows_apart": 1,
+              "sprite_palette": 0
+            },
+            {
+              "body": "$17",
+              "body_hue": "hue_7",
+              "body_row": 1,
+              "contrast": 5.84,
+              "fails": [
+                "body_ground"
+              ],
+              "ground": "$0F",
+              "ground_hue": "grey",
+              "ground_pixels": 768,
+              "ground_row": 0,
+              "ok": false,
+              "rows_apart": 1,
+              "sprite_palette": 1
+            },
+            {
+              "body": "$12",
+              "body_hue": "hue_2",
+              "body_row": 1,
+              "contrast": 3.75,
+              "fails": [
+                "body_ground"
+              ],
+              "ground": "$0F",
+              "ground_hue": "grey",
+              "ground_pixels": 768,
+              "ground_row": 0,
+              "ok": false,
+              "rows_apart": 1,
+              "sprite_palette": 2
+            },
+            {
+              "body": "$11",
+              "body_hue": "hue_1",
+              "body_row": 1,
+              "contrast": 5.04,
+              "fails": [
+                "body_ground"
+              ],
+              "ground": "$0F",
+              "ground_hue": "grey",
+              "ground_pixels": 768,
+              "ground_row": 0,
+              "ok": false,
+              "rows_apart": 1,
+              "sprite_palette": 3
+            }
+          ],
+          "palettes_that_fit": []
+        },
+        {
+          "at": [
+            116,
+            192
+          ],
+          "body": "$02",
+          "body_hue": "hue_2",
+          "body_luminance": 0.036,
+          "body_row": 0,
+          "box": [
+            24,
+            0,
+            48,
+            32
+          ],
+          "colours": [
+            {
+              "entry": "$0F",
+              "hex": "#000000",
+              "on_master": true,
+              "pixels": 156
+            },
+            {
+              "entry": "$02",
+              "hex": "#0000bc",
+              "on_master": true,
+              "pixels": 121
+            },
+            {
+              "entry": "$36",
+              "hex": "#f0d0b0",
+              "on_master": true,
+              "pixels": 54
+            },
+            {
+              "entry": "$10",
+              "hex": "#bcbcbc",
+              "on_master": true,
+              "pixels": 47
+            },
+            {
+              "entry": "$17",
+              "hex": "#e45c10",
+              "on_master": true,
+              "pixels": 33
+            },
+            {
+              "entry": "$12",
+              "hex": "#0058f8",
+              "on_master": true,
+              "pixels": 23
+            },
+            {
+              "entry": "$30",
+              "hex": "#fcfcfc",
+              "on_master": true,
+              "pixels": 12
+            },
+            {
+              "entry": "$27",
+              "hex": "#fca044",
+              "on_master": true,
+              "pixels": 8
+            }
+          ],
+          "drawn": 454,
+          "pairs": [
+            {
+              "body": "$10",
+              "body_hue": "grey",
+              "body_row": 1,
+              "contrast": 11.06,
+              "fails": [
+                "body_ground"
+              ],
+              "ground": "$0F",
+              "ground_hue": "grey",
+              "ground_pixels": 768,
+              "ground_row": 0,
+              "ok": false,
+              "rows_apart": 1,
+              "sprite_palette": 0
+            },
+            {
+              "body": "$17",
+              "body_hue": "hue_7",
+              "body_row": 1,
+              "contrast": 5.84,
+              "fails": [
+                "body_ground"
+              ],
+              "ground": "$0F",
+              "ground_hue": "grey",
+              "ground_pixels": 768,
+              "ground_row": 0,
+              "ok": false,
+              "rows_apart": 1,
+              "sprite_palette": 1
+            },
+            {
+              "body": "$12",
+              "body_hue": "hue_2",
+              "body_row": 1,
+              "contrast": 3.75,
+              "fails": [
+                "body_ground"
+              ],
+              "ground": "$0F",
+              "ground_hue": "grey",
+              "ground_pixels": 768,
+              "ground_row": 0,
+              "ok": false,
+              "rows_apart": 1,
+              "sprite_palette": 2
+            },
+            {
+              "body": "$11",
+              "body_hue": "hue_1",
+              "body_row": 1,
+              "contrast": 5.04,
+              "fails": [
+                "body_ground"
+              ],
+              "ground": "$0F",
+              "ground_hue": "grey",
+              "ground_pixels": 768,
+              "ground_row": 0,
+              "ok": false,
+              "rows_apart": 1,
+              "sprite_palette": 3
+            }
+          ],
+          "palettes_that_fit": []
+        },
+        {
+          "at": [
+            116,
+            192
+          ],
+          "body": "$02",
+          "body_hue": "hue_2",
+          "body_luminance": 0.036,
+          "body_row": 0,
+          "box": [
+            48,
+            0,
+            72,
+            32
+          ],
+          "colours": [
+            {
+              "entry": "$02",
+              "hex": "#0000bc",
+              "on_master": true,
+              "pixels": 137
+            },
+            {
+              "entry": "$0F",
+              "hex": "#000000",
+              "on_master": true,
+              "pixels": 125
+            },
+            {
+              "entry": "$10",
+              "hex": "#bcbcbc",
+              "on_master": true,
+              "pixels": 55
+            },
+            {
+              "entry": "$17",
+              "hex": "#e45c10",
+              "on_master": true,
+              "pixels": 47
+            },
+            {
+              "entry": "$36",
+              "hex": "#f0d0b0",
+              "on_master": true,
+              "pixels": 26
+            },
+            {
+              "entry": "$27",
+              "hex": "#fca044",
+              "on_master": true,
+              "pixels": 5
+            },
+            {
+              "entry": "$12",
+              "hex": "#0058f8",
+              "on_master": true,
+              "pixels": 3
+            }
+          ],
+          "drawn": 398,
+          "pairs": [
+            {
+              "body": "$10",
+              "body_hue": "grey",
+              "body_row": 1,
+              "contrast": 11.06,
+              "fails": [
+                "body_ground"
+              ],
+              "ground": "$0F",
+              "ground_hue": "grey",
+              "ground_pixels": 768,
+              "ground_row": 0,
+              "ok": false,
+              "rows_apart": 1,
+              "sprite_palette": 0
+            },
+            {
+              "body": "$17",
+              "body_hue": "hue_7",
+              "body_row": 1,
+              "contrast": 5.84,
+              "fails": [
+                "body_ground"
+              ],
+              "ground": "$0F",
+              "ground_hue": "grey",
+              "ground_pixels": 768,
+              "ground_row": 0,
+              "ok": false,
+              "rows_apart": 1,
+              "sprite_palette": 1
+            },
+            {
+              "body": "$12",
+              "body_hue": "hue_2",
+              "body_row": 1,
+              "contrast": 3.75,
+              "fails": [
+                "body_ground"
+              ],
+              "ground": "$0F",
+              "ground_hue": "grey",
+              "ground_pixels": 768,
+              "ground_row": 0,
+              "ok": false,
+              "rows_apart": 1,
+              "sprite_palette": 2
+            },
+            {
+              "body": "$11",
+              "body_hue": "hue_1",
+              "body_row": 1,
+              "contrast": 5.04,
+              "fails": [
+                "body_ground"
+              ],
+              "ground": "$0F",
+              "ground_hue": "grey",
+              "ground_pixels": 768,
+              "ground_row": 0,
+              "ok": false,
+              "rows_apart": 1,
+              "sprite_palette": 3
+            }
+          ],
+          "palettes_that_fit": []
+        },
+        {
+          "at": [
+            116,
+            192
+          ],
+          "body": "$02",
+          "body_hue": "hue_2",
+          "body_luminance": 0.036,
+          "body_row": 0,
+          "box": [
+            72,
+            0,
+            96,
+            32
+          ],
+          "colours": [
+            {
+              "entry": "$02",
+              "hex": "#0000bc",
+              "on_master": true,
+              "pixels": 144
+            },
+            {
+              "entry": "$0F",
+              "hex": "#000000",
+              "on_master": true,
+              "pixels": 127
+            },
+            {
+              "entry": "$10",
+              "hex": "#bcbcbc",
+              "on_master": true,
+              "pixels": 91
+            },
+            {
+              "entry": "$17",
+              "hex": "#e45c10",
+              "on_master": true,
+              "pixels": 42
+            },
+            {
+              "entry": "$36",
+              "hex": "#f0d0b0",
+              "on_master": true,
+              "pixels": 9
+            },
+            {
+              "entry": "$26",
+              "hex": "#f87858",
+              "on_master": true,
+              "pixels": 2
+            }
+          ],
+          "drawn": 415,
+          "pairs": [
+            {
+              "body": "$10",
+              "body_hue": "grey",
+              "body_row": 1,
+              "contrast": 11.06,
+              "fails": [
+                "body_ground"
+              ],
+              "ground": "$0F",
+              "ground_hue": "grey",
+              "ground_pixels": 768,
+              "ground_row": 0,
+              "ok": false,
+              "rows_apart": 1,
+              "sprite_palette": 0
+            },
+            {
+              "body": "$17",
+              "body_hue": "hue_7",
+              "body_row": 1,
+              "contrast": 5.84,
+              "fails": [
+                "body_ground"
+              ],
+              "ground": "$0F",
+              "ground_hue": "grey",
+              "ground_pixels": 768,
+              "ground_row": 0,
+              "ok": false,
+              "rows_apart": 1,
+              "sprite_palette": 1
+            },
+            {
+              "body": "$12",
+              "body_hue": "hue_2",
+              "body_row": 1,
+              "contrast": 3.75,
+              "fails": [
+                "body_ground"
+              ],
+              "ground": "$0F",
+              "ground_hue": "grey",
+              "ground_pixels": 768,
+              "ground_row": 0,
+              "ok": false,
+              "rows_apart": 1,
+              "sprite_palette": 2
+            },
+            {
+              "body": "$11",
+              "body_hue": "hue_1",
+              "body_row": 1,
+              "contrast": 5.04,
+              "fails": [
+                "body_ground"
+              ],
+              "ground": "$0F",
+              "ground_hue": "grey",
+              "ground_pixels": 768,
+              "ground_row": 0,
+              "ok": false,
+              "rows_apart": 1,
+              "sprite_palette": 3
+            }
+          ],
+          "palettes_that_fit": []
+        },
+        {
+          "at": [
+            116,
+            192
+          ],
+          "body": "$02",
+          "body_hue": "hue_2",
+          "body_luminance": 0.036,
+          "body_row": 0,
+          "box": [
+            96,
+            0,
+            120,
+            32
+          ],
+          "colours": [
+            {
+              "entry": "$0F",
+              "hex": "#000000",
+              "on_master": true,
+              "pixels": 141
+            },
+            {
+              "entry": "$02",
+              "hex": "#0000bc",
+              "on_master": true,
+              "pixels": 138
+            },
+            {
+              "entry": "$10",
+              "hex": "#bcbcbc",
+              "on_master": true,
+              "pixels": 60
+            },
+            {
+              "entry": "$36",
+              "hex": "#f0d0b0",
+              "on_master": true,
+              "pixels": 48
+            },
+            {
+              "entry": "$17",
+              "hex": "#e45c10",
+              "on_master": true,
+              "pixels": 43
+            },
+            {
+              "entry": "$27",
+              "hex": "#fca044",
+              "on_master": true,
+              "pixels": 10
+            },
+            {
+              "entry": "$26",
+              "hex": "#f87858",
+              "on_master": true,
+              "pixels": 2
+            },
+            {
+              "entry": "$12",
+              "hex": "#0058f8",
+              "on_master": true,
+              "pixels": 1
+            }
+          ],
+          "drawn": 443,
+          "pairs": [
+            {
+              "body": "$10",
+              "body_hue": "grey",
+              "body_row": 1,
+              "contrast": 11.06,
+              "fails": [
+                "body_ground"
+              ],
+              "ground": "$0F",
+              "ground_hue": "grey",
+              "ground_pixels": 768,
+              "ground_row": 0,
+              "ok": false,
+              "rows_apart": 1,
+              "sprite_palette": 0
+            },
+            {
+              "body": "$17",
+              "body_hue": "hue_7",
+              "body_row": 1,
+              "contrast": 5.84,
+              "fails": [
+                "body_ground"
+              ],
+              "ground": "$0F",
+              "ground_hue": "grey",
+              "ground_pixels": 768,
+              "ground_row": 0,
+              "ok": false,
+              "rows_apart": 1,
+              "sprite_palette": 1
+            },
+            {
+              "body": "$12",
+              "body_hue": "hue_2",
+              "body_row": 1,
+              "contrast": 3.75,
+              "fails": [
+                "body_ground"
+              ],
+              "ground": "$0F",
+              "ground_hue": "grey",
+              "ground_pixels": 768,
+              "ground_row": 0,
+              "ok": false,
+              "rows_apart": 1,
+              "sprite_palette": 2
+            },
+            {
+              "body": "$11",
+              "body_hue": "hue_1",
+              "body_row": 1,
+              "contrast": 5.04,
+              "fails": [
+                "body_ground"
+              ],
+              "ground": "$0F",
+              "ground_hue": "grey",
+              "ground_pixels": 768,
+              "ground_row": 0,
+              "ok": false,
+              "rows_apart": 1,
+              "sprite_palette": 3
+            }
+          ],
+          "palettes_that_fit": []
+        },
+        {
+          "at": [
+            116,
+            192
+          ],
+          "body": "$02",
+          "body_hue": "hue_2",
+          "body_luminance": 0.036,
+          "body_row": 0,
+          "box": [
+            120,
+            0,
+            144,
+            32
+          ],
+          "colours": [
+            {
+              "entry": "$02",
+              "hex": "#0000bc",
+              "on_master": true,
+              "pixels": 122
+            },
+            {
+              "entry": "$0F",
+              "hex": "#000000",
+              "on_master": true,
+              "pixels": 116
+            },
+            {
+              "entry": "$10",
+              "hex": "#bcbcbc",
+              "on_master": true,
+              "pixels": 66
+            },
+            {
+              "entry": "$36",
+              "hex": "#f0d0b0",
+              "on_master": true,
+              "pixels": 54
+            },
+            {
+              "entry": "$17",
+              "hex": "#e45c10",
+              "on_master": true,
+              "pixels": 45
+            },
+            {
+              "entry": "$12",
+              "hex": "#0058f8",
+              "on_master": true,
+              "pixels": 5
+            },
+            {
+              "entry": "$07",
+              "hex": "#881400",
+              "on_master": true,
+              "pixels": 3
+            }
+          ],
+          "drawn": 411,
+          "pairs": [
+            {
+              "body": "$10",
+              "body_hue": "grey",
+              "body_row": 1,
+              "contrast": 11.06,
+              "fails": [
+                "body_ground"
+              ],
+              "ground": "$0F",
+              "ground_hue": "grey",
+              "ground_pixels": 768,
+              "ground_row": 0,
+              "ok": false,
+              "rows_apart": 1,
+              "sprite_palette": 0
+            },
+            {
+              "body": "$17",
+              "body_hue": "hue_7",
+              "body_row": 1,
+              "contrast": 5.84,
+              "fails": [
+                "body_ground"
+              ],
+              "ground": "$0F",
+              "ground_hue": "grey",
+              "ground_pixels": 768,
+              "ground_row": 0,
+              "ok": false,
+              "rows_apart": 1,
+              "sprite_palette": 1
+            },
+            {
+              "body": "$12",
+              "body_hue": "hue_2",
+              "body_row": 1,
+              "contrast": 3.75,
+              "fails": [
+                "body_ground"
+              ],
+              "ground": "$0F",
+              "ground_hue": "grey",
+              "ground_pixels": 768,
+              "ground_row": 0,
+              "ok": false,
+              "rows_apart": 1,
+              "sprite_palette": 2
+            },
+            {
+              "body": "$11",
+              "body_hue": "hue_1",
+              "body_row": 1,
+              "contrast": 5.04,
+              "fails": [
+                "body_ground"
+              ],
+              "ground": "$0F",
+              "ground_hue": "grey",
+              "ground_pixels": 768,
+              "ground_row": 0,
+              "ok": false,
+              "rows_apart": 1,
+              "sprite_palette": 3
+            }
+          ],
+          "palettes_that_fit": []
+        },
+        {
+          "at": [
+            116,
+            192
+          ],
+          "body": "$02",
+          "body_hue": "hue_2",
+          "body_luminance": 0.036,
+          "body_row": 0,
+          "box": [
+            144,
+            0,
+            168,
+            32
+          ],
+          "colours": [
+            {
+              "entry": "$0F",
+              "hex": "#000000",
+              "on_master": true,
+              "pixels": 92
+            },
+            {
+              "entry": "$02",
+              "hex": "#0000bc",
+              "on_master": true,
+              "pixels": 76
+            },
+            {
+              "entry": "$36",
+              "hex": "#f0d0b0",
+              "on_master": true,
+              "pixels": 38
+            },
+            {
+              "entry": "$17",
+              "hex": "#e45c10",
+              "on_master": true,
+              "pixels": 21
+            },
+            {
+              "entry": "$07",
+              "hex": "#881400",
+              "on_master": true,
+              "pixels": 20
+            }
+          ],
+          "drawn": 247,
+          "pairs": [
+            {
+              "body": "$10",
+              "body_hue": "grey",
+              "body_row": 1,
+              "contrast": 11.06,
+              "fails": [
+                "body_ground"
+              ],
+              "ground": "$0F",
+              "ground_hue": "grey",
+              "ground_pixels": 768,
+              "ground_row": 0,
+              "ok": false,
+              "rows_apart": 1,
+              "sprite_palette": 0
+            },
+            {
+              "body": "$17",
+              "body_hue": "hue_7",
+              "body_row": 1,
+              "contrast": 5.84,
+              "fails": [
+                "body_ground"
+              ],
+              "ground": "$0F",
+              "ground_hue": "grey",
+              "ground_pixels": 768,
+              "ground_row": 0,
+              "ok": false,
+              "rows_apart": 1,
+              "sprite_palette": 1
+            },
+            {
+              "body": "$12",
+              "body_hue": "hue_2",
+              "body_row": 1,
+              "contrast": 3.75,
+              "fails": [
+                "body_ground"
+              ],
+              "ground": "$0F",
+              "ground_hue": "grey",
+              "ground_pixels": 768,
+              "ground_row": 0,
+              "ok": false,
+              "rows_apart": 1,
+              "sprite_palette": 2
+            },
+            {
+              "body": "$11",
+              "body_hue": "hue_1",
+              "body_row": 1,
+              "contrast": 5.04,
+              "fails": [
+                "body_ground"
+              ],
+              "ground": "$0F",
+              "ground_hue": "grey",
+              "ground_pixels": 768,
+              "ground_row": 0,
+              "ok": false,
+              "rows_apart": 1,
+              "sprite_palette": 3
+            }
+          ],
+          "palettes_that_fit": []
+        }
+      ],
+      "path": "game/sprites_src/chars/percy_battle.png",
+      "size": [
+        168,
+        32
+      ]
+    }
+  ],
+  "tool": "palette_synergy"
+}

@@ -973,6 +973,31 @@ function pp_overworld_draw(_world) {
             show_debug_message("PP ship: wrote pp_ship_frame_3.png from the room itself at draw " + string(global.pp_ship_draws));
         }
     }
+
+    // Card WIRE-V2 capture door: with PP_WARP_SHOTS="x,y;x,y" set, from the 40th draw each listed tile gets 30 draws. At the first
+    // the walker is set on the tile and the camera follows; 15 draws later the room writes pp_warp_<n>.png from its own frame.
+    // Unset, which is every real launch, this costs one environment read per frame and does nothing.
+    var _shots = environment_get_variable(PP_WARP_SHOTS);
+    if (_shots != "") {
+        if (!variable_global_exists("pp_warp_draws")) global.pp_warp_draws = 0;
+        global.pp_warp_draws += 1;
+        var _slot = global.pp_warp_draws - 40;
+        var _tiles = string_split(_shots, ";");
+        if (_slot >= 0 && (_slot div 30) < array_length(_tiles)) {
+            var _k = _slot div 30;
+            if ((_slot mod 30) == 0) {
+                var _xy = string_split(_tiles[_k], ",");
+                _world.hero = pp_overworld_hero(real(_xy[0]), real(_xy[1]));
+                _world.enter_tx = _world.hero.tx;
+                _world.enter_ty = _world.hero.ty;
+                pp_overworld_camera_follow(_world);
+            }
+            if ((_slot mod 30) == 15) {
+                screen_save("pp_warp_" + string(_k) + ".png");
+                show_debug_message("PP warp: wrote pp_warp_" + string(_k) + ".png on tile " + _tiles[_k]);
+            }
+        }
+    }
 }
 
 // ---------------------------------------------------------------------------------------------------------------
@@ -980,6 +1005,11 @@ function pp_overworld_draw(_world) {
 // (idle, walk a, walk b) in rows of 16x16, so the frame index is direction * 3 + step. With no sheet the
 // same silhouette is drawn from blocks at the same size, which is the card's stated fallback and keeps the
 // walk cycle, the facing and the dialogue reach working before any art lands.
+
+/// Card WIRE-V2 debug doors, both unset in every real launch. PP_WARP opens the run on a map (pp_mode_overworld), PP_WARP_SHOTS
+/// is a list of tiles "x,y;x,y" the capture below stands the walker on, one saved frame each.
+#macro PP_WARP "PP_" + "WARP"
+#macro PP_WARP_SHOTS "PP_" + "WARP_SHOTS"
 
 #macro PP_HERO_SHEET "zander_ow_v2"
 #macro PP_SAILOR_SHEET "sailor_ow_v2"
