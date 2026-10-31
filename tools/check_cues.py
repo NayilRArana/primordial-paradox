@@ -7,7 +7,7 @@ It reads only:
   data/audio.json                 the cue table this card owns
   data/slice.json                 the slice's map, scene and encounter
   data/maps/all.json, data/maps/ship_sample.json, data/scenes/all.json, data/encounters/all.json
-  assets/audio/<asset>/<asset>.ogg   the file each landed cue claims
+  assets/audio/<folder>/<file>.ogg  the render each landed cue's delivered_file names
   game/scripts/pp_audio/pp_audio.gml  read only, for the crossfade macro the data mirrors
 
 It does not render, write, or play anything. Exit code 0 means every check passed.
@@ -99,7 +99,7 @@ def main() -> int:
         problems.append("data/audio.json: cues: two cues share one asset, so one file cannot be told from the other")
 
     landed = {}
-    delivered_notes = []
+    stream_names = {}
     for cue_id, row in rows.items():
         asset = row.get("asset") or ""
         path = os.path.join(root, "assets", "audio", asset, asset + ".ogg")
@@ -129,14 +129,26 @@ def main() -> int:
             declared_path = os.path.join(root, declared_rel)
             if not os.path.isfile(declared_path):
                 problems.append("data/audio.json: %s: delivered_file %r is missing" % (cue_id, declared_rel))
-            elif present and declared_rel != "assets/audio/%s/%s.ogg" % (asset, asset):
-                # The bus streams assets/audio/<asset>/<asset>.ogg (pp_audio_music_paths, pp_audio.gml:142),
-                # so a row may name a different render only while the two are not yet one file. Printed,
-                # not failed: the row is telling the truth about what the musician delivered, and the fix
-                # is the cue owner collapsing the revisions, not a data edit here.
-                delivered_notes.append(
-                    "%s: the ledger names %s, and the bus will stream %s until the cue owner makes them one file"
-                    % (cue_id, declared_rel, "assets/audio/%s/%s.ogg" % (asset, asset)))
+            else:
+                # Since card t_0c7a0a03 the bus resolves a cue by this field (pp_audio_music_file_name,
+                # pp_audio.gml), so the ledger is the file the game opens, not a note beside an asset name.
+                # The mirror copies each render into game/datafiles/streams under its own basename and only
+                # reads one folder level under assets/audio, so a take filed deeper than that names a file
+                # no build carries, and two takes sharing one basename would overwrite each other there.
+                parts = declared_rel.split("/")
+                if len(parts) != 4 or parts[0] != "assets" or parts[1] != "audio":
+                    problems.append("data/audio.json: %s: delivered_file %r is not assets/audio/<folder>/<file>.ogg, "
+                                    "so sync_art.mirror_streams never copies it" % (cue_id, declared_rel))
+                seen = stream_names.setdefault(parts[-1], [])
+                if cue_id not in seen:
+                    seen.append(cue_id)
+
+    # --- one name, one cue: the mirror flattens every render into one folder --------------------------------------
+    for name in sorted(stream_names):
+        if len(stream_names[name]) > 1:
+            problems.append("data/audio.json: %s: the cues %s all name the file %s, so sync_art.mirror_streams "
+                            "would leave one file where the bus expects the others"
+                            % (", ".join(stream_names[name]), " and ".join(stream_names[name]), name))
 
     # --- the fallback chain must terminate at a file, with no cycle ---------------------------------------------
     def resolve(cue_id, trail):
@@ -220,15 +232,18 @@ def main() -> int:
     for cue_id, row in rows.items():
         asset = row.get("asset") or ""
         state = "landed" if landed.get(cue_id) else "pending"
+        # The name column is the file the bus opens, which since card t_0c7a0a03 is the ledger's
+        # delivered_file when the row carries one and the asset name when it does not.
+        declared = row.get("delivered_file")
+        name = "-"
+        if landed.get(cue_id):
+            name = str(declared).replace("\\", "/").rsplit("/", 1)[-1] if declared else "%s.ogg" % asset
         print("%-6s %-34s %-28s %-7s %s"
-              % (cue_id, asset, "%s.ogg" % asset if landed.get(cue_id) else "-", state,
-                 row.get("fallback") or "-"))
+              % (cue_id, asset, name, state, row.get("fallback") or "-"))
     print("")
     print("references walked: %d from maps, scenes and encounters; slice cues: %s"
           % (len(refs), ", ".join(slice_cues) or "none"))
     print("landed %d, pending %d" % (sum(1 for v in landed.values() if v), sum(1 for v in landed.values() if not v)))
-    for note in delivered_notes:
-        print("NOTE " + note)
     if problems:
         for problem in problems:
             print("FAIL " + problem)

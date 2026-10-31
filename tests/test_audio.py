@@ -11,10 +11,11 @@ What is pinned here, and why each pin earns its place:
     pp_audio_focus;
   - check_data refuses a cue id no row defines, on a private copy of data\\.
 
-Honest limits. There is no data\\music directory and no pp_*.ogg anywhere in the tree, so no cue
-has a file to play. GameMaker builds this tree and the build log shows the module loading and
-playing, but no test below listens to a speaker: what is pinned is the contract between the data,
-the module text and the checker. Anything about how it sounds is unproven and said so.
+Honest limits. Seven cue rows are landed and each names a render that is on disk; the bus resolves the row's
+delivered_file first and the asset name second, and the folder it asks for is the folder tools/sync_art.py
+mirrors into (card t_0c7a0a03, pinned below). What is still unproven is the last inch: no GameMaker window was
+opened for these tests, so nothing here says an OGG reached a speaker. What is pinned is the contract between the
+data, the module text, the mirror and the checker. Anything about how it sounds is unproven and said so.
 
 Defects this file still records rather than hides:
   1. Thirteen of the seventeen rows are asked for by no map, scene or encounter, and data\\audio.json
@@ -42,6 +43,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, "data")
 MODULE = os.path.join(ROOT, "game", "scripts", "pp_audio", "pp_audio.gml")
 STEP_EVENT = os.path.join(ROOT, "game", "objects", "obj_pp_game", "Step_0.gml")
+SYNC_ART = os.path.join(ROOT, "tools", "sync_art.py")
 SPEC = os.path.join(ROOT, "specs", "12-audio.md")
 TEXT_MODULE = os.path.join(ROOT, "game", "scripts", "pp_text", "pp_text.gml")
 # The cue table's source rows live inside the game since card t_a6fb94f8 (manager decision A on
@@ -647,3 +649,117 @@ def test_rule_nine_is_recorded_as_unproven_because_the_engine_page_does_not_prom
     assert "audio_is_playing" in provenance
     assert "audio_create_buffer_sound" in provenance
 
+
+# --- the bus resolves a cue by the file its ledger row names (card t_0c7a0a03) ---------------------------
+
+def _music_dir(code):
+    """PP_AUDIO_MUSIC_DIR as a plain folder name, its trailing slash kept.
+
+    The macro is read as text rather than trusted, because the whole defect this section pins is a
+    bus that looked in a folder no build writes: the name of the folder is the fact under test.
+    """
+    value = _macro(code, "PP_AUDIO_MUSIC_DIR")
+    assert value is not None, "pp_audio.gml has no PP_AUDIO_MUSIC_DIR macro"
+    assert len(value) >= 3 and value[0] == '"' and value[-1] == '"', "the macro is not a string: %r" % value
+    return value[1:-1]
+
+
+def _mirror_streams_dir():
+    """The folder tools/sync_art.py mirror_streams writes into, read from its own source text.
+
+    Text, not an import, for the reason the GML is read as text: the claim is that the mirror's
+    destination is one string and the bus asks for that same string. An import would still pass
+    after a refactor moved the copy while a test spelled the folder out itself.
+    """
+    text = _text(SYNC_ART)
+    start = text.index("def mirror_streams(")
+    body = text[start:text.index("\nif __name__", start)]
+    match = re.search(r'dst_dir\s*=\s*os\.path\.join\(\s*ROOT\s*,\s*"game"\s*,\s*"datafiles"\s*,\s*"([^"]+)"\s*\)', body)
+    assert match, "mirror_streams no longer builds its destination from ROOT/game/datafiles/<one name>"
+    return match.group(1)
+
+
+def _bus_stream_names(row, module):
+    """The file names the module would try for one row, in the module's own order.
+
+    A reimplementation of pp_audio_music_file_name and the candidate list pp_audio_music_paths
+    builds, but gated on what the module text says: the resolver and its reading of delivered_file
+    are looked for first, and a module that keys on the asset name alone gets the asset name back
+    here too. That is what makes this test red on a bus which never reads the ledger, instead of
+    green on a Python copy of the rule the GML does not implement.
+    """
+    asset_name = "%s.ogg" % row["asset"]
+    declared = row.get("delivered_file")
+    names = []
+    reads_ledger = "function pp_audio_music_file_name(" in _code(module)
+    if reads_ledger:
+        reads_ledger = '"delivered_file"' in _function(module, "pp_audio_music_file_name")
+    if reads_ledger and isinstance(declared, str) and declared.strip():
+        names.append(declared.replace("\\", "/").rsplit("/", 1)[-1])
+    if asset_name not in names:
+        names.append(asset_name)
+    return names
+
+
+def test_the_bus_and_the_mirror_agree_on_one_streams_folder():
+    """DEFECT, card t_0c7a0a03 half 1. PP_AUDIO_MUSIC_DIR is music/ and tools/sync_art.py
+    mirror_streams writes game/datafiles/streams/, and game/datafiles/music does not exist, so
+    every landed cue row logged "has no OGG yet" and six cues could not play. One folder is the
+    fix, and the two halves are compared as strings: a mirror that writes anywhere else is a red
+    here, not a silent silence at runtime.
+    """
+    music_dir = _music_dir(_code(_text(MODULE)))
+    mirror_dir = _mirror_streams_dir()
+    assert music_dir == mirror_dir + "/", (
+        "the bus asks for %r and sync_art.mirror_streams writes %r, so no cue can open the file the "
+        "mirror copies" % (music_dir, mirror_dir + "/"))
+
+
+def test_a_landed_cue_opens_the_file_its_ledger_row_names():
+    """DEFECT, card t_0c7a0a03 half 2. pp_audio_music took the file from _entry.asset only, so a row
+    could name a render the game would never open: PP-17's ledger names
+    assets/audio/pp_boarding_v2/pp_boarding_v2_humanized.ogg while the bus streamed the v1
+    pp_boarding.ogg. Every landed row is walked: the first path the bus opens is the row's
+    delivered_file under the one streams folder, the mirror's own basename rule makes that name
+    from a source one level under assets/audio, and that source is on disk.
+    """
+    rows = [row for row in _cue_rows() if row.get("pending") is False]
+    assert len(rows) == 7, "the landed set moved: %s" % [row["id"] for row in rows]
+    module = _text(MODULE)
+    music_dir = _music_dir(_code(module))
+    audio_src = os.path.join(ROOT, "assets", "audio")
+    for row in rows:
+        where = row["id"]
+        declared = row.get("delivered_file")
+        assert isinstance(declared, str) and declared.lower().endswith(".ogg"), \
+            "%s is landed and names no delivered_file, so there is nothing to resolve" % where
+        names = _bus_stream_names(row, module)
+        wanted_name = declared.replace("\\", "/").rsplit("/", 1)[-1]
+        assert names[0] == wanted_name, "%s: the bus would try %r first, the row names %r" % (where, names[0], wanted_name)
+        src = os.path.join(ROOT, declared.replace("/", os.sep))
+        assert os.path.isfile(src), "%s: delivered_file %s is not on disk" % (where, declared)
+        assert os.path.dirname(os.path.dirname(src)) == audio_src, (
+            "%s: %s is not one folder under assets/audio, so mirror_streams never copies it" % (where, declared))
+        assert os.path.basename(src) == names[0], (
+            "%s: the mirror writes %r and the bus asks for %r"
+            % (where, os.path.basename(src), names[0]))
+
+
+def test_the_bus_reads_delivered_file_and_keeps_the_asset_name_as_the_fallback():
+    """The resolver has to be in the module, called by pp_audio_music, and the asset name has to
+    survive as the second candidate: a row written before a render existed carries no
+    delivered_file, and it must still fall back to <asset>.ogg instead of going silent.
+    """
+    module = _text(MODULE)
+    code = _code(module)
+    assert '"music/"' not in code, "the macro still names the folder no build writes"
+    paths = _function(module, "pp_audio_music_paths")
+    assert "pp_audio_music_file_name(_entry)" in paths, "the path builder ignores the resolver"
+    assert 'string(_entry.asset) + ".ogg"' in paths, "the asset name is not kept as the fallback candidate"
+    namer = _function(module, "pp_audio_music_file_name")
+    assert '"delivered_file"' in namer and "_entry.asset" in namer, \
+        "the resolver must read delivered_file first and fall back to the asset name"
+    music = _function(module, "pp_audio_music")
+    assert "pp_audio_music_paths(_entry.asset)" not in music, \
+        "pp_audio_music still takes the file from the asset name alone"
+    assert "pp_audio_music_paths(_entry)" in music

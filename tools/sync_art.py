@@ -357,6 +357,12 @@ def mirror_streams() -> None:
     checkout could not regenerate that .yyp while this script mirrored only the first theme. The
     rule now is: every .ogg in a theme folder is a stream, named by its own basename, so a faster
     render of the same piece (title_theme_v3_126.ogg beside title_theme_v3.ogg) ships with it.
+
+    This destination is not a local choice: PP_AUDIO_MUSIC_DIR in game\\scripts\\pp_audio\\pp_audio.gml
+    must be this same folder name plus a slash, because the bus opens <folder>/<name>.ogg and
+    <folder>/<name>.ogg with datafiles/ in front of it (card t_0c7a0a03). tests\\test_audio.py
+    compares the two strings, so a mirror that starts writing somewhere else is a red there rather
+    than a cue that goes silent at runtime.
     """
     base = os.path.join(ROOT, "assets", "audio")
     dst_dir = os.path.join(ROOT, "game", "datafiles", "streams")

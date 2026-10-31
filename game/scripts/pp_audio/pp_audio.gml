@@ -4,8 +4,9 @@
 /// Two tables live behind this module and both are data:
 ///   effects, the short sounds, listed in game\datafiles\sfx\sfx.json by tools\sync_art.py with the data chunk
 ///     offset and byte length measured from the file, so no number in here is a guess;
-///   music cues, keyed by the musician's own ids PP-01 to PP-16 in data\audio.json, so his OGG named after the
-///     cue's asset is picked up with no code edit (spec 12, card G0-2).
+///   music cues, keyed by the musician's own ids PP-01 to PP-16 in data\audio.json, each resolved to the OGG its
+///     row's delivered_file names and to <asset>.ogg only when the row carries no delivered_file, so a landed take
+///     plays with no code edit (spec 12, card G0-2; one resolver, card t_0c7a0a03).
 ///
 /// Audio calls used here, and where each behaviour was checked. Every page named below was read on 2026-10-22 at
 /// https://manual.gamemaker.io/monthly/en/GameMaker_Language/GML_Reference/Asset_Management/Audio/ :
@@ -38,7 +39,12 @@
 /// the cue list in the musician's round 1 note (PP-01 to PP-16).
 
 #macro PP_AUDIO_SFX_DIR "sfx/"
-#macro PP_AUDIO_MUSIC_DIR "music/"
+// The one folder music streams live in, and it is tools/sync_art.py's mirror_streams destination, not a
+// second place: that mirror copies every .ogg under assets/audio/<folder>/ into game/datafiles/streams/
+// under its own basename, so the name it writes is the name the bus asks for (card t_0c7a0a03). The
+// title theme already read streams/ through pp_audio_theme_streams, which is why the title was the one
+// piece of music that played while every cue row logged "has no OGG yet".
+#macro PP_AUDIO_MUSIC_DIR "streams/"
 #macro PP_AUDIO_FADE_STEPS 30
 #macro PP_AUDIO_PRI_MUSIC 10
 #macro PP_AUDIO_PRI_BOSS 12
@@ -137,13 +143,43 @@ function pp_audio_cue(_id) {
     return _reg[$ _id];
 }
 
-/// Where a cue's OGG may sit. The first path is what a shipped Included File looks like, the second is the same file
-/// inside game\datafiles on a machine that has not built yet, so the musician can drop the OGG in either place.
-function pp_audio_music_paths(_asset) {
-    return [
-        working_directory + PP_AUDIO_MUSIC_DIR + string(_asset) + ".ogg",
-        working_directory + "datafiles/" + PP_AUDIO_MUSIC_DIR + string(_asset) + ".ogg"
-    ];
+/// The file name a cue row resolves to, no folder. The ledger's own delivered_file wins, because that is the
+/// take the cue owner signed off (PP-17 names pp_boarding_v2_humanized.ogg, not the v1 render its asset name
+/// points at); the asset name stands only when the row carries no delivered_file, which is every row written
+/// before a render existed. Only the last path segment is used, because the mirror flattens every render into
+/// PP_AUDIO_MUSIC_DIR by basename: a folder in the ledger says where the musician kept the take, never where the
+/// build puts it. string_split, string_replace_all and chr are all already used in this project (chr in pp_input and
+/// pp_map_tile, string_split in pp_app and pp_battle_director); string_last_pos is not, so the rule does not depend on
+/// a function this tree has never compiled, and the separator is written chr(92) rather than a quoted backslash so
+/// the line carries no escape sequence at all.
+function pp_audio_music_file_name(_entry) {
+    var _declared = "";
+    if (variable_struct_exists(_entry, "delivered_file") && is_string(_entry.delivered_file)) {
+        _declared = _entry.delivered_file;
+    }
+    if (_declared != "") {
+        var _parts = string_split(string_replace_all(_declared, chr(92), "/"), "/");
+        _declared = _parts[array_length(_parts) - 1];
+    }
+    if (_declared != "") return _declared;
+    return string(_entry.asset) + ".ogg";
+}
+
+/// Where a cue's OGG may sit, tried in order: the ledger's file first, then the asset name, each in the folder a
+/// shipped Included File looks like and then the same file inside game\datafiles on a machine that has not built
+/// yet. The asset name is the fallback a row needs no field for: a ledger naming a take the mirror never saw still
+/// opens the render its asset name points at rather than going silent. The asset candidate is only added when it
+/// is a different name, so a row whose ledger already says <asset>.ogg is asked for once, not twice.
+function pp_audio_music_paths(_entry) {
+    var _names = [pp_audio_music_file_name(_entry)];
+    var _asset_name = string(_entry.asset) + ".ogg";
+    if (_asset_name != _names[0]) array_push(_names, _asset_name);
+    var _paths = [];
+    for (var n = 0; n < array_length(_names); n += 1) {
+        array_push(_paths, working_directory + PP_AUDIO_MUSIC_DIR + _names[n]);
+        array_push(_paths, working_directory + "datafiles/" + PP_AUDIO_MUSIC_DIR + _names[n]);
+    }
+    return _paths;
 }
 
 /// Finish a fade that is still running, so a second cue or a stop inside the 500 ms window cannot overwrite the fade
@@ -204,7 +240,8 @@ function pp_audio_music(_cue, _fade_steps) {
     pp_audio_theme_release(_a, _fade_ms);
 
     var _file = "";
-    var _paths = pp_audio_music_paths(_entry.asset);
+    var _name = pp_audio_music_file_name(_entry);
+    var _paths = pp_audio_music_paths(_entry);
     for (var p = 0; p < array_length(_paths); p++) {
         if (file_exists(_paths[p])) { _file = _paths[p]; break; }
     }
@@ -212,7 +249,7 @@ function pp_audio_music(_cue, _fade_steps) {
         _a.silent += 1;
         _a.music_cue = _cue;
         show_debug_message("PP audio: music cue " + string(_cue) + " has no OGG yet, expected "
-            + string(_entry.asset) + ".ogg, placeholder " + string(_entry.placeholder));
+            + PP_AUDIO_MUSIC_DIR + _name + ", placeholder " + string(_entry.placeholder));
         // The sounds table stays as the stand-in behind the cue: if this cue names one, it is asked for here.
         if (variable_struct_exists(_entry, "placeholder_sound") && is_string(_entry.placeholder_sound)
             && _entry.placeholder_sound != "") {
