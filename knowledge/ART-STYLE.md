@@ -214,6 +214,13 @@ name (`cand_r18_percy_ow` and `cand_r18_percy_man_1` to `3`), by `tools/art/make
 and the record with every measurement is knowledge/ART-B-PERCY-2026-10-30.md. The rest of row 11, the wardroom
 tiles under `make_env_ship.py` and `make_ship_tiles.py`, is still not redrawn.
 
+The old man of row 9, the high street stander (`cand_r18_ouranos_ow`), is redrawn at the same 16 x 24 cell and by
+the same tool, but he is authored as a whole cell rather than assembled from the shared body: `OLD_MAN_DOWN` in
+`tools/art/make_characters_v2.py`, with the stoop in the head to shoulder ratio, the bald crown and beard in white
+and the outline weight in the ink. The sheet is `game/sprites_src/chars/ouranos_ow24.png` and the record is
+knowledge/ART-B-OURANOS-2026-10-30.md. The map he stands on, row 9's `southampton_high_street`, is still not
+built.
+
 ## 8. How this file stays true
 
 Every number above is printed by `tools/art/make_art_target.py --report` and by
