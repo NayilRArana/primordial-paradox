@@ -56,18 +56,63 @@ def test_a_painted_frame_quantises_inside_the_scene_set_and_three_colours_per_ar
     assert problems == [], problems
 
 
-def test_a_sprite_is_painted_through_one_sprite_palette_only():
+def watched_colour_tables(monkeypatch):
+    """Wrap Image.Image.getcolors so a row can prove what the code under test asked Pillow for.
+
+    Pillow sizes the table behind getcolors() from maxcolors rather than from the picture, so the old
+    `getcolors(maxcolors=1 << 24)` asked for 16,777,216 entries on a 16x16 sprite: 521.0 MB of peak
+    working set measured on a 256x240 frame on 2026-10-30 (539.1 MB on 2026-10-27) and a MemoryError on
+    a box with less free memory (cards t_f4d1c2d1 and t_83a4acad). The callable this returns asserts
+    that no ask exceeded the pixels of the frame it read, the same method as
+    tests/test_quantize_concept.py::test_the_colour_count_never_asks_pillow_for_a_table_bigger_than_the_frame.
+    """
+    asks = []
+    original = Image.Image.getcolors
+
+    def watched(self, maxcolors=256):
+        asks.append((self.width * self.height, maxcolors))
+        return original(self, maxcolors)
+
+    monkeypatch.setattr(Image.Image, "getcolors", watched)
+
+    def assert_no_ask_exceeds_the_frame():
+        assert asks, "no getcolors call reached Pillow, so this row proved nothing"
+        for capacity, maxcolors in asks:
+            assert maxcolors <= capacity, (
+                "getcolors asked for %d entries on a %d pixel frame" % (maxcolors, capacity))
+
+    return assert_no_ask_exceeds_the_frame
+
+
+def test_a_sprite_is_painted_through_one_sprite_palette_only(monkeypatch):
     scene = scene_palette_set.scene(ROOT, "battle_deck_night")
     brief = {"coat": (26, 58, 138), "coat_dark": (16, 34, 92), "skin": (200, 138, 90),
              "gold": (224, 176, 64), "outline": (16, 16, 24)}
+    check = watched_colour_tables(monkeypatch)
     sprite = kaggle_r7.paint_sprite(brief, (16, 16), kaggle_r7.seeded("sprite"), scene, 8)
     rows = [sorted({scene.rgb(entry) for entry in palette}) for palette in scene.sprites]
     chosen = rows[2]
-    counts = sprite.getcolors(1 << 24) or []
+    counts = sprite.getcolors(sprite.width * sprite.height) or []
     colours = [colour[:3] for _, colour in counts if colour[3]]
     mapped = {kaggle_r7.nearest_in(chosen, colour) for colour in colours}
     assert len(mapped) <= 3, mapped
     assert all(colour in chosen for colour in mapped)
+    check()
+
+
+def test_the_sprite_candidate_never_asks_pillow_for_a_table_the_sprite_cannot_fill(tmp_path, monkeypatch):
+    """The measured half of sprite_candidate, with the colour table ask watched (card t_83a4acad)."""
+    scene = scene_palette_set.scene(ROOT, "battle_deck_night")
+    grid = palette_synergy.Grid(ROOT)
+    out = tmp_path / "concepts"
+    out.mkdir()
+    monkeypatch.setattr(kaggle_r7, "CONCEPTS", str(out))
+    monkeypatch.setattr(kaggle_r7, "EXTERNAL", {"dir": None, "manifest": None, "rows": {}})
+    subject = [item for item in kaggle_r7.SUBJECTS if item["kind"] == "sprite"][0]
+    check = watched_colour_tables(monkeypatch)
+    result = kaggle_r7.sprite_candidate(str(tmp_path), subject, grid, scene, "test")
+    check()
+    assert result["size"] == [16, 16] and result["distinct_colours"] >= 1, result
 
 
 def test_the_segments_cover_every_area_once():

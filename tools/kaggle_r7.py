@@ -539,8 +539,13 @@ def sprite_candidate(root: str, subject: dict, grid, scene, lane: str) -> dict:
     # by the summed delta E of the whole sprite and paint through the cheapest. Union-of-four mapping is the
     # failure palette_synergy calls palette_count, and it is not a frame a PPU can draw.
     rows = [sorted({scene.rgb(entry) for entry in palette}) for palette in scene.sprites]
-    counts = [(rgb[:3], count) for count, rgb in (concept.getcolors(maxcolors=1 << 24) or [])
-              if count and rgb[3]]
+    # Pillow sizes the getcolors table from maxcolors, not from the picture: 1 << 24 asked for
+    # 16,777,216 entries on a 16x16 sprite (521.0 MB measured on a 256x240 frame on 2026-10-30,
+    # MemoryError on a tight box; cards t_f4d1c2d1 and t_83a4acad). The sprite's own pixels are the
+    # most colours it can hold.
+    limit = concept.width * concept.height
+    table = concept.getcolors(maxcolors=limit) or []
+    counts = [(rgb[:3], count) for count, rgb in table if count and rgb[3]]
     total_pixels = sum(count for _, count in counts)
     costs = [sum(count * min(quantize_concept.delta_e(rgb, option) for option in row)
                  for rgb, count in counts)

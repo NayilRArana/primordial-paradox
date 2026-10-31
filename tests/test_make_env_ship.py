@@ -148,13 +148,29 @@ def test_sheet_is_the_size_the_metadata_says(built):
     assert image.getpixel((0, 0))[3] == 255
 
 
-def test_every_colour_on_the_sheet_is_one_of_the_ten_declared(built):
+def test_every_colour_on_the_sheet_is_one_of_the_ten_declared(built, monkeypatch):
     tileset = load(built["files"]["tileset"])
     declared = [entry["hex"].lower() for entry in tileset["palette"]]
     assert len(declared) == 10, "the card allows 8 to 10 colours for the scene"
     expected = {tuple(int(hexv[i:i + 2], 16) for i in (1, 3, 5)) for hexv in declared}
     image = Image.open(built["files"]["sheet"]).convert("RGB")
-    used = {colour for _, colour in image.getcolors(maxcolors=1 << 24)}
+    # Pillow sizes the table behind getcolors() from maxcolors, not from the picture: 1 << 24 asked
+    # for 16,777,216 entries on a 256x48 sheet (521.0 MB of peak working set measured on a 256x240
+    # frame on 2026-10-30, MemoryError on a box with less free memory; cards t_f4d1c2d1 and
+    # t_83a4acad). This row watches the ask so a fixed limit cannot come back here.
+    asks = []
+    original = Image.Image.getcolors
+
+    def watched(self, maxcolors=256):
+        asks.append((self.width * self.height, maxcolors))
+        return original(self, maxcolors)
+
+    monkeypatch.setattr(Image.Image, "getcolors", watched)
+    used = {colour for _, colour in (image.getcolors(maxcolors=image.width * image.height) or [])}
+    assert asks, "no getcolors call reached Pillow, so this row proved nothing"
+    for capacity, maxcolors in asks:
+        assert maxcolors <= capacity, (
+            "getcolors asked for %d entries on a %d pixel frame" % (maxcolors, capacity))
     assert used == expected, "every declared colour must be used, and no other colour may appear"
 
 

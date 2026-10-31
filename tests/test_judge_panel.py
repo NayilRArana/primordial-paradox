@@ -25,6 +25,7 @@ import sys
 import urllib.error
 
 import pytest
+from PIL import Image
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TOOLS = os.path.join(ROOT, "tools")
@@ -118,6 +119,38 @@ def test_measured_lines_state_the_duration_gap_and_the_blank_frames():
     assert "1 of the 3 frames are one colour" in text
     assert "no footstep cue" in text
     assert "h264" in text and "not a PPU palette measurement" in text
+
+
+def test_the_colour_facts_come_from_a_table_no_bigger_than_the_frame(tmp_path, monkeypatch):
+    """eye_critic.measure_image is the half the panel quotes as measured, so its table ask is pinned.
+
+    Pillow sizes the table behind getcolors() from maxcolors, not from the picture: the old
+    `getcolors(maxcolors=1 << 24)` asked for 16,777,216 entries on every frame, which measured 521.0 MB
+    of peak working set on a 256x240 frame (539.1 MB on 2026-10-27) and raised MemoryError on a box with
+    less free memory (cards t_f4d1c2d1 and t_83a4acad). judge_panel.sample_frames calls this once per
+    sampled frame.
+    """
+    path = tmp_path / "frame.png"
+    frame = Image.new("RGB", (256, 240))
+    for y in range(240):
+        for x in range(256):
+            frame.putpixel((x, y), (x, y, (x * y) % 256))
+    frame.save(str(path), "PNG")
+    asks = []
+    original = Image.Image.getcolors
+
+    def watched(self, maxcolors=256):
+        asks.append((self.width * self.height, maxcolors))
+        return original(self, maxcolors)
+
+    monkeypatch.setattr(Image.Image, "getcolors", watched)
+    facts = eye_critic.measure_image(str(path))
+    assert asks, "no getcolors call reached Pillow, so this row proved nothing"
+    for capacity, maxcolors in asks:
+        assert maxcolors <= capacity, (
+            "getcolors asked for %d entries on a %d pixel frame" % (maxcolors, capacity))
+    assert (facts["width"], facts["height"]) == (256, 240)
+    assert facts["colours"] == 256 * 240, facts["colours"]
 
 
 def test_scores_reasons_and_the_weighted_total():

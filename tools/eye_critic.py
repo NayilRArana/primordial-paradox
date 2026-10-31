@@ -383,7 +383,13 @@ def measure_image(path):
         facts["error"] = "could not read pixels: %s" % exc
         return facts
     facts["width"], facts["height"] = width, height
-    counts = frame.getcolors(maxcolors=1 << 24) or []
+    # Pillow sizes the table behind getcolors() from maxcolors, not from the picture, so the old
+    # 1 << 24 asked for a 16,777,216 entry table on every frame: 521.0 MB of peak working set on
+    # 256x240 and 521.6 MB on 1024x768, measured 2026-10-30 (539.1 and 544.6 MB on 2026-10-27), and
+    # a MemoryError on a box with less free memory (cards t_f4d1c2d1 and t_83a4acad). A frame cannot
+    # hold more distinct colours than it has pixels, so its own size is the largest table this call
+    # can use.
+    counts = frame.getcolors(maxcolors=width * height) or []
     facts["colours"] = len(counts)
     if counts:
         biggest = max(counts, key=lambda pair: pair[0])
