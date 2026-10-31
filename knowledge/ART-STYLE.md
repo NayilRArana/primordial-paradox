@@ -208,6 +208,12 @@ about style:
    it should be two visibly different sized boxes.
 2. The chair at the right reads as spindly. Its uprights and legs want to be 2 px solid, not 1 px.
 
+Row 11, partly done. Lt. Percy and his three men are redrawn to direction B at the 16 x 24 cell the queue rows
+name (`cand_r18_percy_ow` and `cand_r18_percy_man_1` to `3`), by `tools/art/make_characters_v2.py
+--only-style-b`. The four sheets are `game/sprites_src/chars/percy_ow24.png` and `percy_man_{1,2,3}_ow24.png`,
+and the record with every measurement is knowledge/ART-B-PERCY-2026-10-30.md. The rest of row 11, the wardroom
+tiles under `make_env_ship.py` and `make_ship_tiles.py`, is still not redrawn.
+
 ## 8. How this file stays true
 
 Every number above is printed by `tools/art/make_art_target.py --report` and by

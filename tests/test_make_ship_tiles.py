@@ -42,7 +42,14 @@ def load(name: str, path: str):
 
 @pytest.fixture(scope="module")
 def ms():
-    return load("make_ship_tiles_under_test", os.path.join(ROOT, "tools", "art", "make_ship_tiles.py"))
+    module = load("make_ship_tiles_under_test", os.path.join(ROOT, "tools", "art", "make_ship_tiles.py"))
+    # The palette map is filled by load_colours(), which build() calls. This file's colour test reads the map
+    # without a build, so it used to depend on an earlier test in this file having asked for the `built` fixture:
+    # under a -k selection that deselected that test it failed with KeyError 'k' on a green tree (card
+    # t_3dfd69d1 measured that, the whole file alone was 9 passed). Filling the map here is what makes the test
+    # order independent, and it changes no pixel and no assertion.
+    module.load_colours()
+    return module
 
 
 @pytest.fixture(scope="module")
