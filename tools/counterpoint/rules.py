@@ -453,6 +453,8 @@ class Score(object):
             arrangement = arrange.build_arrangement_percy(score)
         elif version_3 and profile == "hadrian":
             arrangement = arrange.build_arrangement_hadrian(score)
+        elif version_3 and profile == "pp04":
+            arrangement = arrange.build_arrangement_pp04(score)
         elif version_3:
             arrangement = arrange.build_arrangement_v3(score)
         else:

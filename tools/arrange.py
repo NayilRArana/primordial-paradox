@@ -2656,6 +2656,207 @@ def self_check(arrangement, data=None):
     return result
 
 
+# ============================================= version 3, the pp04 profile (fight cue)
+# assets/audio/pp_04_navy_sailors*/score_pp04*.yaml share one schema that differs from the
+# generic v3 schema in one spot: each section writes its `bars` as a LIST of bar numbers and
+# its `melody` as one [note, eighths] row per bar, exactly the shape
+# assets/audio/pp_04_navy_sailors/build_pp04.py reads. That builder (and its v2 and v3
+# siblings) turns the recipe into the eight chip voices; this reader reproduces the same
+# lines so the counterpoint checker cannot disagree with the renderer about which note is in
+# which voice. The three builders differ only in the unpitched percussion, which the checker
+# skips, so the pitched lines here match all three.
+PP04_EIGHTH = EIGHTH            # 240 ticks
+PP04_BEAT = 2 * EIGHTH          # 480 ticks
+PP04_BAR = 4 * PP04_BEAT        # 4/4: 1920 ticks
+PP04_SLOTS = 8                  # eighths in a bar
+PP04_TICKS_PER_BAR = PP04_BAR
+PP04_GATE_MUTED = 0.40
+PP04_GATE_LEAD = 0.90
+PP04_GATE_BASS = 0.80
+PP04_GATE_HAT = 0.55
+PP04_HAT_PITCH = 6
+PP04_FILL_PITCHES = (12, 10, 8)
+PP04_CRASH_PITCH = 10
+PP04_BASS_ROOT = {2: 38, 0: 36, 10: 46, 9: 45, 7: 43}
+PP04_RIFF_ROOT = {2: 50, 0: 48, 10: 46, 9: 45, 7: 43}
+PP04_FIFTH_PC = {0: 7, 2: 9, 10: 5, 9: 4, 7: 2}
+
+
+def _pp04_fifth_pitch(root_pc, lo=60, hi=71):
+    """The fifth of a root pitch class, inside the power fifth register."""
+    pc = PP04_FIFTH_PC.get(root_pc)
+    if pc is None:
+        pc = (root_pc + 7) % 12
+    for pitch in range(lo, hi + 1):
+        if pitch % 12 == pc:
+            return pitch
+    raise ValueError("no fifth of pc %d inside %d to %d" % (root_pc, lo, hi))
+
+
+def _pp04_section_bars(score):
+    """Every bar of a pp04 recipe in playing order, as Bar objects."""
+    order = ("A", "B", "A2", "A3")
+    bars = []
+    melody_a = None
+    for name in order:
+        block = (score.get("sections") or {}).get(name)
+        if block is None:
+            continue
+        melody = block["melody"]
+        if isinstance(melody, str):
+            if "same notes as A" in melody:
+                if melody_a is None:
+                    raise ValueError("A must be read before %s" % name)
+                melody = [list(row) for row in melody_a]
+            else:
+                raise ValueError("unreadable melody line for %s: %r" % (name, melody))
+        if name == "A":
+            melody_a = [list(row) for row in melody]
+        if len(melody) != len(block["chords"]):
+            raise ValueError("%s has %d bars of melody and %d chords"
+                             % (name, len(melody), len(block["chords"])))
+        for offset, (chord, notes) in enumerate(zip(block["chords"], melody)):
+            total = sum(length for _pitch, length in notes)
+            if total != PP04_SLOTS:
+                raise ValueError("%s bar %d sums to %d eighths, not %d"
+                                 % (name, offset + 1, total, PP04_SLOTS))
+            bar = Bar(len(bars), name)
+            bar.number = block["bars"][offset]
+            bar.chord_symbol = chord
+            bar.melody = [(note_to_midi(pitch), length) for pitch, length in notes]
+            bars.append(bar)
+    return bars
+
+
+def build_arrangement_pp04(score):
+    """Turn a pp04 recipe into the same eight voice lines build_pp04.py writes."""
+    bars = _pp04_section_bars(score)
+    meta = {
+        "bpm": float(score["meta"]["bpm"]),
+        "beats_per_bar": 4,
+        "loop_start_bar": int(score["meta"]["loop_start_bar"]),
+        "ticks_per_bar": PP04_TICKS_PER_BAR,
+    }
+    out = Arrangement(score, bars, meta)
+    first = {}
+    for bar in bars:
+        first.setdefault(bar.section, bar.number)
+
+    # Levels and duties; the checker reads the notes, not the controls.
+    section_level = {"A": 9, "B": 7, "A2": 11, "A3": 12}
+    track_share = {
+        "vrc6 pulse a": 1.00, "vrc6 pulse b": 0.60, "vrc6 saw": 0.50,
+        "pulse 1": 0.80, "pulse 2": 0.80, "triangle": 1.00, "noise": 0.65, "dpcm": 1.00,
+    }
+    for bar in bars:
+        start = out.bar_start(bar)
+        level = section_level.get(bar.section, 9)
+        for track in TRACK_NAMES:
+            value = max(0, min(15, int(round(level * track_share[track]))))
+            out.add_control(track, start, 11, value)
+        out.add_control("pulse 1", start, 12, PULSE_DUTY_50_2A03)
+        out.add_control("pulse 2", start, 12, PULSE_DUTY_50_2A03)
+        out.add_control("vrc6 pulse b", start, 12, vrc6_duty_value(0.5))
+        duty = score["voices"]["vrc6_pulse_a"]["duty"][bar.section]
+        out.add_control("vrc6 pulse a", start, 12, vrc6_duty_value(duty))
+
+    # The lead, motif N in A, A2 and A3, the release in B.
+    melody_notes = []
+    for bar in bars:
+        start = out.bar_start(bar)
+        slot = 0
+        for pitch, length in bar.melody:
+            tick = start + slot * PP04_EIGHTH
+            held = int(round(length * PP04_EIGHTH * PP04_GATE_LEAD))
+            out.add("vrc6 pulse a", tick, held, pitch, 108)
+            melody_notes.append((tick, held, pitch))
+            slot += length
+
+    # Vibrato after one eighth on notes that last three eighths or more.
+    depth = int(round(12 / 100.0 / 2.0 * 127))
+    for tick, length, _pitch in melody_notes:
+        if length >= 3 * PP04_EIGHTH:
+            out.add_control("vrc6 pulse a", tick, 1, depth)
+            out.add_control("vrc6 pulse a", tick, 20, 1)
+        else:
+            out.add_control("vrc6 pulse a", tick, 1, 0)
+            out.add_control("vrc6 pulse a", tick, 20, 0)
+
+    # The rest of the band, one bar at a time.
+    for position, bar in enumerate(bars):
+        start = out.bar_start(bar)
+        section = bar.section
+        pc = parse_chord(bar.chord_symbol).root_pc
+        bass = PP04_BASS_ROOT[pc]
+        riff = PP04_RIFF_ROOT[pc]
+
+        # vrc6 pulse b: the chord fifth held for the bar, the power fifth layer.
+        out.add("vrc6 pulse b", start, int(PP04_BAR * 0.94), _pp04_fifth_pitch(pc), 84)
+
+        # vrc6 saw: the low root, one note per bar.
+        out.add("vrc6 saw", start, int(PP04_BAR * 0.96), riff, 72)
+
+        # triangle: the bass in eighths, a step below the next root on the last eighth
+        # of a bar that changes chord.
+        next_bass = None
+        if position + 1 < len(bars):
+            next_bass = PP04_BASS_ROOT[parse_chord(bars[position + 1].chord_symbol).root_pc]
+        for slot in range(PP04_SLOTS):
+            pitch = bass
+            if slot == PP04_SLOTS - 1 and next_bass is not None and next_bass != bass:
+                approach = next_bass - 2
+                if 36 <= approach <= 55:
+                    pitch = approach
+            tick = start + slot * PP04_EIGHTH
+            out.add("triangle", tick, int(PP04_EIGHTH * PP04_GATE_BASS), pitch, 112)
+
+        # The power chord: root on pulse 1, fifth on pulse 2, muted eighths. It rests in
+        # the first half of the bridge, which is what makes the release read.
+        chord_heard = not (section == "B" and bar.number < first["B"] + 4)
+        if chord_heard:
+            for slot in range(PP04_SLOTS):
+                tick = start + slot * PP04_EIGHTH
+                out.add("pulse 1", tick, int(PP04_EIGHTH * PP04_GATE_MUTED), riff, 104)
+                out.add("pulse 2", tick, int(PP04_EIGHTH * PP04_GATE_MUTED), riff + 7, 96)
+
+        # noise: hats only, top rate. Unpitched, so the checker skips it.
+        sixteenth_bars = (23, 24)
+        fill_bar = 24
+        crash_bars = (29, 32)
+        hat_slots = list(range(PP04_SLOTS))
+        if section == "B" and bar.number < first["B"] + 4:
+            hat_slots = [2, 6]
+        if bar.number in sixteenth_bars:
+            hat_slots = list(range(PP04_SLOTS)) + [s + 0.5 for s in range(PP04_SLOTS)]
+        for slot in hat_slots:
+            out.add("noise", start + int(slot * PP04_EIGHTH), int(PP04_EIGHTH * PP04_GATE_HAT),
+                    PP04_HAT_PITCH, 52 if section != "B" else 40)
+        if bar.number == fill_bar:
+            for index, pitch in enumerate(PP04_FILL_PITCHES):
+                out.add("noise", start + (5 + index) * PP04_EIGHTH, PP04_EIGHTH, pitch, 96)
+            out.add("noise", start + PP04_SLOTS * PP04_EIGHTH - PP04_EIGHTH, PP04_EIGHTH,
+                    PP04_FILL_PITCHES[-1], 88)
+        if bar.number in crash_bars:
+            out.add("noise", start, 2 * PP04_EIGHTH, PP04_CRASH_PITCH, 104)
+
+        # dpcm: the kit. Unpitched, so the checker skips it.
+        if section in ("A", "A2", "A3"):
+            out.add("dpcm", start, PP04_EIGHTH, 36, 116)
+            out.add("dpcm", start + 2 * PP04_BEAT, PP04_EIGHTH, 38, 100)
+            if section in ("A2", "A3"):
+                out.add("dpcm", start + 3 * PP04_BEAT, PP04_EIGHTH, 36, 104)
+                if bar.number == fill_bar:
+                    out.add("dpcm", start + 3 * PP04_BEAT + PP04_EIGHTH, PP04_EIGHTH, 38, 96)
+        elif section == "B":
+            if bar.number >= first["B"] + 4:
+                out.add("dpcm", start, PP04_EIGHTH, 36, 104)
+                if bar.number == first["B"] + 7:
+                    out.add("dpcm", start + 3 * PP04_BEAT + PP04_EIGHTH, PP04_EIGHTH, 38, 100)
+                else:
+                    out.add("dpcm", start + 2 * PP04_BEAT, PP04_EIGHTH, 38, 92)
+    return out
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("score", nargs="?", default=DEFAULT_SCORE)

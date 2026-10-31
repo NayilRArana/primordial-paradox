@@ -190,7 +190,7 @@ def main(argv=None):
 
     try:
         score = rules.load_score(args.score, key=rules.parse_key(args.key) if args.key else None)
-    except (ValueError, OSError) as error:
+    except Exception as error:   # any failure to read or build the cue is "cannot measure" (exit 2), never a traceback
         sys.stderr.write("counterpoint: cannot measure %s: %s\n" % (args.score, error))
         return 2
     if not score.parts or score.notes_total < 2:
