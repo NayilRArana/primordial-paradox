@@ -47,6 +47,27 @@ def rows():
     return eye_drive.sample_frames()
 
 
+def assert_the_captures_are_here(rows):
+    """Fail with the cause named, not with the traceback an open() or the sampler raises.
+
+    eye_drive.sample_frames() turns output\\drive\\pp_drive_shot_01.png to _12.png into the 256x240
+    copies under output\\drive_frames\\, and the rows that measure or review a frame read those
+    copies. Only a GameMaker run makes a capture, so on a tree that lacks them no frame is written
+    and the red arrives as `FileNotFoundError: .../drive_frames/drive_shot_01.png` from Image.open
+    or as eye_drive.self_test's `run the sampler first` EyeError. Neither one says where the file
+    was meant to come from, which is how a by-product dependency hides (card t_4321ea51).
+    Whatever is absent here is named, and nothing is skipped: the row still fails.
+    """
+    missing = [row["n"] for row in rows if not row.get("capture")]
+    assert not missing, (
+        "shots %s have no capture under output/drive/, so sample_frames() wrote no frame to measure. "
+        "The input is output/drive/pp_drive_shot_01.png to _12.png, twelve 768x720 captures that only "
+        "a GameMaker run makes; they are un-ignored by name in .gitignore, listed in "
+        "tools/check_test_inputs.py FIXTURES and committed by card t_d2c52f15, and pine_offload.py "
+        "OUTPUT_KEEP_PREFIXES carries output/drive/ and output/drive_frames/ so Pine has them too. "
+        "A tree without them is a capture run away from green, not a code failure." % missing)
+
+
 def test_one_frame_per_shot_and_twelve_of_them(rows):
     assert len(rows) == 12
     assert [row["n"] for row in rows] == list(range(1, 13))
@@ -70,6 +91,7 @@ def test_every_shot_row_carries_the_shot_list_description(rows):
 
 
 def test_measurement_reports_colours_and_attribute_areas(rows, palette):
+    assert_the_captures_are_here(rows)
     for row in rows[:3]:
         measured = eye_drive.measure(row, palette)
         assert measured["size"] == [256, 240]
@@ -80,6 +102,41 @@ def test_measurement_reports_colours_and_attribute_areas(rows, palette):
         # The two halves must agree: a frame with a colour the PPU cannot output is not legal.
         if measured["off_palette_colours"]:
             assert measured["legal"] is False, "an off-palette frame cannot pass legality"
+
+
+def test_measure_never_asks_pillow_for_a_table_bigger_than_the_frame(tmp_path, palette, monkeypatch):
+    """eye_drive.measure is the half of a shot's verdict that is quoted as measured, so pin its ask.
+
+    Pillow sizes the table behind getcolors() from maxcolors rather than from the picture, so the
+    fixed `getcolors(1 << 24)` this tool used until card t_fb343601 asked for 16,777,216 entries on
+    every 256x240 frame: +521.0 MB of peak working set against +10.0 MB for the bounded call,
+    measured on CitadelArana 2026-10-30 (539.1 MB on 2026-10-27), and a MemoryError from
+    PIL/Image.py on a box with less free memory (cards t_f4d1c2d1 and t_83a4acad). The same wrap
+    proves the answer did not change: every pixel of this frame holds its own colour, so the count
+    is the frame's pixel count either way.
+    """
+    from PIL import Image
+
+    path = tmp_path / "frame.png"
+    frame = Image.new("RGB", (256, 240))
+    for y in range(240):
+        for x in range(256):
+            frame.putpixel((x, y), (x, y, (x * y) % 256))
+    frame.save(str(path), "PNG")
+    asks = []
+    original = Image.Image.getcolors
+
+    def watched(self, maxcolors=256):
+        asks.append((self.width * self.height, maxcolors))
+        return original(self, maxcolors)
+
+    monkeypatch.setattr(Image.Image, "getcolors", watched)
+    measured = eye_drive.measure({"n": 1, "frame": str(path)}, palette)
+    assert asks, "no getcolors call reached Pillow, so this row proved nothing"
+    for capacity, maxcolors in asks:
+        assert maxcolors <= capacity, (
+            "getcolors asked for %d entries on a %d pixel frame" % (maxcolors, capacity))
+    assert measured["colours"] == 256 * 240, measured["colours"]
 
 
 def test_verdict_cannot_pass_on_a_legal_failure():
@@ -105,6 +162,10 @@ def test_verdict_bands_and_the_unjudged_case():
 def test_model_chain_falls_back_on_a_per_day_quota_refusal(tmp_path, rows):
     """The behaviour the report claims, driven with the API's own per-day 429 body."""
     os.environ.setdefault("PP_EYE_MAX_PER_MINUTE", "20")
+    # self_test reviews output\drive_frames\drive_shot_01.png, which it does not create itself:
+    # the `rows` fixture above is what samples it. Name the missing input instead of letting the
+    # sampler's own guard raise first (card t_4321ea51).
+    assert_the_captures_are_here(rows)
     result = eye_drive.self_test(str(tmp_path / "selftest"))
     assert result["refused"] == eye_drive.MODEL_CHAIN[0]
     assert result["answered"] == eye_drive.MODEL_CHAIN[1]

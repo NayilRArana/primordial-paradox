@@ -163,6 +163,21 @@ def load_key_from_user_environment():
 
 # --------------------------------------------------------------------------- sampling
 
+def _drop_a_frame_an_earlier_run_wrote(row):
+    """Remove this shot's frame from a previous run, so a missing capture cannot be measured.
+
+    Measured 2026-10-24 (card t_4321ea51), with CAPTURE_DIR pointed at a folder that does not
+    exist and the frames of an earlier run still in FRAME_DIR: sample_frames() reported twelve
+    failed shots, and yet eye_drive.measure(rows[0], palette) returned a measurement and
+    --self-test printed PASS, because both open row["frame"] by path and that path still held the
+    old copy. A frame on disk that no current capture produced is the silent pass this suite
+    forbids, so a failed shot takes its old frame with it. The absence is tested before the remove
+    rather than swallowed in a handler, so a failure here stays visible (clean code gate, Ch.7).
+    """
+    if os.path.exists(row["frame"]):
+        os.remove(row["frame"])
+
+
 def sample_frames():
     """Write the native 256x240 copy of every shot into output\\drive_frames and measure it.
 
@@ -178,11 +193,13 @@ def sample_frames():
                    frame=os.path.join(FRAME_DIR, "drive_shot_%02d.png" % shot["n"]))
         if not os.path.exists(source):
             row["error"] = "no captured frame at %s" % os.path.relpath(source, ROOT)
+            _drop_a_frame_an_earlier_run_wrote(row)
             rows.append(row)
             continue
         frame, info = nes.load_frame(source, None, crop="auto")
         if frame.size != (nes.FRAME_W, nes.FRAME_H):
             row["error"] = "frame is %dx%d, not 256x240" % frame.size
+            _drop_a_frame_an_earlier_run_wrote(row)
             rows.append(row)
             continue
         frame.convert("RGB").save(row["frame"])
@@ -202,7 +219,13 @@ def measure(row, palette):
                       if p.get("rule") == "background_area"]
     palette_problems = report["palette"]["problems"]
     measured = {
-        "colours": len((image.convert("RGB").getcolors(1 << 24) or [])),
+        # Pillow sizes the table behind getcolors() from maxcolors, not from the picture: the fixed
+        # 1 << 24 this line used to ask for built a 16,777,216 entry table on every 256x240 frame,
+        # which measured +521.0 MB of peak working set against +10.0 MB for the bounded call on
+        # 2026-10-30 (539.1 MB on 2026-10-27) and raised MemoryError on a box with less free memory
+        # (cards t_f4d1c2d1, t_83a4acad, t_fb343601). A picture cannot hold more distinct colours
+        # than it has pixels, so the answer is identical and the table is only as big as the frame.
+        "colours": len((image.convert("RGB").getcolors(maxcolors=image.width * image.height) or [])),
         "size": [image.width, image.height],
         "off_palette_colours": report["palette"]["off_palette_colours"],
         "off_palette_pixels": report["palette"]["off_palette_pixels"],
