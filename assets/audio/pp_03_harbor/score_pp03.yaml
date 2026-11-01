@@ -10,6 +10,18 @@
 # Why 68 bpm and 64 bars: the cue holds under four pages of text. At 68 bpm a bar is 3.53 s, so the
 # loop is 3:46 long and does not turn over while a player is still reading. Nothing in the cue exceeds
 # level 11 of 15 on any voice, and the lead gives up an eighth at the end of every four bar phrase.
+#
+# Repair 2026-11-01 (card t_79152146). The M4 cue gate refused this recipe with 8 CP-01 spots (a raw
+# clash on a strong beat) and 5 CP-09 spots (parallel octaves between the lead and the bass). Nothing
+# in the melody changed; the harmony under it did, and each edit answers one finding:
+#   Em/G and Em under the crest D5 B4 G4 became G. The crest spells a G triad, so the old chord made
+#   its first note a seventh that then left by leap; G is what the melody already outlines.
+#   Dm at the arrival and return bar 5 became Dm/F, and Am at harbor_light, water, light_again bar 3
+#   and read bar 8 became Am/C. The bass approach tone at the half bar was landing an octave under
+#   the lead; the inversion moves it by contrary motion instead.
+# Measured after the repair: cue_gate.py --no-baseline gives 0 CP-01 and 0 CP-09, exit 0, and the
+# M1a hard count falls from 29 to 24. The rendered MIDI and the master are still the pre-repair
+# render; re-rendering them is its own card, because it changes what the player hears.
 
 meta:
   profile: harbor
@@ -35,10 +47,10 @@ motifs:
 sections:
   arrival:
     bars: 8
-    chords: [Am, Em/G, F, C, Dm, Am, Dm, E7]
+    chords: [Am, G, F, C, Dm/F, Am, Dm, E7]
     melody:
       - [[A4, 2], [C5, 2], [E5, 2], [r, 2]]      # H, the tide rises
-      - [[D5, 3], [B4, 1], [G4, 4]]              # the crest and the fall over v
+      - [[D5, 3], [B4, 1], [G4, 4]]              # the crest and the fall over VII: D B G is a G triad
       - [[A4, 2], [C5, 2], [F5, 2], [r, 2]]      # H2, the same rise over bVI
       - [[E5, 4], [C5, 4]]                       # the arrival on bIII
       - [[D5, 2], [F5, 2], [E5, 2], [D5, 2]]     # over iv, the water turning
@@ -53,7 +65,7 @@ sections:
 
   settle:
     bars: 8
-    chords: [Am, Em/G, F, C, F, G, E7, Am]
+    chords: [Am, G, F, C, F, G, E7, Am]
     melody:
       - [[A4, 2], [C5, 2], [E5, 2], [r, 2]]      # H again, the listener has it now
       - [[D5, 3], [B4, 1], [G4, 4]]
@@ -71,7 +83,7 @@ sections:
 
   harbor_light:
     bars: 8
-    chords: [C, G/B, Am, Em, F, C, F, G]
+    chords: [C, G/B, Am/C, G, F, C, F, G]
     melody:
       - [[E4, 2], [G4, 2], [C5, 2], [r, 2]]      # the same shape in C major: the water at dawn
       - [[D5, 3], [B4, 1], [G4, 4]]
@@ -89,7 +101,7 @@ sections:
 
   water:
     bars: 8
-    chords: [C, G/B, Am, Em, F, Dm, G, C]
+    chords: [C, G/B, Am/C, G, F, Dm, G, C]
     melody:
       - [[E4, 2], [G4, 2], [C5, 2], [r, 2]]
       - [[D5, 3], [B4, 1], [G4, 4]]
@@ -108,7 +120,7 @@ sections:
 
   return:
     bars: 8
-    chords: [Am, Em/G, F, C, Dm, Am, Dm, E7]
+    chords: [Am, G, F, C, Dm/F, Am, Dm, E7]
     melody: "same notes as arrival"
     texture: "the return, and the one place the cue is loudest: the broken chord goes back to eighths, the echo is on, every voice is at its section level, and the drums take a soft crash on the downbeat (rung 5). One rung at a time only; no new material"
     arp: eighths
@@ -118,7 +130,7 @@ sections:
 
   read:
     bars: 8
-    chords: [Am, Em/G, F, C, F, G, E7, Am]
+    chords: [Am, G, F, C, F, G, E7, Am/C]
     melody:
       - [[A4, 3], [C5, 1], [E5, 2], [r, 2]]      # H with its rhythm changed once per phrase (HOK-17)
       - [[D5, 3], [B4, 1], [G4, 4]]
@@ -137,7 +149,7 @@ sections:
 
   light_again:
     bars: 8
-    chords: [C, G/B, Am, Em, F, C, F, G]
+    chords: [C, G/B, Am/C, G, F, C, F, G]
     melody: "same notes as harbor_light"        # the section is keyed harbor_light; arrange.py's V3_BASE_MELODY reads one word, so the key is spelled here
     texture: "the light returns with the full calm ensemble: eighths on the broken chord, the echo on, the walk in the last two bars"
     arp: eighths
@@ -148,7 +160,7 @@ sections:
 
   close:
     bars: 8
-    chords: [Am, Em/G, F, Dm, F, E7, Am, Am]
+    chords: [Am, G, F, Dm, F, E7, Am, Am]
     melody:
       - [[A4, 2], [C5, 2], [E5, 2], [r, 2]]
       - [[D5, 3], [B4, 1], [G4, 4]]

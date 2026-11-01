@@ -36,6 +36,46 @@ seam check the card asks for.
   pad on the saw, bass on the triangle as root and fifth with a walking bar where the section says so.
   The echo arrives on `pulse 2` from section 3 (CHIP-08: one eighth late, 40 percent).
 
+## The cue gate repair, 2026-11-01 (card t_79152146)
+
+The M4 cue gate (`tools/counterpoint/cue_gate.py`) refused this recipe, and it was right to: 8 CP-01
+findings (a dissonance on a strong beat that is neither prepared nor resolved) and 5 CP-09 findings
+(parallel perfect intervals between the lead and the bass). The recipe had no row in
+`data/cue_gate_baseline.json` because it was unreadable by the checker until commit f8f872d8, which is
+after that baseline was written, so the gate had no floor to report it against.
+
+Nothing in the melody changed. The harmony under it did, and each edit answers measured findings:
+
+- `Em/G` and `Em` under the crest `D5 B4 G4` became `G`, in the arrival, settle, return, read, close,
+  harbor_light, water and light_again sections. That crest spells a G triad; over Em its first note is
+  a seventh that then leaves by leap, which is exactly what the gate named at bars 2, 10, 20, 28, 34,
+  42, 52 and 58.
+- `Dm` at the arrival and return bar 5 became `Dm/F`, and `Am` at harbor_light, water and light_again
+  bar 3 and at read bar 8 became `Am/C`. The arranger's half-bar approach tone in the bass was landing
+  an octave under the lead, so the bass and the melody moved in parallel octaves (bars 5, 19, 27, 37,
+  51). The inversion moves the bass to the other side of the destination root.
+
+Measured after the repair, with the project interpreter:
+
+```
+python tools/counterpoint/cue_gate.py assets/audio/pp_03_harbor/score_pp03.yaml --no-baseline
+  807 notes, 64 bars, key A minor (declared), outer voices vrc6 pulse a + triangle
+  M1a verdict PASS (hard 24, soft 17, style 33)
+  G1 CP-01 raw clashes on a strong beat: 0   G2 CP-09 parallel perfect intervals: 0
+  state: PASS, exit 0
+```
+
+The M1a hard count fell from 29 to 24 and the style count from 35 to 33. The same recipe built through
+`build_pp03.py` and gated as a MIDI also reads 0 CP-01 and 0 CP-09.
+
+## The render is one repair behind
+
+`pp_03_harbor.mid` (and therefore `.wav`, `.mp3`, `.ogg`, the loop sidecar, `arrange_report.json`,
+`score_check.json` and the W5 master `pp_03_harbor_master1`) is still the pre-repair render. The
+committed MIDI is byte-identical to `build_pp03.py` run on the old recipe, and it gates LEGACY with 9
+CP-01 and 1 CP-09, which is what the player currently hears. Card t_1a7c13cc re-renders and re-masters
+the cue from this recipe and takes it to Nayil's ear, because three of the edits change the harmony.
+
 ## The drums, which is what this card was really about
 
 The 2026-10-22 ear sweep scored drums 3 to 5 on every master and said the noise channel holds one
