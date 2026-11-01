@@ -229,8 +229,11 @@ def test_the_hp_line_joins_its_numbers_with_the_slash_the_sheet_now_carries():
     asset. The slash exists now, so the reason for the words is gone and keeping them would be drift.
     """
     glyphs = set(font_glyphs())
-    field = function_body(read(DIRECTOR), "pp_battle_draw")
-    hp = [line for line in field.split("\n") if '"HP "' in line or '"/"' in line or '"   WILL "' in line]
+    # Card t_8dcd842f moved the format of the line into pp_battle_hud_state, the one reader both battle screens draw
+    # from, so the literal is looked for there. Every rule below is unchanged: the numbers joined by a slash, no OF,
+    # and the sheet carrying the glyph the line asks for.
+    field = function_body(read(DIRECTOR), "pp_battle_hud_state")
+    hp = [line for line in field.split("\n") if '"HP "' in line or '"/"' in line or '"WILL "' in line]
     assert hp, "the HP and WILL line is gone"
     joined = " ".join(hp)
     assert '"/"' in joined, "the HP line does not join its numbers with a slash"

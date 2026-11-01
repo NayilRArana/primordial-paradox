@@ -106,6 +106,9 @@ function pp_battle_new(_encounter, _enemy, _party, _ledger) {
     pp_talk_live_state_init(_battle);
 
     pp_battle_phase_set(_battle, PPBattlePhase.intro);
+    // Card t_8dcd842f: the readout's first line, so a recording's log carries "HP 20/20" at fight start
+    // without reading a pixel, and every later line can be compared with it.
+    pp_battle_hud_refresh(_battle, "fight start");
     return _battle;
 }
 
@@ -295,6 +298,9 @@ function pp_battle_step(_battle) {
     _battle.phase_steps += 1;
     if (_battle.popup_steps > 0) _battle.popup_steps -= 1;
     if (_battle.cursor_note_steps > 0) _battle.cursor_note_steps -= 1;
+    // Card t_8dcd842f: the HUD's safety net. Four comparisons while nothing moved; a logged refresh the step
+    // after any meter changes, including the two written outside this file.
+    pp_battle_hud_guard(_battle);
 
     switch (_battle.phase) {
         case PPBattlePhase.intro: pp_battle_step_intro(_battle); break;
@@ -393,6 +399,8 @@ function pp_battle_begin_action(_battle) {
             var _power = _battle.actor.powers[0];
             if (is_undefined(_power)) break;
             _battle.actor.will = max(0, _battle.actor.will - _power.cost);
+            // Card t_8dcd842f: the resource meter this hud shows moved, so the log says so before the hit lands.
+            pp_battle_hud_refresh(_battle, "will spent");
             pp_battle_hurt_enemy(_battle, _power.power);
             pp_battle_say(_battle, ["* " + _power.name + " lands for " + string(_power.power) + "."], "enemy_turn");
             break;
@@ -413,6 +421,7 @@ function pp_battle_begin_action(_battle) {
             if (pp_battle_spare_allowed(_battle) && !pp_battle_spare_route_refused(_battle)) {
                 _battle.result = PPResult.spare;
                 _battle.enemy_hp = 0;
+                pp_battle_hud_refresh(_battle, "spare");
                 pp_battle_enter_result(_battle);
             } else if (pp_battle_interrupt_ready(_battle)) {
                 // Spec 18 section 4 rule 4: a refused SPARE at or below the enemy's interrupt threshold is the story
@@ -427,6 +436,7 @@ function pp_battle_begin_action(_battle) {
             var _item = _battle.actor.items[0];
             if (!is_undefined(_item)) {
                 _battle.actor.hp = min(_battle.actor.max_hp, _battle.actor.hp + _item.heal);
+                pp_battle_hud_refresh(_battle, "item heal");
                 array_delete(_battle.actor.items, 0, 1);
                 pp_battle_say(_battle, ["* " + _item.name + " restores " + string(_item.heal) + ". Salty."], "enemy_turn");
             }
@@ -464,6 +474,8 @@ function pp_battle_fight_damage(_battle, _power) {
 
 function pp_battle_hurt_enemy(_battle, _damage) {
     _battle.enemy_hp = max(0, _battle.enemy_hp - _damage);
+    // Card t_8dcd842f: the hook, called by the damage path itself.
+    pp_battle_hud_refresh(_battle, "enemy damage");
     _battle.popup_value = _damage;
     _battle.popup_steps = PP_DAMAGE_POPUP_STEPS;
     if (_battle.enemy_hp <= 0 && _battle.result == PPResult.none) _battle.result = PPResult.kill;
@@ -570,6 +582,8 @@ function pp_battle_step_dodge(_battle) {
     var _ev = pp_arena_step(_battle.arena, _in.vec_x, _in.vec_y);
     if (_ev.hit) {
         _battle.actor.hp = max(0, _battle.actor.hp - _battle.arena.attack);
+        // Card t_8dcd842f: the party's hp moved, which is the one number this hud exists to show while dodging.
+        pp_battle_hud_refresh(_battle, "party hit");
         _battle.popup_value = _battle.arena.attack;
         _battle.popup_steps = PP_DAMAGE_POPUP_STEPS;
     }
@@ -1188,6 +1202,137 @@ function pp_battle_draw_party(_battle) {
 // PP_COLOUR_MISSING (255, 0, 255) in the one room the demo fights in. A role a set does not carry is not a colour
 // the map's room palette holds, which is exactly what R48's check refuses.
 
+// ---------------------------------------------------------------------------------------------------------------
+// The HUD's numbers, and its refresh hook (card t_8dcd842f).
+//
+// The battle screen prints four numbers: the party's hp and will, the enemy's hp and the MERCY meter. Until this
+// card each of those marks did its own division and its own clamp at the draw site, so a text line and the bar
+// beside it could disagree by a rounding step, and nothing outside a draw call could say what the player was
+// looking at. One reader answers for all of them here, and one hook says when a number moved.
+//
+// This is NOT a second stats store. pp_battle_hud_state reads the fields the fight already moves, actor.hp,
+// actor.max_hp, actor.will, actor.will_max, enemy_hp, enemy.max_hp and talk_mercy over data\talk_live.json's
+// will.max, and writes none of them back. The fractions are clamped to 0..1 here so no caller has to remember to,
+// and every maximum is floored at 1 so a data row holding a 0 cannot divide by zero.
+//
+// The low band is 0.3, the same share the legacy screen's enemy bar used before this card, stated once.
+
+/// What the HUD is showing, in one struct, read from the fight's own fields. Side effect free: a draw site, a probe
+/// or a test can call it without touching the fight.
+function pp_battle_hud_state(_battle) {
+    var _d = pp_talk_live_data();
+    var _hp = max(0, floor(_battle.actor.hp));
+    var _hp_max = max(1, floor(_battle.actor.max_hp));
+    var _will = max(0, floor(_battle.actor.will));
+    var _will_max = max(1, floor(_battle.actor.will_max));
+    var _mercy_max = max(1, floor(_d.will_max));
+    var _mercy = 0;
+    if (variable_struct_exists(_battle, "talk_mercy") && !is_undefined(_battle.talk_mercy)) _mercy = floor(_battle.talk_mercy);
+    _mercy = clamp(_mercy, 0, _mercy_max);
+    var _enemy_hp = max(0, floor(_battle.enemy_hp));
+    var _enemy_max = max(1, floor(_battle.enemy.max_hp));
+    return {
+        hp: _hp,
+        hp_max: _hp_max,
+        hp_frac: clamp(_hp / _hp_max, 0, 1),
+        hp_low: (_hp / _hp_max <= 0.3),
+        hp_text: "HP " + string(_hp) + "/" + string(_hp_max),
+        will: _will,
+        will_max: _will_max,
+        will_frac: clamp(_will / _will_max, 0, 1),
+        will_text: "WILL " + string(_will) + "/" + string(_will_max),
+        mercy: _mercy,
+        mercy_max: _mercy_max,
+        mercy_frac: clamp(_mercy / _mercy_max, 0, 1),
+        mercy_label: string(_d.will_label),
+        enemy_hp: _enemy_hp,
+        enemy_max: _enemy_max,
+        enemy_frac: clamp(_enemy_hp / _enemy_max, 0, 1),
+        enemy_low: (_enemy_hp / _enemy_max <= 0.3)
+    };
+}
+
+/// THE REFRESH HOOK. Call it immediately after any code changes the party's hp or will, the enemy's hp or the MERCY
+/// meter: pp_battle_hud_refresh(_battle, "why"). It stores the state on the fight as battle.hud and writes ONE log
+/// line, and only when a number actually changed, so a recording's log says when the readout stepped and to what:
+///
+///     PP: hud HP 20/20, WILL 3/3, MERCY 0/100, enemy hp 15/15, after fight start
+///
+/// It draws nothing. Every draw site calls pp_battle_hud_state itself, so a caller that forgets the hook cannot
+/// leave the screen stale; it only loses the line. pp_battle_step runs pp_battle_hud_guard once a step as the
+/// safety net for the two meters written outside this file (pp_battle_text's pp_talk_apply and pp_talk_live's
+/// answer), so neither module needs an edit of its own to be covered.
+function pp_battle_hud_refresh(_battle, _why) {
+    var _hud = pp_battle_hud_state(_battle);
+    var _last = undefined;
+    if (variable_struct_exists(_battle, "hud") && is_struct(_battle.hud)) _last = _battle.hud;
+    _battle.hud = _hud;
+    if (!is_undefined(_last) && _last.hp == _hud.hp && _last.will == _hud.will
+        && _last.enemy_hp == _hud.enemy_hp && _last.mercy == _hud.mercy) {
+        return _hud;
+    }
+    show_debug_message("PP: hud " + _hud.hp_text + ", " + _hud.will_text + ", " + _hud.mercy_label + " "
+        + string(_hud.mercy) + "/" + string(_hud.mercy_max) + ", enemy hp " + string(_hud.enemy_hp) + "/"
+        + string(_hud.enemy_max) + ", after " + string(_why));
+    return _hud;
+}
+
+/// The safety net: four integer comparisons a step while a number is still, and a refresh the moment one moves.
+function pp_battle_hud_guard(_battle) {
+    if (!variable_struct_exists(_battle, "hud") || !is_struct(_battle.hud)) {
+        pp_battle_hud_refresh(_battle, "first step");
+        return;
+    }
+    var _last = _battle.hud;
+    if (_last.hp != _battle.actor.hp || _last.will != _battle.actor.will
+        || _last.enemy_hp != _battle.enemy_hp || _last.mercy != _battle.talk_mercy) {
+        pp_battle_hud_refresh(_battle, "step");
+    }
+}
+
+// The party panel (battle screen B) and the legacy stat row are both inside the area the dodge arena draws over: the
+// arena is 160 x 100 on 128, 120 (pp_config's arena macros), so it runs from y 70 to y 170 and swallows the panel at
+// y 120 to 160 whole. During the dodge phase, which is the only phase that takes hp off the party, the number the
+// hazards are lowering is underneath the bullet board and cannot be read at all. Moving the arena is not this
+// card's: its size is what every pattern in data\dodge is validated against (tools\check_data.py simulates them on
+// the same 160 x 100 box). Drawing the panel over the arena instead would hide the bottom 40 pixels of the board
+// and the player's own marker with it, which breaks the dodging to make a number readable.
+//
+// So the same four numbers are printed where nothing else draws: the top left corner, above the board's first row at
+// y 70. The plate is the room's ink, the letters are the sheet's own glyphs, and the two bars are the dim track and
+// text fill the legacy screen already spends, so the strip asks for no role a room lacks and covers no hazard.
+
+/// The strip's rect: x 8 to 179, y 8 to 35. The tests hold it above the arena's top edge and inside the frame.
+function pp_battle_hud_strip() {
+    return { x1: 8, y1: 8, x2: 179, y2: 35, text_x: 12, bar_x: 100, bar_w: 76, bar_h: 5, hp_y: 12, will_y: 24 };
+}
+
+/// One bar: dim track, text fill, whole pixels, and a fraction below one whole pixel still shows as one pixel so a
+/// meter that has moved at all is visible. The same rule the screen B meters state.
+function pp_battle_draw_meter(_x, _y, _w, _h, _frac) {
+    draw_set_colour(pp_role_colour("dim"));
+    draw_rectangle(_x, _y, _x + _w - 1, _y + _h - 1, false);
+    var _fill = floor(_w * clamp(_frac, 0, 1));
+    if (_frac > 0 && _fill < 1) _fill = 1;
+    if (_fill <= 0) return 0;
+    draw_set_colour(pp_role_colour("text"));
+    draw_rectangle(_x, _y, _x + _fill - 1, _y + _h - 1, false);
+    return _fill;
+}
+
+/// The readout during the dodge phase, over the corner of the field the arena does not reach.
+function pp_battle_draw_hud_field(_battle) {
+    var _hud = pp_battle_hud_state(_battle);
+    var _s = pp_battle_hud_strip();
+    draw_set_colour(pp_role_colour("ink"));
+    draw_rectangle(_s.x1, _s.y1, _s.x2, _s.y2, false);
+    pp_font_draw(_hud.hp_text, _s.text_x, _s.hp_y, 1);
+    pp_font_draw(_hud.will_text, _s.text_x, _s.will_y, 1);
+    pp_battle_draw_meter(_s.bar_x, _s.hp_y + 1, _s.bar_w, _s.bar_h, _hud.hp_frac);
+    pp_battle_draw_meter(_s.bar_x, _s.will_y + 1, _s.bar_w, _s.bar_h, _hud.will_frac);
+    return _hud;
+}
+
 function pp_battle_draw(_battle) {
     draw_set_alpha(1);
     draw_set_colour(pp_role_colour("paper"));
@@ -1222,7 +1367,8 @@ function pp_battle_draw(_battle) {
         var _bar_w = _enemy_slot.w * 2;
         var _bar_x = _enemy_slot.x - 16;
         var _bar_y = _enemy_slot.y + _enemy_slot.h + 4;
-        var _hp_frac = _battle.enemy_hp / max(1, _battle.enemy.max_hp);
+        var _legacy_hud = pp_battle_hud_state(_battle);
+        var _hp_frac = _legacy_hud.enemy_frac;
         draw_set_colour(pp_role_colour("dim"));
         draw_rectangle(_bar_x, _bar_y, _bar_x + _bar_w - 1, _bar_y + 3, false);
         draw_set_colour(pp_role_colour("text"));
@@ -1234,8 +1380,8 @@ function pp_battle_draw(_battle) {
         // will is already printed at y 156 and two things called WILL on one screen is one thing too many.
         // Label on the first free row, bar across the whole 64 pixel track below it: a 12 pixel fill was what the
         // number-reserving layout left, and a bar a judge cannot see move is not evidence of anything.
-        var _will = clamp(_battle.talk_mercy, 0, pp_talk_live_data().will_max);
-        var _will_max = max(1, pp_talk_live_data().will_max);
+        // Card t_8dcd842f: the label stays this exact data call because tools\capture_talk_live.py reads this
+        // line as the MERCY row's position; the meter's two numbers come from the state reader.
         pp_font_draw(pp_talk_live_data().will_label, _bar_x, _bar_y + 12, 1);
         var _will_x = _bar_x;
         var _will_y = _bar_y + 20;
@@ -1243,15 +1389,17 @@ function pp_battle_draw(_battle) {
         draw_set_colour(pp_role_colour("dim"));
         draw_rectangle(_will_x, _will_y, _will_x + _will_w - 1, _will_y + 3, false);
         draw_set_colour(pp_role_colour("text"));
-        draw_rectangle(_will_x, _will_y, _will_x + floor(_will_w * (_will / _will_max)), _will_y + 3, false);
+        draw_rectangle(_will_x, _will_y, _will_x + floor(_will_w * _legacy_hud.mercy_frac), _will_y + 3, false);
     }
 
     // Player health and will. Card BATTLE-FONT-WIRE wrote this as `HP 12 OF 12` because the sheet had no slash;
     // card SHEET-GLYPH-GAP (t_f476435e, decision D13) grew the sheet a slash and the two brackets, so the line now
     // reads the way the rest of the idiom writes it. 22 characters at the slice's numbers, x 16 to x 192, inside the
     // frame.
-    pp_font_draw("HP " + string(_battle.actor.hp) + "/" + string(_battle.actor.max_hp)
-        + "   WILL " + string(_battle.actor.will) + "/" + string(_battle.actor.will_max), 16, 156, 1);
+    // Card t_8dcd842f: the row's two numbers and their text come from the one reader, the same struct the bars
+    // and the dodge phase's strip use, so the line cannot disagree with a meter drawn from it.
+    var _row_hud = pp_battle_hud_state(_battle);
+    pp_font_draw(_row_hud.hp_text + "   " + _row_hud.will_text, 16, 156, 1);
 
     if (_battle.phase == PPBattlePhase.intro) {
         if (_battle.phase_steps < PP_INTRO_FLASH_STEPS && (_battle.phase_steps div 4) mod 2 == 0) {
@@ -1267,6 +1415,10 @@ function pp_battle_draw(_battle) {
     // painted over the command window's top border. Drawing the band last keeps the overhang inside the field.
     if (_battle.phase == PPBattlePhase.dodge && !is_undefined(_battle.arena)) {
         pp_arena_draw(_battle.arena);
+        // Card t_8dcd842f: the board covers the stat row whole (the arena runs from y 70 to y 170 and the row
+        // sits at y 156), so the same numbers are printed in the corner above it while the player dodges. Drawn
+        // after the arena because the arena dims the whole frame first.
+        pp_battle_draw_hud_field(_battle);
     }
 
     if (_battle.phase == PPBattlePhase.menu || _battle.phase == PPBattlePhase.resolve) {

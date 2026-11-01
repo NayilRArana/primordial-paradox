@@ -520,14 +520,17 @@ def test_the_two_new_actions_do_not_steal_a_key_from_another_action():
 
 def test_the_will_bar_is_inside_the_frame_and_cannot_overdraw():
     source = read(DIRECTOR_GML)
-    assert "pp_talk_live_data().will_label" in source
+    # Card t_8dcd842f moved the label and the two clamps into pp_battle_hud_state, the one reader every meter on the
+    # battle screen is drawn from, so these rules are looked for in the shape they have now. What they say is
+    # unchanged: the label is the data file's, the meter is a share of the track, and the track is inside the frame.
+    assert "mercy_label: string(_d.will_label)" in source, "the meter is labelled in code and not by the data file"
+    assert "mercy_frac: clamp(_mercy / _mercy_max, 0, 1)" in source, "the meter is not clamped to a share"
+    assert "floor(_will_w * _legacy_hud.mercy_frac)" in source, (
+        "the fill must be a fraction of the track, so it cannot be drawn wider than the track")
     # The track is the health bar's own width and the fill is the meter's share of it: no digits take a column out of
     # the bar, because a bar a judge cannot see move is not evidence that anything moved. (The earlier layout reserved
     # 36 pixels for a number and left a 12 pixel fill; card t_ee178652 dropped the number for that reason.)
     assert "var _will_w = _bar_w;" in source
-    assert "clamp(_battle.talk_mercy, 0, pp_talk_live_data().will_max)" in source
-    assert "floor(_will_w * (_will / _will_max))" in source, (
-        "the fill must be a fraction of the track, so it cannot be drawn wider than the track")
     # The geometry, computed from the layout file the director reads rather than from a remembered pixel count.
     screens = talk_live.load_json("data/ui_layouts.json")["screens"]
     battle = [screen for screen in screens if screen["name"] == "battle"][0]
