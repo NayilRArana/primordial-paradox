@@ -218,6 +218,32 @@ function pp_audio_theme_release(_a, _fade_ms) {
     return true;
 }
 
+/// The path a cue's OGG is found at right now, or an empty string when the take is not in the build. It is the same
+/// candidate list pp_audio_music opens from, so "is it there" and "play it" cannot disagree.
+function pp_audio_cue_file(_entry) {
+    var _paths = pp_audio_music_paths(_entry);
+    for (var p = 0; p < array_length(_paths); p++) {
+        if (file_exists(_paths[p])) return _paths[p];
+    }
+    return "";
+}
+
+/// The cue that actually plays when `_cue` is asked for: the cue itself when its OGG is in the build, otherwise the first
+/// cue down its `fallback` chain (data\audio.json) whose OGG is. That is what makes a pending cue (PP-07 to PP-16) a
+/// landed cue's music instead of a silent room. A chain that never reaches a file, or names a row that is not there,
+/// answers the asked cue, so the old "has no OGG yet" path still tells the log what is missing.
+function pp_audio_cue_resolve(_cue) {
+    var _id = _cue;
+    for (var hop = 0; hop < 8; hop += 1) {
+        var _entry = pp_audio_cue(_id);
+        if (is_undefined(_entry)) return _cue;
+        if (pp_audio_cue_file(_entry) != "") return _id;
+        if (!variable_struct_exists(_entry, "fallback") || !is_string(_entry.fallback) || _entry.fallback == "") return _cue;
+        _id = _entry.fallback;
+    }
+    return _cue;
+}
+
 /// Start one music cue, crossfading from whatever is playing. One music source at a time, the title theme
 /// included: a live theme is handed to the same fade first. The outgoing instance fades to 0 over the fade and
 /// is stopped by pp_audio_step when the fade time is up, and the incoming one rises from 0 to the music level
@@ -230,6 +256,15 @@ function pp_audio_music(_cue, _fade_steps) {
     if (is_undefined(_entry)) {
         show_debug_message("PP audio: unknown music cue " + string(_cue) + ", nothing played");
         return false;
+    }
+    // A cue whose OGG has not arrived plays the landed cue its row names as `fallback` (card MUSIC-EVERYWHERE), so the
+    // cue that is kept, compared and logged from here on is the one that resolved. A room that asks for PP-07 and a room
+    // that asks for PP-05 therefore share one stream, and the second ask does not restart it.
+    var _asked = _cue;
+    _cue = pp_audio_cue_resolve(_cue);
+    if (_cue != _asked) {
+        _entry = pp_audio_cue(_cue);
+        show_debug_message("PP audio: music cue " + string(_asked) + " has no OGG yet, falling back to " + string(_cue));
     }
     // Asking for the track that is already playing must not restart it, or a room trigger on every step would stutter.
     if (_a.music_cue == _cue && _a.music_inst > -1) return true;
@@ -393,6 +428,56 @@ function pp_audio_step() {
     if (_a.fade_inst > -1 && current_time >= _a.fade_end_ms) pp_audio_fade_flush(_a);
 }
 
+/// The fight cue a fight falls back to when its encounter row names none: PP-04, the navy sailors take the ear gate scored.
+#macro PP_AUDIO_FIGHT_CUE "PP-04"
+
+/// Room music (card MUSIC-EVERYWHERE, spec 12 acceptance 1). Every map names its cue in its own `music` field and
+/// pp_map_load copies it onto the map; this is the one door that turns that field into sound. It is called by every path
+/// that makes a room the active one: a new overworld (first entry, a warp, a load from a save), a door
+/// (pp_overworld_change_map), a scene that places the walker on another map, and the way back from a fight. The same
+/// cue in the next room is a no-op inside pp_audio_music, so walking between two PP-03 rooms never restarts the stream.
+/// A room with no cue leaves the music in hand playing. One line per entry names the room, the cue it asked for and the
+/// cue that is playing, so a headless run can be read back room by room.
+function pp_audio_room(_map) {
+    if (!is_struct(global.pp) || !is_struct(_map)) return false;
+    var _id = "";
+    if (variable_struct_exists(_map, "id")) _id = string(_map.id);
+    var _cue = "";
+    if (variable_struct_exists(_map, "music") && is_string(_map.music)) _cue = _map.music;
+    if (_cue == "") {
+        show_debug_message("PP audio: room " + _id + " names no music cue, the music in hand keeps playing");
+        return false;
+    }
+    var _a = pp_audio_state();
+    var _played = _a.played;
+    var _ok = pp_audio_music(_cue, PP_AUDIO_FADE_STEPS);
+    var _note = (_a.played > _played) ? "started" : "kept";
+    show_debug_message("PP audio: room " + _id + " asked " + _cue + ", playing " + pp_audio_music_cue() + " (" + _note
+        + "), stream " + (_ok ? "yes" : "no"));
+    return _ok;
+}
+
+/// Fight music (card MUSIC-EVERYWHERE, spec 12 rule 7). The encounter row names its cue in `music` (data\encounters\all.json:
+/// PP-04 for the deck fights, PP-06 for Percy, whose row is the boss priority). A row without one, or no row at all, plays
+/// PP_AUDIO_FIGHT_CUE, so no fight is silent. Called when the battle mode opens. The way back is pp_audio_room: the
+/// overworld asks for its room cue again when the fight hands control back.
+function pp_audio_battle(_enc) {
+    if (!is_struct(global.pp)) return false;
+    var _id = "";
+    var _cue = PP_AUDIO_FIGHT_CUE;
+    if (is_struct(_enc)) {
+        if (variable_struct_exists(_enc, "id")) _id = string(_enc.id);
+        if (variable_struct_exists(_enc, "music") && is_string(_enc.music) && _enc.music != "") _cue = _enc.music;
+    }
+    var _a = pp_audio_state();
+    var _played = _a.played;
+    var _ok = pp_audio_music(_cue, PP_AUDIO_FADE_STEPS);
+    var _note = (_a.played > _played) ? "started" : "kept";
+    show_debug_message("PP audio: fight " + _id + " asked " + _cue + ", playing " + pp_audio_music_cue() + " (" + _note
+        + "), stream " + (_ok ? "yes" : "no"));
+    return _ok;
+}
+
 /// The music cue playing now, or an empty string. The log and the tests read this instead of the instance id.
 function pp_audio_music_cue() {
     if (!is_struct(global.pp) || !is_struct(global.pp.audio)) return "";
@@ -463,6 +548,9 @@ function pp_audio_play_theme(_a) {
     // source, so the test is the same one duck and unduck make: absent or released. Testing existence alone would
     // make the theme unstartable for the rest of the run after the first cue.
     if (!variable_struct_exists(_a, "theme_inst") || _a.theme_inst <= -1) {
+        // Room and fight music play in the game now, so the way back to the title (a game over's RETURN TO TITLE, the demo
+        // route's last step) hands the cue to the fade before the theme starts, or the two would play over each other.
+        if (_a.music_inst > -1) pp_audio_music_stop();
         var _candidates = pp_audio_theme_streams();
         for (var t = 0; t < array_length(_candidates); t += 1) {
             var _rel = _candidates[t];

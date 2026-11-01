@@ -121,6 +121,9 @@ function pp_scene_world_place(_world, _map_id, _start) {
             return false;
         }
         _world.map = _map;
+        // Card MUSIC-EVERYWHERE: a scene that puts the walker on another map makes that room the active one, so its cue
+        // starts here; the scene's own music command, which comes after the placement, still wins.
+        pp_audio_room(_map);
         _world.actors = {};
         if (is_array(_map.actors)) {
             var _i = 0;

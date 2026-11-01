@@ -611,6 +611,10 @@ function pp_battle_enter_result(_battle) {
         + ", enemy " + string(_battle.enemy.id) + ", enemy hp " + string(_battle.enemy_hp)
         + "/" + string(_battle.enemy.max_hp));
 
+    // Card MUSIC-EVERYWHERE: a lost fight ends the music over the full fade (spec 12 rule 5), so nothing plays under the game
+    // over screen; a win and a spare keep the fight cue until the player's press hands the music back to the room.
+    if (_battle.defeated) pp_audio_music_stop();
+
     var _lines;
     if (_battle.defeated) _lines = pp_battle_dialogue_lines(_battle.encounter.lose_dialogue);
     else if (_battle.result == PPResult.spare) _lines = pp_battle_dialogue_lines(_battle.encounter.win_dialogue_spare);

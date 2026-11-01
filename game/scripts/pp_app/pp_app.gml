@@ -379,6 +379,8 @@ function pp_mode_battle() {
             global.pp.battle = _battle;
             // Card SFX-WIRE: the fight opens with the swoosh, whether or not the encounter data was found.
             pp_audio_play("encounter_swoosh");
+            // Card MUSIC-EVERYWHERE: the fight cue the encounter row names (PP-04, or PP-06 for Percy), PP-04 when it names none.
+            pp_audio_battle(_enc);
         },
         step: function(_params) {
             var _battle = global.pp.battle;
@@ -437,7 +439,12 @@ function pp_mode_overworld() {
     return {
         enter: function(_params) {
             var _resumed = is_struct(_params) && variable_struct_exists(_params, "resumed") && _params.resumed;
-            if (_resumed && !is_undefined(global.pp.world)) return;
+            if (_resumed && !is_undefined(global.pp.world)) {
+                // Card MUSIC-EVERYWHERE: the way back from a fight (and the second half of a load) asks for the room's own cue,
+                // which takes the music over from the fight cue; a room cue that is already playing is not restarted.
+                pp_audio_room(global.pp.world.map);
+                return;
+            }
 
             var _slice = global.pp_data.slice;
             var _map_id = _slice.map;

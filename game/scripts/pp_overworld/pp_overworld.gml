@@ -63,6 +63,10 @@ function pp_overworld_new(_map_id, _spawn_name) {
     // actually stands on; pp_save_autosave_step waits for the fade, and for any scene that opens here to finish.
     pp_save_autosave_arm(_map.id);
 
+    // Card MUSIC-EVERYWHERE: the room's own cue starts the moment the room is the active one. This is the one door a first
+    // entry, a PP_WARP launch, a load from a save and a mode swap back to the overworld all pass through.
+    pp_audio_room(_map);
+
     // Story actors placed by the map data (card ASSEMBLE). One sailor on the lower deck is the first of them.
     // They are read from the map, never hardcoded here, so a new NPC is a data edit and not a code edit.
     if (is_array(_map.actors)) {
@@ -624,6 +628,8 @@ function pp_overworld_change_map(_world, _map_id, _spawn_name) {
     // The new map is an entry too (spec 11 rule 4), so it arms its own silent save. Like the first entry, the write
     // waits for the fade this call just started.
     pp_save_autosave_arm(_map.id);
+    // Card MUSIC-EVERYWHERE: a door is a room entry too; the same cue in the next room does not restart.
+    pp_audio_room(_map);
     return true;
 }
 
@@ -703,6 +709,7 @@ function pp_overworld_actor_ahead(_world) {
 
 /// Step the overworld: clocks, scene, dialogue, walking, triggers.
 function pp_overworld_step(_world) {
+    pp_overworld_music_tour(_world);
     if (is_undefined(_world)) return;
 
     // Clocks that run whether or not anything else does. The world clock climbs every step so the animated tiles keep
@@ -1033,6 +1040,39 @@ function pp_overworld_draw(_world) {
 /// is a list of tiles "x,y;x,y" the capture below stands the walker on, one saved frame each.
 #macro PP_WARP "PP_" + "WARP"
 #macro PP_WARP_SHOTS "PP_" + "WARP_SHOTS"
+
+/// Card MUSIC-EVERYWHERE debug door, unset in every real launch (the variable is read once). With PP_MUSIC_TOUR set to any
+/// text, the walker stays where he is and, every PP_MUSIC_TOUR_STEPS steps, the bus is asked for the cue of the next room
+/// row, then of the next encounter row, through the same pp_audio_room and pp_audio_battle the game calls. One headless
+/// launch therefore writes a "PP audio: room <id> asked <cue>, playing <cue>" line for every room and a "PP audio: fight"
+/// line for every fight. It reads the data rows, not the world, so it loads no map, writes no save and moves nobody; when
+/// the list is done the world's own room cue is asked for again, which is the fight-end path.
+#macro PP_MUSIC_TOUR "PP_" + "MUSIC_TOUR"
+#macro PP_MUSIC_TOUR_STEPS 240
+function pp_overworld_music_tour(_world) {
+    if (!variable_global_exists("pp_music_tour_on")) {
+        global.pp_music_tour_on = (environment_get_variable(PP_MUSIC_TOUR) != "");
+        global.pp_music_tour_steps = 0;
+    }
+    if (!global.pp_music_tour_on) return;
+    global.pp_music_tour_steps += 1;
+    if ((global.pp_music_tour_steps mod PP_MUSIC_TOUR_STEPS) != 1) return;
+    var _rooms = global.pp_data.maps.maps;
+    var _fights = global.pp_data.encounters.encounters;
+    var _stop = global.pp_music_tour_steps div PP_MUSIC_TOUR_STEPS;
+    var _total = array_length(_rooms) + array_length(_fights);
+    if (_stop < array_length(_rooms)) {
+        show_debug_message("PP music tour: stop " + string(_stop + 1) + " of " + string(_total) + ", room " + string(_rooms[_stop].id));
+        pp_audio_room(_rooms[_stop]);
+    } else if (_stop < _total) {
+        var _enc = _fights[_stop - array_length(_rooms)];
+        show_debug_message("PP music tour: stop " + string(_stop + 1) + " of " + string(_total) + ", fight " + string(_enc.id));
+        pp_audio_battle(_enc);
+    } else if (_stop == _total) {
+        show_debug_message("PP music tour: done, back to the room cue of " + string(_world.map.id));
+        pp_audio_room(_world.map);
+    }
+}
 
 #macro PP_HERO_SHEET "zander_ow_v2"
 #macro PP_SAILOR_SHEET "sailor_ow_v2"
