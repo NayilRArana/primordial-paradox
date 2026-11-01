@@ -74,11 +74,18 @@ Exit codes:
     1  a check failed, or the script is malformed, or the game window never appeared
     3  the watchdog fired (the run overran)
     4  the idle gate refused to open a window: the user had input in the last three minutes (card CAPTURE-QUIET),
-       or this host cannot draw at all, in which case the run is not measured and nothing is claimed about it
+       or a desktop automation was driving the keyboard for the whole wait, or this host cannot draw at all, in
+       which case the run is not measured and nothing is claimed about it
 
 Quiet by default (card CAPTURE-QUIET, Nayil 2026-10-22): the game is started with PP_MUTE=1 so nothing plays, no
 window opens unless the idle gate in tools\\idle_check.py sees three quiet minutes, and the window is moved off the
 primary screen. --sound is for an audio proof, --show leaves the window where it is, --force is a human override.
+
+The wait (card t_688422b1): the bare command asks the gate for up to IDLE_WAIT_S (900 s) instead of taking the first
+refusal, so a night that finds the desktop busy holds its one attempt rather than recording nothing. That is patience
+and not a way round the gate: while codex.exe or codex-computer-use-swift.exe is running the gate keeps refusing, wait
+or no wait, because a window opened under a desktop automation is covered mid take. `--idle-wait 0` restores the old
+skip at once, which is what a person who wants the attempt to fail fast should pass.
 
 Portable import (card PINE-HONEST, 2026-10-24): the two modules this tool draws and launches with,
 tools\\capture_title.py and tools\\pp_launch.py, import ctypes.wintypes at their own line 39 and line 41, which raises
@@ -177,6 +184,17 @@ OUTPUT_DIR = os.path.join(ROOT, "output", "demo")
 BUILD_DIR = os.path.join(ROOT, "build")
 DEFAULT_SCRIPT = os.path.join(DEMO_DIR, "run_002.json")
 MANIFEST = os.path.join(DEMO_DIR, "manifest.json")
+
+# Card t_688422b1 (judge panel 2026-10-31, fix 4): the nightly of 2026-10-30 recorded NO VIDEO, and the reason was
+# not the route. play_demo asked the idle gate once, took the refusal, and the whole night was lost to a desktop
+# automation that had the keyboard at that second. A take that needs a quiet desktop waits for the gate; it never
+# defeats it. So the bare command now holds the launch for this long, asking every tools\idle_check.py POLL_S, and a
+# quiet minute is taken the moment it arrives. 900 s is the longest a night can be held without spoiling the
+# submission date: the gate's own three quiet minutes plus room for an automation to finish what it is doing. The gate
+# still refuses while codex.exe or codex-computer-use-swift.exe runs, wait or no wait (tools\idle_check.py:201-217),
+# so this buys patience and never a covered take; --idle-wait 0 asks for the old skip at once, and --force is still
+# the human override.
+IDLE_WAIT_S = 900.0
 
 # The frames the run is checked on, as a share of the recording: the start, then every sixth. Sampling on
 # fractions of the measured duration rather than on fixed seconds keeps the check valid for a longer script.
@@ -1008,7 +1026,7 @@ def reconstruct_audio(rows, seconds, out_path):
     info.update({"source": AUDIO_SOURCE_RECONSTRUCTED,
                  "track": out_path,
                  "first_music": None if not music else {"cue": music[0]["cue"],
-                                                        "file": os.path.relpath(music[0]["file"], ROOT).replace("\\", "/"),
+                                                        "file": repo_relative(music[0]["file"]),
                                                         "at": music[0]["in"]},
                  "why": "%d segment%s from %d audio line%s in the game's log"
                         % (len(segments), "" if len(segments) == 1 else "s",
@@ -1272,7 +1290,7 @@ def write_cues(video_path, log_text, footsteps, trace, script):
     payload = {
         "video": video_path,
         "written_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-        "script": (os.path.relpath(script_path_used, ROOT) if script_path_used else None),
+        "script": (repo_relative(script_path_used) if script_path_used else None),
         "beats": beat_report(log_text),
         "cues": {"footsteps": int(footsteps)},
         "talk": talk_report(log_text),
@@ -1657,7 +1675,7 @@ def verify_video(path, script, report_path=None, pollution=None, cues=None, audi
                 detail[key] = audio[key]
         track = detail.get("track")
         if track:
-            detail["track"] = os.path.relpath(track, ROOT).replace("\\", "/")
+            detail["track"] = repo_relative(track)
         report["audio_detail"] = detail
 
     work = os.path.join(BUILD_DIR, "_demo_check")
@@ -1922,6 +1940,21 @@ def print_report(report):
 
 # ---------------------------------------------------------------------------------------------------------------------
 # The run
+
+def repo_relative(path):
+    """A path as the verify file records it: relative to the repo when it can be, absolute when it cannot.
+
+    Card t_688422b1: `os.path.relpath` raises ValueError when the two paths are on different drives ("path is on mount
+    'C:', start on mount 'D:'"), and every caller here is writing a line of evidence into a report, where a crash is
+    worse than a long path. A take whose streams folder sits on another disk (a cache, a second drive), or a gate tree
+    built in a temp folder while the repo lives on D:, must still be able to say where a file is. Separators become
+    forward slashes so the same string reads the same on Pine, which is where the suite also runs.
+    """
+    try:
+        return os.path.relpath(path, ROOT).replace("\\", "/")
+    except ValueError:
+        return str(path).replace("\\", "/")
+
 
 def out_path_for(script):
     """The mp4 path the script names, resolved under the repository root."""
@@ -2195,8 +2228,8 @@ def run_demo(script, keep_raw=False):
         print("talk leg: %s" % json.dumps(talk_report(log_text), sort_keys=True))
 
         ok, report = verify_video(out_path, script, verify_path, pollution=pollution, cues=cues, audio=audio_info)
-        report["script"] = os.path.relpath(script_path_used, ROOT) if script_path_used else None
-        report["run"] = {"trace": replay.trace, "failures": failures, "game_log": os.path.relpath(log_path, ROOT),
+        report["script"] = repo_relative(script_path_used) if script_path_used else None
+        report["run"] = {"trace": replay.trace, "failures": failures, "game_log": repo_relative(log_path),
                          "footsteps": footsteps, "planned_seconds": round(seconds, 3),
                          "recorded_seconds": round(record_seconds, 3)}
         # A cover seen once the recording had stopped is a NOTE beside the checks, never one of the six and
@@ -2259,10 +2292,12 @@ def main():
         pp_launch = launch_module()
     except PlatformUnavailable as error:
         return unavailable(error)
-    # Card CAPTURE-QUIET: the same four launch flags every launching tool takes (tools\pp_launch.py).
-    pp_launch.add_launch_flags(parser)
+    # Card CAPTURE-QUIET: the same four launch flags every launching tool takes (tools\pp_launch.py). Card t_688422b1:
+    # the wait is this tool's own default, so a bare `python tools\play_demo.py` on a busy desktop holds the launch
+    # instead of spending the night's only attempt on one refusal.
+    pp_launch.add_launch_flags(parser, default_wait=IDLE_WAIT_S)
     parser.add_argument("--script", default=DEFAULT_SCRIPT,
-                        help="the demo script to play (default data\\demo\\run_001.json)")
+                        help="the demo script to play (default data\\demo\\run_002.json, the 180 s submission take)")
     parser.add_argument("--out", default=None, help="override the mp4 path the script names")
     parser.add_argument("--check", action="store_true",
                         help="check an existing mp4 against the script instead of playing the game")

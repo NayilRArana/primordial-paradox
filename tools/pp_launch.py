@@ -392,8 +392,8 @@ def add_launch_flags(parser, default_wait=0.0):
     parser.add_argument("--show", action="store_true",
                         help="leave the window where it is (default: move it off the primary screen)")
     parser.add_argument("--idle-wait", type=float, default=default_wait, dest="idle_wait",
-                        help="poll this many seconds for the user to go quiet before skipping (default %g: skip at "
-                             "once when there has been input in the last %.0f s)" % (default_wait, MIN_IDLE_S))
+                        help="poll this many seconds for the user to go quiet before skipping (default %g; 0 skips "
+                             "at once when there has been input in the last %.0f s)" % (default_wait, MIN_IDLE_S))
     parser.add_argument("--force", action="store_true",
                         help="run even though input was recent: only a person at the keyboard should use this")
     return parser

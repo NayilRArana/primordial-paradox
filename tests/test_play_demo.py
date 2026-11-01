@@ -24,6 +24,7 @@ import importlib.util
 import json
 import os
 import tempfile
+import time
 
 import pytest
 
@@ -233,3 +234,76 @@ def test_a_black_frame_measures_as_black_and_a_game_frame_does_not():
     bright = os.path.join(scratch, "bright.png")
     Image.new("RGB", (768, 720), (0, 120, 248)).save(bright, "PNG")
     assert demo.frame_luma(bright) > demo.MIN_MEAN_LUMA
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Card t_688422b1 (judge panel 2026-10-31, fix 4): the take has to reach the end of its own clock, and the night it is
+# recorded on has to hold the launch instead of spending it on one idle gate refusal.
+
+
+@pytest.mark.windows_only
+def test_the_submission_take_waits_for_the_gate_instead_of_taking_the_first_refusal():
+    """900 s of patience is the fix for the NO VIDEO night, and it may never be shorter than the gate's own quiet.
+
+    tools/idle_check.py allows a launch after MIN_IDLE_S of no input, so a wait below that number could only ever run
+    out before a quiet minute existed. The wait is also not a way around the gate: the automation check refuses
+    whatever this number is, so the test pins the number that buys patience and nothing else.
+    """
+    demo = load_tool("play_demo")
+    idle = load_tool("idle_check")
+    assert demo.IDLE_WAIT_S == 900.0, "the submission take's wait changed: %r s" % (demo.IDLE_WAIT_S,)
+    assert demo.IDLE_WAIT_S >= idle.MIN_IDLE_S, (
+        "a %r s wait cannot outlast the %r s of quiet the gate asks for" % (demo.IDLE_WAIT_S, idle.MIN_IDLE_S))
+    # The bare command's own default, not a flag the caller has to remember: the nightly runs the command with no
+    # arguments, and that is the call that lost 2026-10-30.
+    text = open(os.path.join(TOOLS, "play_demo.py"), "r", encoding="utf-8").read()
+    assert "add_launch_flags(parser, default_wait=IDLE_WAIT_S)" in text
+
+
+@pytest.mark.windows_only
+def test_a_path_on_another_drive_is_recorded_instead_of_raising():
+    """The verify file records where a file is; `os.path.relpath` raises across drives, and that crashed a take.
+
+    Card t_688422b1: tests/test_play_demo_audio.py::test_the_rebuilt_track_really_renders_and_is_not_silence writes its
+    streams folder under the system temp, so the rebuilt track's first music file sits on C: while this repo is on D:,
+    and the audio record raised `ValueError: path is on mount 'C:', start on mount 'D:'` inside a report writer. Four
+    call sites did their own relpath; they all go through repo_relative now, and a path it cannot relativise is
+    recorded in full rather than crashing the take.
+    """
+    demo = load_tool("play_demo")
+    inside = demo.repo_relative(os.path.join(demo.ROOT, "data", "demo", "run_002.json"))
+    assert inside == "data/demo/run_002.json", "a path inside the repo is not recorded relative to it: %r" % (inside,)
+    foreign = demo.repo_relative(os.path.join("C:" + os.sep, "Users", "naran", "streams", "title_theme_v3_126.ogg"))
+    assert "\\" not in foreign, "the recorded path kept Windows separators: %r" % (foreign,)
+    assert foreign.endswith("title_theme_v3_126.ogg"), "the recorded path lost its file: %r" % (foreign,)
+
+
+@pytest.mark.windows_only
+def test_a_beat_the_game_never_names_does_not_end_the_take_early():
+    """A marker is an accelerator, never a stop (card t_688422b1: "without early stop").
+
+    The judged take of 2026-10-26 was 73.483 s against a 180 s plan. That number came from a 71 s script, but the
+    property that matters here is separate and worth a pin: a beat whose log line never arrives costs the beat's own
+    step and a line in the verify file, and the recording still runs to the end step with the last beat held on
+    screen. Only a covering window stops a take early.
+    """
+    demo = load_tool("play_demo")
+    scratch = tempfile.mkdtemp(prefix="pp_demo_")
+    log_path = os.path.join(scratch, "game.log")
+    with open(log_path, "w", encoding="utf-8") as handle:
+        handle.write("PP: something else entirely\n")
+    script = {"clock": {"fps": 60},
+              "events": [{"id": "r001", "kind": "note", "step": 0},
+                         {"id": "r002", "kind": "note", "step": 6, "marker": "PP scene: never written"}]}
+    player = demo.Replay(script, 0, log_path, lambda *args, **kwargs: None)
+    started = time.monotonic()
+    failures = player.run(60)
+    elapsed = time.monotonic() - started
+    # The clock is what "without early stop" means: 1.0 s of end step plus the 30 step hold of the last beat, and the
+    # run does not return before the hold is over. A run that stopped at the beat would return at about 0.1 s.
+    assert elapsed >= 1.4, "the take stopped at %.2f s, before the 1.0 s end step and its 30 step hold" % elapsed
+    assert any("never carried" in failure for failure in failures), (
+        "a beat the game never named passed silently: %r" % (failures,))
+    assert [row["id"] for row in player.trace] == ["r002"], (
+        "a missing marker changed what was played: %r" % (player.trace,))
+    assert player.trace[0]["at_step"] >= 6, "the beat fired before its own step: %r" % (player.trace[0],)

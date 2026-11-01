@@ -277,7 +277,10 @@ def test_play_demo_records_what_it_was_told():
     text = source("play_demo")
     # Card PINE-HONEST (t_84fe63ff): both calls now go through the lazily imported launcher, so they read
     # launch.add_launch_flags( and launch.policy_from_args(. Same two properties, accessor instead of prefix.
-    assert ("pp_launch.add_launch_flags(parser)" in text) or ("launch.add_launch_flags(parser)" in text)
+    assert "add_launch_flags(parser" in text, "play_demo stopped taking the shared launch flags"
+    # Card t_688422b1: play_demo passes its own default wait to the shared helper (the other launching tools pass
+    # default_wait=0.0), so the assertion above is spelled as a prefix: the helper is still the one implementation.
+    assert "default_wait=IDLE_WAIT_S" in text, "the submission take lost its wait for a quiet desktop"
     assert ("LAUNCH = pp_launch.policy_from_args(args)" in text) \
         or ("LAUNCH = launch.policy_from_args(args)" in text)
 
