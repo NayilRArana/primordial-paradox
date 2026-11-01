@@ -38,6 +38,12 @@ Scope and honesty notes:
   - Key membership is not a checker rule (FV-4-rules.md 6.9), so the evaluator does not judge
     it; the module applies it only with scale_only=True.
   - No test touches the network. No test writes outside pytest's tmp_path.
+  - The suite must collect and run from a clean clone, where two files this box has do not
+    exist: the cue MIDI (gitignored by repo policy, `.gitignore` line 103 `*.mid`) and
+    tools/counterpoint/generate.py (only present once its own commit lands). The repertoire
+    window is therefore frozen in `pp04_repertoire_window.json` beside this file, and the two
+    checks that need the raw cue or the generator drop that row when the file is absent. On a
+    tree that has both, nothing is skipped.
 """
 
 from __future__ import annotations
@@ -328,9 +334,30 @@ HAND_INVENTION = {
 REPERTOIRE_VOICES = ("pulse 1", "pulse 2", "triangle")
 REPERTOIRE_BARS = (7, 8)
 
+# The cue MIDI is gitignored by repo policy (.gitignore line 103, `*.mid`), so the sampled
+# window is frozen in a committed JSON beside this test instead of being read from the cue when
+# this module loads. Reading the cue there made the whole module uncollectable from a clean
+# clone; the frozen copy is what a clean checkout tests.
+REPERTOIRE_FIXTURE = os.path.join(HERE, "pp04_repertoire_window.json")
 
-def _shipped_repertoire_grid():
-    """The shipped cue's own notes, sampled on the eight beat boundaries of bars 7 and 8.
+
+def _load_frozen_repertoire_window():
+    """The committed copy of the window, plus the key it is measured in."""
+    with open(REPERTOIRE_FIXTURE, encoding="utf-8") as handle:
+        frozen = json.load(handle)
+    assert tuple(frozen["bars"]) == REPERTOIRE_BARS, frozen["bars"]
+    assert tuple(frozen["grid"]) == REPERTOIRE_VOICES, frozen["grid"]
+    grid = {}
+    for voice in REPERTOIRE_VOICES:
+        line = [int(pitch) for pitch in frozen["grid"][voice]]
+        assert len(line) == len(REPERTOIRE_BARS) * frozen["beats"], (voice, len(line))
+        grid[voice] = line
+    key = (int(frozen["key"][0]), str(frozen["key"][1]))
+    return grid, key
+
+
+def _live_repertoire_grid():
+    """The same notes sampled live from the shipped cue MIDI. The drift check's oracle.
 
     `assets/audio/pp_04_fight_baroque_v2` is the studio's own M3 build (NOTES.md: three voice
     fugue exposition on the game's leitmotif, A minor, 4/4, 168 bpm), so there is no third
@@ -338,6 +365,9 @@ def _shipped_repertoire_grid():
     pinned onto a one-attack-per-beat grid whole; this window is the part where all three
     voices sound on every beat, and pinning the sampled pitches is the faithful reduction of
     the shipped notes to the model's grid.
+
+    Only callable where the cue exists: on a clean clone it does not, which is why the fixture
+    is frozen in REPERTOIRE_FIXTURE and this function is used by the drift test alone.
     """
     import rules  # the M1a checker, only to read the committed MIDI
 
@@ -355,11 +385,11 @@ def _shipped_repertoire_grid():
     return grid
 
 
-REPERTOIRE_WINDOW = _shipped_repertoire_grid()
+REPERTOIRE_WINDOW, REPERTOIRE_KEY = _load_frozen_repertoire_window()
 
 GOOD_TEXTURES = {
     "hand-written-invention": (HAND_INVENTION, (0, "major")),
-    "shipped-repertoire-pp04-bars-7-8": (REPERTOIRE_WINDOW, (9, "minor")),
+    "shipped-repertoire-pp04-bars-7-8": (REPERTOIRE_WINDOW, REPERTOIRE_KEY),
 }
 
 # One bad case per rule the card names, each breaking exactly that rule according to the
@@ -467,11 +497,18 @@ def test_known_good_texture_solves_sat(name):
     assert result["model"] == grid, "a fully pinned SAT model must be the grid that was pinned"
 
 
+@pytest.mark.skipif(not os.path.isfile(SHIPPED_CUE),
+                    reason="cue MIDI is gitignored by repo policy (*.mid) and absent here, so "
+                           "the frozen window cannot be re-derived: %s" % SHIPPED_CUE)
 def test_shipped_repertoire_fixture_is_still_the_committed_cue():
-    """The repertoire fixture is derived from the shipped MIDI, so a change to that cue fails
-    here instead of silently testing something else."""
-    assert os.path.isfile(SHIPPED_CUE), SHIPPED_CUE
-    assert _shipped_repertoire_grid() == REPERTOIRE_WINDOW
+    """The repertoire fixture is a frozen copy of the shipped cue's bars 7 and 8, so a change
+    to that cue fails here instead of silently testing something else.
+
+    Skipped where the cue is absent, which is every clean clone: that is exactly why the window
+    is frozen in pp04_repertoire_window.json. On a tree that has the cue, this is the only
+    thing keeping the frozen copy honest.
+    """
+    assert _live_repertoire_grid() == REPERTOIRE_WINDOW
 
 
 def test_known_good_canon_is_sat_and_the_imitation_holds():
@@ -596,24 +633,29 @@ def _snapshot(root):
 
 
 def test_running_the_tools_writes_nothing_into_the_shipped_cue_paths(tmp_path):
-    before = _snapshot(AUDIO)
+    before = _snapshot(AUDIO) if os.path.isdir(AUDIO) else {}
     env = dict(os.environ)
+    # Rows whose file a clean clone deliberately does not have are dropped rather than failing
+    # the run: the cue MIDI is gitignored by repo policy, and the generate tool is only present
+    # where its own commit is. A missing row is reported by its own absence, not as a red.
     runs = [
         # the model under test, both CLI paths, with its JSON sent to tmp_path
-        [sys.executable, Z3_TOOL, "--canon", "--positions", "4",
-         "--json", str(tmp_path / "canon.json")],
-        [sys.executable, Z3_TOOL, "--worked-examples"],
-        # the reader and the generator that share this directory
-        [sys.executable, CHECK_TOOL, SHIPPED_CUE, "--quiet"],
-        [sys.executable, GENERATE_TOOL, "--form", "invention", "--seed", "1",
-         "--out", str(tmp_path / "invention.mid"), "--out-dir", str(tmp_path)],
+        ("counterpoint_z3.py", [sys.executable, Z3_TOOL, "--canon", "--positions", "4",
+                                "--json", str(tmp_path / "canon.json")]),
+        ("counterpoint_z3.py --worked-examples", [sys.executable, Z3_TOOL, "--worked-examples"]),
     ]
-    for argv in runs:
+    if os.path.isfile(SHIPPED_CUE):
+        runs.append(("check.py", [sys.executable, CHECK_TOOL, SHIPPED_CUE, "--quiet"]))
+    if os.path.isfile(GENERATE_TOOL):
+        runs.append(("generate.py", [sys.executable, GENERATE_TOOL, "--form", "invention",
+                                     "--seed", "1", "--out", str(tmp_path / "invention.mid"),
+                                     "--out-dir", str(tmp_path)]))
+    for tag, argv in runs:
         proc = subprocess.run(argv, cwd=str(tmp_path), env=env, capture_output=True, text=True,
                               timeout=600)
         assert proc.returncode == 0, "%s exited %d\n%s\n%s" % (
-            os.path.basename(argv[1]), proc.returncode, proc.stdout[-2000:], proc.stderr[-2000:])
-    after = _snapshot(AUDIO)
+            tag, proc.returncode, proc.stdout[-2000:], proc.stderr[-2000:])
+    after = _snapshot(AUDIO) if os.path.isdir(AUDIO) else {}
     assert set(after) == set(before), "files appeared or vanished under assets/audio: %s" % (
         sorted(set(after) ^ set(before))[:10],)
     changed = sorted(name for name in before if before[name] != after[name])

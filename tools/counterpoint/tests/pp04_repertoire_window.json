@@ -1,0 +1,47 @@
+{
+  "_comment": "Frozen beat-boundary window of bars 7-8 of the shipped cue assets/audio/pp_04_fight_baroque_v2/pp_04_fight_baroque_v2.mid, which is the studio's own M3 build (three voice fugue exposition on the game's leitmotif, A minor, 4/4, 168 bpm; see that folder's NOTES.md), so no third party music is involved. The cue MIDI is gitignored by repo policy (.gitignore:103 *.mid), so the sampled pitches live here instead of being read from the file at import: a clean clone must still collect and run the adversarial suite. test_shipped_repertoire_fixture_is_still_the_committed_cue re-derives the same window from the MIDI when that file is present and fails if this copy has drifted.",
+  "bars": [
+    7,
+    8
+  ],
+  "beats": 4,
+  "grid": {
+    "pulse 1": [
+      74,
+      77,
+      74,
+      77,
+      79,
+      79,
+      79,
+      79
+    ],
+    "pulse 2": [
+      62,
+      69,
+      65,
+      69,
+      67,
+      71,
+      67,
+      71
+    ],
+    "triangle": [
+      50,
+      50,
+      50,
+      50,
+      52,
+      52,
+      52,
+      52
+    ]
+  },
+  "key": [
+    9,
+    "minor"
+  ],
+  "sampling": "max sounding pitch per voice at each of the eight beat boundaries",
+  "source_cue": "assets/audio/pp_04_fight_baroque_v2/pp_04_fight_baroque_v2.mid",
+  "source_sha256": "a7f7ed516272500f2b7f101bea4b7f79d4df683d78f7b012668dbc3418d07a63"
+}
