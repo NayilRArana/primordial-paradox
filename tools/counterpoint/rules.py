@@ -119,7 +119,7 @@ KEY_ALIASES = {"": "major", "maj": "major", "major": "major",
 NES_RANGES = {
     "vrc6 pulse a": (55, 96),
     "vrc6 pulse b": (45, 84),
-    "vrc6 saw": (43, 67),
+    "vrc6 saw": (43, 71),   # v1 pad window 48..71, V3 window 43..67, so the union is 43..71
     "pulse 1": (55, 83),
     "pulse 2": (43, 96),
     "triangle": (36, 55),

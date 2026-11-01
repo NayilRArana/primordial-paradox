@@ -85,7 +85,7 @@ SHIPPED_CUE = os.path.join(AUDIO, "pp_04_fight_baroque_v2", "pp_04_fight_baroque
 NES_RANGES = {
     "vrc6 pulse a": (55, 96),
     "vrc6 pulse b": (45, 84),
-    "vrc6 saw": (43, 67),
+    "vrc6 saw": (43, 71),
     "pulse 1": (55, 83),
     "pulse 2": (43, 96),
     "triangle": (36, 55),

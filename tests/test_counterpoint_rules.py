@@ -205,6 +205,35 @@ def test_cp17_a_note_outside_the_nes_range_of_its_voice_is_a_finding():
     assert found(passing, "CP-17") == []
 
 
+def test_cp17_accepts_the_saw_ceiling_the_renderer_actually_writes():
+    """arrange.py voices the v1 saw pad inside 48..71 (tools/arrange.py:640-641), so 68..71 is legal
+    input and CP-17 must not fault it; 72 is still above the renderer and still a finding."""
+    inside = score_of(upper=voice((76, 0, 4)), **{"vrc6 saw": voice((68, 0, 2), (71, 2, 2))})
+    above = score_of(upper=voice((76, 0, 4)), **{"vrc6 saw": voice((72, 0, 4))})
+    assert found(inside, "CP-17") == []
+    assert [f["rule"] for f in found(above, "CP-17")] == ["CP-17"]
+
+
+def test_the_nes_range_table_is_the_arrange_py_union_the_comment_claims():
+    """rules.py:115-118 says NES_RANGES holds arrange.py's two tables widened to their union, so
+    the checker cannot fault a note the renderer writes for another section."""
+    if TOOLS not in sys.path:
+        sys.path.insert(0, TOOLS)
+    import arrange
+
+    union = {}
+    for table in (arrange.VOICE_RANGES, arrange.V3_VOICE_RANGES):
+        for name, (low, high) in table.items():
+            if name in union:
+                union[name] = (min(low, union[name][0]), max(high, union[name][1]))
+            else:
+                union[name] = (low, high)
+    union["pulse 1"] = (min(union["pulse 1"][0], arrange.PULSE_1_B_RANGE[0]),
+                        max(union["pulse 1"][1], arrange.PULSE_1_B_RANGE[1]))
+    for name in rules.NES_RANGES:
+        assert rules.NES_RANGES[name] == union[name], name
+
+
 def test_cp18_an_escape_tone_is_recorded_as_a_style_note():
     failing = score_of(upper=voice((67, 0, 1), (65, 1, 1), (72, 2, 2)), lower=voice((60, 0, 4)))
     passing = score_of(upper=voice((67, 0, 1), (65, 1, 1), (64, 2, 2)), lower=voice((60, 0, 4)))
