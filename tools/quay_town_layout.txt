@@ -1,0 +1,96 @@
+# Town Quay v2 layout template (card LD-4). One character per tile, 48 x 45, glyphs from knowledge/MAP-STYLE-GUIDE.md Part A.
+# Started from Appendix A of the guide. Run tools/make_quay_town.py --diff to list every cell that differs from Appendix A; the reasons
+# are in output/level_pass_2026-10-27/v2/PROGRESS.md (CHANGES). Comment lines start with "# ", a grid row never contains a space.
+# The generator reads the 45 grid rows, then the @ lines. Edit by hand freely, then run: python tools/make_quay_town.py
+# Alphabet = data/tile_classes_quay_v2.json. ^ roof ridge, r eave, C chimney, W wall, V boards, P pilaster, w window, D door, S sign,
+# A awning, G gable, t ticket window, k band, . ground, : paving, , paving alt, ; drain, T tree, f F fence, * centrepiece, ~ water,
+# = coping, # quay wall face, p plank, b bollard, s steps, | pier rail, L lamp, h bench, v counter, o crate, O barrel, X container,
+# H hull, d deck, c cabin, m mast, N funnel, > bow, g gangway, M J U K crane, Λ lantern (replaces the centre ridge tile of the tower).
+# The generator alternates roof palette A/B per building, varies trees, paving, steps, planks and water: do not draw those by hand.
+TTTTTTTTTTTTTTTTTTTTTT::::TTTTTTTTTTTTTTTTTTTTTT
+TTTTTTTTTTTTTTTTTTTTTT::::TTTTTTTTTTTTTTTTTTTTTT
+TTTTTTTTTTTTTTTTTTTTTL::::L^^+^^TTTTTTTTTTTTTTTT
+TTTTTTTTTTTTTTTTTTTTT.::::.rrrrrTTTTTTTTTTTTTTTT
+TTf^C^^f^C^^f^^^^^TTT.::::.PWGWPTTTT^C^^f^C^^fTT
+TTfrrrrfrrrrfrrSrrTTT.::::.PwWwPTTTTrrrrfrrrrfTT
+TTfwWWwfwWWwfAAAAATTT.::::.PwWwPTTTTwWWwfwWWwfTT
+TTfWDWWfWDWWfwwDSwTTTS::::SPWDWPTTTTWDWWfWDWWfTT
+TT.::::::::::::::::::::::::::::::::::::::::::.TT
+TT.::::::::::::::::::::::::::::::::::::::::::.TT
+TT.::::::::::::::::::::::::::::::::::::::::::.TT
+Tf^C^^C^::::^C^::::^^C^^^C^^::::^C^^C^f^^^^^fTTT
+Tfrrrrrr::::rrr::::rrrGGGrrr::::rrrrrrfrrSrrfTTT
+TfWwWWwW::::wWw::::PwwSSSwwP::::WwWWwWfAAAAAfTTT
+TfwwDSWw::::WDS::::PwwWWWwwP::::wwDSWwfwwDSwfTTT
+TTfL::L::::::::::::PAAAAAAAP::::hh::OO:::::::fTT
+TTf::::::::::::::::PWtDDDtSP:::::::::::::::::fTT
+TTf::::::::::::::::::::::::::::::::::::::::::fTT
+TTf::::::::::::::::::::::::::::::::::::::::::FTT
+TTf::::::::::::::::::::::::::::::::::::::::::fTT
+TTf::::::::::::::::::::::::::::::::::::::::::fTT
+TT^Λ^::::::::::::SS:::::::::::::::^^C^^C^^:::fTT
+TTrrr::AAA::AAA:::::::::::::^^C^^frrrSSrrr:::FTT
+TTWwW::vvv::vvv::::L,,,;,,,LrrrrrfPwwVVwwP:::fTT
+TTkkk:::O::::O:::::,:::::::,wWwWwfPWWVVWWP:::fTT
+TTWwW::::::::::::::,:h:::h:,WWDSWfPWWDDWWP:::fTT
+TTkkk::::::::::::::;:::*:::;:::::::::::UJJJMfFTT
+TTWWW::AAA::AAA::::,:::::::,:::::::::::::::MffTT
+TTWDW::vvv::vvv::::,:::::::,::::oo::::XXX::KKfTT
+TT.:::::O::::O:::::L,,,;,,,L::::OO::::XXX::KKfTT
+TT.::::::::::::::::::::::::::::::::::::::::::FTT
+ff===b:::b====L==b===LpppL==b==L==b==b===b===fff
+######sss############|ppp|######################
+~~~~~~sss~~~~~~~~~~~~bpppb~~~~~~~~~~~~~~~~~~~~~~
+~ddd~~sss~ddd~~~~~~~~|ppp|~~~~~~m~~~~~~~~~~~~~~~
+~HH>~~~~~~HH>~~~~~~~~|ppp|~~~~~cdddd~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~bpppb~~~~HHHHH>~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~|ppp|~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~LpppL~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~|gg|~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~NNccc|gg|~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~dddddddddddd~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~HHHHHHHHHHH>~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@spawn start 24 1
+@spawn from_gate 8 10
+@spawn from_office 30 26
+@spawn from_pier 23 39
+@actor morgan 9 10 left sailor quay_gate_checkpoint
+@barrier 8 8 b
+@plaza 19 23 27 29
+@fightspot dock_petty_officer 30 27
+@osm 9 7 A1 11 0 Southampton Register Office
+@osm 15 7 A3 1 11 Kuti's Brasserie
+@osm 42 7 A1 51 5 Oceana Boulevard
+@osm 4 14 A9 8 5 Dancing Man (Wool House)
+@osm 13 14 A6 26 6 Telephone House
+@osm 23 16 A5 10 20 Red Funnel Terminal 1
+@osm 37 25 A4 23 22 Playhouse
+@osm 30 25 A6 18 25 Town Quay Offices
+@trigger 4 7 say say_door_oceana
+@trigger 9 7 say say_door_register
+@trigger 15 7 say say_door_kuti
+@trigger 29 7 say say_door_register
+@trigger 37 7 say say_door_oceana
+@trigger 42 7 say say_door_oceana
+@trigger 4 14 say say_door_dancing_man
+@trigger 13 14 say say_door_telephone
+@trigger 34 14 say say_door_dancing_man
+@trigger 41 14 say say_door_kuti
+@trigger 22 16 say say_door_red_funnel
+@trigger 23 16 say say_door_red_funnel
+@trigger 24 16 say say_door_red_funnel
+@trigger 37 25 say say_door_playhouse
+@trigger 38 25 say say_door_playhouse
+@trigger 3 28 say say_door_playhouse
+@trigger 30 25 map quay_dock_office spawn=from_quay
+@trigger 8 10 scene quay_gate_checkpoint once=true
+@trigger 8 12 scene quay_yard_walk once=true condition=gate_passed
+@trigger 16 26 marker deck_hound once=true marker_kind=story
+@trigger 23 40 map ship_small spawn=start
+@trigger 24 40 map ship_small spawn=start
+@trigger 23 38 say ship_aboard
+@trigger 24 38 say ship_aboard
+@trigger 23 35 save quay_rest_pier
+@trigger 5 30 save quay_rest_tower

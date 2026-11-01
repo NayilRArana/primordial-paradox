@@ -160,15 +160,15 @@ def test_the_audit_runs_on_every_room_and_finds_the_ship_and_quay_problems():
         audited[m["id"]] = map_audit.audit_room(m, rooms_by_id)
 
     ship = audited["ship_small"]
-    assert any(f["kind"] == "dangling_door" and f["target"] == "ship_sample" for f in ship), ship
+    assert not any(f["kind"] == "dangling_door" for f in ship), ship   # ship_sample.json is appended to the registry at load, so the hatch is a real door pair
 
     cabin = audited["ship_cabin"]
     reach = next(f for f in cabin if f["kind"] == "reachability")
-    assert reach["unreachable_count"] == 8, reach   # the two bunk booths are enclosed floor at HEAD
+    assert reach["unreachable_count"] == 0, reach   # the level pass of 2026-10-27 opened the two bunk booths (was 8)
 
     quay = audited["southampton_town_quay"]
     reach = next(f for f in quay if f["kind"] == "reachability")
-    assert reach["unreachable_count"] == 230, reach   # the quay's unreachable floor tiles
+    assert reach["unreachable_count"] == 0, reach   # v2 quay (2026-10-28): redesigned, every walkable tile is reachable (was 230 in the OSM trace)
 
     # every room carries each check kind
     for mid, findings in audited.items():

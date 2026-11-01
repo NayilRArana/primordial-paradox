@@ -138,6 +138,26 @@
         "sea_3",
         "sea_4"
       ]
+    },
+    {
+      "id": "quay_storm",
+      "note": "the same Town Quay in the hurricane: the storm sheet's eleven roles plus paper, dim and text, so the box, the cursor and a flash draw from the set instead of the missing colour",
+      "roles": [
+        "ink",
+        "paper",
+        "dim",
+        "text",
+        "grey_4",
+        "grey_5",
+        "sea_1",
+        "sea_2",
+        "sea_4",
+        "blood_3",
+        "stone_2",
+        "blood_4",
+        "gold_4",
+        "gold_5"
+      ]
     }
   ]
 }

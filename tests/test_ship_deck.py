@@ -84,7 +84,7 @@ DECK = "ship_small"
 CABIN = "ship_cabin"
 DECK_SIZE = (20, 15)
 DECK_WALKABLE = 176
-DECK_TRIGGERS = 7
+DECK_TRIGGERS = 9  # card t_785b61f0 adds the deck hound and the deck watch's percy, both fought in the demo
 
 # The sheet the deck names: 48 tiles of 16 by 16, 16 to a row, so 3 rows.
 SHEET = "ts_ship"
@@ -606,8 +606,13 @@ def test_the_first_fight_sits_two_tiles_east_of_the_spawn_with_a_clear_line(deck
     """The hand off the boarding scene ends on: the trigger is one step ahead, and the line is open."""
     spawn = deck["spawns"]["start"]
     battles = triggers_of(deck, "battle")
-    assert len(battles) == 1, "the deck carries %d battle triggers, the first fight is one" % len(battles)
-    fight = battles[0]
+    # Card t_785b61f0: the demo's shot table needs a one command win and a forced defeat as well as the first fight,
+    # so the deck carries three fight triggers now. The first fight is still the one nearest the spawn, and it is the
+    # only one this test pins: the other two are read by tests/test_demo_shots.py.
+    assert battles, "the deck carries no battle trigger, so the first fight has nothing to start it"
+    fight = min(battles, key=lambda row: row["x"] - spawn["x"])
+    assert fight["id"] == "tutorial_sailors", (
+        "the fight nearest the spawn is %r, so the boarding scene's hand off starts the wrong fight" % fight["id"])
 
     assert fight["y"] == spawn["y"], (
         "the fight at (%d,%d) is not on the spawn's row %d" % (fight["x"], fight["y"], spawn["y"]))
@@ -653,7 +658,8 @@ def test_the_deck_carries_the_seven_triggers_the_beats_ride_on(deck):
                             % (trigger["id"], tile))
     assert problems == [], problems
     assert {(trigger["kind"], trigger["id"]) for trigger in triggers} == {
-        ("save", SAVE_ID), ("battle", "tutorial_sailors"), ("flag", "ship_deck_seen"),
+        ("save", SAVE_ID), ("battle", "tutorial_sailors"), ("battle", "deck_hound"), ("battle", "percy"),
+        ("flag", "ship_deck_seen"),
         ("scene", LOG_SCENE), ("map", CABIN), ("map", "ship_sample"),
         ("map", "southampton_town_quay"),
     }, sorted((trigger["kind"], trigger["id"]) for trigger in triggers)

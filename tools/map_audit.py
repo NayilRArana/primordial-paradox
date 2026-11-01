@@ -25,6 +25,7 @@ from walker_bot import collision_value, sweep_snags
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MAPS_JSON = os.path.join(ROOT, "data", "maps", "all.json")
+SHIP_SAMPLE_JSON = os.path.join(ROOT, "data", "maps", "ship_sample.json")
 OUT_DIR = os.path.join(ROOT, "output", "map_audit")
 REPORT_JSON = os.path.join(OUT_DIR, "report.json")
 
@@ -34,7 +35,16 @@ POI_KINDS = {"say", "battle", "scene", "map", "save", "flag", "marker"}
 def load_maps():
     with open(MAPS_JSON, "r", encoding="utf-8-sig") as handle:
         data = json.load(handle)
-    return data["maps"]
+    maps = list(data["maps"])
+    # The game appends data\\maps\\ship_sample.json to the registry at load (game/scripts/pp_data/pp_data.gml), so the
+    # deck's hatch to ship_sample is a real, symmetric door pair and not a dangling one. Read it the same way the game
+    # does, or the audit reports a door mismatch the engine never sees.
+    if os.path.exists(SHIP_SAMPLE_JSON):
+        with open(SHIP_SAMPLE_JSON, "r", encoding="utf-8-sig") as handle:
+            extra = json.load(handle)
+        if isinstance(extra, dict) and isinstance(extra.get("maps"), list):
+            maps.extend(extra["maps"])
+    return maps
 
 
 def room_walkables(room):

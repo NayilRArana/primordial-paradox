@@ -95,7 +95,7 @@ ARRIVAL_MAP = "southampton_town_quay"
 ENTRY_SPAWN = "start"
 
 # The block the roadmap's S4 names: 53 by 56 tiles at 8 m a tile.
-ARRIVAL_SIZE = (53, 56)
+ARRIVAL_SIZE = (48, 45)   # v2 redesign 2026-10-28: a town of 3 x 3 screens (style guide B1), was 53 x 56
 
 # PACING-AND-CUTSCENES 6.2 and D1: none within 6 tiles of an entry, a door or a control handback.
 MARKER_CLEAR_TILES = 6
@@ -105,7 +105,7 @@ SCREEN_MARKER_CAP = 2
 # D1 names 1701 walkable tiles for this block, which is the figure the density band is read against.
 # Card t_67a36372 opens the pier junction at (35,47) so the ship gangway at the pier head can be walked
 # to, which is one more: 1702 measured on the shipped grid, with the barrier shut.
-ARRIVAL_WALKABLE = 1702
+ARRIVAL_WALKABLE = 817   # v2 redesign 2026-10-28 (tools/make_quay_town.py), barrier shut; was 689 after the v1 level pass, 1702 before
 # The one map trigger on the block that is not a building door: the gangway onto the ship (t_67a36372).
 GANGWAY_MAP = "ship_small"
 
@@ -511,13 +511,13 @@ def test_every_door_tile_is_drawn_as_a_door_and_answers_something(arrival):
     silent = sorted(drawn - firing)
     assert silent == [], "tile(s) %s are drawn as doors and no trigger answers them" % silent
 
-    assert len(drawn) == 8, "the block carries %d door tiles, ARRIVAL-CONTENT names 8" % len(drawn)
+    assert len(drawn) == 17, "the block carries %d door tiles; v2 draws 17 (every building has a door, the terminal 3 wide, the warehouse 2)" % len(drawn)
     assert len(interior) == 1, (
         "the block carries %d interior map doors; ARRIVAL-CONTENT makes the dock office the only "
         "interior, so the other doors are say triggers" % len(interior))
 
-    assert len(gangway) == 1, (
-        "the block carries %d gangway triggers to %r, the pier head needs 1"
+    assert len(gangway) == 2, (
+        "the block carries %d gangway triggers to %r, the 2 wide gangway at the pier head needs 2, one per tile"
         % (len(gangway), GANGWAY_MAP))
     tile = (gangway[0]["x"], gangway[0]["y"])
     assert tile not in drawn, "the gangway tile %s is drawn as a door, which a gangway is not" % (tile,)
@@ -559,8 +559,8 @@ def test_the_walkable_area_reaches_every_door(arrival):
     doors = sorted(set(door_tiles(arrival)) | {(trigger["x"], trigger["y"])
                                                for trigger in triggers_of(arrival, "map")})
     # Eight drawn doors plus the gangway at the pier head, which is on a pier tile and not door art.
-    assert len(door_tiles(arrival)) == 8, door_tiles(arrival)
-    assert len(doors) == 9, doors
+    assert len(door_tiles(arrival)) == 17, door_tiles(arrival)
+    assert len(doors) == 19, doors   # 17 drawn doors plus the 2 gangway tiles
 
     shut, shut_steps = flood_fill(arrival, start, gate_open=False)
     assert story_gate_is_open(arrival), (
@@ -706,8 +706,8 @@ def test_the_wild_density_band_is_one_per_forty_to_sixty_walkable_tiles(arrival)
         "the story gate changes the walkable count by more than the one tile the barrier occupies")
 
     low, high = wild_marker_band(ARRIVAL_WALKABLE)
-    assert (low, high) == (29, 42), (
-        "1701 walkable tiles at one per 40 to 60 is %d to %d wild markers" % (low, high))
+    assert (low, high) == (14, 20), (   # v2: 817 walkable tiles (was 689, which gave 12 to 17)
+        "817 walkable tiles at one per 40 to 60 is %d to %d wild markers" % (low, high))
     assert density_problems(ARRIVAL_WALKABLE, low) == []
     assert density_problems(ARRIVAL_WALKABLE, high) == []
     assert density_problems(ARRIVAL_WALKABLE, low - 1) != [], "one wild marker too few passed the band"
