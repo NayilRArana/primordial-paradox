@@ -2680,6 +2680,21 @@ PP04_CRASH_PITCH = 10
 PP04_BASS_ROOT = {2: 38, 0: 36, 10: 46, 9: 45, 7: 43}
 PP04_RIFF_ROOT = {2: 50, 0: 48, 10: 46, 9: 45, 7: 43}
 PP04_FIFTH_PC = {0: 7, 2: 9, 10: 5, 9: 4, 7: 2}
+# The register each voice is allowed to occupy. The pp04 cue is a rock riff, not the
+# waltz: the recipe's texture line puts the power chord on the two 2A03 pulses as
+# "the root of the power chord in muted eighths ... no third anywhere" (RCK-01), so
+# pulse 1 and pulse 2 live in the bass register here and the ranges follow the cue
+# that ships rather than the theme's melody doubling.
+PP04_VOICE_RANGES = {
+    "vrc6 pulse a": (60, 84),
+    "vrc6 pulse b": (48, 72),
+    "vrc6 saw": (36, 60),
+    "pulse 1": (36, 60),
+    "pulse 2": (36, 72),
+    "triangle": (36, 55),
+    "noise": (1, 15),
+    "dpcm": (36, 38),
+}
 
 
 def _pp04_fifth_pitch(root_pc, lo=60, hi=71):
@@ -2857,6 +2872,93 @@ def build_arrangement_pp04(score):
     return out
 
 
+def self_check_pp04(arrangement, data=None):
+    """The numbers a pp04 recipe earns, read back off the arrangement it built.
+
+    The recipe is the older shape: every section names its bars as a list of bar
+    numbers, so the report carries those numbers and checks them against the
+    recipe, which is what the counterpoint checker reads too (rules.py sends a
+    pp04 profile here as well, so the measured cue and the rendered cue cannot
+    disagree about a note).
+    """
+    score = arrangement.score
+    bars = arrangement.bars
+    meta = score.get("meta") or {}
+    bpm = arrangement.meta["bpm"]
+    sections = list(score["sections"])
+    first = {}
+    for bar in bars:
+        first.setdefault(bar.section, bar.number)
+
+    result = {
+        "schema": "pp04",
+        "sections": sections,
+        "section_bars": {name: len([b for b in bars if b.section == name])
+                         for name in sections},
+        "section_first_bar": first,
+        "bars": len(bars),
+        "bpm": bpm,
+        "beats_per_bar": arrangement.meta["beats_per_bar"],
+        "key": meta.get("key"),
+        "duration_seconds": round(len(bars) * arrangement.meta["beats_per_bar"]
+                                  * 60.0 / bpm, 3),
+        "loop_start_bar": arrangement.meta["loop_start_bar"],
+        "loop_end_bar": meta.get("loop_end_bar"),
+        "tail_bars": meta.get("tail_bars"),
+        "tracks": list(TRACK_NAMES),
+        "notes": {name: len(arrangement.notes[name]) for name in TRACK_NAMES},
+        "max_simultaneous_notes": max_simultaneous(arrangement),
+        "out_of_range": [],
+    }
+
+    for name in TRACK_NAMES:
+        lo, hi = PP04_VOICE_RANGES[name]
+        for start, _end, pitch in note_spans(arrangement.notes[name]):
+            if not (lo <= pitch <= hi):
+                result["out_of_range"].append(
+                    {"track": name, "tick": start, "pitch": pitch,
+                     "note": midi_to_name(pitch), "range": [lo, hi]})
+
+    written = {name: [bar.chord_symbol for bar in bars if bar.section == name]
+               for name in sections}
+    declared = {name: list(score["sections"][name]["chords"]) for name in sections}
+    result["chords_by_section"] = written
+    result["chords_match_score"] = written == declared
+    result["bar_numbers_match_score"] = all(
+        [bar.number for bar in bars if bar.section == name]
+        == list(score["sections"][name]["bars"])
+        for name in sections)
+
+    section_a = [bar for bar in bars if bar.section == "A"][:2]
+    result["melody_bars_1_2"] = [
+        midi_to_name(pitch)
+        for bar in section_a
+        for pitch, _length in bar.melody
+        if pitch is not None
+    ]
+    result["melody_bar_numbers"] = [bar.number for bar in section_a]
+
+    if data is not None:
+        parsed = read_midi(data)
+        result["midi_tracks"] = [name for name, _notes in parsed["tracks"]]
+        result["midi_ntracks"] = parsed["ntracks"]
+        result["midi_division"] = parsed["division"]
+        tempo_us = parsed["tempo_us"]
+        result["midi_tempo_us_per_qn"] = tempo_us
+        result["midi_bpm"] = (round(60_000_000.0 / tempo_us, 3)
+                              if tempo_us else None)
+        result["midi_time_signature"] = ("%d/%d" % parsed["time_sig"]
+                                         if parsed["time_sig"] else None)
+        result["midi_bar_ticks"] = PP04_TICKS_PER_BAR
+        result["tempo_meta_matches_score"] = (
+            tempo_us == _microseconds_per_quarter(arrangement.meta["bpm"])
+            and parsed["time_sig"] == (arrangement.meta["beats_per_bar"], 4)
+            and arrangement.meta["beats_per_bar"] * PPQ == PP04_TICKS_PER_BAR)
+        result["midi_duration_seconds"] = round(
+            len(arrangement.bars) * PP04_TICKS_PER_BAR / PPQ * tempo_us / 1e6, 3)
+    return result
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("score", nargs="?", default=DEFAULT_SCORE)
@@ -2882,6 +2984,12 @@ def main(argv=None):
         arrangement = build_arrangement_percy(score)
     elif version_3 and profile == "hadrian":
         arrangement = build_arrangement_hadrian(score)
+    elif version_3 and profile == "pp04":
+        # The pp04 recipe writes each section's span as a list of bar numbers, which
+        # is the shape the three score_pp04*.yaml files use; the generic v3 reader
+        # counts bars instead and used to die on them here. Same reader the
+        # counterpoint checker calls, so the render and the measurement agree.
+        arrangement = build_arrangement_pp04(score)
     elif version_3:
         arrangement = build_arrangement_v3(score)
     else:
@@ -2892,6 +3000,8 @@ def main(argv=None):
         report = self_check_percy(arrangement, data)
     elif version_3 and profile == "hadrian":
         report = self_check_hadrian(arrangement, data)
+    elif version_3 and profile == "pp04":
+        report = self_check_pp04(arrangement, data)
     elif version_3:
         report = self_check_v3(arrangement, data)
     else:
