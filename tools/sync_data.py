@@ -48,12 +48,6 @@ NOT_RUNTIME = frozenset({
     # no reader; under D5 the game's only talk input is data/meta_bake.json, and spec 19 section 12.5
     # forbids the list travelling in the bundle next to the bake it already guards).
     "talk_profanity.json",
-    # talk_personas.json is the persona cards the live talk outside a fight answers as (card t_acae7c0a, spec 21
-    # section 11). tools/ai_bridge.py and tools/bake_personas.py read it by path out of data\, and no GML module
-    # names it: the game talks to the bridge over loopback, not through the bundle, exactly as it does with the
-    # judge prompt in data\talk\. Keep it here until a card wires a persona scene into GML; that card moves this
-    # line out and lets the mirror carry the file, and tests\test_talk_personas.py names both halves.
-    "talk_personas.json",
     # talk_personas_bake.json is the report tools/bake_personas.py writes about its own run (card t_acae7c0a,
     # spec 21 section 11): which line went where, what came back, and which cache file replays it. That tool's
     # --check and tests\test_talk_personas.py read it; the game does not, because a persona answer is replayed

@@ -53,6 +53,7 @@ function pp_overworld_new(_map_id, _spawn_name) {
         sfx: "",
         battle_request: "",
         battle_done: "",
+        talk_request: "",
         spawn_name: _spawn_name,
         map_changes: 0
     };
@@ -478,6 +479,16 @@ function pp_overworld_start_encounter(_world, _encounter_id) {
     return true;
 }
 
+/// Start a persona talk: the app owns the mode swap, the world only asks. The id is a persona card in
+/// data/talk_personas.json (card t_0fda85b8), not an encounter, so no battle and no turn economy follows.
+function pp_overworld_start_talk(_world, _persona_id) {
+    if (_world.talk_request != "") return false;
+    _world.talk_request = _persona_id;
+    show_debug_message("PP: talk start " + string(_persona_id) + " on " + string(_world.map.id)
+        + " " + string(_world.hero.tx) + "," + string(_world.hero.ty));
+    return true;
+}
+
 /// Called by the battle mode when it hands control back. `_handoff_scene` is the scene id the fight handed over, or ""
 /// when it handed nothing over; a caller that passes three arguments passes none.
 ///
@@ -545,6 +556,10 @@ function pp_overworld_fire(_world, _trigger) {
 
         case "battle":
             pp_overworld_start_encounter(_world, _trigger.id);
+            break;
+
+        case "persona":
+            pp_overworld_start_talk(_world, _trigger.id);
             break;
 
         case "scene":
@@ -757,6 +772,14 @@ function pp_overworld_step(_world) {
         var _id = _world.battle_request;
         _world.battle_request = "";
         pp_app_request(PPMode.battle, { encounter_id: _id, from_world: true });
+        return;
+    }
+
+    // Ask for the persona talk once per request; the app performs the swap (card t_0fda85b8).
+    if (_world.talk_request != "") {
+        var _pid = _world.talk_request;
+        _world.talk_request = "";
+        pp_app_request(PPMode.talk_persona, { persona: _pid });
         return;
     }
 

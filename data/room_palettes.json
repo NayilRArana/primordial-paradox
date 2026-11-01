@@ -102,5 +102,42 @@
         "gold_5"
       ]
     }
+,
+    {
+      "id": "halls_day",
+      "note": "the Montefiore halls room in daylight: cold plaster, pale boards, the sky in two windows",
+      "roles": [
+        "ink",
+        "paper",
+        "dim",
+        "text",
+        "grey_4",
+        "grey_5",
+        "sea_3",
+        "sea_4",
+        "gold_2",
+        "gold_4",
+        "stone_2"
+      ]
+    },
+    {
+      "id": "street_rain",
+      "note": "the high street in the rain: wet stone, brick frontage, a wet road and two lit windows",
+      "roles": [
+        "ink",
+        "paper",
+        "dim",
+        "text",
+        "grey_3",
+        "grey_4",
+        "grey_5",
+        "sea_1",
+        "blood_3",
+        "blood_4",
+        "stone_2",
+        "sea_3",
+        "sea_4"
+      ]
+    }
   ]
 }

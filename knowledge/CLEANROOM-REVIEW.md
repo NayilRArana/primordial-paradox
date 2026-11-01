@@ -62,6 +62,7 @@ review's method: the "clean-room re-review 2026-10-19" section at the end of `kn
 | game/scripts/pp_rng/pp_rng.gml | confirmed | code-review | 2026-10-19 |
 | game/scripts/pp_save/pp_save.gml | confirmed | gamedev review | 2026-10-22 |
 | game/scripts/pp_talk_live/pp_talk_live.gml | reviewed | gamedev | 2026-10-26 |
+| game/scripts/pp_talk_persona/pp_talk_persona.gml | reviewed | gamedev | 2026-10-30 |
 | game/scripts/pp_scene/pp_scene.gml | confirmed | code-review | 2026-10-22 |
 | game/scripts/pp_text/pp_text.gml | confirmed | gamedev review | 2026-10-22 |
 | game/scripts/pp_title/pp_title.gml | reviewed | gamedev | 2026-10-21 |
@@ -338,6 +339,22 @@ actually carry. The manual names those events and does not print their numbers, 
 wrong three ways (both HTTP slots call one id matched handler, a request that never reports times out at the data
 file's budget with the fallback answering, and the voice leg reports "no recording" while the keyboard and the grid
 keep working). A running build is what confirms them, and no capture of one exists for this module.
+
+## The persona TALK entry, the box opened outside a fight (2026-10-30, card t_0fda85b8)
+
+Row raised: `game/scripts/pp_talk_persona/pp_talk_persona.gml`, `reviewed` by `gamedev` on 2026-10-30. This is this
+lane's own read of the one file it wrote, the same shape as the `reviewed | gamedev` rows above; no independent second
+reviewer has seen it, and none is claimed here.
+
+Read in full, and why it is genre level. The module reuses the box `pp_talk_live` already ships and changes only what a
+chat outside a fight needs: no meter, no tries, no turn economy, effects none and end, and Esc leaves. It reads the
+persona cards from data/talk_personas.json, so the name plate is the card's `name` field, and the reply draws in the
+same message window at the same 8 pixel pitch with the same `* ` marker as the sailor's. The two http_request call
+sites stay in pp_talk_live; this module's submit and answer hand off to those existing sites, so no third network path
+exists. A persona id on a map trigger instead of a battle id is the ordinary shape of an NPC conversation opening a
+text box, and the trigger kind is the same kind of map row the battle trigger already uses. Nothing decompiled or
+ripped was opened, searched or reasoned from, and `tools/check_cleanroom.py` reports no blacklist hit, no reference to
+a study copy and no foreign name.
 
 ## What the rows do not claim
 

@@ -274,6 +274,14 @@ function pp_talk_live_state_init(_battle) {
     return _battle;
 }
 
+/// True when this box state is a persona chat (opened outside a fight) rather than a battle talk. The persona
+/// id lives on the state and the fight path never carries one, so every branch this flag guards is a dead branch
+/// in the sailor fight (card t_0fda85b8, spec 21 section 11).
+function pp_talk_live_is_persona(_battle) {
+    return is_struct(_battle) && variable_struct_exists(_battle, "persona") && is_string(_battle.persona)
+        && _battle.persona != "";
+}
+
 /// True while the box owns the menu. The director asks this instead of testing a stage string, so the one place that
 /// knows the stage names is this file.
 function pp_talk_live_open_now(_battle) {
@@ -548,6 +556,7 @@ function pp_talk_live_delete(_battle) {
 
 /// Esc: put the box down, spend nothing, and hand the menu back. A player who changes their mind owes no turn.
 function pp_talk_live_abandon(_battle) {
+    if (pp_talk_live_is_persona(_battle)) return pp_talk_persona_abandon(_battle);
     pp_audio_play("menu_move");
     show_debug_message("PP: talk live abandoned at " + string(string_length(_battle.live_text)) + " characters");
     pp_talk_live_close(_battle);
@@ -560,6 +569,7 @@ function pp_talk_live_abandon(_battle) {
 /// Send. An empty line is refused and the box stays open, because an empty TALK is not a turn.
 function pp_talk_live_submit(_battle) {
     var _d = pp_talk_live_data();
+    if (pp_talk_live_is_persona(_battle)) return pp_talk_persona_submit(_battle);
     var _line = pp_talk_live_scrub(_battle.live_text);
     if (_line == "") {
         pp_audio_play("menu_move");
@@ -618,6 +628,7 @@ function pp_talk_live_scrub(_text) {
 /// file path, a save, a flag, the player's earlier lines or an exact hp: a prompt cannot leak what it never received.
 function pp_talk_live_request(_battle) {
     var _d = pp_talk_live_data();
+    if (pp_talk_live_is_persona(_battle)) return pp_talk_persona_request(_battle);
     var _body = {
         encounter_id: "",
         npc: "",
@@ -888,6 +899,7 @@ function pp_talk_live_hear_answer(_battle, _doc) {
 /// than an authored option could.
 function pp_talk_live_answer(_battle, _doc, _via) {
     var _d = pp_talk_live_data();
+    if (pp_talk_live_is_persona(_battle)) return pp_talk_persona_answer(_battle, _doc, _via);
     var _answer = pp_talk_live_answer_clean(_doc);
     if (is_undefined(_answer)) {
         show_debug_message("PP: talk live answer refused (" + _via + "), fallback answers");
@@ -1171,9 +1183,11 @@ function pp_talk_live_draw(_battle) {
 
     // The prompt and how many tries are left, on the window's first row.
     pp_font_draw("* " + _d.prompt, _x, pp_talk_live_prompt_y(), 1);
-    var _counter = string(pp_talk_live_tries_left(_battle)) + "/" + string(_d.tries_max);
-    var _cw = pp_font_width(_counter);
-    pp_font_draw(_counter, PP_FRAME_W - 8 - _cw, pp_talk_live_prompt_y(), 1);
+    if (!pp_talk_live_is_persona(_battle)) {
+        var _counter = string(pp_talk_live_tries_left(_battle)) + "/" + string(_d.tries_max);
+        var _cw = pp_font_width(_counter);
+        pp_font_draw(_counter, PP_FRAME_W - 8 - _cw, pp_talk_live_prompt_y(), 1);
+    }
 
     switch (_battle.live_stage) {
         case "entry":

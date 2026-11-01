@@ -31,7 +31,7 @@
       "properties": {
         "x": { "type": "integer", "minimum": 0 },
         "y": { "type": "integer", "minimum": 0 },
-        "kind": { "enum": ["scene", "battle", "map", "say", "flag", "marker", "save"] },
+        "kind": { "enum": ["scene", "battle", "map", "say", "flag", "marker", "save", "persona"] },
         "id": { "type": "string", "minLength": 1 },
         "once": { "type": "boolean" },
         "condition": { "type": "string", "description": "A flag name that must be set, or the empty string for no condition." },

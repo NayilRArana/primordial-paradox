@@ -79,6 +79,7 @@ Every file that ships is listed here, and tools\check_provenance.py refuses a mo
 | game/scripts/pp_rng/pp_rng.gml | specs alone | 09 |
 | game/scripts/pp_save/pp_save.gml | save, load and resume | 01, 10, 11 |
 | game/scripts/pp_talk_live/pp_talk_live.gml | the live TALK entry and the local AI bridge | 16, 19, 21 |
+| game/scripts/pp_talk_persona/pp_talk_persona.gml | the persona TALK entry, the box opened outside a fight | 16, 19, 21 |
 | game/scripts/pp_touch/pp_touch.gml | specs alone | 22 |
 | game/objects/obj_pp_game | specs alone | 01, 02 |
 | game/objects/obj_pp_debug_overlay | specs alone | 10 |
@@ -354,6 +355,38 @@ data\talk_live_tape.json in the same byte shape the bridge answers with, so a re
 address is assembled at call time and no shipped module holds a URL literal. The fallback is a tape miss row rather than
 an error, and the WILL meter is the same talk_mercy the authored options move, clamped, so a live answer can never move
 it further than the authored row it stands in for.
+
+Copied expression: none.
+
+## the persona TALK entry, the box opened outside a fight (2026-10-30, card t_0fda85b8)
+
+Status: the persona chat for card t_0fda85b8: game\scripts\pp_talk_persona\pp_talk_persona.gml and the two async event
+files it shares with the sailor's box (game\objects\obj_pp_game\Other_62.gml and Other_69.gml), which each gain one
+else-if branch. It reads the same box pp_talk_live already ships, so it owns the pp_talk_persona row of the module map
+above and no other row, and it adds no network path of its own.
+
+Studied: no decompiled, ripped, fan ported or commercial material of any kind was read, opened, searched, fetched or
+reasoned from for this entry, and no other game's code, text or audio informed it. The written sources were this
+repository's specs\21-live-talk.md section 11 (the section that names the out of scope this card closes), specs\16
+and specs\19 (the box this module reopens), and the persona cards data\talk_personas.json that card t_acae7c0a wrote.
+The GameMaker calls reused here are the ones pp_talk_live already proved against the manual and the runtime's own
+GmlSpec.xml, so no new engine page was read.
+
+Mechanics learned (public mechanics and our own decisions, not a studied design):
+- A chat outside a fight is the same box with the fight fields absent: no meter, no tries burned, no turn economy,
+  effects none and end, and Esc leaves without a turn. The thinking beat is the same stage names the sailor's box uses.
+- A persona is a card with an id and a name, read out of data\talk_personas.json; the name plate is the card's `name`
+  field, not a hard coded string, so an author edits the card and the plate follows.
+- A map trigger of kind `persona` with a persona id is the same row shape as the existing `battle` trigger, dispatched
+  through pp_overworld_fire, so the box opens the same way a fight does and no new door is invented.
+- Replay stays the default: offline the miss falls to the card's own fallback_pool, and no third http_request site is
+  added, because the two sites in pp_talk_live stay the project's only network path.
+
+Our implementation differs by: the whole persona path is a thin branch over the box, not a second box. submit, request,
+answer, abandon and the async handler hand off to pp_talk_live the moment the fight-specific fields are absent, and the
+draw reuses the same message window, the same 8 pixel pitch and the same `* ` marker. The name plate is drawn below the
+window at the battle's enemy label row, and the reply rows are built from the bridge's persona answer shape (text, mood,
+effect, hint) with the same two line, 28 character cap as the card's answer_cap.
 
 Copied expression: none.
 

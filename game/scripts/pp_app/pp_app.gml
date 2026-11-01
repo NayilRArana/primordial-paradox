@@ -98,6 +98,7 @@ function pp_app_boot() {
     pp_app_register(PPMode.title, pp_title_mode());
     pp_app_register(PPMode.overworld, pp_mode_overworld());
     pp_app_register(PPMode.battle, pp_mode_battle());
+    pp_app_register(PPMode.talk_persona, pp_talk_persona_mode());
 
     // The title screen is the first thing the player sees. Since card W1 it owns a room: the frame sets the mode,
     // moves to rm_pp_title, and the room's own object enters the screen, so the screen is entered exactly once.

@@ -312,6 +312,15 @@
     },
     {
       "$GMIncludedFile": "",
+      "%Name": "talk_personas.json",
+      "CopyToMask": -1,
+      "filePath": "datafiles",
+      "name": "talk_personas.json",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
       "%Name": "tile_classes_drive.json",
       "CopyToMask": -1,
       "filePath": "datafiles",
@@ -3106,6 +3115,12 @@
       "id": {
         "name": "pp_talk_live",
         "path": "scripts/pp_talk_live/pp_talk_live.yy"
+      }
+    },
+    {
+      "id": {
+        "name": "pp_talk_persona",
+        "path": "scripts/pp_talk_persona/pp_talk_persona.yy"
       }
     },
     {

@@ -156,19 +156,26 @@ def test_every_persona_names_the_shared_profanity_guard(doc):
     assert len(talk_guard.load_tokens()) >= 20, "the guard's own floor, spec 19 section 7 layer D"
 
 
-def test_the_persona_card_is_not_in_the_bundle_and_no_gml_names_it():
-    """The bridge reads it over loopback, so mirroring it would only add an Included File nobody opens."""
-    assert "talk_personas.json" in sync_data.NOT_RUNTIME, (
-        "data/talk_personas.json is mirrored again, or silently dropped from the bundle")
-    assert "talk_personas.json" not in sync_data.source_files(), "sync_data still mirrors the persona cards"
+def test_the_persona_card_is_in_the_bundle_and_a_gml_module_names_it():
+    """Card t_0fda85b8 wired the SAY IT YOURSELF box into the game, so the engine now reads the persona cards
+    out of the bundle: pp_talk_persona.gml loads data/talk_personas.json for the name plate (the card's `name`
+    field), which is why the file left NOT_RUNTIME. The earlier form of this test pinned the pre wiring state
+    and failed on purpose the moment a GML module named the file; this form pins the wired state and fails the
+    moment the file is silently dropped back out of the bundle or the reader is removed. The bake report stays
+    out of the bundle for the same reason it always did."""
+    assert "talk_personas.json" not in sync_data.NOT_RUNTIME, (
+        "data/talk_personas.json left the bundle again: pp_talk_persona.gml reads it for the persona name plate")
+    assert "talk_personas.json" in sync_data.source_files(), "sync_data no longer mirrors the persona cards"
+    named = []
     for dirpath, _dirnames, filenames in os.walk(os.path.join(ROOT, "game")):
         for filename in filenames:
             if not filename.endswith(".gml"):
                 continue
             with open(os.path.join(dirpath, filename), "r", encoding="utf-8-sig") as handle:
-                assert "talk_personas" not in handle.read(), (
-                    "%s names the persona cards: if the engine reads them, take the file out of NOT_RUNTIME"
-                    % filename)
+                if "talk_personas" in handle.read():
+                    named.append(filename)
+    assert named, (
+        "no GML module reads the persona cards: the persona name plate has no source, so the file must not be mirrored")
 
 
 def test_the_bake_report_is_not_in_the_bundle_either():

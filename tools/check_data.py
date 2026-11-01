@@ -101,12 +101,13 @@ PATTERN_SHAPES = {"rain", "wall", "ring", "fan", "spiral", "sweep", "pincer", "l
 PATTERN_AIM = {"fixed", "at_marker"}
 ORIGIN_NAMES = {"top", "bottom", "left", "right", "centre", "corner"}
 
-TRIGGER_KINDS = {"scene", "battle", "map", "say", "flag", "marker", "save"}
+TRIGGER_KINDS = {"scene", "battle", "map", "say", "flag", "marker", "save", "persona"}
 # The id table each trigger kind names, for the cross reference. "save" is absent on purpose: a save point's id is a
 # label for the player's sake (spec 11), not a row in any table, so there is nothing to resolve it against.
 TRIGGER_ID_TABLES = {
     "scene": "scene", "battle": "encounter", "map": "map",
     "say": "dialogue", "flag": "flag", "marker": "encounter",
+    "persona": "persona",
 }
 SCENE_COMMANDS = {
     "say", "move", "face", "wait", "fade", "music", "sfx", "camera",
@@ -288,6 +289,7 @@ class Checker:
             ("power", "powers.json", "powers"),
             ("sound", "audio.json", "sounds"),
             ("cue", "audio.json", "cues"),
+            ("persona", "talk_personas.json", "personas"),
         ):
             for row in rows(rel, key):
                 name = row.get("id")
@@ -317,6 +319,9 @@ class Checker:
         # The talk cards (spec 16 section 10). The schema validates the file's shape; this check reads it as well so
         # a phase row and its phase card cannot point at different phases (card t_155e22e2).
         self.load("talk_cards.json")
+        # The persona cards (card t_acae7c0a, spec 21 section 11). Loaded so a map trigger of kind "persona"
+        # resolves its id against the same cards the bridge answers as, not against a name nobody defined.
+        self.load("talk_personas.json")
         items = self.load("items.json")
         powers = self.load("powers.json")
         flags = self.load("flags.json")
@@ -326,6 +331,7 @@ class Checker:
         ids = {
             "enemy": {}, "encounter": {}, "pattern": {}, "map": {}, "scene": {},
             "dialogue": {}, "item": {}, "power": {}, "sound": {}, "flag": set(), "cue": {},
+            "persona": {},
         }
         self.register_ids(ids)
 
