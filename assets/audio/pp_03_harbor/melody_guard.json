@@ -63,14 +63,16 @@
   ],
   "failures": [],
   "highest_jaccard": 0.0,
+  "lineage_skipped": 0,
   "longest_identical_run": 1,
   "longest_interval_run": 4,
   "melody": "<repo>\\assets\\audio\\pp_03_harbor\\pp_03_harbor.mid",
   "melody_intervals": 171,
+  "melody_lineage": "pp_03_harbor",
   "melody_notes": 172,
   "melody_track": "vrc6 pulse a",
   "ngram": 5,
   "passed": true,
-  "references": 29,
+  "references": 32,
   "run_limit": 8
 }

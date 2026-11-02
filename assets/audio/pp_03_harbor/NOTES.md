@@ -68,13 +68,54 @@ python tools/counterpoint/cue_gate.py assets/audio/pp_03_harbor/score_pp03.yaml 
 The M1a hard count fell from 29 to 24 and the style count from 35 to 33. The same recipe built through
 `build_pp03.py` and gated as a MIDI also reads 0 CP-01 and 0 CP-09.
 
-## The render is one repair behind
+## The render, rebuilt 2026-11-02 (card t_1a7c13cc)
 
-`pp_03_harbor.mid` (and therefore `.wav`, `.mp3`, `.ogg`, the loop sidecar, `arrange_report.json`,
-`score_check.json` and the W5 master `pp_03_harbor_master1`) is still the pre-repair render. The
-committed MIDI is byte-identical to `build_pp03.py` run on the old recipe, and it gates LEGACY with 9
-CP-01 and 1 CP-09, which is what the player currently hears. Card t_1a7c13cc re-renders and re-masters
-the cue from this recipe and takes it to Nayil's ear, because three of the edits change the harmony.
+The render was one repair behind until this card. The committed `pp_03_harbor.mid` was byte-identical to
+`build_pp03.py` run on the pre-repair recipe (sha256 `6a693a67c0a3d7e0953726e6335b77aad970c3c1863623b92593e72ad48931bd`,
+measured on this card against a fresh build of the old recipe), and it gated LEGACY with 9 CP-01 and 1
+CP-09, which is what the player heard. It now reads:
+
+```
+python assets/audio/pp_03_harbor/build_pp03.py
+  -> exit 0, 64 bars, 225.882 s, 1375 notes, first chord Am, last chord Am
+     (midi sha256 2e047b85d11bf8c5e8165468e525ec02a5fb229f5ecbf9d648f248d4f16b128f)
+
+python tools/counterpoint/cue_gate.py assets/audio/pp_03_harbor/pp_03_harbor.mid --no-baseline
+  -> 1105 notes, 64 bars, key C major (detected), outer voices vrc6 pulse a + triangle
+     M1a verdict FAIL (hard 243, soft 37, style 10); clash count 86 raw, 0 on a strong beat
+     G1 CP-01 0   G2 CP-09 0   state: PASS, exit 0
+
+python tools/render_chip.py assets/audio/pp_03_harbor/pp_03_harbor.mid \
+    assets/audio/pp_03_harbor/pp_03_harbor.wav --loop-bars 64 \
+    --loop-json assets/audio/pp_03_harbor/pp_03_harbor_loop.json
+  -> 225.882 s, peak -1.00 dBFS, rms -16.11 dBFS, 9961412 samples, seam sample difference 0
+     (renderer v2, soft limiter, peak target -1.0 dBFS; mp3 at 192k)
+
+ffmpeg -i pp_03_harbor.wav -ac 1 -ar 44100 -c:a libvorbis -q:a 6 pp_03_harbor.ogg
+  -> vorbis q6, mono, 44100 Hz, 225.882358 s, sha256 58f2de8b355e8d5f0d3737f8f9786bce0bf4a2a3a2e8bb93f011187e17b15582
+
+python assets/audio/pp_03_harbor/check_pp03.py --json score_check.json
+  -> 20 passed, 0 failed
+
+python tools/melody_guard.py pp_03_harbor.mid <musikage> --json melody_guard.json
+  -> PASS, 32 references, longest identical (interval, rhythm) run 1, highest 5-gram Jaccard 0.0000
+
+python tools/final_mix.py --build --only PP-03 then --verify
+  -> master pp_03_harbor_master1 at -14.02 LUFS, -0.55 dBTP, LRA 2.8, loop 44 to 9958036, seam clean;
+     4 masters measured, 0 outside target
+```
+
+Measured against a build of the pre-repair recipe, the melody did not move: `vrc6 pulse a` 172 notes,
+`pulse 2` 129, `noise` 136 and `dpcm` 134 are identical in start, end and pitch, and the harmony voices
+differ at exactly the bars the repair names, `vrc6 pulse b` and `vrc6 saw` at bars 2, 10, 20, 28, 34,
+42, 52 and 58 (G4 to D4 in the guide tone, E3 and B3 to D3 and G3 in the pad), `pulse 1` at the same eight
+bars (E3 to D3), and `triangle` at bars 2, 5, 10, 19, 20, 27, 28, 34, 37, 42, 48, 51, 52 and 58 (the
+bass inversion: bar 5 A2 and D3 became F2 and A2, bar 48 E2 and A2 became E2 and C3).
+
+The ear verdict is the one thing this card cannot produce: three of the edits change the harmony, so the
+question is Nayil's, and the card is blocked on it. If he prefers the old harmony, the cue gate needs a
+different answer than a waiver, and the render and master would be rebuilt again from whatever the recipe
+then says.
 
 ## The drums, which is what this card was really about
 
