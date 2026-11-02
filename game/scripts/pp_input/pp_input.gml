@@ -87,6 +87,8 @@ function pp_input_sample() {
     // The touch controls are sampled first, so their held map is ready when the action loop merges it below. They
     // publish the same seven actions the keys and the pad write, and they only run on a touch target (spec 22).
     pp_touch_sample();
+    // Card BATTLE-PROOF: the debug door's held actions (pp_overworld.gml). Dead unless PP_FIGHT_TOUR is set.
+    pp_fight_tour_think();
     var _keys = variable_struct_get_names(_in.actions);
     for (var i = 0; i < array_length(_keys); i++) {
         var _a = _in.actions[$ _keys[i]];
@@ -100,6 +102,7 @@ function pp_input_sample() {
         // A finger on a touch control holds the same action its key holds, so the walk vector, the menus and the
         // dialogue all read one source (spec 22 rule 2).
         if (!_down && pp_touch_held(_keys[i])) _down = true;
+        if (!_down && pp_fight_tour_held(_keys[i])) _down = true;
 
         _a.prev = _a.held;
         _a.held = _down;

@@ -268,6 +268,8 @@ function pp_app_draw() {
         draw_rectangle(0, 0, PP_FRAME_W, PP_FRAME_H, false);
         draw_set_alpha(1);
     }
+    // Card BATTLE-PROOF: the debug door's frame, written after everything is drawn. Dead unless PP_FIGHT_TOUR is set.
+    pp_fight_tour_shot();
 }
 
 function pp_app_mode() {

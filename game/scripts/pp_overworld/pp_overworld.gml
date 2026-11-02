@@ -1074,6 +1074,301 @@ function pp_overworld_music_tour(_world) {
     }
 }
 
+// ---------------------------------------------------------------------------------------------------------------
+/// Card BATTLE-PROOF debug door, unset in every real launch (the variable is read once, then cached). With PP_FIGHT_TOUR set
+/// to "all" or to a list of encounter ids ("percy" or "morgan_gate,percy"), the game plays each of those fights to a real
+/// end TWICE after the title: once by SPARE (TALK until the SPARE entry is enabled, then SPARE) and once by KILL (POWER
+/// when it is usable, then FIGHT until HP 0). It starts each fight through pp_overworld_start_encounter, the entry a map
+/// trigger uses, and it plays by holding the same logical actions a player holds: pp_input_sample asks
+/// pp_fight_tour_think once per step and ORs pp_fight_tour_held into each action's down state. Nothing in the battle rules,
+/// numbers or data is touched. One result line per run: "PP fight tour: <id> path=<spare|kill> result=<...> turns=<n>".
+/// A fight that cannot be finished is reported as result=stuck, never worked around.
+#macro PP_FIGHT_TOUR "PP_" + "FIGHT_TOUR"
+#macro PP_FIGHT_TOUR_SETTLE 90
+#macro PP_FIGHT_TOUR_STALL 2400
+#macro PP_FIGHT_TOUR_CAP 20000
+
+function pp_fight_tour_on() {
+    if (!variable_global_exists("pp_ft_on")) {
+        var _v = environment_get_variable(PP_FIGHT_TOUR);
+        global.pp_ft_on = (_v != "");
+        if (global.pp_ft_on) {
+            var _ids = ["morgan_gate", "tutorial_sailors", "percy"];
+            if (_v != "all") _ids = string_split(_v, ",");
+            var _jobs = [];
+            var _paths = ["spare", "kill"];
+            for (var _p = 0; _p < 2; _p += 1) {
+                for (var _i = 0; _i < array_length(_ids); _i += 1) {
+                    array_push(_jobs, { id: string_trim(_ids[_i]), path: _paths[_p] });
+                }
+            }
+            global.pp_ft = {
+                jobs: _jobs, job: 0, hold: {}, tick: 0, idle: 0, begun: false, started: false, battle_seen: false,
+                finished: false, run_steps: 0, cool: 0, talks: 0, power_used: false, key: "", key_steps: 0,
+                shot_req: "", shots: {}, abort: false, done_said: false
+            };
+        }
+    }
+    return global.pp_ft_on;
+}
+
+/// True when the tour holds this action down this step. One boolean read per action per step while the door is closed.
+function pp_fight_tour_held(_id) {
+    if (!pp_fight_tour_on()) return false;
+    return variable_struct_exists(global.pp_ft.hold, _id);
+}
+
+/// Called at the end of the draw: writes the frame the think step asked for. Does nothing with the door closed.
+function pp_fight_tour_shot() {
+    if (!pp_fight_tour_on()) return;
+    var _t = global.pp_ft;
+    if (_t.shot_req == "") return;
+    var _name = _t.shot_req;
+    _t.shot_req = "";
+    screen_save(_name);
+    show_debug_message("PP fight tour: shot " + _name);
+}
+
+function pp_fight_tour_shot_once(_t, _job, _step) {
+    var _k = _job.id + "_" + _job.path + "_" + _step;
+    if (variable_struct_exists(_t.shots, _k)) return;
+    _t.shots[$ _k] = true;
+    _t.shot_req = "pp_fight_" + _k + ".png";
+}
+
+function pp_fight_tour_press(_t, _name, _cool) {
+    _t.hold[$ _name] = true;
+    _t.cool = _cool;
+}
+
+/// Move a cursor of _n rows from _cur to _target with up and down presses. True when it is already there.
+function pp_fight_tour_goto(_t, _cur, _target, _n) {
+    if (_cur == _target) return true;
+    var _fwd = ((_target - _cur) mod _n + _n) mod _n;
+    pp_fight_tour_press(_t, (_fwd <= _n - _fwd) ? "down" : "up", 5);
+    return false;
+}
+
+function pp_fight_tour_result(_t, _job, _result, _turns) {
+    show_debug_message("PP fight tour: " + _job.id + " path=" + _job.path + " result=" + _result + " turns=" + string(_turns));
+}
+
+/// The marker's move for this step: nine candidate holds, eight steps of straight line hazard travel each, the one with the
+/// widest clearance to every hazard wins, a pull to the centre breaks ties. It reads the arena and holds direction actions.
+function pp_fight_tour_dodge(_t, _b) {
+    var _a = _b.arena;
+    if (!is_struct(_a) || _a.warn_steps > 0) return;
+    var _g = _a.geometry;
+    var _mh = PP_MARKER_SIZE * 0.5 - PP_HITBOX_INSET;
+    var _best = -100000;
+    var _bx = 0;
+    var _by = 0;
+    for (var _vy = -1; _vy <= 1; _vy += 1) {
+        for (var _vx = -1; _vx <= 1; _vx += 1) {
+            var _l = point_distance(0, 0, _vx, _vy);
+            var _sx = _vx;
+            var _sy = _vy;
+            if (_l > 1) { _sx = _vx / _l; _sy = _vy / _l; }
+            var _score = 60;
+            var _px = _a.marker.x;
+            var _py = _a.marker.y;
+            for (var _s = 1; _s <= 8; _s += 1) {
+                _px = clamp(_px + _sx * PP_MARKER_SPEED, _g.x1, _g.x2 - PP_MARKER_SIZE);
+                _py = clamp(_py + _sy * PP_MARKER_SPEED, _g.y1, _g.y2 - PP_MARKER_SIZE);
+                for (var _h = 0; _h < array_length(_a.hazards); _h += 1) {
+                    var _hz = _a.hazards[_h];
+                    if (!_hz.alive) continue;
+                    var _hx = _hz.x + lengthdir_x(_hz.speed * _s, _hz.dir) + _hz.size * 0.5;
+                    var _hy = _hz.y + lengthdir_y(_hz.speed * _s, _hz.dir) + _hz.size * 0.5;
+                    var _hh = _hz.size * 0.5 - PP_HITBOX_INSET;
+                    var _sep = max(abs(_hx - (_px + PP_MARKER_SIZE * 0.5)), abs(_hy - (_py + PP_MARKER_SIZE * 0.5))) - (_hh + _mh);
+                    if (_sep < _score) _score = _sep;
+                }
+            }
+            _score -= point_distance(_px, _py, PP_ARENA_CX - PP_MARKER_SIZE * 0.5, PP_ARENA_CY - PP_MARKER_SIZE * 0.5) * 0.02;
+            if (_l > 0) _score -= 0.5;
+            if (_score > _best) { _best = _score; _bx = _vx; _by = _vy; }
+        }
+    }
+    if (_bx < 0) _t.hold[$ "left"] = true;
+    if (_bx > 0) _t.hold[$ "right"] = true;
+    if (_by < 0) _t.hold[$ "up"] = true;
+    if (_by > 0) _t.hold[$ "down"] = true;
+}
+
+/// One decision per step, called from pp_input_sample before the action loop reads the holds.
+function pp_fight_tour_think() {
+    if (!pp_fight_tour_on()) return;
+    var _t = global.pp_ft;
+    _t.hold = {};
+    if (!variable_global_exists("pp") || !is_struct(global.pp) || !variable_struct_exists(global.pp, "app")) return;
+    if (_t.abort) return;
+    if (_t.job >= array_length(_t.jobs)) {
+        if (!_t.done_said) {
+            _t.done_said = true;
+            show_debug_message("PP fight tour: done, jobs " + string(array_length(_t.jobs)));
+        }
+        return;
+    }
+    _t.tick += 1;
+    if (_t.cool > 0) _t.cool -= 1;
+    var _job = _t.jobs[_t.job];
+    var _app = global.pp.app;
+    var _mode = _app.mode;
+
+    if (_t.started) {
+        _t.run_steps += 1;
+        if (_t.run_steps > PP_FIGHT_TOUR_CAP) {
+            if (!_t.finished) pp_fight_tour_result(_t, _job, "stuck", -1);
+            show_debug_message("PP fight tour: " + _job.id + " " + _job.path + " state=aborted cap " + string(PP_FIGHT_TOUR_CAP));
+            _t.abort = true;
+            return;
+        }
+    }
+
+    if (_mode == PPMode.overworld) {
+        if (!variable_struct_exists(global.pp, "world") || !is_struct(global.pp.world)) return;
+        var _w = global.pp.world;
+        if (!_t.begun) {
+            _t.begun = true;
+            show_debug_message("PP fight tour: begin, map " + string(_w.map.id) + ", jobs " + string(array_length(_t.jobs)));
+        }
+        if (_t.started && _t.finished) {
+            // The fight is over and the world has the screen again: the next run.
+            _t.job += 1;
+            _t.started = false;
+            _t.battle_seen = false;
+            _t.finished = false;
+            _t.idle = 0;
+            _t.run_steps = 0;
+            _t.key = "";
+            _t.key_steps = 0;
+            show_debug_message("PP fight tour: " + _job.id + " " + _job.path + " state=back_in_world");
+            return;
+        }
+        if (_t.started) {
+            if (_t.run_steps > 900 && !_t.battle_seen) {
+                pp_fight_tour_result(_t, _job, "stuck", -1);
+                show_debug_message("PP fight tour: " + _job.id + " " + _job.path + " state=never_entered_battle");
+                _t.abort = true;
+            }
+            return;
+        }
+        if (_app.fade_dir != 0 || !is_undefined(_app.pending)) { _t.idle = 0; return; }
+        if (pp_scene_running(_w.scene)) return;
+        _t.idle += 1;
+        if (_t.idle < PP_FIGHT_TOUR_SETTLE) return;
+        _t.started = true;
+        _t.run_steps = 0;
+        _t.talks = 0;
+        _t.power_used = false;
+        show_debug_message("PP fight tour: " + _job.id + " " + _job.path + " state=start");
+        pp_overworld_start_encounter(_w, _job.id);
+        return;
+    }
+
+    if (_mode != PPMode.battle || !_t.started) return;
+    var _b = global.pp.battle;
+    if (!is_struct(_b)) return;
+    if (!_t.battle_seen) {
+        _t.battle_seen = true;
+        show_debug_message("PP fight tour: " + _job.id + " " + _job.path + " state=battle_entered");
+    }
+
+    // One state line per change of what the fight is waiting on, and the stall watchdog on the same key.
+    var _names = ["intro", "menu", "resolve", "message", "telegraph", "dodge", "result", "ended"];
+    var _key = _names[_b.phase];
+    if (_b.phase == PPBattlePhase.menu && _b.talk_stage != "") _key = "talk_options";
+    if (_key != _t.key) {
+        _t.key = _key;
+        _t.key_steps = 0;
+        show_debug_message("PP fight tour: " + _job.id + " " + _job.path + " state=" + _key + " turn=" + string(_b.turn)
+            + " enemy_hp=" + string(_b.enemy_hp) + " party_hp=" + string(_b.actor.hp) + " trust=" + string(_b.trust));
+    }
+    _t.key_steps += 1;
+    if (_t.key_steps > PP_FIGHT_TOUR_STALL) {
+        if (!_t.finished) pp_fight_tour_result(_t, _job, "stuck", _b.turn);
+        show_debug_message("PP fight tour: " + _job.id + " " + _job.path + " state=stalled in " + _key + " turn=" + string(_b.turn)
+            + " enemy_hp=" + string(_b.enemy_hp) + " party_hp=" + string(_b.actor.hp) + " trust=" + string(_b.trust));
+        _t.abort = true;
+        return;
+    }
+    if (_app.fade_dir != 0 || !is_undefined(_app.pending)) return;
+
+    // The end: the result is logged once, from the fight's own outcome word.
+    if (!_t.finished && (_b.defeated || _b.phase == PPBattlePhase.ended)) {
+        var _word = pp_battle_outcome(_b);
+        var _res = _word;
+        if (_word == "spare") _res = "spared";
+        if (_word == "kill") _res = "won";
+        if (_word == "defeat") _res = "lost";
+        pp_fight_tour_result(_t, _job, _res, _b.turn);
+        _t.finished = true;
+    }
+
+    switch (_b.phase) {
+        case PPBattlePhase.menu:
+            if (_b.phase_steps < 10) break;
+            if (_b.turn == 0) pp_fight_tour_shot_once(_t, _job, "menu");
+            if (_t.cool > 0) break;
+            if (_b.talk_stage == "options") {
+                var _n = array_length(_b.talk_options);
+                var _want = _t.talks mod 3;
+                if (_want >= _n || (variable_struct_exists(_b.talk_options[_want], "live") && _b.talk_options[_want].live == true)) _want = 0;
+                if (pp_fight_tour_goto(_t, _b.talk_cursor, _want, _n)) {
+                    pp_fight_tour_press(_t, "confirm", 8);
+                    _t.talks += 1;
+                }
+                break;
+            }
+            var _target = PPCommand.fight;
+            if (_job.path == "spare") {
+                if (pp_command_state(_b, PPCommand.spare).enabled) _target = PPCommand.spare;
+                else if (pp_command_state(_b, PPCommand.talk).enabled) _target = PPCommand.talk;
+            } else if (!_t.power_used && pp_command_state(_b, PPCommand.power).enabled) {
+                _target = PPCommand.power;
+            }
+            if (pp_fight_tour_goto(_t, _b.cursor, _target, 5)) {
+                if (_target == PPCommand.power) _t.power_used = true;
+                pp_fight_tour_press(_t, "confirm", 10);
+            }
+            break;
+
+        case PPBattlePhase.resolve:
+            if (abs(_b.bar_pos - 50) <= 5) _t.hold[$ "confirm"] = true;
+            break;
+
+        case PPBattlePhase.message:
+            if (_b.turn == 0 && _b.phase_steps <= 40) {
+                if (_b.phase_steps == 30) pp_fight_tour_shot_once(_t, _job, "intro");
+                break;
+            }
+            if (_b.turn > 0 && _b.phase_steps <= 40 && ((_job.path == "spare" && _b.talk_reply && _t.talks == 1)
+                || (_job.path == "kill" && _t.talks == 0 && _b.turn == 1))) {
+                if (_b.phase_steps == 30) pp_fight_tour_shot_once(_t, _job, (_job.path == "spare") ? "talk" : "hit");
+                break;
+            }
+            if ((_t.tick mod 4) != 0) _t.hold[$ "confirm"] = true;
+            break;
+
+        case PPBattlePhase.dodge:
+            pp_fight_tour_dodge(_t, _b);
+            break;
+
+        case PPBattlePhase.result:
+            if (_b.defeated) {
+                if (_b.phase_steps == 80) pp_fight_tour_shot_once(_t, _job, "ending");
+                if (_b.phase_steps > 90 && (_t.tick mod 30) == 0) _t.hold[$ "confirm"] = true;
+            }
+            break;
+
+        case PPBattlePhase.ended:
+            if (_t.key_steps == 10) pp_fight_tour_shot_once(_t, _job, "ending");
+            if (_t.key_steps > 40 && (_t.tick mod 30) == 0) _t.hold[$ "confirm"] = true;
+            break;
+    }
+}
+
 #macro PP_HERO_SHEET "zander_ow_v2"
 #macro PP_SAILOR_SHEET "sailor_ow_v2"
 
