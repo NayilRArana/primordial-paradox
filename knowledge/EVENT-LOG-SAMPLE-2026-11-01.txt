@@ -1,0 +1,404 @@
+# EVENT-LOG-SAMPLE-2026-11-01.txt
+# A sample of the game's own audio log, for card t_37855a33 (DEMO-AUDIO-CAPTURE, the mapping child).
+# Every line below a source header is copied verbatim from that log, in its written order, unedited.
+# The rule that turns these lines into sound is knowledge/EVENT-LOG-AUDIO-MAP-2026-11-01.json.
+# Rewrite it with: python tools/event_audio_map.py --fixture
+
+# --- source: build/demo-game.log
+# --- what it exercises: a headless demo run: the theme, footsteps, blips, a menu, focus, loads
+PP audio: title_theme streaming streams/title_theme_v3_126.ogg, instance 400001, gain 0.70
+PP audio: car_engine_loop loaded car_engine_loop.wav (0.80 s, 44100 Hz, buffer ref buffer 2)
+PP audio: car_engine_loop played, instance 400002
+PP audio: thunder_soft loaded thunder_soft.wav (1.45 s, 44100 Hz, buffer ref buffer 1)
+PP audio: thunder_soft played, instance 400003
+PP audio: menu_select loaded menu_select.wav (0.16 s, 44100 Hz, buffer ref buffer 3)
+PP audio: menu_select played, instance 400004
+PP audio: menu_move loaded menu_move.wav (0.06 s, 44100 Hz, buffer ref buffer 4)
+PP audio: menu_move played, instance 400005
+PP audio: thunder_soft played, instance 400006
+PP audio: menu_select played, instance 400007
+PP audio: footstep loaded footstep.wav (0.09 s, 44100 Hz, buffer ref buffer 5)
+PP audio: footstep played, instance 400008
+PP audio: footstep played, instance 400009
+PP audio: footstep played, instance 400010
+PP audio: footstep played, instance 400011
+PP audio: footstep played, instance 400012
+PP audio: footstep played, instance 400013
+PP audio: footstep played, instance 400014
+PP audio: footstep played, instance 400015
+PP audio: footstep played, instance 400016
+PP audio: footstep played, instance 400017
+PP audio: footstep played, instance 400018
+PP audio: footstep played, instance 400019
+PP audio: footstep played, instance 400020
+PP audio: footstep played, instance 400021
+PP audio: footstep played, instance 400022
+PP audio: footstep played, instance 400023
+PP audio: footstep played, instance 400024
+PP audio: footstep played, instance 400025
+PP audio: footstep played, instance 400026
+PP audio: footstep played, instance 400027
+PP audio: footstep played, instance 400028
+PP audio: footstep played, instance 400029
+PP audio: footstep played, instance 400030
+PP audio: footstep played, instance 400031
+PP audio: footstep played, instance 400032
+PP audio: footstep played, instance 400033
+PP audio: footstep played, instance 400034
+PP audio: footstep played, instance 400035
+PP audio: focus lost, music paused (cue and theme) and every effect stopped
+PP audio: focus back, music resumed where it stopped
+PP audio: footstep played, instance 400036
+PP audio: footstep played, instance 400037
+PP audio: footstep played, instance 400038
+PP audio: footstep played, instance 400039
+PP audio: footstep played, instance 400040
+PP audio: text_blip_a loaded text_blip_a.wav (0.06 s, 44100 Hz, buffer ref buffer 6)
+PP audio: text_blip_a played, instance 400041
+PP audio: text_blip_a played, instance 400042
+PP audio: text_blip_a played, instance 400043
+PP audio: text_blip_a played, instance 400044
+PP audio: text_blip_a played, instance 400045
+PP audio: text_blip_a played, instance 400046
+PP audio: text_blip_a played, instance 400047
+PP audio: text_blip_a played, instance 400048
+PP audio: text_blip_a played, instance 400049
+PP audio: text_blip_a played, instance 400050
+PP audio: text_blip_a played, instance 400051
+PP audio: text_blip_a played, instance 400052
+PP audio: text_blip_a played, instance 400053
+PP audio: text_blip_a played, instance 400054
+PP audio: text_blip_a played, instance 400055
+PP audio: text_blip_a played, instance 400056
+PP audio: text_blip_a played, instance 400057
+PP audio: text_blip_a played, instance 400058
+PP audio: text_blip_a played, instance 400059
+PP audio: text_blip_a played, instance 400060
+PP audio: text_blip_a played, instance 400061
+PP audio: text_blip_a played, instance 400062
+PP audio: text_blip_a played, instance 400063
+PP audio: text_blip_a played, instance 400064
+PP audio: text_blip_a played, instance 400065
+PP audio: text_blip_a played, instance 400066
+PP audio: text_blip_a played, instance 400067
+PP audio: text_blip_a played, instance 400068
+PP audio: text_blip_a played, instance 400069
+PP audio: text_blip_a played, instance 400070
+PP audio: text_blip_a played, instance 400071
+PP audio: text_blip_a played, instance 400072
+PP audio: text_blip_a played, instance 400073
+PP audio: footstep played, instance 400074
+PP audio: footstep played, instance 400075
+PP audio: footstep played, instance 400076
+PP audio: footstep played, instance 400077
+PP audio: footstep played, instance 400078
+PP audio: footstep played, instance 400079
+PP audio: footstep played, instance 400080
+PP audio: footstep played, instance 400081
+PP audio: footstep played, instance 400082
+PP audio: footstep played, instance 400083
+PP audio: footstep played, instance 400084
+PP audio: footstep played, instance 400085
+PP audio: footstep played, instance 400086
+PP audio: footstep played, instance 400087
+PP audio: footstep played, instance 400088
+PP audio: footstep played, instance 400089
+PP audio: footstep played, instance 400090
+PP audio: footstep played, instance 400091
+PP audio: footstep played, instance 400092
+PP audio: footstep played, instance 400093
+PP audio: footstep played, instance 400094
+PP audio: footstep played, instance 400095
+PP audio: footstep played, instance 400096
+PP audio: footstep played, instance 400097
+PP audio: footstep played, instance 400098
+PP audio: footstep played, instance 400099
+PP audio: footstep played, instance 400100
+PP audio: footstep played, instance 400101
+PP audio: footstep played, instance 400102
+PP audio: footstep played, instance 400103
+PP audio: footstep played, instance 400104
+PP audio: footstep played, instance 400105
+PP audio: footstep played, instance 400106
+PP audio: footstep played, instance 400107
+PP audio: footstep played, instance 400108
+PP audio: footstep played, instance 400109
+PP audio: footstep played, instance 400110
+PP audio: footstep played, instance 400111
+PP audio: footstep played, instance 400112
+PP audio: footstep played, instance 400113
+PP audio: footstep played, instance 400114
+PP audio: footstep played, instance 400115
+PP audio: footstep played, instance 400116
+PP audio: footstep played, instance 400117
+PP audio: footstep played, instance 400118
+PP audio: footstep played, instance 400119
+PP audio: footstep played, instance 400120
+PP audio: footstep played, instance 400121
+PP audio: footstep played, instance 400122
+PP audio: footstep played, instance 400123
+PP audio: footstep played, instance 400124
+PP audio: footstep played, instance 400125
+PP audio: footstep played, instance 400126
+PP audio: footstep played, instance 400127
+PP audio: footstep played, instance 400128
+PP audio: footstep played, instance 400129
+PP audio: footstep played, instance 400130
+PP audio: footstep played, instance 400131
+PP audio: footstep played, instance 400132
+PP audio: footstep played, instance 400133
+PP audio: footstep played, instance 400134
+PP audio: footstep played, instance 400135
+PP audio: footstep played, instance 400136
+PP audio: footstep played, instance 400137
+PP audio: footstep played, instance 400138
+PP audio: footstep played, instance 400139
+PP audio: footstep played, instance 400140
+PP audio: footstep played, instance 400141
+PP audio: footstep played, instance 400142
+PP audio: footstep played, instance 400143
+PP audio: footstep played, instance 400144
+PP audio: footstep played, instance 400145
+PP audio: footstep played, instance 400146
+PP audio: footstep played, instance 400147
+PP audio: footstep played, instance 400148
+PP audio: footstep played, instance 400149
+PP audio: footstep played, instance 400150
+PP audio: footstep played, instance 400151
+PP audio: footstep played, instance 400152
+PP audio: footstep played, instance 400153
+PP audio: footstep played, instance 400154
+PP audio: footstep played, instance 400155
+PP audio: footstep played, instance 400156
+PP audio: footstep played, instance 400157
+PP audio: footstep played, instance 400158
+# 166 audio lines
+
+# --- source: output/music_everywhere_2026-11-01/music_tour.log
+# --- what it exercises: the MUSIC-EVERYWHERE tour: cue streams, rooms, fights
+PP audio: title_theme streaming streams/title_theme_v3_126.ogg, instance 400001, gain 0.70
+PP audio: car_engine_loop loaded car_engine_loop.wav (0.80 s, 44100 Hz, buffer ref buffer 2)
+PP audio: car_engine_loop played, instance 400002
+PP audio: focus lost, music paused (cue and theme) and every effect stopped
+PP audio: focus back, music resumed where it stopped
+PP audio: menu_select loaded menu_select.wav (0.16 s, 44100 Hz, buffer ref buffer 1)
+PP audio: menu_select played, instance 400003
+PP audio: menu_select played, instance 400004
+PP audio: title_theme handed to the fade, the cue takes the one music source
+PP audio: music cue PP-05 streaming <repo>\output\PrimordialParadox\streams/pp_05_small_ship.ogg, instance 400005, priority 10, fade 30 steps
+PP audio: room ship_small asked PP-05, playing PP-05 (started), stream yes
+PP audio: room ship_small asked PP-05, playing PP-05 (kept), stream yes
+PP audio: room ship_cabin asked PP-05, playing PP-05 (kept), stream yes
+PP audio: music cue PP-03 streaming <repo>\output\PrimordialParadox\streams/pp_03_harbor_master1.ogg, instance 400006, priority 10, fade 30 steps
+PP audio: room southampton_town_quay asked PP-03, playing PP-03 (started), stream yes
+PP audio: room quay_dock_office asked PP-03, playing PP-03 (kept), stream yes
+PP audio: music cue PP-02 streaming <repo>\output\PrimordialParadox\streams/pp_drive_master1.ogg, instance 400007, priority 10, fade 30 steps
+PP audio: room drive_m4_corridor asked PP-02, playing PP-02 (started), stream yes
+PP audio: music cue PP-05 streaming <repo>\output\PrimordialParadox\streams/pp_05_small_ship.ogg, instance 400008, priority 10, fade 30 steps
+PP audio: room wessex_lane_montefiore asked PP-05, playing PP-05 (started), stream yes
+PP audio: room southampton_high_street asked PP-05, playing PP-05 (kept), stream yes
+PP audio: room ship_sample asked PP-05, playing PP-05 (kept), stream yes
+PP audio: music cue PP-04 streaming <repo>\output\PrimordialParadox\streams/pp_04_navy_sailors_master1.ogg, instance 400009, priority 10, fade 30 steps
+PP audio: fight tutorial_sailors asked PP-04, playing PP-04 (started), stream yes
+PP audio: fight deck_hound asked PP-04, playing PP-04 (kept), stream yes
+PP audio: music cue PP-06 streaming <repo>\output\PrimordialParadox\streams/percy_theme.ogg, instance 400010, priority 12, fade 30 steps
+PP audio: fight percy asked PP-06, playing PP-06 (started), stream yes
+PP audio: music cue PP-04 streaming <repo>\output\PrimordialParadox\streams/pp_04_navy_sailors_master1.ogg, instance 400011, priority 10, fade 30 steps
+PP audio: fight morgan_gate asked PP-04, playing PP-04 (started), stream yes
+PP audio: music cue PP-05 streaming <repo>\output\PrimordialParadox\streams/pp_05_small_ship.ogg, instance 400012, priority 10, fade 30 steps
+PP audio: room ship_small asked PP-05, playing PP-05 (started), stream yes
+# 31 audio lines
+
+# --- source: build/first_fight_game.log
+# --- what it exercises: an older run: the theme duck and the fallback path for a pending cue
+PP audio: title_theme streaming streams/title_theme_v3_126.ogg, instance 400001, gain 0.70
+PP audio: car_engine_loop loaded car_engine_loop.wav (0.80 s, 44100 Hz, buffer ref buffer 2)
+PP audio: car_engine_loop played, instance 400002
+PP audio: menu_select loaded menu_select.wav (0.16 s, 44100 Hz, buffer ref buffer 1)
+PP audio: menu_select played, instance 400003
+PP audio: menu_select played, instance 400004
+PP audio: title_theme ducked 6 dB, gain 1.40
+PP audio: text_blip_a loaded text_blip_a.wav (0.06 s, 44100 Hz, buffer ref buffer 3)
+PP audio: text_blip_a played, instance 400005
+PP audio: text_blip_a played, instance 400006
+PP audio: text_blip_a played, instance 400007
+PP audio: text_blip_a played, instance 400008
+PP audio: text_blip_a played, instance 400009
+PP audio: text_blip_a played, instance 400010
+PP audio: text_blip_a played, instance 400011
+PP audio: text_blip_a played, instance 400012
+PP audio: text_blip_a played, instance 400013
+PP audio: text_blip_a played, instance 400014
+PP audio: text_blip_a played, instance 400015
+PP audio: text_blip_a played, instance 400016
+PP audio: text_blip_a played, instance 400017
+PP audio: text_blip_a played, instance 400018
+PP audio: text_blip_a played, instance 400019
+PP audio: text_blip_a played, instance 400020
+PP audio: text_blip_a played, instance 400021
+PP audio: text_blip_a played, instance 400022
+PP audio: title_theme back to full after 6 dB
+PP audio: title_theme handed to the fade, the cue takes the one music source
+PP audio: music cue PP-02 has no OGG yet, expected pp_drive_v2.ogg, placeholder 1
+PP audio: footstep loaded footstep.wav (0.09 s, 44100 Hz, buffer ref buffer 4)
+PP audio: footstep played, instance 400023
+PP audio: footstep played, instance 400024
+PP audio: footstep played, instance 400025
+PP audio: footstep played, instance 400026
+PP audio: footstep played, instance 400027
+PP audio: footstep played, instance 400028
+PP audio: footstep played, instance 400029
+PP audio: footstep played, instance 400030
+PP audio: footstep played, instance 400031
+PP audio: footstep played, instance 400032
+PP audio: footstep played, instance 400033
+PP audio: music cue PP-03 has no OGG yet, expected pp_03_harbor.ogg, placeholder 1
+PP audio: text_blip_a played, instance 400034
+PP audio: text_blip_a played, instance 400035
+PP audio: text_blip_a played, instance 400036
+PP audio: text_blip_a played, instance 400037
+PP audio: text_blip_a played, instance 400038
+PP audio: text_blip_a played, instance 400039
+PP audio: text_blip_a played, instance 400040
+PP audio: text_blip_a played, instance 400041
+PP audio: text_blip_a played, instance 400042
+PP audio: text_blip_a played, instance 400043
+PP audio: text_blip_a played, instance 400044
+PP audio: text_blip_a played, instance 400045
+PP audio: text_blip_a played, instance 400046
+PP audio: text_blip_a played, instance 400047
+PP audio: text_blip_a played, instance 400048
+PP audio: text_blip_a played, instance 400049
+PP audio: text_blip_a played, instance 400050
+PP audio: text_blip_a played, instance 400051
+PP audio: text_blip_a played, instance 400052
+PP audio: text_blip_a played, instance 400053
+PP audio: text_blip_a played, instance 400054
+PP audio: text_blip_a played, instance 400055
+PP audio: text_blip_a played, instance 400056
+PP audio: text_blip_a played, instance 400057
+PP audio: text_blip_a played, instance 400058
+PP audio: text_blip_a played, instance 400059
+PP audio: text_blip_a played, instance 400060
+PP audio: text_blip_a played, instance 400061
+PP audio: text_blip_a played, instance 400062
+PP audio: text_blip_a played, instance 400063
+PP audio: text_blip_a played, instance 400064
+PP audio: text_blip_a played, instance 400065
+PP audio: text_blip_a played, instance 400066
+PP audio: text_blip_a played, instance 400067
+PP audio: text_blip_a played, instance 400068
+PP audio: text_blip_a played, instance 400069
+PP audio: text_blip_a played, instance 400070
+PP audio: text_blip_a played, instance 400071
+PP audio: text_blip_a played, instance 400072
+PP audio: text_blip_a played, instance 400073
+PP audio: text_blip_a played, instance 400074
+PP audio: text_blip_a played, instance 400075
+PP audio: text_blip_a played, instance 400076
+PP audio: text_blip_a played, instance 400077
+PP audio: text_blip_a played, instance 400078
+PP audio: text_blip_a played, instance 400079
+PP audio: text_blip_a played, instance 400080
+PP audio: text_blip_a played, instance 400081
+PP audio: text_blip_a played, instance 400082
+PP audio: text_blip_a played, instance 400083
+PP audio: text_blip_a played, instance 400084
+PP audio: text_blip_a played, instance 400085
+PP audio: text_blip_a played, instance 400086
+PP audio: text_blip_a played, instance 400087
+PP audio: text_blip_a played, instance 400088
+PP audio: text_blip_a played, instance 400089
+PP audio: text_blip_a played, instance 400090
+PP audio: text_blip_a played, instance 400091
+PP audio: text_blip_a played, instance 400092
+PP audio: text_blip_a played, instance 400093
+PP audio: text_blip_a played, instance 400094
+PP audio: text_blip_a played, instance 400095
+PP audio: text_blip_a played, instance 400096
+PP audio: text_blip_a played, instance 400097
+PP audio: text_blip_a played, instance 400098
+PP audio: text_blip_a played, instance 400099
+PP audio: text_blip_a played, instance 400100
+PP audio: text_blip_a played, instance 400101
+PP audio: text_blip_a played, instance 400102
+PP audio: text_blip_a played, instance 400103
+PP audio: text_blip_a played, instance 400104
+PP audio: text_blip_a played, instance 400105
+PP audio: text_blip_a played, instance 400106
+PP audio: text_blip_a played, instance 400107
+PP audio: text_blip_a played, instance 400108
+PP audio: text_blip_a played, instance 400109
+PP audio: text_blip_a played, instance 400110
+PP audio: text_blip_a played, instance 400111
+PP audio: text_blip_a played, instance 400112
+PP audio: text_blip_a played, instance 400113
+PP audio: text_blip_a played, instance 400114
+PP audio: text_blip_a played, instance 400115
+PP audio: text_blip_a played, instance 400116
+PP audio: music cue PP-05 has no OGG yet, expected pp_05_small_ship.ogg, placeholder 1
+PP audio: unknown cue ship_ambient
+PP audio: text_blip_a played, instance 400117
+PP audio: text_blip_a played, instance 400118
+PP audio: text_blip_a played, instance 400119
+PP audio: text_blip_a played, instance 400120
+PP audio: text_blip_a played, instance 400121
+PP audio: text_blip_a played, instance 400122
+PP audio: text_blip_a played, instance 400123
+PP audio: text_blip_a played, instance 400124
+PP audio: text_blip_a played, instance 400125
+PP audio: text_blip_a played, instance 400126
+PP audio: text_blip_a played, instance 400127
+PP audio: text_blip_a played, instance 400128
+PP audio: text_blip_a played, instance 400129
+PP audio: text_blip_a played, instance 400130
+PP audio: text_blip_a played, instance 400131
+PP audio: text_blip_a played, instance 400132
+PP audio: text_blip_a played, instance 400133
+PP audio: text_blip_a played, instance 400134
+PP audio: text_blip_a played, instance 400135
+PP audio: text_blip_a played, instance 400136
+PP audio: text_blip_a played, instance 400137
+PP audio: footstep played, instance 400138
+PP audio: encounter_swoosh loaded encounter_swoosh.wav (0.70 s, 44100 Hz, buffer ref buffer 5)
+PP audio: encounter_swoosh played, instance 400139
+# 151 audio lines
+
+# --- source: build/ff-probe2-game.log
+# --- what it exercises: a build whose manifest lacks the car_engine_loop row: the one silent-effect line
+PP audio: title_theme streaming streams/title_theme_v3_126.ogg, instance 400001, gain 0.70
+PP audio: car_engine_loop silent, not in sfx/sfx.json
+PP audio: menu_select loaded menu_select.wav (0.16 s, 44100 Hz, buffer ref buffer 1)
+PP audio: menu_select played, instance 400002
+PP audio: menu_select played, instance 400003
+PP audio: focus lost, music paused (cue and theme) and every effect stopped
+PP audio: focus back, music resumed where it stopped
+PP audio: title_theme ducked 6 dB, gain 1.40
+PP audio: text_blip_a loaded text_blip_a.wav (0.06 s, 44100 Hz, buffer ref buffer 2)
+PP audio: text_blip_a played, instance 400004
+PP audio: text_blip_a played, instance 400005
+PP audio: text_blip_a played, instance 400006
+PP audio: text_blip_a played, instance 400007
+PP audio: text_blip_a played, instance 400008
+PP audio: text_blip_a played, instance 400009
+PP audio: text_blip_a played, instance 400010
+PP audio: text_blip_a played, instance 400011
+PP audio: text_blip_a played, instance 400012
+PP audio: text_blip_a played, instance 400013
+PP audio: text_blip_a played, instance 400014
+PP audio: text_blip_a played, instance 400015
+PP audio: text_blip_a played, instance 400016
+PP audio: text_blip_a played, instance 400017
+PP audio: text_blip_a played, instance 400018
+PP audio: text_blip_a played, instance 400019
+PP audio: text_blip_a played, instance 400020
+PP audio: text_blip_a played, instance 400021
+PP audio: text_blip_a played, instance 400022
+PP audio: text_blip_a played, instance 400023
+PP audio: focus lost, music paused (cue and theme) and every effect stopped
+PP audio: text_blip_a played, instance 400024
+PP audio: text_blip_a played, instance 400025
+PP audio: text_blip_a played, instance 400026
+PP audio: text_blip_a played, instance 400027
+# 34 audio lines
+
