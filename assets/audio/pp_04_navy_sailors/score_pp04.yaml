@@ -7,6 +7,12 @@
 # Bar = 4 * 60 / 176 = 1.363636 s, so the two bar hook cell ends at 2.727 s and the four bar
 # phrase ends at 5.455 s. The hook is complete inside the first four seconds.
 # Durations are in eighth notes; a 4/4 bar holds 8. Note names are concert pitch (A4 = 440 Hz).
+#
+# 2026-11-02, card t_a97f06db: bar 12 (Dm, the release's second bar) opens on F5, the third, where
+# it used to hold D5, the root. The old note moved in parallel octaves with the triangle's root, C5
+# over C2 into D5 over D2 across the bar 11 to bar 12 line, which the M4 cue gate refused as CP-09.
+# Holding the third keeps the release's length, register and rhythm and leaves the tonic D5 where
+# the phrase already states it (bar 9). No other note of this recipe moved.
 meta:
   profile: pp04
   key: D minor
@@ -45,7 +51,7 @@ sections:
       - [[D5, 4], [C5, 2], [Bb4, 2]]
       - [[F5, 2], [D5, 2], [Bb4, 4]]
       - [[E5, 2], [D5, 2], [C5, 4]]
-      - [[D5, 6], [A4, 2]]
+      - [[F5, 6], [A4, 2]]
       - [[G5, 2], [F5, 2], [D5, 2], [C5, 2]]
       - [[Bb4, 2], [C5, 2], [D5, 2], [F5, 2]]
       - [[E5, 2], [F5, 2], [G5, 2], [A5, 2]]

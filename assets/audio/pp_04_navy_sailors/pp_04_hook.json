@@ -42,7 +42,7 @@
       "measured": "2 leaps",
       "pass": false,
       "points": 4.0,
-      "suggestion": "the motif has 2 leaps; one leap (three or more semitones) per motif is what makes it sing",
+      "suggestion": "the motif has 2 leaps; one leap (5 or more semitones) per motif is what makes it sing",
       "weight": 8
     },
     {
@@ -112,7 +112,7 @@
       "weight": 6
     }
   ],
-  "grammar": "defaults",
+  "grammar": "<repo>\\knowledge\\MUSIC-HOOK-GRAMMAR.md",
   "grid": "sixteenth",
   "melody_track": "vrc6 pulse a",
   "midi_tracks": [
@@ -148,7 +148,7 @@
     "the phrase wanders; shape it as an arch (rise to one peak then fall) or hold a pedal pitch",
     "the motif leaves too many notes outside it; move material into the 2 bar phrase or drop the notes that do not belong",
     "the third return is a copy (100% the same); change the ending, add a passing note or start it on a different chord tone",
-    "the motif has 2 leaps; one leap (three or more semitones) per motif is what makes it sing"
+    "the motif has 2 leaps; one leap (5 or more semitones) per motif is what makes it sing"
   ],
   "tempo_us": 340909,
   "weakest": {

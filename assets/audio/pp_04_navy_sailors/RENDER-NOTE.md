@@ -45,7 +45,7 @@ python assets/audio/pp_04_navy_sailors/build_pp04.py
     -> 43.636 s, 32 bars, 158 lead notes, hook cell end 2.727 s
 python tools/melody_guard.py assets/audio/pp_04_navy_sailors/melody_lead.json \
     "<workspace>/Shared/projects/musikage" --json .../melody_guard.json
-    -> PASS, longest identical interval run 5 of 8 allowed, best jaccard 0.0000
+    -> PASS, longest identical interval run 6 of 8 allowed, best jaccard 0.0000
 python tools/render_chip.py .../pp_04_navy_sailors.mid .../pp_04_navy_sailors.wav --loop-bars 32
     -> peak -1.00 dBFS, rms -15.67 dBFS, seam sample difference 0
 ffmpeg -c:a libvorbis -q:a 6 (the ogg, from the same wav)
@@ -98,6 +98,42 @@ live tree instead:
 ```
 python assets/audio/pp_04_navy_sailors/pp04_check.py
 ```
+
+## The 2026-11-02 counterpoint fix (card t_a97f06db)
+
+The M4 cue gate (`tools/counterpoint/cue_gate.py`) measured this recipe REFUSED on one CP-09: bar 12
+beat 1, the lead's C5 over the triangle's C2 into D5 over D2, parallel octaves at the bar line. Bar 12
+now holds F5, the third of Dm, for the same six eighths, and falls to A4 as before. The tonic D5 is
+still stated in the release at bar 9, so nothing the ear knew is missing; the recipe's own header
+carries the same note.
+
+What was re-run after the change, with the numbers this time:
+
+    python assets/audio/pp_04_navy_sailors/build_pp04.py
+        -> 43.636 s, 32 bars, 158 lead notes (unchanged count, one pitch moved)
+    python tools/render_chip.py ... --loop-bars 32 --hook-report .../pp_04_hook.json
+        -> peak -1.00 dBFS, rms -15.67 dBFS, 1924363 samples, seam sample difference 0, hook 74 of 100
+    python assets/audio/pp_04_navy_sailors/pp04_check.py
+        -> six checks PASS, blip band 33.71 dB down at 1046.5 Hz and 30.54 dB at 1318.5 Hz
+    python tools/melody_guard.py ...
+        -> PASS, longest identical interval run 6 of 8 allowed
+    python tools/counterpoint/cue_gate.py assets/audio/pp_04_navy_sailors/score_pp04.yaml
+        -> PASS, G1 CP-01 0, G2 CP-09 0, exit 0
+
+The mix, and why no new master is in this commit. `tools/final_mix.py` gives every master a new folder
+and refuses to write over an existing one, so the fixed source was mastered once by hand as
+`pp_04_navy_sailors_master2`: -14.10 LUFS integrated, -0.59 dBTP, LRA 4.2, seam clean, `--verify`
+agrees, sha256 d1549f0b, 548568 bytes. That folder is NOT in the tree, because the commit gate
+(`tools/check_build_inputs.py --staged`) refuses an OGG under `assets/audio` that the project's own
+`game/PrimordialParadox.yyp` does not list, and listing it means the game starts shipping a second
+PP-04 stream that no cue row names. Naming a build is a person's edit (master1's own note says so),
+and a new take of the fight cue should be heard first, so the four decisions are listed on card
+t_a97f06db and the build, its .md and its sidecar sit outside the repo at
+`D:/Temp/hermes-tmp/pp04_master2_20261102/` for that ear. `pp_04_navy_sailors_master1` is untouched
+and remains the mix of the pre-fix source whose sha256 its own note records; `data/audio.json`,
+`final_mix.ROUTE` and tests/test_audio.py still name master1. The one-line build:
+
+    python tools/final_mix.py --build --only PP-04 --asset pp_04_navy_sailors_master2
 
 ## Two decisions for Nayil's ear
 

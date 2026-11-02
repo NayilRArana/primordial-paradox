@@ -55,9 +55,9 @@
   "first_lead_note_seconds": 0.0,
   "hook_cell_end_seconds": 2.727,
   "four_bar_phrase_end_seconds": 5.455,
-  "lead_notes_in_first_4s": 18,
+  "lead_notes_in_first_4s": 17,
   "notes": {
-    "vrc6 pulse a": 162,
+    "vrc6 pulse a": 156,
     "vrc6 pulse b": 32,
     "vrc6 saw": 32,
     "pulse 1": 224,

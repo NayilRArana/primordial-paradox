@@ -110,3 +110,30 @@ Q: PP-04 is landed from `assets/audio/pp_04_navy_sailors/pp_04_navy_sailors.ogg`
 `data/audio.json` still reads `"placeholder": true`. v3 is 100 on the hook meter against 74 and up
 1 on the ear against v2 on the same judge; landing it is a registry and yyp edit you own, not a call
 this lane makes.
+
+## 8. 2026-11-02: the counterpoint fix, card t_a97f06db
+
+The M4 cue gate measured this recipe REFUSED: 10 CP-01 and 5 CP-09, the same shapes v2 carried,
+because v3 is v2's cell. The cell is now v2's as that card left it, which keeps both devices: the cell
+holds E5 through bar 1 and leaps to A5 on bar 2's downbeat, and the two release devices keep their
+three steps. The bar 12 device leans from F5, the third, instead of from the root, because the root
+there was the parallel octave the gate refused; preparation, dissonance and resolution are unchanged
+in kind (F5 held, E5 ninth, resolves to D5). Bar 16's flat thirteenth device is untouched.
+
+Measured after the change:
+
+| measure | before | after |
+| --- | --- | --- |
+| cue gate | REFUSED, 10 CP-01, 5 CP-09, exit 1 | **PASS**, 0 and 0, exit 0 |
+| hook meter | 100 / 100 | **100 / 100** |
+| motif | 2 bars, 12 notes, 10 returns, 74% coverage | 2 bars, 12 notes, 10 returns, 71% |
+| hook cell | 6 notes, rhythm 2/2/2/2/4/4 repeated 20 times | 6 notes, rhythm 2/2/2/2/2/2 repeated 4 times |
+| third return | 75% the same | 78% the same |
+| contour / leaps / steps | 10 of 10 arch, 1 leap, 91% | 10 of 10 arch, 1 leap, 91% |
+| lead notes | 166 | 160 |
+| render | 1922015 samples, rms -16.47 dBFS | 1924363 samples, rms -16.51 dBFS, peak -1.00 dBFS |
+| loop seam at bar 28 | jump 0 | jump 0, sides 0 and 11386 |
+
+The OGG, the loop JSON, the two hook reports, the score report and `melody_lead_v3.json` in this
+folder are the after-state; the .mid, .wav, .mp3 and the humanized .mid were re-rendered from it.
+Section 4 of v2's NOTES (linked here as v3's origin) records what the superseded cell was.

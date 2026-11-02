@@ -63,14 +63,16 @@
   ],
   "failures": [],
   "highest_jaccard": 0.0,
+  "lineage_skipped": 0,
   "longest_identical_run": 0,
   "longest_interval_run": 6,
   "melody": "<repo>\\assets\\audio\\pp_04_navy_sailors\\melody_lead.json",
   "melody_intervals": 157,
+  "melody_lineage": "melody_lead",
   "melody_notes": 158,
   "melody_track": "melody_lead.json",
   "ngram": 5,
   "passed": true,
-  "references": 29,
+  "references": 32,
   "run_limit": 8
 }

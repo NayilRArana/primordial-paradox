@@ -128,3 +128,40 @@ Q: PP-04 is landed from `assets/audio/pp_04_navy_sailors/pp_04_navy_sailors.ogg`
 `data/audio.json` still says `"placeholder": true` for it. v2 scores 100 on the hook meter against
 74 and is flat on the ear, so whether it replaces the master is a registry edit you own, not a call
 this lane makes.
+
+## 9. 2026-11-02: the counterpoint fix, card t_a97f06db
+
+The M4 cue gate (`tools/counterpoint/cue_gate.py`) measured this recipe REFUSED, and the numbers
+above are that superseded state. Two defects, both in the lead against the triangle:
+
+- 10 CP-01, one shape ten times: the ninth E5 attacked on the beat 3 accent in every statement of the
+  cell and left by the leap to A5, so it was an unprepared accent dissonance rather than an
+  appoggiatura.
+- 5 CP-09: A5 into G5 in parallel fifths with the triangle's D2 into C2 at every Dm to C bar line
+  (bars 2, 18, 22, 26), plus the D5 over D2 at bar 12 that v1 also had.
+
+The cell now climbs the ladder in bar 1 and holds E5 to the bar line; bar 2 takes the leap up to A5
+on its own downbeat and walks the ladder back down. That is one leap and one arch still, and the
+dissonance now sits on an offbeat with the seam reading a ninth into a sixth. Bar 12 holds F5, the
+third, for the same reason v1 now does. Nothing else in the cue moved: chords, tempo, form, the kit
+and the tail are unchanged.
+
+Measured after the change, on the same tools section 1 and section 4 use:
+
+| measure | before | after |
+| --- | --- | --- |
+| cue gate | REFUSED, 10 CP-01, 5 CP-09, exit 1 | **PASS**, 0 and 0, exit 0 |
+| hook meter | 100 / 100 | **100 / 100** |
+| motif | 2 bars, 12 notes, 10 returns, 74% coverage | 2 bars, 12 notes, 10 returns, 73% |
+| hook cell | 6 notes, rhythm 2/2/2/2/4/4 repeated 20 times | 6 notes, rhythm 2/2/2/2/2/2 repeated 4 times |
+| third return | 75% the same | 78% the same |
+| contour / leaps / steps | 10 of 10 arch, 1 leap, 91% | 10 of 10 arch, 1 leap, 91% |
+| lead notes | 162 | 156 |
+| render | 1922015 samples, rms -16.49 dBFS | 1924363 samples, rms -16.50 dBFS |
+| loop seam at bar 28 | jump 0, sides 0 and 11628 | jump 0, sides 0 and 10992 |
+
+`hook_report_v2.json`, `hook_render_v2.json`, `pp_04_score_report_v2.json`, `melody_lead_v2.json`, the
+loop JSON and the OGG in this folder are the after-state; the .mid, .wav and .mp3 beside them were
+re-rendered from the same build. Section 4's row about "the third statement answers on G5" describes
+the superseded cell: the variation now lives in the tail of bar 6 (Bb4 then A4, the only statement that
+ends on the seventh) against the C#5 answer at bars 4, 8, 20 and 24.
