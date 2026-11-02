@@ -21,8 +21,9 @@ from PIL import Image
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "output", "battle_visuals_2026-11-01")
+if os.environ.get("PP_BATTLE_OUT"):
+    OUT = os.path.abspath(os.environ["PP_BATTLE_OUT"])
 GLYPHS = " !\"'()*,-./0123456789:?ABCDEFGHIJKLMNOPQRSTUVWXYZ[]abcdefghijklmnopqrstuvwxyz"
-PARTY = ("konrad", "zander", "percy", "hadrian")
 COMMANDS = ("FIGHT", "POWER", "TALK", "SPARE", "ITEM")
 
 
@@ -104,6 +105,13 @@ class Renderer:
         self.swatch(fill, x + 1, y + 1, n, h - 2)
         self.swatch(hi, x + 1, y + 1, n, 1)
 
+    def party(self):
+        """The party column the director draws: the legacy battle screen's `party` rows, in the file's own order.
+        `member` is the sheet id lowered; `name` is the word printed under the portrait (ZEUS, KRONOS, HADES)."""
+        screens = data("data", "ui_layouts.json")["screens"]
+        rows = [s for s in screens if s.get("name") == "battle"][0]["party"]
+        return [(r["member"].lower(), r.get("name", r["member"].upper())) for r in rows]
+
     def compose(self, c):
         L = self.L
         self.im = Image.new("RGBA", (256, 240), (0, 0, 0, 255))
@@ -126,10 +134,12 @@ class Renderer:
 
         q = L["panel"]
         self.window(q["x"], q["y"], q["w"], q["h"])
-        for i, pid in enumerate(PARTY):
+        for i, (pid, label) in enumerate(self.party()):
             sheet = load("game", "sprites_src", "chars", "%s_battle.png" % pid)
             f0 = sheet.crop((0, 0, 24, 32))
-            self.im.paste(f0, (q["party_x"] + i * q["party_step"], q["party_y"]), f0)
+            px = q["party_x"] + i * q["party_step"]
+            self.im.paste(f0, (px, q["party_y"]), f0)
+            self.centre(label, px + q["name_dx"], q["name_y"])
         self.swatch("grey", q["rule_x"], q["party_y"] + 1, 1, 30)
         self.text("HP %d/%d" % (c["php"], c["php_max"]), q["stat_x"], q["hp_y"])
         self.bar(q["stat_x"], q["hp_bar_y"], q["bar_w"], q["bar_h"], c["php"] / float(c["php_max"]), "hp", "hp_hi")

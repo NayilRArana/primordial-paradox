@@ -75,13 +75,15 @@ def built():
 def test_the_block_is_read_from_the_layout_in_pixels():
     rects, path = mb.load_party_block(ROOT)
     assert os.path.abspath(path) == os.path.abspath(LAYOUT)
-    assert rects == [(224, 32, 24, 32), (224, 64, 24, 32), (224, 96, 24, 32), (224, 128, 24, 32)]
+    # 2026-11-02: three party members (Zeus, Kronos, Hades), so three slots. The floor the strips bake is unchanged
+    # (1920 px, rows 32 to 111) because the dropped fourth slot lay below the 112 px strip.
+    assert rects == [(224, 32, 24, 32), (224, 64, 24, 32), (224, 96, 24, 32)]
 
     with open(LAYOUT, "r", encoding="utf-8-sig") as handle:
         data = json.load(handle)
     battle = [screen for screen in data["screens"] if screen["name"] == "battle"][0]
     tile = data["frame"]["tile"]
-    # The party list is in tiles and the sprites list in pixels: both describe the same four slots.
+    # The party list is in tiles and the sprites list in pixels: both describe the same three slots.
     assert [(slot["x"] * tile, slot["y"] * tile) for slot in battle["party"]] == [(x, y) for x, y, _, _ in rects]
     assert all(slot["w"] * tile == w and slot["h"] * tile == h for slot, (_, _, w, h) in zip(battle["party"], rects))
 

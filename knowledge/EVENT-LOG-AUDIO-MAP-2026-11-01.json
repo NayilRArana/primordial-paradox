@@ -96,7 +96,7 @@
       "sound": "none",
       "regex": "^PP audio: no effect manifest at .*sfx\\.json, every effect stays silent$",
       "meaning": "the effect manifest is missing, so every effect in the run is silent",
-      "source": "game/scripts/pp_audio/pp_audio.gml:77",
+      "source": "game/scripts/pp_audio/pp_audio.gml:87",
       "observed_in_logs": false,
       "sample_lines": 0,
       "why_unobserved": "fires only when sfx/sfx.json is missing from the build; no run in the tree was built without it"
@@ -106,19 +106,29 @@
       "sound": "none",
       "regex": "^PP audio: data/audio\\.json has no cues table, every music cue stays silent$",
       "meaning": "the music table is missing, so every cue in the run is silent",
-      "source": "game/scripts/pp_audio/pp_audio.gml:130",
+      "source": "game/scripts/pp_audio/pp_audio.gml:142",
       "observed_in_logs": false,
       "sample_lines": 0,
       "why_unobserved": "fires only when audio.json has no cues table; every sampled build had one"
+    },
+    {
+      "type": "music_gain_repaired",
+      "sound": "none",
+      "regex": "^PP audio: music (\\S+) gain repaired to \\S+ \\(it had drifted below half\\)$",
+      "meaning": "a live music instance had drifted below half the music level and was put back at the level (card MUSIC-REAL)",
+      "source": "game/scripts/pp_audio/pp_audio.gml:462",
+      "observed_in_logs": false,
+      "sample_lines": 0,
+      "why_unobserved": "fires only if the engine moves a music gain the bus never asked for; no run in the tree has needed the repair"
     },
     {
       "type": "focus_lost",
       "sound": "music_pause",
       "regex": "^PP audio: focus lost, music paused.*every effect stopped$",
       "meaning": "the window lost focus: the music is paused and every effect is stopped",
-      "source": "game/scripts/pp_audio/pp_audio.gml:412",
+      "source": "game/scripts/pp_audio/pp_audio.gml:428",
       "observed_in_logs": true,
-      "sample_lines": 4,
+      "sample_lines": 3,
       "why_unobserved": ""
     },
     {
@@ -126,9 +136,9 @@
       "sound": "music_resume",
       "regex": "^PP audio: focus back, music resumed where it stopped$",
       "meaning": "focus is back: the music resumes from the paused position",
-      "source": "game/scripts/pp_audio/pp_audio.gml:417",
+      "source": "game/scripts/pp_audio/pp_audio.gml:433",
       "observed_in_logs": true,
-      "sample_lines": 3,
+      "sample_lines": 2,
       "why_unobserved": ""
     },
     {
@@ -136,9 +146,9 @@
       "sound": "music_stop",
       "regex": "^PP audio: title_theme handed to the fade, the cue takes the one music source$",
       "meaning": "a cue is starting: the theme fades out over the bus fade and the cue takes the slot",
-      "source": "game/scripts/pp_audio/pp_audio.gml:217",
+      "source": "game/scripts/pp_audio/pp_audio.gml:229",
       "observed_in_logs": true,
-      "sample_lines": 2,
+      "sample_lines": 3,
       "why_unobserved": ""
     },
     {
@@ -146,7 +156,7 @@
       "sound": "music_stop",
       "regex": "^PP audio: title_theme stopping over (\\d+) steps$",
       "meaning": "the theme fades out over the printed number of steps and stops",
-      "source": "game/scripts/pp_audio/pp_audio.gml:337",
+      "source": "game/scripts/pp_audio/pp_audio.gml:353",
       "observed_in_logs": false,
       "sample_lines": 0,
       "why_unobserved": "fires only when a stop arrives with no cue playing and a theme still live"
@@ -156,7 +166,7 @@
       "sound": "music_stop",
       "regex": "^PP audio: music stopping over (\\d+) steps$",
       "meaning": "the cue fades out over the printed number of steps and stops",
-      "source": "game/scripts/pp_audio/pp_audio.gml:344",
+      "source": "game/scripts/pp_audio/pp_audio.gml:360",
       "observed_in_logs": false,
       "sample_lines": 0,
       "why_unobserved": "fires only when the music is stopped while a cue is playing; no sampled run stopped its music"
@@ -166,7 +176,7 @@
       "sound": "music_start",
       "regex": "^PP audio: title_theme streaming (\\S+), instance -?\\d+, gain (-?[0-9.]+)$",
       "meaning": "the title theme starts from the named stream at the printed gain, looped",
-      "source": "game/scripts/pp_audio/pp_audio.gml:567",
+      "source": "game/scripts/pp_audio/pp_audio.gml:645",
       "observed_in_logs": true,
       "sample_lines": 4,
       "why_unobserved": ""
@@ -176,7 +186,7 @@
       "sound": "none",
       "regex": "^PP audio: title_theme ducked (-?[0-9.]+) dB in the state, no stream instance to turn down$",
       "meaning": "a duck level is recorded for the next theme start; nothing is playing to turn down",
-      "source": "game/scripts/pp_audio/pp_audio.gml:649",
+      "source": "game/scripts/pp_audio/pp_audio.gml:728",
       "observed_in_logs": false,
       "sample_lines": 0,
       "why_unobserved": "fires only when a duck is asked for before the theme stream exists"
@@ -186,9 +196,9 @@
       "sound": "music_gain",
       "regex": "^PP audio: title_theme ducked (-?[0-9.]+) dB, gain (-?[0-9.]+)$",
       "meaning": "the theme's gain changes to the printed number right now",
-      "source": "game/scripts/pp_audio/pp_audio.gml:657",
+      "source": "game/scripts/pp_audio/pp_audio.gml:736",
       "observed_in_logs": true,
-      "sample_lines": 2,
+      "sample_lines": 3,
       "why_unobserved": ""
     },
     {
@@ -196,9 +206,9 @@
       "sound": "music_gain",
       "regex": "^PP audio: title_theme back to full after (-?[0-9.]+) dB$",
       "meaning": "the theme's gain goes back to the bus music level",
-      "source": "game/scripts/pp_audio/pp_audio.gml:670",
+      "source": "game/scripts/pp_audio/pp_audio.gml:749",
       "observed_in_logs": true,
-      "sample_lines": 1,
+      "sample_lines": 2,
       "why_unobserved": ""
     },
     {
@@ -206,9 +216,9 @@
       "sound": "music_start",
       "regex": "^PP audio: music cue (\\S+) streaming (.+), instance -?\\d+, priority (-?\\d+), fade (\\d+) steps$",
       "meaning": "a music cue starts from the named file at the bus music level, looped, fading in",
-      "source": "game/scripts/pp_audio/pp_audio.gml:322",
+      "source": "game/scripts/pp_audio/pp_audio.gml:338",
       "observed_in_logs": true,
-      "sample_lines": 8,
+      "sample_lines": 12,
       "why_unobserved": ""
     },
     {
@@ -216,7 +226,7 @@
       "sound": "none",
       "regex": "^PP audio: music cue (\\S+) has no OGG yet, falling back to (\\S+)$",
       "meaning": "the asked cue has no file, so the bus asked for the fallback; the next start line is the sound",
-      "source": "game/scripts/pp_audio/pp_audio.gml:267",
+      "source": "game/scripts/pp_audio/pp_audio.gml:279",
       "observed_in_logs": false,
       "sample_lines": 0,
       "why_unobserved": "fires only when a cue row has no file and names a fallback; every sampled run asked for landed cues"
@@ -226,7 +236,7 @@
       "sound": "none",
       "regex": "^PP audio: music cue (\\S+) has no OGG yet, expected (\\S+), placeholder (\\w+)$",
       "meaning": "the cue has no file where the game looks: silence, and the game plays no music here",
-      "source": "game/scripts/pp_audio/pp_audio.gml:286",
+      "source": "game/scripts/pp_audio/pp_audio.gml:298",
       "observed_in_logs": true,
       "sample_lines": 3,
       "why_unobserved": ""
@@ -236,7 +246,7 @@
       "sound": "none",
       "regex": "^PP audio: music cue (\\S+) silent, audio_create_stream failed on (.+)$",
       "meaning": "the file is there and the stream would not open: silence",
-      "source": "game/scripts/pp_audio/pp_audio.gml:304",
+      "source": "game/scripts/pp_audio/pp_audio.gml:316",
       "observed_in_logs": false,
       "sample_lines": 0,
       "why_unobserved": "fires only when a file exists and audio_create_stream refuses it"
@@ -246,7 +256,7 @@
       "sound": "none",
       "regex": "^PP audio: music cue (\\S+) silent, no audio channel for it$",
       "meaning": "no audio channel was free at the music priority: silence",
-      "source": "game/scripts/pp_audio/pp_audio.gml:311",
+      "source": "game/scripts/pp_audio/pp_audio.gml:327",
       "observed_in_logs": false,
       "sample_lines": 0,
       "why_unobserved": "fires only when all ten channels are taken at the music priority"
@@ -256,7 +266,7 @@
       "sound": "none",
       "regex": "^PP audio: unknown music cue (\\S+), nothing played$",
       "meaning": "a cue id the table does not know: silence",
-      "source": "game/scripts/pp_audio/pp_audio.gml:257",
+      "source": "game/scripts/pp_audio/pp_audio.gml:269",
       "observed_in_logs": false,
       "sample_lines": 0,
       "why_unobserved": "fires only when the room or fight names a cue id the table does not hold"
@@ -266,7 +276,7 @@
       "sound": "none",
       "regex": "^PP audio: sfx (\\S+) silent, not in sfx/sfx\\.json$",
       "meaning": "the effect is not in the manifest: silence",
-      "source": "game/scripts/pp_audio/pp_audio.gml:362",
+      "source": "game/scripts/pp_audio/pp_audio.gml:378",
       "observed_in_logs": false,
       "sample_lines": 0,
       "why_unobserved": "fires only on the pp_audio_sfx path with an id the manifest lacks; sampled misses all came through pp_audio_play"
@@ -276,9 +286,9 @@
       "sound": "none",
       "regex": "^PP audio: (\\S+) loaded (\\S+) \\(([0-9.]+) s, (\\d+) Hz, buffer (.+)\\)$",
       "meaning": "the effect file was read into a buffer: no sound yet, the play line is the sound",
-      "source": "game/scripts/pp_audio/pp_audio.gml:539",
+      "source": "game/scripts/pp_audio/pp_audio.gml:617",
       "observed_in_logs": true,
-      "sample_lines": 15,
+      "sample_lines": 16,
       "why_unobserved": ""
     },
     {
@@ -286,7 +296,7 @@
       "sound": "none",
       "regex": "^PP audio: (\\S+) silent, no file at (.+)$",
       "meaning": "the effect file is missing: silence",
-      "source": "game/scripts/pp_audio/pp_audio.gml:501",
+      "source": "game/scripts/pp_audio/pp_audio.gml:579",
       "observed_in_logs": false,
       "sample_lines": 0,
       "why_unobserved": "fires only when a manifest row names a wav that is not in the build"
@@ -296,7 +306,7 @@
       "sound": "none",
       "regex": "^PP audio: (\\S+) silent, buffer_load failed on (.+)$",
       "meaning": "the effect file would not load: silence",
-      "source": "game/scripts/pp_audio/pp_audio.gml:507",
+      "source": "game/scripts/pp_audio/pp_audio.gml:585",
       "observed_in_logs": false,
       "sample_lines": 0,
       "why_unobserved": "fires only when the wav is there and buffer_load refuses it"
@@ -306,7 +316,7 @@
       "sound": "none",
       "regex": "^PP audio: (\\S+) silent, the measured length does not fit (.+)$",
       "meaning": "the manifest's measured length does not fit the file: silence",
-      "source": "game/scripts/pp_audio/pp_audio.gml:517",
+      "source": "game/scripts/pp_audio/pp_audio.gml:595",
       "observed_in_logs": false,
       "sample_lines": 0,
       "why_unobserved": "fires only when the manifest's measured length does not fit the wav"
@@ -316,7 +326,7 @@
       "sound": "none",
       "regex": "^PP audio: (\\S+) silent, audio_create_buffer_sound failed on (.+)$",
       "meaning": "the buffer sound would not be created: silence",
-      "source": "game/scripts/pp_audio/pp_audio.gml:531",
+      "source": "game/scripts/pp_audio/pp_audio.gml:609",
       "observed_in_logs": false,
       "sample_lines": 0,
       "why_unobserved": "fires only when audio_create_buffer_sound refuses the buffer"
@@ -326,9 +336,9 @@
       "sound": "sfx",
       "regex": "^PP audio: ([a-z0-9_]+) played, instance -?\\d+$",
       "meaning": "one effect plays once, at the level of the bus path that asked for it",
-      "source": "game/scripts/pp_audio/pp_audio.gml:381, game/scripts/pp_audio/pp_audio.gml:611",
+      "source": "game/scripts/pp_audio/pp_audio.gml:397, game/scripts/pp_audio/pp_audio.gml:690",
       "observed_in_logs": true,
-      "sample_lines": 324,
+      "sample_lines": 371,
       "why_unobserved": ""
     },
     {
@@ -336,7 +346,7 @@
       "sound": "none",
       "regex": "^PP audio: (\\S+) silent, not in sfx/sfx\\.json$",
       "meaning": "an effect the cue list knows but the manifest does not ship: silence",
-      "source": "game/scripts/pp_audio/pp_audio.gml:600",
+      "source": "game/scripts/pp_audio/pp_audio.gml:679",
       "observed_in_logs": true,
       "sample_lines": 1,
       "why_unobserved": ""
@@ -346,7 +356,7 @@
       "sound": "none",
       "regex": "^PP audio: unknown cue (\\S+)$",
       "meaning": "a name that is not an effect at all: silence",
-      "source": "game/scripts/pp_audio/pp_audio.gml:592",
+      "source": "game/scripts/pp_audio/pp_audio.gml:671",
       "observed_in_logs": true,
       "sample_lines": 1,
       "why_unobserved": ""
@@ -356,7 +366,7 @@
       "sound": "none",
       "regex": "^PP audio: room (\\S+) names no music cue, the music in hand keeps playing$",
       "meaning": "the room names no cue: whatever music is playing keeps playing",
-      "source": "game/scripts/pp_audio/pp_audio.gml:448",
+      "source": "game/scripts/pp_audio/pp_audio.gml:526",
       "observed_in_logs": false,
       "sample_lines": 0,
       "why_unobserved": "fires only when a map names no music cue; every sampled room names one"
@@ -366,9 +376,9 @@
       "sound": "none",
       "regex": "^PP audio: room (\\S+) asked (\\S+), playing (\\S+) \\((started|kept)\\), stream (yes|no)$",
       "meaning": "the room asked for a cue; the start line above or below is the sound, this line is the verdict",
-      "source": "game/scripts/pp_audio/pp_audio.gml:455",
+      "source": "game/scripts/pp_audio/pp_audio.gml:533",
       "observed_in_logs": true,
-      "sample_lines": 10,
+      "sample_lines": 14,
       "why_unobserved": ""
     },
     {
@@ -376,9 +386,9 @@
       "sound": "none",
       "regex": "^PP audio: fight (\\S+) asked (\\S+), playing (\\S+) \\((started|kept)\\), stream (yes|no)$",
       "meaning": "the fight asked for a cue; the start line is the sound, this line is the verdict",
-      "source": "game/scripts/pp_audio/pp_audio.gml:476",
+      "source": "game/scripts/pp_audio/pp_audio.gml:554",
       "observed_in_logs": true,
-      "sample_lines": 4,
+      "sample_lines": 5,
       "why_unobserved": ""
     },
     {
@@ -386,7 +396,7 @@
       "sound": "none",
       "regex": "^PP audio: no title theme stream in (.+)$",
       "meaning": "no theme stream file was found at boot: silence where the theme would be",
-      "source": "game/scripts/pp_audio/pp_audio.gml:572",
+      "source": "game/scripts/pp_audio/pp_audio.gml:650",
       "observed_in_logs": false,
       "sample_lines": 0,
       "why_unobserved": "fires only when no theme stream file is in the build at boot"
@@ -1219,16 +1229,16 @@
   "unmatched_lines": [],
   "event_line_counts": {
     "theme_stream": 4,
-    "sfx_loaded": 15,
-    "sfx_played": 324,
-    "focus_lost": 4,
-    "focus_back": 3,
-    "theme_handed": 2,
-    "music_stream": 8,
-    "room_asked": 10,
-    "fight_asked": 4,
-    "theme_ducked": 2,
-    "theme_unducked": 1,
+    "sfx_loaded": 16,
+    "sfx_played": 371,
+    "theme_ducked": 3,
+    "theme_unducked": 2,
+    "theme_handed": 3,
+    "music_stream": 12,
+    "room_asked": 14,
+    "fight_asked": 5,
+    "focus_lost": 3,
+    "focus_back": 2,
     "music_missing": 3,
     "cue_unknown_name": 1,
     "sfx_silent_manifest": 1

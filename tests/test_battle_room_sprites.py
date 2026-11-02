@@ -173,7 +173,7 @@ def test_every_sheet_the_room_draws_is_on_palette(report):
     """The card's third constraint, measured: strip, enemy and the four party sheets, all on the union palette."""
     measured = report["claims"]["every_sheet_the_room_draws_is_on_palette"]["measured"]
     assert set(measured) == {report["strip_drawn"], "navy_sailor", "konrad_battle", "zander_battle",
-                             "percy_battle", "hadrian_battle"}, "the room's own sheet sweep changed its set"
+                             "hadrian_battle"}, "the room's own sheet sweep changed its set"
     for name, numbers in measured.items():
         assert numbers["in_index"], "%s is not in the art index" % name
         assert numbers["off_palette_colours"] == {}, "%s carries off palette pixels: %s" % (

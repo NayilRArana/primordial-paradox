@@ -139,18 +139,52 @@ def test_the_enemy_slot_is_the_layout_files_own_first_slot():
     assert slot["pixels"] == "32x32"
 
 
-def test_the_party_column_is_the_layout_files_own_four_members():
-    """x=224, y=32/64/96/128, 24x32 each, in the layout's own member order, which is the order it draws in."""
+def test_the_party_column_is_the_layout_files_own_three_members():
+    """x=224, y=32/64/96, 24x32 each, in the layout's own member order, which is the order it draws in.
+
+    2026-11-02 (order of 2026-11-02: only three party members, Zeus, Kronos, Hades): the fourth row (Percy, now the officer
+    enemy) is gone, so the column is three slots. The reason is in output/battle_party_2026-11-02/PROGRESS.md."""
     rows = battle_screen()["party"]
     slots = resolved_party()
-    assert len(rows) == len(slots) == 4
+    assert len(rows) == len(slots) == 3
     for layout_row, slot in zip(rows, slots):
         assert slot["id"] == layout_row["member"].lower(), "the slot order is not the layout's order"
         assert slot["x"] == layout_row["x"] * 8 == 224
         assert slot["y"] == layout_row["y"] * 8
         assert slot["w"] == layout_row["w"] * 8 == 24
         assert slot["h"] == layout_row["h"] * 8 == 32
-    assert [slot["y"] for slot in slots] == [32, 64, 96, 128]
+    assert [slot["y"] for slot in slots] == [32, 64, 96]
+
+
+def test_the_party_is_zeus_kronos_hades_and_percy_is_not_in_it():
+    """Evidence: CHARACTER-BIBLE.md, Zeus is Zander, Kronos is Konrad, Hades is Hadrian; Percy is the enemy boss.
+    The member is the sheet id, the name is what the party panel prints under the portrait, in this order."""
+    rows = battle_screen()["party"]
+    assert [(row["member"].lower(), row["name"]) for row in rows] == [
+        ("zander", "ZEUS"), ("konrad", "KRONOS"), ("hadrian", "HADES")]
+    assert "percy" not in [slot["id"] for slot in resolved_party()]
+    status = battle_screen()["text"]["status_rows"]
+    assert [row.split()[0] for row in status] == ["ZEUS", "KRONOS", "HADES"]
+
+
+def test_the_party_panel_prints_each_name_under_its_portrait_inside_the_panel():
+    """battle_b: three cells, a name row under each 24 px sheet, names clear of each other and of the rule."""
+    panel = load(LAYOUT)["battle_b"]["panel"]
+    names = [row["name"] for row in battle_screen()["party"]]
+    assert len(names) == 3
+    spans = []
+    for i, name in enumerate(names):
+        left = panel["party_x"] + i * panel["party_step"]
+        centre = left + panel["name_dx"]
+        spans.append((centre - len(name) * 4, centre + len(name) * 4))
+        assert left + 24 <= panel["rule_x"]
+    for (a0, a1), (b0, b1) in zip(spans, spans[1:]):
+        assert a1 + 4 <= b0, "two party names run together"
+    assert spans[-1][1] + 4 <= panel["rule_x"], "the last name reaches the rule"
+    assert panel["party_y"] + 32 <= panel["name_y"] and panel["name_y"] + 8 <= panel["y"] + panel["h"] * 8 - 2
+    assert panel["y"] + panel["h"] * 8 <= 168, "the panel reaches the command band"
+    code = body("pp_battle_draw_party_b")
+    assert "_slots[i].name" in code and "_q.name_y" in code, "the panel does not draw the member names"
 
 
 def test_the_party_block_stays_inside_the_frame_and_clear_of_the_band():
@@ -163,14 +197,15 @@ def test_the_party_block_stays_inside_the_frame_and_clear_of_the_band():
 # ---- 2. The cast is the reserved four ----------------------------------------------------------------------------
 
 
-def test_the_four_sheets_are_the_four_heroes_that_hold_a_reserved_palette():
-    """data/scene_palettes.json reserves one triple for each of four heroes, and those four are what is drawn."""
+def test_the_three_sheets_are_heroes_that_hold_a_reserved_palette():
+    """data/scene_palettes.json reserves one triple for each of four heroes; three are drawn, the fourth (Percy's)
+    stays reserved and unspent now that Percy is an enemy."""
     reserved = load(SCENE_PALETTES)["hero_palettes"]
     drawn = [slot["id"] for slot in resolved_party()]
-    assert sorted(drawn) == sorted(reserved), "the battle block draws a hero the palette file does not reserve"
+    assert len(drawn) == 3 and set(drawn) < set(reserved), "the battle block draws a hero the palette file does not reserve"
 
 
-@pytest.mark.parametrize("hero", ["konrad", "zander", "percy", "hadrian"])
+@pytest.mark.parametrize("hero", ["konrad", "zander", "hadrian"])
 def test_each_party_sheet_is_the_24x32_seven_frame_strip_the_slot_is_sized_for(hero):
     sidecar = load(os.path.join(CHARS, "%s_battle.json" % hero))
     slot = [row for row in resolved_party() if row["id"] == hero]

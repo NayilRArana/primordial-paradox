@@ -1189,7 +1189,10 @@ function pp_battle_party_slots() {
     for (var i = 0; i < array_length(_screen.party); i++) {
         var _row = _screen.party[i];
         var _size = pp_battle_pixels(_row.pixels);
-        array_push(_out, { id: string_lower(string(_row.member)),
+        // 2026-11-02: three party members. `member` stays the sheet id; the row's `name` in the layout file is
+        // the word the party panel prints under the portrait.
+        var _label = variable_struct_exists(_row, "name") ? string(_row.name) : string_upper(string(_row.member));
+        array_push(_out, { id: string_lower(string(_row.member)), name: _label,
                            x: _row.x * 8, y: _row.y * 8, w: _size[0], h: _size[1] });
     }
     return _out;
@@ -1874,7 +1877,10 @@ function pp_battle_draw_party_b(_battle, _lb) {
         if (!pp_art_has(_name)) continue;
         var _f = 0;
         if (_battle.actor.hp <= 0 && pp_art_frames(_name) > 6) _f = 6;
-        pp_art_draw(_name, _f, _q.party_x + i * _q.party_step + _shake_x, _q.party_y, PP_UNTINTED, 1);
+        var _px = _q.party_x + i * _q.party_step + _shake_x;
+        pp_art_draw(_name, _f, _px, _q.party_y, PP_UNTINTED, 1);
+        // The member's name under the portrait (ZEUS, KRONOS, HADES), centred on the 24 px sheet.
+        pp_font_draw_centre(_slots[i].name, _px + _q.name_dx, _q.name_y, 1);
         _drawn += 1;
     }
     pp_battle_swatch("grey", _q.rule_x, _q.party_y + 1, 1, 30);

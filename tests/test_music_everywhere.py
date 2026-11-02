@@ -271,3 +271,69 @@ def test_the_music_tour_debug_door_drives_the_same_two_calls_and_is_called_from_
     assert "pp_audio_music_stop" not in tour and "pp_save_" not in tour and "pp_map_load(" not in tour, \
         "the tour must stay a read of the data rows: no save, no map load"
     assert "pp_overworld_music_tour(_world)" in _function(overworld, "pp_overworld_step")[1]
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# Card MUSIC-REAL (2026-11-02): audibility, not only wiring.
+
+def test_a_cue_starts_at_the_music_level_never_at_gain_zero():
+    """Every post title cue used to start at gain 0 and rely on a gain ramp to rise, the one thing the audible title theme never
+    did and every muted proof never exercised. The source must start a cue at PP_AUDIO_GAIN_MUSIC and carry no ramp in."""
+    raw, code = _function(_text("pp_audio/pp_audio.gml"), "pp_audio_music")
+    assert "audio_play_sound(_stream, _priority, _loop, PP_AUDIO_GAIN_MUSIC)" in raw
+    assert not re.search(r"audio_play_sound\(_stream,[^;]*,\s*0\)", code), "a cue may not start at gain 0"
+    assert "audio_sound_gain(_inst, PP_AUDIO_GAIN_MUSIC" not in code, "no ramp in: the level is set at the start"
+
+
+def test_the_bus_repairs_a_music_instance_that_sits_near_silence():
+    raw, code = _function(_text("pp_audio/pp_audio.gml"), "pp_audio_music_heal")
+    assert "audio_sound_get_gain(_a.music_inst)" in code and "audio_sound_gain(_a.music_inst, PP_AUDIO_GAIN_MUSIC, 0)" in code
+    assert "focus_paused" in code and "audio_is_playing" in code
+    step = _function(_text("pp_audio/pp_audio.gml"), "pp_audio_step")[1]
+    assert "pp_audio_music_heal(_a)" in step and "pp_audio_status_step(_a)" in step
+
+
+def test_the_audio_status_door_is_inert_unless_pp_audio_log_is_set():
+    text = _text("pp_audio/pp_audio.gml")
+    assert '#macro PP_AUDIO_LOG "PP_" + "AUDIO_LOG"' in text
+    raw, code = _function(text, "pp_audio_status_step")
+    assert "status_on < 0" in code and "environment_get_variable(PP_AUDIO_LOG)" in code
+    assert "if (_a.status_on != 1" in code, "an unset run returns before building any line"
+    for field in ("mode=", "room=", "cue=", "instance=", "playing=", "gain=", "master=", "paused="):
+        assert field in raw
+    assert "PP audio status:" in raw and "current_time + 1000" in code
+
+
+def test_hit_is_aliased_to_a_shipped_effect():
+    """pp_battle_director asks for "hit" (Hermes card t_087d0a5b) and no table ships that name; the bus maps it."""
+    text = _text("pp_audio/pp_audio.gml")
+    alias = _function(text, "pp_audio_cue_alias")[0]
+    target = re.search(r'_cue == "hit"\) return "([a-z_]+)"', alias)
+    assert target, "the alias for hit is missing"
+    shipped = {c["id"] for c in _json("game", "datafiles", "sfx", "sfx.json")["cues"]}
+    assert target.group(1) in shipped, "the alias target must be a shipped effect"
+    assert target.group(1) in re.search(r"function pp_audio_cues\(\) \{(.*?)\n\}", text, re.S).group(1)
+    play = _function(text, "pp_audio_play")[1]
+    assert play.index("pp_audio_cue_alias(_cue)") < play.index("pp_audio_cues()")
+
+
+def test_every_effect_name_the_game_asks_for_is_known_and_shipped_or_aliased():
+    text = _text("pp_audio/pp_audio.gml")
+    known = set(re.findall(r'"([a-z_]+)"', re.search(r"function pp_audio_cues\(\) \{(.*?)\n\}", text, re.S).group(1)))
+    shipped = {c["id"] for c in _json("game", "datafiles", "sfx", "sfx.json")["cues"]}
+    alias = {"hit": re.search(r'_cue == "hit"\) return "([a-z_]+)"', text).group(1)}
+    for path in glob.glob(os.path.join(SCRIPTS, "*", "*.gml")):
+        with open(path, encoding="utf-8") as handle:
+            for name in re.findall(r'pp_audio_play\("([^"]+)"\)', handle.read()):
+                real = alias.get(name, name)
+                assert real in known, "%s asks for %s which the bus does not know" % (os.path.basename(path), name)
+                assert real == "title_theme" or real in shipped, "%s is not a shipped effect" % real
+
+
+def test_every_live_cue_has_its_ogg_in_the_exe_folder_when_a_build_exists():
+    build = os.path.join(ROOT, "output", "PrimordialParadox", "streams")
+    if not os.path.isdir(build):
+        return
+    for cue in ("PP-01", "PP-02", "PP-03", "PP-04", "PP-05", "PP-06", "PP-17"):
+        _played, name = _resolve(cue)
+        assert name and os.path.isfile(os.path.join(build, name)), "%s has no OGG next to the exe" % cue

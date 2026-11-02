@@ -56,6 +56,16 @@
 #macro PP_AUDIO_GAIN_BLIP 0.5
 #macro PP_AUDIO_STEP_MS 16.6667
 #macro PP_AUDIO_SFX_SLOTS 8
+// Card MUSIC-REAL: the status door's environment name, split like the quiet switch so the macro is not itself a use of the name.
+#macro PP_AUDIO_LOG "PP_" + "AUDIO_LOG"
+
+/// Names the game asks for that no table ships under that name, mapped to the shipped effect that stands in (card MUSIC-REAL,
+/// Hermes card t_087d0a5b): the dodge arena's damage hit asked for "hit", which sfx.json never carried, so the player's own
+/// damage was silent. The caller keeps its name; the bus answers with the shipped sound.
+function pp_audio_cue_alias(_cue) {
+    if (_cue == "hit") return "hit_light";
+    return _cue;
+}
 
 /// The effect names the game asks for by name. Music is asked for by cue id through pp_audio_music instead.
 function pp_audio_cues() {
@@ -94,7 +104,9 @@ function pp_audio_state() {
             music_cue: "", music_inst: -1, music_stream: -1,
             fade_inst: -1, fade_stream: -1, fade_end_ms: 0,
             sfx_insts: [],
-            focus_paused: false
+            focus_paused: false,
+            music_started_ms: 0, heal_next_ms: 0, heals: 0,
+            status_on: -1, status_next_ms: 0
         };
     }
     var _a = global.pp.audio;
@@ -304,19 +316,23 @@ function pp_audio_music(_cue, _fade_steps) {
         show_debug_message("PP audio: music cue " + string(_cue) + " silent, audio_create_stream failed on " + _file);
         return false;
     }
-    var _inst = audio_play_sound(_stream, _priority, _loop, 0);
+    // Card MUSIC-REAL (2026-11-02): the cue starts AT the music level and only the outgoing track is faded. It used to start at
+    // gain 0 and rely on audio_sound_gain(_inst, level, fade) to ramp up, which is the one thing the audible title theme never
+    // did (it starts at its level), and the one thing every proof run skipped because every proof ran muted. A ramp that does
+    // not land leaves a cue "playing" in the log and silent in the room, so nothing here depends on one landing.
+    var _inst = audio_play_sound(_stream, _priority, _loop, PP_AUDIO_GAIN_MUSIC);
     if (_inst < 0) {
         _a.silent += 1;
         audio_destroy_stream(_stream);
         show_debug_message("PP audio: music cue " + string(_cue) + " silent, no audio channel for it");
         return false;
     }
-    audio_sound_gain(_inst, PP_AUDIO_GAIN_MUSIC, _fade_ms);
 
     if (_a.music_inst > -1) pp_audio_fade_handoff(_a, _a.music_inst, _a.music_stream, _fade_ms);
     _a.music_inst = _inst;
     _a.music_stream = _stream;
     _a.music_cue = _cue;
+    _a.music_started_ms = current_time;
     _a.fade_end_ms = current_time + _fade_ms;
     _a.played += 1;
     show_debug_message("PP audio: music cue " + string(_cue) + " streaming " + _file + ", instance " + string(_inst)
@@ -426,6 +442,68 @@ function pp_audio_step() {
     pp_audio_focus(!window_has_focus());
 
     if (_a.fade_inst > -1 && current_time >= _a.fade_end_ms) pp_audio_fade_flush(_a);
+    pp_audio_music_heal(_a);
+    pp_audio_status_step(_a);
+}
+
+/// Card MUSIC-REAL: a live music instance that sits near silence, with the window focused and no pause asked for, is put
+/// back at the music level at once and the repair is logged. The bus starts every cue at that level now, so this only fires
+/// when the engine moved the gain somewhere it was never told to; it exists so the room cannot go quiet while the log says
+/// "playing". Checked at most four times a second, and not while a focus pause holds the instance.
+function pp_audio_music_heal(_a) {
+    if (_a.music_inst <= -1 || _a.focus_paused) return false;
+    if (current_time < _a.heal_next_ms) return false;
+    _a.heal_next_ms = current_time + 250;
+    if (current_time - _a.music_started_ms < 100) return false;
+    if (!audio_is_playing(_a.music_inst)) return false;
+    if (audio_sound_get_gain(_a.music_inst) >= PP_AUDIO_GAIN_MUSIC * 0.5) return false;
+    audio_sound_gain(_a.music_inst, PP_AUDIO_GAIN_MUSIC, 0);
+    _a.heals += 1;
+    show_debug_message("PP audio: music " + string(_a.music_cue) + " gain repaired to " + string(PP_AUDIO_GAIN_MUSIC)
+        + " (it had drifted below half)");
+    return true;
+}
+
+/// Card MUSIC-REAL debug door, unset in every real launch: with PP_AUDIO_LOG set to any text, one line a second says what the
+/// player would hear (the mode, the room, the cue, its instance, whether the engine reports it playing, its gain, the master
+/// gain and whether it is paused), so a log proves the ear's side and not only that a cue was asked for. The variable is read
+/// once; an unset run costs one environment read and nothing per frame.
+function pp_audio_status_step(_a) {
+    if (_a.status_on < 0) _a.status_on = (environment_get_variable(PP_AUDIO_LOG) != "") ? 1 : 0;
+    if (_a.status_on != 1 || current_time < _a.status_next_ms) return false;
+    _a.status_next_ms = current_time + 1000;
+    var _inst = _a.music_inst;
+    var _cue = string(_a.music_cue);
+    if (_inst <= -1 && variable_struct_exists(_a, "theme_inst") && _a.theme_inst > -1) {
+        _inst = _a.theme_inst;
+        _cue = "title_theme";
+    }
+    if (_cue == "") _cue = "none";
+    var _playing = (_inst > -1 && audio_is_playing(_inst)) ? "1" : "0";
+    var _paused = (_inst > -1 && audio_is_paused(_inst)) ? "1" : (_a.focus_paused ? "1" : "0");
+    var _gain = (_inst > -1) ? string(audio_sound_get_gain(_inst)) : "none";
+    var _mode = "none";
+    var _room = room_get_name(room);
+    if (is_struct(global.pp) && is_struct(global.pp.app)) {
+        switch (global.pp.app.mode) {
+            case PPMode.boot: _mode = "boot"; break;
+            case PPMode.title: _mode = "title"; break;
+            case PPMode.overworld: _mode = "overworld"; break;
+            case PPMode.cutscene: _mode = "cutscene"; break;
+            case PPMode.battle: _mode = "battle"; break;
+            case PPMode.menu: _mode = "menu"; break;
+            case PPMode.talk_persona: _mode = "talk_persona"; break;
+            default: _mode = string(global.pp.app.mode); break;
+        }
+        if ((global.pp.app.mode == PPMode.overworld || global.pp.app.mode == PPMode.battle)
+            && variable_struct_exists(global.pp, "world") && is_struct(global.pp.world)
+            && is_struct(global.pp.world.map) && variable_struct_exists(global.pp.world.map, "id")) {
+            _room = string(global.pp.world.map.id);
+        }
+    }
+    show_debug_message("PP audio status: mode=" + _mode + " room=" + _room + " cue=" + _cue + " instance=" + string(_inst)
+        + " playing=" + _playing + " gain=" + _gain + " master=" + string(audio_get_master_gain(0)) + " paused=" + _paused);
+    return true;
 }
 
 /// The fight cue a fight falls back to when its encounter row names none: PP-04, the navy sailors take the ear gate scored.
@@ -582,6 +660,7 @@ function pp_audio_play(_cue) {
     var _a = pp_audio_state();
     _a.last_cue = _cue;
     _a.asked += 1;
+    _cue = pp_audio_cue_alias(_cue);
 
     var _known = pp_audio_cues();
     var _is_cue = false;

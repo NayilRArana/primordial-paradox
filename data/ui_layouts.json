@@ -132,7 +132,8 @@
       ],
       "party": [
         {
-          "member": "KONRAD",
+          "member": "ZANDER",
+          "name": "ZEUS",
           "x": 28,
           "y": 4,
           "w": 3,
@@ -140,7 +141,8 @@
           "pixels": "24x32"
         },
         {
-          "member": "ZANDER",
+          "member": "KONRAD",
+          "name": "KRONOS",
           "x": 28,
           "y": 8,
           "w": 3,
@@ -148,17 +150,10 @@
           "pixels": "24x32"
         },
         {
-          "member": "PERCY",
+          "member": "HADRIAN",
+          "name": "HADES",
           "x": 28,
           "y": 12,
-          "w": 3,
-          "h": 4,
-          "pixels": "24x32"
-        },
-        {
-          "member": "HADRIAN",
-          "x": 28,
-          "y": 16,
           "w": 3,
           "h": 4,
           "pixels": "24x32"
@@ -178,10 +173,9 @@
         ],
         "status_header": "NAME      HP",
         "status_rows": [
-          "KONRAD  HP 24",
-          "ZANDER  HP 18",
-          "PERCY   HP 31",
-          "HADRIAN HP 21"
+          "ZEUS    HP 20",
+          "KRONOS  HP 20",
+          "HADES   HP 20"
         ]
       },
       "cursors": [
@@ -210,13 +204,6 @@
         {
           "x": 224,
           "y": 96,
-          "w": 24,
-          "h": 32,
-          "role": "party"
-        },
-        {
-          "x": 224,
-          "y": 128,
           "w": 24,
           "h": 32,
           "role": "party"
@@ -443,19 +430,21 @@
     },
     "panel": {
       "x": 8,
-      "y": 120,
+      "y": 116,
       "w": 30,
-      "h": 5,
-      "party_x": 16,
-      "party_step": 30,
-      "party_y": 124,
-      "rule_x": 136,
-      "stat_x": 144,
-      "hp_y": 124,
-      "hp_bar_y": 133,
-      "will_y": 141,
-      "will_bar_y": 150,
-      "bar_w": 96,
+      "h": 6,
+      "party_x": 20,
+      "party_step": 54,
+      "party_y": 120,
+      "name_y": 153,
+      "name_dx": 12,
+      "rule_x": 172,
+      "stat_x": 180,
+      "hp_y": 122,
+      "hp_bar_y": 131,
+      "will_y": 139,
+      "will_bar_y": 148,
+      "bar_w": 60,
       "bar_h": 6
     },
     "message": {
