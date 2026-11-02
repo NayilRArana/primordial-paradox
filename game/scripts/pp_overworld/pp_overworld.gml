@@ -108,6 +108,10 @@ function pp_overworld_hero(_tx, _ty) {
         step_px: 0,
         face_x: 0,
         face_y: 0,
+        // The DRAWN direction (card HERO-ZEUS): the sign pair of the last move, kept while he stands, so the eight
+        // direction sheet shows a diagonal. `facing` stays the four way string the reach and the scenes read.
+        dir_x: 0,
+        dir_y: 1,
         from_x: _tx * PP_TILE,
         from_y: _ty * PP_TILE,
         to_x: _tx * PP_TILE,
@@ -214,6 +218,8 @@ function pp_world_face_input(_hero, _wx, _wy) {
     }
     _hero.face_x = _wx;
     _hero.face_y = _wy;
+    _hero.dir_x = _wx;
+    _hero.dir_y = _wy;
 }
 
 /// He is not walking this step: the cycle goes back to its standing frame, and the facing rule forgets which way the
@@ -358,8 +364,12 @@ function pp_world_start_move(_world, _tx, _ty, _steps_per_tile) {
     // confirm on the tile ahead read the tile behind (card t_009836b9, the deck's fight trigger).
     if (_sx != 0) {
         _hero.facing = (_sx > 0) ? "right" : "left";
+        _hero.dir_x = (_sx > 0) ? 1 : -1;
+        _hero.dir_y = 0;
     } else if (_sy != 0) {
         _hero.facing = (_sy > 0) ? "down" : "up";
+        _hero.dir_x = 0;
+        _hero.dir_y = (_sy > 0) ? 1 : -1;
     }
     // Card SFX-WIRE: a tile move shows two walk frames, so one footstep per move is one every second frame.
     pp_audio_play("footstep");
@@ -1371,6 +1381,51 @@ function pp_fight_tour_think() {
 
 #macro PP_HERO_SHEET "zander_ow_v2"
 #macro PP_SAILOR_SHEET "sailor_ow_v2"
+// Card HERO-ZEUS: the style B Zeus, 16x24, eight directions, two frames each (frame = direction * 2 + step; step 0
+// stands). Direction order is the sheet's own: down, down_left, left, up_left, up, up_right, right, down_right.
+// The figure is 8 pixels taller than the 16x16 tile he stands on, so it is drawn 8 pixels higher: the feet row stays
+// the tile's bottom row, exactly where the old 16x16 hero's feet were.
+#macro PP_HERO_SHEET8 "zeus_ow_walk8"
+#macro PP_HERO8_DY (-8)
+
+/// Index (0..7) of a direction in the eight direction sheet, from the SIGNS of the movement vector. (0, 0) is down.
+function pp_world_dir8_index(_dx, _dy) {
+    if (_dx == 0 && _dy == 0) return 0;
+    if (_dx == 0) return (_dy > 0) ? 0 : 4;
+    if (_dy == 0) return (_dx < 0) ? 2 : 6;
+    if (_dx < 0) return (_dy > 0) ? 1 : 3;
+    return (_dy < 0) ? 5 : 7;
+}
+
+/// The drawn direction of the hero: his last movement vector, kept while he stands. A scene that turns him (its own
+/// `face` command sets only `facing`) wins when it disagrees with the vector, so he never draws against the way the
+/// reach points.
+function pp_world_hero_dir8(_hero) {
+    var _dx = 0;
+    var _dy = 0;
+    var _agrees = false;
+    if (variable_struct_exists(_hero, "dir_x")) {
+        _dx = _hero.dir_x;
+        _dy = _hero.dir_y;
+        if (_hero.facing == "right") _agrees = (_dx > 0);
+        else if (_hero.facing == "left") _agrees = (_dx < 0);
+        else if (_hero.facing == "down") _agrees = (_dy > 0);
+        else if (_hero.facing == "up") _agrees = (_dy < 0);
+    }
+    if (!_agrees) {
+        var _v = pp_world_dir_vector(_hero.facing);
+        _dx = _v.x;
+        _dy = _v.y;
+    }
+    return pp_world_dir8_index(_dx, _dy);
+}
+
+/// The frame of the eight direction sheet: direction times two, plus the step. The step is the same two frame cycle
+/// the four direction sheet uses, timed by the DISTANCE walked (`_walk_anim`), and 0 (standing) when not walking.
+function pp_world_hero_frame8(_hero) {
+    var _step = (_hero.walking == true) ? (_hero.walk_anim mod 2) : 0;
+    return pp_world_hero_dir8(_hero) * 2 + _step;
+}
 
 /// Row of a direction inside an overworld sheet. The sheet the character lane draws is 128x16, eight frames in
 /// one row: down 0, down 1, up 0, up 1, right 0, right 1, left 0, left 1. So the direction order is down, up,
@@ -1417,6 +1472,10 @@ function pp_overworld_draw_hero(_world, _ox, _oy) {
     var _sy = floor(_hero.py) - floor(_world.cam_y) + _oy;
     var _walking = (_hero.walking == true);
     var _step = pp_world_walk_frame(_walking, _hero.walk_anim);
+    // The style B eight direction Zeus, 8 pixels higher so his feet stay on the tile's bottom row (card HERO-ZEUS).
+    if (pp_art_has(PP_HERO_SHEET8)) {
+        if (pp_art_draw(PP_HERO_SHEET8, pp_world_hero_frame8(_hero), _sx, _sy + PP_HERO8_DY, PP_UNTINTED, 1)) return;
+    }
     var _frame = pp_world_sheet_frame(PP_HERO_SHEET, _hero.facing, _walking, _hero.walk_anim);
     if (pp_art_draw(PP_HERO_SHEET, _frame, _sx, _sy, PP_UNTINTED, 1)) return;
 
