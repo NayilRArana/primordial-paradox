@@ -1,7 +1,7 @@
 {
   "format": 1,
   "kind": "talk_live",
-  "version": 1,
+  "version": 2,
   "owner": "gamedev",
   "card": "t_ee178652 (W2 LIVE-TALK)",
   "rule": "The live TALK path's numbers live here, not in GML. pp_talk_live reads this file once through pp_data_json and a missing key falls back to the GETTER default in the GML, never to a crash. Bump 'version' when a value that changes what the player sees changes, because data/talk_live_tape.json records which version it was captured against.",
@@ -43,7 +43,10 @@
     "cursor_blink_steps": 30,
     "dots_step_steps": 15,
     "after_reply_steps": 8,
-    "note": "780 steps is 13 seconds at 60 steps a second: tools/ai_bridge.py gives its whole rung ladder PP_TALK_TIMEOUT seconds (default 6, or 12 when a Meta key is present, which is the budget muse-spark-1.3 needs) and a game that gave up before the bridge would turn every slow but good answer into a fallback. The budget must exceed the bridge's deadline, and this is the one number to retune if the bridge's own timeout moves."
+    "voice_wait_steps": 60,
+    "hear_timeout_steps": 180,
+    "scene_timeout_steps": 420,
+    "note": "780 steps is 13 seconds at 60 steps a second: tools/ai_bridge.py gives its whole rung ladder PP_TALK_TIMEOUT seconds (default 6, or 12 when a Meta key is present, which is the budget muse-spark-1.3 needs) and a game that gave up before the bridge would turn every slow but good answer into a fallback. The budget must exceed the bridge's deadline, and this is the one number to retune if the bridge's own timeout moves. Card t_330b12ce adds three clocks beside it: voice_wait_steps is how long the box waits for the engine's recording buffer after the key is released, hear_timeout_steps is how long a transcription may take before the box says no voice came back, and scene_timeout_steps is the shorter answer budget a cutscene gets, because the S5 office exchange sits inside a 17.5 second shot and cannot spend the fight's whole 13 seconds on one line. 420 steps is 7.0 seconds, just over the bridge's own 6 second default."
   },
 
   "voice": {
@@ -74,6 +77,10 @@
     "hint_wait": "THE SAILOR CONSIDERS IT",
     "tries_note": "That is enough talking.",
     "empty_note": "Say something first.",
+    "scene_fallback_1": "THE LINE DID NOT",
+    "scene_fallback_2": "CARRY. SAY IT AGAIN.",
+    "scene_fallback_note": "NO ANSWER. SAY IT AGAIN.",
+    "voice_note": "NO VOICE CAME BACK.",
     "note": "Every string the box draws. 28 columns at most, checked by the test: the sheet is 8 pixels a glyph and the window is 224 interior pixels. The strings are capitals because the sheet's capitals are the shape the first fight's authored options already use."
   },
 

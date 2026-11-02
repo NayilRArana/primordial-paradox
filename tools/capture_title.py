@@ -2170,6 +2170,14 @@ KEY_CODES = {
     "right": 0x27,
     "escape": 0x1B,
 }
+# Card t_1163ca72: the letters and the digits, so a take can type a line into the TALK box. pp_input reads the text
+# field through keyboard_check_pressed on the VK, one character a step per code, which is exactly what a synthesised
+# keystroke delivers: no IME, no text events, no focus subtleties. A-Z and 0-9 are the whole alphabet the box accepts
+# from keys besides its punctuation (it also takes the shifted row, which this table does not need to send).
+for _letter in "abcdefghijklmnopqrstuvwxyz":
+    KEY_CODES[_letter] = ord(_letter.upper())
+for _digit in "0123456789":
+    KEY_CODES[_digit] = ord(_digit)
 # "wait" is not a key: it is a pause in the script, so a scene that plays out over several seconds can be given
 # the time it needs without guessing one gap for every press.
 KEY_WAIT_S = 1.0

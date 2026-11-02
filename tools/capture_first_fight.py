@@ -721,21 +721,48 @@ def ink_rows(mask, height):
     return runs
 
 
-def score_frame(pixels, roles, geom, labels, text_colour=None):
+def victory_panel():
+    """The victory panel's pixels, from the row the game's own draw call reads.
+
+    Card t_855887d8. The panel used to be a paper rectangle drawn from pp_app's battle draw, at (40,100)-(216,140),
+    with an outcome word at y 112 and "press Z" at y 126; those numbers were typed into this verifier. The panel is
+    now a window in the battle screen's own nine slice, drawn by pp_battle_draw_victory, and its geometry is the
+    battle_b.victory row of data/ui_layouts.json. This verifier therefore reads the row instead: a panel that moves
+    is measured where the game draws it, and a row that disappears stops the run instead of quietly measuring the
+    old rectangle.
+
+    Returns the frame's rect, the paper field inside the nine slice's 8 px border, and the three text rows.
+    """
+    layout = _read_json("ui_layouts.json")
+    screen = layout.get("battle_b") if isinstance(layout, dict) else None
+    row = screen.get("victory") if isinstance(screen, dict) else None
+    if not row:
+        raise SystemExit("data/ui_layouts.json has no battle_b.victory row, so pp_battle_draw_victory's panel "
+                         "cannot be measured")
+    x, y = int(row["x"]), int(row["y"])
+    w, h = int(row["w"]) * 8, int(row["h"]) * 8
+    return {
+        "rect": (x, y, x + w - 1, y + h - 1),
+        "field": (x + 8, y + 8, x + w - 9, y + h - 9),
+        "title_y": int(row["title_y"]),
+        "word_y": int(row["word_y"]),
+        "press_y": int(row["press_y"]),
+    }
+
+
+def score_frame(pixels, roles, geom, labels):
     """Every number the report prints for one frame, computed from the roles and the draw geometry.
 
     The command cells are measured as contrast against the window's paper (contrast_mask, card t_239422fe): the
     sheet paints its one ink as a 2C02 white and the encoder spreads it, so no role colour is the label's.
 
-    `text_colour` names the colour the victory panel's word and "press Z" are measured in, and defaults to the ink
-    role: on the recorded fight's result panel (resume_probe/frames/f_0090.png, panel paper 0.953) those bands do
-    carry the ink role, measured 28 px and 53 px wide. It is NOT used for the command cells, which carry no ink role
-    pixel at all on the same recording.
+    The victory panel's three rows are measured the same way, and for the same reason (card t_855887d8): the words
+    are pp_font_draw's glyphs on the panel's paper field, so the ink role appears 0 times in them, exactly as it
+    appears 0 times in a command label. What the bands measure is where the glyphs are, not which colour they are.
     """
     box_colour = roles["paper"]
     border_colour = roles["dim"]
     ink_colour = roles["ink"]
-    glyph_colour = text_colour or ink_colour
     bx1, by1, bx2, by2 = geom["box"]
 
     box_hit, box_total = rect_stats(pixels, (bx1 + 1, by1 + 1, bx2 - 1, by2 - 1),
@@ -811,15 +838,18 @@ def score_frame(pixels, roles, geom, labels, text_colour=None):
             "bbox_width": (bbox[2] - bbox[0] + 1) if bbox else 0,
         }
 
-    # The victory panel (pp_app's battle draw): paper at (40,100)-(216,140), the outcome word at y=112 and
-    # "press Z" at y=126, both centred on x=128 and both the sheet's glyphs.
-    panel = (40, 100, SCREEN_W - 40, 140)
-    panel_hit, panel_total = rect_stats(pixels, (panel[0] + 1, panel[1] + 1, panel[2] - 1, panel[3] - 1),
-                                        box_colour, tolerance=0)
-    word_band = (panel[0] + 1, 112, panel[2] - 1, 119)
-    press_band = (panel[0] + 1, 126, panel[2] - 1, 133)
-    word_mask = ink_mask(pixels, word_band, (glyph_colour,))
-    press_mask = ink_mask(pixels, press_band, (glyph_colour,))
+    # The victory panel (pp_battle_draw_victory): a window in the battle screen's nine slice with a paper field
+    # inside its 8 px border, the title at title_y, the outcome word at word_y and "press Z" at press_y, all centred.
+    # The paper share is measured on the field itself, because the frame is art and the field is what the words are
+    # read against; the two text bands are measured as contrast against that paper, since the sheet's glyphs are a
+    # near white and no role colour appears in them.
+    panel = victory_panel()
+    field = panel["field"]
+    panel_hit, panel_total = rect_stats(pixels, field, box_colour, tolerance=0)
+    word_band = (field[0] + 1, panel["word_y"], field[2] - 1, panel["word_y"] + 7)
+    press_band = (field[0] + 1, panel["press_y"], field[2] - 1, panel["press_y"] + 7)
+    word_mask = contrast_mask(pixels, word_band, box_colour)
+    press_mask = contrast_mask(pixels, press_band, box_colour)
     word_bbox = ink_bbox(word_mask)
     press_bbox = ink_bbox(press_mask)
 
@@ -1065,7 +1095,6 @@ def check_outputs():
     roles = role_colours()
     geom = menu_geometry()
     labels = command_labels()
-    glyph_ink = roles["ink"]
     frames = []
     for name in sorted(os.listdir(FRAME_DIR)) if os.path.isdir(FRAME_DIR) else []:
         if not name.endswith(".png"):
@@ -1075,7 +1104,7 @@ def check_outputs():
         if pixels is None:
             frames.append({"frame": name, "error": why})
             continue
-        scores = score_frame(pixels, roles, geom, labels, text_colour=glyph_ink)
+        scores = score_frame(pixels, roles, geom, labels)
         try:
             at_second = float(name.split("_")[1].split(".")[0])
         except (IndexError, ValueError):

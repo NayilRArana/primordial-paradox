@@ -377,6 +377,14 @@ def check_file(path=REPORT, root=ROOT):
                     problems.append("row %d and its cache file hold different text" % index)
 
     for persona_id in by_id:
+        card = by_id[persona_id]
+        if card.get("bake") is False:
+            # Card t_330b12ce: a card may say it is not part of the baked list. The dock clerk answers inside the S5
+            # cutscene through the scene's own path, so his lines are not pre-recorded here and are not missing.
+            if per.get(persona_id, 0):
+                problems.append("persona %s is marked bake false and still carries %d rows"
+                                % (persona_id, per.get(persona_id, 0)))
+            continue
         count = per.get(persona_id, 0)
         if count < PER_PERSONA:
             problems.append("persona %s has %d rows and the card asks for %d" % (persona_id, count, PER_PERSONA))

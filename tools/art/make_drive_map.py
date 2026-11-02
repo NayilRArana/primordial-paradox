@@ -315,7 +315,10 @@ def _row_spans(text):
         if line == "    {":
             open_at = offset
         elif open_at is not None and line.rstrip(",") == "    }":
-            spans.append((open_at, offset + len(line)))
+            # Stop before the comma: the caller keeps whatever follows the span, so a row that is no longer the
+            # last one still keeps the comma that separates it from the row after it (card ART-B-MAPS found this
+            # when the drive set stopped being the last set in data/room_palettes.json).
+            spans.append((open_at, offset + len(line.rstrip(","))))
             open_at = None
     return spans
 

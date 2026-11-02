@@ -679,11 +679,11 @@ def triangle_ink(pixels, band, colour):
 def talk_scores(pixels, roles, geom, labels, options, colour):
     """Every number this report prints for one frame: the FIGHT tool's measures plus the talk ones.
 
-    fig.score_frame is asked for the ink role, which is what its own report and its result panel are written in. The
-    glyphs the command list and the option panel draw are NOT that role (pp_font paints the sheet's own colour), so
-    the cells and the bands below are measured against `colour` instead.
+    fig.score_frame measures the result panel's word and prompt against the panel's paper (card t_855887d8), which
+    is the same rule the cells and the bands below use: the glyphs the font draws are not a palette role, so a band
+    is measured as contrast against what it is drawn on.
     """
-    scores = fig.score_frame(pixels, roles, geom, labels, text_colour=roles["ink"])
+    scores = fig.score_frame(pixels, roles, geom, labels)
     band_top = geom["box"][1] + 1
     band_bottom = geom["box"][3] - 1
     bands = glyph_bands(pixels, band_top, band_bottom, 20, SCREEN_W - 8, colour)

@@ -38,6 +38,10 @@ QUAY_MAP = "southampton_town_quay"
 SHIP_MAP = "ship_small"
 DRIVE_SCENE = "drive_to_southampton"
 GATE_SCENE = "quay_gate_checkpoint"
+# Card t_785b61f0: the dock office is a route step of its own now, between the gate and the boarding.
+OFFICE_STEP = "office"
+OFFICE_SCENE = "quay_dock_office_play"
+OFFICE_MAP = "quay_dock_office"
 BOARDING_SCENE = "ship_boarding"
 FIRST_FIGHT = "tutorial_sailors"
 
@@ -79,7 +83,14 @@ def test_the_route_chain_reaches_the_first_fight_through_the_maps_own_trigger():
                      if trigger.get("kind") == "scene" and trigger.get("id") == GATE_SCENE]
     assert gate_triggers, "southampton_town_quay carries no %r scene trigger, so the arrival has no gate" % GATE_SCENE
     assert steps["gate"]["kind"] == "scene" and steps["gate"]["scene"] == GATE_SCENE
-    assert steps["gate"]["next"] == "boarding"
+    # Card t_785b61f0: the dock office and its boarding pass sit between the gate and the boarding, so the demo's S5
+    # shot is on the route and not only on the map. The office row has to be the scene the office map carries.
+    assert steps["gate"]["next"] == OFFICE_STEP
+    assert steps[OFFICE_STEP]["kind"] == "scene" and steps[OFFICE_STEP]["scene"] == OFFICE_SCENE
+    assert steps[OFFICE_STEP]["next"] == "boarding"
+    assert scenes[OFFICE_SCENE]["map"] == OFFICE_MAP, (
+        "the office scene %r runs on %r, and the route's office row names %r, so the pass is shown on the wrong map"
+        % (OFFICE_SCENE, scenes[OFFICE_SCENE]["map"], OFFICE_MAP))
 
     assert scenes[BOARDING_SCENE]["map"] == SHIP_MAP
     assert steps["boarding"]["kind"] == "scene" and steps["boarding"]["scene"] == BOARDING_SCENE

@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://primordial-paradox.local/schemas/talk_personas.schema.json",
   "title": "Primordial Paradox TALK personas",
-  "description": "The persona cards for the live talk outside a fight (card t_acae7c0a, spec 21 section 11): Konrad in S1, Urien in S2 and one panicking townsperson in S3, per knowledge/SCENES-S1-S3.md. tools/ai_bridge.py reads this file and nothing else reads it, so the schema is the published shape and the bridge is the enforcer. Two rules a schema cannot state and the bridge checks instead: banned_words, banned_marks and mood_allowed are guards on the answer and are never sent to the model, and a persona answer is capped at two sentences drawn as two lines of 28 characters. Every string here is printable ASCII, because the box draws the sheet's alphabet and a mark the sheet lacks would be a hole.",
+  "description": "The persona cards for the live talk outside a fight (card t_acae7c0a, spec 21 section 11): Konrad in S1, Urien in S2 and one panicking townsperson in S3, per knowledge/SCENES-S1-S3.md, plus Nye the dock clerk for the S5 cutscene exchange (card t_330b12ce). tools/ai_bridge.py reads this file and nothing else reads it, so the schema is the published shape and the bridge is the enforcer. Two rules a schema cannot state and the bridge checks instead: banned_words, banned_marks and mood_allowed are guards on the answer and are never sent to the model, and a persona answer is capped at two sentences drawn as two lines of 28 characters. Every string here is printable ASCII, because the box draws the sheet's alphabet and a mark the sheet lacks would be a hole.",
   "type": "object",
   "required": ["format", "kind", "rule", "answer_cap", "budget_s", "profanity", "personas"],
   "additionalProperties": false,
@@ -44,9 +44,9 @@
     "personas": {
       "type": "array",
       "minItems": 3,
-      "maxItems": 3,
+      "maxItems": 4,
       "items": { "$ref": "#/$defs/persona" },
-      "description": "One card per scene the live talk stands in. Three, because the demo's story beats are three."
+      "description": "One card per character the live talk stands in: the three scene chats of S1 to S3, plus the dock clerk of S5 who answers inside a cutscene (card t_330b12ce). Four, because those are the four exchanges the demo puts a box on."
     }
   },
   "$defs": {
@@ -111,8 +111,8 @@
         },
         "scene": {
           "type": "string",
-          "enum": ["S1", "S2", "S3"],
-          "description": "The story beat from knowledge/SCENES-S1-S3.md, not a demo segment letter."
+          "enum": ["S1", "S2", "S3", "S5"],
+          "description": "The story beat from knowledge/SCENES-S1-S3.md, not a demo segment letter. S5 is the dock office, which lives in the demo's shot table section instead (card t_330b12ce) and is named here so the clerk's card can carry the beat it answers in."
         },
         "place": {
           "type": "string",
@@ -181,6 +181,17 @@
           "maxItems": 3,
           "items": { "type": "string", "enum": ["calm", "guarded", "rattled", "warm", "angry"] },
           "description": "The moods this persona can be in. An answer outside the list is mapped to the first one and labelled mood_mapped."
+        },
+        "effects": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": { "type": "string", "enum": ["none", "nudge", "soften", "setback", "end"] },
+          "description": "Optional. The effects this character may pick from when the request names no fight: a scene chat that shows the model's verdict on the player's line needs soften, nudge and setback as well as none, which the persona default (none and end) cannot express. tools/ai_bridge.py falls back to the judge file's own list when a card omits this, so the three S1 to S3 chats answer exactly as before (card t_330b12ce)."
+        },
+        "bake": {
+          "type": "boolean",
+          "description": "Optional, true unless written. False means this card is not part of data/talk_personas_bake.json: the dock clerk answers inside the S5 cutscene through the scene's own path, so tool/bake_personas.py neither bakes his fifteen lines nor reports them missing (card t_330b12ce)."
         },
         "fallback_pool": {
           "type": "array",

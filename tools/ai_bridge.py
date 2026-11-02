@@ -550,6 +550,7 @@ def build_task(judge, cards, encounters, payload, personas=None):
         raise BadRequest("player_text is empty after normalisation")
     encounter_id = str(payload.get("encounter_id") or "tutorial_sailors")
     persona = None
+    allowed = tuple()
     requested = payload.get("persona")
     if requested:
         persona = personas.get(str(requested))
@@ -573,6 +574,15 @@ def build_task(judge, cards, encounters, payload, personas=None):
         max_lines = max(1, min(judge.max_lines, int(cap.get("lines") or 2)))
         max_chars = max(1, min(judge.max_chars, int(cap.get("chars") or judge.max_chars)))
         allowed = tuple(judge.effects_npc)
+        # Card t_330b12ce: a scene chat shows the model's verdict on the player's line, and the persona default
+        # (none and end) can only ever read unmoved. A card that names its own effects, as the dock clerk's does,
+        # widens the list to the judge's own vocabulary; every card that does not is answered exactly as before.
+        declared = persona.get("effects")
+        if isinstance(declared, list) and declared:
+            picked = tuple(str(effect) for effect in declared
+                           if str(effect) in judge.effects or str(effect) in judge.effects_npc)
+            if picked:
+                allowed = picked
         char_doc = persona_block(persona, cap)
     else:
         card_id = str(payload.get("npc") or alias.get("npc") or talk.get("card") or encounter_id)
@@ -611,12 +621,18 @@ def build_task(judge, cards, encounters, payload, personas=None):
                     player_text))
     messages = [{"role": "system", "content": judge.system},
                 {"role": "user", "content": user_text}]
-    key = sha256_text(json.dumps({"judge": judge.version, "system": sha256_text(judge.system),
-                                  "system_local": sha256_text(judge.system_local),
-                                  "character": char_doc, "scene": scene_doc,
-                                  "persona": (persona or {}).get("version"),
-                                  "limits": [max_lines, max_chars],
-                                  "player": player_text}, sort_keys=True))
+    key_doc = {"judge": judge.version, "system": sha256_text(judge.system),
+               "system_local": sha256_text(judge.system_local),
+               "character": char_doc, "scene": scene_doc,
+               "persona": (persona or {}).get("version"),
+               "limits": [max_lines, max_chars],
+               "player": player_text}
+    # Card t_330b12ce: a card that names its own effects changes what a model may answer, so it changes the cache key.
+    # A card without them hashes exactly as before, which is what keeps every answer already recorded for the S1 to S3
+    # chats replayable.
+    if persona is not None and persona.get("effects"):
+        key_doc["effects"] = list(allowed)
+    key = sha256_text(json.dumps(key_doc, sort_keys=True))
     fallback_pool = list(talk.get("fallback_pool") or [])
     if persona is not None:
         fallback_pool = list(persona.get("fallback_pool") or [])
