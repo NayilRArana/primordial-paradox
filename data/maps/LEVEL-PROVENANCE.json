@@ -312,9 +312,9 @@
       ],
       "fight_spots": [
         {
-          "id": "dock_petty_officer",
-          "x": 30,
-          "y": 27
+          "id": "morgan_gate",
+          "x": 8,
+          "y": 11
         }
       ]
     },

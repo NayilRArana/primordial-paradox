@@ -1,0 +1,311 @@
+{
+  "version": 1,
+  "name": "run_command_win",
+  "written": "2026-11-01",
+  "why": "One launch on the deck, the single command win, then the ship's log save. This is the command half of S6: the Deck Watch is cleared with two FIGHTs (the sailor has 15 hp and the game's damage runs 2 to 12, so no single blow can end it), and then the deck hound, which carries the damage floor's own 2 hp, is ended by ONE Confirm on FIGHT. The save is the same scene the submission take uses. Card t_e48b13a6: a win path the demo harness can select by name.",
+  "beat_source": "knowledge/mechanics/PACING-AND-CUTSCENES.md section 9 (beat 23 the deck hound, beat 27 the ship's log, beat 28 the TALK fight) and knowledge/DEMO-SCRIPT.md section 3 (S6)",
+  "game": {
+    "exe": "PrimordialParadox.exe",
+    "window_title": "Primordial Paradox",
+    "launch_args": [
+      "-game",
+      "{win}"
+    ],
+    "env": {
+      "PP_ROUTE_HOLD": "drive"
+    },
+    "env_note": "PP_ROUTE_HOLD holds the route's drive step so the run room stands with the walker on the deck at ship_small (2,7), which is the same recipe data/demo/run_001.json plays. Unset in every launch a player makes.",
+    "note": "the form measured on this PC and recorded in tools/capture_title.py: <game>.exe -game <data>.win is the only form that starts the game instead of opening a file dialog"
+  },
+  "clock": {
+    "fps": 60,
+    "max_steps": 14000,
+    "note": "one step is one 60th of a second, the game's own step. A marker event's step is its fallback, used only when the log is block buffered; the marker itself moves the event earlier, never later."
+  },
+  "seeds": {
+    "title_flash": 20261021,
+    "rng_mod": 2147483647,
+    "note": "title_flash is PP_TITLE_FLASH_SEED, the attract's own stream, so the same launch flashes on the same steps. The fight's dodge patterns are data recipes, not a random draw."
+  },
+  "record": {
+    "fps": 60,
+    "scale": 3,
+    "width": 768,
+    "height": 720,
+    "min_seconds": 30.0,
+    "out": "output/demo/run_command_win.mp4",
+    "audio": "auto",
+    "note": "768x720 is exactly 3x the 256x240 screen the game draws into its window on this PC"
+  },
+  "events": [
+    {
+      "id": "p01",
+      "step": 0,
+      "kind": "note",
+      "beat": 1,
+      "note": "title attract: the logo, the moon, the storm cloud, the seeded flash. No key is pressed."
+    },
+    {
+      "id": "p02",
+      "step": 600,
+      "kind": "key",
+      "key": "enter",
+      "beat": 2,
+      "note": "PRESS START opens the menu on NEW GAME"
+    },
+    {
+      "id": "p03",
+      "step": 690,
+      "kind": "key",
+      "key": "enter",
+      "beat": 2,
+      "note": "NEW GAME confirmed, which starts the intro"
+    },
+    {
+      "id": "p04",
+      "step": 1140,
+      "kind": "note",
+      "beat": 3,
+      "marker": "PP title: intro started",
+      "marker_delay_steps": 0,
+      "note": "the game's own line that NEW GAME took and the crawl began"
+    },
+    {
+      "id": "p05",
+      "step": 3300,
+      "kind": "note",
+      "beat": 7,
+      "marker": "starting the run in",
+      "marker_delay_steps": 60,
+      "note": "the game's own line that the crawl finished and the run room loaded. PP_ROUTE_HOLD holds the route's drive step, so the room stands with the walker on the deck"
+    },
+    {
+      "id": "p06",
+      "step": 3420,
+      "kind": "note",
+      "beat": 26,
+      "note": "the deck held still for a second at the slice's own spawn, ship_small (2,7)"
+    },
+    {
+      "id": "p07",
+      "step": 3500,
+      "kind": "hold",
+      "key": "right",
+      "steps": 19,
+      "beat": 26,
+      "note": "right held 19 steps: the shipped collision walked by walker_bot lands on the Deck Watch's own tile (4,7), two tiles east of the spawn"
+    },
+    {
+      "id": "p08",
+      "step": 3560,
+      "kind": "key",
+      "key": "confirm",
+      "beat": 28,
+      "note": "Confirm standing on the trigger: a battle fires on a press through pp_overworld_confirm_target, never on a touch, so this press is what opens the fight"
+    },
+    {
+      "id": "p09",
+      "step": 3620,
+      "kind": "note",
+      "beat": 28,
+      "marker": "PP: battle start tutorial_sailors",
+      "marker_delay_steps": 0,
+      "note": "the game's own line that the Deck Watch fight started"
+    },
+    {
+      "id": "c01",
+      "step": 4000,
+      "kind": "key",
+      "key": "confirm",
+      "beat": 28,
+      "marker": "enemy hp 15/15",
+      "marker_delay_steps": 60,
+      "note": "the command list opens on FIGHT and the sailor is at its full 15: Confirm takes FIGHT"
+    },
+    {
+      "id": "c02",
+      "step": 4200,
+      "kind": "key",
+      "key": "confirm",
+      "beat": 28,
+      "marker": "PP: command fight, turn 1",
+      "marker_delay_steps": 26,
+      "note": "the timing bar confirmed 26 steps in: 43 of 100, power 87, which is 11 of the sailor's 15 hp"
+    },
+    {
+      "id": "c03",
+      "step": 4500,
+      "kind": "key",
+      "key": "confirm",
+      "beat": 28,
+      "marker": "PP: battle menu, turn 1",
+      "marker_delay_steps": 60,
+      "note": "the sailor's answer is over and the list is back on turn 1, cursor still on FIGHT: Confirm again"
+    },
+    {
+      "id": "c04",
+      "step": 4700,
+      "kind": "key",
+      "key": "confirm",
+      "beat": 28,
+      "marker": "PP: command fight, turn 2",
+      "marker_delay_steps": 26,
+      "note": "the bar again at 26 steps: the second blow ends the sailor"
+    },
+    {
+      "id": "c05",
+      "step": 5000,
+      "kind": "note",
+      "beat": 28,
+      "marker": "PP: fight result kill, turn 2",
+      "marker_delay_steps": 0,
+      "note": "the game's own line that the watch was ended by blows, which is what opens the deck east of it"
+    },
+    {
+      "id": "c06",
+      "step": 5300,
+      "kind": "hold",
+      "key": "right",
+      "steps": 19,
+      "beat": 23,
+      "marker": "PP: fight result kill, turn 2",
+      "marker_delay_steps": 320,
+      "note": "right held 19 steps from (4,7): the shipped collision walked by walker_bot lands on the hound's own tile (6,7), two tiles east along the corridor"
+    },
+    {
+      "id": "c07",
+      "step": 5400,
+      "kind": "key",
+      "key": "confirm",
+      "beat": 23,
+      "note": "Confirm standing on the hound's trigger: the fight opens"
+    },
+    {
+      "id": "c08",
+      "step": 5480,
+      "kind": "note",
+      "beat": 23,
+      "marker": "PP: battle start deck_hound",
+      "marker_delay_steps": 0,
+      "note": "the game's own line that the deck hound's fight started"
+    },
+    {
+      "id": "c09",
+      "step": 5900,
+      "kind": "key",
+      "key": "confirm",
+      "beat": 23,
+      "marker": "enemy hp 2/2",
+      "marker_delay_steps": 60,
+      "note": "the command list opens on FIGHT and the hound is at 2 hp, the floor of the game's own damage: one Confirm ends the fight and the bar is never pressed"
+    },
+    {
+      "id": "c10",
+      "step": 6100,
+      "kind": "note",
+      "beat": 23,
+      "marker": "PP: fight result kill, turn 1, enemy deck_hound",
+      "marker_delay_steps": 0,
+      "note": "the game's own line that the hound went down on turn 1: the single command win"
+    },
+    {
+      "id": "s01",
+      "step": 6260,
+      "kind": "hold",
+      "beat": 27,
+      "marker": "PP: fight result kill, turn 1, enemy deck_hound",
+      "marker_delay_steps": 320,
+      "note": "left held 21 steps: the shipped collision walked back to the corridor tile (3,7) in front of the log's doorway",
+      "key": "left",
+      "steps": 21
+    },
+    {
+      "id": "s02",
+      "step": 6300,
+      "kind": "hold",
+      "beat": 27,
+      "marker": "PP: fight result kill, turn 1, enemy deck_hound",
+      "marker_delay_steps": 40,
+      "note": "up held 7 steps: through the doorway onto (3,6), where the ship's log scene's trigger sits",
+      "key": "up",
+      "steps": 7
+    },
+    {
+      "id": "s03",
+      "step": 6340,
+      "kind": "key",
+      "beat": 27,
+      "marker": "PP: fight result kill, turn 1, enemy deck_hound",
+      "marker_delay_steps": 40,
+      "note": "Confirm on the doorway: the log is a scene trigger, so it also fires on a press. The scene walks the hero up the corridor to the save point at (3,2) and plays the log's two pages",
+      "key": "confirm"
+    },
+    {
+      "id": "s04",
+      "step": 6580,
+      "kind": "key",
+      "beat": 27,
+      "marker": "PP: fight result kill, turn 1, enemy deck_hound",
+      "marker_delay_steps": 240,
+      "note": "the log's first page: this press finishes its typing",
+      "key": "confirm"
+    },
+    {
+      "id": "s05",
+      "step": 6740,
+      "kind": "key",
+      "beat": 27,
+      "marker": "PP: fight result kill, turn 1, enemy deck_hound",
+      "marker_delay_steps": 160,
+      "note": "the log's first page: this press turns it",
+      "key": "confirm"
+    },
+    {
+      "id": "s06",
+      "step": 6940,
+      "kind": "key",
+      "beat": 27,
+      "marker": "PP: fight result kill, turn 1, enemy deck_hound",
+      "marker_delay_steps": 200,
+      "note": "the log's second page: this press finishes its typing",
+      "key": "confirm"
+    },
+    {
+      "id": "s07",
+      "step": 7100,
+      "kind": "key",
+      "beat": 27,
+      "marker": "PP: fight result kill, turn 1, enemy deck_hound",
+      "marker_delay_steps": 160,
+      "note": "the log's second page: this press closes the book, and the scene plays save_jingle and leaves the hero on the save point at (3,2), which is the ship's log save the win has to reach. No press after this one: the take ends on the written log, not on a save menu left open",
+      "key": "confirm"
+    },
+    {
+      "id": "s08",
+      "step": 7220,
+      "kind": "note",
+      "beat": 27,
+      "note": "the written log held on screen with save_jingle over it, and the hero left standing on the save point at (3,2): this is the ship's log save, reached the same way by both wins"
+    },
+    {
+      "id": "s09",
+      "step": 7520,
+      "kind": "note",
+      "beat": 27,
+      "note": "the deck held, because the take ends here"
+    }
+  ],
+  "checks": {
+    "end_step": 7760,
+    "required_beats": [
+      "S1 title",
+      "S2 crawl",
+      "S6 hound fight",
+      "S6 ship log save"
+    ],
+    "min_lit_frames": 4,
+    "palette_share_min": 0.9,
+    "palette_tolerance": 12,
+    "note": "required_beats is what the shot table of this path names, so the recorder's own verifier asks the same question the judge does"
+  }
+}

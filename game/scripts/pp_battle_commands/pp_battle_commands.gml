@@ -25,13 +25,13 @@ function pp_command_state(_battle, _cmd) {
             return { enabled: true, reason: "" };
 
         case PPCommand.power:
-            if (array_length(_battle.actor.powers) == 0) _reason = "no power taken yet";
-            else if (_battle.actor.will <= 0) _reason = "no will";
+            if (array_length(_battle.actor.powers) == 0) _reason = "no power. none taken";
+            else if (_battle.actor.will <= 0) _reason = "no will left";
             if (_reason != "") return { enabled: false, reason: _reason };
             return { enabled: true, reason: "" };
 
         case PPCommand.talk:
-            if (!pp_battle_has_talk(_battle)) _reason = "nothing to say to this one";
+            if (!pp_battle_has_talk(_battle)) _reason = "it is not listening";
             if (_reason != "") return { enabled: false, reason: _reason };
             return { enabled: true, reason: "" };
 
@@ -46,13 +46,15 @@ function pp_command_state(_battle, _cmd) {
             // spec 07 line 33 and spec 10's genocide row). The field is read HERE, where every other refusal is read,
             // so the menu draws the reason and the director never has to answer a press the data refused. The route
             // itself is derived, never stored (spec 10 rule 7, pp_battle_route_name).
-            if (pp_battle_spare_route_refused(_battle)) _reason = "no mercy left on this route";
-            else if (!pp_battle_spare_allowed(_battle)) _reason = "not ready to end it";
+            if (pp_battle_spare_route_refused(_battle)) _reason = "mercy is off duty";
+            else if (!pp_battle_spare_allowed(_battle)) _reason = "it is not ready";
+            // Card THREE-BATTLES: the enemy row may word the gentle refusal (spare_refusal in data).
+            if (_reason == "it is not ready") _reason = pp_battle_spare_refusal(_battle);
             if (_reason != "") return { enabled: false, reason: _reason };
             return { enabled: true, reason: "" };
 
         case PPCommand.item:
-            if (pp_battle_usable_item_count(_battle) <= 0) _reason = "no item";
+            if (pp_battle_usable_item_count(_battle) <= 0) _reason = "pockets empty";
             if (_reason != "") return { enabled: false, reason: _reason };
             return { enabled: true, reason: "" };
     }
@@ -79,4 +81,12 @@ function pp_command_label(_battle, _entry) {
     var _state = pp_command_state(_battle, _entry.id);
     if (_state.enabled) return _entry.label;
     return _entry.label + "  (" + _state.reason + ")";
+}
+
+/// Card THREE-BATTLES: the gentle refusal a SPARE press gets before its condition is met. The enemy row's spare_refusal
+/// first, the old plain words second. It is a reason drawn in the menu, so the press never advances the turn.
+function pp_battle_spare_refusal(_battle) {
+    var _enemy = _battle.enemy;
+    if (is_struct(_enemy) && variable_struct_exists(_enemy, "spare_refusal") && is_string(_enemy.spare_refusal) && _enemy.spare_refusal != "") return _enemy.spare_refusal;
+    return "it is not ready";
 }

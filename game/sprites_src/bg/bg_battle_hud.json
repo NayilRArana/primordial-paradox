@@ -1,0 +1,41 @@
+{
+  "name": "bg_battle_hud",
+  "kind": "ui_atlas",
+  "frame_w": 16,
+  "frame_h": 16,
+  "frames": 12,
+  "fps": 0.0,
+  "backdrop": {
+    "index": 15,
+    "hex": "#000000"
+  },
+  "swatches": [
+    "k",
+    "grey",
+    "hp",
+    "hp_hi",
+    "low",
+    "low_hi",
+    "will",
+    "will_hi",
+    "mercy",
+    "mercy_hi",
+    "gold",
+    "white"
+  ],
+  "entries": [
+    15,
+    0,
+    26,
+    42,
+    22,
+    38,
+    17,
+    33,
+    37,
+    53,
+    40,
+    48
+  ],
+  "note": "flat 16x16 cells; the director cuts one pixel out of a cell and stretches it, so a bar is exact art colour."
+}

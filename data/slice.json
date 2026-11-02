@@ -41,6 +41,13 @@
         "kind": "scene",
         "label": "the gate checkpoint and its three replies",
         "scene": "quay_gate_checkpoint",
+        "next": "office"
+      },
+      {
+        "id": "office",
+        "kind": "scene",
+        "label": "the dock office and the boarding pass",
+        "scene": "quay_dock_office_play",
         "next": "boarding"
       },
       {

@@ -5,33 +5,55 @@
     {
       "id": "navy_sailor",
       "name": "Navy Sailor",
-      "max_hp": 15,
-      "attack": { "min": 2, "max": 2 },
+      "max_hp": 24,
+      "attack": {
+        "min": 2,
+        "max": 2
+      },
       "sprite": "spr_pp_sailor",
       "element": "sea",
       "route_kind": "regular",
-      "patterns": ["tutorial_slow_rain"],
+      "patterns": [
+        "tutorial_slow_rain"
+      ],
       "talk_dialogue": "talk_navy_sailor",
       "trust_to_spare": 3,
       "spare_hp_percent": 25,
       "rewards": [
-        { "kind": "item", "id": "salve", "count": 1 }
-      ]
+        {
+          "kind": "item",
+          "id": "salve",
+          "count": 1
+        }
+      ],
+      "telegraph_line": "HE RAISES THE MOP",
+      "spare_hint": "{n} MORE TALKS TO RELIEVE HIM",
+      "spare_ready_hint": "HE LOWERS THE MOP. SPARE.",
+      "spare_refusal": "he holds the watch"
     },
     {
       "id": "percy",
       "name": "Percy",
-      "max_hp": 120,
-      "attack": { "min": 3, "max": 5 },
+      "max_hp": 40,
+      "attack": {
+        "min": 3,
+        "max": 5
+      },
       "sprite": "spr_pp_percy",
       "element": "sea",
       "route_kind": "boss",
-      "patterns": ["percy_rain"],
+      "patterns": [
+        "percy_rain"
+      ],
       "talk_dialogue": "talk_percy",
       "trust_to_spare": 3,
       "spare_hp_percent": 25,
       "rewards": [
-        { "kind": "power", "id": "tide_step", "count": 1 }
+        {
+          "kind": "power",
+          "id": "tide_step",
+          "count": 1
+        }
       ],
       "phases": [
         {
@@ -40,14 +62,20 @@
           "talk_set": "talk_percy_phase2",
           "talk_phase": "percy_phase2",
           "line_id": "percy_phase2_line",
-          "attack": { "min": 4, "max": 5 }
+          "attack": {
+            "min": 4,
+            "max": 5
+          }
         },
         {
           "hp_at_or_below": 40,
           "pattern_id": "percy_fan",
           "talk_set": "talk_percy_phase3",
           "line_id": "percy_phase3_line",
-          "attack": { "min": 4, "max": 6 }
+          "attack": {
+            "min": 4,
+            "max": 6
+          }
         }
       ],
       "interrupt": {
@@ -55,23 +83,86 @@
         "hp_at_or_below": 40,
         "unless_flag": "met_prometheus",
         "scene": "prometheus_interrupt"
-      }
+      },
+      "telegraph_line": "PERCY LEVELS THE TRIDENT",
+      "spare_hint": "ANSWER PLAINLY: {n} MORE.",
+      "spare_ready_hint": "THE LOG IS CLOSED. SPARE.",
+      "spare_refusal": "he is not done yet"
     },
     {
       "id": "deck_hound",
       "name": "Deck Hound",
       "max_hp": 2,
-      "attack": { "min": 2, "max": 2 },
+      "attack": {
+        "min": 2,
+        "max": 2
+      },
       "sprite": "spr_pp_hound",
       "element": "earth",
       "route_kind": "regular",
-      "patterns": ["tutorial_slow_rain"],
+      "patterns": [
+        "tutorial_slow_rain"
+      ],
       "talk_dialogue": "talk_deck_hound",
       "trust_to_spare": 3,
       "spare_hp_percent": 25,
       "rewards": [
-        { "kind": "item", "id": "salve", "count": 1 }
+        {
+          "kind": "item",
+          "id": "salve",
+          "count": 1
+        }
       ]
+    },
+    {
+      "id": "morgan",
+      "name": "Morgan",
+      "max_hp": 28,
+      "attack": {
+        "min": 2,
+        "max": 3
+      },
+      "sprite": "spr_pp_petty_officer",
+      "element": "sea",
+      "route_kind": "regular",
+      "patterns": [
+        "officer_stamp",
+        "officer_clipboard"
+      ],
+      "talk_dialogue": "talk_morgan",
+      "trust_to_spare": 3,
+      "spare_hp_percent": 25,
+      "telegraph_line": "HE UNCAPS HIS PEN",
+      "act_responses": [
+        {
+          "option": 0,
+          "pattern_pool": [
+            "officer_paperwork"
+          ],
+          "attack_delta": -1,
+          "line": "* He needs the right form."
+        },
+        {
+          "option": 1,
+          "attack_delta": -1,
+          "line": "* He blushes. Stamps soften."
+        },
+        {
+          "option": 2,
+          "skip_turn": true,
+          "line": "* He panics. No attack."
+        }
+      ],
+      "rewards": [
+        {
+          "kind": "item",
+          "id": "salve",
+          "count": 1
+        }
+      ],
+      "spare_hint": "HEAR HIM OUT: {n} MORE TALKS.",
+      "spare_ready_hint": "HE HAS HAD HIS SAY. SPARE.",
+      "spare_refusal": "he is still writing"
     }
   ]
 }

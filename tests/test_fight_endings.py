@@ -73,6 +73,7 @@ OUTCOMES = ((PERCY, "kill", "percy_win_kill"), (PERCY, "spare", "percy_win_spare
 # The route a fight happens on when the player has already killed a boss (spec 10), which is what makes the refusal
 # reachable data rather than a hypothetical.
 GENOCIDE = "genocide"
+END_CARD = "demo_end_card"   # the three battle demo ends every Percy epilogue on this shared card
 
 LONG_DASHES = ("\u2014", "\u2013", "\u2015", "\u2212")
 
@@ -337,7 +338,12 @@ def ending_of(data: Data, fight: Fight):
             taken.append(value)
         elif kind == "say":
             said.append(value)
-    assert len(said) == 1, "the epilogue %r says %r, one set is expected" % (scene_id, said)
+    # One ending's own set. The fight that closes the demo (it sets demo_complete) follows its set with the shared end
+    # card; the other fights say the set and nothing else. Either way the set is exactly one.
+    ends_demo = "demo_complete" in (fight.encounter.get("flags_on_%s" % fight.outcome) or [])
+    expected = 2 if ends_demo else 1
+    assert len(said) == expected, "the epilogue %r says %r, %d line set(s) expected" % (scene_id, said, expected)
+    assert (said[1:] == [END_CARD]) == ends_demo, "the end card follows the epilogue exactly when the fight ends the demo: %r" % (said,)
     return fight.outcome, dialogue_id, " -> ".join(taken), said[0]
 
 
@@ -482,7 +488,7 @@ def test_the_refusal_is_visible_on_the_genocide_route(data):
     genocide["bosses_killed"] = 1
 
     percy = Fight(data, PERCY, routed_counters=dict(genocide))
-    percy.hp = 31   # inside the 40 percent gate (48 hp) and above the spare floor at 30 hp
+    percy.hp = 11   # inside the 40 percent gate (16 hp of 40) and above the spare floor at 10 hp
     assert data.route_of(genocide, 0) == GENOCIDE
     assert not percy.spare_allowed()
     before = sum(percy.counters.values())
@@ -498,8 +504,8 @@ def test_the_refusal_is_visible_on_the_genocide_route(data):
 
     # Percy at 30 hp on the genocide route: the spare gate would take him, and the route refuses the entry anyway.
     percy_low = Fight(data, PERCY, routed_counters=dict(genocide))
-    percy_low.hp = 30
-    assert percy_low.spare_allowed(), "25 percent of 120 is 30 hp, where the spare gate opens"
+    percy_low.hp = 10
+    assert percy_low.spare_allowed(), "25 percent of 40 is 10 hp, where the spare gate opens"
     assert percy_low.command_state() == (False, "no mercy left on this route"), percy_low.command_state()
     kind, reason = percy_low.press_spare()
     assert (kind, reason) == ("refused", "no mercy left on this route"), (kind, reason)
@@ -557,9 +563,9 @@ def test_the_interruption_and_the_disabled_entry_are_the_gml_this_file_mirrors(d
     assert spare_state.index("pp_battle_interrupt_ready(_battle)") < \
         spare_state.index("pp_battle_spare_route_refused(_battle)"), spare_state
     # Card t_905a18ce (F4): the route refusal is read at the menu, and its reason is the menu's, not a dialogue id.
-    assert 'if (pp_battle_spare_route_refused(_battle)) _reason = "no mercy left on this route";' in spare_state, \
+    assert 'if (pp_battle_spare_route_refused(_battle)) _reason = "mercy is off duty";' in spare_state, \
         spare_state
-    assert 'else if (!pp_battle_spare_allowed(_battle)) _reason = "not ready to end it";' in spare_state, spare_state
+    assert 'else if (!pp_battle_spare_allowed(_battle)) _reason = "it is not ready";' in spare_state, spare_state
     route = function_body(code_only(_read(DIRECTOR_GML)), "pp_battle_spare_route_refused")
     assert "spare_refuses_on_route" in route and "pp_battle_route_name(_battle)" in route, route
 
@@ -668,16 +674,16 @@ def probe() -> int:
     genocide["bosses_killed"] = 1
     percy = Fight(data, PERCY, routed_counters=dict(genocide))
     before = sum(percy.counters.values())
-    percy.hp = 31
+    percy.hp = 11
     kind, scene = percy.press_spare()
-    print("  percy at 31 hp, SPARE -> %s, scene %s, exit row %s, counters before %d after %d"
+    print("  percy at 11 hp, SPARE -> %s, scene %s, exit row %s, counters before %d after %d"
           % (kind, scene, percy.exit, before, sum(percy.counters.values())))
     assert (kind, scene, percy.exit) == ("interrupt", "prometheus_interrupt", "turned")
     assert sum(percy.counters.values()) == before
     percy = Fight(data, PERCY, routed_counters=dict(genocide))
-    percy.hp = 30
+    percy.hp = 10
     kind, reason = percy.press_spare()
-    print("  percy at 30 hp (the spare line), SPARE -> %s, disabled entry reason %r" % (kind, reason))
+    print("  percy at 10 hp (the spare line), SPARE -> %s, disabled entry reason %r" % (kind, reason))
     assert (kind, reason) == ("refused", "no mercy left on this route")
     navy = Fight(data, NAVY, routed_counters=dict(genocide))
     kind, reason = navy.press_spare()
@@ -685,7 +691,7 @@ def probe() -> int:
     assert (kind, reason) == ("refused", "no mercy left on this route")
     percy = Fight(data, PERCY, routed_counters=dict(genocide))
     kind, reason = percy.press_spare()
-    print("  percy at 120 hp, above the gate, SPARE -> %s, disabled entry reason %r" % (kind, reason))
+    print("  percy at %d hp, above the gate, SPARE -> %s, disabled entry reason %r" % (percy.enemy["max_hp"], kind, reason))
     assert (kind, reason) == ("refused", "no mercy left on this route")
     return 0
 

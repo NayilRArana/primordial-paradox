@@ -84,7 +84,9 @@ DECK = "ship_small"
 CABIN = "ship_cabin"
 DECK_SIZE = (20, 15)
 DECK_WALKABLE = 176
-DECK_TRIGGERS = 9  # card t_785b61f0 adds the deck hound and the deck watch's percy, both fought in the demo
+# 2026-11-01 (three battle demo): the hound and Percy triggers left the deck, so the nine became seven. Card t_866814e6
+# put the hound's trigger back (eight); Nayil's order (manager decision, same day) took it off again: seven.
+DECK_TRIGGERS = 7  # the deck watch at 4,7 is the only fight; no hound fight, no forced defeat
 
 # The sheet the deck names: 48 tiles of 16 by 16, 16 to a row, so 3 rows.
 SHEET = "ts_ship"
@@ -109,7 +111,10 @@ LOG_SCENE = "ship_log"
 BOARDING_SCENE = "ship_boarding"
 LOG_START = (3, 7)
 LOG_PATH = [(3, 7), (3, 6), (3, 5), (3, 4), (3, 3), (3, 2)]
-RUNNER_COMMANDS = 16
+# Card t_1163ca72 added the seventeenth (`talk`), which is the one command a scene uses to take a typed line and answer
+# it with the character's recorded turn. The number is pinned here as well as in tests/test_scene_runner.py because two
+# different cards wrote the two lists, and a scene the runner skips would pass the checker.
+RUNNER_COMMANDS = 17
 
 DIRECTIONS = ((1, 0), (-1, 0), (0, 1), (0, -1))
 
@@ -606,9 +611,9 @@ def test_the_first_fight_sits_two_tiles_east_of_the_spawn_with_a_clear_line(deck
     """The hand off the boarding scene ends on: the trigger is one step ahead, and the line is open."""
     spawn = deck["spawns"]["start"]
     battles = triggers_of(deck, "battle")
-    # Card t_785b61f0: the demo's shot table needs a one command win and a forced defeat as well as the first fight,
-    # so the deck carries three fight triggers now. The first fight is still the one nearest the spawn, and it is the
-    # only one this test pins: the other two are read by tests/test_demo_shots.py.
+    # Card t_785b61f0 put three fight triggers on the deck; the three battle demo (2026-11-01) took the hound and Percy
+    # off it again, so the deck carries ONE fight trigger, the sailor watch, and that one is the first fight. The
+    # nearest-to-the-spawn rule stays so a later second trigger cannot take the first fight's place unnoticed.
     assert battles, "the deck carries no battle trigger, so the first fight has nothing to start it"
     fight = min(battles, key=lambda row: row["x"] - spawn["x"])
     assert fight["id"] == "tutorial_sailors", (
@@ -642,7 +647,12 @@ def test_every_spawn_and_the_save_point_are_walkable(deck):
 
 
 def test_the_deck_carries_the_seven_triggers_the_beats_ride_on(deck):
-    """Seven triggers, each one where a hero can reach it: on a walkable tile, or a door to face."""
+    """Seven triggers, each one where a hero can reach it: on a walkable tile, or a door to face.
+
+    The count moved from nine to seven when the three battle demo took the hound and Percy off the deck, to eight when
+    card t_866814e6 put the hound's own trigger back at (6,7) for a 180 s take, and back to seven by Nayil's order
+    (manager decision 2026-11-01): exactly three battles, so the deck's only fight is the deck watch.
+    """
     triggers = triggers_of(deck)
     assert len(triggers) == DECK_TRIGGERS, (
         "the deck carries %d triggers, the S5 measurement is %d" % (len(triggers), DECK_TRIGGERS))
@@ -658,7 +668,7 @@ def test_the_deck_carries_the_seven_triggers_the_beats_ride_on(deck):
                             % (trigger["id"], tile))
     assert problems == [], problems
     assert {(trigger["kind"], trigger["id"]) for trigger in triggers} == {
-        ("save", SAVE_ID), ("battle", "tutorial_sailors"), ("battle", "deck_hound"), ("battle", "percy"),
+        ("save", SAVE_ID), ("battle", "tutorial_sailors"),
         ("flag", "ship_deck_seen"),
         ("scene", LOG_SCENE), ("map", CABIN), ("map", "ship_sample"),
         ("map", "southampton_town_quay"),

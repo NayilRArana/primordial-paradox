@@ -411,5 +411,99 @@
       "preview_png": "output/ui_menu_preview.png",
       "preview_scale": 3
     }
-  ]
+  ],
+  "battle_b": {
+    "name": "battle_b",
+    "note": "NES style B battle screen, 2026-11-01. The one geometry for pp_battle_director.gml and tools/render_battle_visuals.py.",
+    "scene": {
+      "x": 0,
+      "y": 0,
+      "w": 256,
+      "h": 168
+    },
+    "enemy": {
+      "cx": 168,
+      "feet": 112,
+      "frame_w": 64,
+      "frame_h": 80,
+      "suffix": "_big"
+    },
+    "plate": {
+      "x": 128,
+      "y": 8,
+      "w": 15,
+      "h": 4,
+      "name_y": 12,
+      "hp_y": 21,
+      "mercy_y": 29,
+      "label_x": 136,
+      "bar_x": 184,
+      "bar_w": 56,
+      "bar_h": 6
+    },
+    "panel": {
+      "x": 8,
+      "y": 120,
+      "w": 30,
+      "h": 5,
+      "party_x": 16,
+      "party_step": 30,
+      "party_y": 124,
+      "rule_x": 136,
+      "stat_x": 144,
+      "hp_y": 124,
+      "hp_bar_y": 133,
+      "will_y": 141,
+      "will_bar_y": 150,
+      "bar_w": 96,
+      "bar_h": 6
+    },
+    "message": {
+      "x": 0,
+      "y": 0,
+      "w": 32,
+      "h": 6
+    },
+    "command": {
+      "x": 8,
+      "y": 168,
+      "w": 30,
+      "h": 8
+    },
+    "timing": {
+      "x": 40,
+      "y": 8,
+      "w": 22,
+      "h": 4,
+      "bar_x": 56,
+      "bar_y": 17,
+      "bar_w": 160,
+      "bar_h": 7
+    },
+    "victory": {
+      "x": 32,
+      "y": 88,
+      "w": 24,
+      "h": 8,
+      "title_y": 100,
+      "word_y": 112,
+      "press_y": 126
+    },
+    "swatches": {
+      "sprite": "bg_battle_hud",
+      "cell": 16,
+      "k": 0,
+      "grey": 1,
+      "hp": 2,
+      "hp_hi": 3,
+      "low": 4,
+      "low_hi": 5,
+      "will": 6,
+      "will_hi": 7,
+      "mercy": 8,
+      "mercy_hi": 9,
+      "gold": 10,
+      "white": 11
+    }
+  }
 }

@@ -47,6 +47,8 @@ COMMAND_ARGS = {
     "spawn": ({"actor", "x", "y"}, {"actor", "x", "y"}),
     "destroy": ({"actor"}, {"actor"}),
     "battle": ({"id"}, {"id"}),
+    # Card t_1163ca72: the scene chat. It names the npc it speaks to; the plate is the name the box draws.
+    "talk": ({"npc"}, {"npc", "plate"}),
     "setflag": ({"name"}, {"name", "value"}),
     "branch": ({"flag", "scene"}, {"flag", "scene"}),
     "end": (set(), set()),
@@ -111,7 +113,7 @@ def test_runner_command_list_and_switch_agree_in_both_directions():
     commands = runner_commands(text)
     assert commands == [
         "say", "move", "face", "wait", "fade", "music", "sfx", "camera", "shake", "flash",
-        "spawn", "destroy", "battle", "setflag", "branch", "end",
+        "spawn", "destroy", "battle", "talk", "setflag", "branch", "end",
     ], "the runner's command list changed; spec 06's table has to change with it"
 
     start = gml_function(text, "pp_scene_command_start")

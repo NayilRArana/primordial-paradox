@@ -21,6 +21,9 @@
     "sign_55_seen",
     "sign_43_seen",
     "sign_30_seen",
-    "sign_20_seen"
+    "sign_20_seen",
+    "morgan_spared",
+    "morgan_killed",
+    "demo_complete"
   ]
 }

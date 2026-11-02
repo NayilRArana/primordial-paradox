@@ -43,10 +43,15 @@ TITLE_OGG = os.path.join(ROOT, "assets", "audio", "pp_01_title", "pp_01_title.og
 SHIP_OGG = os.path.join(ROOT, "assets", "audio", "pp_05_small_ship", "pp_05_small_ship.ogg")
 
 TITLE = "PP audio: title_theme streaming streams/title_theme_v3_126.ogg, instance 400001, gain 0.70"
-CUE = "PP audio: music cue PP-05 streaming music/pp_05_small_ship.ogg, instance 400010, priority 10, fade 30 steps"
-MISSING = "PP audio: music cue PP-07 has no OGG yet, expected pp_07_prometheus_explains.ogg, placeholder true"
-DUCK = "PP audio: title_theme ducked -6 dB, gain 0.3508"
-UNDUCK = "PP audio: title_theme back to full after -6 dB"
+# The bus logs the folder it opens, which is PP_AUDIO_MUSIC_DIR = streams/ (pp_audio.gml, card t_0c7a0a03):
+# sync_art.mirror_streams copies each render there under its own basename, so this is the line a real run prints.
+CUE = "PP audio: music cue PP-05 streaming streams/pp_05_small_ship.ogg, instance 400010, priority 10, fade 30 steps"
+MISSING = "PP audio: music cue PP-07 has no OGG yet, expected streams/pp_07_prometheus_explains.ogg, placeholder true"
+# The duck line the game prints for a 6 dB duck depth: the printed gain is the two-decimal GML string of
+# 0.7 * 10^(-6/20) = 0.3508. The parser ignores the printed gain and re-derives it from the dB depth, so the
+# gain assertions below use the full value, not this rounded string.
+DUCK = "PP audio: title_theme ducked 6 dB, gain 0.35"
+UNDUCK = "PP audio: title_theme back to full after 6 dB"
 FOOTSTEP = "PP audio: footstep played, instance 400008"
 BLIP = "PP audio: text_blip_a played, instance 400020"
 STOP = "PP audio: music stopping over 30 steps"
@@ -152,6 +157,60 @@ def test_a_check_from_disk_is_unmeasured_either_way_and_never_a_verdict(demo):
     assert not ok and line.startswith("FAIL")
 
 
+@pytest.mark.windows_only
+def test_a_final_take_with_no_audio_record_fails_instead_of_measuring(demo):
+    """The shipping question: a cut with no verify file beside it cannot answer, so it does not ship.
+
+    `--check` on its own is a measurement and UNMEASURED is the honest answer for a file with no record. A take
+    that is about to be submitted is a different question, and the difference between "not measured" and
+    "allowed to ship" is the whole reason this card exists: output/demo/DEMO-CUT-V3.mp4, the cut that would be
+    submitted, has no verify file at all (knowledge/READINESS-2026-10-26-R2.md).
+    """
+    for has_audio in (True, False):
+        ok, line = demo.audio_check(None, has_audio, final=True)
+        assert not ok, "a final take with no record of its audio may not pass"
+        assert line.startswith("FAIL") and "no record" in line and "final take" in line, line
+        # Without --final the same file still measures UNMEASURED and says so: the two questions stay distinct.
+        ok_plain, plain = demo.audio_check(None, has_audio)
+        assert ok_plain and plain.startswith("UNMEASURED")
+    ok, line = demo.audio_check({"source": "reconstructed", "segments": [1], "first_music": {"cue": "x", "at": 0.0}},
+                                True, final=True)
+    assert ok and line.startswith("PASS"), "a labelled take still passes when the shipping question is asked"
+
+
+@pytest.mark.windows_only
+def test_check_final_asks_the_verifier_for_the_shipping_answer(demo, tmp_path, monkeypatch):
+    """--final is wired to the verifier, so the flag is not a help string nobody reads.
+
+    The script is supplied rather than read from disk on purpose: `DEFAULT_SCRIPT` names
+    `data/demo/run_002.json`, that file is in the shared index but not in HEAD (measured 2026-10-27 18:26,
+    `git ls-tree -r HEAD --name-only projects/primordial-paradox/data/demo` lists only `manifest.json` and
+    `run_001.json`), and a test that trusted the default would go red in the gate's clean tree for a reason
+    that has nothing to do with this flag.
+    """
+    seen = {}
+    report = {"checks": {}, "has_audio": True, "audio_source": None}
+    script = {"name": "pinned", "events": [{"step": 0, "beat": 1, "kind": "note", "id": "x"}],
+              "clock": {"fps": 60}, "seeds": {}, "game": {}}
+
+    def fake_verify(path, script, report_path=None, pollution=None, cues=None, audio=None, final=False,
+                    shot_table=None):
+        seen.update({"final": final, "audio": audio, "path": path, "shot_table": shot_table})
+        return True, dict(report)
+
+    monkeypatch.setattr(demo, "verify_video", fake_verify)
+    monkeypatch.setattr(demo, "print_report", lambda report: None)
+    monkeypatch.setattr(demo, "load_script", lambda path: script)
+    take = tmp_path / "take.mp4"
+    take.write_bytes(b"")
+    monkeypatch.setattr(sys, "argv", ["play_demo.py", "--check", "--video", str(take)])
+    assert demo.main() == 0
+    assert seen["final"] is False and seen["audio"] is None, "without --final the question is the plain one"
+    monkeypatch.setattr(sys, "argv", ["play_demo.py", "--check", "--final", "--video", str(take)])
+    assert demo.main() == 0
+    assert seen["final"] is True, "--final has to reach the verifier, or the shipping gate is a comment"
+
+
 # ---------------------------------------------------------------------------------------------------------------------
 # 3 and 4: the log lines, the gains, and what the game did not play
 
@@ -167,7 +226,7 @@ def test_the_game_log_lines_become_the_cues_the_game_named(demo, delivered):
     assert music[0]["file"].endswith("title_theme_v3_126.ogg")
     assert music[1]["file"].endswith("pp_05_small_ship.ogg")
     duck = [row for row in events if row["kind"] == "duck"][0]
-    assert abs(duck["gain"] - 0.7 * 10 ** (-6 / 20.0)) < 1e-6, "the duck is the game's own 0.7 times -6 dB"
+    assert abs(duck["gain"] - 0.7 * 10 ** (-6 / 20.0)) < 1e-6, "the duck is the game's own 0.7 times a 6 dB duck depth"
     unduck = [row for row in events if row["kind"] == "unduck"][0]
     assert unduck["gain"] == demo.GAME_GAIN_MUSIC
     effects = {row["id"]: row["gain"] for row in events if row["kind"] == "sfx"}
@@ -201,10 +260,11 @@ def test_the_plan_splits_the_music_at_the_games_own_duck(demo, delivered):
     assert len(music) == 3, "one music start, two gain changes: three pieces, not a guess at a ramp"
     assert [round(row["in"], 3) for row in music] == [0.0, 10.0, 20.0]
     assert music[0]["gain"] == demo.GAME_GAIN_MUSIC
-    # The game's own log prints the ducked gain as 0.3508 (0.7 times -6 dB, rounded by the game's own line), so
-    # the plan carries the same four decimals and the assertion allows that rounding.
+    # The ducked gain is 0.7 * 10^(-6/20) = 0.3508, derived here rather than typed from memory; the plan carries
+    # it rounded to four decimals.
+    ducked = round(0.7 * 10 ** (-6 / 20.0), 4)
     assert abs(music[1]["gain"] - 0.7 * 10 ** (-6 / 20.0)) < 1e-3
-    assert music[1]["gain"] == 0.3508
+    assert music[1]["gain"] == ducked
     assert music[2]["gain"] == demo.GAME_GAIN_MUSIC
     assert music[0]["fade_in"] > 0 and music[-1]["fade_out"] > 0, "the game's own crossfade at the edges only"
     assert music[1]["fade_in"] == 0.0 and music[1]["fade_out"] == 0.0, "a duck is instant in the game"

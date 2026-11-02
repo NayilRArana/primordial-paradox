@@ -402,10 +402,46 @@
     },
     {
       "$GMIncludedFile": "",
+      "%Name": "bg_battle_hud.png",
+      "CopyToMask": -1,
+      "filePath": "datafiles/art",
+      "name": "bg_battle_hud.png",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
       "%Name": "bg_battle_quay_dusk.png",
       "CopyToMask": -1,
       "filePath": "datafiles/art",
       "name": "bg_battle_quay_dusk.png",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "bg_battle_quay_town.png",
+      "CopyToMask": -1,
+      "filePath": "datafiles/art",
+      "name": "bg_battle_quay_town.png",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "bg_battle_ship_deck.png",
+      "CopyToMask": -1,
+      "filePath": "datafiles/art",
+      "name": "bg_battle_ship_deck.png",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "bg_battle_ship_office.png",
+      "CopyToMask": -1,
+      "filePath": "datafiles/art",
+      "name": "bg_battle_ship_office.png",
       "resourceType": "GMIncludedFile",
       "resourceVersion": "2.0"
     },
@@ -546,10 +582,28 @@
     },
     {
       "$GMIncludedFile": "",
+      "%Name": "morgan_big.png",
+      "CopyToMask": -1,
+      "filePath": "datafiles/art",
+      "name": "morgan_big.png",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
       "%Name": "navy_sailor.png",
       "CopyToMask": -1,
       "filePath": "datafiles/art",
       "name": "navy_sailor.png",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "navy_sailor_big.png",
+      "CopyToMask": -1,
+      "filePath": "datafiles/art",
+      "name": "navy_sailor_big.png",
       "resourceType": "GMIncludedFile",
       "resourceVersion": "2.0"
     },
@@ -568,6 +622,15 @@
       "CopyToMask": -1,
       "filePath": "datafiles/art",
       "name": "percy_battle.png",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "percy_big.png",
+      "CopyToMask": -1,
+      "filePath": "datafiles/art",
+      "name": "percy_big.png",
       "resourceType": "GMIncludedFile",
       "resourceVersion": "2.0"
     },
@@ -1585,6 +1648,33 @@
       "CopyToMask": -1,
       "filePath": "datafiles/demo",
       "name": "run_002.json",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "run_command_win.json",
+      "CopyToMask": -1,
+      "filePath": "datafiles/demo",
+      "name": "run_command_win.json",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "run_talk_win.json",
+      "CopyToMask": -1,
+      "filePath": "datafiles/demo",
+      "name": "run_talk_win.json",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "shot_table.json",
+      "CopyToMask": -1,
+      "filePath": "datafiles/demo",
+      "name": "shot_table.json",
       "resourceType": "GMIncludedFile",
       "resourceVersion": "2.0"
     },

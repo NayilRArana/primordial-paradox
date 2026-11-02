@@ -415,18 +415,11 @@ function pp_mode_battle() {
             }
             pp_battle_draw(_battle);
 
-            // Card t_905a18ce (F2): a fight that hands a scene over is never waited on, so it never shows the "press Z"
-            // panel either. The prompt and the outcome word are the old door for a kill and a spare, which still end
-            // on the player's own press.
-            if (pp_battle_finished(_battle) && pp_battle_handoff_scene(_battle) == "") {
-                draw_set_colour(pp_role_colour("paper"));
-                draw_rectangle(40, 100, PP_FRAME_W - 40, 140, false);
-                // Card BATTLE-FONT-WIRE: the outcome word and the prompt are the sheet's glyphs, centred and word
-                // wrapped to the panel's own 176 px inside (40 to 216), which is 22 characters.
-                var _outcome_cols = pp_font_cols(PP_FRAME_W - 80);
-                pp_font_draw_wrapped_centre(pp_battle_outcome(_battle), PP_FRAME_W * 0.5, 112, _outcome_cols, 10, 1);
-                pp_font_draw_centre("press Z", PP_FRAME_W * 0.5, 126, 1);
-            }
+            // Card t_855887d8: the victory panel is the director's draw now (pp_battle_draw_victory), drawn last
+            // inside pp_battle_draw so the panel sits over the field, the actors and the command band the same way
+            // this block used to. Nothing about the door changed: this mode still waits for `confirm` and only while
+            // pp_battle_finished, and a fight that hands a scene over is still never waited on.
+
         }
     };
 }
@@ -490,6 +483,9 @@ function pp_mode_overworld() {
         },
         draw: function(_params) {
             pp_overworld_draw(global.pp.world);
+            // Card t_1163ca72: the scene's own text box over the map it plays on, so the S5 office exchange is drawn
+            // in the room the player is standing in and not on a second screen.
+            pp_scene_draw_overlay(global.pp.world);
         }
     };
 }

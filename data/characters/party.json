@@ -11,7 +11,13 @@
       "sprite": "spr_pp_hero",
       "weapon": "dads_good_knife",
       "starting_items": [
-        { "id": "salve", "count": 2 }
+        {
+          "id": "salve",
+          "count": 2
+        }
+      ],
+      "starting_powers": [
+        "tide_step"
       ]
     }
   ]

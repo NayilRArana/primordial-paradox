@@ -15,7 +15,7 @@
 /// handful of frames, which is a palette change on steps the scene already spends and never a wait of its own.
 function pp_scene_commands() {
     return ["say", "move", "face", "wait", "fade", "music", "sfx", "camera", "shake", "flash",
-            "spawn", "destroy", "battle", "setflag", "branch", "end"];
+            "spawn", "destroy", "battle", "talk", "setflag", "branch", "end"];
 }
 
 /// The environment flag that switches on the F1 scene self test. Defined here, next to its only reader, and split so
@@ -62,6 +62,10 @@ function pp_scene_new(_scene_id, _world) {
         trace: false,
         // Card t_009836b9: a scene whose row asks for it can be ended by the player's hold of cancel, and the hold is
         // counted per runner so a scene entered by a branch starts its own count.
+        // Card t_1163ca72: the S5 office exchange. The player says a line in the box and the character answers with
+        // the model's recorded turn for that character (data/meta_bake.json's npc rows), all inside this runner, so
+        // the exchange is a scene command and not a second state machine in the overworld.
+        talk: undefined,
         skippable: false,
         skip_hold: 0
     };
@@ -383,6 +387,29 @@ function pp_scene_command_start(_sc, _world) {
             _world.battle_request = _cmd.id;
             return;
 
+        case "talk":
+            // The player approaches, the box opens for their line, and the character answers it. A scene that names an
+            // npc the bake has no turn for is a beat with nothing to say: it is reported and the scene moves on rather
+            // than holding a text box open on an empty answer.
+            var _npc = "";
+            if (variable_struct_exists(_cmd, "npc")) _npc = string(_cmd.npc);
+            if (_npc == "") {
+                show_debug_message("PP scene: talk without an npc at " + string(_sc.id) + "[" + string(_sc.index) + "]");
+                pp_scene_advance(_sc, _world);
+                return;
+            }
+            var _plate = "";
+            if (variable_struct_exists(_cmd, "plate")) _plate = string(_cmd.plate);
+            var _talk = pp_talk_scene_new(_npc, _plate);
+            if (!pp_talk_scene_open(_talk)) {
+                show_debug_message("PP scene: no baked turn for " + _npc + " at " + string(_sc.id) + "[" + string(_sc.index) + "]");
+                pp_scene_advance(_sc, _world);
+                return;
+            }
+            _sc.talk = _talk;
+            _sc.state = "talk";
+            return;
+
         case "setflag":
             if (!variable_struct_exists(_cmd, "name")) {
                 show_debug_message("PP scene: setflag without a name at " + string(_sc.id) + "[" + string(_sc.index) + "]");
@@ -436,6 +463,7 @@ function pp_scene_command_start(_sc, _world) {
 /// Move to the next command, or finish.
 function pp_scene_advance(_sc, _world) {
     if (!is_undefined(_sc.dialogue)) _sc.dialogue = undefined;
+    if (!is_undefined(_sc.talk)) _sc.talk = undefined;
     _sc.index += 1;
     if (_sc.index >= array_length(_sc.commands)) {
         // A scene that runs out of commands without `end` is a data error the checker names; the runner still stops and
@@ -534,10 +562,44 @@ function pp_scene_step(_sc, _world) {
             }
             return;
 
+        case "talk":
+            // Card t_1163ca72: the exchange owns the screen until the answer has been read. A confirm over the reply
+            // ends it, an Esc in the typing stage leaves it, and either way the scene moves to its next command, which
+            // is what carries S5 on to the boarding fade.
+            if (!is_struct(_sc.talk)) {
+                pp_scene_advance(_sc, _world);
+                return;
+            }
+            if (_sc.autoplay) {
+                pp_talk_scene_autoplay(_sc.talk);
+            } else {
+                pp_talk_scene_step(_sc.talk);
+            }
+            if (_sc.talk.finished) {
+                show_debug_message("PP scene: " + string(_sc.id) + " talk done with " + string(_sc.talk.scene_npc)
+                    + " at index " + string(_sc.index) + ", said " + string(array_length(_sc.talk.scene_said)) + " line(s)");
+                _sc.talk = undefined;
+                pp_scene_advance(_sc, _world);
+            }
+            return;
+
         default:
             pp_scene_advance(_sc, _world);
             return;
     }
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+// The overlay (card t_1163ca72)
+
+/// The running scene's own text box, drawn over the map the scene plays on. Today that is the scene chat's box and
+/// nothing else; a scene without one draws nothing, so this call costs an idle step nothing.
+function pp_scene_draw_overlay(_world) {
+    if (!is_struct(_world)) return;
+    var _sc = _world.scene;
+    if (!pp_scene_running(_sc)) return;
+    if (!variable_struct_exists(_sc, "talk") || !is_struct(_sc.talk)) return;
+    pp_talk_scene_draw(_sc.talk);
 }
 
 /// Hand control back to the walker. The tile is the one the hero is standing on, the camera follows him again, and a

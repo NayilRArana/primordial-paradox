@@ -65,9 +65,9 @@
       "id": "battle_intro_sailors",
       "speaker": "narrator",
       "lines": [
-        "* A Navy Sailor squares up.",
-        "* His mop is regulation.",
-        "* TALK or FIGHT. Choose."
+        "* A sailor holds the hatch.",
+        "* \"Deck is closed. Orders.\"",
+        "* Talk him down, or fight."
       ]
     },
     {
@@ -83,7 +83,8 @@
       "id": "navy_win_kill",
       "speaker": "narrator",
       "lines": [
-        "* The sailor does not get up.",
+        "* The sailor drops his mop.",
+        "* The hatch is unguarded.",
         "* The deck is very quiet."
       ]
     },
@@ -91,9 +92,9 @@
       "id": "navy_win_spare",
       "speaker": "narrator",
       "lines": [
-        "* He steps aside.",
-        "* His eyes stay on the sea.",
-        "* \"Bridge is that way. Move.\""
+        "* He lowers the mop.",
+        "* \"Hatch is open. Move.\"",
+        "* His eyes stay on the sea."
       ]
     },
     {
@@ -127,7 +128,9 @@
       "id": "percy_lore_stop",
       "speaker": "narrator",
       "lines": [
-        "* Percy fills the doorway.",
+        "* An officer's cabin.",
+        "* Brass lamp. Charts. A log.",
+        "* Lt. Percy Skye, aged 23.",
         "* \"NAME. BUSINESS. VEIL.\"",
         "* \"IN THAT ORDER.\""
       ]
@@ -137,7 +140,7 @@
       "speaker": "percy",
       "portrait": "percy",
       "lines": [
-        "* \"A stowaway with a god.\"",
+        "* \"Aboard. In my office.\"",
         "* \"STATE YOUR BUSINESS.\"",
         "* Percy lifts the trident."
       ]
@@ -219,7 +222,7 @@
       "id": "percy_epilogue_spare",
       "speaker": "narrator",
       "lines": [
-        "* Percy sits against the mast.",
+        "* Percy sits at his desk.",
         "* \"The fire-carrier took you.\"",
         "* \"The hatch is yours.\""
       ]
@@ -683,6 +686,51 @@
         "* A long nave on the hill.",
         "* A square tower. No lights.",
         "* Winchester is asleep."
+      ]
+    },
+    {
+      "id": "battle_intro_morgan",
+      "speaker": "narrator",
+      "lines": [
+        "* Morgan drops the barrier.",
+        "* \"Bag check. Regulations.\"",
+        "* Talk him round, or fight."
+      ]
+    },
+    {
+      "id": "talk_morgan",
+      "speaker": "guard",
+      "lines": [
+        "* \"May I see the form?\"",
+        "* \"Lovely handwriting.\"",
+        "* \"The captain is coming!\""
+      ]
+    },
+    {
+      "id": "morgan_win_kill",
+      "speaker": "narrator",
+      "lines": [
+        "* Morgan's pen rolls away.",
+        "* The barrier arm stays up.",
+        "* Nobody checks your bag."
+      ]
+    },
+    {
+      "id": "morgan_win_spare",
+      "speaker": "narrator",
+      "lines": [
+        "* Morgan stamps your hand.",
+        "* APPROVED. He means it.",
+        "* \"Go on. Mind the kettle.\""
+      ]
+    },
+    {
+      "id": "demo_end_card",
+      "speaker": "narrator",
+      "lines": [
+        "* END OF THE DEMO.",
+        "* The veil thins tonight.",
+        "* Thank you for playing."
       ]
     }
   ]

@@ -23,6 +23,11 @@ What this file holds down, and why each one earns its place:
      commands and shows the two flags set. It is a mirror of the GML and not the engine, which is why the GML's own
      comparison, order and outcome word are also pinned text for text below.
 
+Numbers, 2026-11-01 (three battle demo): Percy ships at 40 hp, not the spec's 120. The percents are unchanged (gate 40,
+SPARE 25), so every hp below is the percent of 40: the gate is 16 hp, the SPARE line 10 hp, and the story exit lives in
+the 6 hp window 16 down to 11 (it was 18 hp, 48 down to 31, at 120 hp). Section 2's counterfactual keeps the 120 hp
+reference boss because it is arithmetic about why the trigger is not a crossing, not about the shipped row.
+
 Known gaps, recorded rather than hidden:
   - no GML is compiled or run here. GameMaker is not installed on this host, so the driver below is a mirror of the
     director and of the menu, and the GML's own text is pinned so the mirror cannot drift silently. Nothing in this
@@ -71,7 +76,8 @@ INTERRUPT_PERCENT = 40      # spec 18 section 6's data block
 SPARE_PERCENT = 25          # spec 07: SPARE is enabled at 25 percent or less
 FIGHT_CEILING = 12          # spec 07's FIGHT ceiling, 2 to 12
 TIDE_STEP = 18              # the biggest legal blow once the power is spent
-MAX_HP = 120
+MAX_HP = 120                # spec 18's reference boss: only the section 2 counterfactual arithmetic uses it
+PERCY_HP = 40               # what ships since the three battle demo (2026-11-01); the other hp below derive from it
 
 
 def read_json(path):
@@ -125,22 +131,26 @@ def test_the_gate_is_the_request_and_not_a_crossing():
     """Spec 18 section 4 rule 4 reads the field name literally, and this is the difference that keeps the kill legal."""
     block = interrupt_block()
     threshold = block["hp_at_or_below"]
-    assert crossing_hp(threshold, MAX_HP) == 48, "40 percent of 120 is 48 hp, the highest hp the gate covers"
+    assert percy()["max_hp"] == PERCY_HP, "every hp below is a percent of the shipped 40"
+    assert crossing_hp(threshold, PERCY_HP) == 16, "40 percent of 40 is 16 hp, the highest hp the gate covers"
     # Above the gate the request does not interrupt; at the gate it does; at the spare bar the spare simply wins.
-    assert press_spare(percy(), 49, 0, {}) == ("refused", None)
-    assert press_spare(percy(), 48, 0, {}) == ("interrupted", SCENE_ID)
-    assert press_spare(percy(), 31, 0, {}) == ("interrupted", SCENE_ID)
-    assert press_spare(percy(), 30, 0, {}) == ("spare", None), "25 percent of 120 is 30 hp, where SPARE is accepted"
+    assert press_spare(percy(), 17, 0, {}) == ("refused", None)
+    assert press_spare(percy(), 16, 0, {}) == ("interrupted", SCENE_ID)
+    assert press_spare(percy(), 11, 0, {}) == ("interrupted", SCENE_ID)
+    assert press_spare(percy(), 10, 0, {}) == ("spare", None), "25 percent of 40 is 10 hp, where SPARE is accepted"
 
 
 def test_the_story_exit_lives_in_the_eighteen_hp_window_the_spec_names():
-    """A18-5: "a 6 hp window (48 hp down to 31)" is 18 hp of the bar; the numbers are pinned so it cannot drift."""
-    spare_bar = crossing_hp(SPARE_PERCENT, MAX_HP)
-    gate = crossing_hp(INTERRUPT_PERCENT, MAX_HP)
-    assert (spare_bar, gate) == (30, 48)
-    window = [hp for hp in range(1, MAX_HP + 1) if press_spare(percy(), hp, 0, {})[0] == "interrupted"]
-    assert window == list(range(31, gate + 1)), window
-    assert len(window) == 18
+    """A18-5: the window between the SPARE line and the gate; the numbers are pinned so it cannot drift.
+
+    It is 18 hp (48 down to 31) at the spec's 120 hp and 6 hp (16 down to 11) at the 40 hp the demo ships.
+    """
+    spare_bar = crossing_hp(SPARE_PERCENT, PERCY_HP)
+    gate = crossing_hp(INTERRUPT_PERCENT, PERCY_HP)
+    assert (spare_bar, gate) == (10, 16)
+    window = [hp for hp in range(1, PERCY_HP + 1) if press_spare(percy(), hp, 0, {})[0] == "interrupted"]
+    assert window == list(range(11, gate + 1)), window
+    assert len(window) == 6
 
 
 def test_the_flag_and_the_scene_ids_exist():
@@ -628,15 +638,15 @@ def test_f1_the_spare_entry_is_pressable_across_the_whole_interrupt_window():
 
     enemy = percy()
     encounter = encounter_row()
-    enabled_hp = [hp for hp in range(1, MAX_HP + 1)
+    enabled_hp = [hp for hp in range(1, PERCY_HP + 1)
                   if command_state(hp, 0, {}, enemy, encounter, "undecided")[0]]
-    assert enabled_hp == list(range(1, 49)), \
-        "SPARE is pressable at %r; the spare line is 30 hp and the gate is 48 hp" % (enabled_hp[:3],)
-    for hp in range(31, 49):
+    assert enabled_hp == list(range(1, 17)), \
+        "SPARE is pressable at %r; the spare line is 10 hp and the gate is 16 hp" % (enabled_hp[:3],)
+    for hp in range(11, 17):
         assert press_through_menu(hp, 0, {}, enemy, encounter, "undecided") == ("interrupted", SCENE_ID), hp
-    assert press_through_menu(30, 0, {}, enemy, encounter, "undecided") == ("spare", None)
-    assert press_through_menu(49, 0, {}, enemy, encounter, "undecided") == ("disabled", "not ready to end it")
-    print("F1: SPARE pressable at every hp in 1..48; 31..48 all end as interrupted -> %s" % SCENE_ID)
+    assert press_through_menu(10, 0, {}, enemy, encounter, "undecided") == ("spare", None)
+    assert press_through_menu(17, 0, {}, enemy, encounter, "undecided") == ("disabled", "not ready to end it")
+    print("F1: SPARE pressable at every hp in 1..16; 11..16 all end as interrupted -> %s" % SCENE_ID)
 
 
 def test_f4_the_route_refusal_is_read_at_the_menu_and_not_only_in_python():
@@ -651,20 +661,20 @@ def test_f4_the_route_refusal_is_read_at_the_menu_and_not_only_in_python():
 
     enemy = percy()
     # Above the gate on the genocide route the entry is refused with the route's own reason, not the spare gate's.
-    assert command_state(60, 0, {}, enemy, encounter, "genocide") == (False, "no mercy left on this route")
+    assert command_state(20, 0, {}, enemy, encounter, "genocide") == (False, "no mercy left on this route")
     # At the spare line too: the route refusal beats the hp gate, which is what spec 07 line 33 and spec 10 ask for.
-    assert command_state(30, 0, {}, enemy, encounter, "genocide") == (False, "no mercy left on this route")
+    assert command_state(10, 0, {}, enemy, encounter, "genocide") == (False, "no mercy left on this route")
     # And inside the gate the press still arrives, because that is where the interruption fires on every route.
-    assert command_state(40, 0, {}, enemy, encounter, "genocide") == (True, "")
-    assert press_through_menu(40, 0, {}, enemy, encounter, "genocide") == ("interrupted", SCENE_ID)
+    assert command_state(13, 0, {}, enemy, encounter, "genocide") == (True, "")
+    assert press_through_menu(13, 0, {}, enemy, encounter, "genocide") == ("interrupted", SCENE_ID)
     # On a route the row does not refuse, the same hp values behave as they did before.
-    assert command_state(30, 0, {}, enemy, encounter, "undecided") == (True, "")
-    assert command_state(60, 0, {}, enemy, encounter, "undecided") == (False, "not ready to end it")
+    assert command_state(10, 0, {}, enemy, encounter, "undecided") == (True, "")
+    assert command_state(20, 0, {}, enemy, encounter, "undecided") == (False, "not ready to end it")
     # The navy row refuses the same route and names the line its refusal plays, which is not a cursor note.
     navy = encounter_row("tutorial_sailors")
     assert navy.get("spare_refuses_on_route") == "genocide", navy.get("spare_refuses_on_route")
     assert navy.get("spare_refused_dialogue") == "navy_spare_refused"
-    print("F4: genocide refuses SPARE at 60 hp and at 30 hp with the route's reason; 40 hp still interrupts")
+    print("F4: genocide refuses SPARE at 20 hp and at 10 hp with the route's reason; 13 hp still interrupts")
 
 
 def caller_step(outcome, handoff, pressed):
@@ -736,9 +746,9 @@ def probe() -> int:
         shown = outcome
         print("  hp %3d  press SPARE -> %-12s scene %s" % (hp, outcome, scene or "-"))
 
-    print("\nprobe 2: the refused SPARE at 31 hp, the lowest hp the gate covers")
+    print("\nprobe 2: the refused SPARE at 11 hp, the lowest hp the gate covers")
     flags = {}
-    outcome, scene = press_spare(enemy, 31, 0, flags)
+    outcome, scene = press_spare(enemy, 11, 0, flags)
     row, counters, exit_name = ledger_record(outcome, enemy)
     print("  outcome %s, scene %s" % (outcome, scene))
     print("  exit row %s -> %s, counters %s" % (row["id"], exit_name, counters))
@@ -760,15 +770,15 @@ def probe() -> int:
     assert trace[-1] == ("end",)
 
     print("\nprobe 4: the second press is refused, because met_prometheus is set")
-    print("  press SPARE again -> %s" % (press_spare(enemy, 31, 0, flags),))
+    print("  press SPARE again -> %s" % (press_spare(enemy, 11, 0, flags),))
 
     print("\nprobe 5: the kill route stays open above and below the gate")
     outcome, events = kill_by_damage(enemy, {})
     print("  FIGHT %d a blow from %d hp to 0, no SPARE press -> outcome %s, SPARE presses %d"
           % (FIGHT_CEILING, enemy["max_hp"], outcome, len(events)))
     assert outcome == "kill" and events == []
-    outcome, events = fight_to_zero(enemy, {}, presses=(48,))
-    print("  the same fight with one SPARE press at 48 hp -> outcome %s, events %s" % (outcome, events))
+    outcome, events = fight_to_zero(enemy, {}, presses=(16,))
+    print("  the same fight with one SPARE press at 16 hp -> outcome %s, events %s" % (outcome, events))
     assert outcome == "interrupted"
     print("  a crossing trigger at %d hp instead would need one blow of at least %d hp; the ceiling is %d (%d with tide_step)"
           % (crossing_hp(block["hp_at_or_below"], enemy["max_hp"]),

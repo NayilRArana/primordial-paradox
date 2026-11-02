@@ -137,6 +137,16 @@
         "id": { "type": "string", "minLength": 1, "description": "Encounter id in data/encounters/all.json." }
       }
     },
+    "talk": {
+      "type": "object",
+      "required": ["cmd", "npc"],
+      "additionalProperties": false,
+      "properties": {
+        "cmd": { "const": "talk" },
+        "npc": { "type": "string", "minLength": 1, "description": "Actor id on the scene's own map. The player's typed line is answered with this character's recorded turns from data/meta_bake.json's npc rows (card t_1163ca72)." },
+        "plate": { "type": "string", "minLength": 1, "description": "The name the box draws, uppercased. Defaults to the npc id." }
+      }
+    },
     "setflag": {
       "type": "object",
       "required": ["cmd", "name"],
@@ -181,6 +191,7 @@
         { "$ref": "#/$defs/spawn" },
         { "$ref": "#/$defs/destroy" },
         { "$ref": "#/$defs/battle" },
+        { "$ref": "#/$defs/talk" },
         { "$ref": "#/$defs/setflag" },
         { "$ref": "#/$defs/branch" },
         { "$ref": "#/$defs/end" }

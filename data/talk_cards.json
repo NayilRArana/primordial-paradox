@@ -668,8 +668,8 @@
       }
     },
     {
-      "id": "petty_officer",
-      "enemy": "petty_officer",
+      "id": "morgan",
+      "enemy": "morgan",
       "phase": "",
       "version": 1,
       "voice": "Brisk, clipped, faintly bored authority; short sentences.",

@@ -75,6 +75,15 @@ def read(path):
         return handle.read()
 
 
+def gml_function(text, name):
+    """The body of one GML function, from its `function name(` to the closing brace at column 0."""
+    start = text.find("function %s(" % name)
+    assert start >= 0, "%s is not defined" % name
+    end = text.find("\n}", start)
+    assert end > start, "%s has no closing brace at column 0" % name
+    return text[start:end + 2]
+
+
 @pytest.fixture(scope="module")
 def data():
     return talk_live.load_data(ROOT)
@@ -562,8 +571,17 @@ def test_the_async_events_point_at_the_one_handler():
         body = read(os.path.join(obj, name))
         assert "pp_talk_live_async(global.pp.battle);" in body
     voice = read(os.path.join(obj, "Other_73.gml"))
-    assert "pp_talk_live_voice_recorded(" in voice
+    # Card t_330b12ce: the take is delivered to whichever box is listening, not to the fight alone, so the event names
+    # the finder and the finder names pp_talk_live_voice_recorded. Both halves are pinned: an event that posts the raw
+    # buffer straight into the fight would hand a scene's samples to a fight that never asked for them (or drop them).
+    assert "pp_talk_live_voice_event(_buffer)" in voice
     assert "audio recording" in voice.lower()
+    finder = gml_function(read(GML), "pp_talk_live_voice_event")
+    assert "pp_talk_live_voice_recorded(_box, _buffer)" in finder, (
+        "the finder does not hand the take to the box that owns it")
+    record = gml_function(read(GML), "pp_talk_live_voice_recorded")
+    assert "pp_talk_live_send_hear(" in record, (
+        "a take that arrives after the stop is not the one that starts the transcription")
 
 
 def test_a_brush_past_the_voice_key_is_refused_and_a_real_take_lands(data, tape):

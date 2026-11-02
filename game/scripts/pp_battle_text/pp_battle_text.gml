@@ -560,6 +560,19 @@ function pp_talk_apply(_battle, _record) {
     return _battle.talk_delta;
 }
 
+/// Card THREE-BATTLES (2026-11-01): the stated spare condition, as the line under the TALK box. Data only: the enemy row's
+/// spare_hint (with {n} for the talks still needed) until trust reaches trust_to_spare, then spare_ready_hint. An enemy
+/// row that names neither gets "" and the baked hint stays. The same trust number is what pp_battle_spare_allowed tests,
+/// so the line cannot promise a SPARE the gate would refuse.
+function pp_battle_spare_hint(_battle) {
+    var _enemy = _battle.enemy;
+    if (!is_struct(_enemy) || !variable_struct_exists(_enemy, "trust_to_spare")) return "";
+    var _need = max(0, _enemy.trust_to_spare - _battle.trust);
+    var _key = (_need > 0) ? "spare_hint" : "spare_ready_hint";
+    if (!variable_struct_exists(_enemy, _key)) return "";
+    return string_replace(string(_enemy[$ _key]), "{n}", string(_need));
+}
+
 /// Open the option panel for this turn. The battle stays in the menu phase: the panel is the menu's own second shape,
 /// not a new phase, so nothing else in the turn loop moves.
 function pp_talk_begin(_battle) {
@@ -622,9 +635,15 @@ function pp_talk_step(_battle) {
         + ", mercy " + string(_battle.talk_mercy) + ", trust " + string(_battle.trust));
     _battle.talk_stage = "";
     _battle.talk_hint = _record.hint;
+    // Card THREE-BATTLES: the stated spare condition is the hint line under every reply, from the enemy row.
+    var _spare_hint = pp_battle_spare_hint(_battle);
+    if (_spare_hint != "") _battle.talk_hint = _spare_hint;
     _battle.talk_reply = true;
     _battle.talk_last_effect = _record.effect;
     pp_audio_play("menu_select");
+    // Card BATTLE-FULL: the enemy row may say what this option does to its next turn (pp_battle_act_apply).
+    var _act_line = pp_battle_act_apply(_battle, _battle.talk_cursor);
+    if (_act_line != "") array_push(_record.lines, _act_line);
     pp_battle_say(_battle, _record.lines, "enemy_turn");
 }
 
@@ -683,12 +702,11 @@ function pp_talk_draw_options(_battle) {
     // Card BATTLE-FONT-WIRE: the prompt and the three labels are the sheet's glyphs. The labels are 26 characters at
     // the longest (a dialogue line's 28 less the `* ` marker), which is x 24 to x 232 inside the band at x 248.
     pp_font_draw("* " + PP_TALK_PROMPT, pp_talk_text_x(), pp_talk_text_y() + pp_talk_line_pitch(), 1);
+    // Card THREE-BATTLES: the spare condition is readable the moment the panel opens, before the first pick.
+    pp_talk_hint_draw(pp_battle_spare_hint(_battle));
 
     // The three options, in the band, at the 16 pixel pitch the command menu already uses.
-    draw_set_colour(pp_role_colour("paper"));
-    draw_rectangle(8, PP_MENU_TOP, PP_FRAME_W - 8, PP_FRAME_H - 8, false);
-    draw_set_colour(pp_role_colour("dim"));
-    draw_rectangle(8, PP_MENU_TOP, PP_FRAME_W - 8, PP_FRAME_H - 8, true);
+    pp_battle_draw_band_frame();
 
     // Card t_ee178652: four rows now, the enemy's own lines plus SAY IT YOURSELF (spec 16 section 1 step 1), so the
     // pitch is 13 and the first row sits at PP_MENU_TOP + 8: 176, 189, 202, 215, the last glyph bottom at 223, inside

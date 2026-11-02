@@ -1,0 +1,320 @@
+{
+  "version": 1,
+  "name": "run_talk_win",
+  "written": "2026-11-01",
+  "why": "One launch on the deck, one fight won by talking, then the ship's log save. This is the talking half of S6: the Deck Watch's fight is opened with a press, answered with TALK three times so the meter climbs 0 to 60 on the bake's own soften row, and ended with SPARE on the trust those three talks earned, so no blow is thrown. The save is the same scene the submission take uses. Card t_e48b13a6: a win path the demo harness can select by name.",
+  "beat_source": "knowledge/mechanics/PACING-AND-CUTSCENES.md section 9 (beat 23 the deck hound, beat 27 the ship's log, beat 28 the TALK fight) and knowledge/DEMO-SCRIPT.md section 3 (S6)",
+  "game": {
+    "exe": "PrimordialParadox.exe",
+    "window_title": "Primordial Paradox",
+    "launch_args": [
+      "-game",
+      "{win}"
+    ],
+    "env": {
+      "PP_ROUTE_HOLD": "drive"
+    },
+    "env_note": "PP_ROUTE_HOLD holds the route's drive step so the run room stands with the walker on the deck at ship_small (2,7), which is the same recipe data/demo/run_001.json plays. Unset in every launch a player makes.",
+    "note": "the form measured on this PC and recorded in tools/capture_title.py: <game>.exe -game <data>.win is the only form that starts the game instead of opening a file dialog"
+  },
+  "clock": {
+    "fps": 60,
+    "max_steps": 14000,
+    "note": "one step is one 60th of a second, the game's own step. A marker event's step is its fallback, used only when the log is block buffered; the marker itself moves the event earlier, never later."
+  },
+  "seeds": {
+    "title_flash": 20261021,
+    "rng_mod": 2147483647,
+    "note": "title_flash is PP_TITLE_FLASH_SEED, the attract's own stream, so the same launch flashes on the same steps. The fight's dodge patterns are data recipes, not a random draw."
+  },
+  "record": {
+    "fps": 60,
+    "scale": 3,
+    "width": 768,
+    "height": 720,
+    "min_seconds": 30.0,
+    "out": "output/demo/run_talk_win.mp4",
+    "audio": "auto",
+    "note": "768x720 is exactly 3x the 256x240 screen the game draws into its window on this PC"
+  },
+  "events": [
+    {
+      "id": "p01",
+      "step": 0,
+      "kind": "note",
+      "beat": 1,
+      "note": "title attract: the logo, the moon, the storm cloud, the seeded flash. No key is pressed."
+    },
+    {
+      "id": "p02",
+      "step": 600,
+      "kind": "key",
+      "key": "enter",
+      "beat": 2,
+      "note": "PRESS START opens the menu on NEW GAME"
+    },
+    {
+      "id": "p03",
+      "step": 690,
+      "kind": "key",
+      "key": "enter",
+      "beat": 2,
+      "note": "NEW GAME confirmed, which starts the intro"
+    },
+    {
+      "id": "p04",
+      "step": 1140,
+      "kind": "note",
+      "beat": 3,
+      "marker": "PP title: intro started",
+      "marker_delay_steps": 0,
+      "note": "the game's own line that NEW GAME took and the crawl began"
+    },
+    {
+      "id": "p05",
+      "step": 3300,
+      "kind": "note",
+      "beat": 7,
+      "marker": "starting the run in",
+      "marker_delay_steps": 60,
+      "note": "the game's own line that the crawl finished and the run room loaded. PP_ROUTE_HOLD holds the route's drive step, so the room stands with the walker on the deck"
+    },
+    {
+      "id": "p06",
+      "step": 3420,
+      "kind": "note",
+      "beat": 26,
+      "note": "the deck held still for a second at the slice's own spawn, ship_small (2,7)"
+    },
+    {
+      "id": "p07",
+      "step": 3500,
+      "kind": "hold",
+      "key": "right",
+      "steps": 19,
+      "beat": 26,
+      "note": "right held 19 steps: the shipped collision walked by walker_bot lands on the Deck Watch's own tile (4,7), two tiles east of the spawn"
+    },
+    {
+      "id": "p08",
+      "step": 3560,
+      "kind": "key",
+      "key": "confirm",
+      "beat": 28,
+      "note": "Confirm standing on the trigger: a battle fires on a press through pp_overworld_confirm_target, never on a touch, so this press is what opens the fight"
+    },
+    {
+      "id": "p09",
+      "step": 3620,
+      "kind": "note",
+      "beat": 28,
+      "marker": "PP: battle start tutorial_sailors",
+      "marker_delay_steps": 0,
+      "note": "the game's own line that the Deck Watch fight started"
+    },
+    {
+      "id": "t01",
+      "step": 3900,
+      "kind": "key",
+      "key": "down",
+      "beat": 28,
+      "marker": "PP: battle menu, turn 0",
+      "marker_delay_steps": 60,
+      "note": "the command list is up on turn 0 with the cursor on FIGHT (the list is FIGHT, POWER, TALK, SPARE, ITEM): Down moves it off FIGHT"
+    },
+    {
+      "id": "t02",
+      "step": 3960,
+      "kind": "key",
+      "key": "down",
+      "beat": 28,
+      "note": "Down again: the cursor sits on TALK"
+    },
+    {
+      "id": "t03",
+      "step": 4020,
+      "kind": "key",
+      "key": "confirm",
+      "beat": 28,
+      "note": "Confirm on TALK opens the panel, and pp_talk_begin writes the line the first reply waits on"
+    },
+    {
+      "id": "t04",
+      "step": 4400,
+      "kind": "key",
+      "key": "confirm",
+      "beat": 28,
+      "marker": ", mercy 0, trust 1",
+      "marker_delay_steps": 60,
+      "note": "the panel is open on the first option, the bake's soften row: Confirm takes it, so the meter reads 20"
+    },
+    {
+      "id": "t05",
+      "step": 4800,
+      "kind": "key",
+      "key": "confirm",
+      "beat": 28,
+      "marker": "PP: battle menu, turn 1",
+      "marker_delay_steps": 60,
+      "note": "the reply board and the enemy's turn are done and the list is back on turn 1, cursor still on TALK: Confirm opens the panel again"
+    },
+    {
+      "id": "t06",
+      "step": 5000,
+      "kind": "key",
+      "key": "confirm",
+      "beat": 28,
+      "marker": ", mercy 20, trust 2",
+      "marker_delay_steps": 60,
+      "note": "the panel is open on the first option again: Confirm takes it, so the meter reads 40"
+    },
+    {
+      "id": "t07",
+      "step": 5400,
+      "kind": "key",
+      "key": "confirm",
+      "beat": 28,
+      "marker": "PP: battle menu, turn 2",
+      "marker_delay_steps": 60,
+      "note": "turn 2's command list, cursor still on TALK: Confirm opens the panel for the third reply"
+    },
+    {
+      "id": "t08",
+      "step": 5600,
+      "kind": "key",
+      "key": "confirm",
+      "beat": 28,
+      "marker": ", mercy 40, trust 3",
+      "marker_delay_steps": 60,
+      "note": "the third soften: the meter reads 60, and that line is the one BEAT_CUES names for this beat"
+    },
+    {
+      "id": "t09",
+      "step": 6000,
+      "kind": "key",
+      "key": "down",
+      "beat": 28,
+      "marker": "PP: battle menu, turn 3",
+      "marker_delay_steps": 60,
+      "note": "turn 3's command list: Down moves the cursor from TALK to SPARE"
+    },
+    {
+      "id": "t10",
+      "step": 6200,
+      "kind": "key",
+      "key": "confirm",
+      "beat": 28,
+      "marker": "PP: battle menu, turn 3",
+      "marker_delay_steps": 140,
+      "note": "Confirm on SPARE with trust at 3, the sailor's own trust_to_spare: the fight is won by talking and no blow is thrown"
+    },
+    {
+      "id": "t11",
+      "step": 6400,
+      "kind": "note",
+      "beat": 28,
+      "marker": "PP: fight result spare",
+      "marker_delay_steps": 0,
+      "note": "the game's own line that the fight ended in a spare: the win the talking exchange earned"
+    },
+    {
+      "id": "s01",
+      "step": 6560,
+      "kind": "hold",
+      "beat": 27,
+      "marker": "PP: fight result spare",
+      "marker_delay_steps": 320,
+      "note": "left held 5 steps: the shipped collision walked back to the corridor tile (3,7) in front of the log's doorway",
+      "key": "left",
+      "steps": 5
+    },
+    {
+      "id": "s02",
+      "step": 6600,
+      "kind": "hold",
+      "beat": 27,
+      "marker": "PP: fight result spare",
+      "marker_delay_steps": 40,
+      "note": "up held 7 steps: through the doorway onto (3,6), where the ship's log scene's trigger sits",
+      "key": "up",
+      "steps": 7
+    },
+    {
+      "id": "s03",
+      "step": 6640,
+      "kind": "key",
+      "beat": 27,
+      "marker": "PP: fight result spare",
+      "marker_delay_steps": 40,
+      "note": "Confirm on the doorway: the log is a scene trigger, so it also fires on a press. The scene walks the hero up the corridor to the save point at (3,2) and plays the log's two pages",
+      "key": "confirm"
+    },
+    {
+      "id": "s04",
+      "step": 6880,
+      "kind": "key",
+      "beat": 27,
+      "marker": "PP: fight result spare",
+      "marker_delay_steps": 240,
+      "note": "the log's first page: this press finishes its typing",
+      "key": "confirm"
+    },
+    {
+      "id": "s05",
+      "step": 7040,
+      "kind": "key",
+      "beat": 27,
+      "marker": "PP: fight result spare",
+      "marker_delay_steps": 160,
+      "note": "the log's first page: this press turns it",
+      "key": "confirm"
+    },
+    {
+      "id": "s06",
+      "step": 7240,
+      "kind": "key",
+      "beat": 27,
+      "marker": "PP: fight result spare",
+      "marker_delay_steps": 200,
+      "note": "the log's second page: this press finishes its typing",
+      "key": "confirm"
+    },
+    {
+      "id": "s07",
+      "step": 7400,
+      "kind": "key",
+      "beat": 27,
+      "marker": "PP: fight result spare",
+      "marker_delay_steps": 160,
+      "note": "the log's second page: this press closes the book, and the scene plays save_jingle and leaves the hero on the save point at (3,2), which is the ship's log save the win has to reach. No press after this one: the take ends on the written log, not on a save menu left open",
+      "key": "confirm"
+    },
+    {
+      "id": "s08",
+      "step": 7520,
+      "kind": "note",
+      "beat": 27,
+      "note": "the written log held on screen with save_jingle over it, and the hero left standing on the save point at (3,2): this is the ship's log save, reached the same way by both wins"
+    },
+    {
+      "id": "s09",
+      "step": 7820,
+      "kind": "note",
+      "beat": 27,
+      "note": "the deck held, because the take ends here"
+    }
+  ],
+  "checks": {
+    "end_step": 8060,
+    "required_beats": [
+      "S1 title",
+      "S2 crawl",
+      "S6 talk fight",
+      "S6 ship log save"
+    ],
+    "min_lit_frames": 4,
+    "palette_share_min": 0.9,
+    "palette_tolerance": 12,
+    "note": "required_beats is what the shot table of this path names, so the recorder's own verifier asks the same question the judge does"
+  }
+}

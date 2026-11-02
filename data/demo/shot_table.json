@@ -1,0 +1,308 @@
+{
+  "version": 1,
+  "written": "2026-11-01",
+  "source": "knowledge/DEMO-SCRIPT.md section 1 (the six shots at a glance), section 3 (S1 to S6, second by second) and the S5 and S6 sub-shot paragraphs. The numbers are the document's own steps, read back through the 60 step a second clock, so a row here and a row there cannot drift without the validator saying so.",
+  "why": "One command plays one documented take: this file is the shot table as data. tools/play_demo.py reads a table by name, plays the script the table names, and then asks the game's own log whether each shot's line was written. Card t_fb7e8271 made the file; card t_866814e6 made `full` the 180 s take the card asks for and kept the 253.5 s three fight take as full-three.",
+  "narration": {
+    "used": false,
+    "note": "The recorder draws no text on the frame and writes no narrator line into the video: the shots are the game's own pixels, and the captions DEMO-SCRIPT.md names belong to the edit (R44), not to this take. A table row that carries a narrator, narration or voiceover field is refused by the validator, so the take cannot grow a voice over quietly."
+  },
+  "tables": {
+    "full": {
+      "name": "full",
+      "title": "the three fight take a concurrent lane authored on 2026-11-01: Morgan at the gate and Percy in his office as well, 253.5 s",
+      "script": "data/demo/run_002.json",
+      "fps": 60,
+      "total_seconds": 253.5,
+      "tolerance_seconds": 1.0,
+      "take_band_seconds": [
+        243.5,
+        263.5
+      ],
+      "end_step": 15210,
+      "clock_note": "253.50 s is 15,210 steps at 60 a second. It is not the submission take: DEMO-SCRIPT section 3, the card and the Meta pitch all ask for 180 s. It is kept beside the 180 s table so the work that built it (Morgan's gate fight, Percy's office fight and the end card) is not lost while the day's judging take is the one the card names.",
+      "required_beats": [
+        "S1 title",
+        "S2 crawl",
+        "S3 drive",
+        "S4 gate",
+        "S4 morgan fight",
+        "S5 office",
+        "S5 office talk",
+        "S5 boarding",
+        "S6 talk fight",
+        "S6 ship log save",
+        "S6 percy fight"
+      ],
+      "shots": [
+        {
+          "id": "S1",
+          "title": "the title, PRESS START, NEW GAME",
+          "seconds": 16.0,
+          "start_step": 0,
+          "end_step": 960,
+          "markers": [
+            "S1 title"
+          ],
+          "on_screen": "the attract loop of rm_pp_title, the car, the storm cloud, the logo, then the menu with CONTINUE in the second ink",
+          "inputs": "none until 11.80 s, then enter twice"
+        },
+        {
+          "id": "S2",
+          "title": "the crawl",
+          "seconds": 13.0,
+          "start_step": 960,
+          "end_step": 1740,
+          "markers": [
+            "S2 crawl"
+          ],
+          "on_screen": "the crawl over the star field, one row at a time, no page skipped",
+          "inputs": "confirm held from 22.00 s to 27.00 s, then released"
+        },
+        {
+          "id": "S3",
+          "title": "the drive, one shot, the sign that counts down",
+          "seconds": 10.03,
+          "start_step": 1740,
+          "end_step": 2342,
+          "markers": [
+            "S3 drive"
+          ],
+          "on_screen": "shot 3 of the drive list, the verge and the gantry sign, then the hard cut on the bar",
+          "inputs": "confirm once at 35.00 s, which closes the one caption"
+        },
+        {
+          "id": "S4",
+          "title": "arrival at Town Quay, the gate checkpoint with its three option choice, and Morgan's fight at the gate",
+          "seconds": 61.04,
+          "start_step": 2342,
+          "end_step": 6004,
+          "markers": [
+            "S4 gate",
+            "S4 morgan fight"
+          ],
+          "on_screen": "the quay, the yard walk with footsteps, the checkpoint, four pages and one three option choice, then Morgan at the gate: the battle frame, three TALKs on his third option with the hint line, SPARE, the closing board",
+          "inputs": "held directions for the walk, confirm through the pages, Down and confirm on the choice, then Down Down confirm to open TALK, a panel pick for each of three talks, Down and confirm for SPARE",
+          "sub_shots": [
+            {
+              "id": "S4.1",
+              "title": "arrival, the checkpoint and its three option choice",
+              "seconds": 16.53,
+              "start_step": 2342,
+              "end_step": 3334,
+              "markers": [
+                "S4 gate"
+              ],
+              "on_screen": "the quay, the yard walk, the checkpoint pages, the choice and the bluff reply",
+              "inputs": "held directions, confirm through the pages, Down and confirm on the choice"
+            },
+            {
+              "id": "S4.2",
+              "title": "Morgan at the gate, three TALKs and the SPARE",
+              "seconds": 44.5,
+              "start_step": 3334,
+              "end_step": 6004,
+              "markers": [
+                "S4 morgan fight"
+              ],
+              "on_screen": "the battle frame on Morgan, TALK opens the panel, the third option three times, the hint line, SPARE, the result panel",
+              "inputs": "Down Down confirm to open TALK, Down Down confirm to pick, confirm to reopen TALK for each next talk, Down and confirm for SPARE"
+            }
+          ]
+        },
+        {
+          "id": "S5",
+          "title": "the dock office, the boarding pass, the boarding",
+          "seconds": 19.85,
+          "start_step": 6004,
+          "end_step": 7195,
+          "markers": [
+            "S5 office",
+            "S5 office talk",
+            "S5 boarding"
+          ],
+          "on_screen": "the office, Nye's page and its bake row, the clerk asking the player's name and answering the typed line in his plate, the slip changing hands, the quay south, the gangway, the deck",
+          "inputs": "confirm on the door, a press for every page, the typed name in the TALK box (letters then enter), a press to close the answer, walking keys, then the boarding scene",
+          "sub_shots": [
+            {
+              "id": "S5.1",
+              "title": "the dock office and the boarding pass",
+              "seconds": 14.02,
+              "start_step": 6004,
+              "end_step": 6845,
+              "markers": [
+                "S5 office",
+                "S5 office talk"
+              ],
+              "on_screen": "six pages with the clerk's exchange between them: the player types his name, the box answers in Nye's plate with the verdict, then the pass page",
+              "inputs": "confirm through the pages, the five letters of the name and enter, confirm through the pass page"
+            },
+            {
+              "id": "S5.2",
+              "title": "the gangway and the boarding",
+              "seconds": 5.83,
+              "start_step": 6845,
+              "end_step": 7195,
+              "markers": [
+                "S5 boarding"
+              ],
+              "on_screen": "the boarding scene, the horn, the gangway page, the deck of ship_small",
+              "inputs": "a confirm on each of the two gangway presses"
+            }
+          ]
+        },
+        {
+          "id": "S6",
+          "title": "the deck watch fight, the ship's log save, Percy's office fight and the end card",
+          "seconds": 133.58,
+          "start_step": 7195,
+          "end_step": 15210,
+          "markers": [
+            "S6 talk fight",
+            "S6 ship log save",
+            "S6 percy fight"
+          ],
+          "on_screen": "the deck, the deck watch won by three TALKs and the SPARE, the cabin and the ship's log save, Percy's office, three TALKs, the SPARE, the ending scene and the end card",
+          "inputs": "walking keys, Down Down confirm to open TALK, a panel pick for each talk, Down and confirm for SPARE, confirm through the log, the save and the end card",
+          "sub_shots": [
+            {
+              "id": "S6.1",
+              "title": "the deck watch, the TALK fight won by talking",
+              "seconds": 46.67,
+              "start_step": 7195,
+              "end_step": 9995,
+              "markers": [
+                "S6 talk fight"
+              ],
+              "on_screen": "the deck watch, the TALK panel, three replies on the first, second and third option with the hint line, SPARE, the peaceful end",
+              "inputs": "Down Down confirm to open TALK, then per talk confirm to open, Down to the option, confirm to pick; Down and confirm for SPARE"
+            },
+            {
+              "id": "S6.2",
+              "title": "the cabin and the ship's log save",
+              "seconds": 13.17,
+              "start_step": 9995,
+              "end_step": 10785,
+              "markers": [
+                "S6 ship log save"
+              ],
+              "on_screen": "the cabin door, the ship's log, the Saving panel and the chime, then the corridor to Percy's door",
+              "inputs": "walking keys, then a confirm through the log and the save"
+            },
+            {
+              "id": "S6.3",
+              "title": "Percy's office: three TALKs, the SPARE and the end card",
+              "seconds": 73.75,
+              "start_step": 10785,
+              "end_step": 15210,
+              "markers": [
+                "S6 percy fight"
+              ],
+              "on_screen": "Percy's office, the office scene, the battle frame, three TALKs on the first option, SPARE, the ending scene and END OF THE DEMO",
+              "inputs": "walking keys, confirm through the office pages, Down Down confirm to open TALK, confirm twice per talk, Down and confirm for SPARE, confirm through the end card"
+            }
+          ]
+        }
+      ],
+      "why": "The three battle take, Morgan at the gate, the deck watch and Percy in his office, 253.5 s: the full route and the QA take since Nayil's order (manager decision 2026-11-01: exactly three battles, every fight ends by spare or 0 HP). The 180 s take of card t_866814e6, built around a deck hound fight and a forced defeat, is retired. The tooling needs every table's shots to meet end to end from step 0, so a 180 s highlights table cannot be a subset of this take; that recut is left to the demo card with data/demo/run_002.json as its source."
+    },
+    "talk-win": {
+      "name": "talk-win",
+      "title": "the S6 talking win alone: the deck, TALK three times, SPARE, the ship's log save",
+      "script": "data/demo/run_talk_win.json",
+      "fps": 60,
+      "total_seconds": 134.33,
+      "tolerance_seconds": 1.0,
+      "take_band_seconds": [
+        115.0,
+        165.0
+      ],
+      "end_step": 8060,
+      "clock_note": "One take, one launch, one deck. 134.33 s is 8,060 steps at 60 a second. The fight rows are driven by the game's own log lines, so a press cannot land on a board or a dodge: each one names the line it waits on and carries the fallback step the run uses if the log is block buffered.",
+      "why": "Card t_e48b13a6: the talking win as a path the demo harness can select by name, without the 180 s take around it and without a person at the keyboard. It is the same fight and the same save the submission take uses, started on the deck through PP_ROUTE_HOLD=drive.",
+      "required_beats": [
+        "S1 title",
+        "S2 crawl",
+        "S6 talk fight",
+        "S6 ship log save"
+      ],
+      "shots": [
+        {
+          "id": "TW1",
+          "title": "the title, the crawl, the walk to the Deck Watch and the talking win",
+          "seconds": 109.33,
+          "start_step": 0,
+          "end_step": 6560,
+          "markers": [
+            "S1 title",
+            "S2 crawl",
+            "S6 talk fight"
+          ],
+          "on_screen": "the attract, PRESS START, the crawl, the deck at 2,7, the press on the Deck Watch's own tile, the command list, the TALK panel with the meter climbing 0 to 20 to 40 to 60, then SPARE and the peaceful end",
+          "inputs": "enter twice, right held 19 steps, a confirm on the trigger, two downs and the TALK panel three times, then down and a confirm on SPARE"
+        },
+        {
+          "id": "TW2",
+          "title": "the ship's log and its save",
+          "seconds": 25.0,
+          "start_step": 6560,
+          "end_step": 8060,
+          "markers": [
+            "S6 ship log save"
+          ],
+          "on_screen": "the doorway at (3,6), the log's two pages, the hero walked to the save point at (3,2) with save_jingle over the written page",
+          "inputs": "left held 5 steps, up held 7, a confirm on the doorway, four presses for the two pages, and no press after them"
+        }
+      ]
+    },
+    "command-win": {
+      "name": "command-win",
+      "title": "the S6 single command win: the deck, the hound ended by ONE FIGHT, the ship's log save",
+      "script": "data/demo/run_command_win.json",
+      "fps": 60,
+      "total_seconds": 129.33,
+      "tolerance_seconds": 1.0,
+      "take_band_seconds": [
+        110.0,
+        160.0
+      ],
+      "end_step": 7760,
+      "clock_note": "One take, one launch, one deck. 129.33 s is 7,760 steps at 60 a second. The Deck Watch is cleared first because the deck is a corridor: its trigger at (4,7) sits west of the hound's at (6,7), so no walk reaches the hound without passing it. The hound then falls to one Confirm on FIGHT, because it carries 2 hp and 2 is the floor of the game's own damage.",
+      "why": "Card t_e48b13a6: the single command win as a path the demo harness can select by name. The win it proves is the hound's, the only fight on the deck a single command can end.",
+      "required_beats": [
+        "S1 title",
+        "S2 crawl",
+        "S6 hound fight",
+        "S6 ship log save"
+      ],
+      "shots": [
+        {
+          "id": "CW1",
+          "title": "the title, the crawl, the watch cleared, the hound ended by one FIGHT",
+          "seconds": 104.33,
+          "start_step": 0,
+          "end_step": 6260,
+          "markers": [
+            "S1 title",
+            "S2 crawl",
+            "S6 hound fight"
+          ],
+          "on_screen": "the attract, PRESS START, the crawl, the deck at 2,7, the Deck Watch's two blows, the walk east, the hound's intro and one Confirm on FIGHT that ends it",
+          "inputs": "enter twice, right held 19 steps, a confirm on the trigger, FIGHT twice with the bar, right held 19 steps, a confirm on the hound's trigger, one confirm on FIGHT"
+        },
+        {
+          "id": "CW2",
+          "title": "the ship's log and its save",
+          "seconds": 25.0,
+          "start_step": 6260,
+          "end_step": 7760,
+          "markers": [
+            "S6 ship log save"
+          ],
+          "on_screen": "the doorway at (3,6), the log's two pages, the hero walked to the save point at (3,2) with save_jingle over the written page",
+          "inputs": "left held 21 steps, up held 7, a confirm on the doorway, four presses for the two pages, and no press after them"
+        }
+      ]
+    }
+  }
+}

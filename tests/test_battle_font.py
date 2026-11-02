@@ -166,12 +166,16 @@ def test_the_battle_band_and_the_card_are_measured_in_cells():
     # The message window is 224 px inside (PP_FRAME_W - 32), which is 28 characters at 8 px a cell.
     band = function_body(read(BATTLE_TEXT), "pp_text_board_draw")
     assert "pp_font_cols(PP_FRAME_W - 32)" in band, band
-    # The game over card's inner rectangle is x 66 to x 190, 124 px: 15 cells, and the fallback path in pp_app takes
-    # the outcome word at the same kind of count (176 px inside its panel).
+    # The game over card's inner rectangle is x 66 to x 190, 124 px: 15 cells.
     card = function_body(read(DIRECTOR), "pp_battle_draw_gameover")
     assert "draw_rectangle(66, 66, 190, 174, false)" in card, card
     assert "pp_font_cols(124)" in card, card
-    assert "pp_font_cols(PP_FRAME_W - 80)" in read(APP)
+    # Card t_855887d8: the result panel moved out of pp_app and into pp_battle_draw_victory. Its field is the nine
+    # slice less its two 8 px borders (176 px, the same inside width the pp_app panel had), and the outcome word is
+    # centred on that field as one line, so nothing about it wraps or runs off the frame.
+    panel = function_body(read(DIRECTOR), "pp_battle_draw_victory")
+    assert "pp_font_draw_centre(pp_battle_outcome(_battle), _cx, _v.word_y, 1);" in panel, panel
+    assert "draw_rectangle(_v.x + 8, _v.y + 8, _x2 - 8, _y2 - 8, false);" in panel, panel
 
 
 # ---------------------------------------------------------------------------------------------------------------

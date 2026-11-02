@@ -22,7 +22,7 @@ function pp_battle_new(_encounter, _enemy, _party, _ledger) {
             power_multiplier: _party.power_multiplier,
             will: _party.will_max,
             will_max: _party.will_max,
-            powers: pp_battle_saved_powers(_ledger),
+            powers: pp_battle_saved_powers(_ledger, _party),
             items: pp_battle_start_items(_party, _ledger),
             // Card PP-KNIFE: the row the party's own data names as its weapon, resolved once at the top of the fight
             // from data/items.json. Undefined when the party names none, and the director then prints its plain line.
@@ -81,6 +81,11 @@ function pp_battle_new(_encounter, _enemy, _party, _ledger) {
         result: PPResult.none,
         recorded: false,
         defeated: false,
+        // Card BATTLE-FULL (2026-10-27): hit feedback and the ACT effect. hurt_flash and shake count down from the step
+        // the marker is hit; skip_enemy_turn is set by a TALK option whose enemy row says skip_turn (act_responses).
+        hurt_flash: 0,
+        shake: 0,
+        skip_enemy_turn: false,
         // Card R27 (spec 07 acceptance 4, spec 11 rule 5): the game over. A defeat never becomes PPBattlePhase.ended
         // by itself. The result phase holds the fade to black, then the game over frame, then the two ways out.
         // gameover_choice is "" while the screen waits, "wait" while the save read is in flight, "continue" once the
@@ -106,8 +111,8 @@ function pp_battle_new(_encounter, _enemy, _party, _ledger) {
     pp_talk_live_state_init(_battle);
 
     pp_battle_phase_set(_battle, PPBattlePhase.intro);
-    // Card t_8dcd842f: the readout's first line, so a recording's log carries "HP 20/20" at fight start
-    // without reading a pixel, and every later line can be compared with it.
+    // Card t_8dcd842f: the readout's first line, so a recording's log carries "HP 20/20" at fight start without
+    // reading a pixel, and every later line can be compared with it.
     pp_battle_hud_refresh(_battle, "fight start");
     return _battle;
 }
@@ -152,10 +157,18 @@ function pp_battle_enemy_phase_sync(_battle) {
     return _battle;
 }
 
-/// Powers carry over from the ledger once they are earned.
-function pp_battle_saved_powers(_ledger) {
-    if (variable_struct_exists(_ledger, "powers")) return _ledger.powers;
-    return [];
+/// Powers carry over from the ledger once they are earned. Card THREE-BATTLES (2026-11-01): a party row may also name
+/// starting_powers (ids in data\powers.json). A fight uses them while the ledger holds none, so POWER works in every fight.
+function pp_battle_saved_powers(_ledger, _party) {
+    if (variable_struct_exists(_ledger, "powers") && is_array(_ledger.powers) && array_length(_ledger.powers) > 0) return _ledger.powers;
+    var _out = [];
+    if (is_struct(_party) && variable_struct_exists(_party, "starting_powers") && is_array(_party.starting_powers)) {
+        for (var i = 0; i < array_length(_party.starting_powers); i++) {
+            var _id = _party.starting_powers[i];
+            if (variable_struct_exists(global.pp_data.power_by_id, _id)) array_push(_out, global.pp_data.power_by_id[$ _id]);
+        }
+    }
+    return _out;
 }
 
 /// Starting items come from party data, expanded to one record per copy so using one is one array delete.
@@ -298,8 +311,10 @@ function pp_battle_step(_battle) {
     _battle.phase_steps += 1;
     if (_battle.popup_steps > 0) _battle.popup_steps -= 1;
     if (_battle.cursor_note_steps > 0) _battle.cursor_note_steps -= 1;
-    // Card t_8dcd842f: the HUD's safety net. Four comparisons while nothing moved; a logged refresh the step
-    // after any meter changes, including the two written outside this file.
+    if (_battle.hurt_flash > 0) _battle.hurt_flash -= 1;
+    if (_battle.shake > 0) _battle.shake -= 1;
+    // Card t_8dcd842f: the HUD's safety net. Four comparisons while nothing moved; a logged refresh the step after
+    // any meter changes, including the two written outside this file.
     pp_battle_hud_guard(_battle);
 
     switch (_battle.phase) {
@@ -316,6 +331,18 @@ function pp_battle_step(_battle) {
 }
 
 function pp_battle_step_intro(_battle) {
+    // Card t_866814e6: DEMO-SCRIPT N1's forced defeat, as one data field on one encounter row (data/encounters/all.json,
+    // deck_collapse). No fight in the slice can be lost, so the demo's S6.4 beat had nothing to land on. The fight's own
+    // actor is put to 0 and the result is entered on the intro's first step, so the 12 step fade, the game over card and
+    // CONTINUE all come from the one path R27 built and no second defeat path exists. An encounter without the field
+    // reaches the same step it always did, because the read is guarded by variable_struct_exists.
+    if (_battle.phase_steps == 1 && variable_struct_exists(_battle.encounter, "forced_defeat")
+        && _battle.encounter.forced_defeat) {
+        _battle.actor.hp = 0;
+        _battle.defeated = true;
+        pp_battle_enter_result(_battle);
+        return;
+    }
     if (_battle.phase_steps == PP_INTRO_FLASH_STEPS + PP_FRAME_SLIDE_STEPS) {
         var _intro = pp_battle_dialogue(_battle.encounter.intro_dialogue);
         if (is_array(_intro)) pp_battle_say(_battle, _intro, "menu");
@@ -534,6 +561,12 @@ function pp_battle_after_message(_battle) {
             pp_battle_say(_battle, pp_battle_dialogue_lines(_line_id), "enemy_turn");
             return;
         }
+        // An ACT that made the enemy lose its turn (enemy row act_responses, skip_turn) spends it here, once.
+        if (_battle.skip_enemy_turn) {
+            _battle.skip_enemy_turn = false;
+            pp_battle_phase_set(_battle, PPBattlePhase.menu);
+            return;
+        }
         _battle.attack_value = pp_battle_roll_attack(_battle);
         pp_battle_phase_set(_battle, PPBattlePhase.telegraph);
         return;
@@ -570,6 +603,27 @@ function pp_battle_pick_pattern(_battle) {
     return undefined;
 }
 
+/// Apply the enemy row's act_responses entry for the TALK option just picked (data only, no enemy id in code).
+/// Returns the extra narration line, or "" when the option changes nothing.
+function pp_battle_act_apply(_battle, _option) {
+    var _enemy = _battle.enemy;
+    if (!variable_struct_exists(_enemy, "act_responses")) return "";
+    var _rows = _enemy.act_responses;
+    for (var i = 0; i < array_length(_rows); i++) {
+        var _r = _rows[i];
+        if (_r.option != _option) continue;
+        if (variable_struct_exists(_r, "pattern_pool")) _battle.pattern_pool = _r.pattern_pool;
+        if (variable_struct_exists(_r, "attack_delta")) {
+            var _a = _battle.attack_range;
+            _battle.attack_range = { min: max(1, _a.min + _r.attack_delta), max: max(1, _a.max + _r.attack_delta) };
+        }
+        if (variable_struct_exists(_r, "skip_turn") && _r.skip_turn) _battle.skip_enemy_turn = true;
+        show_debug_message("PP: act response, option " + string(_option) + ", enemy " + string(_enemy.id));
+        if (variable_struct_exists(_r, "line")) return _r.line;
+    }
+    return "";
+}
+
 function pp_battle_roll_attack(_battle) {
     // Spec 18 section 6 consequence 1: a phase row may raise the attack inside the enemy's own band, so the roll
     // reads the range the current phase put in force and never the enemy row directly.
@@ -586,6 +640,10 @@ function pp_battle_step_dodge(_battle) {
         pp_battle_hud_refresh(_battle, "party hit");
         _battle.popup_value = _battle.arena.attack;
         _battle.popup_steps = PP_DAMAGE_POPUP_STEPS;
+        // Hit feedback: a screen flash, a shake of the party row and the existing hit cue.
+        _battle.hurt_flash = 6;
+        _battle.shake = 12;
+        pp_audio_play("hit");
     }
     if (_ev.ended) {
         _battle.arena = undefined;
@@ -949,7 +1007,7 @@ function pp_battle_dialogue_lines(_id) {
 
 /// The four strips, spelled the way the art lane's own files and the scene palette sets spell them.
 function pp_battle_bg_strips() {
-    return ["corridor", "wardroom", "deck_night", "quay_dusk"];
+    return ["corridor", "wardroom", "deck_night", "quay_dusk", "quay_town", "ship_deck", "ship_office"];
 }
 
 /// The field origin. One function so the probe and the draw cannot disagree about it.
@@ -992,6 +1050,7 @@ function pp_battle_bg_for_room(_set) {
         case "lower_deck": return "corridor";
         case "ship_cabin": return "wardroom";
         case "deck_day": return "deck_night";
+        case "quay_night": return "quay_town";
     }
     return "";
 }
@@ -1032,6 +1091,9 @@ function pp_battle_bg_name(_battle) {
 
 /// The art index name of a strip: the mirror writes one row per PNG, so the name is the file's stem.
 function pp_battle_bg_sprite(_name) {
+    // 2026-11-01: the three weak 256x112 strips have real 256x168 scenes now; a build that has them draws them.
+    var _new = pp_battle_bg_upgrade(_name);
+    if (_new != string(_name) && pp_art_has("bg_battle_" + _new)) return "bg_battle_" + _new;
     return "bg_battle_" + string(_name);
 }
 
@@ -1050,6 +1112,9 @@ function pp_battle_draw_field(_battle) {
     var _sprite = pp_battle_bg_sprite(_name);
     if (pp_art_has(_sprite)) {
         pp_art_draw(_sprite, 0, pp_battle_bg_x(), pp_battle_bg_y(), PP_UNTINTED, 1);
+        // A 168 row scene fills the field down to the command band; what is left of the frame is black.
+        var _scene_h = pp_art_info(_sprite).frame_h;
+        if (_scene_h > pp_battle_bg_h()) pp_battle_swatch("k", 0, _scene_h, PP_FRAME_W, PP_FRAME_H - _scene_h);
         return _name;
     }
 
@@ -1159,6 +1224,8 @@ function pp_battle_actor_frame(_battle, _name) {
 /// call makes: the sheet is drawn exactly as authored, in the three colours its sidecar names ($0F $02 $30), so no
 /// sprite palette is spent on it and the strip keeps its four for the party.
 function pp_battle_draw_enemy(_battle, _slot) {
+    // 2026-11-01: the big battle sheet at the battle_b anchor comes first; the legacy slot is the fallback.
+    if (pp_battle_draw_enemy_big(_battle)) return true;
     if (is_undefined(_slot)) return false;
 
     var _name = pp_battle_enemy_sprite(_battle);
@@ -1183,6 +1250,8 @@ function pp_battle_draw_enemy(_battle, _slot) {
 /// slot whose sheet is not in the build is skipped and the rest still draw, because one missing sheet must not empty
 /// the block. Returns how many were drawn, which is the number the test and the capture both read.
 function pp_battle_draw_party(_battle) {
+    var _lb = pp_battle_layout_b();
+    if (!is_undefined(_lb)) return pp_battle_draw_party_b(_battle, _lb);
     var _slots = pp_battle_party_slots();
     var _drawn = 0;
     for (var i = 0; i < array_length(_slots); i++) {
@@ -1351,7 +1420,9 @@ function pp_battle_draw(_battle) {
     // rectangles that used to be here (a hero at 40,96 and an enemy block at 176,72) were the pre art stand-ins and
     // they are gone, because a placeholder left on screen beside the real draws would read as a second enemy. The
     // enemy's name, its health bar and the damage popup follow it to the left half for the same reason.
+    var _layout_b = pp_battle_layout_b();
     var _enemy_slot = pp_battle_enemy_slot();
+    if (!is_undefined(_layout_b)) _enemy_slot = pp_battle_enemy_rect_b(_layout_b);
     pp_battle_draw_enemy(_battle, _enemy_slot);
     pp_battle_draw_party(_battle);
     // Card PP-KNIFE: the swing, over the enemy's own slot for the first steps of the message a FIGHT opens. It is
@@ -1359,7 +1430,14 @@ function pp_battle_draw(_battle) {
     // bars stay readable over it.
     pp_battle_draw_slash(_battle, _enemy_slot);
 
-    if (!is_undefined(_enemy_slot)) {
+    if (!is_undefined(_layout_b)) {
+        // 2026-11-01 battle screen B: the enemy's plate (name, HP, MERCY) is one window. It steps aside while the
+        // timing bar, the telegraph line and the arena own the top of the field.
+        if (_battle.phase != PPBattlePhase.resolve && _battle.phase != PPBattlePhase.telegraph && _battle.phase != PPBattlePhase.dodge) {
+            pp_battle_draw_plate_b(_battle, _layout_b);
+        }
+    }
+    if (is_undefined(_layout_b) && !is_undefined(_enemy_slot)) {
         // Card BATTLE-FONT-WIRE: the enemy's name is the sheet's glyphs, over the slot the enemy stands in. The names
         // in data/enemies/all.json run to 11 characters (88 px) and the slot's centre would put the first glyph
         // outside the frame, so the name is centred on x 48, the nearest 8 px cell boundary that holds the longest
@@ -1384,8 +1462,8 @@ function pp_battle_draw(_battle) {
         // will is already printed at y 156 and two things called WILL on one screen is one thing too many.
         // Label on the first free row, bar across the whole 64 pixel track below it: a 12 pixel fill was what the
         // number-reserving layout left, and a bar a judge cannot see move is not evidence of anything.
-        // Card t_8dcd842f: the label stays this exact data call because tools\capture_talk_live.py reads this
-        // line as the MERCY row's position; the meter's two numbers come from the state reader.
+        // Card t_8dcd842f: the label stays this exact data call because tools\capture_talk_live.py reads this line as
+        // the MERCY row's position; the meter's two numbers come from the state reader below.
         pp_font_draw(pp_talk_live_data().will_label, _bar_x, _bar_y + 12, 1);
         var _will_x = _bar_x;
         var _will_y = _bar_y + 20;
@@ -1400,10 +1478,14 @@ function pp_battle_draw(_battle) {
     // card SHEET-GLYPH-GAP (t_f476435e, decision D13) grew the sheet a slash and the two brackets, so the line now
     // reads the way the rest of the idiom writes it. 22 characters at the slice's numbers, x 16 to x 192, inside the
     // frame.
-    // Card t_8dcd842f: the row's two numbers and their text come from the one reader, the same struct the bars
-    // and the dodge phase's strip use, so the line cannot disagree with a meter drawn from it.
-    var _row_hud = pp_battle_hud_state(_battle);
-    pp_font_draw(_row_hud.hp_text + "   " + _row_hud.will_text, 16, 156, 1);
+    var _shake_x = 0;
+    if (_battle.shake > 0) _shake_x = ((_battle.shake div 2) mod 2 == 0) ? 3 : -3;
+    if (is_undefined(_layout_b)) {
+        // Card t_8dcd842f: the row's two numbers and their text come from the one reader, the same struct the bars
+        // and the dodge phase's strip use, so the line cannot disagree with a meter drawn from it.
+        var _row_hud = pp_battle_hud_state(_battle);
+        pp_font_draw(_row_hud.hp_text + "   " + _row_hud.will_text, 16 + _shake_x, 156, 1);
+    }
 
     if (_battle.phase == PPBattlePhase.intro) {
         if (_battle.phase_steps < PP_INTRO_FLASH_STEPS && (_battle.phase_steps div 4) mod 2 == 0) {
@@ -1419,12 +1501,15 @@ function pp_battle_draw(_battle) {
     // painted over the command window's top border. Drawing the band last keeps the overhang inside the field.
     if (_battle.phase == PPBattlePhase.dodge && !is_undefined(_battle.arena)) {
         pp_arena_draw(_battle.arena);
-        // Card t_8dcd842f: the board covers the stat row whole (the arena runs from y 70 to y 170 and the row
-        // sits at y 156), so the same numbers are printed in the corner above it while the player dodges. Drawn
-        // after the arena because the arena dims the whole frame first.
+        // Card t_8dcd842f: the board covers the party panel whole (the arena runs from y 70 to y 170 and the panel
+        // sits at y 120 to 160), so the same numbers are printed in the corner above it while the player dodges.
+        // Drawn after the arena because the arena dims the whole frame first.
         pp_battle_draw_hud_field(_battle);
     }
 
+    if (!is_undefined(_layout_b) && _battle.phase != PPBattlePhase.menu && _battle.phase != PPBattlePhase.resolve) {
+        pp_battle_draw_band_frame();
+    }
     if (_battle.phase == PPBattlePhase.menu || _battle.phase == PPBattlePhase.resolve) {
         // Card R30: while a talk is open the band draws its three options instead of the command list, and the prompt
         // takes the message window. Both shapes are spec 16 section 1: the options are the enemy's own three lines.
@@ -1443,20 +1528,10 @@ function pp_battle_draw(_battle) {
     // Card t_ee178652: the live entry box owns the same window while it is open, before the board branch, because a
     // typed line is not a message board and drawing one over the other would print the box under a reply.
     if (pp_talk_live_open_now(_battle)) {
-        draw_set_colour(pp_role_colour("paper"));
-        draw_rectangle(pp_battle_text_box_x1(), pp_battle_text_box_y1(),
-                       pp_battle_text_box_x2() - 1, pp_battle_text_box_y2() - 1, false);
-        draw_set_colour(pp_role_colour("dim"));
-        draw_rectangle(pp_battle_text_box_x1(), pp_battle_text_box_y1(),
-                       pp_battle_text_box_x2() - 1, pp_battle_text_box_y2() - 1, true);
+        pp_battle_draw_message_box();
         pp_talk_live_draw(_battle);
     } else if (!is_undefined(_battle.messages)) {
-        draw_set_colour(pp_role_colour("paper"));
-        draw_rectangle(pp_battle_text_box_x1(), pp_battle_text_box_y1(),
-                       pp_battle_text_box_x2() - 1, pp_battle_text_box_y2() - 1, false);
-        draw_set_colour(pp_role_colour("dim"));
-        draw_rectangle(pp_battle_text_box_x1(), pp_battle_text_box_y1(),
-                       pp_battle_text_box_x2() - 1, pp_battle_text_box_y2() - 1, true);
+        pp_battle_draw_message_box();
         // Card R30: a baked reply draws at spec 19's 8 pixel pitch with the hint on the row under it (Q2 and Q9), and
         // every other line keeps spec 05's pitch. The window does not grow for either.
         if (_battle.talk_reply) {
@@ -1472,17 +1547,32 @@ function pp_battle_draw(_battle) {
         // the enemy's sheet, and white on a light body is not a number a player can read. Card t_4275136f moves it
         // from x 200 to the enemy's own slot centre with the enemy it belongs to.
         pp_font_draw_plated_centre(string(_battle.popup_value), _enemy_slot.x + _enemy_slot.w * 0.5,
-                                   120 - (PP_DAMAGE_POPUP_STEPS - _battle.popup_steps), 1);
+                                   (is_undefined(_layout_b) ? 120 : 84) - (PP_DAMAGE_POPUP_STEPS - _battle.popup_steps), 1);
     }
 
     if (_battle.phase == PPBattlePhase.telegraph) {
-        pp_font_draw_centre("here it comes", PP_FRAME_W * 0.5, 96, 1);
+        var _warn = "here it comes";
+        if (variable_struct_exists(_battle.enemy, "telegraph_line")) _warn = _battle.enemy.telegraph_line;
+        if (is_undefined(_layout_b)) pp_font_draw_centre(_warn, PP_FRAME_W * 0.5, 96, 1);
+        else pp_battle_draw_telegraph_b(_warn);
+    }
+
+    // Hit flash: two flickers of the text role over the whole frame, no new colour.
+    if (_battle.hurt_flash > 0 && (_battle.hurt_flash div 2) mod 2 == 1) {
+        draw_set_alpha(0.5);
+        draw_set_colour(pp_role_colour("text"));
+        draw_rectangle(0, 0, PP_FRAME_W, PP_FRAME_H, false);
+        draw_set_alpha(1);
     }
 
     // Card R27: a lost fight fades out here and the game over frame takes the screen.
     if (_battle.defeated && _battle.phase == PPBattlePhase.result) {
         pp_battle_draw_gameover(_battle);
     }
+
+    // Card t_855887d8: a won fight ends on its victory panel. Drawn last so it sits over the field, the actors, the
+    // plate and the command band, which is where the panel in pp_app's battle draw used to stand.
+    if (pp_battle_victory_shown(_battle)) pp_battle_draw_victory(_battle);
 }
 
 /// The game over screen (spec 07 acceptance 4, spec 13 look). Two parts and both are whole pixels: the 12 step fade
@@ -1576,33 +1666,33 @@ function pp_battle_draw_gameover(_battle) {
 /// command list had, so the screen around the box does not jump, and no label can be read as a command that could be
 /// pressed while the player is typing.
 function pp_battle_draw_band_empty() {
-    draw_set_colour(pp_role_colour("paper"));
-    draw_rectangle(8, PP_MENU_TOP, PP_FRAME_W - 8, PP_FRAME_H - 8, false);
-    draw_set_colour(pp_role_colour("dim"));
-    draw_rectangle(8, PP_MENU_TOP, PP_FRAME_W - 8, PP_FRAME_H - 8, true);
+    pp_battle_draw_band_frame();
 }
 
 function pp_battle_draw_menu(_battle) {
-    var _y = PP_MENU_TOP + 8;
-    draw_set_colour(pp_role_colour("paper"));
-    draw_rectangle(8, PP_MENU_TOP, PP_FRAME_W - 8, PP_FRAME_H - 8, false);
-    draw_set_colour(pp_role_colour("dim"));
-    draw_rectangle(8, PP_MENU_TOP, PP_FRAME_W - 8, PP_FRAME_H - 8, true);
+    var _lb = pp_battle_layout_b();
+    var _y = PP_MENU_TOP + (is_undefined(_lb) ? 8 : 10);
+    var _pitch = is_undefined(_lb) ? 20 : 14;
+    pp_battle_draw_band_frame();
 
     var _table = pp_command_table();
     for (var i = 0; i < array_length(_table); i++) {
         var _entry = _table[i];
         var _state = pp_command_state(_battle, _entry.id);
         var _x = 24 + (i mod 2) * 104;
-        var _yy = _y + (i div 2) * 20;
+        var _yy = _y + (i div 2) * _pitch;
         // Card BATTLE-FONT-WIRE: the label is the sheet's glyphs in the sheet's one ink. A refused entry used to be
         // drawn in the dim role, which the sheet cannot do without a multiply no PPU can output, so it is ruled
         // through instead (rule 6); the cursor arrow still marks the row the player is on.
         if (_state.enabled) pp_font_draw(_entry.label, _x, _yy, 1);
         else pp_font_draw_struck(_entry.label, _x, _yy, 1);
         if (i == _battle.cursor) {
-            draw_set_colour(pp_role_colour("text"));
-            draw_triangle(_x - 10, _yy, _x - 10, _yy + 8, _x - 4, _yy + 4, false);
+            if (!is_undefined(_lb) && pp_art_has("spr_pp_menu_cursor")) {
+                pp_art_draw("spr_pp_menu_cursor", 0, _x - 12, _yy, PP_UNTINTED, 1);
+            } else {
+                draw_set_colour(pp_role_colour("text"));
+                draw_triangle(_x - 10, _yy, _x - 10, _yy + 8, _x - 4, _yy + 4, false);
+            }
         }
     }
 
@@ -1610,7 +1700,7 @@ function pp_battle_draw_menu(_battle) {
         // The reason a row is refused, one row on the band's bottom line at 28 columns. It sat at PP_FRAME_H - 20
         // before, which crosses the third label row at 216 once a glyph is 8 px tall; at PP_FRAME_H - 16 its 8 px
         // clear the labels' bottom edge at 224 and the band's own border at 232.
-        pp_font_draw_wrapped(_battle.cursor_note, 16, PP_FRAME_H - 16, pp_font_cols(PP_FRAME_W - 32), 8, 1);
+        pp_font_draw_wrapped(_battle.cursor_note, 16, PP_FRAME_H - (is_undefined(_lb) ? 16 : 20), pp_font_cols(PP_FRAME_W - 32), 8, 1);
     } else {
         // Card PP-KNIFE (t_503707c8): the menu text for the weapon. The band's bottom line is empty whenever nothing
         // is refused, and the row the player's hand points with is the one that should say what the hand is holding.
@@ -1618,11 +1708,16 @@ function pp_battle_draw_menu(_battle) {
         // nothing here rather than a label with nothing after it. 22 characters at the demo's name, in the 28 the
         // line holds.
         var _held = pp_battle_weapon_name(_battle);
-        if (_held != "") pp_font_draw("HELD: " + _held, 16, PP_FRAME_H - 16, 1);
+        if (_held != "") pp_font_draw("HELD: " + _held, 16, PP_FRAME_H - (is_undefined(_lb) ? 16 : 20), 1);
     }
 }
 
 function pp_battle_draw_bar(_battle) {
+    var _lb = pp_battle_layout_b();
+    if (!is_undefined(_lb) && pp_art_has("spr_pp_window")) {
+        pp_battle_draw_timing_b(_battle, _lb);
+        return;
+    }
     var _y = 120;
     draw_set_colour(pp_role_colour("dim"));
     draw_rectangle(48, _y, 208, _y + 6, false);
@@ -1631,4 +1726,277 @@ function pp_battle_draw_bar(_battle) {
     draw_set_colour(pp_role_colour("text"));
     draw_rectangle(48 + floor(1.6 * _battle.bar_pos) - 1, _y - 4, 48 + floor(1.6 * _battle.bar_pos) + 1, _y + 10, false);
     pp_font_draw("Z", 48, _y + 12, 1);
+}
+
+
+// ---------------------------------------------------------------------------------------------------------------
+// Battle screen B (2026-11-01 redesign). The geometry is the battle_b row of data\ui_layouts.json and nothing here
+// restates it: tools\render_battle_visuals.py reads the same row and the same sheets and draws this screen offline, so
+// the pictures in output\battle_visuals_2026-11-01 are this code's own layout. Windows are the project's nine slice
+// window sheet, letters are the 8x8 font, the cursor is spr_pp_menu_cursor, and every bar colour is cut out of the
+// bg_battle_hud swatch atlas (PP_UNTINTED art), so the screen invents no colour and asks for no role a room lacks.
+
+/// The battle_b layout (a top level key of data\ui_layouts.json, outside the three screens the UI gate counts), or
+/// undefined when the bundle has none and the legacy draw runs unchanged.
+function pp_battle_layout_b() {
+    if (!variable_global_exists("pp_data") || !is_struct(global.pp_data)) return undefined;
+    if (!variable_struct_exists(global.pp_data, "ui_layouts")) return undefined;
+    var _file = global.pp_data.ui_layouts;
+    if (!is_struct(_file) || !variable_struct_exists(_file, "battle_b")) return undefined;
+    return _file.battle_b;
+}
+
+/// A flat rectangle in one atlas colour: one pixel cut from the swatch cell and stretched, so a bar is exact art.
+function pp_battle_swatch(_key, _x, _y, _w, _h) {
+    if (_w <= 0 || _h <= 0) return false;
+    var _lb = pp_battle_layout_b();
+    if (is_undefined(_lb)) return false;
+    var _sw = _lb.swatches;
+    if (!variable_struct_exists(_sw, _key)) return false;
+    var _info = pp_art_info(_sw.sprite);
+    if (is_undefined(_info)) return false;
+    var _cell = _sw.cell;
+    draw_sprite_part_ext(_info.sprite, 0, _sw[$ _key] * _cell + _cell div 2, _cell div 2, 1, 1, _x, _y, floor(_w), floor(_h), PP_UNTINTED, 1);
+    return true;
+}
+
+/// A meter: grey outline, black track, a fill colour and its one pixel highlight row. Whole pixels only.
+function pp_battle_bar_b(_x, _y, _w, _h, _frac, _fill, _hi) {
+    pp_battle_swatch("grey", _x, _y, _w, _h);
+    pp_battle_swatch("k", _x + 1, _y + 1, _w - 2, _h - 2);
+    var _n = floor((_w - 2) * clamp(_frac, 0, 1));
+    if (_frac > 0 && _n < 1) _n = 1;
+    pp_battle_swatch(_fill, _x + 1, _y + 1, _n, _h - 2);
+    pp_battle_swatch(_hi, _x + 1, _y + 1, _n, 1);
+}
+
+/// One window in the project's nine slice sheet, size in 8 pixel tiles; a drawn box when the sheet is missing.
+function pp_battle_window_b(_x, _y, _w, _h) {
+    if (pp_window_draw(_x, _y, _w, _h, 1)) return true;
+    draw_set_colour(pp_role_colour("paper"));
+    draw_rectangle(_x, _y, _x + _w * 8 - 1, _y + _h * 8 - 1, false);
+    draw_set_colour(pp_role_colour("dim"));
+    draw_rectangle(_x, _y, _x + _w * 8 - 1, _y + _h * 8 - 1, true);
+    return false;
+}
+
+/// The command band's frame, drawn in every phase so the lower part of the screen is never an empty slab.
+function pp_battle_draw_band_frame() {
+    var _lb = pp_battle_layout_b();
+    if (!is_undefined(_lb) && pp_art_has("spr_pp_window")) {
+        var _m = _lb.command;
+        pp_battle_window_b(_m.x, _m.y, _m.w, _m.h);
+        return;
+    }
+    draw_set_colour(pp_role_colour("paper"));
+    draw_rectangle(8, PP_MENU_TOP, PP_FRAME_W - 8, PP_FRAME_H - 8, false);
+    draw_set_colour(pp_role_colour("dim"));
+    draw_rectangle(8, PP_MENU_TOP, PP_FRAME_W - 8, PP_FRAME_H - 8, true);
+}
+
+/// The message window over the top of the field (the text board and the live entry box draw inside it).
+function pp_battle_draw_message_box() {
+    var _lb = pp_battle_layout_b();
+    if (!is_undefined(_lb) && pp_art_has("spr_pp_window")) {
+        var _g = _lb.message;
+        pp_battle_window_b(_g.x, _g.y, _g.w, _g.h);
+        return;
+    }
+    draw_set_colour(pp_role_colour("paper"));
+    draw_rectangle(pp_battle_text_box_x1(), pp_battle_text_box_y1(),
+                   pp_battle_text_box_x2() - 1, pp_battle_text_box_y2() - 1, false);
+    draw_set_colour(pp_role_colour("dim"));
+    draw_rectangle(pp_battle_text_box_x1(), pp_battle_text_box_y1(),
+                   pp_battle_text_box_x2() - 1, pp_battle_text_box_y2() - 1, true);
+}
+
+/// The big enemy frame as a rect: bottom centre anchored on the scene's floor (battle_b enemy row).
+function pp_battle_enemy_rect_b(_lb) {
+    var _e = _lb.enemy;
+    return { x: _e.cx - _e.frame_w div 2, y: _e.feet - _e.frame_h + 1, w: _e.frame_w, h: _e.frame_h };
+}
+
+/// The art name of the enemy's big sheet: the row's own battle_sprite when it names one, else its id plus the suffix.
+function pp_battle_enemy_big_name(_battle) {
+    if (!is_struct(_battle) || !is_struct(_battle.enemy)) return "";
+    var _lb = pp_battle_layout_b();
+    if (is_undefined(_lb)) return "";
+    var _name = "";
+    if (variable_struct_exists(_battle.enemy, "battle_sprite")) _name = string(_battle.enemy.battle_sprite);
+    else if (variable_struct_exists(_battle.enemy, "id")) _name = string(_battle.enemy.id) + string(_lb.enemy.suffix);
+    if (_name == "" || !pp_art_has(_name)) return "";
+    return _name;
+}
+
+/// True for the first steps of the message a FIGHT or a POWER opens: the enemy shows its hit frame and shudders.
+function pp_battle_enemy_hit_now(_battle) {
+    if (_battle.phase != PPBattlePhase.message) return false;
+    if (_battle.action != PPCommand.fight && _battle.action != PPCommand.power) return false;
+    return (_battle.popup_steps > 0 && _battle.phase_steps < 18);
+}
+
+/// The enemy, large, standing on the scene's floor. Frames 0 and 1 are a one pixel breath, frame 2 is the hit.
+function pp_battle_draw_enemy_big(_battle) {
+    var _lb = pp_battle_layout_b();
+    if (is_undefined(_lb)) return false;
+    var _e = _lb.enemy;
+    var _hit = pp_battle_enemy_hit_now(_battle);
+    var _shake = 0;
+    if (_hit) _shake = ((_battle.phase_steps div 2) mod 2 == 0) ? 2 : -2;
+    var _name = pp_battle_enemy_big_name(_battle);
+    if (_name != "") {
+        var _f = (_battle.phase_steps div 30) mod 2;
+        if (_hit && pp_art_frames(_name) > 2) _f = 2;
+        pp_art_draw(_name, _f, _e.cx - _e.frame_w div 2 + _shake, _e.feet - _e.frame_h + 1, PP_UNTINTED, 1);
+        return true;
+    }
+    // An enemy with no big sheet keeps its small one, at the same anchor and the same scale.
+    var _old = pp_battle_enemy_sprite(_battle);
+    if (_old != "") {
+        var _info = pp_art_info(_old);
+        pp_art_draw(_old, pp_battle_actor_frame(_battle, _old), _e.cx - _info.frame_w div 2 + _shake,
+                    _e.feet - _info.frame_h + 1, PP_UNTINTED, 1);
+        return true;
+    }
+    return false;
+}
+
+/// The party panel: the layout's party members as portraits, then one shared HP bar and one shared WILL bar.
+function pp_battle_draw_party_b(_battle, _lb) {
+    var _q = _lb.panel;
+    pp_battle_window_b(_q.x, _q.y, _q.w, _q.h);
+    var _slots = pp_battle_party_slots();
+    var _shake_x = 0;
+    if (_battle.shake > 0) _shake_x = ((_battle.shake div 2) mod 2 == 0) ? 3 : -3;
+    var _drawn = 0;
+    for (var i = 0; i < array_length(_slots); i++) {
+        var _name = pp_battle_party_sprite(_slots[i].id);
+        if (!pp_art_has(_name)) continue;
+        var _f = 0;
+        if (_battle.actor.hp <= 0 && pp_art_frames(_name) > 6) _f = 6;
+        pp_art_draw(_name, _f, _q.party_x + i * _q.party_step + _shake_x, _q.party_y, PP_UNTINTED, 1);
+        _drawn += 1;
+    }
+    pp_battle_swatch("grey", _q.rule_x, _q.party_y + 1, 1, 30);
+    // Card t_8dcd842f: the panel's two lines and two meters both come off pp_battle_hud_state, so the number a
+    // player reads and the bar under it can never be one step apart.
+    var _hud = pp_battle_hud_state(_battle);
+    pp_font_draw(_hud.hp_text, _q.stat_x + _shake_x, _q.hp_y, 1);
+    pp_battle_bar_b(_q.stat_x + _shake_x, _q.hp_bar_y, _q.bar_w, _q.bar_h, _hud.hp_frac,
+                    _hud.hp_low ? "low" : "hp", _hud.hp_low ? "low_hi" : "hp_hi");
+    pp_font_draw(_hud.will_text, _q.stat_x + _shake_x, _q.will_y, 1);
+    pp_battle_bar_b(_q.stat_x + _shake_x, _q.will_bar_y, _q.bar_w, _q.bar_h, _hud.will_frac, "will", "will_hi");
+    return _drawn;
+}
+
+/// The enemy's plate: its name, its health and its MERCY meter (the same meter the TALK options move).
+function pp_battle_draw_plate_b(_battle, _lb) {
+    var _p = _lb.plate;
+    pp_battle_window_b(_p.x, _p.y, _p.w, _p.h);
+    pp_font_draw_centre(string(_battle.enemy.name), _p.x + _p.w * 4, _p.name_y, 1);
+    // Card t_8dcd842f: the plate's two meters read the same struct as the party's, so the MERCY bar the TALK
+    // options move is drawn from the value the fight holds and not from a second clamp at the draw call.
+    var _hud = pp_battle_hud_state(_battle);
+    pp_font_draw("HP", _p.label_x, _p.hp_y, 1);
+    pp_battle_bar_b(_p.bar_x, _p.hp_y + 1, _p.bar_w, _p.bar_h, _hud.enemy_frac,
+                    _hud.enemy_low ? "low" : "hp", _hud.enemy_low ? "low_hi" : "hp_hi");
+    pp_font_draw(_hud.mercy_label, _p.label_x, _p.mercy_y, 1);
+    pp_battle_bar_b(_p.bar_x, _p.mercy_y + 1, _p.bar_w, _p.bar_h, _hud.mercy_frac, "mercy", "mercy_hi");
+}
+
+/// The enemy's telegraph line, in a window at the top of the field instead of text laid over the picture.
+function pp_battle_draw_telegraph_b(_text) {
+    var _tiles = clamp(string_length(_text) + 2, 3, 32);
+    var _x = (PP_FRAME_W - _tiles * 8) div 2;
+    pp_battle_window_b(_x, 8, _tiles, 3);
+    pp_font_draw(_text, _x + 8, 12, 1);
+}
+
+/// The FIGHT timing bar in a window at the top of the field: track, gold sweet spot, white marker, the Z hint.
+function pp_battle_draw_timing_b(_battle, _lb) {
+    var _t = _lb.timing;
+    pp_battle_window_b(_t.x, _t.y, _t.w, _t.h);
+    pp_battle_bar_b(_t.bar_x, _t.bar_y, _t.bar_w, _t.bar_h, 0, "hp", "hp_hi");
+    pp_battle_swatch("gold", _t.bar_x + _t.bar_w div 2 - 3, _t.bar_y + 1, 6, _t.bar_h - 2);
+    pp_battle_swatch("white", _t.bar_x + floor(1.6 * _battle.bar_pos) - 1, _t.bar_y - 3, 3, _t.bar_h + 6);
+    pp_font_draw("Z", _t.bar_x, _t.bar_y + 11, 1);
+}
+
+/// The three weak strips and the scenes that replace them: a legacy name resolves to its new scene when the build has it.
+function pp_battle_bg_upgrade(_name) {
+    switch (string(_name)) {
+        case "quay_dusk": return "quay_town";
+        case "deck_night": return "ship_deck";
+        case "wardroom": return "ship_office";
+    }
+    return string(_name);
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+// The victory panel (card t_855887d8)
+//
+// A fight that is won used to stop on nothing: a paper rectangle with the bare outcome word on it, drawn out of the
+// director's own file. The panel here is a window in the battle screen's own nine slice (pp_battle_window_b, the same
+// frame the enemy plate, the party panel, the telegraph and the command band draw), with a paper field inside it, the
+// word VICTORY, the outcome word the fight chose, and the one key that leaves. It invents no colour: the frame is art
+// the other windows already draw, the field is the paper role, and the words are the sheet's own glyphs.
+//
+// The geometry is data (data/ui_layouts.json, battle_b.victory), so the offline renderer and this draw call cannot
+// disagree about where the panel is. The legacy branch is used only when the layout is absent, and it is the old
+// rectangle with the same three words, so a build without the battle screen still ends a fight on a panel.
+
+/// True while a WON fight shows its victory panel: the fight chose kill or spare, its result beat has started, and the
+/// fight is not handing the screen to a scene. The interruption is excluded by its own outcome (PPResult.interrupt),
+/// and a defeat by both fields, so the game over card keeps the frame a lost fight hands it.
+function pp_battle_victory_shown(_battle) {
+    if (!is_struct(_battle)) return false;
+    if (_battle.defeated) return false;
+    if (_battle.result != PPResult.kill && _battle.result != PPResult.spare) return false;
+    if (pp_battle_handoff_scene(_battle) != "") return false;
+    return _battle.phase == PPBattlePhase.result || _battle.phase == PPBattlePhase.ended;
+}
+
+/// The panel itself. The three words are the state's own: "VICTORY" is the title, pp_battle_outcome is the word the
+/// fight wrote (kill or spare), and the prompt is drawn only once pp_battle_finished, because before that the mode
+/// still refuses a press and a prompt that cannot be taken is a lie.
+function pp_battle_draw_victory(_battle) {
+    var _lb = pp_battle_layout_b();
+    if (is_undefined(_lb) || !variable_struct_exists(_lb, "victory")) {
+        pp_battle_draw_victory_plain(_battle);
+        return 0;
+    }
+
+    var _v = _lb.victory;
+    var _x2 = _v.x + _v.w * 8 - 1;
+    var _y2 = _v.y + _v.h * 8 - 1;
+
+    // The frame first, then the paper field inside its own 8 pixel border. The panel is a window, not a hole: the
+    // words sit on the role the screen's text is read against, and the frame is the HUD's.
+    pp_battle_window_b(_v.x, _v.y, _v.w, _v.h);
+    draw_set_colour(pp_role_colour("paper"));
+    draw_rectangle(_v.x + 8, _v.y + 8, _x2 - 8, _y2 - 8, false);
+
+    // One rule under the title, the same dim hairline the party panel rules its sprite column with.
+    draw_set_colour(pp_role_colour("dim"));
+    draw_line_width(_v.x + 16, _v.title_y + 9, _x2 - 16, _v.title_y + 9, 1);
+
+    var _cx = _v.x + _v.w * 4;
+    pp_font_draw_centre("VICTORY", _cx, _v.title_y, 1);
+    pp_font_draw_centre(pp_battle_outcome(_battle), _cx, _v.word_y, 1);
+    if (pp_battle_finished(_battle)) pp_font_draw_centre("press Z", _cx, _v.press_y, 1);
+    return 1;
+}
+
+/// The same panel for a build that carries no battle_b layout: the rectangle the old draw call used, a dim outline so
+/// it is a window and not a fill, and the same three words in the same order.
+function pp_battle_draw_victory_plain(_battle) {
+    draw_set_colour(pp_role_colour("paper"));
+    draw_rectangle(40, 100, PP_FRAME_W - 40, 140, false);
+    draw_set_colour(pp_role_colour("dim"));
+    draw_rectangle(40, 100, PP_FRAME_W - 40, 140, true);
+    draw_line_width(56, 110, PP_FRAME_W - 56, 110, 1);
+    pp_font_draw_centre("VICTORY", PP_FRAME_W * 0.5, 101, 1);
+    pp_font_draw_centre(pp_battle_outcome(_battle), PP_FRAME_W * 0.5, 112, 1);
+    if (pp_battle_finished(_battle)) pp_font_draw_centre("press Z", PP_FRAME_W * 0.5, 126, 1);
+    return 0;
 }

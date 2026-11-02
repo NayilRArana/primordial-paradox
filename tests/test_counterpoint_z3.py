@@ -75,7 +75,7 @@ def test_module_imports_without_side_effects_or_engine_imports():
         "loaded = sorted(m for m in sys.modules if m.split('.')[0] in forbidden)\n"
         "print(','.join(loaded))\n"
     )
-    finished = subprocess.run([sys.executable, "-c", program], cwd=COUNTERPOINT,
+    finished = subprocess.run([sys.executable, "-c", program], cwd=COUNTERPOINT, stdin=subprocess.DEVNULL,
                               capture_output=True, text=True, timeout=120)
     assert finished.returncode == 0, finished.stderr
     assert finished.stdout.strip() == "", "the module pulled in %r" % finished.stdout
@@ -84,7 +84,7 @@ def test_module_imports_without_side_effects_or_engine_imports():
 
 def test_no_file_io_at_import_time(tmp_path):
     program = "import counterpoint_z3\n"
-    finished = subprocess.run([sys.executable, "-c", program], cwd=str(tmp_path),
+    finished = subprocess.run([sys.executable, "-c", program], cwd=str(tmp_path), stdin=subprocess.DEVNULL,
                               capture_output=True, text=True, timeout=120,
                               env=dict(os.environ, PYTHONPATH=COUNTERPOINT))
     assert finished.returncode == 0, finished.stderr

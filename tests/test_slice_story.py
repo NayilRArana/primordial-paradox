@@ -80,7 +80,8 @@ PAGE_LINES = check_data.PAGE_LINES          # 3
 PAGES = check_data.PAGES                    # 3
 FIGHT_DAMAGE_MIN, FIGHT_DAMAGE_MAX = 2, 12  # spec 07, the FIGHT row: sweeps 0 to 100 in 60 steps, damage 2 to 12
 BOSS_ATTACK_MIN, BOSS_ATTACK_MAX = 3, 6     # spec 07, health: Percy 120 hp and attack 3 to 6
-PERCY_MAX_HP = 120                          # spec 07, health
+PERCY_MAX_HP = 40                           # the three battle demo (2026-11-01) cut him from spec 07's 120 hp
+DEMO_END_FLAG = "demo_complete"              # both Percy endings also set it: it is how the demo ends
 INTERRUPT_CEILING = 60                      # the card's decision: the interruption threshold sits at 60 or below
 ROUTE_LABELS = ("undecided", "mercy", "blooded", "genocide")  # spec 10 table, and data/project.json
 
@@ -369,25 +370,29 @@ def unknown_phase_patterns(story):
 
 
 def threshold_problems(story):
-    """Strictly decreasing, and every threshold below the enemy's own max_hp: the first crossing must be a crossing."""
+    """Strictly decreasing, and every threshold below 100 percent: the first crossing must be a crossing.
+
+    `hp_at_or_below` is a PERCENT of the enemy's max_hp (spec 18 section 8 P3, and the checker accepts 1 to 99), so the
+    ceiling the first phase must sit under is 100, not max_hp. The old version compared the percent with max_hp, which
+    only passed while Percy was 120 hp (70 is under 120) and said nothing true at the 40 hp the demo ships.
+    """
     problems = []
     for enemy_id, row in sorted(story.enemies.items()):
         thresholds = [phase.get("hp_at_or_below") for phase in row.get("phases") or []]
         if not thresholds:
             continue
-        previous = row.get("max_hp")
+        if not isinstance(row.get("max_hp"), int):
+            problems.append("%s has phases but no integer max_hp to take a percent of" % enemy_id)
+        previous = 100
         for index, value in enumerate(thresholds):
             if not isinstance(value, int) or isinstance(value, bool):
                 problems.append("%s.phases[%d].hp_at_or_below is %r, not an integer" % (enemy_id, index, value))
                 continue
-            if not isinstance(previous, int):
-                problems.append("%s has phases but no integer max_hp to be below" % enemy_id)
-                break
             if value >= previous:
-                problems.append("%s.phases[%d] is at %d hp, which is not below the %s before it"
+                problems.append("%s.phases[%d] is at %d percent, which is not below the %s before it"
                                 % (enemy_id, index, value, previous))
             if value <= 0:
-                problems.append("%s.phases[%d] is at %d hp, so the phase could never be entered alive"
+                problems.append("%s.phases[%d] is at %d percent, so the phase could never be entered alive"
                                 % (enemy_id, index, value))
             previous = value
     return problems
@@ -498,9 +503,9 @@ def test_phase_thresholds_are_strictly_decreasing_and_below_max_hp(story):
     # The one row the card asks about, named so a silent deletion is a failure and not an empty loop.
     thresholds = [phase["hp_at_or_below"] for phase in story.enemies["percy"].get("phases") or []]
     assert thresholds, "Percy carries no phases at all"
-    previous = PERCY_MAX_HP
+    previous = 100   # the thresholds are percents of max_hp, so the first one must sit under 100 percent
     for index, value in enumerate(thresholds):
-        assert value < previous, "Percy phase %d at %d hp is not below the %d before it" % (index, value, previous)
+        assert 0 < value < previous, "Percy phase %d at %d percent is not below the %d before it" % (index, value, previous)
         previous = value
 
 
@@ -545,7 +550,9 @@ def test_every_attack_range_stays_inside_the_spec_07_boss_band(story):
 
 def test_the_last_phase_is_reachable_from_120_hp_with_the_fight_damage_band(story):
     percy = story.enemies["percy"]
-    last = (percy.get("phases") or [])[-1]["hp_at_or_below"]
+    # A percent of max_hp (spec 18 section 8 P3), turned into the hp the blows have to reach: 40 percent of 40 is 16.
+    # It used to compare the raw percent with hp, which is vacuous once max_hp is not above the percent.
+    last = (percy.get("phases") or [])[-1]["hp_at_or_below"] * percy["max_hp"] // 100
     damages = range(FIGHT_DAMAGE_MIN, FIGHT_DAMAGE_MAX + 1)
     reachable = reachable_hp(percy["max_hp"], damages)
     entered = sorted(hp for hp in reachable if hp <= last)
@@ -745,13 +752,18 @@ def test_both_percy_endings_carry_their_dialogue_and_their_flag(story):
         dialogue_id = encounter.get(dialogue_field)
         assert dialogue_id in story.dialogues, "%s names %r, not a dialogue id" % (dialogue_field, dialogue_id)
         flags = encounter.get(flag_field) or []
-        assert len(flags) == 1, "%s must write exactly one flag, data says %r" % (flag_field, flags)
-        assert flags[0] in story.flags, "%s names %r, not a name in data/flags.json" % (flag_field, flags[0])
-        seen_flags.append(flags[0])
+        # Since the three battle demo both endings also set the shared end flag, demo_complete, which is how the demo
+        # ends. What stays true is that exactly ONE flag is the ending's own, so the epilogue can tell the two apart.
+        own = [name for name in flags if name != DEMO_END_FLAG]
+        assert len(own) == 1, "%s must write exactly one ending flag besides %s, data says %r" % (flag_field, DEMO_END_FLAG, flags)
+        assert flags.count(DEMO_END_FLAG) == 1 and len(flags) == 2, "%s must be the ending flag and %s only: %r" % (flag_field, DEMO_END_FLAG, flags)
+        assert own[0] in story.flags, "%s names %r, not a name in data/flags.json" % (flag_field, own[0])
+        assert DEMO_END_FLAG in story.flags, "%s is not a name in data/flags.json" % DEMO_END_FLAG
+        seen_flags.append(own[0])
         rows = story.dialogues[dialogue_id]
         lines = rows.get("lines") or [line for page in rows.get("pages") or [] for line in page.get("lines") or []]
         assert lines, "the ending dialogue %r has no lines" % dialogue_id
-        print("%s: dialogue %r, flag %r, %d line(s)" % (dialogue_field, dialogue_id, flags[0], len(lines)))
+        print("%s: dialogue %r, flag %r, %d line(s)" % (dialogue_field, dialogue_id, own[0], len(lines)))
     assert seen_flags[0] != seen_flags[1], "kill and spare write the same flag, so the epilogue cannot tell them apart"
 
 

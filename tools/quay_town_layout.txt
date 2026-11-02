@@ -59,7 +59,7 @@ ff===b:::b====L==b===LpppL==b==L==b==b===b===fff
 @actor morgan 9 10 left sailor quay_gate_checkpoint
 @barrier 8 8 b
 @plaza 19 23 27 29
-@fightspot dock_petty_officer 30 27
+@fightspot morgan_gate 8 11
 @osm 9 7 A1 11 0 Southampton Register Office
 @osm 15 7 A3 1 11 Kuti's Brasserie
 @osm 42 7 A1 51 5 Oceana Boulevard
@@ -87,7 +87,6 @@ ff===b:::b====L==b===LpppL==b==L==b==b===b===fff
 @trigger 30 25 map quay_dock_office spawn=from_quay
 @trigger 8 10 scene quay_gate_checkpoint once=true
 @trigger 8 12 scene quay_yard_walk once=true condition=gate_passed
-@trigger 16 26 marker deck_hound once=true marker_kind=story
 @trigger 23 40 map ship_small spawn=start
 @trigger 24 40 map ship_small spawn=start
 @trigger 23 38 say ship_aboard

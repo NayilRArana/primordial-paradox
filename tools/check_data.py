@@ -111,7 +111,7 @@ TRIGGER_ID_TABLES = {
 }
 SCENE_COMMANDS = {
     "say", "move", "face", "wait", "fade", "music", "sfx", "camera",
-    "shake", "flash", "spawn", "destroy", "battle", "setflag", "branch", "end",
+    "shake", "flash", "spawn", "destroy", "battle", "talk", "setflag", "branch", "end",
 }
 DIRECTIONS = {"up", "down", "left", "right"}
 AUDIO_KINDS = {"music", "sfx", "ui"}
@@ -1654,6 +1654,23 @@ class Checker:
                     battle_seen = True
                     self.ref(ids, "encounter", self.want(command, "id", "str", filename, command_path),
                              filename, command_path + ".id")
+                elif cmd == "talk":
+                    # Card t_1163ca72: a scene chat names the npc it speaks to. The npc has to be one of the actors
+                    # standing on the scene's own map, so a typo is a checker error and not a beat where the box opens
+                    # on nobody. The plate is the name the box draws and it is optional.
+                    npc = self.require(command, "npc", "str", filename, command_path)
+                    self.want(command, "plate", "str", filename, command_path)
+                    map_row = ids["map"].get(map_name) if isinstance(map_name, str) else None
+                    actors = map_row.get("actors") if isinstance(map_row, dict) else None
+                    actor_ids = set()
+                    if isinstance(actors, list):
+                        for actor in actors:
+                            if isinstance(actor, dict) and isinstance(actor.get("id"), str):
+                                actor_ids.add(actor["id"])
+                    if isinstance(npc, str) and npc not in actor_ids:
+                        self.error(filename, command_path + ".npc",
+                                   "%r is not an actor on %r; a scene talk speaks to a character who is in the room"
+                                   % (npc, map_name))
                 elif cmd == "spawn":
                     self.require(command, "actor", "str", filename, command_path)
                     for axis in ("x", "y"):

@@ -59,6 +59,10 @@ SPEC_21 = os.path.join(ROOT, "specs", "21-live-talk.md")
 SCENES = os.path.join(ROOT, "knowledge", "SCENES-S1-S3.md")
 
 PERSONA_IDS = ("konrad", "urien", "quay_townsperson")
+# The dock clerk answers inside the S5 cutscene (card t_330b12ce) so he carries a card like the three scene chats but
+# no bake report block: the bake list is the three live chats, and adding him there would move a recorded report.
+NYE_ID = "nye"
+ALL_IDS = PERSONA_IDS + (NYE_ID,)
 # What the card asks for, in one place: three personas, fifteen answers each, two sentences, six seconds.
 PER_PERSONA = 15
 ANSWER_SENTENCES = 2
@@ -120,14 +124,19 @@ def test_the_data_is_the_published_shape(doc):
 
 def test_three_personas_one_per_scene(doc, rows):
     assert doc["kind"] == "talk_personas" and doc["format"] == 1
-    assert tuple(sorted(rows)) == tuple(sorted(PERSONA_IDS)), "the card names exactly these three"
+    assert tuple(sorted(rows)) == tuple(sorted(ALL_IDS)), "the file names the three scene chats and the dock clerk"
     assert [rows[pid]["scene"] for pid in PERSONA_IDS] == ["S1", "S2", "S3"], "one persona per scene, in order"
     places = [rows[pid]["place"] for pid in PERSONA_IDS]
     assert places == ["wessex_lane_montefiore", "southampton_high_street", "southampton_town_quay"], places
+    # Card t_330b12ce: the clerk is the fourth card and stands in the dock office of the demo's S5, which the schema
+    # allows for him alone (the S1 to S3 chats are the story beats from knowledge/SCENES-S1-S3.md).
+    assert rows[NYE_ID]["scene"] == "S5" and rows[NYE_ID]["place"] == "quay_dock_office"
+    assert rows[NYE_ID]["effects"] == ["none", "nudge", "soften", "setback"], (
+        "a scene verdict has to be able to read persuaded, unmoved and angered, and the persona default is none/end")
 
 
 def test_every_persona_carries_the_answers_the_card_asks_for(rows):
-    for pid in PERSONA_IDS:
+    for pid in ALL_IDS:
         row = rows[pid]
         assert len(row["lines"]) >= PER_PERSONA, "%s carries fewer than %d bake lines" % (pid, PER_PERSONA)
         assert len(set(line.strip().lower() for line in row["lines"])) == len(row["lines"]), pid
@@ -144,11 +153,16 @@ def test_the_answer_cap_and_the_budget_are_the_cards_numbers(doc):
     assert ai_bridge.DEFAULT_TALK_TIMEOUT == BUDGET_S
 
 
-def test_the_box_uses_the_six_second_budget(box, monkeypatch):
+def test_the_box_uses_the_budget_the_board_recorded(box, monkeypatch):
+    """Demiurge decision 2026-10-27 (handoff t_3da6e753, recorded on the board): the whole request budget is 12 s when a
+    Meta key is present and the 6 s default without one. tools/ai_bridge.py already says so; this pin follows it."""
     monkeypatch.delenv("PP_TALK_TIMEOUT", raising=False)
-    assert box.budget == BUDGET_S
+    assert ai_bridge.DEFAULT_TALK_TIMEOUT_KEY == 12.0
+    assert ai_bridge.DEFAULT_TALK_TIMEOUT == BUDGET_S
+    expected = ai_bridge.DEFAULT_TALK_TIMEOUT_KEY if ai_bridge.meta_key_present() else ai_bridge.DEFAULT_TALK_TIMEOUT
+    assert box.budget == expected
     # The Meta rung may spend at most half the budget, so a persona turn can never be the slowest thing in a scene.
-    assert box._share("meta", BUDGET_S) <= BUDGET_S - 0.6
+    assert box._share("meta", box.budget) <= box.budget - 0.6
 
 
 def test_every_persona_names_the_shared_profanity_guard(doc):

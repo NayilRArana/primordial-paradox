@@ -642,7 +642,13 @@ def test_the_flood_fill_is_iterative_and_walks_each_tile_once():
 
 def test_no_marker_is_within_six_tiles_of_the_entry_a_door_or_a_handback(arrival, scenes_by_id):
     marks = [("marker %r" % marker_id, x, y) for _kind, x, y, marker_id in markers_of(arrival)]
-    assert marks, "the block carries no marker, so the scripted first encounter has nowhere to fire"
+    # Three battle demo (2026-11-01): the quay carries no marker any more. The first fight (Morgan) is chained inside
+    # the three gate branch scenes, so it starts from the scene the player is already in and not from a tile. What this
+    # pin kept is "the scripted first encounter has somewhere to fire": a marker, or the gate scenes starting it.
+    chained = all([command.get("id") for command in scenes_by_id[gate]["commands"] if command.get("cmd") == "battle"]
+                  == ["morgan_gate"] for gate in ("quay_gate_truth", "quay_gate_bluff", "quay_gate_authority"))
+    assert marks or chained, ("the block carries no marker and the gate scenes do not start morgan_gate, so the "
+                              "scripted first encounter has nowhere to fire")
 
     anchors = [("the entry tile", arrival["spawns"][ENTRY_SPAWN]["x"], arrival["spawns"][ENTRY_SPAWN]["y"])]
     anchors += [("door", x, y) for x, y in sorted(set(door_tiles(arrival)))]
@@ -671,10 +677,13 @@ def test_the_marker_mix_is_the_one_the_ruling_names(arrival):
     explicit = [trigger for trigger in triggers_of(arrival, "marker") if "marker_kind" in trigger]
     assert len(explicit) == len(kinds), "a marker on this row does not state its marker_kind (D1 rule 4)"
     assert kinds.count("wild") == 0, "%d wild marker(s) on a scripted block" % kinds.count("wild")
-    assert kinds.count("story") == 1, "the block carries %d story marker(s), D1 names 1" % kinds.count("story")
+    # D1 named one story marker, the first encounter's tile. Since the three battle demo (2026-11-01) the first fight is
+    # chained inside the gate scenes, so the block carries none; a story marker added later still has to be once.
+    assert kinds.count("story") == 0, ("the block carries %d story marker(s); the three battle demo chains the first "
+                                       "fight in the gate scenes" % kinds.count("story"))
 
-    marker = triggers_of(arrival, "marker")[0]
-    assert marker["once"] is True, "a story marker fires once and never re-arms (D1), this one does not"
+    for marker in triggers_of(arrival, "marker"):
+        assert marker["once"] is True, "a story marker fires once and never re-arms (D1), this one does not"
 
 
 def test_no_screen_holds_more_than_two_markers(arrival):
@@ -683,8 +692,8 @@ def test_no_screen_holds_more_than_two_markers(arrival):
     assert screen == (16, 15), "spec 04 says 16 by 15 tiles visible, pp_config says %s" % (screen,)
     marks = [("marker %r" % marker_id, x, y) for _kind, x, y, marker_id in markers_of(arrival)]
     assert screen_marker_problems(marks, screen) == [], screen_marker_problems(marks, screen)
-    # One marker cannot be two on a screen: the card's "never two on one screen" follows from the count.
-    assert len(marks) == 1
+    # No marker cannot be two on a screen (three battle demo: the quay has none, the first fight is in the gate scenes).
+    assert len(marks) == 0
 
 
 def test_the_screen_cap_refuses_a_third_marker_in_one_window():
@@ -716,7 +725,7 @@ def test_the_wild_density_band_is_one_per_forty_to_sixty_walkable_tiles(arrival)
     # The block itself carries no wild marker, so the band has nothing to measure: D1 rules that a
     # scripted block's authored marker count wins, and the story count is checked above.
     assert density_problems(walkable_count(arrival), 0) == []
-    assert markers_of(arrival)[0][0] == "story"
+    assert markers_of(arrival) == [], "the quay carries no marker since the three battle demo (the hound's marker left)"
 
 
 # --------------------------------------------------------------------------- 6. the gate scene

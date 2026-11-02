@@ -49,8 +49,17 @@ the second net.
 
 Usage:
     python tools\\play_demo.py                        play data\\demo\\run_002.json and record output\\demo\\run_002.mp4
-                                                      (the 180 s submission take, card t_785b61f0; run_001.json is the
+                                                      (the 253.5 s three battle take, the QA take, card t_785b61f0; run_001.json is the
                                                       71 s walk take and is named with --script when it is wanted)
+    python tools\\play_demo.py --shot-table full      the same take, played as the named shot table in
+                                                      data\\demo\\shot_table.json: the table names its script, its six
+                                                      shots and four sub-shots, the second each one runs from, and the
+                                                      game's own log line each shot has to produce. The table's
+                                                      durations have to sum to 180.00 s inside the table's own
+                                                      tolerance (1.0 s), and the take is failed by name when a shot's
+                                                      line never appears (card t_fb7e8271)
+    python tools\\play_demo.py --shot-table full --dry-run
+                                                      print the table's rows and its sum, without launching the game
     python tools\\play_demo.py --script data\\demo\\run_001.json --out output\\demo\\x.mp4
     python tools\\play_demo.py --check                re-check the mp4 the script names, without launching the game
     python tools\\play_demo.py --check --video P.mp4  check some other file the same way
@@ -184,6 +193,23 @@ OUTPUT_DIR = os.path.join(ROOT, "output", "demo")
 BUILD_DIR = os.path.join(ROOT, "build")
 DEFAULT_SCRIPT = os.path.join(DEMO_DIR, "run_002.json")
 MANIFEST = os.path.join(DEMO_DIR, "manifest.json")
+# Card t_fb7e8271: the shot table as data. One file, one table per name, and every table names its script, its shots and
+# the game's own log line each shot has to produce, so the take and the write-up cannot drift without a word here.
+SHOT_TABLE = os.path.join(DEMO_DIR, "shot_table.json")
+# The sum a table's own durations have to land inside. Not zero: S3 carries the drive list's 602 steps (10.03 s), and a
+# recorded file's duration is measured from the container and never equals the plan to the frame.
+SHOT_TABLE_TOLERANCE_S = 1.0
+# Card t_e48b13a6: the two S6 win paths, selectable by name. A path is a shot table with a shorter name, so one flag
+# plays the documented take and the table still names the script, the shots and the log lines the run has to produce.
+PATH_TABLES = {"talk": "talk-win", "command": "command-win"}
+PATH_WHY = {
+    "talk": "TALK three times so the meter climbs to 60, then SPARE: the fight ends with no blow thrown",
+    "command": "one Confirm on FIGHT against the deck hound's 2 hp: the fight ends in a single command",
+}
+# A shot row that carries any of these is refused: this take carries no narrator, no narration and no voice over.
+# The captions DEMO-SCRIPT.md names are drawn by the edit (R44) and never by the recorder, and this list is what keeps
+# a voice over from arriving here as a field somebody adds without noticing the rule.
+NARRATION_KEYS = ("narrator", "narration", "narrator_text", "voiceover", "voice_over", "voice-over")
 
 # Card t_688422b1 (judge panel 2026-10-31, fix 4): the nightly of 2026-10-30 recorded NO VIDEO, and the reason was
 # not the route. play_demo asked the idle gate once, took the refusal, and the whole night was lost to a desktop
@@ -455,6 +481,378 @@ def planned_seconds(script):
         end_step = max(event["step"] for event in script["events"])
     end_step = min(end_step, script["clock"]["max_steps"])
     return end_step / float(fps)
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# The shot table as data (card t_fb7e8271)
+#
+# Why a table beside the script: the script says which keys go down and when. It cannot say that those keys are the six
+# shots of knowledge/DEMO-SCRIPT.md, that the whole thing is 180.00 s, or that each shot has a line the game writes when
+# it is on screen. That knowledge lived in a document and in a person's head, and a take that quietly lost S5 looked
+# exactly like a take that had it. data/demo/shot_table.json is that knowledge as a file the recorder reads: a shot's
+# seconds, its start and end step, and the BEAT_CUES name of the line the game's own log has to carry for it.
+
+def load_shot_table(name, path=SHOT_TABLE):
+    """The shot table called `name`, as a copy. Raises SystemExit naming the tables this checkout carries."""
+    try:
+        with open(path, "r", encoding="utf-8") as handle:
+            data = json.load(handle)
+    except OSError as error:
+        raise SystemExit("the shot table %s could not be read: %s" % (path, error))
+    except ValueError as error:
+        raise SystemExit("the shot table %s is not JSON: %s" % (path, error))
+    tables = data.get("tables") or {}
+    if not isinstance(tables, dict) or not tables:
+        raise SystemExit("%s carries no tables" % path)
+    if name not in tables:
+        raise SystemExit("%s carries no shot table %r: it carries %s"
+                         % (path, name, ", ".join(sorted(tables)) or "none"))
+    table = json.loads(json.dumps(tables[name]))  # a copy, so a caller cannot edit the file's own row in memory
+    table.setdefault("name", name)
+    if data.get("version") != 1:
+        raise SystemExit("%s must be version 1, not %r" % (path, data.get("version")))
+    return table
+
+
+def shot_table_names(path=SHOT_TABLE):
+    """The names this checkout's shot table file carries, for a help line or an error."""
+    try:
+        with open(path, "r", encoding="utf-8") as handle:
+            data = json.load(handle)
+    except (OSError, ValueError):  # gate: ok an unreadable table file has no names, and the error that names the path comes from load_shot_table.
+        return []
+    return sorted((data.get("tables") or {}).keys())
+
+
+def shot_table_seconds(table):
+    """The plan's own total: the sum of the shot rows' seconds, rounded to a millisecond."""
+    return round(sum(float(shot.get("seconds") or 0.0) for shot in table.get("shots") or []), 3)
+
+
+def shot_table_markers(table):
+    """Every log line the table requires, from the shot rows and their sub-shots, in the order they are reached."""
+    names = []
+    for shot in table.get("shots") or []:
+        for row in [shot] + list(shot.get("sub_shots") or []):
+            for name in row.get("markers") or []:
+                if name not in names:
+                    names.append(name)
+    return names
+
+
+def narration_fields(value, where=""):
+    """Every place in a table that carries a narrator, narration or voice over field, as 'where.key' strings."""
+    found = []
+    if isinstance(value, dict):
+        for key, item in value.items():
+            if str(key).lower() in NARRATION_KEYS:
+                found.append("%s.%s" % (where or "table", key))
+            found += narration_fields(item, "%s.%s" % (where or "table", key))
+    elif isinstance(value, list):
+        for index, item in enumerate(value):
+            found += narration_fields(item, "%s[%d]" % (where or "table", index))
+    return found
+
+
+def validate_shot_table(table):
+    """Every rule a shot table has to satisfy, as a list of problems. Empty means the table can be played.
+
+    The rules are the ways a shot table has been wrong before: a plan that does not add up to the 180 s the card asks
+    for, a row whose start does not meet the row above it so a second belongs to no shot or to two, a sub-shot whose
+    seconds do not fill its parent, a marker that is not a row of BEAT_CUES so no log line could ever satisfy it, and a
+    narrator field, which this take never carries.
+    """
+    problems = []
+    if not isinstance(table, dict):
+        return ["the table is not a JSON object"]
+    fps = table.get("fps")
+    if not isinstance(fps, int) or not 1 <= fps <= 240:
+        problems.append("fps must be an integer between 1 and 240, not %r" % (fps,))
+        fps = 60
+    total = table.get("total_seconds")
+    if not isinstance(total, (int, float)) or total <= 0:
+        problems.append("total_seconds must be a positive number, not %r" % (total,))
+        total = None
+    tolerance = table.get("tolerance_seconds")
+    if not isinstance(tolerance, (int, float)) or tolerance < 0:
+        problems.append("tolerance_seconds must be zero or more, not %r" % (tolerance,))
+        tolerance = None
+    band = table.get("take_band_seconds")
+    if not isinstance(band, list) or len(band) != 2 or not all(isinstance(v, (int, float)) for v in band):
+        problems.append("take_band_seconds must be two numbers, the low and the high of the band a take may run in")
+    elif band[0] >= band[1]:
+        problems.append("take_band_seconds is %r, and its low is not under its high" % (band,))
+    elif isinstance(total, (int, float)) and not band[0] <= total <= band[1]:
+        problems.append("total_seconds %.2f is outside the take's own band %r" % (total, band))
+    for where in narration_fields(table):
+        problems.append("%s is a narrator field, and this take carries no narration: the captions belong to the edit, "
+                        "not to the recorder" % where)
+
+    shots = table.get("shots")
+    if not isinstance(shots, list) or not shots:
+        problems.append("shots must be a non empty list")
+        return problems
+    seen_ids = set()
+    seen_markers = {}
+    previous_end = None
+    for index, shot in enumerate(shots):
+        where = "shots[%d]" % index
+        if not isinstance(shot, dict):
+            problems.append("%s is not an object" % where)
+            continue
+        identifier = shot.get("id")
+        if not isinstance(identifier, str) or not identifier:
+            problems.append("%s has no id" % where)
+        elif identifier in seen_ids:
+            problems.append("%s repeats the id %r" % (where, identifier))
+        else:
+            seen_ids.add(identifier)
+            where = "shots[%s]" % identifier
+        seconds = shot.get("seconds")
+        start, end = shot.get("start_step"), shot.get("end_step")
+        if not isinstance(seconds, (int, float)) or seconds <= 0:
+            problems.append("%s.seconds must be a positive number, not %r" % (where, seconds))
+        if not isinstance(start, int) or start < 0:
+            problems.append("%s.start_step must be a non negative integer, not %r" % (where, start))
+            start = None
+        if not isinstance(end, int) or end <= 0:
+            problems.append("%s.end_step must be a positive integer, not %r" % (where, end))
+            end = None
+        if start is not None and previous_end is None and index == 0 and start != 0:
+            problems.append("%s.start_step is %d and the first shot starts the take at step 0" % (where, start))
+        if start is not None and previous_end is not None and start != previous_end:
+            problems.append("%s.start_step is %d and the shot above it ends at %d, so the plan has a gap or an overlap"
+                            % (where, start, previous_end))
+        if start is not None and end is not None:
+            if end <= start:
+                problems.append("%s ends at step %d, not after its start %d" % (where, end, start))
+            elif isinstance(seconds, (int, float)) and abs(seconds - (end - start) / float(fps)) > 0.02:
+                problems.append("%s says %.3f s and its steps %d to %d are %.3f s at %d fps"
+                                % (where, seconds, start, end, (end - start) / float(fps), fps))
+            previous_end = end
+        markers = shot.get("markers")
+        own_markers = set()
+        if not isinstance(markers, list) or not markers or not all(isinstance(name, str) and name for name in markers):
+            problems.append("%s.markers must be a non empty list of shot table names, not %r" % (where, markers))
+            markers = []
+        else:
+            own_markers = set(markers)
+            for name in markers:
+                if name in seen_markers and seen_markers[name] != identifier:
+                    problems.append("%s repeats the log line %r, which shots[%s] already names"
+                                    % (where, name, seen_markers[name]))
+                else:
+                    seen_markers[name] = identifier
+                if name not in dict(BEAT_CUES):
+                    problems.append("%s names %r and no row of play_demo.BEAT_CUES carries it, so no log line could "
+                                    "ever satisfy this shot" % (where, name))
+        sub_previous_end = None
+        sub_seconds = 0.0
+        sub_markers = set()
+        for sub_index, sub in enumerate(shot.get("sub_shots") or []):
+            sub_where = "%s.sub_shots[%d]" % (where, sub_index)
+            if not isinstance(sub, dict):
+                problems.append("%s is not an object" % sub_where)
+                continue
+            sub_start, sub_end = sub.get("start_step"), sub.get("end_step")
+            sub_len = sub.get("seconds")
+            if not isinstance(sub_len, (int, float)) or sub_len <= 0:
+                problems.append("%s.seconds must be a positive number, not %r" % (sub_where, sub_len))
+            else:
+                sub_seconds += float(sub_len)
+            sub_names = sub.get("markers")
+            if not isinstance(sub_names, list) or not sub_names:
+                problems.append("%s.markers must be a non empty list, not %r" % (sub_where, sub_names))
+            else:
+                # A sub-shot names the lines it is the one to produce, so its names are also its shot's names: the two
+                # lists have to be the same set, and a name may not appear in two sub-shots or in two shots.
+                for name in sub_names:
+                    if name in sub_markers:
+                        problems.append("%s repeats the log line %r, which another sub-shot of %s names"
+                                        % (sub_where, name, where))
+                    sub_markers.add(name)
+                    if name not in own_markers:
+                        problems.append("%s names %r and its shot's own markers do not carry it"
+                                        % (sub_where, name))
+                    if seen_markers.get(name) != identifier:
+                        problems.append("%s names %r, which another shot already names" % (sub_where, name))
+            if not isinstance(sub_start, int) or not isinstance(sub_end, int) or sub_end <= sub_start:
+                problems.append("%s needs integer start_step and end_step with the end after the start" % sub_where)
+                continue
+            if sub_previous_end is None:
+                if start is not None and sub_start != start:
+                    problems.append("%s starts at %d and its shot starts at %d" % (sub_where, sub_start, start))
+            elif sub_start != sub_previous_end:
+                problems.append("%s starts at %d and the sub-shot above it ends at %d"
+                                % (sub_where, sub_start, sub_previous_end))
+            if end is not None and sub_end > end:
+                problems.append("%s ends at %d, past its shot's end %d" % (sub_where, sub_end, end))
+            sub_previous_end = sub_end
+            if isinstance(sub_len, (int, float)) and abs(sub_len - (sub_end - sub_start) / float(fps)) > 0.02:
+                problems.append("%s says %.3f s and its steps %d to %d are %.3f s at %d fps"
+                                % (sub_where, sub_len, sub_start, sub_end,
+                                   (sub_end - sub_start) / float(fps), fps))
+        if sub_markers and sub_markers != own_markers:
+            problems.append("%s's markers are %r and its sub-shots name %r: the two lists are one set"
+                            % (where, sorted(own_markers), sorted(sub_markers)))
+        if sub_previous_end is not None:
+            if end is not None and sub_previous_end != end:
+                problems.append("%s's sub-shots end at %d and the shot ends at %d, so a second of it belongs to no "
+                                "sub-shot" % (where, sub_previous_end, end))
+            if isinstance(seconds, (int, float)) and abs(sub_seconds - seconds) > 0.02:
+                problems.append("%s's sub-shots sum to %.3f s and the shot is %.3f s"
+                                % (where, sub_seconds, seconds))
+
+    if previous_end is not None:
+        end_step = table.get("end_step")
+        if not isinstance(end_step, int) or end_step <= 0:
+            problems.append("end_step must be a positive integer, not %r" % (end_step,))
+        elif previous_end != end_step:
+            problems.append("the shots end at step %d and the table's end_step is %d" % (previous_end, end_step))
+        if isinstance(total, (int, float)) and isinstance(fps, int) and fps > 0:
+            if abs(previous_end / float(fps) - total) > 0.02:
+                problems.append("the shots end at %.3f s and the table's total_seconds is %.3f" %
+                                (previous_end / float(fps), total))
+    if isinstance(total, (int, float)) and tolerance is not None:
+        plan = shot_table_seconds(table)
+        if abs(plan - total) > tolerance:
+            problems.append("the shots sum to %.3f s and the table says %.3f s, which is outside its own %.2f s "
+                            "tolerance" % (plan, total, tolerance))
+
+    required = table.get("required_beats")
+    if not isinstance(required, list) or not required:
+        problems.append("required_beats must be a non empty list of the log lines this table's take has to produce")
+    else:
+        missing = [name for name in shot_table_markers(table) if name not in required]
+        extra = [name for name in required if name not in shot_table_markers(table)]
+        if missing:
+            problems.append("required_beats does not carry %r, which a shot row names" % (missing,))
+        if extra:
+            problems.append("required_beats carries %r, which no shot row names" % (extra,))
+    return problems
+
+
+def apply_shot_table(script, table):
+    """The script with the table's own beats and end step, so play and check read one plan.
+
+    The table is the plan the card asks for: its required log lines are the run's required beats and its end step is the
+    run's end step. A script that disagrees is refused by validate_shot_table_script rather than half applied.
+    """
+    merged = json.loads(json.dumps(script))
+    checks = merged.setdefault("checks", {})
+    checks["required_beats"] = list(table.get("required_beats") or [])
+    if isinstance(table.get("end_step"), int):
+        checks["end_step"] = int(table["end_step"])
+    merged["shot_table"] = {"name": table.get("name"), "script": table.get("script"),
+                            "total_seconds": table.get("total_seconds"),
+                            "tolerance_seconds": table.get("tolerance_seconds")}
+    return merged
+
+
+def validate_shot_table_script(table, script):
+    """The rules that bind a table to the script it plays, as a list of problems."""
+    problems = []
+    planned = planned_seconds(script)
+    total = table.get("total_seconds")
+    tolerance = table.get("tolerance_seconds")
+    if isinstance(total, (int, float)) and isinstance(tolerance, (int, float)):
+        if abs(planned - total) > tolerance:
+            problems.append("the script plans %.3f s and the shot table is %.3f s plus or minus %.2f s"
+                            % (planned, total, tolerance))
+    claimed = (script.get("checks") or {}).get("required_beats") or []
+    table_beats = table.get("required_beats") or []
+    dropped = [name for name in table_beats if name not in claimed]
+    if dropped:
+        problems.append("the shot table requires %r and the script's checks.required_beats does not carry them"
+                        % (dropped,))
+    return problems
+
+
+def shot_table_rows(table, beats=None):
+    """The table as rows for a report: the id, the second it starts, its length, and whether its line was written."""
+    beats = beats or {}
+    rows = []
+    for shot in table.get("shots") or []:
+        for row in [shot] + list(shot.get("sub_shots") or []):
+            markers = row.get("markers") or []
+            named = [name for name in markers if (beats.get(name) or {}).get("found")]
+            rows.append({"id": row.get("id"), "start_step": row.get("start_step"), "end_step": row.get("end_step"),
+                         "seconds": row.get("seconds"), "markers": markers, "named": named,
+                         "found": bool(markers) and len(named) == len(markers),
+                         "sub_shot": row is not shot})
+    return rows
+
+
+def print_shot_table(table, beats=None):
+    """The table as one block of lines, for the run log and for --dry-run: the shot, its second, its length, its line."""
+    rows = shot_table_rows(table, beats)
+    band = table.get("take_band_seconds") or [table.get("total_seconds"), table.get("total_seconds")]
+    print("shot table %r: %d rows, %.2f s (tolerance %.2f s, take band %.1f to %.1f s), script %s"
+          % (table.get("name"), len(rows), shot_table_seconds(table), float(table.get("tolerance_seconds") or 0.0),
+             float(band[0]), float(band[1]), table.get("script")))
+    fps = float(table.get("fps") or 60)
+    for row in rows:
+        marks = ", ".join(row["markers"])
+        state = ""
+        if beats:
+            state = " [%s]" % ("named" if row["found"] else "NEVER NAMED")
+        print("  %-5s %7.2f s  %6.2f s from step %5d  %s%s"
+              % (row["id"], (row["start_step"] or 0) / fps, float(row["seconds"] or 0.0), row["start_step"] or 0,
+                 marks, state))
+
+
+def shot_table_report(table, duration_s=None, beat_rows=None):
+    """What the shot table says and what the game's log said about it, as one dict for the verify file."""
+    rows = shot_table_rows(table, beat_rows)
+    return {"name": table.get("name"), "script": table.get("script"),
+            "total_seconds": table.get("total_seconds"), "tolerance_seconds": table.get("tolerance_seconds"),
+            "sum_seconds": shot_table_seconds(table),
+            "take_band_seconds": table.get("take_band_seconds"),
+            "duration_s": None if duration_s is None else round(float(duration_s), 3),
+            "narration": bool(narration_fields(table)), "shots": rows,
+            "missing": [row["markers"] for row in rows if row["markers"] and not row["found"]]}
+
+
+def shot_table_check(table, duration_s, beat_rows):
+    """The shot table's verdict on a finished take, as (ok, line).
+
+    Two questions, and both are the card's: the plan adds up to 180 seconds inside the table's own tolerance, and the
+    take runs inside the table's take band (170 to 190 s, the card's band); then every shot's log line was written by
+    the game, so a take that lost S5 or the game over is failed by the shot's own name and not by a paragraph.
+    """
+    total = float(table.get("total_seconds") or 0.0)
+    tolerance = float(table.get("tolerance_seconds") or 0.0)
+    band = table.get("take_band_seconds")
+    if not isinstance(band, list) or len(band) != 2:
+        band = [total, total]
+    low, high = float(band[0]), float(band[1])
+    measured = None if duration_s is None else float(duration_s)
+    plan = shot_table_seconds(table)
+    rows = shot_table_rows(table, beat_rows)
+    missing = []
+    for row in rows:
+        for name in row["markers"]:
+            if name not in row["named"] and name not in missing:
+                missing.append(name)
+    problems = []
+    if abs(plan - total) > tolerance:
+        problems.append("the shots sum to %.3f s and the table is %.3f s, outside its %.2f s tolerance"
+                        % (plan, total, tolerance))
+    if measured is None:
+        problems.append("the take's duration could not be read, so its place in the %.1f to %.1f s band is unknown"
+                        % (low, high))
+    elif not low <= measured <= high:
+        problems.append("%.3f s of video is outside the %.1f to %.1f s band the shot table names"
+                        % (measured, low, high))
+    if missing:
+        problems.append("the game's log never named %d of its lines: %s" % (len(missing), ", ".join(missing)))
+    if problems:
+        return False, ("FAIL the shot table %r is not met: %s"
+                       % (table.get("name"), "; ".join(problems)))
+    named = sum(len(row["named"]) for row in rows)
+    return True, ("PASS the shot table %r: its %d rows sum to %.2f s inside the %.2f s tolerance and the take runs "
+                  "%.2f s, inside the %.1f to %.1f s band; the game's own log named all %d of its lines"
+                  % (table.get("name"), len(rows), plan, tolerance, measured or 0.0, low, high, named))
 
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -865,7 +1263,8 @@ def audio_events(rows):
             except ValueError:
                 notes.append("%.3f s: a duck line whose level could not be read: %s" % (at, line))
                 continue
-            events.append({"kind": "duck", "at": at, "db": db, "gain": GAME_GAIN_MUSIC * 10.0 ** (db / 20.0)})
+            events.append({"kind": "duck", "at": at, "db": db,
+                           "gain": GAME_GAIN_MUSIC * 10.0 ** (-db / 20.0)})
             continue
         if UNDUCK_RE.match(line):
             events.append({"kind": "unduck", "at": at, "gain": GAME_GAIN_MUSIC})
@@ -1235,12 +1634,22 @@ BEAT_CUES = (
     ("S2 crawl", "PP title: intro started"),
     ("S3 drive", "PP: music PP-02 requested"),
     ("S4 gate", "PP scene: quay_gate_checkpoint end at tile"),
+    ("S4 morgan fight", "PP: battle start morgan_gate"),
     ("S5 office", "PP route: step gate handed to step office"),
+    # Card t_1163ca72: the clerk's question, the player's typed line and the character's recorded answer. The line is
+    # what proves the exchange reached the box rather than the beat's say pages.
+    ("S5 office talk", "PP: talk scene answer, npc nye"),
     ("S5 boarding", "PP route: step office handed to step boarding"),
     ("S6 talk fight", "PP: talk pick, option 0, effect soften, mercy 60"),
     ("S6 hound fight", "PP: battle start deck_hound"),
     ("S6 ship log save", "PP: ship's log"),
+    ("S6 percy fight", "PP: battle start percy"),
     ("S6 defeat", "PP: fight result defeat"),
+    # Card t_fb7e8271: the two lines the take ends on. The game over card is drawn after the 12 step fade
+    # (pp_battle_director.gml:1407) and CONTINUE is the press that puts the save back (:787), so a take that stops at
+    # "defeat" and never reaches this screen is named as the missing shot and not as a mystery.
+    ("S6 game over", "PP: game over frame"),
+    ("S6 continue", "PP: game over, CONTINUE restored the last save"),
 )
 FOOTSTEP_NEEDLE = "footstep played"
 LIVE_TALK_NEEDLE = "PP: talk live open, mode live"
@@ -1285,17 +1694,22 @@ def cues_path(video_path):
     return stem + "_cues.json"
 
 
-def write_cues(video_path, log_text, footsteps, trace, script):
+def write_cues(video_path, log_text, footsteps, trace, script, shot_table=None):
     """Write the sidecar a later `--check` reads, because a video file alone cannot name the beats that made it."""
+    beats = beat_report(log_text)
     payload = {
         "video": video_path,
         "written_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "script": (repo_relative(script_path_used) if script_path_used else None),
-        "beats": beat_report(log_text),
+        "beats": beats,
         "cues": {"footsteps": int(footsteps)},
         "talk": talk_report(log_text),
         "trace": trace,
     }
+    # Card t_fb7e8271: the shot table's own rows go in the sidecar with the beats they were checked against, so a
+    # `--check` on the file alone can say which shot the log named and which one it never named.
+    if shot_table is not None:
+        payload["shot_table"] = shot_table_report(shot_table, None, beats)
     with open(cues_path(video_path), "w", encoding="utf-8", newline="\n") as handle:
         handle.write(json.dumps(payload, indent=2, sort_keys=True) + "\n")
     payload["sidecar"] = cues_path(video_path)
@@ -1570,7 +1984,7 @@ def audio_stream(ffprobe, path):
     return bool(data.get("streams"))
 
 
-def verify_video(path, script, report_path=None, pollution=None, cues=None, audio=None, final=False):
+def verify_video(path, script, report_path=None, pollution=None, cues=None, audio=None, final=False, shot_table=None):
     """Check a finished mp4 against the script. Returns (ok, report).
 
     The four checks the card asks for, in the order a wrong recording shows up:
@@ -1876,6 +2290,14 @@ def verify_video(path, script, report_path=None, pollution=None, cues=None, audi
             "PASS %d footstep cues in the take, at least the %d the script asks for" % (footsteps, required_footsteps))
         ok_cues = True
     ok = bool(ok and ok_beats and ok_cues)
+    # Card t_fb7e8271: the shot table's own two questions, asked of the finished file. The plan adds up to 180 s inside
+    # the table's tolerance, and the game's log named every shot's line, so a take that lost S5 or the game over is
+    # failed by the name of the shot it lost instead of by a paragraph a reader has to interpret.
+    if shot_table is not None:
+        table_ok, table_line = shot_table_check(shot_table, duration, beat_rows)
+        report["checks"]["shot_table"] = table_line
+        report["shot_table"] = shot_table_report(shot_table, duration, beat_rows)
+        ok = bool(ok and table_ok)
     report["ok"] = ok
     # Card t_7450df91 (RECEIPTS-LABELS): every Meta number this take's record carries is named with one of
     # three labels and one receipt in data/receipts/meta_receipts.jsonl, so a reader never meets a number
@@ -1915,7 +2337,7 @@ def post_recording_cover_note(covered):
 
 def print_report(report):
     for name in ("file", "duration", "stream", "audio", "not_black", "not_a_terminal", "not_polluted", "jumps",
-                 "motion", "beats", "cues"):
+                 "motion", "beats", "cues", "shot_table"):
         line = report["checks"].get(name)
         if line:
             print("  %s" % line)
@@ -1970,7 +2392,7 @@ def out_stem(path):
     return os.path.splitext(os.path.basename(path))[0]
 
 
-def run_demo(script, keep_raw=False):
+def run_demo(script, keep_raw=False, shot_table=None):
     """Launch the built game, play the script, record it, cut it to 3x, then check the file."""
     # Card PINE-HONEST (t_84fe63ff): both modules come in on first use, and a host with no window primitives
     # refuses here, where a window would actually be opened, so --check and --dry-run still work where nothing can
@@ -2028,6 +2450,10 @@ def run_demo(script, keep_raw=False):
     end_step = (script.get("checks") or {}).get("end_step") or max(event["step"] for event in script["events"])
     seconds = planned_seconds(script)
     print("plan: %d events over %.1f s on a %d fps clock" % (len(script["events"]), seconds, fps))
+    if shot_table is not None:
+        # Card t_fb7e8271: the table is printed before anything opens, so the run log says what the take is meant to
+        # be shot by shot, and the verify file later says which of those lines the game's own log wrote.
+        print_shot_table(shot_table)
 
     os.makedirs(BUILD_DIR, exist_ok=True)
     log_path = os.path.join(BUILD_DIR, "demo-game.log")
@@ -2223,11 +2649,12 @@ def run_demo(script, keep_raw=False):
 
         # Card t_785b61f0: the beats and the footsteps go in a sidecar beside the mp4, written while the game's own log
         # is still in hand, so `--check` on the file alone can name the shot table's beats afterwards.
-        cues = write_cues(out_path, log_text, footsteps, replay.trace, script)
+        cues = write_cues(out_path, log_text, footsteps, replay.trace, script, shot_table=shot_table)
         print("wrote %s" % cues)
         print("talk leg: %s" % json.dumps(talk_report(log_text), sort_keys=True))
 
-        ok, report = verify_video(out_path, script, verify_path, pollution=pollution, cues=cues, audio=audio_info)
+        ok, report = verify_video(out_path, script, verify_path, pollution=pollution, cues=cues, audio=audio_info,
+                                  shot_table=shot_table)
         report["script"] = repo_relative(script_path_used) if script_path_used else None
         report["run"] = {"trace": replay.trace, "failures": failures, "game_log": repo_relative(log_path),
                          "footsteps": footsteps, "planned_seconds": round(seconds, 3),
@@ -2296,9 +2723,21 @@ def main():
     # the wait is this tool's own default, so a bare `python tools\play_demo.py` on a busy desktop holds the launch
     # instead of spending the night's only attempt on one refusal.
     pp_launch.add_launch_flags(parser, default_wait=IDLE_WAIT_S)
-    parser.add_argument("--script", default=DEFAULT_SCRIPT,
-                        help="the demo script to play (default data\\demo\\run_002.json, the 180 s submission take)")
+    parser.add_argument("--script", default=None,
+                        help="the demo script to play (default data\\demo\\run_002.json, the 253.5 s three battle take, the QA take; "
+                             "with --shot-table the table names the script)")
+    parser.add_argument("--shot-table", default=None, metavar="NAME",
+                        help="play the shot table called NAME in data\\demo\\shot_table.json, so one command plays the "
+                             "documented take: the table names its script, its shots and sub-shots, their seconds, "
+                             "and the game's own log line each shot has to produce. `--shot-table full` is the 180 s "
+                             "submission take through the dock office, the TALK fight, the ship's log save and the "
+                             "game over")
     parser.add_argument("--out", default=None, help="override the mp4 path the script names")
+    parser.add_argument("--path", default=None, metavar="NAME",
+                        help="play one of the two S6 win paths by name: the hook card t_e48b13a6 asks for, one flag "
+                             "and no manual input. `talk` is TALK three times so the meter climbs to 60, then SPARE, so "
+                             "no blow is thrown; `command` is one Confirm on FIGHT that ends the deck hound at its 2 hp. "
+                             "Each plays the shot table of the same path, so `--path talk` is `--shot-table talk-win`")
     parser.add_argument("--check", action="store_true",
                         help="check an existing mp4 against the script instead of playing the game")
     parser.add_argument("--video", default=None, help="with --check, the mp4 to check")
@@ -2334,8 +2773,51 @@ def main():
                 print(report["install"])
             return 0
 
-        script_path_used = os.path.abspath(args.script)
+        # Card t_e48b13a6: the two S6 win paths are selectable by name. A path is a shot table with a shorter name,
+        # so `--path talk` and `--shot-table talk-win` play the same documented take, and the table is what names the
+        # script, the shots and the log lines the run has to produce.
+        path_name = (args.path or "").strip().lower()
+        if path_name:
+            if path_name not in PATH_TABLES:
+                print("no path called %r: the paths are %s"
+                      % (args.path, ", ".join("%s (%s)" % (key, why) for key, why in sorted(PATH_WHY.items()))))
+                return 2
+            chosen = PATH_TABLES[path_name]
+            if args.shot_table and args.shot_table != chosen:
+                print("--path %s plays the shot table %r and --shot-table named %r: ask for one"
+                      % (path_name, chosen, args.shot_table))
+                return 2
+            args.shot_table = chosen
+            print("path %r: %s" % (path_name, PATH_WHY[path_name]))
+
+        # Card t_fb7e8271: a named shot table is read first, because the table names the script it plays. The table is
+        # validated before the game is launched, so a plan that does not add up to 180 s costs one line and not a take.
+        table = None
+        if args.shot_table:
+            table = load_shot_table(args.shot_table)
+            problems = validate_shot_table(table)
+            if problems:
+                print("the shot table %r in %s is not playable:" % (table.get("name"), repo_relative(SHOT_TABLE)))
+                for problem in problems:
+                    print("  %s" % problem)
+                return 1
+            print("shot table %r: %s" % (table.get("name"), table.get("title") or table.get("script")))
+
+        script_path = args.script
+        if script_path is None and table is not None and table.get("script"):
+            script_path = os.path.join(ROOT, str(table["script"]))
+        script_path_used = os.path.abspath(script_path or DEFAULT_SCRIPT)
         script = load_script(script_path_used)
+        if table is not None:
+            problems = validate_shot_table_script(table, script)
+            if problems:
+                print("the shot table %r does not match %s:"
+                      % (table.get("name"), repo_relative(script_path_used)))
+                for problem in problems:
+                    print("  %s" % problem)
+                return 1
+            # The table's own beats and end step are the run's, so play and check read one plan and not two.
+            script = apply_shot_table(script, table)
         if args.out:
             script = json.loads(json.dumps(script))
             script["record"]["out"] = args.out
@@ -2345,11 +2827,19 @@ def main():
                   % (script["name"], len(script["events"]), planned_seconds(script), script["clock"]["fps"],
                      json.dumps({key: value for key, value in script["seeds"].items() if key != "note"},
                                 sort_keys=True)))
+            if table is not None:
+                print_shot_table(table)
             for row in timeline(script):
                 print("  %6.2f s  beat %2d  %-4s %-8s %s" % (row["second"], row["beat"], row["kind"],
                                                             row["key"] or "", row["id"]))
             beats = sorted({row["beat"] for row in timeline(script)})
             print("beats covered by the script: %s" % ", ".join(str(beat) for beat in beats))
+            if table is not None:
+                print("shot table %r sums to %.2f s against %.2f s plus or minus %.2f s: %s"
+                      % (table.get("name"), shot_table_seconds(table), float(table.get("total_seconds") or 0.0),
+                         float(table.get("tolerance_seconds") or 0.0),
+                         "inside" if abs(shot_table_seconds(table) - float(table.get("total_seconds") or 0.0))
+                         <= float(table.get("tolerance_seconds") or 0.0) else "OUTSIDE"))
             return 0
 
         if args.check:
@@ -2365,11 +2855,12 @@ def main():
             if cues is None:
                 print("no cue log beside this take (%s), so the beats it was made of cannot be named from the file"
                       % os.path.basename(cues_path(path)))
-            ok, report = verify_video(path, script, cues=cues, audio=read_audio_record(path), final=args.final)
+            ok, report = verify_video(path, script, cues=cues, audio=read_audio_record(path), final=args.final,
+                                      shot_table=table)
             print_report(report)
             return 0 if ok else 1
 
-        return run_demo(script, keep_raw=args.keep_raw)
+        return run_demo(script, keep_raw=args.keep_raw, shot_table=table)
     except PlatformUnavailable as error:
         # Anything that needed the drawing path and could not have it: --check on a host with no ffprobe path, a
         # dry run whose key table cannot be read. One line and 4, never a green and never a silent zero.

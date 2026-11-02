@@ -4,6 +4,7 @@
   "encounters": [
     {
       "id": "tutorial_sailors",
+      "background": "ship_deck",
       "name": "Deck Watch",
       "enemies": [
         "navy_sailor"
@@ -102,7 +103,40 @@
       }
     },
     {
+      "id": "deck_collapse",
+      "background": "ship_office",
+      "name": "The Officer's Cabin",
+      "enemies": [
+        "percy"
+      ],
+      "seed": 20261101,
+      "music": "PP-06",
+      "intro_dialogue": "battle_lose",
+      "win_dialogue_kill": "battle_lose",
+      "win_dialogue_spare": "battle_lose",
+      "lose_dialogue": "battle_lose",
+      "trust_per_talk": 1,
+      "flags_on_kill": [],
+      "flags_on_spare": [],
+      "beat": 30,
+      "beat_id": "s6_forced_defeat",
+      "forced_defeat": true,
+      "note": "Card t_866814e6. This is DEMO-SCRIPT N1's forced defeat as data: no fight in the slice can be lost, so the S6.4 beat (the defeat that opens the game over and CONTINUE) has nothing to land on. The row carries forced_defeat, which pp_battle_step_intro reads on its first step: the fight's actor is put to 0 and the result is entered before any menu is drawn, so the take gets the fade, the game over card and CONTINUE from the one code path R27 built, in a fixed number of steps. The enemy is Percy and the frame is his cabin because that is where the 180 s take presses it: the officer he came to find is the last thing on screen before the card, and the card's own line reads Percy stands over you. No key is invented and no second defeat path exists; an encounter row without the field behaves exactly as before.",
+      "pacing": {
+        "turns": 0,
+        "seconds_fixed": 9,
+        "seconds_per_turn": 0,
+        "seconds": 9,
+        "band_seconds": [
+          6,
+          14
+        ],
+        "source": "DEMO-SCRIPT section 3, S6.4: 2:51.00 to 3:00.00 is 540 steps of defeat, game over frame and CONTINUE, which is 9 s"
+      }
+    },
+    {
       "id": "percy",
+      "background": "ship_office",
       "name": "Percy",
       "enemies": [
         "percy"
@@ -115,13 +149,54 @@
       "lose_dialogue": "battle_lose",
       "trust_per_talk": 1,
       "flags_on_kill": [
-        "percy_killed"
+        "percy_killed",
+        "demo_complete"
       ],
       "flags_on_spare": [
-        "percy_spared"
+        "percy_spared",
+        "demo_complete"
       ],
       "epilogue_scene": "percy_aftermath",
       "spare_refuses_on_route": "genocide"
+    },
+    {
+      "id": "morgan_gate",
+      "background": "quay_town",
+      "name": "Morgan, Town Quay Gate",
+      "enemies": [
+        "morgan"
+      ],
+      "seed": 20261027,
+      "music": "PP-04",
+      "intro_dialogue": "battle_intro_morgan",
+      "win_dialogue_kill": "morgan_win_kill",
+      "win_dialogue_spare": "morgan_win_spare",
+      "lose_dialogue": "battle_lose",
+      "trust_per_talk": 1,
+      "flags_on_kill": [
+        "morgan_killed"
+      ],
+      "flags_on_spare": [
+        "morgan_spared"
+      ],
+      "talk": {
+        "card": "morgan",
+        "card_home": "data/talk_cards.json, id morgan",
+        "options_dialogue": "talk_morgan",
+        "option_count": 3,
+        "mercy_per_option": 20,
+        "mercy_to_spare": 60,
+        "talks_to_spare": 3,
+        "fallback_line": "* He checks his clipboard.",
+        "fallback_delta": 0,
+        "fallback_mood": "guarded",
+        "fallback_pool": [
+          "* He ticks a box.",
+          "* He sighs at your handwriting.",
+          "* He checks his clipboard."
+        ],
+        "fallback_rule": "index = (fnv1a32(normalised line) + mercy before the change) modulo the pool length, no RNG anywhere"
+      }
     }
   ]
 }

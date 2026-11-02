@@ -2,8 +2,8 @@
 
 Card t_d1eb2a47, the first third of the split ruled in D4 of `knowledge/GAMEDEV-DECISIONS-2026-10-23.md`. Spec 18
 sections 1 and 6 are the source: a phase row is `{hp_at_or_below, pattern_id, talk_set, line_id}`, the breakpoint is a
-PERCENT of max_hp compared in integers (section 8 P3), and Percy's bands are 70 percent and 40 percent, which at 120 hp
-are 84 and 48.
+PERCENT of max_hp compared in integers (section 8 P3), and Percy's bands are 70 percent and 40 percent, which at the
+shipped 40 hp are 28 and 16 (84 and 48 at the spec's 120 hp, before the three battle demo of 2026-11-01).
 
 What this file holds down, and why each one earns its place:
 
@@ -49,9 +49,11 @@ ENEMIES = os.path.join(ROOT, "data", "enemies", "all.json")
 SCHEMA = os.path.join(ROOT, "data", "schemas", "enemies.schema.json")
 DIRECTOR = os.path.join(ROOT, "game", "scripts", "pp_battle_director", "pp_battle_director.gml")
 
-# Spec 18 section 6, the table and the data block: 70 percent of 120 is 84, 40 percent of 120 is 48.
+# Spec 18 section 6, the table and the data block: the bands are the percents 70 and 40. The three battle demo
+# (2026-11-01) ships Percy at 40 hp, so 70 percent of 40 is 28 and 40 percent of 40 is 16 (84 and 48 at the old 120).
+PERCY_MAX_HP = 40
 PERCY_BANDS = (70, 40)
-PERCY_CROSSINGS = (84, 48)
+PERCY_CROSSINGS = (28, 16)
 
 
 def read_json(path):
@@ -117,7 +119,7 @@ def test_percy_ships_the_two_rows_spec_18_section_6_writes():
     # Section 6's phase 1 is rain only; C18-1 is the delta that narrows this list, and the checker refuses the wall in
     # both places at once, so the two cannot drift.
     assert row["patterns"] == ["percy_rain"], row["patterns"]
-    assert row["max_hp"] == 120 and row["route_kind"] == "boss"
+    assert row["max_hp"] == PERCY_MAX_HP and row["route_kind"] == "boss"
 
 
 def test_the_crossings_are_the_arithmetic_the_spec_names():
@@ -125,10 +127,10 @@ def test_the_crossings_are_the_arithmetic_the_spec_names():
     crossings = tuple(crossing_hp(phase["hp_at_or_below"], row["max_hp"]) for phase in row["phases"])
     assert crossings == PERCY_CROSSINGS, crossings
     # The numbers in words, so a reader can check the sum without running anything:
-    assert 70 * 120 // 100 == 84
-    assert 40 * 120 // 100 == 48
+    assert 70 * 40 // 100 == 28
+    assert 40 * 40 // 100 == 16
     # Strictly descending, which is the order the director walks them in.
-    assert 84 > 48
+    assert 28 > 16
 
 
 def test_the_attack_stays_inside_the_spec_07_band():
@@ -147,17 +149,17 @@ def test_the_attack_stays_inside_the_spec_07_band():
 
 def test_the_pool_and_the_attack_move_at_each_threshold():
     walk = {step["hp"]: step for step in phase_walk(percy_rows())}
-    assert walk[120]["pool"] == ("percy_rain",)
-    assert walk[85]["pool"] == ("percy_rain",), "85 hp is above 84, so nothing has crossed"
-    assert walk[84]["pool"] == ("percy_rain", "percy_wall"), "84 is the first crossing"
-    assert walk[49]["pool"] == ("percy_rain", "percy_wall"), "49 hp is above 48"
-    assert walk[48]["pool"] == ("percy_rain", "percy_wall", "percy_fan"), "48 is the second crossing"
+    assert walk[40]["pool"] == ("percy_rain",)
+    assert walk[29]["pool"] == ("percy_rain",), "29 hp is above 28, so nothing has crossed"
+    assert walk[28]["pool"] == ("percy_rain", "percy_wall"), "28 is the first crossing"
+    assert walk[17]["pool"] == ("percy_rain", "percy_wall"), "17 hp is above 16"
+    assert walk[16]["pool"] == ("percy_rain", "percy_wall", "percy_fan"), "16 is the second crossing"
     assert walk[1]["pool"] == ("percy_rain", "percy_wall", "percy_fan")
     # The attack is the number the player cannot name, so it moves with the same crossings and needs no label.
-    assert (walk[85]["attack"], walk[84]["attack"], walk[48]["attack"]) == ((3, 5), (4, 5), (4, 6))
+    assert (walk[29]["attack"], walk[28]["attack"], walk[16]["attack"]) == ((3, 5), (4, 5), (4, 6))
     # The TALK set follows the same door.
-    assert walk[85]["talk"] == "talk_percy"
-    assert walk[84]["talk"] == "talk_percy_phase2"
+    assert walk[29]["talk"] == "talk_percy"
+    assert walk[28]["talk"] == "talk_percy_phase2"
 
 
 def test_the_breakpoint_is_a_percent_so_halving_max_hp_moves_nothing():

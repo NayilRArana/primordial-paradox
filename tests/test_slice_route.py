@@ -104,7 +104,10 @@ BEATS_BY_STEP = {
     "crawl": (3, 6),      # fade to stars, then the three crawl beats
     "drive": (7, 19),     # Big Ben, the London street, the M3, the rain, the radio, the services interlude
     "gate": (20, 20),     # the gate checkpoint, four pages and the one three option choice
-    "arrival": (21, 22),  # full control on the dock yard, then the dock office and the boarding pass
+    # Card t_785b61f0: the office is a route step of its own now, so the yard walk (21) and the dock office (22, the
+    # six pages and the boarding pass) are two steps again instead of one.
+    "arrival": (21, 21),  # full control on the dock yard
+    "office": (22, 22),   # the dock office, six pages, the boarding pass
     "boarding": (24, 26),  # the quay side walk, the gangway and horn, the ship corridor
     "save": (27, 27),     # the cabin, the ship's log, the first save
 }

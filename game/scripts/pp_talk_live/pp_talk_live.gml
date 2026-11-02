@@ -73,6 +73,17 @@ function pp_talk_live_data() {
         voice_bits: 16,
         voice_file: "cache/talk_voice.wav",
         voice_hold_min: 15,
+        // Card t_330b12ce: the voice leg's own clocks. The recorder's buffer arrives in the engine's own async
+        // event, which is never the same step as the key release, so the box waits for it (voice_wait_steps) and
+        // the transcription request has its own shorter budget (hear_timeout_steps). A scene chat is a cutscene and
+        // cannot spend the fight's whole 13 second budget on one line, so it carries scene_timeout_steps instead.
+        voice_wait_steps: 60,
+        hear_timeout_steps: 180,
+        scene_timeout_steps: 420,
+        fallback_line_1: "THE LINE DID NOT",
+        fallback_line_2: "CARRY. SAY IT AGAIN.",
+        fallback_note: "NO ANSWER. SAY IT AGAIN.",
+        voice_note: "NO VOICE CAME BACK.",
         grid: [],
         grid_cols: 11,
         grid_rows: 4,
@@ -115,6 +126,9 @@ function pp_talk_live_data() {
             _d.timeout_steps = pp_talk_live_int(_t, "timeout_steps", _d.timeout_steps);
             _d.blink_steps = pp_talk_live_int(_t, "cursor_blink_steps", _d.blink_steps);
             _d.dots_steps = pp_talk_live_int(_t, "dots_step_steps", _d.dots_steps);
+            _d.voice_wait_steps = pp_talk_live_int(_t, "voice_wait_steps", _d.voice_wait_steps);
+            _d.hear_timeout_steps = pp_talk_live_int(_t, "hear_timeout_steps", _d.hear_timeout_steps);
+            _d.scene_timeout_steps = pp_talk_live_int(_t, "scene_timeout_steps", _d.scene_timeout_steps);
         }
         if (variable_struct_exists(_doc, "voice") && is_struct(_doc.voice)) {
             var _v = _doc.voice;
@@ -145,6 +159,10 @@ function pp_talk_live_data() {
             _d.hint_wait = pp_talk_live_str(_s, "hint_wait", _d.hint_wait);
             _d.tries_note = pp_talk_live_str(_s, "tries_note", _d.tries_note);
             _d.empty_note = pp_talk_live_str(_s, "empty_note", _d.empty_note);
+            _d.fallback_line_1 = pp_talk_live_str(_s, "scene_fallback_1", _d.fallback_line_1);
+            _d.fallback_line_2 = pp_talk_live_str(_s, "scene_fallback_2", _d.fallback_line_2);
+            _d.fallback_note = pp_talk_live_str(_s, "scene_fallback_note", _d.fallback_note);
+            _d.voice_note = pp_talk_live_str(_s, "voice_note", _d.voice_note);
         }
         if (variable_struct_exists(_doc, "will") && is_struct(_doc.will)) {
             _d.will_max = pp_talk_live_int(_doc.will, "max", _d.will_max);
@@ -166,6 +184,9 @@ function pp_talk_live_data() {
     if (_d.rows_shown < 1) _d.rows_shown = 2;
     if (_d.tries_max < 1) _d.tries_max = 3;
     if (_d.timeout_steps < 60) _d.timeout_steps = 780;
+    if (_d.scene_timeout_steps < 60) _d.scene_timeout_steps = 420;
+    if (_d.hear_timeout_steps < 30) _d.hear_timeout_steps = 180;
+    if (_d.voice_wait_steps < 15) _d.voice_wait_steps = 60;
     if (_d.blink_steps < 1) _d.blink_steps = 30;
 
     global.pp_talk_live_table = _d;
@@ -267,6 +288,11 @@ function pp_talk_live_state_init(_battle) {
     if (!variable_struct_exists(_battle, "live_voice_steps")) _battle.live_voice_steps = 0;
     if (!variable_struct_exists(_battle, "live_voice_buffer")) _battle.live_voice_buffer = undefined;
     if (!variable_struct_exists(_battle, "live_voice_channel")) _battle.live_voice_channel = -1;
+    // Card t_330b12ce: the steps spent waiting for the engine's recording buffer, and the steps spent waiting for a
+    // transcription. Both are clocks on a take, so a machine with no microphone and a bridge with no whisper each
+    // resolve into a note on screen instead of a box that never moves again.
+    if (!variable_struct_exists(_battle, "live_voice_wait")) _battle.live_voice_wait = 0;
+    if (!variable_struct_exists(_battle, "live_hear_steps")) _battle.live_hear_steps = 0;
     if (!variable_struct_exists(_battle, "live_cursor_steps")) _battle.live_cursor_steps = 0;
     if (!variable_struct_exists(_battle, "live_back_hold")) _battle.live_back_hold = 0;
     if (!variable_struct_exists(_battle, "live_deferred")) _battle.live_deferred = undefined;
@@ -280,6 +306,15 @@ function pp_talk_live_state_init(_battle) {
 function pp_talk_live_is_persona(_battle) {
     return is_struct(_battle) && variable_struct_exists(_battle, "persona") && is_string(_battle.persona)
         && _battle.persona != "";
+}
+
+/// True when this box state is a scene chat: a line the player says inside a cutscene, answered by the baked turn
+/// the model wrote for that character (card t_1163ca72, the S5 dock office exchange). The npc id lives on the state
+/// and neither the fight path nor the persona path ever carries one, so every branch this flag guards is dead code
+/// in the sailor fight and in a persona chat.
+function pp_talk_live_is_scene(_battle) {
+    return is_struct(_battle) && variable_struct_exists(_battle, "scene_npc") && is_string(_battle.scene_npc)
+        && _battle.scene_npc != "";
 }
 
 /// True while the box owns the menu. The director asks this instead of testing a stage string, so the one place that
@@ -358,6 +393,40 @@ function pp_talk_live_step(_battle) {
 function pp_talk_live_step_entry(_battle) {
     var _d = pp_talk_live_data();
     _battle.live_cursor_steps += 1;
+
+    // Card t_330b12ce: a take whose buffer the engine has not handed back yet. The release stops the recorder and
+    // the samples arrive in the audio recording event, which is a step or more later, so the box holds here and lets
+    // the event send the wav. A machine whose recorder never reports costs voice_wait_steps and a note, never a box
+    // that ignores every key afterwards.
+    if (_battle.live_voice_wait > 0) {
+        _battle.live_voice_wait += 1;
+        if (_battle.live_voice_wait > _d.voice_wait_steps) {
+            _battle.live_voice_wait = 0;
+            _battle.live_voice_channel = -1;
+            _battle.live_voice_buffer = undefined;
+            _battle.live_note = _d.voice_note;
+            _battle.live_note_steps = 120;
+            show_debug_message("PP: talk live no recording buffer after " + string(_d.voice_wait_steps)
+                + " steps, the keyboard and the grid still work");
+        }
+        return;
+    }
+
+    // Card t_330b12ce: a transcription in flight. Typing is held for its budget because the transcript replaces the
+    // line, and at hear_timeout_steps the request is abandoned with a note instead of holding the box forever.
+    if (_battle.live_pending == "hear" && is_real(_battle.live_handle) && _battle.live_handle >= 0) {
+        _battle.live_hear_steps += 1;
+        if (_battle.live_hear_steps > _d.hear_timeout_steps) {
+            _battle.live_handle = -1;
+            _battle.live_pending = "";
+            _battle.live_hear_steps = 0;
+            _battle.live_note = _d.voice_note;
+            _battle.live_note_steps = 120;
+            show_debug_message("PP: talk live hear timeout at " + string(_d.hear_timeout_steps)
+                + " steps, the keyboard and the grid still work");
+        }
+        return;
+    }
 
     // The voice key, held. A recording shorter than the data's floor is refused with the low blip, so a brush
     // against the key is not a transcribe round trip.
@@ -487,12 +556,20 @@ function pp_talk_live_step_listen(_battle) {
     var _steps = _battle.live_voice_steps;
     var _buffer = pp_talk_live_voice_stop(_battle);
     _battle.live_stage = "entry";
-    if (_steps < _d.voice_hold_min || is_undefined(_buffer)) {
+    if (_steps < _d.voice_hold_min) {
         pp_audio_play("menu_move");
         _battle.live_note = _d.empty_note;
         _battle.live_note_steps = 90;
         show_debug_message("PP: talk live recording " + string(_steps) + " steps, under the "
             + string(_d.voice_hold_min) + " step floor, refused");
+        return;
+    }
+    // Card t_330b12ce: the stop and the samples are two steps. When the buffer is already here (a build that hands it
+    // back synchronously) the wav goes now; otherwise the box waits in entry and pp_talk_live_voice_recorded sends it
+    // the moment the engine's audio recording event arrives.
+    if (is_undefined(_buffer)) {
+        _battle.live_voice_wait = 1;
+        show_debug_message("PP: talk live recording stopped, waiting for the engine's buffer");
         return;
     }
     pp_talk_live_send_hear(_battle, _buffer);
@@ -513,10 +590,19 @@ function pp_talk_live_step_wait(_battle) {
         }
         return;
     }
-    if (_battle.live_steps >= _d.timeout_steps) {
+    if (_battle.live_steps >= pp_talk_live_timeout_steps(_battle)) {
         show_debug_message("PP: talk live timeout at " + string(_battle.live_steps) + " steps, fallback answers");
         pp_talk_live_answer(_battle, pp_talk_live_tape_miss(_battle), "timeout");
     }
+}
+
+/// How long this box waits for an answer before the fallback takes the turn. A scene chat is a cutscene with a shot
+/// table behind it, so it gets the shorter budget the data file carries; a fight gets the 13 second window that
+/// outlasts the bridge's own deadline (card t_330b12ce).
+function pp_talk_live_timeout_steps(_battle) {
+    var _d = pp_talk_live_data();
+    if (pp_talk_live_is_scene(_battle)) return _d.scene_timeout_steps;
+    return _d.timeout_steps;
 }
 
 // ---------------------------------------------------------------------------------------------------------------
@@ -556,6 +642,7 @@ function pp_talk_live_delete(_battle) {
 
 /// Esc: put the box down, spend nothing, and hand the menu back. A player who changes their mind owes no turn.
 function pp_talk_live_abandon(_battle) {
+    if (pp_talk_live_is_scene(_battle)) return pp_talk_scene_abandon(_battle);
     if (pp_talk_live_is_persona(_battle)) return pp_talk_persona_abandon(_battle);
     pp_audio_play("menu_move");
     show_debug_message("PP: talk live abandoned at " + string(string_length(_battle.live_text)) + " characters");
@@ -569,6 +656,7 @@ function pp_talk_live_abandon(_battle) {
 /// Send. An empty line is refused and the box stays open, because an empty TALK is not a turn.
 function pp_talk_live_submit(_battle) {
     var _d = pp_talk_live_data();
+    if (pp_talk_live_is_scene(_battle)) return pp_talk_scene_submit(_battle);
     if (pp_talk_live_is_persona(_battle)) return pp_talk_persona_submit(_battle);
     var _line = pp_talk_live_scrub(_battle.live_text);
     if (_line == "") {
@@ -629,6 +717,7 @@ function pp_talk_live_scrub(_text) {
 function pp_talk_live_request(_battle) {
     var _d = pp_talk_live_data();
     if (pp_talk_live_is_persona(_battle)) return pp_talk_persona_request(_battle);
+    if (pp_talk_live_is_scene(_battle)) return pp_talk_scene_request(_battle);
     var _body = {
         encounter_id: "",
         npc: "",
@@ -700,9 +789,16 @@ function pp_talk_live_send_talk(_battle) {
 /// The voice leg. The recorded buffer becomes a wav at the data file's rate, and the wav goes to /hear.
 function pp_talk_live_send_hear(_battle, _buffer) {
     var _d = pp_talk_live_data();
+    _battle.live_hear_steps = 0;
+    _battle.live_voice_wait = 0;
     if (!pp_talk_live_is_live()) {
         // Replay: the demo's transcripts are part of the tape, so the voice path shows the same box the live path
-        // does without a microphone and without a socket.
+        // does without a microphone and without a socket. A scene chat has no recorded take of its own, so it says so
+        // and leaves the line the player already has; a transcript from the fight would be the wrong character.
+        if (pp_talk_live_is_scene(_battle)) {
+            show_debug_message("PP: talk live scene hear in replay, no recording, the keyboard carries the line");
+            return false;
+        }
         var _hear = pp_talk_live_hear_replay(_battle, _buffer);
         if (is_string(_hear) && _hear != "") {
             _battle.live_text = _hear;
@@ -777,7 +873,47 @@ function pp_talk_live_voice_recorded(_battle, _buffer) {
     if (!buffer_exists(_buffer)) return false;
     _battle.live_voice_buffer = _buffer;
     show_debug_message("PP: talk live recording " + string(buffer_get_size(_buffer)) + " bytes");
+    // Card t_330b12ce: this is the event a released take was waiting for. Send it now, once, and only while the box
+    // is still open in its entry stage: a player who cancelled while the samples were in flight owns no request.
+    if (_battle.live_voice_wait > 0) {
+        _battle.live_voice_wait = 0;
+        if (_battle.live_stage == "entry") {
+            pp_talk_live_send_hear(_battle, _buffer);
+        }
+    }
     return true;
+}
+
+/// The recording event, routed to whichever box is open. One microphone and up to three boxes can exist on the same
+/// frame (a fight, a persona chat and a scene chat), so the event asks which of them is listening instead of assuming
+/// the battle's. A buffer that no box asked for is dropped with a log line rather than kept.
+function pp_talk_live_voice_event(_buffer) {
+    var _boxes = pp_talk_live_open_boxes();
+    for (var i = 0; i < array_length(_boxes); i++) {
+        var _box = _boxes[i];
+        if (!is_struct(_box)) continue;
+        if (_box.live_stage != "listen" && _box.live_voice_wait <= 0) continue;
+        if (_box.live_voice_channel < 0 && _box.live_voice_wait <= 0) continue;
+        return pp_talk_live_voice_recorded(_box, _buffer);
+    }
+    show_debug_message("PP: talk live recording delivered with no box listening, dropped");
+    return false;
+}
+
+/// Every box the game can have open at once, in the order a take is most likely to belong to. The scene chat is
+/// reached through the world's scene runner, which is where pp_scene keeps the runner it is playing.
+function pp_talk_live_open_boxes() {
+    var _out = [];
+    if (!is_struct(global.pp)) return _out;
+    if (is_struct(global.pp.battle)) array_push(_out, global.pp.battle);
+    if (is_struct(global.pp.talk_persona)) array_push(_out, global.pp.talk_persona);
+    if (is_struct(global.pp.world)) {
+        var _sc = global.pp.world.scene;
+        if (is_struct(_sc) && variable_struct_exists(_sc, "talk") && is_struct(_sc.talk)) {
+            array_push(_out, _sc.talk);
+        }
+    }
+    return _out;
 }
 
 /// A 44 byte RIFF header and the recorded samples behind it. buffer_text writes the four character tags without a
@@ -818,11 +954,14 @@ function pp_talk_live_wav(_src, _rate, _channels, _bits) {
 function pp_talk_live_async(_battle) {
     if (!is_struct(_battle)) return false;
     pp_talk_live_state_init(_battle);
-    if (_battle.live_stage != "wait") return false;
 
+    // The id decides first, then the stage. Card t_330b12ce found why the order matters: a /hear answer arrives while
+    // the box is back in its entry stage (the transcript belongs IN the box, not after a send), so a handler that
+    // demanded "wait" threw every transcript away and left the handle open.
     var _id = ds_map_find_value(async_load, "id");
     if (is_undefined(_id) || !is_real(_battle.live_handle) || _battle.live_handle < 0) return false;
     if (_id != _battle.live_handle) return false;
+    if (_battle.live_stage != "wait" && _battle.live_pending != "hear") return false;
 
     _battle.live_handle = -1;
     var _http = ds_map_find_value(async_load, "http_status");
@@ -841,6 +980,12 @@ function pp_talk_live_async(_battle) {
 
     if (!_ok) {
         show_debug_message("PP: talk live answer not ok, status " + string(_status) + ", http " + string(_http));
+        if (_pending == "hear") {
+            _battle.live_note = pp_talk_live_data().voice_note;
+            _battle.live_note_steps = 120;
+            show_debug_message("PP: talk live hear answer not ok, the keyboard and the grid still work");
+            return true;
+        }
         pp_talk_live_answer(_battle, pp_talk_live_tape_miss(_battle), "transport_error");
         return true;
     }
@@ -900,6 +1045,7 @@ function pp_talk_live_hear_answer(_battle, _doc) {
 function pp_talk_live_answer(_battle, _doc, _via) {
     var _d = pp_talk_live_data();
     if (pp_talk_live_is_persona(_battle)) return pp_talk_persona_answer(_battle, _doc, _via);
+    if (pp_talk_live_is_scene(_battle)) return pp_talk_scene_answer(_battle, _doc, _via);
     var _answer = pp_talk_live_answer_clean(_doc);
     if (is_undefined(_answer)) {
         show_debug_message("PP: talk live answer refused (" + _via + "), fallback answers");
@@ -1028,6 +1174,18 @@ function pp_talk_live_verdict_legal(_verdict) {
         if (_set[i] == _verdict) return true;
     }
     return false;
+}
+
+/// The inverse map, for the one box that shows a verdict as a word: a baked turn's effect, through the same table
+/// data/talk/sailor_judge.json carries (soften and nudge are persuaded, none and end are unmoved, setback is angered).
+/// Card t_1163ca72 draws this word in the office's text box, so the model's judgement is on screen and not in a log.
+function pp_talk_live_effect_verdict(_effect) {
+    switch (_effect) {
+        case "soften":  return "persuaded";
+        case "nudge":   return "persuaded";
+        case "setback": return "angered";
+    }
+    return "unmoved";
 }
 
 /// The effect enum the rest of the talk code already speaks (spec 19 section 4): persuaded is a soften when it is a
@@ -1183,7 +1341,7 @@ function pp_talk_live_draw(_battle) {
 
     // The prompt and how many tries are left, on the window's first row.
     pp_font_draw("* " + _d.prompt, _x, pp_talk_live_prompt_y(), 1);
-    if (!pp_talk_live_is_persona(_battle)) {
+    if (!pp_talk_live_is_persona(_battle) && !pp_talk_live_is_scene(_battle)) {
         var _counter = string(pp_talk_live_tries_left(_battle)) + "/" + string(_d.tries_max);
         var _cw = pp_font_width(_counter);
         pp_font_draw(_counter, PP_FRAME_W - 8 - _cw, pp_talk_live_prompt_y(), 1);
