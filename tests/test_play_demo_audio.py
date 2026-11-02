@@ -55,6 +55,11 @@ UNDUCK = "PP audio: title_theme back to full after 6 dB"
 FOOTSTEP = "PP audio: footstep played, instance 400008"
 BLIP = "PP audio: text_blip_a played, instance 400020"
 STOP = "PP audio: music stopping over 30 steps"
+# The two lines pp_audio_focus writes (game/scripts/pp_audio/pp_audio.gml:415 to :434). The pause line is the
+# game's own account of the music stopping and every ringing effect being stopped; the resume line says the
+# music came back where it stopped.
+FOCUS_LOST = "PP audio: focus lost, music paused (cue and theme) and every effect stopped"
+FOCUS_BACK = "PP audio: focus back, music resumed where it stopped"
 
 
 def load_tool(name: str):
@@ -92,10 +97,14 @@ def delivered(demo, tmp_path, monkeypatch):
     shutil.copyfile(TITLE_OGG, streams / "title_theme_v3_126.ogg")
     shutil.copyfile(TITLE_OGG, sfx / "footstep.ogg")
     shutil.copyfile(TITLE_OGG, sfx / "text_blip_a.ogg")
+    # One effect long enough to still be ringing when the game's focus pause arrives, so the cut at the pause
+    # second can be measured and not only asserted on a field.
+    shutil.copyfile(TITLE_OGG, sfx / "long_ring.ogg")
     manifest = sfx / "sfx.json"
     manifest.write_text(json.dumps({"cues": [
         {"id": "footstep", "file": "footstep.ogg", "seconds": 0.5},
         {"id": "text_blip_a", "file": "text_blip_a.ogg", "seconds": 0.5},
+        {"id": "long_ring", "file": "long_ring.ogg", "seconds": 4.0},
     ]}), encoding="utf-8")
     # The second STREAM_DIRS entry is the real assets folder, so the PP-05 line resolves against the tracked
     # file the way it does for real: the build's streams folder first, then the delivered originals.
@@ -300,3 +309,111 @@ def test_the_rebuilt_track_really_renders_and_is_not_silence(demo, delivered, tm
     streams = json.loads(probe.stdout or "{}").get("streams") or []
     assert streams and streams[0]["codec_name"] == "aac"
     assert streams[0]["sample_rate"] == "48000" and streams[0]["channels"] == 2, streams[0]
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# 6: the game's focus pause is part of the game's own sound (review round 1, correction 1)
+#
+# `pp_audio_focus` pauses the music and stops every ringing effect when the window loses focus, and resumes the
+# music where it stopped when focus returns (game/scripts/pp_audio/pp_audio.gml:415 to :434, and
+# knowledge/EVENT-LOG-AUDIO-MAP-2026-11-01.json maps focus_lost to music_pause and focus_back to music_resume).
+# A rebuild that played through that pause would reproduce a sound the game never made.
+
+@pytest.mark.windows_only
+def test_the_rebuild_is_silent_where_the_log_records_the_focus_pause(demo, delivered):
+    events, notes = demo.audio_events(rows(TITLE, FOCUS_LOST, FOCUS_BACK, step=10.0))
+    assert notes == [], notes
+    assert [row["kind"] for row in events] == ["music", "focus_lost", "focus_back"]
+    assert demo.focus_windows(events, 40.0) == [(10.0, 20.0)]
+    segments, _silent = demo.log_audio_plan(events, 40.0)
+    music = [row for row in segments if row["kind"] == "music"]
+    assert [(row["in"], row["out"]) for row in music] == [(0.0, 10.0), (20.0, 40.0)], \
+        "no music segment may sit inside the pause the log records"
+    # "resumed where it stopped" is the log's own wording: the piece after the pause starts at the playing time
+    # the music had reached, which is neither 0 nor the second the resume line happened to arrive (20.0).
+    assert music[1]["offset"] == 10.0, music[1]
+    assert music[1]["offset"] != music[1]["in"]
+    assert "resumed 10.000 s into the file" in music[1]["why"], music[1]["why"]
+    assert music[0]["fade_in"] > 0 and music[0]["fade_out"] == 0.0, \
+        "the game pauses dead: a piece that ends at the pause carries no fade out"
+    assert music[1]["fade_in"] == 0.0, "the game resumes dead: no fade in after the pause"
+    assert music[1]["fade_out"] > 0, "the game's own crossfade at the end of the cue only"
+
+
+@pytest.mark.windows_only
+def test_an_effect_ringing_when_the_pause_came_is_cut_there_and_a_later_one_is_kept(demo, delivered):
+    ring = "PP audio: long_ring played, instance 400030"
+    log = [{"at": at, "line": line, "before_recording": index == 0}
+           for index, (at, line) in enumerate(((0.0, TITLE), (8.0, ring), (10.0, FOCUS_LOST),
+                                               (30.0, FOCUS_BACK), (32.0, ring)))]
+    events, notes = demo.audio_events(log)
+    assert notes == [], notes
+    segments, _silent = demo.log_audio_plan(events, 40.0)
+    effects = [row for row in segments if row["kind"] == "sfx"]
+    assert [(row["in"], row["out"]) for row in effects] == [(8.0, 10.0), (32.0, 36.0)], \
+        "the effect that was ringing is cut at the pause, and the one the log prints after it is kept whole"
+    assert "cut at 10.000 s" in effects[0]["why"], effects[0]["why"]
+
+
+@pytest.mark.windows_only
+def test_the_focus_reading_is_stated_in_the_record_and_not_chosen_in_silence(demo, delivered):
+    reading = demo.FOCUS_EFFECTS_READING
+    assert "already ringing" in reading, reading
+    assert "kept" in reading, "the record has to say what happened to an effect line printed after the pause"
+    assert "play line" in reading, "and why that reading follows from the log itself"
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# 7: every audio line is accounted for (review round 1, correction 2)
+
+@pytest.mark.windows_only
+def test_every_audio_line_ends_as_a_placement_a_silent_cue_or_a_note(demo, delivered):
+    status = ("PP audio status: mode=title room=rm_pp_title cue=title_theme instance=400001 playing=1 "
+              "gain=0.70 master=1 paused=0")
+    unknown = "PP audio: a shape this tool has never seen"
+    log = rows(TITLE, status, unknown, MISSING, FOCUS_LOST, FOCUS_BACK)
+    events, notes = demo.audio_events(log)
+    accounted = len(events) + len(notes)
+    assert accounted == len(log), (
+        "%d of the %d audio rows were left with no account of them: %d events and %d notes"
+        % (len(log) - accounted, len(log), len(events), len(notes)))
+    kinds = [row["kind"] for row in events]
+    assert "music" in kinds and "music_missing" in kinds and "focus_lost" in kinds and "focus_back" in kinds, kinds
+    assert any("no shape for" in note and "a shape this tool has never seen" in note for note in notes), notes
+    assert any("state report" in note and "1 time" in note for note in notes), notes
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# 8: the rendered track is silent in the pause and sounds again after it
+
+def window_mean_db(demo, path, start, seconds):
+    """ffmpeg's own volumedetect mean over one window of the track, so a silence is measured and not assumed."""
+    ffmpeg = demo.ffmpeg_path()
+    result = subprocess.run([ffmpeg, "-hide_banner", "-nostats", "-ss", "%.3f" % start, "-t", "%.3f" % seconds,
+                             "-i", path, "-af", "volumedetect", "-f", "null", "-"],
+                            capture_output=True, text=True, stdin=subprocess.DEVNULL)
+    for line in (result.stderr or "").splitlines():
+        if "mean_volume:" in line:
+            return float(line.split("mean_volume:")[1].strip().split()[0])
+    return None
+
+
+@pytest.mark.windows_only
+def test_the_rendered_track_is_silent_in_the_pause_and_sounds_after_it(demo, delivered, tmp_path):
+    ffmpeg = demo.ffmpeg_path()
+    if not ffmpeg:
+        pytest.skip("ffmpeg is not installed on this host, so the rebuild cannot be measured here")
+    log = [{"at": at, "line": line, "before_recording": index == 0}
+           for index, (at, line) in enumerate(((0.0, TITLE), (10.0, FOCUS_LOST), (20.0, FOCUS_BACK)))]
+    out = str(tmp_path / "paused.m4a")
+    info = demo.reconstruct_audio(log, 30.0, out)
+    assert info["source"] == "reconstructed", info.get("why")
+    assert info["focus"]["pauses"] == [{"from": 10.0, "to": 20.0}], info.get("focus")
+    assert info["focus"]["effects"] == demo.FOCUS_EFFECTS_READING
+    before = window_mean_db(demo, out, 1.0, 3.0)
+    inside = window_mean_db(demo, out, 12.0, 5.0)
+    after = window_mean_db(demo, out, 22.0, 3.0)
+    assert before is not None and before > demo.SILENT_TRACK_DB, "the music sounds before the pause: %s dB" % before
+    assert inside is not None and inside <= demo.SILENT_TRACK_DB, \
+        "the pause the game recorded measures %s dB, which is not silence" % inside
+    assert after is not None and after > demo.SILENT_TRACK_DB, "the music comes back after the pause: %s dB" % after

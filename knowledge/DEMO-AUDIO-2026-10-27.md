@@ -261,16 +261,33 @@ The rebuild path needs all five of these, and its pass conditions are the last t
    with the second it arrived on the recording's clock; lines already in the file at record start (the title
    theme streams at boot) are placed at 0.0 and flagged `before_recording`.
 2. `audio_events` turns each line into a cue with the file it names, found on this checkout: the title theme
-   stream, a music cue by id, a cue the game could not start, a stop, a duck, an unduck, or an effect
-   (`audio_events`, `resolve_stream`, `sfx_table`).
+   stream, a music cue by id, a cue the game could not start, a stop, a duck, an unduck, a focus pause, a focus
+   resume, or an effect (`audio_events`, `resolve_stream`, `sfx_table`). Every row the watch hands over ends as
+   one of three things: a placement, a silent cue, or a note. A line with a shape this tool does not know is a
+   note naming the line, and the once-a-second `PP audio status:` lines are counted into one note, so a take's
+   record is a full account of its log instead of a count that implies it (`audio_events`, review round 1).
 3. `log_audio_plan` places them at the game's own gains and splits the music at each duck: music 0.7, an effect
    0.9, a text blip 0.45, a 6 dB duck 0.3508, crossfade 30 steps of 16.6667 ms at the edges
    (`game/scripts/pp_audio/pp_audio.gml` lines 42 to 51; `tools/play_demo.py` constants).
-4. `render_log_audio` builds one ffmpeg filtergraph: an `anullsrc` base, one input per cue (music looped with
-   `-stream_loop -1`), each trimmed, gained, faded and delayed to its second, mixed with `normalize=0`, out as
-   AAC 48 kHz stereo.
-5. `reconstruct_audio` refuses to call the result audio when ffmpeg's own `volumedetect` mean is at or under
-   -70 dBFS, so a silent track is a failure and never a pass (`SILENT_TRACK_DB`).
+4. The game's focus pause is part of its sound. `pp_audio_focus` pauses the music and stops every ringing
+   effect when the window loses focus, and resumes the music where it stopped when focus returns
+   (`game/scripts/pp_audio/pp_audio.gml` lines 415 to 434). `focus_windows` reads the two log lines into
+   (lost, back) pairs, the music carries no segment inside a pair, and the piece after it starts at the second
+   of the file the music had reached, which every music segment carries as its `offset` and
+   `render_log_audio` trims from (`atrim=start=...`, `tools/play_demo.py`). A piece that ends at a pause carries no
+   fade out and a resumed piece no fade in, because the engine pauses and resumes dead
+   (`game/scripts/pp_audio/pp_audio.gml` line 420 and line 431, `log_audio_plan`).
+5. Which reading of the pause line the rebuild uses is stated in the take's record and not chosen in silence:
+   the pause stops the effects that were already ringing at that instant, which the plan cuts at the pause
+   second, and an effect the log prints after the pause is kept, because the game prints a play line when it
+   starts a sound and a stopped sound cannot print one (`FOCUS_EFFECTS_READING`, `tools/play_demo.py`). The
+   record carries that sentence plus the pause seconds under `audio_detail.focus`
+   (`reconstruct_audio`, `verify_video`).
+6. `render_log_audio` builds one ffmpeg filtergraph: an `anullsrc` base, one input per cue (music looped with
+   `-stream_loop -1`), each trimmed from its offset, gained, faded and delayed to its second, mixed with
+   `normalize=0`, out as AAC 48 kHz stereo (`render_log_audio`, `tools/play_demo.py`).
+7. `reconstruct_audio` refuses to call the result audio when ffmpeg's own `volumedetect` mean is at or under
+   -70 dBFS, so a silent track is a failure and never a pass (`SILENT_TRACK_DB`, `tools/play_demo.py`).
 
 A cue the game asked for and could not start stays silent in the rebuild, because the cue's OGG is not where
 the music path looks today (`knowledge/nodes/audio-routing.md` section 3). The rebuild reproduces the game's
@@ -358,3 +375,77 @@ Until that run exists, no take after 2026-10-30 may ship: the only two labels th
 section 6, `none` fails, and a take with no record at all fails the shipping question. The cut that would be
 submitted today, `output/demo/DEMO-CUT-V3.mp4`, is one of those unrecorded files: it has no verify file beside
 it, so it fails `--check --final` on its audio rather than being submitted on a guess.
+
+
+## 9. Review round 1: the focus pause and the accounting, measured 2026-11-02
+
+Two corrections were asked for on this card after the 2026-11-02 take, and both are in `tools/play_demo.py` now.
+
+### 9.1 The music no longer plays across a pause the game's own log records
+
+The 2026-11-02 take's own record is the defect: `output/demo/audio-2026-11-02_verify.json` has one music
+segment, `title_theme` from `in` 0.0 to `out` 256.0, while `build/demo-game.log` line 47 says
+`PP audio: focus lost, music paused (cue and theme) and every effect stopped` and line 72 says
+`PP audio: focus back, music resumed where it stopped` (`build/demo-game.log`). The pause came before the first
+thunder placement at 7.031 s and the resume after the last one at 251.328 s, so that record played the theme
+for about 244 s of the 256 s the log says the music was paused (`output/demo/audio-2026-11-02_verify.json`).
+
+Now `audio_events` reads both lines as events, `focus_windows` pairs them, `log_audio_plan` emits no music
+segment inside a pair, and the piece after the pause starts at the second of the file the music had reached:
+the plan carries it as `offset`, and `render_log_audio` trims from there with `atrim=start=...`
+(`tools/play_demo.py` `focus_windows`, `log_audio_plan`, `render_log_audio`). The take's record gains
+`audio_detail.focus` with the pause seconds, one sentence on the music and `FOCUS_EFFECTS_READING`
+(`reconstruct_audio`, `tools/play_demo.py`).
+
+Measured on the real log, with a DECLARED uniform clock: `build/demo-game.log` has no timestamps of its own, so
+the probe gives one audio line per second in log order, which is a shape proof and not that take's real
+seconds (`output/demo/focus-proof-2026-11-02.json`, `_t7540_focus_probe_r1.log` in this card's workspace):
+
+| measure | value | source |
+| --- | --- | --- |
+| audio lines in the log | 32 | `build/demo-game.log` |
+| focus window read from the log | 3.0 s to 27.0 s | `output/demo/focus-proof-2026-11-02.json` |
+| music segments overlapping the pause | 0 | same file |
+| music pieces | 0.0 to 3.0 at offset 0.000, then 27.0 to 32.0 at offset 3.000 | same file |
+| effect placements the log prints inside the pause, kept by the stated reading | 22 | same file |
+| rebuilt track mean | -17.2 dBFS, aac 48000 Hz 2 channels, 32.000000 s | ffprobe of `output/demo/focus-proof-2026-11-02.m4a` |
+| mean before the pause, inside it, after the resume | -19.4 dB, -16.7 dB, -16.3 dB | `ffmpeg -ss ... -af volumedetect` on that file |
+
+The pause window is not silent in that rebuild, and the record says why: the 22 effect plays the log prints
+between the two focus lines are kept, per the reading above. What the fix removes is the music playing through
+the pause, and the segments show it: 0 music segments overlap the window (`output/demo/focus-proof-2026-11-02.json`).
+
+### 9.2 A pause with nothing but music in it measures as silence
+
+`tests/test_play_demo_audio.py::test_the_rendered_track_is_silent_in_the_pause_and_sounds_after_it` renders a
+log of a title cue, a pause at 10 s and a resume at 20 s, and measures three windows of the finished file with
+ffmpeg's own `volumedetect`: 1.0 to 4.0 s is above the -70 dB floor, 12.0 to 17.0 s is at or under it, and
+22.0 to 25.0 s is above it again. That is the pause held as a silence in the rendered track, not only in the
+plan (`tests/test_play_demo_audio.py`, `SILENT_TRACK_DB` in `tools/play_demo.py`).
+
+### 9.3 Every audio line now ends as a placement, a silent cue, or a note
+
+On the 2026-11-02 take the record read `lines: 27`, `notes: []`, `segments: 24`, which implies every line was
+accounted for while the two focus lines had simply been dropped (`output/demo/audio-2026-11-02_verify.json`).
+`audio_events` now appends a note for any line whose shape it does not know, names the line in it, and counts
+the once-a-second `PP audio status:` lines into one note (`audio_events`, `tools/play_demo.py`). On the real log
+that is visible at once: 32 audio lines give 30 events and 2 notes, and the two notes name the `car_engine_loop
+loaded` and `thunder_soft loaded` lines, which the old code dropped without a word
+(`output/demo/focus-proof-2026-11-02.json`).
+
+### 9.4 Tests, measured 2026-11-02
+
+    .venv/Scripts/python.exe -m pytest tests/test_play_demo_audio.py tests/test_event_audio_map.py \
+        tests/test_play_demo.py tests/test_play_demo_cover.py tests/test_demo_bed.py -q
+    -> 73 passed
+
+The new pins are the four in section 6 to 8 of `tests/test_play_demo_audio.py`: the pause with no music segment
+in it and the resume at the playing-time offset, the effect cut at the pause with a later play kept whole, the
+reading stated in the record, the full accounting of a log, and the rendered track's three windows.
+
+### 9.5 What is still owed, and it is not a code item
+
+The check the card names has to be run on a real take after the route fix lands and the manager's 2026-11-02
+15:25 hold lifts. `output/demo/audio-2026-11-02.mp4` is not that take: its picture is a route that stalled on
+the title and its audio predates this fix, so it is evidence for the field and the mux only
+(`output/demo/audio-2026-11-02_verify.json`). The command for the next take is the one in section 8.

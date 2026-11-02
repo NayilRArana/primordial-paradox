@@ -281,6 +281,8 @@ LOOPBACK_INSTALL = ("audio install: install VB-Audio Virtual Cable (vb-audio.com
 # The game writes one "PP audio:" line per cue it asks for, plays or leaves silent
 # (game/scripts/pp_audio/pp_audio.gml), so the log is the account of what it played and when.
 AUDIO_LOG_NEEDLE = "PP audio:"
+# The PP_AUDIO_LOG debug door writes one of these a second; they are state, never a cue, so no rebuild counts them.
+AUDIO_STATUS_NEEDLE = "PP audio status:"
 AUDIO_LOG_POLL_S = 0.05
 # A rebuilt track whose mean level is at or under this is silence, not audio: nothing on this card may pass a
 # silent track off as the game's sound.
@@ -292,6 +294,19 @@ MUSIC_STOP_RE = re.compile(r"^PP audio: (?:music|title_theme) stopping over")
 SFX_PLAYED_RE = re.compile(r"^PP audio: ([a-z0-9_]+) played, instance")
 DUCK_RE = re.compile(r"^PP audio: title_theme ducked (-?[\d.]+) dB")
 UNDUCK_RE = re.compile(r"^PP audio: title_theme back to full after")
+# The game pauses the music and stops every effect when the window loses focus, and resumes the music where it
+# stopped when focus comes back (game/scripts/pp_audio/pp_audio.gml:415 to :434, the two lines pp_audio_focus
+# writes). A rebuild that ignored these two lines would play music across a pause the game's own log records.
+FOCUS_LOST_RE = re.compile(r"^PP audio: focus lost, music paused")
+FOCUS_BACK_RE = re.compile(r"^PP audio: focus back, music resumed")
+# Which reading of the pause line this rebuild uses, carried in the record. The line says "every effect stopped"
+# and the same log can carry effect plays after it, so the reading is stated rather than chosen in silence:
+# the pause stops what was ALREADY ringing at that instant (pp_audio_focus loops the live sfx instances and
+# stops them), and an effect line the log prints afterwards is kept, because the game prints a play line when
+# it starts a sound and a stopped sound cannot print one.
+FOCUS_EFFECTS_READING = ("focus lost stops the effects that were already ringing at that instant, which the "
+                         "reconstruction cuts there, and an effect the log records as played after the pause is "
+                         "kept: the game prints a play line when it starts a sound, so that sound did play")
 SFX_MANIFEST = os.path.join(ROOT, "game", "datafiles", "sfx", "sfx.json")
 # Where the cue files the game names in its log actually live on this checkout: the build mirrors the delivered
 # OGGs into game/datafiles/streams, and assets/audio holds the delivered originals.
@@ -413,6 +428,8 @@ def validate_script(script):
                 problems.append("%s has a marker but no fallback step" % where)
             if not isinstance(event.get("marker"), str) or not event.get("marker"):
                 problems.append("%s.marker must be a non empty string" % where)
+            if not isinstance(event.get("marker_wait_s", 0), (int, float)) or event.get("marker_wait_s", 0) < 0:
+                problems.append("%s.marker_wait_s must be a non negative number" % where)
             if not isinstance(event.get("marker_delay_steps", 0), int):
                 problems.append("%s.marker_delay_steps must be an integer" % where)
         if step is not None:
@@ -858,13 +875,14 @@ def shot_table_check(table, duration_s, beat_rows):
 # ---------------------------------------------------------------------------------------------------------------------
 # The replay
 
-def read_marker(log_path, needle):
-    """True when the game's own log already carries a line. Absent file means 'not yet', never an error."""
+def read_marker(log_path, needle, need=1):
+    """True when the game's own log already carries a line `need` times (a line two events share, such as the fight
+    result of two fights, is only the second event's once it appears twice). Absent file means 'not yet'."""
     if not os.path.isfile(log_path):
         return False
     try:
         with open(log_path, "r", encoding="utf-8", errors="replace") as handle:
-            return needle in handle.read()
+            return handle.read().count(needle) >= need
     except OSError:  # gate: ok the game may hold the log open for writing on this platform; a marker that cannot be read is treated as absent and the step fallback takes over.
         return False
 
@@ -886,15 +904,28 @@ class Replay(object):
         self.fps = script["clock"]["fps"]
         self.started = None
         self.trace = []
+        # Card ROUTE-STALL: steps the game ran behind the tape at a marker_wait_s event. Every later event moves by it.
+        self.shift = 0
+        # An event whose marker an earlier event already names needs one more occurrence in the log than that many.
+        self.ordinal = {}
+        seen = {}
+        for event in script.get("events") or []:
+            marker = event.get("marker")
+            if marker:
+                self.ordinal[event["id"]] = seen.get(marker, 0) + 1
+                seen[marker] = seen.get(marker, 0) + 1
 
     def step_now(self):
-        return int((time.monotonic() - self.started) * self.fps)
+        return int((time.monotonic() - self.started) * self.fps) - self.shift
 
     def record(self, event_id, kind, detail, step):
-        row = {"id": event_id, "kind": kind, "detail": detail, "at_step": step,
-               "at_second": round(step / float(self.fps), 3)}
+        # The rows carry the VIDEO clock (tape step plus the hold shift), the clock the recording and the game log run
+        # on; the tape's own step stays beside it.
+        video = step + self.shift
+        row = {"id": event_id, "kind": kind, "detail": detail, "at_step": video, "tape_step": step,
+               "at_second": round(video / float(self.fps), 3)}
         self.trace.append(row)
-        print("  %-5s %-6s %-28s at %.1f s (step %d)" % (event_id, kind, detail[:28], step / float(self.fps), step))
+        print("  %-5s %-6s %-28s at %.1f s (step %d)" % (event_id, kind, detail[:28], video / float(self.fps), video))
         return row
 
     def wait_until(self, target_step, max_wait_s=60.0):
@@ -909,18 +940,41 @@ class Replay(object):
                                  % (now, target_step - now, target_step))
             time.sleep(min(0.02, max(0.001, (target_step - now) / float(self.fps))))
 
-    def wait_marker(self, needle, fallback_step, delay_steps, timeout_s):
+    def wait_marker(self, needle, fallback_step, delay_steps, timeout_s, need=1):
         """Wait for a log line, then delay, but never past the event's own fallback step.
 
         Returns (step, seen). The marker only moves the event earlier than its fallback: if it has not
         appeared by the fallback step, the fallback is what the run uses and the verify file says so.
         """
         while self.step_now() < fallback_step:
-            if read_marker(self.log_path, needle):
+            if read_marker(self.log_path, needle, need):
                 return min(self.step_now() + delay_steps, fallback_step), True
             time.sleep(0.1)
-        seen = read_marker(self.log_path, needle)
+        seen = read_marker(self.log_path, needle, need)
         return fallback_step, seen
+
+    def wait_marker_hold(self, needle, fallback_step, delay_steps, wait_s, need=1):
+        """Like wait_marker, but a game that is LATE holds the tape instead of being left behind.
+
+        Seen before the fallback: the event moves earlier, as always. Not seen by the fallback: the tape waits up to
+        wait_s more seconds for the line, then fires delay_steps after it and shifts the rest of the clock by the
+        lateness, so a typed word or a menu press never lands before the box that reads it exists. Never seen: the
+        fallback step is used and the caller says so. Returns (step, seen).
+        """
+        limit = fallback_step + int(wait_s * self.fps)
+        while True:
+            now = self.step_now()
+            if read_marker(self.log_path, needle, need):
+                target = now + delay_steps
+                if target > fallback_step:
+                    self.shift += target - fallback_step
+                    return fallback_step, True
+                return target, True
+            if now >= limit:
+                # Never seen: the tape still waited, so the keys after it keep their spacing instead of bursting.
+                self.shift += max(0, now - fallback_step)
+                return fallback_step, False
+            time.sleep(0.1)
 
     def run(self, end_step, should_stop=None):
         cap = capture_module()  # the key codes, imported here so this class can exist on any host
@@ -936,9 +990,20 @@ class Replay(object):
                 self.record("pollution-stop", "stop", "a window covered the game, stopping", self.step_now())
                 stopped = True
                 break
-            if event.get("marker"):
+            if event.get("marker") and event.get("marker_wait_s"):
+                target, seen = self.wait_marker_hold(event["marker"], event["step"],
+                                                     int(event.get("marker_delay_steps", 0)),
+                                                     float(event["marker_wait_s"]), self.ordinal[event["id"]])
+                reached = self.wait_until(target)
+                detail = ("marker %r %s" % (event["marker"], "seen" if seen else "not seen, step used"))
+                self.record(event["id"], "marker", detail, reached)
+                if not seen:
+                    failures.append("%s: the log never carried %r within %.0f s of step %d"
+                                    % (event["id"], event["marker"], float(event["marker_wait_s"]), event["step"]))
+            elif event.get("marker"):
                 target, seen = self.wait_marker(event["marker"], event["step"],
-                                                int(event.get("marker_delay_steps", 0)), 30.0)
+                                                int(event.get("marker_delay_steps", 0)), 30.0,
+                                                self.ordinal[event["id"]])
                 reached = self.wait_until(target)
                 detail = ("marker %r %s" % (event["marker"], "seen" if seen else "not seen, step used"))
                 self.record(event["id"], "marker", detail, reached)
@@ -1010,6 +1075,38 @@ def pre_roll_viewport(hwnd, path):
     return rect, box, score, "viewport %s at score %.3f" % (box, score)
 
 
+RECORD_TAIL_S = 2.5
+
+
+def record_bound_seconds(script, seconds, end_step=None):
+    """The longest the recorder may run: the plan, the tail, and every second a marker_wait_s event may hold the tape.
+
+    The recorder is stopped by hand once the replay ends, so this is only the safety stop, but it must not be shorter
+    than a replay that waited for the game at every hold (a held tape runs past a bound of seconds + tail)."""
+    held = 0.0
+    for event in script.get("events") or []:
+        if end_step is not None and event.get("step", 0) > end_step:
+            continue
+        if event.get("marker") and event.get("marker_wait_s"):
+            held += float(event["marker_wait_s"])
+    return float(seconds) + RECORD_TAIL_S + held
+
+
+def stop_recorder(recorder, grace_s):
+    """Let the recording run grace_s past the replay, then ask ffmpeg to finish the file with q on its stdin.
+    Returns a note when the pipe was already gone, or "" when it took the q or had already exited."""
+    time.sleep(grace_s)
+    if recorder.poll() is not None or recorder.stdin is None:
+        return ""
+    try:
+        recorder.stdin.write(b"q")
+        recorder.stdin.flush()
+        recorder.stdin.close()
+    except OSError as error:
+        return "the recorder stdin was gone before q (%s)" % error
+    return ""
+
+
 def start_recorder(rect, out_path, duration_s, fps, loopback):
     """Start ffmpeg on the window rectangle. Returns (process, log file handle, log path).
 
@@ -1045,7 +1142,7 @@ def start_recorder(rect, out_path, duration_s, fps, loopback):
                       "-map", "0:v", "-map", "1:a", "-c:a", "aac", "-b:a", "160k"]
     arguments.append(out_path)
     process = subprocess.Popen([FFMPEG, "-hide_banner", "-y"] + arguments,
-                               stdout=handle, stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL)
+                               stdout=handle, stderr=subprocess.STDOUT, stdin=subprocess.PIPE)
     return process, handle, log_path
 
 
@@ -1159,7 +1256,7 @@ class LogAudioWatch(threading.Thread):
         else:
             self._tail = ""
         for line in lines:
-            if AUDIO_LOG_NEEDLE not in line:
+            if AUDIO_LOG_NEEDLE not in line or AUDIO_STATUS_NEEDLE in line:
                 continue
             at = 0.0 if not self._polled_once else max(0.0, time.monotonic() - self.started_at)
             self.rows.append({"at": round(at, 3), "line": line.strip(), "before_recording": not self._polled_once})
@@ -1224,12 +1321,22 @@ def audio_events(rows):
 
     Returns (events, notes). A line this tool cannot place becomes a note and never an invented sound: the
     reconstruction reproduces the game's own sound, and where the game was silent it stays silent.
+
+    Every row the watcher hands over ends as one of the three: an event (a placement), a `music_missing` event
+    (a silent cue, because the game asked for a cue it could not start), or a note. Nothing is dropped in
+    silence, so a take's own record can be read as a full account of its log (card DEMO-AUDIO-CAPTURE, review
+    correction 2). The `PP audio status:` lines the PP_AUDIO_LOG door writes once a second are state, never a
+    cue: they are counted and one note says so, instead of vanishing.
     """
     events = []
     notes = []
     effects = sfx_table()
+    status_lines = 0
     for row in rows:
         line = str(row.get("line") or "")
+        if AUDIO_STATUS_NEEDLE in line:
+            status_lines += 1
+            continue
         at = max(0.0, float(row.get("at") or 0.0))
         match = MUSIC_STREAM_RE.match(line)
         if match:
@@ -1283,6 +1390,22 @@ def audio_events(rows):
                 continue
             events.append({"kind": "sfx", "at": at, "id": cue_id, "file": path, "seconds": length,
                            "gain": sfx_gain(cue_id)})
+            continue
+        if FOCUS_LOST_RE.match(line):
+            events.append({"kind": "focus_lost", "at": at})
+            continue
+        if FOCUS_BACK_RE.match(line):
+            events.append({"kind": "focus_back", "at": at})
+            continue
+        # A line of the family's own shape that none of the above places: it is a note, never silence with
+        # no account of it. The log is the game's own account, so a shape the tool does not know is a gap in
+        # the tool, and the record has to say so.
+        notes.append("%.3f s: the log carries an audio line this tool has no shape for, so it placed nothing "
+                     "for it: %s" % (at, line))
+    if status_lines:
+        notes.append("the game's own state report (mode, cue, gain, paused) is written %d time%s by the "
+                     "PP_AUDIO_LOG door, once a second, and it places no sound"
+                     % (status_lines, "" if status_lines == 1 else "s"))
     return events, notes
 
 
@@ -1295,17 +1418,45 @@ def music_gain_at(gains, moment, start):
     return round(level, 4)
 
 
+def focus_windows(events, seconds):
+    """The seconds the game's log says the music was paused: (lost, back) pairs, the last back clipped to the take.
+
+    `pp_audio_focus` pauses the music and the theme when the window loses focus and resumes them where they
+    stopped when it comes back (game/scripts/pp_audio/pp_audio.gml:415 to :434), so both lines are in the log
+    of any take that lost focus. A pause with no matching resume runs to the end of the take.
+    """
+    windows = []
+    lost = None
+    for row in sorted(events, key=lambda item: item["at"]):
+        if row["kind"] == "focus_lost" and lost is None:
+            lost = float(row["at"])
+        elif row["kind"] == "focus_back" and lost is not None:
+            windows.append((lost, float(row["at"])))
+            lost = None
+    if lost is not None:
+        windows.append((lost, float(seconds)))
+    return windows
+
+
 def log_audio_plan(events, seconds):
     """The track's segments: what the game played, from where, at what gain, between which seconds.
 
     Returns (segments, silent_cues). A music cue the game asked for and could not start is carried as a silent
     cue, so the rebuilt track is silent exactly where the game was: the reconstruction reproduces the game's
     sound, not the sound the game was supposed to make.
+
+    The focus pause is part of the game's own sound. Where the log carries `focus lost, music paused`, the music
+    stops there and carries no segment until the `focus back` second, and the piece after it starts at the
+    second of the file the music had reached (`resumed where it stopped` is the log's own wording), which every
+    music segment carries as its `offset`. An effect that was already ringing when the pause came is cut at the
+    pause second, because `pp_audio_focus` stops the live instances; an effect the log records as played after
+    the pause is kept, and `FOCUS_EFFECTS_READING` states that reading in the take's record.
     """
     fade = GAME_FADE_STEPS * GAME_STEP_MS / 1000.0
     starts = [row for row in events if row["kind"] == "music"]
     stops = [row["at"] for row in events if row["kind"] == "music_stop"]
     gains = [row for row in events if row["kind"] in ("duck", "unduck")]
+    pauses = focus_windows(events, seconds)
     silent_cues = [{"at": round(row["at"], 3), "cue": row.get("cue"),
                     "why": "the game asked for this cue and its OGG is not where the game looks, so the game "
                            "played nothing here and neither does the reconstruction"}
@@ -1320,17 +1471,53 @@ def log_audio_plan(events, seconds):
                 stop = moment
         if stop - start <= 0.02:
             continue
-        edges = [start] + sorted(moment for moment in duck_moments if start < moment < stop) + [stop]
-        for piece in range(len(edges) - 1):
-            piece_in, piece_out = edges[piece], edges[piece + 1]
-            if piece_out - piece_in <= 0.02:
+        # The seconds this cue is really playing: the timeline minus the focus pauses, each stretch carrying the
+        # second of the file that is playing when it begins. `played` is the music that has run so far, which is
+        # where the game resumes from, and a resume is not the arrival second.
+        stretches = []
+        cursor = start
+        played = 0.0
+        for lost_at, back_at in pauses:
+            if back_at <= start:
                 continue
-            segments.append({"kind": "music", "cue": row.get("cue") or os.path.basename(row["file"]),
-                             "file": row["file"], "in": round(piece_in, 3), "out": round(piece_out, 3),
-                             "gain": music_gain_at(gains, piece_in, start), "loop": True,
-                             "fade_in": round(fade, 3) if piece == 0 else 0.0,
-                             "fade_out": round(fade, 3) if piece == len(edges) - 2 else 0.0,
-                             "why": "the game's own cue line, placed at the second it arrived"})
+            if lost_at >= stop:
+                break
+            stretch_out = min(max(lost_at, start), stop)
+            if stretch_out - cursor > 0.02:
+                stretches.append((cursor, stretch_out, played))
+                played += stretch_out - cursor
+            cursor = max(cursor, min(back_at, stop))
+            if cursor >= stop:
+                break
+        if stop - cursor > 0.02:
+            stretches.append((cursor, stop, played))
+        for stretch_index, (stretch_in, stretch_out, offset) in enumerate(stretches):
+            edges = ([stretch_in] + sorted(moment for moment in duck_moments if stretch_in < moment < stretch_out)
+                     + [stretch_out])
+            for piece in range(len(edges) - 1):
+                piece_in, piece_out = edges[piece], edges[piece + 1]
+                if piece_out - piece_in <= 0.02:
+                    continue
+                first = stretch_index == 0 and piece == 0
+                last = stretch_index == len(stretches) - 1 and piece == len(edges) - 2
+                piece_offset = offset + (piece_in - stretch_in)
+                if first:
+                    why = "the game's own cue line, placed at the second it arrived"
+                elif piece == 0:
+                    paused_at = [window for window in pauses if window[0] <= piece_in][-1]
+                    why = ("the game's own cue line, resumed %.3f s into the file: the log records the music "
+                           "paused from %.3f s to %.3f s and 'resumed where it stopped'"
+                           % (piece_offset, paused_at[0], paused_at[1]))
+                else:
+                    why = ("the game's own cue line, split at the gain change the log records at %.3f s"
+                           % piece_in)
+                segments.append({"kind": "music", "cue": row.get("cue") or os.path.basename(row["file"]),
+                                 "file": row["file"], "in": round(piece_in, 3), "out": round(piece_out, 3),
+                                 "offset": round(piece_offset, 3),
+                                 "gain": music_gain_at(gains, piece_in, start), "loop": True,
+                                 "fade_in": round(fade, 3) if first else 0.0,
+                                 "fade_out": round(fade, 3) if last else 0.0,
+                                 "why": why})
     for row in events:
         if row["kind"] != "sfx":
             continue
@@ -1338,11 +1525,36 @@ def log_audio_plan(events, seconds):
         if at >= seconds:
             continue
         length = float(row.get("seconds") or 0.0) or 1.0
+        ends = min(seconds, at + length)
+        cut = 0.0
+        for lost_at, back_at in pauses:
+            if at < lost_at <= ends:
+                ends = lost_at
+                cut = lost_at
+                break
+        if ends - at <= 0.02:
+            continue
         segments.append({"kind": "sfx", "cue": row["id"], "file": row["file"], "in": round(at, 3),
-                         "out": round(min(seconds, at + length), 3), "gain": row["gain"], "loop": False,
+                         "out": round(ends, 3), "offset": 0.0, "gain": row["gain"], "loop": False,
                          "fade_in": 0.0, "fade_out": 0.0,
-                         "why": "an effect the game played, placed at the second its log line arrived"})
+                         "why": ("an effect the game played, cut at %.3f s where the log records the focus pause "
+                                 "stopping every effect that was ringing" % cut) if cut else
+                                "an effect the game played, placed at the second its log line arrived"})
     return segments, silent_cues
+
+
+def filter_script_option(ffmpeg):
+    """The option that reads a filtergraph from a file: -/filter_complex on ffmpeg 7 and later, where
+    -filter_complex_script was removed, and -filter_complex_script before that."""
+    try:
+        text = subprocess.run([ffmpeg, "-version"], capture_output=True, text=True, timeout=30,
+                              stdin=subprocess.DEVNULL).stdout or ""
+        match = re.search(r"version\s+n?(\d+)", text)
+        if match and int(match.group(1)) >= 7:
+            return "-/filter_complex"
+    except (OSError, subprocess.TimeoutExpired):  # gate: ok a probe that cannot answer takes the fallback below
+        pass
+    return "-filter_complex_script"
 
 
 def render_log_audio(segments, seconds, out_path):
@@ -1351,20 +1563,50 @@ def render_log_audio(segments, seconds, out_path):
     if not FFMPEG:
         return False, "ffmpeg was not found"
     arguments = ["-f", "lavfi", "-t", "%.3f" % seconds, "-i", "anullsrc=r=48000:cl=stereo"]
+    # WinError 206: one -i per segment and the whole graph on the command line overflowed Windows' 32 KB limit once a
+    # take carried hundreds of text blips. Now each distinct (file, loop) pair is ONE input that asplit fans out, and
+    # the graph goes through a script file, so the command line no longer grows with the number of sounds.
+    usable = []
+    for segment in segments:
+        length = float(segment["out"]) - max(0.0, float(segment["in"]))
+        if length > 0.01:
+            usable.append(segment)
+    if not usable:
+        return False, "no segment had a length to place"
+    input_of = {}
+    uses = {}
+    for segment in usable:
+        key = (segment["file"], bool(segment.get("loop")))
+        if key not in input_of:
+            input_of[key] = len(input_of) + 1
+            if key[1]:
+                arguments += ["-stream_loop", "-1", "-i", key[0]]
+            else:
+                arguments += ["-i", key[0]]
+        uses[key] = uses.get(key, 0) + 1
     filters = []
+    taken = {}
+    for key, count in uses.items():
+        n = input_of[key]
+        if count == 1:
+            filters.append("[%d:a]anull[i%d_0]" % (n, n))
+        else:
+            filters.append("[%d:a]asplit=%d%s" % (n, count, "".join("[i%d_%d]" % (n, k) for k in range(count))))
     labels = ["[0:a]"]
     index = 0
-    for segment in segments:
+    for segment in usable:
+        key = (segment["file"], bool(segment.get("loop")))
+        n = input_of[key]
+        k = taken.get(key, 0)
+        taken[key] = k + 1
         seconds_in = max(0.0, float(segment["in"]))
         length = float(segment["out"]) - seconds_in
-        if length <= 0.01:
-            continue
-        if segment.get("loop"):
-            arguments += ["-stream_loop", "-1", "-i", segment["file"]]
-        else:
-            arguments += ["-i", segment["file"]]
+        # `offset` is the second of the file this piece starts at: 0 for a cue's first play, and the second the
+        # music had reached for a piece that resumes after the game's focus pause ("resumed where it stopped").
+        offset = max(0.0, float(segment.get("offset") or 0.0))
         index += 1
-        chain = ["atrim=0:%.3f" % length, "asetpts=PTS-STARTPTS", "volume=%.4f" % float(segment["gain"])]
+        chain = ["atrim=start=%.3f:end=%.3f" % (offset, offset + length), "asetpts=PTS-STARTPTS",
+                 "volume=%.4f" % float(segment["gain"])]
         fade_in = min(float(segment.get("fade_in") or 0.0), length / 2.0)
         fade_out = min(float(segment.get("fade_out") or 0.0), length / 2.0)
         if fade_in > 0.01:
@@ -1372,12 +1614,13 @@ def render_log_audio(segments, seconds, out_path):
         if fade_out > 0.01:
             chain.append("afade=t=out:st=%.3f:d=%.3f" % (length - fade_out, fade_out))
         chain.append("adelay=%d:all=1" % int(round(seconds_in * 1000.0)))
-        filters.append("[%d:a]%s[r%d]" % (index, ",".join(chain), index))
+        filters.append("[i%d_%d]%s[r%d]" % (n, k, ",".join(chain), index))
         labels.append("[r%d]" % index)
-    if index == 0:
-        return False, "no segment had a length to place"
     filters.append("%samix=inputs=%d:duration=first:normalize=0[out]" % ("".join(labels), len(labels)))
-    arguments += ["-filter_complex", ";".join(filters), "-map", "[out]", "-c:a", "aac", "-b:a", "160k",
+    script_path = os.path.splitext(out_path)[0] + "_filtergraph.txt"
+    with open(script_path, "w", encoding="utf-8") as handle:
+        handle.write(";\n".join(filters))
+    arguments += [filter_script_option(FFMPEG), script_path, "-map", "[out]", "-c:a", "aac", "-b:a", "160k",
                   "-ar", "48000", "-ac", "2", "-t", "%.3f" % seconds, out_path]
     return capture_module().run_ffmpeg(FFMPEG, arguments, timeout=300)
 
@@ -1406,8 +1649,19 @@ def reconstruct_audio(rows, seconds, out_path):
     """Build the take's track from the game's own log lines. Returns the dict the verify file carries."""
     events, notes = audio_events(rows)
     segments, silent_cues = log_audio_plan(events, seconds)
+    pauses = focus_windows(events, seconds)
     info = {"source": AUDIO_SOURCE_NONE, "lines": len(rows), "notes": notes, "silent_cues": silent_cues,
             "segments": segments, "track": None}
+    if pauses or any(row["kind"] in ("focus_lost", "focus_back") for row in events):
+        # The log records a focus pause, so the record says what the rebuild did with it and which reading of
+        # "every effect stopped" it used, instead of leaving a reader to assume the music played through.
+        info["focus"] = {
+            "pauses": [{"from": round(lost, 3), "to": round(back, 3)} for lost, back in pauses],
+            "music": ("silent between each pause's seconds and resumed at the second of the file it had reached"
+                      if pauses else "the log names a focus line but never a pause and a resume that pair, so no "
+                                     "silence was cut"),
+            "effects": FOCUS_EFFECTS_READING,
+        }
     if not segments:
         info["why"] = "the log holds no audio line this tool could place, so there is nothing to rebuild"
         return info
@@ -2084,7 +2338,7 @@ def verify_video(path, script, report_path=None, pollution=None, cues=None, audi
     if audio:
         detail = {}
         for key in ("device", "lines", "segments", "silent_cues", "notes", "track", "why", "mean_volume_db",
-                    "first_music", "devices"):
+                    "first_music", "devices", "focus"):
             if audio.get(key) is not None:
                 detail[key] = audio[key]
         track = detail.get("track")
@@ -2533,12 +2787,14 @@ def run_demo(script, keep_raw=False, shot_table=None):
                     continue
             raise SystemExit("the game lost the keyboard focus and would not take it back (%s)" % why)
 
-        record_seconds = seconds + 2.5
+        record_bound = record_bound_seconds(script, seconds, end_step)
+        record_seconds = record_bound
         # The recording's clock starts here: the log watch stamps each audio line with its distance from this
         # instant, so a rebuilt track is placed on the same clock the video runs on.
         audio_started_at = time.monotonic()
         recorder, recorder_log, recorder_log_path = start_recorder(rect, raw_path, record_seconds, fps, loopback)
-        print("recording %.1f s of the window to %s" % (record_seconds, raw_path))
+        print("recording up to %.1f s of the window to %s (stopped by hand %.1f s after the replay)"
+              % (record_bound, raw_path, RECORD_TAIL_S))
         log_audio = LogAudioWatch(log_path, audio_started_at)
         log_audio.start()
 
@@ -2561,16 +2817,21 @@ def run_demo(script, keep_raw=False, shot_table=None):
             if recorder.poll() is None:
                 recorder.terminate()
 
-        # ffmpeg stops itself on -t; give it a moment to finish writing and closing the container.
+        # The replay is over: keep recording for the tail, then ask ffmpeg to finish the file. The length
+        # reconstruct_audio and recorded_seconds use is what was actually recorded, never the upper bound.
+        stop_note = stop_recorder(recorder, RECORD_TAIL_S - 0.5)
+        if stop_note:
+            failures.append(stop_note)
+        record_seconds = min(record_bound, time.monotonic() - audio_started_at)
         try:
-            recorder.wait(timeout=record_seconds + 60)
+            recorder.wait(timeout=record_bound + 60)
         except subprocess.TimeoutExpired:
             recorder.terminate()
             try:
                 recorder.wait(timeout=15)
             except subprocess.TimeoutExpired:
                 recorder.kill()
-            failures.append("ffmpeg did not stop on its own and was terminated, so the file may be truncated")
+            failures.append("ffmpeg did not stop after q and was terminated, so the file may be truncated")
         cap.release_on_top(hwnd)
         # The game's own account of its sound, stamped while the recording ran (card DEMO-AUDIO-CAPTURE).
         audio_rows = log_audio.stop() if log_audio is not None else []
