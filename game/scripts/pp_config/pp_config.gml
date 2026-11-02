@@ -81,7 +81,8 @@ enum PPMode {
     overworld = 2,
     cutscene = 3,
     battle = 4,
-    menu = 5
+    menu = 5,
+    talk_persona = 6
 }
 
 /// Battle phases. Every transition goes through pp_battle_phase_set() in pp_battle_director.
