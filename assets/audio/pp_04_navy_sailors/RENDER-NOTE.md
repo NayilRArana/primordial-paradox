@@ -120,20 +120,21 @@ What was re-run after the change, with the numbers this time:
     python tools/counterpoint/cue_gate.py assets/audio/pp_04_navy_sailors/score_pp04.yaml
         -> PASS, G1 CP-01 0, G2 CP-09 0, exit 0
 
-The mix, and why no new master is in this commit. `tools/final_mix.py` gives every master a new folder
-and refuses to write over an existing one, so the fixed source was mastered once by hand as
-`pp_04_navy_sailors_master2`: -14.10 LUFS integrated, -0.59 dBTP, LRA 4.2, seam clean, `--verify`
-agrees, sha256 d1549f0b, 548568 bytes. That folder is NOT in the tree, because the commit gate
-(`tools/check_build_inputs.py --staged`) refuses an OGG under `assets/audio` that the project's own
-`game/PrimordialParadox.yyp` does not list, and listing it means the game starts shipping a second
-PP-04 stream that no cue row names. Naming a build is a person's edit (master1's own note says so),
-and a new take of the fight cue should be heard first, so the four decisions are listed on card
-t_a97f06db and the build, its .md and its sidecar sit outside the repo at
-`D:/Temp/hermes-tmp/pp04_master2_20261102/` for that ear. `pp_04_navy_sailors_master1` is untouched
-and remains the mix of the pre-fix source whose sha256 its own note records; `data/audio.json`,
-`final_mix.ROUTE` and tests/test_audio.py still name master1. The one-line build:
+The mix. `tools/final_mix.py` is the only writer of a master folder and it refuses to write over an
+existing one, so the recut was made the way the tool wants it: the pre-fix folder was moved outside the
+repo first, then
 
-    python tools/final_mix.py --build --only PP-04 --asset pp_04_navy_sailors_master2
+    python tools/final_mix.py --build --only PP-04 --asset pp_04_navy_sailors_master1
+    python tools/final_mix.py --verify --only PP-04
+
+which rebuilt `pp_04_navy_sailors_master1` from this source (source sha256 92bffa4b, master sha256
+6d7b63e1, -14.10 LUFS integrated, -0.59 dBTP, LRA 4.2, seam clean, verify 4 of 4 ok). The same four
+passes landed on the same gains and limits, so the fixed cue sits at the same loudness as the shipped
+one; only the audio behind bar 12 is different. Because the asset name did not change, no registry
+edit is needed: `data/audio.json`, `final_mix.ROUTE`, the `.yyp` included file and the test pin all
+still name master1 and all still point at a valid build. The pre-fix folder, its .md and its sidecar
+are kept outside the repo at `D:/Temp/hermes-tmp/pp04_master1_pre_fix_20261102/` (old master ogg sha256
+e600a607) along with an A/B pack for the ear; git history carries the old blobs too.
 
 ## Two decisions for Nayil's ear
 

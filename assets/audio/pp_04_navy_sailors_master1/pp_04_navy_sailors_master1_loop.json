@@ -5,7 +5,7 @@
   "role": "fight",
   "card": "t_120dc9f2 W5 SCORE-FINAL",
   "source_ogg": "assets/audio/pp_04_navy_sailors/pp_04_navy_sailors.ogg",
-  "source_sha256": "74de226bc36decf7f5591a830ccb522d61070691648fa7956a66a4b951a85f23",
+  "source_sha256": "92bffa4b095f00928d05fea9ef475609dd552aceeb29972933215db8997305e3",
   "source_loop_sidecar": "assets/audio/pp_04_navy_sailors/pp_04_navy_sailors_loop.json",
   "sample_rate": 44100,
   "channels": 1,
@@ -90,8 +90,8 @@
     "step_reference_dbfs": -13.88,
     "head_rms_dbfs": -16.09,
     "tail_rms_dbfs": -240.0,
-    "body_rms_dbfs": -15.65,
-    "seam_level_delta_db": -224.35,
+    "body_rms_dbfs": -15.64,
+    "seam_level_delta_db": -224.36,
     "verdict": "dip"
   },
   "seam_after": {

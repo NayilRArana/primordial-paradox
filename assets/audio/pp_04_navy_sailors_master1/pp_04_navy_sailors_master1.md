@@ -4,7 +4,7 @@ Card t_120dc9f2 (W5 SCORE-FINAL, musician). Built by `tools/final_mix.py`, which
 
     python tools\final_mix.py --build --only PP-04
 
-Source: `assets/audio/pp_04_navy_sailors/pp_04_navy_sailors.ogg`, sha256 `74de226bc36decf7f5591a830ccb522d61070691648fa7956a66a4b951a85f23`.
+Source: `assets/audio/pp_04_navy_sailors/pp_04_navy_sailors.ogg`, sha256 `92bffa4b095f00928d05fea9ef475609dd552aceeb29972933215db8997305e3`.
 
 The source file, its MIDI, its WAV and its MP3 are untouched. This folder is a new version; the cue row
 that names a build is a person's edit, not this tool's. The file is the source's own samples: nothing
@@ -39,7 +39,7 @@ The file length is the source's, so a scene that plays the whole cue is unaffect
 
 | seam | wrap jump | file's own p99.9 step | head RMS | tail RMS | body RMS | level delta | verdict |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| source, at its own points | -69.56 dBFS | -13.88 dBFS | -16.09 | -240.00 | -15.65 | -224.35 dB | dip |
+| source, at its own points | -69.56 dBFS | -13.88 dBFS | -16.09 | -240.00 | -15.64 | -224.36 dB | dip |
 | master, at the trimmed points | -41.26 dBFS | -11.01 dBFS | -13.91 | -10.53 | -11.27 | -2.64 dB | clean |
 
 The seam is measured on the decoded deliverable, not on the render, because that is what the game
