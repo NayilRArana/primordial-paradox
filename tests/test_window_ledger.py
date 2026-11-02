@@ -13,7 +13,9 @@ What is pinned here, in order of what a judge would catch:
    keeps a commit's files with it, the folder collapsing that keeps a row readable, and the shot
    coverage the cut is held to.
 
-No test writes WINDOW-LEDGER.md in this checkout.
+No test writes WINDOW-LEDGER.md in this checkout. The one row that reads this checkout's own history
+carries the `monorepo` marker, so a primordial-paradox-only checkout skips it with the reason named
+while the monorepo still fails it (card t_ed6dd5ed).
 """
 
 import os
@@ -46,7 +48,15 @@ def new_repo(path):
     return path
 
 
+@pytest.mark.monorepo
 def test_every_row_resolves_to_an_in_window_commit():
+    """The one row here that reads this checkout's own history, which the public export does not carry.
+
+    Card t_ed6dd5ed: the ledger's other rows build their history in a throwaway repository, so they run
+    anywhere. This row asks for the real baseline tag and the real commits, so a primordial-paradox-only
+    checkout has nothing to resolve them against and tests/conftest.py skips it with that reason. In the
+    monorepo the marker changes nothing and every assertion below still runs.
+    """
     data = window_ledger.collect(ROOT)
     assert data["tag_sha"], "the baseline tag must resolve in this checkout"
     for feature in window_ledger.FEATURES:

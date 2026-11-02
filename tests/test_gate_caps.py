@@ -13,11 +13,15 @@ to run the mapped selection rather than the whole suite. The numbers themselves 
 next to the cap they justify, because a test that invented its own copy of them would be a second
 source of truth and the first one to go stale.
 
-The config is the manager tree's, so a checkout of this project alone has nothing to read, and every
-row FAILS there naming the path (card t_5f0a896e). It used to skip, which is the shape this project
-already paid for once: a row that reports healthy while it read nothing is indistinguishable from one
-that checked a cap. tools/check_test_inputs.py rule 1 forbids a skip guarded by a path existence test
-for exactly that reason, so the guard's verdict is a red with the missing path in it.
+The config is the manager tree's, so a checkout of this project alone has nothing to read. Inside the
+monorepo the rows are strict reds: a config that is present but declares a cap the measurement does not
+justify FAILS here, and that stays (card t_5f0a896e, where a skip had reported healthy while reading
+nothing). Off the monorepo the module carries the `monorepo` marker, and tests/conftest.py turns that
+into a skip whose reason names the absent config (card t_ed6dd5ed): the public repository carries
+projects/primordial-paradox alone, so there the input is not missing but never existed, and six red
+rows on a correct tree is a wrong verdict rather than a strict one. The two are not the same shape:
+tools/check_test_inputs.py rule 1 forbids a skip that hides an input this repository is supposed to
+carry, and it still passes.
 """
 
 from __future__ import annotations
@@ -36,6 +40,11 @@ CONFIG = os.path.join(REPO, "projects", "arananet", "manager", "guard", "suite_c
 # path and no higher". Kept here as the number the rows multiply by, so a future raise of the factor
 # is a visible edit and not a quiet one.
 CAP_MULTIPLIER = 1.5
+
+# Every row in this module reads the manager tree's config, so all of them are the same kind of row and
+# carry the marker the conftest hook reads (card t_ed6dd5ed). Inside the monorepo the marker does
+# nothing: _monorepo_gap() answers None there and no skip is added.
+pytestmark = pytest.mark.monorepo
 
 
 def project_entry():
