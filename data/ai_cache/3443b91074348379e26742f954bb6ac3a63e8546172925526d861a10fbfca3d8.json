@@ -1,0 +1,87 @@
+{
+  "backend": "meta",
+  "key": "3443b91074348379e26742f954bb6ac3a63e8546172925526d861a10fbfca3d8",
+  "kind": "chat",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "recorded_at": "2026-10-27T09:59:24Z",
+  "request": {
+    "messages": [
+      {
+        "content": "<sha256:7beca544a167f7f2:2408 chars>",
+        "role": "system"
+      },
+      {
+        "content": "<sha256:880e38b905e249d3:949 chars>",
+        "role": "user"
+      }
+    ],
+    "model": "muse-spark-1.3",
+    "response_format": {
+      "json_schema": {
+        "name": "answer",
+        "schema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "additionalProperties": false,
+          "properties": {
+            "effect": {
+              "enum": [
+                "soften"
+              ]
+            },
+            "hint": {
+              "maxLength": 28,
+              "pattern": "^([A-Z0-9 .,:!?'()]*)$",
+              "type": "string"
+            },
+            "mood": {
+              "enum": [
+                "calm",
+                "guarded",
+                "rattled",
+                "warm",
+                "angry"
+              ]
+            },
+            "text": {
+              "items": {
+                "maxLength": 28,
+                "minLength": 1,
+                "pattern": "^[A-Z0-9 .,:!?'()]+$",
+                "type": "string"
+              },
+              "maxItems": 4,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "text",
+            "mood",
+            "effect",
+            "hint"
+          ],
+          "title": "Primordial Paradox LLM talk reply",
+          "type": "object"
+        },
+        "strict": true
+      },
+      "type": "json_schema"
+    }
+  },
+  "response": {
+    "text": "{\"effect\": \"soften\", \"hint\": \"THE LONG WATCH\", \"mood\": \"calm\", \"text\": [\"RIGHT. NO LIST DOWN HERE.\", \"JUST THIS LONG WATCH.\"]}",
+    "usage": {
+      "completion_tokens": 2605,
+      "completion_tokens_details": {
+        "reasoning_tokens": 2554
+      },
+      "prompt_tokens": 1079,
+      "prompt_tokens_details": {
+        "cached_tokens": 1009
+      },
+      "total_tokens": 3684
+    }
+  }
+}

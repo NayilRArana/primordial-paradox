@@ -1,0 +1,88 @@
+{
+  "backend": "meta",
+  "key": "67256d0021991d7fe3ff6d6d697d7fd6a91ba914cf753ac2531764d6635b1b1f",
+  "kind": "chat",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "recorded_at": "2026-10-27T09:52:17Z",
+  "request": {
+    "messages": [
+      {
+        "content": "<sha256:7beca544a167f7f2:2408 chars>",
+        "role": "system"
+      },
+      {
+        "content": "<sha256:349c6fc667b88444:928 chars>",
+        "role": "user"
+      }
+    ],
+    "model": "muse-spark-1.3",
+    "response_format": {
+      "json_schema": {
+        "name": "answer",
+        "schema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "additionalProperties": false,
+          "properties": {
+            "effect": {
+              "enum": [
+                "none",
+                "end"
+              ]
+            },
+            "hint": {
+              "maxLength": 28,
+              "pattern": "^([A-Z0-9 .,:!?'()]*)$",
+              "type": "string"
+            },
+            "mood": {
+              "enum": [
+                "calm",
+                "guarded",
+                "rattled",
+                "warm",
+                "angry"
+              ]
+            },
+            "text": {
+              "items": {
+                "maxLength": 28,
+                "minLength": 1,
+                "pattern": "^[A-Z0-9 .,:!?'()]+$",
+                "type": "string"
+              },
+              "maxItems": 4,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "text",
+            "mood",
+            "effect",
+            "hint"
+          ],
+          "title": "Primordial Paradox LLM talk reply",
+          "type": "object"
+        },
+        "strict": true
+      },
+      "type": "json_schema"
+    }
+  },
+  "response": {
+    "text": "{\"effect\":\"none\",\"hint\":\"HE ANSWERS TO ORDERS\",\"mood\":\"guarded\",\"text\":[\"NOTHING SAID. NOTHING KEPT.\",\"STATE IT OR STEP BACK.\"]}",
+    "usage": {
+      "completion_tokens": 1574,
+      "completion_tokens_details": {
+        "reasoning_tokens": 1528
+      },
+      "prompt_tokens": 1055,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 2629
+    }
+  }
+}

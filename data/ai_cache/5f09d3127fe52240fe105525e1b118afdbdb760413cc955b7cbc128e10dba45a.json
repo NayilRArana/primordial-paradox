@@ -1,0 +1,43 @@
+{
+  "backend": "meta",
+  "key": "5f09d3127fe52240fe105525e1b118afdbdb760413cc955b7cbc128e10dba45a",
+  "kind": "vision",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "recorded_at": "2026-10-27T10:26:52Z",
+  "request": {
+    "messages": [
+      {
+        "content": [
+          {
+            "text": "<sha256:509fe8d50cc6c3cd:3964 chars>",
+            "type": "text"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:ce10a23d8bae8105:3374 chars>"
+            },
+            "type": "image_url"
+          }
+        ],
+        "role": "user"
+      }
+    ],
+    "model": "muse-spark-1.3"
+  },
+  "response": {
+    "text": "### 1) What is on the screen\nOne frame of a character-select / roster screen on solid black. Top row, left to right: ZEUS blue, KRONOS orange, PERCY blue-white, MAN 1 blue-white. Bottom row: MAN 2 blue-white, MAN 3 blue-white, OURANOS gray-white. Each has a white all-caps name label above a ~2-tile-wide humanoid sprite. The eye goes first to the KRONOS sprite in region x=80,y=48,w=48,h=64 because it is the only warm orange figure among six cool blue/gray figures. The player is presumably being asked to choose a character, but I cannot see that in the frame: no cursor, no highlight, no PRESS START / SELECT / player-1 indicator, no stats, no background.\n\n### 2) Does it look like a real NES game\n(a) the palette count reads as NES, not as a modern limited palette: **PASS** - measured 11 distinct colours, inside the 25 on-screen ceiling [12 background + 12 sprite + 1 backdrop], and measured every colour is a 64-entry NES palette entry.\n(b) shading is flat, one colour per shape, no gradient banding: **PASS** - tunics, faces, legs are 2-3 flat cells, no gradients, no alpha, no rotation, consistent with sprites are 8x8 or 8x16, no rotation, no alpha.\n(c) sprites read at a glance against the background, with clear silhouettes and no muddy shared colours: **FAIL** - silhouettes are clear against the $0F black backdrop, but MAN 1 / MAN 2 / MAN 3 in regions x=208,y=48,w=40,h=64 and x=16,y=148,w=48,h=64 and x=80,y=148,w=48,h=64 share the exact same blue + white + skin, so they do not read as different choices. 64 objects in OAM, 8 per scanline is not violated, but design violates readability.\n(d) no anti-aliasing and no soft edges anywhere, including text and window borders: **PASS** - all edges are hard 1px steps, text is blocky 8x8 glyphs, no soft window border visible.\n(e) colour changes in the background land on the 16 x 16 grid instead of drifting: **PASS** - background is solid backdrop, no playfield attribute drift to judge. A background can change palette only on a 16x16 pixel boundary, and nothing here breaks it. Measured numbers do not contradict this: 74.2% one colour, 256x240, multiple of 8 in both directions.\n\n### 3) Composition and text\nCrowded on top: four sprites + four labels fill x=16,y=32,w=232,h=80 with ~8px gaps. Bottom row has three sprites, leaving a large empty black void at x=170,y=140,w=86,h=90 and a dead strip at x=0,y=220,w=256,h=20. Focal point [orange KRONOS] is not where the player needs it - there is no ordered start, no P1 cursor, so the eye lands on colour difference, not on action. Text regions: ZEUS x=23,y=32,w=36,h=8 / KRONOS x=82,y=32,w=58,h=8 / PERCY x=142,y=32,w=50,h=8 / MAN 1 x=214,y=32,w=42,h=8 / MAN 2 x=18,y=134,w=42,h=8 / MAN 3 x=82,y=134,w=42,h=8 / OURANOS x=139,y=134,w=62,h=8. All are legible at 256x240 without guessing, white on black. Worst is OURANOS x=139,y=134,w=62,h=8 - 7 characters crammed with 1px inter-glyph spacing, sits 2px off-center over its sprite in x=148,y=148,w=48,h=64, and MAN 1 / MAN 2 / MAN 3 labels make the roster read as placeholder, not final names.\n\n### 4) What looks AI generated or off\nBlunt: this looks handmade and honest, not AI generated. No pillow shading, no detail without structure, no stray anti-aliased pixels, no colours that do not belong, no soft prompt-art gradients. Sprites are symmetrical, mirrored 8x8 tile clusters with consistent 1px outlines. Text is on a glyph grid. Tells that are off are design, not generation: triple-duplicate MAN sprite is copy-paste placeholder; OURANOS gray is the only desaturated entry and has weak leg contrast on black; right-edge MAN 1 almost kisses the overscan edge; empty 74% black with no frame, border, or instruction reads as test ROM, not as a prompt.\n\n### 5) Five concrete fixes\n1. Region x=16,y=148,w=48,h=64 [MAN 2 sprite]: break the triple duplicate. Keep silhouette, replace tunic mid-blue NES $12 with green NES $1A and boots $12 with dark green $0A. Leaves white $30 chest. Now MAN 2 reads as different in sprite palette 4 sprite palettes of 4 entries.\n2. Region x=148,y=148,w=48,h=64 [OURANOS sprite]: fix muddy gray legs on black. Replace foot/shin dark gray NES $2D with white NES $30, keep face $00 gray and suit $10 light gray. Adds 1px white sole, no new colour outside 25-colour budget.\n3. Region x=32,y=222,w=192,h=8 [empty bottom strip]: redraw as instruction row. Add 8x8 white $30 on black $0F text \u201cCHOOSE PRESS START\u201d centered on 8-pixel tile grid, 24 tiles wide. Gives the player a task; currently cannot see one.\n4. Region x=208,y=48,w=40,h=64 [MAN 1 sprite, right edge]: move left by 16 pixels to x=192,y=48,w=40,h=64 to leave safe overscan margin and land feet/torso on 16x16 attribute boundary. No diagonal move, whole tiles only.\n5. Region x=80,y=32,w=64,h=8 [KRONOS label row]: redraw text row locked to tile. Move all top labels up by 8 pixels to y=24 and center KRONOS over x=80,y=48,w=48,h=64, PERCY over its sprite, etc., so baseline sits on 8x8 tiles and 16x16 background grid instead of floating 4px off.\n\n### 6) Scores and machine readable block\nnes_authenticity: 8 - colours, size, flat tiles are right.\nreadability: 6 - clear on black but 3x identical MAN choices illegible as choices, no cursor.\ncharm: 5 - neat blobs, but placeholder names and void lower it.\n\n```json\n{\"nes_authenticity\": 8, \"readability\": 6, \"charm\": 5, \"focal_point\": \"orange KRONOS sprite top row second from left\", \"off_notes\": [\"no AI shading or AA, handmade pixels\", \"MAN 1 / MAN 2 / MAN 3 are identical copy-paste placeholders\", \"OURANOS gray legs wash out on black backdrop\", \"right-edge sprite kisses overscan with no margin\", \"74% empty black with no prompt or frame\"], \"fixes\": [{\"region\": [16, 148, 48, 64], \"change\": \"replace MAN 2 tunic $12 blue with $1A green and boots $12 with $0A dark green, keep $30 white chest\"}, {\"region\": [148, 148, 48, 64], \"change\": \"replace OURANOS leg/foot $2D dark gray with $30 white for 1px sole, keep face $00\"}, {\"region\": [32, 222, 192, 8], \"change\": \"redraw new 8x8 tile text row CHOOSE PRESS START in $30 white on $0F black centered\"}, {\"region\": [208, 48, 40, 64], \"change\": \"move MAN 1 sprite left by 16px to x=192 to clear overscan and align to 16px grid\"}, {\"region\": [80, 32, 64, 8], \"change\": \"move top label row up by 8px to y=24 and center on 8px tile grid\"}]}\n```",
+    "usage": {
+      "completion_tokens": 4828,
+      "completion_tokens_details": {
+        "reasoning_tokens": 2959
+      },
+      "prompt_tokens": 1103,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 5931
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "backend": "mock",
+  "key": "189dbd819f4bf07051cf0f97cc8dc8e6d90e9cca63dc27026dd91520d0b1d4c7",
+  "kind": "image",
+  "mode": "record",
+  "model": "muse-image-1.0",
+  "network": false,
+  "recorded_at": "2026-10-27T05:10:48Z",
+  "request": {
+    "model": "muse-image-1.0",
+    "n": 1,
+    "output_format": "png",
+    "prompt": "NES style title screen backdrop for a 1989 adventure about two Greek houses, a marble temple front with cracked columns at night, a low mountain ridge behind it, deep indigo sky, late NES era 8 bit art, bold black 1 pixel outlines on every form, three tone shading lit from the top left, detailed tiles on a 16x16 grid, restricted palette of about fourteen colours, cold grey stone against black, strong readable silhouette, no text, no logo, no characters",
+    "size": "1024x1024"
+  },
+  "response": {
+    "format": "png",
+    "height": 64,
+    "image_b64": "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAIAAAAlC+aJAAAATElEQVR42u3PMQ0AAAwDoPrX3KMSdi8BB6TPRUBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEDgCgz+tkLCKfkxlQAAAABJRU5ErkJggg==",
+    "mock": true,
+    "url": null,
+    "width": 64
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "backend": "meta",
+  "key": "7dba95e86e069359d486745f03ad40cf69ed2633e38c46639972c0a83fb2c6b2",
+  "kind": "segment",
+  "mode": "record",
+  "model": "sam-3.1",
+  "network": true,
+  "recorded_at": "2026-10-27T08:58:21Z",
+  "request": {
+    "image_bytes": 2690746,
+    "image_sha256": "cedf98b48f730f2de5d1093061035b60816e0ec987e49386f425db6d2f97dcfc",
+    "mask_encoding": "one_bit",
+    "model": "sam-3.1",
+    "prompt": "the temple"
+  },
+  "response": {
+    "boxes": [],
+    "masks": [],
+    "note": "box and mask parsed from the documented special token grammar (dev.meta.ai/docs/sam/reading-segmentation, read 2026-10-26); the raw text is always returned, and a line the parser cannot read yields [] rather than a guess",
+    "objects": [],
+    "text": ""
+  }
+}

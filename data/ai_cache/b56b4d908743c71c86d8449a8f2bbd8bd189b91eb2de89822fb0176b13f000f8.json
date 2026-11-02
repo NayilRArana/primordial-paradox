@@ -5,7 +5,7 @@
   "mode": "record",
   "model": "muse-spark-1.3",
   "network": true,
-  "recorded_at": "2026-10-27T01:42:03Z",
+  "recorded_at": "2026-10-27T21:51:03Z",
   "request": {
     "messages": [
       {
@@ -69,17 +69,17 @@
     }
   },
   "response": {
-    "text": "{\"effect\":\"none\",\"hint\":\"BUSES, FERRY, RAIN\",\"mood\":\"warm\",\"text\":[\"AH, PROPER RAIN AT LAST,\",\"SMELL THAT SKY TURN OVER!\"]}",
+    "text": "{\"effect\":\"none\",\"hint\":\"BUSES, FERRY, SANDWICH\",\"mood\":\"warm\",\"text\":[\"AH, LOVELY RAIN INDEED!\",\"SMELL THE CLOUDS ROLL IN.\"]}",
     "usage": {
-      "completion_tokens": 1145,
+      "completion_tokens": 1800,
       "completion_tokens_details": {
-        "reasoning_tokens": 1095
+        "reasoning_tokens": 1745
       },
       "prompt_tokens": 1198,
       "prompt_tokens_details": {
-        "cached_tokens": 0
+        "cached_tokens": 753
       },
-      "total_tokens": 2343
+      "total_tokens": 2998
     }
   }
 }

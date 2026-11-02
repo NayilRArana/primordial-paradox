@@ -1,0 +1,87 @@
+{
+  "backend": "meta",
+  "key": "a9b3f94cd0a5bbdaef58dbf8b3585d0eed8368aa9ba4f5ec0316fb1f4d548958",
+  "kind": "chat",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "recorded_at": "2026-10-27T21:48:15Z",
+  "request": {
+    "messages": [
+      {
+        "content": "<sha256:7beca544a167f7f2:2408 chars>",
+        "role": "system"
+      },
+      {
+        "content": "<sha256:f4ba3d711ee424a7:881 chars>",
+        "role": "user"
+      }
+    ],
+    "model": "muse-spark-1.3",
+    "response_format": {
+      "json_schema": {
+        "name": "answer",
+        "schema": {
+          "additionalProperties": false,
+          "properties": {
+            "effect": {
+              "enum": [
+                "none",
+                "nudge",
+                "soften",
+                "setback"
+              ]
+            },
+            "hint": {
+              "maxLength": 28,
+              "type": "string"
+            },
+            "mood": {
+              "enum": [
+                "calm",
+                "guarded",
+                "rattled",
+                "warm",
+                "angry"
+              ]
+            },
+            "text": {
+              "items": {
+                "maxLength": 28,
+                "minLength": 1,
+                "pattern": "^[ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 \\.,:!\\?'\\(\\)]+$",
+                "type": "string"
+              },
+              "maxItems": 3,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "text",
+            "mood",
+            "effect",
+            "hint"
+          ],
+          "type": "object"
+        },
+        "strict": true
+      },
+      "type": "json_schema"
+    }
+  },
+  "response": {
+    "text": "{\"effect\": \"setback\", \"hint\": \"HIS NAME, HIS SMOKE\", \"mood\": \"angry\", \"text\": [\"SAY IT AGAIN. I DARE YOU.\", \"WATCH STAYS. YOU LEAVE.\"]}",
+    "usage": {
+      "completion_tokens": 2712,
+      "completion_tokens_details": {
+        "reasoning_tokens": 2650
+      },
+      "prompt_tokens": 1021,
+      "prompt_tokens_details": {
+        "cached_tokens": 881
+      },
+      "total_tokens": 3733
+    }
+  }
+}

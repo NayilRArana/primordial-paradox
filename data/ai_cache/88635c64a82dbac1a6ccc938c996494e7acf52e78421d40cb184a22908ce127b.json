@@ -1,0 +1,43 @@
+{
+  "backend": "meta",
+  "key": "88635c64a82dbac1a6ccc938c996494e7acf52e78421d40cb184a22908ce127b",
+  "kind": "vision",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "recorded_at": "2026-10-27T09:51:19Z",
+  "request": {
+    "messages": [
+      {
+        "content": [
+          {
+            "text": "<sha256:12f0e675f3aaf7e8:3959 chars>",
+            "type": "text"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:be37dfc47e6c7d8a:10790 chars>"
+            },
+            "type": "image_url"
+          }
+        ],
+        "role": "user"
+      }
+    ],
+    "model": "muse-spark-1.3"
+  },
+  "response": {
+    "text": "### 1) What is on the screen\nThe frame shows a left-hand column of graphics about x0-408 wide against a huge black void on the right. Top is a blue block x0,y64,w408,h416 with flat blue fills and scattered speckles, middle is a green blocky structure x0,y510,w400,h230 with a white wire box and clipped white text, bottom is a striped platform x0,y768,w224,h176. A small white dithered blob sits isolated at x578,y848,w222,h88. The eye goes first to the high-contrast white text box at x117,y608,w108,h88 reading BAS: / SOU' because it is the only white on dark. What the player is being asked to do cannot be seen - no PRESS START, no player, no enemies, no HUD, no prompt is visible.\n\n### 2) Does it look like a real NES game\n(a) PASS - palette count reads as NES: measured 8 distinct colours, all 64-entry NES palette, inside the 25-colour ceiling of 12 background + 12 sprite + 1 backdrop.\n(b) PASS - shading is flat, one colour per shape, no gradient banding: blue fills and green fills are solid, no alpha.\n(c) FAIL - sprites do not read at a glance: I cannot separate OAM sprites from background; the white blob at x578,y848,w222,h88 has no clear silhouette and the text shares pure white with background dashes.\n(d) PASS - no anti-aliasing and no soft edges: all edges are hard 4x blocks, including text and window borders.\n(e) FAIL - background colour changes do not land on the 16 x 16 pixel boundary: 4px-high in-file grey streaks equal 1 NES px high at x0,y96,w408,h16 and x0,y444,w200,h12 cut across tiles, and the blue block ends in a stepped edge at x200,y448,w208,h32 instead of a whole 8 x 8 tile edge. Measured facts outrank impression for count, but do not save alignment.\n\n### 3) Composition and text\nCrowded on the left x0-408 from y64 to y944, empty on the right x408-1024,y0,w616,h960 which is ~60% of the frame and matches the measured 66.2% dominant colour. The focal white box at x117,y608,w108,h88 is not where a title needs it - off-center left, clipped, with no surrounding title layout. Text region 1: upper line at x132,y616,w84,h32 reading BAS: . Text region 2: lower line at x132,y652,w84,h32 reading SOU' clipped on the right. At 256 x 240 that is 8x8 glyphs scaled 4x and it is illegible without guessing because the right-most glyphs are cut mid-tile and the box border is open/incomplete. The worst one is the lower line at x132,y652,w84,h32 - missing final letters, stray white pixels, not on the glyph grid.\n\n### 4) What looks AI generated or off\nBlunt: this reads as a broken capture / bad generation, not a handmade shipped title.\n- Stray-pixel noise: dozens of isolated 4x4 grey/black/white pixels across the blue field x0,y64,w408,h416 with no 8 x 8 tile structure.\n- Text not on glyph grid: BAS: / SOU' at x117,y608,w108,h88 clipped mid-character, right border missing.\n- Borders not whole tiles: blue to black step at x200,y448,w208,h32 and grey 1-NES-pixel lines drifting horizontally.\n- Detail without structure: green building x0,y510,w400,h230 dissolves into dither noise with no readable windows/tiles.\n- Dithered blob at x578,y848,w222,h88 with checkerboard tail and uneven outline, floating in black with no shadow/ground, reads as prompt debris.\n- Composition as prompt: left sliver of game + 60% black void, not a designed 256 x 240 layout.\n\n### 5) Five concrete fixes\n1. Region x0,y64,w408,h416 - delete all isolated 1x1 NES-pixel speckles and fill solid to NES $21 blue for upper half and $12 light blue for lower half, no grey $10 pixels left in sky.\n2. Region x117,y608,w108,h88 - erase broken box and redraw on 8-pixel grid in-file 32-pixel grid as 14x5 tiles white NES $30 border with centered 8x8 text PRESS START, move box right by 64 file pixels to x181 to clear green post.\n3. Region x412,y0,w612,h960 - fill black void with continued background tiles copied from x0,y64,w200,h416 shifted by whole 16 NES pixels, 64 file pixels, so nametable is full and backdrop is NES $0F black only.\n4. Region x578,y848,w222,h88 - replace checker blob with a solid 2x 8x16 sprite using NES sprite white $30 + grey $00, 32x16 NES pixels, no checker dither, clear silhouette.\n5. Region x0,y768,w224,h176 - simplify bottom to two 16x16 attribute blocks: white NES $30 dash tiles on dark NES $02 blue-black, remove diagonal noise, align all dashes to 32 file-pixel vertical grid.\n\n### 6) Scores and machine readable block\nNES Authenticity: 3/10\nReadability: 2/10\nCharm: 2/10\n```json\n{\"nes_authenticity\": 3, \"readability\": 2, \"charm\": 2, \"focal_point\": \"clipped white BAS: SOU text box on green\", \"off_notes\": [\"dozens of stray single NES-pixel speckles in blue sky with no tile structure\", \"text BAS: SOU clipped mid-glyph not on 8px grid\", \"1-NES-pixel grey lines drifting off 16x16 attribute grid\", \"green building detail without tile structure dissolving to noise\", \"white checker-dither blob floating in 60 percent black void\"], \"fixes\": [{\"region\": [0, 64, 408, 416], \"change\": \"delete speckles and fill solid NES $21 blue upper and $12 lower\"}, {\"region\": [117, 608, 108, 88], \"change\": \"erase and redraw white $30 box with PRESS START on 8px grid moved +64px right\"}, {\"region\": [412, 0, 612, 960], \"change\": \"fill black void with background tiles copied from left shifted by 64px to fill nametable\"}, {\"region\": [578, 848, 222, 88], \"change\": \"replace dither blob with solid 8x16 sprite in $30 white plus $00 grey\"}, {\"region\": [0, 768, 224, 176], \"change\": \"simplify to $30 white dashes on $02 dark aligned to 32px grid\"}]}\n```",
+    "usage": {
+      "completion_tokens": 4874,
+      "completion_tokens_details": {
+        "reasoning_tokens": 3347
+      },
+      "prompt_tokens": 2237,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 7111
+    }
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "backend": "meta",
+  "key": "05ad602628c1902f6ab6890bfce6b70f960fa4f71ffb493648f229d25d961c71",
+  "kind": "vision",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "recorded_at": "2026-10-31T04:23:36Z",
+  "request": {
+    "messages": [
+      {
+        "content": [
+          {
+            "text": "<sha256:c9cf401f92e3ee13:7769 chars>",
+            "type": "text"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:b55b2cf14a9f79c6:301638 chars>"
+            },
+            "type": "image_url"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:3edcecfeee835bf0:9750 chars>"
+            },
+            "type": "image_url"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:3d276bb22c28dd19:68006 chars>"
+            },
+            "type": "image_url"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:647d5e063ad30bd6:488346 chars>"
+            },
+            "type": "image_url"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:af953c531bf74721:130470 chars>"
+            },
+            "type": "image_url"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:11afffaa3d5b74eb:130562 chars>"
+            },
+            "type": "image_url"
+          }
+        ],
+        "role": "user"
+      }
+    ],
+    "model": "muse-spark-1.3"
+  },
+  "response": {
+    "text": "### What the video shows\nFrom the six stills alone a judge sees the PRIMORDIAL PARADOX title with a car on a road at 6.1s, then a near black starfield at 18.4s, then white crawl text about the veil thinning and a scientist a student a sailor and a CEO at 30.6s, then the same roadside grass and track with a small blue figure frozen at 42.9s, 55.1s and 67.4s. I cannot see the README or the full repo in this panel, only the script excerpt and the run facts. Missing is everything a 3 minute demo needs: no caption or bake row overlay, no person talking to the game, no on screen Meta verdict, no gate choice, no boarding, no fight or game over, and no title card that says what this is.\n\n### The four scores\nImpact: 2 - No TALK verdict or player choice is visible in any frame, so the only models make possible moment never appears on screen.\nUse of Meta AI tooling: 3 - Receipts list 21 model calls with 52.4 percent live, but frames show zero captions, bake rows or textbox verdicts required by S5 and S6.\nTechnical depth: 4 - Check cleanroom PASS over 865 files and 156 bridge receipts suggests a real pipeline, but the last three frames are identical and the run logged no footstep cue.\nDemo: 2 - Measured 73.483s is 106.5s short of 180s with 2 of 6 frames over 90 percent one colour and no shareable story.\n\n### Five fixes, ranked\n1. Restore Right walk and footsteps past Town Quay gate - Criterion: Demo - Lane: gamedev - Body: Fix the Town Quay walk room input routing in the GameMaker player object so Right presses advance the sprite and trigger the footstep cue that was logged as missing. Verify with play_demo until the 42.9s field scrolls instead of freezing. A judge will see continuous walking after 0:43 into the gate checkpoint instead of three identical frames.\n2. Draw live Meta TALK verdict in NES textbox with receipt - Criterion: Use of Meta AI tooling - Lane: assistant - Body: Add a NES textbox draw in the dock office TALK fight scene that prints the live row text from data/receipts/meta_receipts.jsonl with its receipt id in small text. Keep fallback text labeled as fallback when offline. A judge will see a person judging the line inside a NES box with a visible verdict in S5.\n3. Overlay script captions and bake rows on every shot - Criterion: Demo - Lane: builder - Body: Update the builder overlay step to burn one script caption over S1 through S4 and the bake row plus network line over S5 and S6 exactly as the shot table requires. Read captions from the demo script so they type with text blips. A judge will see explanatory text on every shot instead of clean gameplay.\n4. Record full 180 second take through game over - Criterion: Impact - Lane: testing - Body: Change testing play_demo to record the full 180 second route from title attract through first fight, TALK fight, ship log save and game over without early stop. Fix the idle gate refusal that left nightly 2026-10-30 with NO VIDEO. A judge will see Meta shot 1 and Meta shot 2 offline instead of ending at 73.5s.\n5. Add opening title card explaining Meta on NES premise - Criterion: Demo - Lane: builder - Body: Add a five second opening card in the builder video assembly that states the premise, the Meta model judge, and the NES limits. Use the title attract scene plus cold boot caption about CONTINUE being dim. A judge will understand what to watch for and want to share the clip.\n\n### Machine readable block\n```json\n{\"impact\": 2, \"impact_reason\": \"No TALK verdict or player choice is visible in any frame, so the only models make possible moment never appears.\", \"meta_tooling\": 3, \"meta_tooling_reason\": \"Receipts list 21 calls with 52.4 percent live, but frames show zero captions, bake rows or textbox verdicts.\", \"technical_depth\": 4, \"technical_depth_reason\": \"Cleanroom PASS and 156 bridge receipts suggest pipeline, but last three frames identical and no footstep cue.\", \"demo\": 2, \"demo_reason\": \"Measured 73.483s is 106.5s short of 180s with 2 of 6 frames mostly one colour and no shareable story.\", \"fixes\": [{\"title\": \"Restore Right walk and footsteps past Town Quay gate\", \"criterion\": \"Demo\", \"lane\": \"gamedev\", \"body\": \"Fix the Town Quay walk room input routing in the GameMaker player object so Right presses advance the sprite and trigger the footstep cue that was logged as missing. Verify with play_demo until the 42.9s field scrolls instead of freezing. A judge will see continuous walking after 0:43 into the gate checkpoint instead of three identical frames.\"}, {\"title\": \"Draw live Meta TALK verdict in NES textbox with receipt\", \"criterion\": \"Use of Meta AI tooling\", \"lane\": \"assistant\", \"body\": \"Add a NES textbox draw in the dock office TALK fight scene that prints the live row text from data/receipts/meta_receipts.jsonl with its receipt id in small text. Keep fallback text labeled as fallback when offline. A judge will see a person judging the line inside a NES box with a visible verdict in S5.\"}, {\"title\": \"Overlay script captions and bake rows on every shot\", \"criterion\": \"Demo\", \"lane\": \"builder\", \"body\": \"Update the builder overlay step to burn one script caption over S1 through S4 and the bake row plus network line over S5 and S6 exactly as the shot table requires. Read captions from the demo script so they type with text blips. A judge will see explanatory text on every shot instead of clean gameplay.\"}, {\"title\": \"Record full 180 second take through game over\", \"criterion\": \"Impact\", \"lane\": \"testing\", \"body\": \"Change testing play_demo to record the full 180 second route from title attract through first fight, TALK fight, ship log save and game over without early stop. Fix the idle gate refusal that left nightly 2026-10-30 with NO VIDEO. A judge will see Meta shot 1 and Meta shot 2 offline instead of ending at 73.5s.\"}, {\"title\": \"Add opening title card explaining Meta on NES premise\", \"criterion\": \"Demo\", \"lane\": \"builder\", \"body\": \"Add a five second opening card in the builder video assembly that states the premise, the Meta model judge, and the NES limits. Use the title attract scene plus cold boot caption about CONTINUE being dim. A judge will understand what to watch for and want to share the clip.\"}]}\n```",
+    "usage": {
+      "completion_tokens": 6977,
+      "completion_tokens_details": {
+        "reasoning_tokens": 5490
+      },
+      "prompt_tokens": 6517,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 13494
+    }
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "backend": "meta",
+  "key": "6b9ffc6a700f7d17807e3bab523e5fd8cd86cc8dd1c695bf5d2540045da70918",
+  "kind": "chat",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "recorded_at": "2026-10-27T09:58:37Z",
+  "request": {
+    "messages": [
+      {
+        "content": "<sha256:7beca544a167f7f2:2408 chars>",
+        "role": "system"
+      },
+      {
+        "content": "<sha256:114617bcc34d0de0:930 chars>",
+        "role": "user"
+      }
+    ],
+    "model": "muse-spark-1.3",
+    "response_format": {
+      "json_schema": {
+        "name": "answer",
+        "schema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "additionalProperties": false,
+          "properties": {
+            "effect": {
+              "enum": [
+                "none",
+                "end"
+              ]
+            },
+            "hint": {
+              "maxLength": 28,
+              "pattern": "^([A-Z0-9 .,:!?'()]*)$",
+              "type": "string"
+            },
+            "mood": {
+              "enum": [
+                "calm",
+                "guarded",
+                "rattled",
+                "warm",
+                "angry"
+              ]
+            },
+            "text": {
+              "items": {
+                "maxLength": 28,
+                "minLength": 1,
+                "pattern": "^[A-Z0-9 .,:!?'()]+$",
+                "type": "string"
+              },
+              "maxItems": 4,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "text",
+            "mood",
+            "effect",
+            "hint"
+          ],
+          "title": "Primordial Paradox LLM talk reply",
+          "type": "object"
+        },
+        "strict": true
+      },
+      "type": "json_schema"
+    }
+  },
+  "response": {
+    "text": "{\"effect\": \"none\", \"hint\": \"THE LONG WATCH\", \"mood\": \"guarded\", \"text\": [\"SILENCE CLOSES NO GATES.\", \"STATE BUSINESS OR STEP BACK.\"]}",
+    "usage": {
+      "completion_tokens": 1640,
+      "completion_tokens_details": {
+        "reasoning_tokens": 1588
+      },
+      "prompt_tokens": 1055,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 2695
+    }
+  }
+}

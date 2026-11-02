@@ -1,0 +1,87 @@
+{
+  "backend": "meta",
+  "key": "2e0daf423c6a074ed8a3f24ae5aa3bae796f3b1cb139dbb5529151c6058154cf",
+  "kind": "chat",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "recorded_at": "2026-10-27T21:48:45Z",
+  "request": {
+    "messages": [
+      {
+        "content": "<sha256:7beca544a167f7f2:2408 chars>",
+        "role": "system"
+      },
+      {
+        "content": "<sha256:8507f8ec97e02818:860 chars>",
+        "role": "user"
+      }
+    ],
+    "model": "muse-spark-1.3",
+    "response_format": {
+      "json_schema": {
+        "name": "answer",
+        "schema": {
+          "additionalProperties": false,
+          "properties": {
+            "effect": {
+              "enum": [
+                "none",
+                "nudge",
+                "soften",
+                "setback"
+              ]
+            },
+            "hint": {
+              "maxLength": 28,
+              "type": "string"
+            },
+            "mood": {
+              "enum": [
+                "calm",
+                "guarded",
+                "rattled",
+                "warm",
+                "angry"
+              ]
+            },
+            "text": {
+              "items": {
+                "maxLength": 28,
+                "minLength": 1,
+                "pattern": "^[ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 \\.,:!\\?'\\(\\)]+$",
+                "type": "string"
+              },
+              "maxItems": 3,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "text",
+            "mood",
+            "effect",
+            "hint"
+          ],
+          "type": "object"
+        },
+        "strict": true
+      },
+      "type": "json_schema"
+    }
+  },
+  "response": {
+    "text": "{\"effect\":\"soften\",\"hint\":\"THE LONG WATCH\",\"mood\":\"calm\",\"text\":[\"CORSO. THIRD WATCH.\",\"NOBODY ASKS THAT.\"]}",
+    "usage": {
+      "completion_tokens": 2338,
+      "completion_tokens_details": {
+        "reasoning_tokens": 2293
+      },
+      "prompt_tokens": 1019,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3357
+    }
+  }
+}

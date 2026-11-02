@@ -1,0 +1,87 @@
+{
+  "backend": "meta",
+  "key": "307a720ced6e615d121e1ee4943294172e728bb492a1e83d554f915fd758d03f",
+  "kind": "chat",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "recorded_at": "2026-10-27T21:48:37Z",
+  "request": {
+    "messages": [
+      {
+        "content": "<sha256:7beca544a167f7f2:2408 chars>",
+        "role": "system"
+      },
+      {
+        "content": "<sha256:48bff5dd9b5e4f94:886 chars>",
+        "role": "user"
+      }
+    ],
+    "model": "muse-spark-1.3",
+    "response_format": {
+      "json_schema": {
+        "name": "answer",
+        "schema": {
+          "additionalProperties": false,
+          "properties": {
+            "effect": {
+              "enum": [
+                "none",
+                "nudge",
+                "soften",
+                "setback"
+              ]
+            },
+            "hint": {
+              "maxLength": 28,
+              "type": "string"
+            },
+            "mood": {
+              "enum": [
+                "calm",
+                "guarded",
+                "rattled",
+                "warm",
+                "angry"
+              ]
+            },
+            "text": {
+              "items": {
+                "maxLength": 28,
+                "minLength": 1,
+                "pattern": "^[ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 \\.,:!\\?'\\(\\)]+$",
+                "type": "string"
+              },
+              "maxItems": 3,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "text",
+            "mood",
+            "effect",
+            "hint"
+          ],
+          "type": "object"
+        },
+        "strict": true
+      },
+      "type": "json_schema"
+    }
+  },
+  "response": {
+    "text": "{\"effect\": \"nudge\", \"hint\": \"THE LONG WATCH\", \"mood\": \"calm\", \"text\": [\"YEAH. HOURS NOW.\", \"STILL ON WATCH.\"]}",
+    "usage": {
+      "completion_tokens": 2713,
+      "completion_tokens_details": {
+        "reasoning_tokens": 2662
+      },
+      "prompt_tokens": 1023,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3736
+    }
+  }
+}

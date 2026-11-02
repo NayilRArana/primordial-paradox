@@ -1,0 +1,31 @@
+{
+  "backend": "mock",
+  "key": "bb810f0f28d2a21858079ffef049aea182ad3bf0e282ec88f0c1ef95195572f2",
+  "kind": "segment",
+  "mode": "record",
+  "model": "sam-3.1",
+  "network": false,
+  "recorded_at": "2026-10-27T05:10:48Z",
+  "request": {
+    "image_bytes": 133,
+    "image_sha256": "d41dd530139f4f0b6d0b0466cc637c49761d51684b14528c280f126adcd35f27",
+    "mask_encoding": "one_bit",
+    "model": "sam-3.1",
+    "prompt": "the temple"
+  },
+  "response": {
+    "boxes": [
+      [
+        0,
+        0,
+        16,
+        16
+      ]
+    ],
+    "masks": [
+      "mock-mask-2e5a593ec0e9"
+    ],
+    "mock": true,
+    "text": "mock segmentation 2e5a593ec0e9: "
+  }
+}

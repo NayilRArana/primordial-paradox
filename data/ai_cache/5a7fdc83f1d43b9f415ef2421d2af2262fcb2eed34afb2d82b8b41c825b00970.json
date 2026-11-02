@@ -1,0 +1,31 @@
+{
+  "backend": "mock",
+  "key": "5a7fdc83f1d43b9f415ef2421d2af2262fcb2eed34afb2d82b8b41c825b00970",
+  "kind": "segment",
+  "mode": "record",
+  "model": "sam-3.1",
+  "network": false,
+  "recorded_at": "2026-10-27T04:08:28Z",
+  "request": {
+    "image_bytes": 136,
+    "image_sha256": "fed1469fa267053c539322832bae561ff6735621f2f2d282be4525d5a3367776",
+    "mask_encoding": "one_bit",
+    "model": "sam-3.1",
+    "prompt": "the deck"
+  },
+  "response": {
+    "boxes": [
+      [
+        0,
+        0,
+        16,
+        16
+      ]
+    ],
+    "masks": [
+      "mock-mask-e9aa93e094b5"
+    ],
+    "mock": true,
+    "text": "mock segmentation e9aa93e094b5: "
+  }
+}

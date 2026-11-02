@@ -5,7 +5,7 @@
   "mode": "record",
   "model": "muse-spark-1.3",
   "network": true,
-  "recorded_at": "2026-10-27T01:41:13Z",
+  "recorded_at": "2026-10-27T21:50:23Z",
   "request": {
     "messages": [
       {
@@ -69,17 +69,17 @@
     }
   },
   "response": {
-    "text": "{\"effect\": \"none\", \"hint\": \"THE DESK, THE DRIVE, MARKS\", \"mood\": \"guarded\", \"text\": [\"THEY WERE ON THE BOX.\", \"I LEFT YOU THE REST.\"]}",
+    "text": "{\"effect\": \"none\", \"hint\": \"THE DESK AND THE MARKS\", \"mood\": \"guarded\", \"text\": [\"I HAD TWO ON THE WAY UP.\", \"LEAVE THE REST FOR WORK.\"]}",
     "usage": {
-      "completion_tokens": 2352,
+      "completion_tokens": 2297,
       "completion_tokens_details": {
-        "reasoning_tokens": 2296
+        "reasoning_tokens": 2241
       },
       "prompt_tokens": 1207,
       "prompt_tokens_details": {
-        "cached_tokens": 753
+        "cached_tokens": 0
       },
-      "total_tokens": 3559
+      "total_tokens": 3504
     }
   }
 }

@@ -1,0 +1,43 @@
+{
+  "backend": "meta",
+  "key": "6a8b311fb5679b99a64167ca7e29b26b787fa9df935fb583700d250c4c3d2bbc",
+  "kind": "vision",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "recorded_at": "2026-10-27T09:51:00Z",
+  "request": {
+    "messages": [
+      {
+        "content": [
+          {
+            "text": "<sha256:b77bf14c499101bd:3960 chars>",
+            "type": "text"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:bbac0ab62fe0e446:9758 chars>"
+            },
+            "type": "image_url"
+          }
+        ],
+        "role": "user"
+      }
+    ],
+    "model": "muse-spark-1.3"
+  },
+  "response": {
+    "text": "### 1) What is on the screen\nA broken left-column slice of graphics against a huge black void. Top left is a dark blue starfield with a black slab, then a lighter blue band, then a gap to black, then green blocky shapes with a white box containing truncated text, then a road with dashed white lines at bottom left. The eye goes first to the high-contrast white boxed text \"BAS: / SOU'\" in region x,y,w,h 116,608,100,124 measured from top left of the image. I cannot see what the player is being asked to do - no title, no press start, no player sprite, no readable objective.\n\n### 2) Does it look like a real NES game\n(a) PASS - 8 distinct colours, all verified as NES palette entries, well under the 25 colours on screen ceiling of 12 BG + 12 sprite + 1 backdrop, reads as NES.\n(b) PASS - shading is flat, one colour per shape, dither is 1-bit checker, no gradient banding I can see.\n(c) FAIL - no sprite reads at a glance; green blocks bleed into black with no silhouette, white dither blob at bottom right is unreadable.\n(d) PASS - no anti-aliasing or soft edges; all edges are hard 4x blocks, including text and window borders.\n(e) FAIL - background colour changes do not sit on the 16 x 16 pixel boundary; the vertical cut from graphics to black at ~x=408 file pixels = 102 NES pixels is mid-attribute, not on a 16-pixel grid. Measured numbers do not contradict this: 69.3% single-colour cover matches the black void I see.\n\n### 3) Composition and text\nCrowded into a left strip roughly x 0,0,412,960, empty on the right roughly x 412,0,612,960 which is solid black except for one blob. Focal point is the truncated text box, which is not where a player needs it - it is cut off and low in frame. Only legible text region is [116,608,100,124] reading \"BAS: / SOU'\". The worst - and only - text is that box: right edge cropped mid-glyph, so E and TH/H are missing, 8x8 glyph grid broken at the cut, illegible at 256x240 without guessing.\n\n### 4) What looks AI generated or off\nNot AI mush - looks handmade but broken capture / nametable setup. Honest failure, not a prompt render.\nTells named: massive 69% $0F black void reads as missing nametable, not design; left graphics slice ends in a straight vertical cut mid-tile; text box cropped mid-letter; road is occluded mid-tile by a flat green rectangle; isolated white-black checker comet in blackness with no ground or shadow; top black slab has stray grey single pixels with no tile structure. I cannot see pillow shading or modern gradients - none present.\n\n### 5) Five concrete fixes\n1. Right void region [408,0,616,960]: fill missing nametable, snap new vertical seam to x=384 file pixels = 96 NES pixels, which is 6x16, using existing BG palettes only, no new colours.\n2. Text box region [116,608,100,124]: move whole 8x8-tile box left by 32 file pixels = 8 NES pixels and redraw two rows on the glyph grid in NES white $30 as \"BASE\" / \"SOUTH\", restore full 1-tile white border.\n3. Top slab region [44,76,324,36]: delete stray grey pixels and replace black slab fringe with NES blue $21 sky, or delete object and redraw as two 8x16 sprites aligned to 32 file-pixel grid.\n4. Green occluder region [204,760,208,148]: replace flat NES green $19 block with $0F backdrop/transparent to reveal road tiles, snap its left edge to x=192 file pixels = 48 NES pixels = 3x16.\n5. Comet dither region [548,848,196,100]: delete checker dither or rebuild as proper sprite using sprite palette white $30 + NES grey $10, 8x16, no dither, and move by 64 file pixels = 16 NES pixels to sit on background grid if kept.\n\n### 6) Scores and machine readable block\nnes_authenticity: 5 - palette/tiles are NES-legal but frame is not shippable as a real NES screen.\nreadability: 2 - one cropped sign, no objective, 60% void.\ncharm: 2 - colours are honest but composition is a bug, no character.\n\n```json\n{\"nes_authenticity\": 5, \"readability\": 2, \"charm\": 2, \"focal_point\": \"truncated white BAS: / SOU' sign box on green\", \"off_notes\": [\"69% black void from missing nametable, not design\", \"vertical cut mid-attribute at ~102 NES pixels\", \"text cropped mid-glyph on right edge\", \"flat green rectangle occluding road mid-tile\", \"isolated checker-dither comet with no grounding\"], \"fixes\": [{\"region\": [408, 0, 616, 960], \"change\": \"fill void with tiled BG on 64px file grid, seam at x=384, reuse BG palettes only\"}, {\"region\": [116, 608, 100, 124], \"change\": \"move box left 32px and redraw rows BASE/SOUTH in NES $30 white on 8px glyph grid\"}, {\"region\": [44, 76, 324, 36], \"change\": \"remove stray grey, replace slab fringe with NES $21 blue sky\"}, {\"region\": [204, 760, 208, 148], \"change\": \"replace $19 green block with $0F backdrop to reveal road, snap edge to x=192\"}, {\"region\": [548, 848, 196, 100], \"change\": \"delete dither blob or rebuild as 8x16 sprite in $30 white + $10 grey\"}]}\n```",
+    "usage": {
+      "completion_tokens": 4594,
+      "completion_tokens_details": {
+        "reasoning_tokens": 3274
+      },
+      "prompt_tokens": 2237,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 6831
+    }
+  }
+}

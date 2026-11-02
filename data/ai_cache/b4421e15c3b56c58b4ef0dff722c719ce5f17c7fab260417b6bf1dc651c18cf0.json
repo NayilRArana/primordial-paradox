@@ -5,7 +5,7 @@
   "mode": "record",
   "model": "muse-spark-1.3",
   "network": true,
-  "recorded_at": "2026-10-27T01:41:21Z",
+  "recorded_at": "2026-10-27T21:50:28Z",
   "request": {
     "messages": [
       {
@@ -69,17 +69,17 @@
     }
   },
   "response": {
-    "text": "{\"effect\": \"none\", \"hint\": \"THE DESK, THE DRIVE HOME\", \"mood\": \"guarded\", \"text\": [\"I HAD ONE.\", \"YOU HAD THREE.\"]}",
+    "text": "{\"effect\":\"none\",\"hint\":\"THE DESK AND THE DRIVE\",\"mood\":\"guarded\",\"text\":[\"I HAD ONE ON THE DRIVE.\", \"THANK YOU FOR NOTICING.\"]}",
     "usage": {
-      "completion_tokens": 2412,
+      "completion_tokens": 1629,
       "completion_tokens_details": {
-        "reasoning_tokens": 2362
+        "reasoning_tokens": 1581
       },
       "prompt_tokens": 1208,
       "prompt_tokens_details": {
-        "cached_tokens": 1137
+        "cached_tokens": 0
       },
-      "total_tokens": 3620
+      "total_tokens": 2837
     }
   }
 }
