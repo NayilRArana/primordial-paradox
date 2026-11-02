@@ -3,7 +3,9 @@
   "kind": "tileset",
   "name": "quay_tiles",
   "image": "quay_tiles.png",
-  "card": "R46 QUAY-TILES (t_abfb6024)",
+  "card": "ART-B-MAPS (t_d0566ebc): the R46 set (t_abfb6024) redrawn in style B, night",
+  "style": "B, late NES polish: bold dark outlines, three tone shading lit from the top left, detailed tiles",
+  "variant": "night",
   "columns": 8,
   "rows": 3,
   "frames": 20,
@@ -103,7 +105,7 @@
         "gold_4",
         "gold_5"
       ],
-      "note": "append to data/room_palettes.json as a set with this id; ARRIVAL-MAP-2 owns that file"
+      "note": "append to data/room_palettes.json as a set with this id"
     },
     "office_night": {
       "roles": [
@@ -118,7 +120,23 @@
         "gold_4",
         "gold_5"
       ],
-      "note": "append to data/room_palettes.json as a set with this id; ARRIVAL-MAP-2 owns that file"
+      "note": "append to data/room_palettes.json as a set with this id"
+    },
+    "quay_storm": {
+      "roles": [
+        "ink",
+        "grey_4",
+        "grey_5",
+        "sea_1",
+        "sea_2",
+        "sea_4",
+        "blood_3",
+        "stone_2",
+        "blood_4",
+        "gold_4",
+        "gold_5"
+      ],
+      "note": "append to data/room_palettes.json as a set with this id"
     }
   },
   "palettes": [
@@ -208,25 +226,26 @@
       "roles": [
         "grey_4",
         "grey_5",
+        "ink",
         "sea_1"
       ],
-      "note": "wet flagstone, the ground of every walk on the quay",
+      "note": "wet flagstone on a bold black joint, a lit top and left edge per slab, the ground of every walk",
       "blob": {
-        "colours": 3,
+        "colours": 4,
         "roles": [
           "grey_4",
           "grey_5",
-          "sea_1"
-        ],
-        "dark_roles": [
           "ink",
           "sea_1"
         ],
+        "dark_roles": [
+          "ink"
+        ],
         "lightest_role": "grey_5",
-        "lightest_share_percent": 18.8,
-        "rows_without_dark": 0,
-        "horizontal_dark_runs": 30,
-        "interior_dark_pixels": 27
+        "lightest_share_percent": 17.2,
+        "rows_without_dark": 12,
+        "horizontal_dark_runs": 8,
+        "interior_dark_pixels": 5
       },
       "blob_gated": false,
       "blob_verdict": "reported only: a pattern or a light source, not a character silhouette"
@@ -239,25 +258,26 @@
       "roles": [
         "grey_4",
         "grey_5",
+        "ink",
         "sea_1"
       ],
-      "note": "the same stone with a stepped crack, so a long walk is not one tile repeated",
+      "note": "the same stone with a stepped black crack, so a long walk is not one tile repeated",
       "blob": {
-        "colours": 3,
+        "colours": 4,
         "roles": [
           "grey_4",
           "grey_5",
-          "sea_1"
-        ],
-        "dark_roles": [
           "ink",
           "sea_1"
         ],
+        "dark_roles": [
+          "ink"
+        ],
         "lightest_role": "grey_5",
-        "lightest_share_percent": 18.8,
-        "rows_without_dark": 0,
-        "horizontal_dark_runs": 36,
-        "interior_dark_pixels": 38
+        "lightest_share_percent": 16.8,
+        "rows_without_dark": 5,
+        "horizontal_dark_runs": 15,
+        "interior_dark_pixels": 16
       },
       "blob_gated": false,
       "blob_verdict": "reported only: a pattern or a light source, not a character silhouette"
@@ -270,25 +290,26 @@
       "roles": [
         "grey_4",
         "grey_5",
+        "ink",
         "sea_1"
       ],
-      "note": "standing water in a low slab, two glints to say the lamp is behind it",
+      "note": "standing water in a low slab: a black lip, one lit edge, two glints",
       "blob": {
-        "colours": 3,
+        "colours": 4,
         "roles": [
           "grey_4",
           "grey_5",
-          "sea_1"
-        ],
-        "dark_roles": [
           "ink",
           "sea_1"
         ],
+        "dark_roles": [
+          "ink"
+        ],
         "lightest_role": "grey_5",
-        "lightest_share_percent": 17.6,
-        "rows_without_dark": 0,
-        "horizontal_dark_runs": 34,
-        "interior_dark_pixels": 49
+        "lightest_share_percent": 19.5,
+        "rows_without_dark": 9,
+        "horizontal_dark_runs": 13,
+        "interior_dark_pixels": 32
       },
       "blob_gated": false,
       "blob_verdict": "reported only: a pattern or a light source, not a character silhouette"
@@ -301,25 +322,26 @@
       "roles": [
         "grey_4",
         "grey_5",
+        "ink",
         "sea_1"
       ],
-      "note": "the coping at the water, the one tile that lets the map end the stone honestly",
+      "note": "the coping at the water, a lit lip and a black drop, the tile that ends the stone honestly",
       "blob": {
-        "colours": 3,
+        "colours": 4,
         "roles": [
           "grey_4",
           "grey_5",
-          "sea_1"
-        ],
-        "dark_roles": [
           "ink",
           "sea_1"
         ],
+        "dark_roles": [
+          "ink"
+        ],
         "lightest_role": "grey_5",
-        "lightest_share_percent": 21.9,
-        "rows_without_dark": 2,
-        "horizontal_dark_runs": 27,
-        "interior_dark_pixels": 47
+        "lightest_share_percent": 14.1,
+        "rows_without_dark": 10,
+        "horizontal_dark_runs": 10,
+        "interior_dark_pixels": 33
       },
       "blob_gated": false,
       "blob_verdict": "reported only: a pattern or a light source, not a character silhouette"
@@ -347,10 +369,10 @@
           "sea_1"
         ],
         "lightest_role": "sea_4",
-        "lightest_share_percent": 2.3,
+        "lightest_share_percent": 3.1,
         "rows_without_dark": 0,
-        "horizontal_dark_runs": 28,
-        "interior_dark_pixels": 171
+        "horizontal_dark_runs": 16,
+        "interior_dark_pixels": 166
       },
       "blob_gated": false,
       "blob_verdict": "reported only: a pattern or a light source, not a character silhouette"
@@ -365,7 +387,7 @@
         "sea_2",
         "sea_4"
       ],
-      "note": "harbour water, frame 2 of 2: the swell moves two pixels and the glints swap sides",
+      "note": "harbour water, frame 2 of 2: the swell moves three pixels and the glints swap sides",
       "blob": {
         "colours": 3,
         "roles": [
@@ -378,10 +400,10 @@
           "sea_1"
         ],
         "lightest_role": "sea_4",
-        "lightest_share_percent": 2.3,
+        "lightest_share_percent": 0.8,
         "rows_without_dark": 0,
-        "horizontal_dark_runs": 27,
-        "interior_dark_pixels": 173
+        "horizontal_dark_runs": 19,
+        "interior_dark_pixels": 175
       },
       "blob_gated": false,
       "blob_verdict": "reported only: a pattern or a light source, not a character silhouette"
@@ -393,15 +415,13 @@
       "palette": "bg1_harbour_water",
       "roles": [
         "sea_1",
-        "sea_2",
         "sea_4"
       ],
-      "note": "the lamp's glint path on the water: a broken vertical line, so the water answers the light",
+      "note": "the lamp's glint path on the water, broken into dashes so the water answers the light",
       "blob": {
-        "colours": 3,
+        "colours": 2,
         "roles": [
           "sea_1",
-          "sea_2",
           "sea_4"
         ],
         "dark_roles": [
@@ -409,10 +429,10 @@
           "sea_1"
         ],
         "lightest_role": "sea_4",
-        "lightest_share_percent": 4.7,
+        "lightest_share_percent": 3.1,
         "rows_without_dark": 0,
-        "horizontal_dark_runs": 36,
-        "interior_dark_pixels": 167
+        "horizontal_dark_runs": 20,
+        "interior_dark_pixels": 188
       },
       "blob_gated": false,
       "blob_verdict": "reported only: a pattern or a light source, not a character silhouette"
@@ -425,14 +445,16 @@
       "roles": [
         "grey_4",
         "grey_5",
+        "ink",
         "sea_1"
       ],
-      "note": "iron bollard on wet stone, lit on one edge only",
+      "note": "iron bollard on wet stone: a black outline, a lit left edge, a shadow on the right",
       "blob": {
-        "colours": 3,
+        "colours": 4,
         "roles": [
           "grey_4",
           "grey_5",
+          "ink",
           "sea_1"
         ],
         "dark_roles": [
@@ -440,10 +462,10 @@
           "sea_1"
         ],
         "lightest_role": "grey_5",
-        "lightest_share_percent": 21.9,
+        "lightest_share_percent": 11.7,
         "rows_without_dark": 0,
-        "horizontal_dark_runs": 31,
-        "interior_dark_pixels": 64
+        "horizontal_dark_runs": 43,
+        "interior_dark_pixels": 126
       },
       "blob_gated": true,
       "blob_verdict": "pass"
@@ -456,14 +478,16 @@
       "roles": [
         "grey_4",
         "grey_5",
+        "ink",
         "sea_1"
       ],
-      "note": "a chain draped between two bollards: one arc, links as alternating dark and lit clusters",
+      "note": "a chain draped between two bollards: one arc with a black shadow under it, the ground showing through",
       "blob": {
-        "colours": 3,
+        "colours": 4,
         "roles": [
           "grey_4",
           "grey_5",
+          "ink",
           "sea_1"
         ],
         "dark_roles": [
@@ -471,10 +495,10 @@
           "sea_1"
         ],
         "lightest_role": "grey_5",
-        "lightest_share_percent": 19.1,
+        "lightest_share_percent": 19.5,
         "rows_without_dark": 0,
-        "horizontal_dark_runs": 35,
-        "interior_dark_pixels": 36
+        "horizontal_dark_runs": 41,
+        "interior_dark_pixels": 93
       },
       "blob_gated": true,
       "blob_verdict": "pass"
@@ -487,14 +511,16 @@
       "roles": [
         "grey_4",
         "grey_5",
+        "ink",
         "sea_1"
       ],
-      "note": "steel barrier across the quay mouth",
+      "note": "steel barrier across the quay mouth: a lit rail top, two outlined posts",
       "blob": {
-        "colours": 3,
+        "colours": 4,
         "roles": [
           "grey_4",
           "grey_5",
+          "ink",
           "sea_1"
         ],
         "dark_roles": [
@@ -502,10 +528,10 @@
           "sea_1"
         ],
         "lightest_role": "grey_5",
-        "lightest_share_percent": 25.8,
+        "lightest_share_percent": 22.3,
         "rows_without_dark": 0,
-        "horizontal_dark_runs": 35,
-        "interior_dark_pixels": 36
+        "horizontal_dark_runs": 48,
+        "interior_dark_pixels": 124
       },
       "blob_gated": true,
       "blob_verdict": "pass"
@@ -518,25 +544,26 @@
       "roles": [
         "blood_3",
         "blood_4",
+        "ink",
         "stone_2"
       ],
-      "note": "the office frontage: two courses, mortar, a lit top edge per brick",
+      "note": "the office frontage: two courses, black mortar, a lit top edge per brick",
       "blob": {
-        "colours": 3,
+        "colours": 4,
         "roles": [
           "blood_3",
           "blood_4",
-          "stone_2"
-        ],
-        "dark_roles": [
           "ink",
           "stone_2"
         ],
+        "dark_roles": [
+          "ink"
+        ],
         "lightest_role": "blood_4",
-        "lightest_share_percent": 21.9,
-        "rows_without_dark": 2,
-        "horizontal_dark_runs": 26,
-        "interior_dark_pixels": 30
+        "lightest_share_percent": 10.9,
+        "rows_without_dark": 12,
+        "horizontal_dark_runs": 4,
+        "interior_dark_pixels": 28
       },
       "blob_gated": false,
       "blob_verdict": "reported only: a pattern or a light source, not a character silhouette"
@@ -549,25 +576,26 @@
       "roles": [
         "blood_3",
         "blood_4",
+        "ink",
         "stone_2"
       ],
-      "note": "the same wall with two bricks gone dark where the rain runs",
+      "note": "the same wall with bricks gone dark where the rain runs",
       "blob": {
-        "colours": 3,
+        "colours": 4,
         "roles": [
           "blood_3",
           "blood_4",
-          "stone_2"
-        ],
-        "dark_roles": [
           "ink",
           "stone_2"
         ],
+        "dark_roles": [
+          "ink"
+        ],
         "lightest_role": "blood_4",
-        "lightest_share_percent": 19.5,
-        "rows_without_dark": 0,
-        "horizontal_dark_runs": 30,
-        "interior_dark_pixels": 47
+        "lightest_share_percent": 10.9,
+        "rows_without_dark": 10,
+        "horizontal_dark_runs": 6,
+        "interior_dark_pixels": 32
       },
       "blob_gated": false,
       "blob_verdict": "reported only: a pattern or a light source, not a character silhouette"
@@ -583,7 +611,7 @@
         "ink",
         "stone_2"
       ],
-      "note": "the one door in the block that opens: handle catching the lamp",
+      "note": "the one door in the block that opens: a lit frame, a handle catching the lamp",
       "blob": {
         "colours": 4,
         "roles": [
@@ -597,10 +625,10 @@
           "stone_2"
         ],
         "lightest_role": "blood_4",
-        "lightest_share_percent": 13.7,
+        "lightest_share_percent": 16.8,
         "rows_without_dark": 0,
-        "horizontal_dark_runs": 29,
-        "interior_dark_pixels": 68
+        "horizontal_dark_runs": 52,
+        "interior_dark_pixels": 99
       },
       "blob_gated": true,
       "blob_verdict": "pass"
@@ -630,10 +658,10 @@
           "stone_2"
         ],
         "lightest_role": "blood_4",
-        "lightest_share_percent": 11.7,
+        "lightest_share_percent": 16.0,
         "rows_without_dark": 0,
-        "horizontal_dark_runs": 25,
-        "interior_dark_pixels": 92
+        "horizontal_dark_runs": 53,
+        "interior_dark_pixels": 111
       },
       "blob_gated": true,
       "blob_verdict": "pass"
@@ -649,7 +677,7 @@
         "ink",
         "stone_2"
       ],
-      "note": "a lit window: the room in gold with a hot core, waived from the light share rule because it is a light",
+      "note": "a lit window: the room in gold with the hot core at the top left, waived from the light share rule",
       "blob": {
         "colours": 4,
         "roles": [
@@ -662,9 +690,9 @@
           "ink"
         ],
         "lightest_role": "gold_5",
-        "lightest_share_percent": 8.6,
-        "rows_without_dark": 13,
-        "horizontal_dark_runs": 3,
+        "lightest_share_percent": 4.7,
+        "rows_without_dark": 0,
+        "horizontal_dark_runs": 29,
         "interior_dark_pixels": 14
       },
       "blob_gated": false,
@@ -695,7 +723,7 @@
           "stone_2"
         ],
         "lightest_role": "blood_4",
-        "lightest_share_percent": 0.4,
+        "lightest_share_percent": 9.8,
         "rows_without_dark": 0,
         "horizontal_dark_runs": 37,
         "interior_dark_pixels": 72
@@ -727,10 +755,10 @@
           "ink"
         ],
         "lightest_role": "gold_5",
-        "lightest_share_percent": 3.1,
-        "rows_without_dark": 0,
-        "horizontal_dark_runs": 31,
-        "interior_dark_pixels": 134
+        "lightest_share_percent": 3.9,
+        "rows_without_dark": 1,
+        "horizontal_dark_runs": 30,
+        "interior_dark_pixels": 137
       },
       "blob_gated": false,
       "blob_verdict": "reported only: a pattern or a light source, not a character silhouette"
@@ -759,10 +787,10 @@
           "ink"
         ],
         "lightest_role": "gold_5",
-        "lightest_share_percent": 3.1,
+        "lightest_share_percent": 6.2,
         "rows_without_dark": 0,
-        "horizontal_dark_runs": 32,
-        "interior_dark_pixels": 50
+        "horizontal_dark_runs": 33,
+        "interior_dark_pixels": 62
       },
       "blob_gated": false,
       "blob_verdict": "reported only: a pattern or a light source, not a character silhouette"
@@ -775,25 +803,26 @@
       "roles": [
         "blood_3",
         "blood_4",
+        "ink",
         "stone_2"
       ],
-      "note": "the dock office boards, lit edge and dark joint",
+      "note": "the dock office boards, a black joint and a lit edge per board",
       "blob": {
-        "colours": 3,
+        "colours": 4,
         "roles": [
           "blood_3",
           "blood_4",
-          "stone_2"
-        ],
-        "dark_roles": [
           "ink",
           "stone_2"
         ],
+        "dark_roles": [
+          "ink"
+        ],
         "lightest_role": "blood_4",
-        "lightest_share_percent": 21.9,
+        "lightest_share_percent": 10.9,
         "rows_without_dark": 0,
-        "horizontal_dark_runs": 20,
-        "interior_dark_pixels": 50
+        "horizontal_dark_runs": 30,
+        "interior_dark_pixels": 27
       },
       "blob_gated": false,
       "blob_verdict": "reported only: a pattern or a light source, not a character silhouette"
@@ -806,14 +835,16 @@
       "roles": [
         "blood_3",
         "blood_4",
+        "ink",
         "stone_2"
       ],
       "note": "the office desk Nye works behind, drawn on its own boards",
       "blob": {
-        "colours": 3,
+        "colours": 4,
         "roles": [
           "blood_3",
           "blood_4",
+          "ink",
           "stone_2"
         ],
         "dark_roles": [
@@ -821,10 +852,10 @@
           "stone_2"
         ],
         "lightest_role": "blood_4",
-        "lightest_share_percent": 19.5,
+        "lightest_share_percent": 15.6,
         "rows_without_dark": 0,
-        "horizontal_dark_runs": 28,
-        "interior_dark_pixels": 76
+        "horizontal_dark_runs": 34,
+        "interior_dark_pixels": 79
       },
       "blob_gated": true,
       "blob_verdict": "pass"
@@ -844,5 +875,13 @@
   "mocks": [
     "output/quay_block_preview.png",
     "output/quay_office_preview.png"
-  ]
+  ],
+  "rules": {
+    "orphan_pixels": 0,
+    "dither_patches": 0,
+    "light_direction_correct": 360,
+    "light_direction_wrong": 15,
+    "light_direction_ratio": 24.0,
+    "off_palette_pixels": 0
+  }
 }

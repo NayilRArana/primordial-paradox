@@ -567,17 +567,18 @@ def test_focus_pauses_and_resumes_both_music_slots():
     assert "audio_resume_sound(_a.theme_inst)" in focus
 
 
-def test_the_theme_plays_at_the_music_level_and_a_duck_multiplies_it():
-    """The theme started at the engine default gain of 1.0 while every other track started at 0.7, so
-    the title was louder than the game. It now starts at the music level, and the duck and unduck
-    multiply that level instead of replacing it with 1.0 on the way back."""
+def test_the_theme_plays_at_the_music_level_and_a_duck_lowers_it():
+    """The theme starts at the music level, and a duck multiplies that level down. pp_audio_duck_db takes a duck
+    depth in decibels (positive is quieter), so the gain is PP_AUDIO_GAIN_MUSIC * 10^(-_db/20) and a 6 dB duck sits
+    the theme at 0.7 * 10^(-6/20) = 0.3508, not 1.40. The unduck restores the music level, never 1.0."""
     module = _text(MODULE)
     assert _macro(_code(module), "PP_AUDIO_GAIN_MUSIC") == "0.7"
     theme = _function(module, "pp_audio_play_theme")
     assert "audio_play_sound(_stream, PP_AUDIO_PRI_MUSIC, true, _gain)" in theme
     assert "var _gain = PP_AUDIO_GAIN_MUSIC;" in theme
     duck = _function(module, "pp_audio_duck_db")
-    assert "PP_AUDIO_GAIN_MUSIC * power(10, _db / 20)" in duck
+    assert "PP_AUDIO_GAIN_MUSIC * power(10, -_db / 20)" in duck, \
+        "a duck is a depth in dB down: the exponent is negative, so 6 dB lowers, never raises, the theme"
     unduck = _function(module, "pp_audio_unduck")
     assert "audio_sound_gain(_a.theme_inst, PP_AUDIO_GAIN_MUSIC, 0)" in unduck
     assert "audio_sound_gain(_a.theme_inst, 1, 0)" not in _code(module), "the theme can never jump to 1.0"

@@ -1,0 +1,361 @@
+{
+ "note": "HEAD copy (2026-11-02) of the rooms the ship restyle may touch; the identical-collision proof compares against it",
+ "rooms": {
+  "ship_small": {
+   "id": "ship_small",
+   "name": "Small Ship, the deck and the three room corridor",
+   "tileset": "ts_ship",
+   "tile_legend": {
+    "#": "wall",
+    ".": "floor",
+    "D": "door",
+    "H": "hatch",
+    "C": "crate",
+    "G": "grate",
+    "P": "pipe"
+   },
+   "width": 20,
+   "height": 15,
+   "music": "PP-05",
+   "story_flag": "ship_door_open",
+   "room_palette": "deck_day",
+   "palette_indices": [
+    0,
+    1,
+    3,
+    5,
+    8,
+    10,
+    14,
+    16,
+    23,
+    27,
+    33,
+    40,
+    41
+   ],
+   "tiles": [
+    "####################",
+    "#.....#.....#......#",
+    "#...C.#.....#PP....#",
+    "#....C#..G..#P....P#",
+    "#.....#.C.C.#P.GG.P#",
+    "#.....#.....#P....P#",
+    "###D#####D#####D####",
+    "#H................D#",
+    "#..................#",
+    "#########..#########",
+    "#..C..........C....#",
+    "#....G....C........#",
+    "#.........G........#",
+    "#.H......C.........#",
+    "####################"
+   ],
+   "collision": [
+    "11111111111111111111",
+    "10000010000010000001",
+    "10001010000011100001",
+    "10000110000011000011",
+    "10000010101011000011",
+    "10000010000011000011",
+    "11101111101111101111",
+    "10000000000000000021",
+    "10000000000000000001",
+    "11111111100111111111",
+    "10010000000000100001",
+    "10000000001000000001",
+    "10000000000000000001",
+    "10000000010000000001",
+    "11111111111111111111"
+   ],
+   "spawns": {
+    "start": {
+     "x": 2,
+     "y": 7
+    },
+    "after_percy": {
+     "x": 17,
+     "y": 7
+    },
+    "from_cabin": {
+     "x": 17,
+     "y": 7
+    },
+    "from_hatch": {
+     "x": 2,
+     "y": 13
+    }
+   },
+   "actors": [
+    {
+     "id": "navy_sailor",
+     "x": 11,
+     "y": 7,
+     "facing": "left",
+     "kind": "sailor",
+     "dialogue": "talk_navy_sailor"
+    }
+   ],
+   "triggers": [
+    {
+     "x": 3,
+     "y": 2,
+     "kind": "save",
+     "id": "deck_save",
+     "once": false,
+     "condition": ""
+    },
+    {
+     "x": 4,
+     "y": 7,
+     "kind": "battle",
+     "id": "tutorial_sailors",
+     "once": true,
+     "condition": ""
+    },
+    {
+     "x": 14,
+     "y": 8,
+     "kind": "flag",
+     "id": "ship_deck_seen",
+     "once": true,
+     "condition": ""
+    },
+    {
+     "x": 3,
+     "y": 6,
+     "kind": "scene",
+     "id": "ship_log",
+     "once": true,
+     "condition": ""
+    },
+    {
+     "x": 18,
+     "y": 7,
+     "kind": "map",
+     "id": "ship_cabin",
+     "spawn": "from_deck",
+     "once": false,
+     "condition": "ship_door_open"
+    },
+    {
+     "x": 2,
+     "y": 13,
+     "kind": "map",
+     "id": "ship_sample",
+     "spawn": "start",
+     "once": false,
+     "condition": ""
+    },
+    {
+     "x": 1,
+     "y": 7,
+     "kind": "map",
+     "id": "southampton_town_quay",
+     "spawn": "from_pier",
+     "once": false,
+     "condition": ""
+    }
+   ],
+   "rails": []
+  },
+  "ship_cabin": {
+   "id": "ship_cabin",
+   "name": "Small Ship, Percy's Office",
+   "tile_legend": {
+    "#": "wall",
+    ".": "floor",
+    "D": "door"
+   },
+   "width": 16,
+   "height": 15,
+   "music": "PP-05",
+   "story_flag": "",
+   "room_palette": "ship_cabin",
+   "palette_indices": [
+    0,
+    1,
+    2,
+    3,
+    5,
+    7,
+    14,
+    15,
+    16,
+    20,
+    23,
+    40,
+    41
+   ],
+   "tiles": [
+    "################",
+    "#..............#",
+    "#..............#",
+    "#....##..##....#",
+    "#....#....#....#",
+    "#....#....#....#",
+    "#....######....#",
+    "#D.............#",
+    "#..............#",
+    "#....######....#",
+    "#....#....#....#",
+    "#....#....#....#",
+    "#....#....#....#",
+    "#..............#",
+    "################"
+   ],
+   "collision": [
+    "1111111111111111",
+    "1000000000000001",
+    "1000000000000001",
+    "1000011001100001",
+    "1000010000100001",
+    "1000010000100001",
+    "1000011111100001",
+    "1000000000000001",
+    "1000000000000001",
+    "1000011111100001",
+    "1000010000100001",
+    "1000010000100001",
+    "1000010000100001",
+    "1000000000000001",
+    "1111111111111111"
+   ],
+   "spawns": {
+    "from_deck": {
+     "x": 2,
+     "y": 7
+    }
+   },
+   "triggers": [
+    {
+     "x": 1,
+     "y": 7,
+     "kind": "map",
+     "id": "ship_small",
+     "spawn": "from_cabin",
+     "once": false,
+     "condition": ""
+    },
+    {
+     "x": 7,
+     "y": 3,
+     "kind": "scene",
+     "id": "percy_lore_stop",
+     "once": true,
+     "condition": "ship_deck_seen"
+    },
+    {
+     "x": 7,
+     "y": 2,
+     "kind": "scene",
+     "id": "percy_rematch",
+     "once": false,
+     "condition": "percy_standing"
+    }
+   ],
+   "rails": []
+  },
+  "quay_dock_office": {
+   "id": "quay_dock_office",
+   "name": "Town Quay Offices, the dock office",
+   "width": 20,
+   "height": 15,
+   "tile_legend": {
+    ".": "floor",
+    "#": "wall",
+    "D": "door"
+   },
+   "tiles": [
+    "####################",
+    "#..................#",
+    "#..###############.#",
+    "#..#.............#.#",
+    "#..#.............#.#",
+    "#..#....#####....#.#",
+    "#..#.............#.#",
+    "#..................#",
+    "#....####..#####...#",
+    "#....#..#...#..#...#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "######D#############"
+   ],
+   "collision": [
+    "11111111111111111111",
+    "10000000000000000001",
+    "10011111111111111101",
+    "10010000000000000101",
+    "10010000000000000101",
+    "10010000111110000101",
+    "10010000000000000101",
+    "10000000000000000001",
+    "10000111100111110001",
+    "10000100100010010001",
+    "10000000000000000001",
+    "10000000000000000001",
+    "10000000000000000001",
+    "10000000000000000001",
+    "11111111111111111111"
+   ],
+   "music": "PP-03",
+   "story_flag": "",
+   "room_palette": "office_night",
+   "palette_indices": [
+    0,
+    1,
+    3,
+    10,
+    16,
+    17,
+    23
+   ],
+   "spawns": {
+    "from_quay": {
+     "x": 6,
+     "y": 13
+    }
+   },
+   "triggers": [
+    {
+     "x": 6,
+     "y": 14,
+     "kind": "map",
+     "id": "southampton_town_quay",
+     "spawn": "from_office",
+     "once": false,
+     "condition": ""
+    },
+    {
+     "x": 6,
+     "y": 12,
+     "kind": "scene",
+     "id": "quay_dock_office_play",
+     "once": true,
+     "condition": ""
+    }
+   ],
+   "actors": [
+    {
+     "id": "nye",
+     "x": 8,
+     "y": 7,
+     "facing": "down",
+     "kind": "clerk",
+     "dialogue": "quay_dock_office"
+    },
+    {
+     "id": "dylan",
+     "x": 11,
+     "y": 7,
+     "facing": "down",
+     "kind": "sailor",
+     "dialogue": "quay_dock_office"
+    }
+   ],
+   "rails": []
+  }
+ }
+}

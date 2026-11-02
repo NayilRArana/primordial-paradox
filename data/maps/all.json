@@ -6,30 +6,62 @@
     {
       "id": "ship_small",
       "name": "Small Ship, the deck and the three room corridor",
-      "tileset": "ts_ship",
-      "tile_legend": { "#": "wall", ".": "floor", "D": "door", "H": "hatch", "C": "crate", "G": "grate", "P": "pipe" },
+      "tileset": "ship_interior_tiles",
+      "tile_legend": {
+        "#": "wall",
+        "+": "floor",
+        ",": "floor",
+        ".": "floor",
+        ":": "floor",
+        ";": "floor",
+        "B": "wall",
+        "C": "crate",
+        "D": "door",
+        "E": "wall",
+        "G": "grate",
+        "H": "hatch",
+        "L": "wall",
+        "O": "wall",
+        "P": "pipe",
+        "Y": "wall",
+        "p": "pipe"
+      },
       "width": 20,
       "height": 15,
       "music": "PP-05",
       "story_flag": "ship_door_open",
       "room_palette": "deck_day",
-      "palette_indices": [0, 1, 3, 5, 8, 10, 14, 16, 23, 27, 33, 40, 41],
+      "palette_indices": [
+        0,
+        1,
+        3,
+        5,
+        8,
+        10,
+        14,
+        16,
+        23,
+        27,
+        33,
+        40,
+        41
+      ],
       "tiles": [
-        "####################",
-        "#.....#.....#......#",
-        "#...C.#.....#PP....#",
-        "#....C#..G..#P....P#",
-        "#.....#.C.C.#P.GG.P#",
-        "#.....#.....#P....P#",
-        "###D#####D#####D####",
-        "#H................D#",
-        "#..................#",
-        "#########..#########",
-        "#..C..........C....#",
-        "#....G....C........#",
-        "#.........G........#",
-        "#.H......C.........#",
-        "####################"
+        "#B#O#B#BYEYB#B#O#B##",
+        "B:::+:#:::+:B::::::#",
+        "#:::C:B:::+:#Pp::+:B",
+        "B::::C#::G::BP::::P#",
+        "#:::+:#:C:C:#P:GG:PB",
+        "B+::::#::+::#P::+:PB",
+        "#B#D#B#BLDYB#B#D#LB#",
+        "#H.,.;.,..;,.,.;.,D#",
+        "B,.;.,..,;.,..;.,.,O",
+        "#B#L#B#B#.,#B#B#L#B#",
+        "#::C:+:::+::::C::+:B",
+        "B::::G::::C::+:::+:#",
+        "O+::::+:::G:::+::::B",
+        "#:H::+:::C:::+:::::B",
+        "#O#B#B#L#B#O#B#B#L#B"
       ],
       "collision": [
         "11111111111111111111",
@@ -49,10 +81,22 @@
         "11111111111111111111"
       ],
       "spawns": {
-        "start": { "x": 2, "y": 7 },
-        "after_percy": { "x": 17, "y": 7 },
-        "from_cabin": { "x": 17, "y": 7 },
-        "from_hatch": { "x": 2, "y": 13 }
+        "start": {
+          "x": 2,
+          "y": 7
+        },
+        "after_percy": {
+          "x": 17,
+          "y": 7
+        },
+        "from_cabin": {
+          "x": 17,
+          "y": 7
+        },
+        "from_hatch": {
+          "x": 2,
+          "y": 13
+        }
       },
       "actors": [
         {
@@ -65,13 +109,65 @@
         }
       ],
       "triggers": [
-        { "x": 3, "y": 2, "kind": "save", "id": "deck_save", "once": false, "condition": "" },
-        { "x": 4, "y": 7, "kind": "battle", "id": "tutorial_sailors", "once": true, "condition": "" },
-        { "x": 14, "y": 8, "kind": "flag", "id": "ship_deck_seen", "once": true, "condition": "" },
-        { "x": 3, "y": 6, "kind": "scene", "id": "ship_log", "once": true, "condition": "" },
-        { "x": 18, "y": 7, "kind": "map", "id": "ship_cabin", "spawn": "from_deck", "once": false, "condition": "ship_door_open" },
-        { "x": 2, "y": 13, "kind": "map", "id": "ship_sample", "spawn": "start", "once": false, "condition": "" },
-        { "x": 1, "y": 7, "kind": "map", "id": "southampton_town_quay", "spawn": "from_pier", "once": false, "condition": "" }
+        {
+          "x": 3,
+          "y": 2,
+          "kind": "save",
+          "id": "deck_save",
+          "once": false,
+          "condition": ""
+        },
+        {
+          "x": 4,
+          "y": 7,
+          "kind": "battle",
+          "id": "tutorial_sailors",
+          "once": true,
+          "condition": ""
+        },
+        {
+          "x": 14,
+          "y": 8,
+          "kind": "flag",
+          "id": "ship_deck_seen",
+          "once": true,
+          "condition": ""
+        },
+        {
+          "x": 3,
+          "y": 6,
+          "kind": "scene",
+          "id": "ship_log",
+          "once": true,
+          "condition": ""
+        },
+        {
+          "x": 18,
+          "y": 7,
+          "kind": "map",
+          "id": "ship_cabin",
+          "spawn": "from_deck",
+          "once": false,
+          "condition": "ship_door_open"
+        },
+        {
+          "x": 2,
+          "y": 13,
+          "kind": "map",
+          "id": "ship_sample",
+          "spawn": "start",
+          "once": false,
+          "condition": ""
+        },
+        {
+          "x": 1,
+          "y": 7,
+          "kind": "map",
+          "id": "southampton_town_quay",
+          "spawn": "from_pier",
+          "once": false,
+          "condition": ""
+        }
       ],
       "rails": []
     },
@@ -79,9 +175,38 @@
       "id": "ship_cabin",
       "name": "Small Ship, Percy's Office",
       "tile_legend": {
-        "#": "wall",
+        "(": "floor",
+        ")": "floor",
+        ",": "floor",
         ".": "floor",
-        "D": "door"
+        "1": "wall",
+        "2": "wall",
+        "3": "wall",
+        "4": "wall",
+        "5": "wall",
+        "6": "wall",
+        "7": "wall",
+        "8": "wall",
+        ";": "floor",
+        "<": "floor",
+        ">": "floor",
+        "E": "wall",
+        "K": "wall",
+        "Q": "wall",
+        "[": "floor",
+        "]": "floor",
+        "^": "floor",
+        "c": "wall",
+        "d": "door",
+        "f": "wall",
+        "g": "wall",
+        "l": "wall",
+        "m": "wall",
+        "o": "wall",
+        "q": "wall",
+        "r": "floor",
+        "v": "floor",
+        "w": "wall"
       },
       "width": 16,
       "height": 15,
@@ -104,21 +229,21 @@
         41
       ],
       "tiles": [
-        "################",
-        "#..............#",
-        "#..............#",
-        "#....##..##....#",
-        "#....#....#....#",
-        "#....#....#....#",
-        "#....######....#",
-        "#D.............#",
-        "#..............#",
-        "#....######....#",
-        "#....#....#....#",
-        "#....#....#....#",
-        "#....#....#....#",
-        "#..............#",
-        "################"
+        "wwowlwmEcwlwowww",
+        "w.,.;,..;,.,.;,w",
+        "o.(^^^^^^^^^^),w",
+        "w.<rrKgrrfKrr>,l",
+        "w.<rrKrrrrKrr>,w",
+        "l,<rrKrrrrKrr>.w",
+        "w.<rr123234rr>.o",
+        "md<rrrrrrrrrr>,w",
+        "w.<rrrrrrrrrr>,c",
+        "w.<rr567678rr>.w",
+        "l.<rrqrrrrQrr>,l",
+        "w,<rrQrrrrqrr>.w",
+        "o.[vvqvvvvQvv],w",
+        "w,.;,.,..;,.,;.w",
+        "wwowwmwlwwlwmwow"
       ],
       "collision": [
         "1111111111111111",
@@ -170,7 +295,8 @@
           "condition": "percy_standing"
         }
       ],
-      "rails": []
+      "rails": [],
+      "tileset": "ship_interior_tiles"
     },
     {
       "id": "southampton_town_quay",

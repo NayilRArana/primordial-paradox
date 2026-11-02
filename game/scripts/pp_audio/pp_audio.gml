@@ -637,8 +637,10 @@ function pp_audio_counts() {
 }
 
 /// Duck the theme by a number of decibels, for the intro's text crawl (card INTRO-1): the music keeps playing and
-/// only drops under the words. The level is recorded on the bus even when no stream file is in the build, so the log
-/// and the tests can see that the duck was asked for. Returns true when a live instance was turned down.
+/// only drops under the words. `_db` is a duck depth, a positive number of decibels DOWN, so a 6 dB duck multiplies
+/// the gain by 10^(-6/20) and never by 10^(+6/20), which would raise the theme. The level is recorded on the bus
+/// even when no stream file is in the build, so the log and the tests can see that the duck was asked for. Returns
+/// true when a live instance was turned down.
 function pp_audio_duck_db(_db) {
     if (!is_struct(global.pp)) return false;
     var _a = pp_audio_state();
@@ -648,8 +650,9 @@ function pp_audio_duck_db(_db) {
         return false;
     }
     // The duck multiplies the level the theme already sits at, so full is PP_AUDIO_GAIN_MUSIC and a duck is a
-    // fraction of that, never a replacement that would quietly raise the theme back toward 1.0.
-    var _gain = PP_AUDIO_GAIN_MUSIC * power(10, _db / 20);
+    // fraction of that (the exponent is negative: a duck depth lowers), never a replacement that would quietly
+    // raise the theme back toward 1.0.
+    var _gain = PP_AUDIO_GAIN_MUSIC * power(10, -_db / 20);
     audio_sound_gain(_a.theme_inst, _gain, 0);
     show_debug_message("PP audio: title_theme ducked " + string(_db) + " dB, gain " + string(_gain));
     return true;

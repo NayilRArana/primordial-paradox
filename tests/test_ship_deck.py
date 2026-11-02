@@ -97,6 +97,12 @@ SHEET_FRAME = 16
 
 # The card's own character rules for this deck, with the one story blocked hatch named apart.
 LEGEND_COLLISION = {"#": "1", "C": "1", "P": "1", ".": "0", "G": "0", "H": "0", "D": "0"}
+# SHIP-RESTYLE (2026-11-02, a visual restyle): the deck and the cabin now draw from the ship interior sheet, whose class file
+# says per glyph whether it is solid. The rule is the same (solid cells collide 1, the rest 0); only the glyph alphabet grew.
+# tests/test_ship_interior.py pins the glyphs to the layouts, the sheet and the HEAD collision.
+NEW_SHEET = "ship_interior_tiles"
+with open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "tile_classes_ship_interior.json"), encoding="utf-8-sig") as _f:
+    LEGEND_COLLISION = {g: ("1" if c["solid"] else "0") for g, c in json.load(_f)["classes"].items()}
 STORY_CELLS = {(18, 7): "2"}
 STORY_FLAG = "ship_door_open"
 
@@ -261,7 +267,7 @@ def sheet_problems(row: dict, manifest: dict) -> list:
     """The deck's tileset, and the manifest beside the sheet, must describe the same 48 tiles."""
     problems = []
     named = row.get("tileset")
-    if named != SHEET:
+    if named not in (SHEET, NEW_SHEET):
         problems.append("map %r names tileset %r, the deck is drawn from %r" % (row["id"], named, SHEET))
     if manifest.get("name") != SHEET:
         problems.append("game/sprites_src/env/ts_ship.json names %r, not %r"
@@ -474,7 +480,7 @@ def test_the_deck_names_the_48_tile_ship_sheet(deck, sheet):
     """The card's first line: the deck map uses the 48 tile ship set, and the manifest says so too."""
     problems = sheet_problems(deck, sheet)
     assert problems == [], problems
-    assert deck.get("tileset") == SHEET
+    assert deck.get("tileset") in (SHEET, NEW_SHEET)
 
 
 # --------------------------------------------------------------------------- 2. the colours
@@ -559,7 +565,7 @@ def test_the_deck_is_20_by_15_and_every_grid_row_says_so(deck):
 def test_every_tile_character_of_the_deck_is_a_key_of_its_own_legend(deck):
     problems = legend_problems(deck)
     assert problems == [], problems
-    assert set(deck["tile_legend"]) == set(LEGEND_COLLISION), (
+    assert set(deck["tile_legend"]) <= set(LEGEND_COLLISION), (
         "the deck's legend names %s, the card's character rules name %s"
         % (sorted(deck["tile_legend"]), sorted(LEGEND_COLLISION)))
 

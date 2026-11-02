@@ -258,6 +258,15 @@
     },
     {
       "$GMIncludedFile": "",
+      "%Name": "ship_restyle_baseline.json",
+      "CopyToMask": -1,
+      "filePath": "datafiles",
+      "name": "ship_restyle_baseline.json",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
       "%Name": "slice.json",
       "CopyToMask": -1,
       "filePath": "datafiles",
@@ -343,6 +352,15 @@
       "CopyToMask": -1,
       "filePath": "datafiles",
       "name": "tile_classes_ship.json",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "tile_classes_ship_interior.json",
+      "CopyToMask": -1,
+      "filePath": "datafiles",
+      "name": "tile_classes_ship_interior.json",
       "resourceType": "GMIncludedFile",
       "resourceVersion": "2.0"
     },
@@ -766,6 +784,15 @@
       "CopyToMask": -1,
       "filePath": "datafiles/art",
       "name": "sailor_ow_v2.png",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "ship_interior_tiles.png",
+      "CopyToMask": -1,
+      "filePath": "datafiles/art",
+      "name": "ship_interior_tiles.png",
       "resourceType": "GMIncludedFile",
       "resourceVersion": "2.0"
     },

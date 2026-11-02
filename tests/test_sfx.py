@@ -80,7 +80,10 @@ def test_every_effect_is_written(fresh_build):
     assert names == [name for name, _builder, _groups in sfx.EFFECTS]
     # The 21 of card SFX-1 plus car_engine_loop, which the drive shot list adds and which is
     # the one loop; the count is pinned so a dropped effect cannot leave a silent command.
-    assert len(names) == 22
+    # 22 + the 8 PP-BLIPS additions of card t_c9232c57: five per speaker voice blips
+    # (text_blip_zeus, _kronos, _percy, _oldman, _narrator), two alternating footsteps
+    # (footstep_a, footstep_b) and knife_slash. The pin moves with the table, never instead of it.
+    assert len(names) == 30
     for name in names:
         wav_path = os.path.join(out_dir, name + ".wav")
         assert os.path.exists(wav_path), "missing %s" % wav_path

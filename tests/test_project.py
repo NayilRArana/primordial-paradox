@@ -207,7 +207,7 @@ def test_build_inputs_are_committed():
 def test_no_em_or_en_dashes_anywhere():
     bad = []
     for dirpath, dirnames, filenames in os.walk(ROOT):
-        dirnames[:] = [d for d in dirnames if d not in (".git", "study", "build", "__pycache__", ".pytest_cache")]
+        dirnames[:] = [d for d in dirnames if d not in (".git", "study", "build", "__pycache__", ".pytest_cache", ".venv")]
         for name in filenames:
             if not name.lower().endswith((".gml", ".json", ".md", ".py", ".ps1", ".vbs", ".yy", ".yyp", ".txt")):
                 continue

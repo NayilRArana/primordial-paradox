@@ -144,6 +144,11 @@ function pp_map_tileset(_map) {
 
 /// The tile set short name the table is keyed by ("ship", "quay" or "office").
 function pp_map_tile_set(_map) {
+    // Card WIRE-V2: a room that names the v2 quay sheet in its own tileset field draws with the v2 table, whose characters
+    // mean other tiles than the v1 quay's. Every other room still chooses by its room palette id, as before.
+    if (_map.tileset == PP_TILE_SHEET_QUAY_V2) return PP_TILE_SET_QUAY_V2;
+    // Card SHIP-RESTYLE: the restyled ship rooms name their own sheet the same way (one line, nothing else in this file).
+    if (_map.tileset == PP_TILE_SHEET_SHIP_INTERIOR) return PP_TILE_SET_SHIP_INTERIOR;
     return pp_map_tile_set_for_room(_map.room_palette);
 }
 
@@ -178,6 +183,15 @@ function pp_map_draw_plane(_map, _cam_x, _cam_y, _plane, _steps) {
         var _tx = _x0;
         while (_tx <= _x0 + PP_VIEW_W) {
             var _ch = pp_map_tile_char(_map, _tx, _ty);
+            // Card WIRE-V2: a tile whose art is not a full square (lamp head, tree crown, jib) lays its ground first, so the
+            // planes composite the way the level renders do. Sets without an `under` answer -1 and draw exactly as before.
+            if (_plane == PP_TILE_PLANE_GROUND && !is_undefined(_info)) {
+                var _under = pp_map_tile_under(_set, _ch);
+                if (_under >= 0) {
+                    draw_sprite_part_ext(_info.sprite, 0, (_under mod _cols) * _map.tile, floor(_under / _cols) * _map.tile,
+                                         _map.tile, _map.tile, _tx * _map.tile - _cam_x, _ty * _map.tile - _cam_y, 1, 1, PP_UNTINTED, 1);
+                }
+            }
             if (pp_map_tile_plane(_set, _ch) == _plane) {
                 var _px = _tx * _map.tile - _cam_x;
                 var _py = _ty * _map.tile - _cam_y;

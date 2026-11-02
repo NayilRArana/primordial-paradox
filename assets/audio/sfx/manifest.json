@@ -45,6 +45,17 @@
       "text_blip_a",
       "text_blip_b",
       "text_blip_c"
+    ],
+    "voice_blip": [
+      "text_blip_zeus",
+      "text_blip_kronos",
+      "text_blip_percy",
+      "text_blip_oldman",
+      "text_blip_narrator"
+    ],
+    "footsteps": [
+      "footstep_a",
+      "footstep_b"
     ]
   },
   "effects": [
@@ -181,6 +192,122 @@
       "edge_max_step": 0.761712
     },
     {
+      "name": "text_blip_zeus",
+      "voices": [
+        "pulse_25"
+      ],
+      "purpose": "Zeus's talk blip: a mid square at A4, 70 ms, one pitch and one duty.",
+      "groups": [
+        "voice_blip"
+      ],
+      "loop": false,
+      "files": {
+        "wav": "text_blip_zeus.wav",
+        "ogg": "text_blip_zeus.ogg"
+      },
+      "length_seconds": 0.07,
+      "length_samples": 3087,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -15.385,
+      "dc_offset": 0.000481,
+      "first_sample": 0.0,
+      "last_sample": -0.0,
+      "edge_max_step": 0.90957
+    },
+    {
+      "name": "text_blip_kronos",
+      "voices": [
+        "triangle"
+      ],
+      "purpose": "Kronos's talk blip: a low triangle at A2 with a 40 ms repeat at 45 percent.",
+      "groups": [
+        "voice_blip"
+      ],
+      "loop": false,
+      "files": {
+        "wav": "text_blip_kronos.wav",
+        "ogg": "text_blip_kronos.ogg"
+      },
+      "length_seconds": 0.2,
+      "length_samples": 8820,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -16.77,
+      "dc_offset": -0.000543,
+      "first_sample": 0.0,
+      "last_sample": 0.0,
+      "edge_max_step": 0.009186
+    },
+    {
+      "name": "text_blip_percy",
+      "voices": [
+        "noise_short",
+        "pulse_50"
+      ],
+      "purpose": "Lt. Percy's talk blip: a harsh short mode noise burst with a falling square under it.",
+      "groups": [
+        "voice_blip"
+      ],
+      "loop": false,
+      "files": {
+        "wav": "text_blip_percy.wav",
+        "ogg": "text_blip_percy.ogg"
+      },
+      "length_seconds": 0.085011,
+      "length_samples": 3749,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -17.219,
+      "dc_offset": 0.003946,
+      "first_sample": 0.0,
+      "last_sample": 0.0,
+      "edge_max_step": 0.855844
+    },
+    {
+      "name": "text_blip_oldman",
+      "voices": [
+        "pulse_50"
+      ],
+      "purpose": "The old man's talk blip: a soft high square at E6 with a 6 ms attack.",
+      "groups": [
+        "voice_blip"
+      ],
+      "loop": false,
+      "files": {
+        "wav": "text_blip_oldman.wav",
+        "ogg": "text_blip_oldman.ogg"
+      },
+      "length_seconds": 0.075011,
+      "length_samples": 3308,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -9.203,
+      "dc_offset": -6.7e-05,
+      "first_sample": 0.0,
+      "last_sample": -0.0,
+      "edge_max_step": 1.168962
+    },
+    {
+      "name": "text_blip_narrator",
+      "voices": [
+        "pulse_12.5"
+      ],
+      "purpose": "The narrator's talk blip: a neutral tick at E4, dry and unaccented.",
+      "groups": [
+        "voice_blip"
+      ],
+      "loop": false,
+      "files": {
+        "wav": "text_blip_narrator.wav",
+        "ogg": "text_blip_narrator.ogg"
+      },
+      "length_seconds": 0.055011,
+      "length_samples": 2426,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -19.124,
+      "dc_offset": 0.001419,
+      "first_sample": 0.0,
+      "last_sample": 0.0,
+      "edge_max_step": 0.750842
+    },
+    {
       "name": "footstep",
       "voices": [
         "noise_short",
@@ -201,6 +328,54 @@
       "first_sample": 0.0,
       "last_sample": 0.0,
       "edge_max_step": 0.00616
+    },
+    {
+      "name": "footstep_a",
+      "voices": [
+        "noise_short",
+        "triangle"
+      ],
+      "purpose": "The first of two alternating steps: a lower noise clock and a 37 to 35 thud.",
+      "groups": [
+        "footsteps"
+      ],
+      "loop": false,
+      "files": {
+        "wav": "footstep_a.wav",
+        "ogg": "footstep_a.ogg"
+      },
+      "length_seconds": 0.085011,
+      "length_samples": 3749,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -15.478,
+      "dc_offset": 0.003224,
+      "first_sample": 0.0,
+      "last_sample": 0.0,
+      "edge_max_step": 0.003585
+    },
+    {
+      "name": "footstep_b",
+      "voices": [
+        "noise_short",
+        "triangle"
+      ],
+      "purpose": "The second alternating step: a brighter noise clock and a 35 to 33 thud.",
+      "groups": [
+        "footsteps"
+      ],
+      "loop": false,
+      "files": {
+        "wav": "footstep_b.wav",
+        "ogg": "footstep_b.ogg"
+      },
+      "length_seconds": 0.095011,
+      "length_samples": 4190,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -16.207,
+      "dc_offset": 0.002205,
+      "first_sample": 0.0,
+      "last_sample": 0.0,
+      "edge_max_step": 0.008207
     },
     {
       "name": "door_hatch",
@@ -268,6 +443,29 @@
       "first_sample": 0.0,
       "last_sample": 0.0,
       "edge_max_step": 0.639308
+    },
+    {
+      "name": "knife_slash",
+      "voices": [
+        "noise_long",
+        "noise_short",
+        "pulse_50"
+      ],
+      "purpose": "A knife slash: a long noise sweep down, a metallic short mode edge, and a falling square body.",
+      "groups": [],
+      "loop": false,
+      "files": {
+        "wav": "knife_slash.wav",
+        "ogg": "knife_slash.ogg"
+      },
+      "length_seconds": 0.22,
+      "length_samples": 9702,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -17.183,
+      "dc_offset": 0.000835,
+      "first_sample": 0.0,
+      "last_sample": 0.0,
+      "edge_max_step": 0.39177
     },
     {
       "name": "hit_light",

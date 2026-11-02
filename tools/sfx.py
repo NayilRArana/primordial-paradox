@@ -279,12 +279,96 @@ def build_text_blip_c() -> tuple[np.ndarray, list[str], str]:
     return _text_blip(79), ["pulse_12.5"], "Typewriter blip for speaker C (Percy), G5."
 
 
+# PP-BLIPS (card t_c9232c57). Undertale style voice blips: one pitch and one timbre per speaker,
+# played every few letters while a talk box prints. The five are built so a listener can tell Zeus
+# from Kronos from Percy with the screen turned off, and so no two of them share a voice family.
+#
+# "8-bit" in the card is read as the 2A03 voice set, not the PCM depth: every file in this folder is
+# 16 bit PCM mono at 44100, because tools/sync_art.py writes buffer_s16 from the WAV header and the
+# whole effect set is that format. knowledge/SFX-BLIPS.md records the reading and what literal 8 bit
+# PCM would take (sfx.json already names buffer_u8 for an 8 bit WAV, so it is one flag, not a rewrite).
+def build_text_blip_zeus() -> tuple[np.ndarray, list[str], str]:
+    dur = 0.070
+    audio = _notes(dur, "pulse", [(0.0, dur, hz(69), hz(69), 0.022)], duty=DUTY_25)
+    return audio, ["pulse_25"], "Zeus's talk blip: a mid square at A4, 70 ms, one pitch and one duty."
+
+
+def build_text_blip_kronos() -> tuple[np.ndarray, list[str], str]:
+    # The slight delay is inside the sound, not in the bus: a 40 ms repeat at 45 percent reads as a
+    # lower voice speaking a beat behind itself, and it needs no per speaker timing the game would
+    # have to implement. A delay parameter in the data would be a game script change this card may not make.
+    dur = 0.200
+    lead = _notes(dur, "triangle", [(0.0, 0.110, hz(45), hz(45), 0.048)])
+    echo = _notes(dur, "triangle", [(0.040, 0.090, hz(45), hz(45), 0.038)], gain=0.45)
+    return lead + echo, ["triangle"], "Kronos's talk blip: a low triangle at A2 with a 40 ms repeat at 45 percent."
+
+
+def build_text_blip_percy() -> tuple[np.ndarray, list[str], str]:
+    dur = 0.085
+    hiss = noise(dur, 420.0, 1500.0, short=True) * _envelope(dur, 0.018, attack_ms=1.0)
+    throat = _notes(dur, "pulse", [(0.0, 0.060, hz(52), hz(38), 0.025)], duty=DUTY_50, gain=0.7)
+    mix = 0.85 * hiss + throat
+    # finish() high passes at 20 Hz, and its 8 ms time constant cannot settle across an 85 ms burst:
+    # the mean of the mixed burst survived that pass at 0.0066, past the 0.006 line tests\test_sfx.py
+    # draws on the committed file. The cause was measured, not guessed: the short mode LFSR this voice
+    # samples is biased (its 32767 sample mean is -0.656 at the bit level), so the decaying burst is a
+    # slow positive bump sitting under the 20 Hz corner. A steeper pass here, before the shared master
+    # chain, moves it to 0.0040 and changes no other effect. It costs the sub 60 Hz thump, which a
+    # laptop speaker does not reproduce and which no part of the timbre depends on.
+    mix = dc_block(mix, cutoff_hz=60.0)
+    return mix, ["noise_short", "pulse_50"], \
+        "Lt. Percy's talk blip: a harsh short mode noise burst with a falling square under it."
+
+
+def build_text_blip_oldman() -> tuple[np.ndarray, list[str], str]:
+    # Soft here is the 6 ms attack and the gentle decay; the row in data/audio.json also plays it at
+    # 0.55, because every file is normalised to the same peak and loudness has to live somewhere.
+    dur = 0.075
+    audio = _notes(dur, "pulse", [(0.0, dur, hz(88), hz(88), 0.035)], duty=DUTY_50, attack_ms=6.0)
+    return audio, ["pulse_50"], "The old man's talk blip: a soft high square at E6 with a 6 ms attack."
+
+
+def build_text_blip_narrator() -> tuple[np.ndarray, list[str], str]:
+    dur = 0.055
+    audio = _notes(dur, "pulse", [(0.0, dur, hz(64), hz(64), 0.012)], duty=DUTY_12, attack_ms=1.0)
+    return audio, ["pulse_12.5"], "The narrator's talk blip: a neutral tick at E4, dry and unaccented."
+
+
 def build_footstep() -> tuple[np.ndarray, list[str], str]:
     dur = 0.09
     grit = noise(dur, 900.0, 380.0, short=True) * _envelope(dur, 0.028)
     thud = triangle(_freqs(dur, hz(38), hz(36))) * _envelope(dur, 0.03)
     audio = 0.8 * grit + 0.7 * thud
     return audio, ["noise_short", "triangle"], "One step on stone decking; alternates with the other foot."
+
+
+# PP-BLIPS (card t_c9232c57): the two alternating footsteps the card asks for instead of one sound
+# repeated. They differ in length, in noise clock and in thud pitch, so a walk reads as two feet
+# rather than one foot stuttering. Quiet is the data row (volume 0.35), not the file: every effect is
+# normalised to the same peak, so a quieter file would only be a quieter peak, not a quieter footstep.
+def build_footstep_a() -> tuple[np.ndarray, list[str], str]:
+    dur = 0.085
+    grit = noise(dur, 760.0, 340.0, short=True) * _envelope(dur, 0.024)
+    thud = triangle(_freqs(dur, hz(37), hz(35))) * _envelope(dur, 0.028)
+    return 0.75 * grit + 0.6 * thud, ["noise_short", "triangle"], \
+        "The first of two alternating steps: a lower noise clock and a 37 to 35 thud."
+
+
+def build_footstep_b() -> tuple[np.ndarray, list[str], str]:
+    dur = 0.095
+    grit = noise(dur, 1040.0, 470.0, short=True) * _envelope(dur, 0.026)
+    thud = triangle(_freqs(dur, hz(35), hz(33))) * _envelope(dur, 0.030)
+    return 0.72 * grit + 0.62 * thud, ["noise_short", "triangle"], \
+        "The second alternating step: a brighter noise clock and a 35 to 33 thud."
+
+
+def build_knife_slash() -> tuple[np.ndarray, list[str], str]:
+    dur = 0.220
+    swish = noise(dur, 3600.0, 620.0, short=False) * _envelope(dur, 0.055, attack_ms=1.0)
+    edge = noise(dur, 1400.0, 480.0, short=True) * _envelope(dur, 0.030, attack_ms=1.0)
+    body = _notes(dur, "pulse", [(0.0, 0.070, hz(58), hz(43), 0.030)], duty=DUTY_50, gain=0.45)
+    return 0.9 * swish + 0.35 * edge + body, ["noise_long", "noise_short", "pulse_50"], \
+        "A knife slash: a long noise sweep down, a metallic short mode edge, and a falling square body."
 
 
 def build_door_hatch() -> tuple[np.ndarray, list[str], str]:
@@ -487,10 +571,18 @@ EFFECTS: list[tuple[str, "Callable[[], tuple[np.ndarray, list[str], str]]", list
     ("text_blip_a", build_text_blip_a, ["text_blip"]),
     ("text_blip_b", build_text_blip_b, ["text_blip"]),
     ("text_blip_c", build_text_blip_c, ["text_blip"]),
+    ("text_blip_zeus", build_text_blip_zeus, ["voice_blip"]),
+    ("text_blip_kronos", build_text_blip_kronos, ["voice_blip"]),
+    ("text_blip_percy", build_text_blip_percy, ["voice_blip"]),
+    ("text_blip_oldman", build_text_blip_oldman, ["voice_blip"]),
+    ("text_blip_narrator", build_text_blip_narrator, ["voice_blip"]),
     ("footstep", build_footstep, []),
+    ("footstep_a", build_footstep_a, ["footsteps"]),
+    ("footstep_b", build_footstep_b, ["footsteps"]),
     ("door_hatch", build_door_hatch, []),
     ("item_get", build_item_get, []),
     ("heal", build_heal, []),
+    ("knife_slash", build_knife_slash, []),
     ("hit_light", build_hit_light, []),
     ("hit_heavy", build_hit_heavy, []),
     ("miss", build_miss, []),
@@ -506,7 +598,14 @@ EFFECTS: list[tuple[str, "Callable[[], tuple[np.ndarray, list[str], str]]", list
 ]
 
 # The names a caller may ask for, including the grouped text_blip.
-NAME_GROUPS = {"text_blip": ["text_blip_a", "text_blip_b", "text_blip_c"]}
+NAME_GROUPS = {
+    "text_blip": ["text_blip_a", "text_blip_b", "text_blip_c"],
+    # PP-BLIPS (card t_c9232c57): the five per speaker voices a talk box asks for by name, and the
+    # two alternating steps, grouped so a caller can ask for the family and get a member.
+    "voice_blip": ["text_blip_zeus", "text_blip_kronos", "text_blip_percy",
+                   "text_blip_oldman", "text_blip_narrator"],
+    "footsteps": ["footstep_a", "footstep_b"],
+}
 REQUIRED_NAMES = [
     "menu_move", "menu_select", "menu_cancel", "text_blip", "footstep", "door_hatch",
     "item_get", "heal", "hit_light", "hit_heavy", "miss", "crit", "level_up",

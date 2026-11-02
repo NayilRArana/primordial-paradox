@@ -1,0 +1,370 @@
+{
+  "format": 1,
+  "kind": "tile_classes",
+  "name": "ship_interior",
+  "sheet": "assets/tiles/ship_interior/ship_interior_tiles.png",
+  "columns": 16,
+  "card": "SHIP-RESTYLE",
+  "classes": {
+    ".": {
+      "index": 0,
+      "name": "plank_a",
+      "solid": false,
+      "walkable": true,
+      "trigger": false,
+      "plane": "ground"
+    },
+    ",": {
+      "index": 1,
+      "name": "plank_b",
+      "solid": false,
+      "walkable": true,
+      "trigger": false,
+      "plane": "ground"
+    },
+    ";": {
+      "index": 2,
+      "name": "plank_knot",
+      "solid": false,
+      "walkable": true,
+      "trigger": false,
+      "plane": "ground"
+    },
+    ":": {
+      "index": 3,
+      "name": "steel_plate",
+      "solid": false,
+      "walkable": true,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "+": {
+      "index": 4,
+      "name": "steel_tread",
+      "solid": false,
+      "walkable": true,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "G": {
+      "index": 5,
+      "name": "grating",
+      "solid": false,
+      "walkable": true,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "H": {
+      "index": 6,
+      "name": "deck_hatch",
+      "solid": false,
+      "walkable": true,
+      "trigger": true,
+      "plane": "ground"
+    },
+    "D": {
+      "index": 7,
+      "name": "steel_door",
+      "solid": false,
+      "walkable": true,
+      "trigger": true,
+      "plane": "ground"
+    },
+    "#": {
+      "index": 8,
+      "name": "bulkhead_a",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "B": {
+      "index": 9,
+      "name": "bulkhead_panel",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "O": {
+      "index": 10,
+      "name": "bulkhead_porthole",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "L": {
+      "index": 11,
+      "name": "lifebelt",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "E": {
+      "index": 12,
+      "name": "white_ensign",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "Y": {
+      "index": 13,
+      "name": "cage_lamp",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "C": {
+      "index": 14,
+      "name": "crate",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "P": {
+      "index": 15,
+      "name": "pipe_vertical",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "p": {
+      "index": 16,
+      "name": "pipe_horizontal",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "w": {
+      "index": 17,
+      "name": "wainscot",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "o": {
+      "index": 18,
+      "name": "cabin_porthole",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "m": {
+      "index": 19,
+      "name": "wall_chart",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "c": {
+      "index": 20,
+      "name": "wall_clock",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "l": {
+      "index": 21,
+      "name": "sconce",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "K": {
+      "index": 22,
+      "name": "bookcase",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "g": {
+      "index": 23,
+      "name": "globe",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "f": {
+      "index": 24,
+      "name": "floor_lamp",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "1": {
+      "index": 25,
+      "name": "desk_left",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "2": {
+      "index": 26,
+      "name": "desk_drawers",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "3": {
+      "index": 27,
+      "name": "desk_papers",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "4": {
+      "index": 28,
+      "name": "desk_right",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "5": {
+      "index": 29,
+      "name": "bunk_head",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "6": {
+      "index": 30,
+      "name": "bunk_blanket",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "7": {
+      "index": 31,
+      "name": "bunk_fold",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "8": {
+      "index": 32,
+      "name": "bunk_foot",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "q": {
+      "index": 33,
+      "name": "locker_steel",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "Q": {
+      "index": 34,
+      "name": "wardrobe",
+      "solid": true,
+      "walkable": false,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "d": {
+      "index": 35,
+      "name": "oak_door",
+      "solid": false,
+      "walkable": true,
+      "trigger": true,
+      "plane": "ground"
+    },
+    "r": {
+      "index": 36,
+      "name": "carpet",
+      "solid": false,
+      "walkable": true,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "^": {
+      "index": 37,
+      "name": "carpet_n",
+      "solid": false,
+      "walkable": true,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "v": {
+      "index": 38,
+      "name": "carpet_s",
+      "solid": false,
+      "walkable": true,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "<": {
+      "index": 39,
+      "name": "carpet_w",
+      "solid": false,
+      "walkable": true,
+      "trigger": false,
+      "plane": "ground"
+    },
+    ">": {
+      "index": 40,
+      "name": "carpet_e",
+      "solid": false,
+      "walkable": true,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "(": {
+      "index": 41,
+      "name": "carpet_nw",
+      "solid": false,
+      "walkable": true,
+      "trigger": false,
+      "plane": "ground"
+    },
+    ")": {
+      "index": 42,
+      "name": "carpet_ne",
+      "solid": false,
+      "walkable": true,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "[": {
+      "index": 43,
+      "name": "carpet_sw",
+      "solid": false,
+      "walkable": true,
+      "trigger": false,
+      "plane": "ground"
+    },
+    "]": {
+      "index": 44,
+      "name": "carpet_se",
+      "solid": false,
+      "walkable": true,
+      "trigger": false,
+      "plane": "ground"
+    }
+  }
+}

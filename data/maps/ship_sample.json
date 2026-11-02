@@ -81,7 +81,7 @@
       "spawns": {
         "start": {
           "x": 3,
-          "y": 9
+          "y": 10
         },
         "from_cabin": {
           "x": 3,

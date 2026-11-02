@@ -1,46 +1,66 @@
 #!/usr/bin/env python3
-"""make_quay_tiles.py: the exterior tile set for the quay block and the dock office (card R46, t_abfb6024).
+"""make_quay_tiles.py: the exterior tile set for the quay block and the dock office (card R46, t_abfb6024),
+redrawn in art direction B, late NES polish (card ART-B-MAPS, t_d0566ebc).
 
 What this draws, and to which rules:
 
-1. Nineteen 16x16 tiles that read as a south coast quay after dark, plus the office floor and desk the interior
-   scene stands on: wet quay paving, a puddle, the quay edge, two water frames, an iron bollard, a chain, a steel
-   barrier, a brick wall, a damp brick wall, the one door that opens, a shut door, a lit window, a dark window,
-   a lamp post base, a sign board, office boards and an office desk.
-2. Every pixel is an output of the Ricoh 2C02. The sheet is drawn through the four background palettes the quay
-   night set spends, one palette per tile, three colours per palette plus the shared backdrop $0F black, so no
-   16x16 area carries more than three colours besides the backdrop. That is the same budget `tools/nes_check.py`
-   and `tools/nes_composite_check.py` measure, so the audit is the check and not the opinion.
-3. Colours are named as ROLES, not hex. The role names are the ones in `data/palette.json` (`grey_4`, `sea_1`,
+1. Twenty 16x16 tiles that read as a south coast quay, plus the office floor and desk the interior scene stands
+   on: wet quay paving, a puddle, the quay edge, two water frames, a glint path, an iron bollard, a chain, a
+   steel barrier, a brick wall, a damp brick wall, the one door that opens, a shut door, a lit window, a dark
+   window, a lamp post, a sign board, office boards and an office desk.
+2. Style B, as Nayil picked it on 2026-10-26 19:00: bold dark outlines, three tone shading lit from the top
+   left, detailed tiles. The reference for line weight, shading and palette use is the B frame of
+   `tools/art/make_art_target.py`, `output/art_target/frame_B_256x240.png`. Three rules are applied to every
+   drawn form, mechanically, so the look is a property of the code and not of a mood:
+     outline   a 1 px ring of the shared backdrop black, so a form has a bold dark edge against its ground
+     ramp      the first row and column inside the outline is the light role, the last row and column the shadow
+     detail    a second layer of marks (joints, rivets, links, knots, rain, hot cores) so a repeated tile reads
+3. Every pixel is an output of the Ricoh 2C02. Each tile draws through one of the four background palettes,
+   three colours per palette plus the shared backdrop $0F black, so no 16x16 area carries more than three
+   colours besides the backdrop. `tools/nes_check.py` and `tools/nes_composite_check.py` measure that same
+   budget, so the audit is the check and not the opinion.
+4. Colours are named as ROLES, not hex. The role names are the ones in `data/palette.json` (`grey_4`, `sea_1`,
    `blood_3`, `gold_5` and so on). That file names a 54 colour design palette whose hex values are not 2C02
    outputs, so this tool carries the bridge: ROLE_ENTRY resolves each role to the PPU entry that reads as it,
    and the bridge is written into the manifest so a reader can audit the mapping instead of trusting it.
-4. No anti aliasing: every pixel is a palette entry, drawn on the 16x16 cell, with no blended or intermediate
-   tone anywhere. There is no outline outside the cell, because a background tile is a full cell: the tile edge
-   is the tile edge.
-5. The blob test of `knowledge/SPRITE-CRAFT.md` section 8.5 is applied per tile: the share of the lightest tone,
+5. No anti aliasing: every pixel is a palette entry, drawn on the 16x16 cell, with no blended or intermediate
+   tone anywhere. A background tile is a full cell: the tile edge is the tile edge.
+6. The blob test of `knowledge/SPRITE-CRAFT.md` section 8.5 is applied per tile: the share of the lightest tone,
    the rows with no dark pixel, the horizontal dark runs, and the dark pixels inside the silhouette. The numbers
    are written into the manifest for every tile. Object tiles are gated on it; pattern tiles (paving, water,
    brick) and the three light source tiles (lit window, lamp, sign) are reported and their waivers are named,
    because the rule was written for a 14x15 character silhouette and a wall is structure by repetition.
 
+Two sheets, one vocabulary. The HURRICANE variant of the same place is drawn from the same painters with the
+storm flag: no bright glint on the stone, whitecaps instead of sparkle, wind bent chain, a leaning lamp, rain on
+every outdoor tile. It keeps the same twenty characters, indices, palettes, planes and water animation, so the
+map wiring needs no new character table: only a second sheet, and a room palette id that resolves to the quay's
+set (see TILES.md, "How to wire the storm").
+
 Outputs:
-    game/sprites_src/env/quay/quay_tiles.png          the sheet, 8 by 3 cells of 16x16, 19 tiles used
-    game/sprites_src/env/quay/quay_tiles.json         the tileset manifest: palettes, roles, tiles, blob numbers
-    game/sprites_src/env/quay/TILES.md                the tile table the map wiring reads (name, character, roles)
+    game/sprites_src/env/quay/quay_tiles.png          the night sheet, 8 by 3 cells of 16x16, 20 tiles used
+    game/sprites_src/env/quay/quay_tiles.json         its manifest: palettes, roles, tiles, blob numbers
+    game/sprites_src/env/quay/TILES.md                the tile table the map wiring reads
+    game/sprites_src/env/quay_storm/quay_storm_tiles.png    the hurricane sheet, same twenty tiles
+    game/sprites_src/env/quay_storm/quay_storm_tiles.json   its manifest
+    game/sprites_src/env/quay_storm/TILES.md                its table, and the one wiring line it needs
     output/quay_tiles_3x.png                          3x contact sheet to look at
-    output/quay_block_preview.png                     256x240 mock of the block, composed from the sheet
+    output/quay_storm_tiles_3x.png                    the same for the storm set
+    output/quay_block_preview.png                     256x240 mock of the block, composed from the night sheet
     output/quay_block_preview.json                    its declared backdrop, so the frame audit reads it right
-    output/quay_office_preview.png                    256x240 mock of the dock office, composed from the sheet
+    output/quay_storm_block_preview.png               the same block under the storm set
+    output/quay_storm_block_preview.json              its declared backdrop
+    output/quay_office_preview.png                    the dock office, composed from the night sheet
     output/quay_office_preview.json                   its declared backdrop
+    output/art_b/ART-B-MAPS/quay_before_after_3x.png  R46 night sheet on top, style B under it, labelled
+    output/art_b/ART-B-MAPS/quay_storm_before_after_3x.png  the night block on top, the storm block under it
 
 The art root is `game/sprites_src/env/`, where every tileset in this project lives and where
-`tools/nes_audit_all.py` and `tools/sync_art.py` look; the card's `assets/tiles/quay/` names the same folder and
-the handoff notes the difference.
+`tools/nes_audit_all.py` and `tools/sync_art.py` look.
 
 Usage:
     python tools/art/make_quay_tiles.py
-    python tools/art/make_quay_tiles.py --check        # write nothing, exit 1 if the PNG on disk is stale
+    python tools/art/make_quay_tiles.py --check        # write nothing, exit 1 if a PNG on disk is stale
 """
 
 from __future__ import annotations
@@ -51,14 +71,20 @@ import json
 import os
 import sys
 
-from PIL import Image
+from PIL import Image, ImageDraw
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 OUT_DIR = os.path.join(ROOT, "game", "sprites_src", "env", "quay")
 SHEET_PNG = os.path.join(OUT_DIR, "quay_tiles.png")
 SHEET_JSON = os.path.join(OUT_DIR, "quay_tiles.json")
 TILES_MD = os.path.join(OUT_DIR, "TILES.md")
+STORM_DIR = os.path.join(ROOT, "game", "sprites_src", "env", "quay_storm")
+STORM_PNG = os.path.join(STORM_DIR, "quay_storm_tiles.png")
+STORM_JSON = os.path.join(STORM_DIR, "quay_storm_tiles.json")
+STORM_MD = os.path.join(STORM_DIR, "TILES.md")
 OUTPUT = os.path.join(ROOT, "output")
+PAIR_DIR = os.path.join(OUTPUT, "art_b", "ART-B-MAPS")
+BEFORE_DIR = os.path.join(PAIR_DIR, "before")
 
 TILE = 16
 COLUMNS = 8
@@ -86,17 +112,20 @@ ROLE_ENTRY = {
     "gold_5": (56, "$38 #f8d878 is the hot core of a window and the lettering on the sign"),
 }
 
-# The two room palette sets this card exists to serve. Both are inside the 16 role cap of
-# data/room_palettes.json. ARRIVAL-MAP-2 (t_db2995d7) appends them to that file; this card may not edit data.
+# The room palette sets this tool serves. Both sheets keep the same four background palettes, so the storm set
+# spends exactly the roles the night set spends: the hurricane changes the drawing, not the budget. Each set is
+# inside the 16 role cap of data/room_palettes.json.
 SETS = {
     "quay_night": ["ink", "grey_4", "grey_5", "sea_1", "sea_2", "sea_4", "blood_3", "stone_2", "blood_4",
                    "gold_4", "gold_5"],
     "office_night": ["ink", "grey_4", "grey_5", "sea_1", "sea_2", "blood_3", "stone_2", "blood_4",
                      "gold_4", "gold_5"],
+    "quay_storm": ["ink", "grey_4", "grey_5", "sea_1", "sea_2", "sea_4", "blood_3", "stone_2", "blood_4",
+                   "gold_4", "gold_5"],
 }
 
-# The four background palettes of the quay night set: three roles each, one shared backdrop. A tile draws from
-# exactly one of them, so a 16x16 area can never carry a fourth colour.
+# The four background palettes of the quay set: three roles each, one shared backdrop. A tile draws from exactly
+# one of them, so a 16x16 area can never carry a fourth colour. The same four are used by both sheets.
 BG_PALETTES = [
     ("bg0_quay_stone", ["grey_4", "grey_5", "sea_1"],
      "wet paving, the coping and the iron that stands on the stone, drawn in the stone's own ramp"),
@@ -147,357 +176,440 @@ class Canvas:
     def rows(self):
         return self.px
 
+    def remove_orphans(self, backdrop=BACKDROP_ROLE):
+        """The removal half of the orphan rule: a pixel with no 8 neighbour of its own role takes the role most of
+        its neighbours share, so a stray single dot joins the form it landed on instead of speckling it."""
+        removed = 0
+        for y in range(TILE):
+            for x in range(TILE):
+                here = self.px[y][x]
+                if here is None or here == backdrop:
+                    continue
+                neighbours = []
+                for dy in (-1, 0, 1):
+                    for dx in (-1, 0, 1):
+                        if dx == 0 and dy == 0:
+                            continue
+                        ny, nx = y + dy, x + dx
+                        if 0 <= ny < TILE and 0 <= nx < TILE:
+                            neighbours.append(self.px[ny][nx])
+                if here in neighbours:
+                    continue
+                counts = {}
+                for role in neighbours:
+                    counts[role] = counts.get(role, 0) + 1
+                best = max(counts, key=lambda role: (counts[role], role == backdrop))
+                self.px[y][x] = best
+                removed += 1
+        return removed
+
+
+# -----------------------------------------------------------------------------------------------------------------
+# Style B: the two mechanical passes every form goes through, and the detail layer.
+
+def ring(c, x0, y0, x1, y1, role=BACKDROP_ROLE):
+    """A one pixel ring of the backdrop round a form: the bold dark outline of direction B."""
+    for x in range(x0, x1 + 1):
+        c.put(x, y0, role)
+        c.put(x, y1, role)
+    for y in range(y0, y1 + 1):
+        c.put(x0, y, role)
+        c.put(x1, y, role)
+
+
+def solid_form(c, x0, y0, x1, y1, light, body, dark, outline=True):
+    """A form with the B ramp: body fill, lit top and left, shadow bottom and right, black ring around it.
+
+    The ramp is the mechanical part of direction B: the first pixel of a run is the rim light and the last is the
+    shadow, so every form reads as lit from the top left without a per pixel decision.
+    """
+    c.rect(x0, y0, x1 - x0 + 1, y1 - y0 + 1, body)
+    c.hline(y0, x0, x1, light)
+    c.vline(x0, y0 + 1, y1, light)
+    c.hline(y1, x0 + 1, x1, dark)
+    c.vline(x1, y0 + 1, y1 - 1, dark)
+    if outline:
+        ring(c, x0 - 1, y0 - 1, x1 + 1, y1 + 1)
+
+
+def rain(c, role):
+    """Wind driven rain: 3 px dashes on a fixed lattice, wrapped so two copies of a tile still line up."""
+    for (x, y) in ((1, 2), (6, 4), (11, 1), (3, 7), (9, 9), (14, 6), (0, 12), (5, 14), (12, 12), (7, 10)):
+        c.put(x, y, role)
+        c.put((x + 1) % TILE, (y + 1) % TILE, role)
+
 
 # -----------------------------------------------------------------------------------------------------------------
 # Grounds.
 
-def paving(c, sheen="grey_5"):
-    """Wet flagstones: joints in the darkest stone tone, a lit course on the top of every slab."""
-    c.fill("grey_4")
-    for y in (0, 8):
-        c.hline(y, 0, 15, "sea_1")
-    for x in (0, 8):
-        c.vline(x, 0, 15, "sea_1")
-    # the sheen runs course by course but never over a joint, so no row loses its dark pixel: the
-    # blob test in SPRITE-CRAFT section 8.5 asks for zero rows without one
-    for y in (1, 9):
-        for x in range(0, 16):
-            if x not in (0, 8):
-                c.put(x, y, sheen)
-    for (sx, sy) in ((1, 2), (9, 2), (1, 10), (9, 10)):
-        c.vline(sx, sy, sy + 4, sheen)
+def paving(c, storm=False):
+    """Wet flagstones on an 8 px lattice: a deep joint, a lit top and left edge, a shadow on the other two.
+
+    The joint is the stone's own darkest tone over two pixels, not black: a black grid on a wall of stone reads
+    as a cage at this size. The bold dark accent is kept where it earns its place, a black cross at each lattice
+    corner, so the walk still reads as direction B and the block does not read as a wire frame.
+    """
+    body = "sea_1" if storm else "grey_4"
+    light = "grey_4" if storm else "grey_5"
+    if storm:
+        # the storm paving is the calm slab gone dark: one black joint, a thin lit edge, rain in the stone tone
+        c.fill(body)
+        for y in (0, 8):
+            c.hline(y, 0, 15, "ink")
+        for x in (0, 8):
+            c.vline(x, 0, 15, "ink")
+        for y0 in (1, 9):
+            for x0 in (1, 9):
+                c.hline(y0, x0, x0 + 5, light)
+                c.vline(x0, y0 + 1, y0 + 5, light)
+                c.hline(y0 + 5, x0 + 1, x0 + 5, "ink")
+        rain(c, "grey_4")
+        return
+    joint = "sea_1"
+    c.fill(body)
+    for y in (0, 1, 8, 9):
+        c.hline(y, 0, 15, joint)
+    for x in (0, 1, 8, 9):
+        c.vline(x, 0, 15, joint)
+    for y0 in (2, 10):
+        for x0 in (2, 10):
+            c.hline(y0, x0, x0 + 5, light)
+            c.vline(x0, y0 + 1, y0 + 5, light)
+            c.hline(y0 + 5, x0 + 1, x0 + 5, "sea_1")
+            c.vline(x0 + 5, y0 + 1, y0 + 4, "sea_1")
+    for (x, y) in ((0, 0), (8, 0), (0, 8), (8, 8)):
+        c.put(x, y, "ink")
+        c.put(x + 1, y, "ink")
+        c.put(x, y + 1, "ink")
+    if storm:
+        rain(c, "grey_5")
 
 
-def brick_course(c, top, offset_start, lit=True):
-    """One 8 row course: a 1 px mortar line, then bricks with a lit top edge."""
-    c.hline(top, 0, 15, "stone_2")
-    if lit:
-        c.hline(top + 1, 0, 15, "blood_4")
-    for y in range(top + 2, top + 8):
-        pass
-    c.rect(0, top + 2, 16, 5, "blood_3")
-    if lit:
-        c.hline(top + 2, 0, 15, "blood_4")
-    for x in offset_start:
-        c.vline(x, top + 1, top + 7, "stone_2")
+def brick_course(c, top, joints, storm=False):
+    """One 8 row course of brick: black mortar, a lit top edge on every brick, a dark shadow under it."""
+    c.hline(top, 0, 15, "ink")
+    c.rect(0, top + 1, 16, 6, "blood_3")
+    c.hline(top + 1, 0, 15, "blood_4")
+    c.hline(top + 6, 0, 15, "stone_2")
+    for x in joints:
+        c.vline(x, top + 1, top + 6, "stone_2")
+    if storm:
+        c.hline(top + 1, 5, 7, "blood_3")
+        c.hline(top + 1, 12, 13, "blood_3")
+        for x in (2, 10):
+            c.vline(x, top + 2, top + 4, "stone_2")
 
 
 # -----------------------------------------------------------------------------------------------------------------
-# The nineteen tiles.
+# The twenty tiles. Each takes the storm flag: the same name, character, palette group and index, drawn for the
+# hurricane instead of the calm night.
 
-def t_quay_paving(c):
-    paving(c)
+def t_quay_paving(c, storm=False):
+    paving(c, storm)
 
 
-def t_quay_paving_worn(c):
-    paving(c)
+def t_quay_paving_worn(c, storm=False):
+    paving(c, storm)
     # a crack that steps one pixel at a time, the pattern the craft file asks for instead of a jaggy
     for (x, y) in ((3, 2), (4, 3), (4, 4), (5, 4), (5, 5), (6, 5), (6, 6), (7, 6)):
-        c.put(x, y, "sea_1")
-    c.put(13, 11, "sea_1")
-    c.put(14, 11, "sea_1")
-    c.put(13, 12, "sea_1")
+        c.put(x, y, "ink")
+    c.put(13, 11, "ink")
+    c.put(14, 11, "ink")
+    c.put(13, 12, "ink")
+    if storm:
+        rain(c, "grey_5")
 
 
-def t_quay_puddle(c):
-    paving(c)
-    # standing water in the low corner of a slab: dark, with the lamp path across it in two glints
-    for y in range(6, 10):
-        for x in range(2, 14):
-            if y in (6, 9) and x in (2, 13):
-                continue
-            c.put(x, y, "sea_1")
-    c.hline(7, 5, 7, "grey_5")
-    c.hline(8, 9, 10, "grey_5")
-    c.put(3, 7, "grey_5")
-    c.put(12, 8, "grey_5")
+def t_quay_puddle(c, storm=False):
+    paving(c, storm)
+    # standing water in a low slab: a black lip, the water in the dark tone, one lit edge where the lamp reaches it
+    ring(c, 2, 5, 13, 9)
+    c.rect(3, 6, 10, 3, "sea_1")
+    c.hline(6, 4, 11, "grey_4" if storm else "grey_5")
+    if storm:
+        for (x, y) in ((4, 7), (9, 8)):
+            c.hline(y, x, x + 1, "grey_5")
+    else:
+        c.hline(8, 5, 6, "grey_5")
+        c.hline(7, 10, 11, "grey_5")
 
 
-def t_quay_edge(c):
-    """The coping stone at the water: paving above, a lit wet lip, then the drop into black water."""
-    paving(c)
-    c.hline(11, 0, 15, "grey_5")
-    c.hline(12, 0, 15, "grey_4")
-    c.rect(0, 13, 16, 3, "sea_1")
-    for x in range(0, 16, 3):
-        c.put(x, 13, "grey_4")
-
-
-def t_water_deep(c):
-    c.fill("sea_1")
-    for (y, x0) in ((2, 2), (2, 11), (5, 1), (5, 10), (8, 4), (8, 12), (13, 3), (13, 10)):
-        c.hline(y, x0, x0 + 1, "sea_2")
-    for (y, x0) in ((3, 3), (10, 5), (14, 11)):
-        c.hline(y, x0, x0 + 1, "sea_4")
-    c.hline(1, 6, 8, "sea_2")
-
-
-def t_water_ripple(c):
-    c.fill("sea_1")
-    for (y, x0) in ((2, 5), (2, 13), (5, 4), (5, 11), (9, 2), (9, 9), (13, 6), (13, 14)):
-        c.hline(y, x0, x0 + 1, "sea_2")
-    for (y, x0) in ((4, 7), (11, 12), (14, 3)):
-        c.hline(y, x0, x0 + 1, "sea_4")
-    c.hline(7, 3, 4, "sea_2")
-
-
-def t_bollard(c):
-    """An iron bollard on wet stone: a wide base, a shaft, one lit edge where the lamp reaches it."""
-    paving(c)
-    c.rect(3, 12, 10, 3, "sea_1")
-    c.hline(12, 3, 12, "grey_5")
-    c.rect(5, 2, 6, 2, "sea_1")
-    c.put(5, 2, "grey_5")
-    c.put(6, 2, "grey_5")
-    c.rect(6, 4, 4, 8, "sea_1")
-    c.vline(6, 4, 11, "grey_5")
-    c.put(9, 8, "grey_5")
-
-
-def t_chain(c):
-    """A chain draped between two bollards: one arc that meets the tile edge at both ends."""
-    paving(c)
-    drape = [6, 7, 7, 8, 8, 8, 9, 9, 9, 8, 8, 8, 7, 7, 6, 6]
-    for x, y in enumerate(drape):
-        c.put(x, y, "sea_1")
-    for x in (1, 4, 7, 10, 13):
-        c.put(x, drape[x] + 1, "sea_1")
-    for x in (2, 5, 8, 11, 14):
-        c.put(x, drape[x] - 1, "grey_5")
-    c.put(8, 10, "sea_1")
-
-
-def t_barrier(c):
-    """A steel barrier on the quay: a painted rail, two posts, the gap under it in shadow."""
-    paving(c)
-    c.rect(0, 4, 16, 3, "grey_4")
-    c.hline(4, 0, 15, "grey_4")
-    c.hline(5, 0, 15, "grey_5")
-    c.hline(6, 0, 15, "sea_1")
-    c.put(0, 4, "sea_1")
-    c.put(8, 4, "sea_1")
-    c.put(0, 5, "sea_1")
-    c.put(8, 5, "sea_1")
-    for x in (2, 3, 12, 13):
-        c.vline(x, 4, 13, "grey_4")
-    c.vline(2, 4, 13, "grey_5")
-    c.vline(12, 4, 13, "grey_5")
-    c.hline(13, 2, 3, "sea_1")
-    c.hline(13, 12, 13, "sea_1")
-    c.put(7, 5, "grey_5")
-    c.put(8, 5, "sea_1")
-
-
-def t_brick_wall(c):
-    c.fill("blood_3")
-    c.hline(0, 0, 15, "stone_2")
-    c.hline(1, 0, 15, "blood_4")
-    c.rect(0, 2, 16, 5, "blood_3")
-    c.hline(2, 0, 15, "blood_4")
+def t_quay_edge(c, storm=False):
+    """The coping stone at the water: paving above, a lit wet lip, a black drop, then the harbour."""
+    paving(c, storm)
+    c.hline(10, 0, 15, "ink")
+    c.hline(11, 0, 15, "grey_4" if storm else "grey_5")
+    c.hline(12, 0, 15, "grey_5" if storm else "grey_4")
     for x in (0, 8):
-        c.vline(x, 1, 7, "stone_2")
-    c.hline(4, 0, 15, "blood_3")
-    c.hline(8, 0, 15, "stone_2")
-    c.hline(9, 0, 15, "blood_4")
-    c.rect(0, 10, 16, 5, "blood_3")
-    c.hline(10, 0, 15, "blood_4")
-    for x in (4, 12):
-        c.vline(x, 9, 15, "stone_2")
-    c.hline(12, 0, 15, "blood_3")
+        c.vline(x, 11, 12, "sea_1")
+    c.hline(13, 0, 15, "ink")
+    c.rect(0, 14, 16, 2, "sea_1")
+    for x in (3, 11):
+        c.put(x, 15, "grey_4" if storm else "grey_5")
 
 
-def t_brick_wall_damp(c):
-    t_brick_wall(c)
-    # damp: two bricks gone dark where the rain runs, and one lit brick lost its edge
+def water(c, phase, storm=False):
+    """Harbour water: one swell line every six rows, a six pixel dash on a ten pixel pitch, a crest of two pixels.
+
+    The lines run the width of the tile at a fixed pitch so a field of them reads as rows of swell rather than
+    as speckle. The bright teal is a crest, not a highlight on every dash, because a glint on every dash turns a
+    calm harbour into static.
+    """
+    c.fill("sea_1")
+    offset = 0 if phase == 0 else 4
+    for row_index, y in enumerate((2, 8, 14)):
+        for x in range(offset, 16, 10):
+            end = min(x + 5, 15)
+            c.hline(y, x, end, "sea_2")
+            if (row_index + phase) % 2 == 0 and end - x >= 4:
+                c.hline(y, x + 2, x + 3, "sea_4")
+    if storm:
+        # whitecaps: two bold crests in the brightest teal, each with one step of chop under it, so the chop reads
+        # as wind and not as more dashes
+        for (x, y) in ((1, 5), (9, 11)):
+            c.hline(y, x, min(x + 3, 15), "sea_4")
+            c.hline(y + 1, x + 1, min(x + 3, 15), "sea_2")
+
+
+def t_water_deep(c, storm=False):
+    water(c, 0, storm)
+
+
+def t_water_ripple(c, storm=False):
+    water(c, 1, storm)
+
+
+def t_water_reflection(c, storm=False):
+    """What a lamp does to harbour water: a glint path that steps to the right as it falls, the way a point light
+    breaks on a moving surface. Under the storm the path is gone and the water is pocked by rain instead."""
+    c.fill("sea_1")
+    if storm:
+        for (x, y) in ((2, 2), (7, 4), (12, 6), (4, 9), (9, 11), (14, 13)):
+            c.hline(y, x, min(x + 1, 15), "sea_2")
+            c.hline(y - 1, x, min(x + 1, 15), "sea_4")
+        return
+    for step, y in enumerate((3, 6, 9, 12)):
+        x0 = 6 - step
+        c.hline(y, x0, x0 + 3, "sea_2")
+        c.hline(y, x0 + 1, x0 + 2, "sea_4")
+
+
+def t_bollard(c, storm=False):
+    """An iron bollard on wet stone: a black outline, a lit left edge, a shadow on the right, a wide base."""
+    paving(c, storm)
+    solid_form(c, 3, 11, 12, 13, "grey_5", "grey_4", "sea_1")
+    solid_form(c, 6, 3, 9, 10, "grey_5", "grey_4", "sea_1")
+    solid_form(c, 5, 2, 10, 3, "grey_5", "grey_4", "sea_1")
+    c.put(7, 2, "sea_1")
+    c.put(8, 2, "sea_1")
+
+
+def t_chain(c, storm=False):
+    """A chain between two bollards: one arc four pixels thick, black on both sides, the ground showing through."""
+    paving(c, storm)
+    drape = ([5, 6, 7, 9, 10, 10, 11, 11, 11, 10, 10, 9, 7, 6, 5, 5] if storm
+             else [6, 7, 7, 8, 8, 8, 9, 9, 9, 8, 8, 8, 7, 7, 6, 6])
+    for x, y in enumerate(drape):
+        c.put(x, y - 1, "ink")
+        c.put(x, y, "grey_5")
+        c.put(x, y + 1, "sea_1")
+        c.put(x, y + 2, "ink")
+    for x in (1, 4, 7, 10, 13):
+        c.put(x, drape[x] + 1, "grey_4")
+    if storm:
+        rain(c, "grey_5")
+
+
+def t_barrier(c, storm=False):
+    """A steel barrier on the quay: a painted rail with a lit top, two out-lined posts, a black gap under it."""
+    paving(c, storm)
+    c.rect(0, 4, 16, 2, "grey_4")
+    c.hline(4, 0, 15, "grey_5")
+    c.hline(6, 0, 15, "ink")
+    # a joint in the rail every eight pixels, so the rail is a run of sections and every row keeps a dark pixel
+    for x in (0, 8):
+        c.put(x, 4, "sea_1")
+        c.put(x, 5, "sea_1")
+    for x in (1, 9):
+        c.put(x, 5, "grey_5")
+    for x0 in (2, 12):
+        solid_form(c, x0, 6, x0 + 1, 13, "grey_5", "grey_4", "sea_1")
+    c.hline(14, 2, 3, "ink")
+    c.hline(14, 12, 13, "ink")
+    if storm:
+        rain(c, "grey_5")
+
+
+def t_brick_wall(c, storm=False):
+    """The office frontage: two courses, black mortar, a lit top edge on every brick, a shadow under it."""
+    brick_course(c, 0, (0, 8), storm)
+    brick_course(c, 8, (4, 12), storm)
+
+
+def t_brick_wall_damp(c, storm=False):
+    t_brick_wall(c, storm)
+    # damp: bricks gone dark where the rain runs, and one brick lost to the weather
     c.rect(2, 10, 2, 5, "stone_2")
     c.rect(3, 12, 1, 3, "stone_2")
     c.rect(10, 2, 2, 3, "stone_2")
-    c.put(5, 2, "blood_3")
-    c.put(6, 2, "blood_3")
-    c.put(13, 13, "stone_2")
+    c.rect(12, 13, 2, 2, "ink")
+    if storm:
+        c.vline(6, 9, 14, "stone_2")
+        c.vline(13, 2, 6, "stone_2")
 
 
-def t_door_office(c):
-    """The one door in the block that opens: shut, so it is the handle and the frame that say door."""
-    c.fill("blood_3")
-    c.hline(0, 0, 15, "stone_2")
-    c.hline(1, 0, 15, "blood_4")
-    c.rect(2, 2, 12, 12, "stone_2")
-    c.rect(3, 3, 10, 10, "blood_3")
-    c.vline(3, 3, 12, "blood_4")
-    c.hline(3, 3, 12, "blood_4")
-    c.hline(7, 5, 10, "stone_2")
-    c.hline(10, 5, 10, "stone_2")
-    c.put(11, 8, "blood_4")
-    c.put(11, 9, "blood_4")
-    c.hline(14, 2, 13, "stone_2")
+def t_door_office(c, storm=False):
+    """The one door in the block that opens: a lit stone frame, a warm leaf, the handle catching the lamp."""
+    t_brick_wall(c, storm)
+    solid_form(c, 2, 2, 13, 14, "blood_4", "stone_2", "blood_3")
+    solid_form(c, 4, 4, 11, 13, "blood_4", "blood_3", "stone_2")
+    c.hline(9, 6, 10, "stone_2")
+    c.put(10, 8, "blood_4")
+    c.put(10, 9, "blood_4")
+    c.hline(15, 2, 13, "ink")
+
+
+def t_door_shut(c, storm=False):
+    """A shut door: the same frame, boarded across, no handle light."""
+    t_brick_wall(c, storm)
+    solid_form(c, 2, 2, 13, 14, "blood_4", "stone_2", "blood_3")
+    solid_form(c, 4, 4, 11, 13, "blood_4", "blood_3", "stone_2")
+    c.hline(6, 5, 10, "stone_2")
+    c.hline(11, 5, 10, "stone_2")
+    c.put(5, 7, "ink")
+    c.put(10, 7, "ink")
+    c.put(5, 12, "ink")
+    c.put(10, 12, "ink")
+    c.hline(15, 2, 13, "ink")
+
+
+def t_window_lit(c, storm=False):
+    """A lit window: a dark frame, the room in gold, the hot core at the top left, a black sill line."""
+    c.fill("ink")
+    c.rect(1, 1, 14, 12, "stone_2")
+    c.rect(3, 3, 10, 8, "gold_4")
+    c.rect(4, 3, 5, 3, "gold_5")
+    c.vline(8, 3, 10, "stone_2")
+    c.hline(7, 3, 12, "stone_2")
+    c.hline(13, 1, 14, "stone_2")
+    c.hline(14, 1, 14, "ink")
     c.hline(15, 0, 15, "ink")
-    c.put(0, 1, "stone_2")
-    c.put(15, 1, "stone_2")
+    if storm:
+        c.rect(9, 9, 3, 1, "stone_2")
 
 
-def t_door_shut(c):
-    """A shut door: same frame, boarded across, no handle light."""
-    c.fill("blood_3")
-    c.hline(0, 0, 15, "stone_2")
-    c.hline(1, 0, 15, "blood_4")
-    c.rect(2, 2, 12, 12, "stone_2")
-    c.rect(3, 3, 10, 10, "blood_3")
-    c.vline(3, 3, 12, "stone_2")
-    c.vline(12, 3, 12, "stone_2")
-    c.hline(5, 3, 12, "stone_2")
-    c.hline(9, 3, 12, "stone_2")
-    c.hline(6, 4, 11, "blood_4")
-    c.hline(10, 4, 11, "blood_4")
-    c.hline(14, 2, 13, "stone_2")
-    c.hline(15, 0, 15, "ink")
-    c.put(0, 1, "stone_2")
-    c.put(15, 1, "stone_2")
-
-
-def t_window_lit(c):
-    """A lit window: the room in gold, the hot core top left, the frame in the set's dark brown."""
-    c.fill("stone_2")
-    c.rect(2, 2, 12, 11, "gold_4")
-    c.rect(3, 3, 6, 4, "gold_5")
-    c.vline(8, 2, 12, "stone_2")
+def t_window_dark(c, storm=False):
+    """The same window with nobody home: a dark frame, glass in the dark ramp, one grudging sheen."""
+    c.fill("ink")
+    c.rect(1, 1, 14, 12, "stone_2")
+    c.rect(2, 2, 12, 10, "blood_3")
+    c.vline(8, 2, 11, "stone_2")
     c.hline(7, 2, 13, "stone_2")
-    c.put(11, 9, "gold_5")
-    c.put(4, 10, "gold_5")
-    c.hline(0, 0, 15, "ink")
+    c.hline(1, 1, 14, "blood_4")
+    c.vline(1, 2, 12, "blood_4")
+    c.put(3, 3, "blood_4")
     c.hline(13, 1, 14, "stone_2")
     c.hline(14, 1, 14, "ink")
     c.hline(15, 0, 15, "ink")
 
 
-def t_window_dark(c):
-    """The same window with nobody home: glass in the dark ramp, one grudging sheen."""
-    c.fill("stone_2")
-    c.rect(2, 2, 12, 11, "blood_3")
-    c.vline(8, 2, 12, "stone_2")
-    c.hline(7, 2, 13, "stone_2")
-    c.put(4, 4, "blood_4")
-    c.hline(0, 0, 15, "ink")
-    c.hline(13, 1, 14, "stone_2")
-    c.hline(14, 1, 14, "blood_3")
-    c.hline(15, 0, 15, "ink")
-
-
-def t_lamp_base(c):
+def t_lamp_base(c, storm=False):
     """A lamp post and the pool it throws: the only tile whose bright fill is the point."""
     c.fill("ink")
-    c.rect(7, 0, 2, 8, "stone_2")
-    c.vline(7, 1, 7, "gold_4")
-    c.rect(6, 8, 4, 3, "stone_2")
-    c.hline(8, 6, 9, "gold_4")
-    for x in range(1, 15):
-        c.put(x, 11, "gold_4")
-    for x in range(3, 13):
-        c.put(x, 12, "gold_4")
-    for x in range(5, 11):
-        c.put(x, 13, "gold_5")
-    c.hline(14, 6, 9, "gold_4")
-    c.put(2, 12, "gold_5")
-    c.put(13, 12, "gold_5")
-    c.put(6, 10, "gold_4")
-    c.put(9, 10, "gold_4")
+    lean = 1 if storm else 0
+    # the post: a lit left edge, a dark body, a bold black line on either side
+    c.rect(6, 1, 4, 7, "stone_2")
+    c.vline(6, 1, 7, "gold_4")
+    c.vline(5, 1, 7, "ink")
+    c.vline(10, 1, 7, "ink")
+    # the lamp head, leaning into the wind when the storm flag is set
+    c.rect(6 + lean, 8, 4, 1, "stone_2")
+    c.rect(6 + lean, 9, 4, 1, "gold_5")
+    c.rect(5 + lean, 10, 6, 1, "gold_4")
+    ring(c, 5 + lean, 8, 10 + lean, 11)
+    # the pool on the paving: a lit bar, then a wider one, broken by the stone joints
+    c.hline(12, 4, 11, "gold_4")
+    c.hline(13, 2, 13, "gold_4")
+    c.hline(14, 5, 10, "gold_5")
+    for x in (5, 8, 11):
+        c.put(x, 13, "ink")
+    c.hline(15, 0, 15, "gold_4")
 
 
-def t_water_reflection(c):
-    """What a lamp does to harbour water: a broken vertical glint path, nothing else."""
-    c.fill("sea_1")
-    for y in range(1, 15):
-        c.put(7, y, "sea_2")
-    for y in (2, 5, 8, 11, 14):
-        c.put(7, y, "sea_4")
-        c.put(8, y, "sea_4")
-    for y in (4, 7, 10, 13):
-        c.put(6, y, "sea_2")
-        c.put(9, y, "sea_2")
-    c.put(11, 6, "sea_4")
-    c.put(4, 9, "sea_4")
-
-
-def t_sign_board(c):
-    """A harbour sign: dark board, gold face, two rows of lettering. No words at 16 px, only dashes."""
+def t_sign_board(c, storm=False):
+    """A harbour sign: a dark board, gold face, two rows of lettering. No words at 16 px, only dashes."""
     c.fill("ink")
-    c.rect(1, 2, 14, 10, "stone_2")
-    c.rect(2, 3, 12, 8, "gold_4")
+    c.rect(1, 2, 14, 9, "stone_2")
+    c.rect(2, 3, 12, 7, "gold_4")
     for x in (4, 6, 8, 10):
-        c.put(x, 5, "gold_5")
-    for x in (4, 6, 8):
-        c.put(x, 8, "gold_5")
-    c.put(10, 8, "gold_5")
-    c.hline(0, 4, 11, "ink")
-    c.rect(4, 12, 1, 3, "stone_2")
-    c.rect(11, 12, 1, 3, "stone_2")
+        c.vline(x, 5, 6, "gold_5")
+    for x in (4, 6, 8, 10):
+        c.vline(x, 8, 9, "gold_5")
+    c.rect(4, 11, 1, 4, "stone_2")
+    c.rect(11, 11, 1, 4, "stone_2")
+    c.vline(3, 11, 14, "ink")
+    c.vline(5, 11, 14, "ink")
+    c.vline(10, 11, 14, "ink")
+    c.vline(12, 11, 14, "ink")
 
 
-def t_office_floor(c):
-    """Boards: a lit top edge, a dark joint, nail heads where the joist is."""
+def t_office_floor(c, storm=False):
+    """Boards: a black joint every eight rows, a lit top edge on every board, nail heads where the joist is."""
     c.fill("blood_3")
-    for y in (0, 4, 8, 12):
-        c.hline(y, 0, 15, "blood_4")
-        c.put(0, y, "stone_2")
-        c.put(15, y, "stone_2")
-    for y in (3, 7, 11, 15):
-        c.hline(y, 0, 15, "stone_2")
-    # a nail head on every board row, so a row of plain board still has its dark pixel
-    for y, x in ((1, 5), (2, 12), (5, 8), (6, 2), (9, 10), (10, 6), (13, 3), (14, 13)):
-        c.put(x, y, "stone_2")
+    for y in (0, 8):
+        c.hline(y, 0, 15, "ink")
+    for x in (0, 8):
+        c.vline(x, 0, 15, "ink")
+    for y0 in (1, 9):
+        for x0 in (1, 9):
+            c.hline(y0, x0, x0 + 6, "blood_4")
+            c.hline(y0 + 6, x0 + 1, x0 + 6, "stone_2")
+    for (x, y) in ((4, 3), (12, 3), (6, 5), (10, 5), (4, 11), (12, 11), (6, 13), (10, 13)):
+        c.rect(x, y, 2, 2, "stone_2")
 
 
-def t_office_desk(c):
-    """A desk on boards, seen from the front: a lit top, a dark panel, a drawer, legs in shadow."""
-    t_office_floor(c)
-    c.hline(3, 1, 14, "stone_2")
-    c.rect(2, 4, 12, 2, "blood_4")
-    c.put(1, 4, "stone_2")
-    c.put(14, 4, "stone_2")
-    c.put(1, 5, "stone_2")
-    c.put(14, 5, "stone_2")
-    c.hline(6, 1, 14, "stone_2")
-    c.rect(3, 6, 10, 5, "blood_3")
-    c.hline(7, 4, 11, "stone_2")
-    c.hline(9, 6, 9, "stone_2")
-    c.rect(1, 6, 2, 8, "stone_2")
-    c.rect(13, 6, 2, 8, "stone_2")
-    c.put(4, 8, "blood_4")
-    c.put(11, 8, "blood_4")
+def t_office_desk(c, storm=False):
+    """A desk on boards, seen from the front: a lit top, a dark panel, an outlined drawer, legs in shadow."""
+    t_office_floor(c, storm)
+    solid_form(c, 1, 3, 14, 13, "blood_4", "blood_3", "stone_2")
+    c.hline(6, 2, 13, "stone_2")
+    ring(c, 3, 8, 8, 11)
+    c.put(10, 9, "blood_4")
+    c.put(10, 10, "blood_4")
 
 
 # name, character for the map, palette, painter, gate on the blob test, note
 TILES = [
     ("quay_paving", ".", "bg0_quay_stone", t_quay_paving, False,
-     "wet flagstone, the ground of every walk on the quay"),
+     "wet flagstone on a bold black joint, a lit top and left edge per slab, the ground of every walk"),
     ("quay_paving_worn", ",", "bg0_quay_stone", t_quay_paving_worn, False,
-     "the same stone with a stepped crack, so a long walk is not one tile repeated"),
+     "the same stone with a stepped black crack, so a long walk is not one tile repeated"),
     ("quay_puddle", "~", "bg0_quay_stone", t_quay_puddle, False,
-     "standing water in a low slab, two glints to say the lamp is behind it"),
+     "standing water in a low slab: a black lip, one lit edge, two glints"),
     ("quay_edge", "q", "bg0_quay_stone", t_quay_edge, False,
-     "the coping at the water, the one tile that lets the map end the stone honestly"),
+     "the coping at the water, a lit lip and a black drop, the tile that ends the stone honestly"),
     ("water_deep", "w", "bg1_harbour_water", t_water_deep, False,
      "harbour water, frame 1 of 2"),
     ("water_ripple", "W", "bg1_harbour_water", t_water_ripple, False,
-     "harbour water, frame 2 of 2: the swell moves two pixels and the glints swap sides"),
+     "harbour water, frame 2 of 2: the swell moves three pixels and the glints swap sides"),
     ("water_reflection", "R", "bg1_harbour_water", t_water_reflection, False,
-     "the lamp's glint path on the water: a broken vertical line, so the water answers the light"),
+     "the lamp's glint path on the water, broken into dashes so the water answers the light"),
     ("bollard", "B", "bg0_quay_stone", t_bollard, True,
-     "iron bollard on wet stone, lit on one edge only"),
+     "iron bollard on wet stone: a black outline, a lit left edge, a shadow on the right"),
     ("chain", "c", "bg0_quay_stone", t_chain, True,
-     "a chain draped between two bollards: one arc, links as alternating dark and lit clusters"),
+     "a chain draped between two bollards: one arc with a black shadow under it, the ground showing through"),
     ("barrier", "b", "bg0_quay_stone", t_barrier, True,
-     "steel barrier across the quay mouth"),
+     "steel barrier across the quay mouth: a lit rail top, two outlined posts"),
     ("brick_wall", "#", "bg2_brick_iron", t_brick_wall, False,
-     "the office frontage: two courses, mortar, a lit top edge per brick"),
+     "the office frontage: two courses, black mortar, a lit top edge per brick"),
     ("brick_wall_damp", "=", "bg2_brick_iron", t_brick_wall_damp, False,
-     "the same wall with two bricks gone dark where the rain runs"),
+     "the same wall with bricks gone dark where the rain runs"),
     ("door_office", "D", "bg2_brick_iron", t_door_office, True,
-     "the one door in the block that opens: handle catching the lamp"),
+     "the one door in the block that opens: a lit frame, a handle catching the lamp"),
     ("door_shut", "d", "bg2_brick_iron", t_door_shut, True,
      "a shut door, boarded, no handle light: seven of these teach the rule"),
     ("window_lit", "o", "bg3_lamp_glass", t_window_lit, False,
-     "a lit window: the room in gold with a hot core, waived from the light share rule because it is a light"),
+     "a lit window: the room in gold with the hot core at the top left, waived from the light share rule"),
     ("window_dark", "O", "bg2_brick_iron", t_window_dark, True,
      "the same window with nobody home, glass in the dark ramp"),
     ("lamp_base", "L", "bg3_lamp_glass", t_lamp_base, False,
@@ -505,7 +617,7 @@ TILES = [
     ("sign_board", "S", "bg3_lamp_glass", t_sign_board, False,
      "a harbour sign board, lettering as dashes, waived: it is a light"),
     ("office_floor", "f", "bg2_brick_iron", t_office_floor, False,
-     "the dock office boards, lit edge and dark joint"),
+     "the dock office boards, a black joint and a lit edge per board"),
     ("office_desk", "k", "bg2_brick_iron", t_office_desk, True,
      "the office desk Nye works behind, drawn on its own boards"),
 ]
@@ -555,7 +667,7 @@ OFFICE = {
 }
 
 
-def compose(layout):
+def compose(layout, storm=False):
     sheet = Image.new("RGBA", (256, 240), (0, 0, 0, 255))
     by_char = {char: painter for (name, char, _p, painter, _g, _n) in TILES}
     for y in range(15):
@@ -567,7 +679,7 @@ def compose(layout):
                         name_key = cval
             if name_key is None:
                 name_key = layout["default"][y]
-            tile = render_tile(by_char[name_key])
+            tile = render_tile(by_char[name_key], storm)
             sheet.paste(tile, (x * TILE, y * TILE))
     return sheet
 
@@ -603,12 +715,15 @@ def build_colour_map(entries):
         COLOUR[role] = (int(text[0:2], 16), int(text[2:4], 16), int(text[4:6], 16), 255)
 
 
-def render_tile(painter_or_name):
+def render_tile(painter_or_name, storm=False):
     if isinstance(painter_or_name, Image.Image):
         return painter_or_name
-    canvas = Canvas()
-    canvas.fill(BACKDROP_ROLE)
-    painter_or_name(canvas)
+    if isinstance(painter_or_name, Canvas):
+        canvas = painter_or_name
+    else:
+        canvas = Canvas()
+        canvas.fill(BACKDROP_ROLE)
+        painter_or_name(canvas, storm)
     image = Image.new("RGBA", (TILE, TILE), COLOUR[BACKDROP_ROLE])
     pixels = image.load()
     for y in range(TILE):
@@ -685,9 +800,77 @@ def blob_verdict(numbers, gated):
     return "pass" if not failures else "FAIL: " + "; ".join(failures)
 
 
+def sheet_measures(sheet, rendered):
+    """The rule measurements of ART-STYLE.md section 2, taken on the sheet that ships.
+
+    Orphans and dithering are read from the pixels. The light ratio is read tile by tile against that tile's own
+    palette sorted by luminance, because the quay's four palettes are hue ramps and their written order is not
+    brightness order. Off palette is zero by construction: every pixel came out of ROLE_ENTRY, and
+    tools/nes_audit_all.py re-checks it against data/nes_palette.json.
+    """
+    pixels = sheet.load()
+    width, height = sheet.size
+    orphans = 0
+    for y in range(height):
+        for x in range(width):
+            here = pixels[x, y]
+            if here == COLOUR[BACKDROP_ROLE]:
+                continue
+            same = 0
+            for dy in (-1, 0, 1):
+                for dx in (-1, 0, 1):
+                    if dx == 0 and dy == 0:
+                        continue
+                    nx, ny = x + dx, y + dy
+                    if 0 <= nx < width and 0 <= ny < height and pixels[nx, ny] == here:
+                        same += 1
+            if same == 0:
+                orphans += 1
+
+    dither = 0
+    for y in range(height - 3):
+        for x in range(width - 3):
+            def p(dx, dy):
+                return pixels[x + dx, y + dy]
+            if (p(0, 0) != p(1, 0) and p(0, 0) == p(1, 1) and p(1, 0) == p(0, 1)
+                    and p(2, 0) == p(0, 0) and p(3, 0) == p(1, 0)
+                    and p(0, 2) == p(0, 0) and p(0, 3) == p(1, 0)):
+                dither += 1
+
+    correct = 0
+    wrong = 0
+    for position, tile in enumerate(rendered):
+        roles = [role for (name, proles, _note) in BG_PALETTES if name == tile["palette"] for role in proles]
+        ramp = sorted(roles, key=lambda role: luminance(COLOUR[role]))
+        mid, light = ramp[len(ramp) // 2], ramp[-1]
+        ox = (position % COLUMNS) * TILE
+        oy = (position // COLUMNS) * TILE
+        for y in range(oy, oy + TILE):
+            for x in range(ox, ox + TILE):
+                if pixels[x, y] != COLOUR[light]:
+                    continue
+                below = pixels[x, y + 1] if y + 1 < oy + TILE else None
+                right = pixels[x + 1, y] if x + 1 < ox + TILE else None
+                above = pixels[x, y - 1] if y - 1 >= oy else None
+                left = pixels[x - 1, y] if x - 1 >= ox else None
+                if below == COLOUR[mid] or right == COLOUR[mid]:
+                    correct += 1
+                elif above == COLOUR[mid] or left == COLOUR[mid]:
+                    wrong += 1
+
+    return {
+        "orphan_pixels": orphans,
+        "dither_patches": dither,
+        "light_direction_correct": correct,
+        "light_direction_wrong": wrong,
+        "light_direction_ratio": round(correct / float(wrong), 2) if wrong else None,
+        "off_palette_pixels": 0,
+    }
+
+
 # -----------------------------------------------------------------------------------------------------------------
 
-def build():
+def build(storm=False):
     design, entries = load_colours()
     build_colour_map(entries)
 
@@ -695,7 +878,8 @@ def build():
     for (name, char, palette, painter, gated, note) in TILES:
         canvas = Canvas()
         canvas.fill(BACKDROP_ROLE)
-        painter(canvas)
+        painter(canvas, storm)
+        orphans_removed = canvas.remove_orphans()
         roles = sorted({role for row in canvas.rows() for role in row if role})
         allowed = {role for (pname, proles, _n) in BG_PALETTES if pname == palette for role in proles}
         outside = [role for role in roles if role not in allowed and role != BACKDROP_ROLE]
@@ -711,7 +895,8 @@ def build():
             "blob": numbers,
             "blob_verdict": blob_verdict(numbers, gated),
             "blob_gated": gated,
-            "image": render_tile(painter),
+            "orphans_removed": orphans_removed,
+            "image": render_tile(canvas),
             "canvas": canvas,
         })
 
@@ -720,9 +905,6 @@ def build():
     for position, tile in enumerate(rendered):
         sheet.paste(tile["image"], ((position % COLUMNS) * TILE, (position // COLUMNS) * TILE))
     return rendered, sheet
-
-
-SUM_OK = set()
 
 
 def palette_json():
@@ -738,16 +920,21 @@ def palette_json():
     ]
 
 
-def manifest(rendered, sheet):
+def manifest(rendered, sheet, storm=False):
     palettes = palette_json()
     for palette in palettes:
         palette["hex"] = ["#%02x%02x%02x" % COLOUR[role][:3] for role in palette["roles"]]
+    name = "quay_storm_tiles" if storm else "quay_tiles"
     return {
         "format": 1,
         "kind": "tileset",
-        "name": "quay_tiles",
-        "image": "quay_tiles.png",
-        "card": "R46 QUAY-TILES (t_abfb6024)",
+        "name": name,
+        "image": name + ".png",
+        "card": ("ART-B-MAPS (t_d0566ebc): the R46 set (t_abfb6024) redrawn in style B, "
+                 + ("hurricane variant" if storm else "night")),
+        "style": ("B, late NES polish: bold dark outlines, three tone shading lit from the top left, detailed "
+                  "tiles"),
+        "variant": "storm" if storm else "night",
         "columns": COLUMNS,
         "rows": (len(rendered) + COLUMNS - 1) // COLUMNS,
         "frames": len(rendered),
@@ -768,9 +955,8 @@ def manifest(rendered, sheet):
             for role, (entry, why) in sorted(ROLE_ENTRY.items())
         },
         "sets": {
-            name: {"roles": roles, "note": "append to data/room_palettes.json as a set with this id; "
-                                          "ARRIVAL-MAP-2 owns that file"}
-            for name, roles in SETS.items()
+            set_name: {"roles": roles, "note": "append to data/room_palettes.json as a set with this id"}
+            for set_name, roles in SETS.items()
         },
         "palettes": palettes,
         "tiles": [
@@ -789,24 +975,35 @@ def manifest(rendered, sheet):
         ],
         "animation": [
             {"name": "water", "frames": ["water_deep", "water_ripple"], "hold_frames": 24,
-             "note": "the sea is the only thing on the quay that moves; two frames, one step of swell"}
+             "note": ("the sea is the only thing on the quay that moves; two frames, one step of swell"
+                      + (", drawn as chop and whitecaps under the storm" if storm else ""))}
         ],
-        "mocks": ["output/quay_block_preview.png", "output/quay_office_preview.png"],
+        "mocks": (["output/quay_storm_block_preview.png"] if storm
+                  else ["output/quay_block_preview.png", "output/quay_office_preview.png"]),
     }
 
 
-def tiles_markdown(rendered, manifest_data):
+def tiles_markdown(rendered, manifest_data, storm=False):
     lines = []
     add = lines.append
-    add("# QUAY TILES: the tile table the map wiring reads")
+    title = "QUAY STORM TILES" if storm else "QUAY TILES"
+    add("# %s: the tile table the map wiring reads" % title)
     add("")
-    add("Drawn by `tools/art/make_quay_tiles.py` for card R46 (t_abfb6024). Do not edit by hand: rerun the tool.")
+    add("Drawn by `tools/art/make_quay_tiles.py`. Card R46 (t_abfb6024) drew the vocabulary; card ART-B-MAPS "
+        "(t_d0566ebc) redrew every tile in art direction B, late NES polish: bold dark outlines, three tone "
+        "shading lit from the top left, detailed tiles. Do not edit by hand: rerun the tool.")
     add("")
-    add("The sheet is `quay_tiles.png`, %d by %d, %d cells of 16 x 16, %d tiles used. The manifest beside it "
-        "(`quay_tiles.json`) is the machine readable copy of this table."
-        % (manifest_data["imagewidth"], manifest_data["imageheight"], manifest_data["columns"] * manifest_data["rows"],
-           manifest_data["frames"]))
+    add("The sheet is `%s`, %d by %d, %d cells of 16 x 16, %d tiles used. The manifest beside it "
+        "(`%s`) is the machine readable copy of this table."
+        % (manifest_data["image"], manifest_data["imagewidth"], manifest_data["imageheight"],
+           manifest_data["columns"] * manifest_data["rows"], manifest_data["frames"], manifest_data["name"] + ".json"))
     add("")
+    if storm:
+        add("This sheet carries the SAME twenty names, characters, indices, palette groups and water animation as "
+            "the night sheet. It is the hurricane variant of the same place, not a second vocabulary: the map row "
+            "`southampton_town_quay_storm` copies the surveyed grid of `southampton_town_quay` character for "
+            "character and only names a different sheet and a different room palette.")
+        add("")
     add("Colours are ROLES from `data/palette.json`, not hex. The role resolves to one Ricoh 2C02 entry, because "
         "the audit's authority on a colour is `data/nes_palette.json` and the design palette's hexes are not 2C02 "
         "outputs. The bridge is the table below, and it is written in the manifest too.")
@@ -816,12 +1013,10 @@ def tiles_markdown(rendered, manifest_data):
     for role, (entry, why) in sorted(ROLE_ENTRY.items(), key=lambda item: ROLE_ENTRY[item[0]][0]):
         add("| `%s` | $%02X | %s | %s |" % (role, entry, "#%02x%02x%02x" % COLOUR[role][:3], why))
     add("")
-    add("## The two room palette sets")
+    add("## The room palette sets")
     add("")
     for name, roles in SETS.items():
         add("- **%s** (%d roles, cap 16): %s" % (name, len(roles), ", ".join("`%s`" % role for role in roles)))
-    add("")
-    add("ARRIVAL-MAP-2 (t_db2995d7) appends both to `data/room_palettes.json`; this card may not edit data files.")
     add("")
     add("## The four background palettes")
     add("")
@@ -830,6 +1025,21 @@ def tiles_markdown(rendered, manifest_data):
     for (name, roles, note) in BG_PALETTES:
         add("| `%s` | %s | %s | %s |" % (name, ", ".join("`%s`" % role for role in roles),
                                          ", ".join("$%02X" % ROLE_ENTRY[role][0] for role in roles), note))
+    add("")
+    add("## The rules of ART-STYLE.md section 2, measured on this sheet")
+    add("")
+    rules = manifest_data.get("rules") or {}
+    add("| rule | measurement on the shipped sheet |")
+    add("|---|---|")
+    add("| no orphan pixels | %s |" % rules.get("orphan_pixels"))
+    add("| no dithering unless deliberate | %s patch(es) |" % rules.get("dither_patches"))
+    add("| light from the top left | %s correct / %s wrong (ratio %s) |"
+        % (rules.get("light_direction_correct"), rules.get("light_direction_wrong"),
+           rules.get("light_direction_ratio")))
+    add("| 2C02 only | %s off palette pixel(s), and tools/nes_audit_all.py re-checks every entry |"
+        % rules.get("off_palette_pixels"))
+    add("| at most 3 colours besides the backdrop in a 16 x 16 area | enforced while drawing: a tile that leaves "
+        "its palette raises |")
     add("")
     add("## The tiles")
     add("")
@@ -859,21 +1069,26 @@ def tiles_markdown(rendered, manifest_data):
         "without a transparent layer.")
     add("5. The office pair (`office_floor`, `office_desk`) is the same warm ramp, so the interior scene uses the "
         "office night set and needs no fifth palette.")
+    if storm:
+        add("6. **The one line the storm map needs.** `pp_map_tile_set_for_room` in "
+            "`game/scripts/pp_map_tile/pp_map_tile.gml` turns a room palette id into a tile table. The storm map "
+            "row names `room_palette: quay_storm` so the room draws in the storm set, so that function needs "
+            "`if (_id == \"quay_storm\") return PP_TILE_SET_QUAY;` beside the quay_night and office_night lines. "
+            "The tile table, the planes and the water animation are then the quay's own, and only the sheet "
+            "differs, because the map row names `tileset: quay_storm_tiles`.")
+        add("7. The sheet has to reach the build: `tools/sync_art.py` now reads `game/sprites_src/env/quay_storm/` "
+            "(alongside env/quay, env/halls and env/street), so `pp_art_has(\"quay_storm_tiles\")` is true after a "
+            "sync and the map row's `tileset` is the set the game draws. Without that folder in its source list the "
+            "game falls back to flat colour for this room.")
     add("")
     add("## What this set does not do")
     add("")
     add("1. **The light does not spill across tile edges.** A tile carries three colours plus the backdrop, so the "
-        "lamp's pool is inside its own cell; making it spill means a second lit-paving tile in the lamp palette, "
-        "which the 4 palette budget cannot buy until ARRIVAL-MAP-2 says which palettes the quay scene can spare.")
+        "lamp's pool is inside its own cell.")
     add("2. **There is no building wall above three courses.** The block's upper floors are the same brick tile "
-        "repeated; a window sill course and a roofline are the next two tiles this set needs, and neither is in "
-        "the card.")
+        "repeated; a window sill course and a roofline are the next two tiles this set needs.")
     add("3. **Nothing here is a sprite.** These are background tiles on the 16 x 16 attribute grid: characters, "
         "the clerk and the sailor stand on them and obey the sprite rules in SPRITE-CRAFT, not these.")
-    add("4. **The water is two frames, not four.** Two frames held 24 game frames each is the slow swell the night "
-        "quay wants; a third frame buys a crest breaking at the quay edge and nothing else at this size.")
-    add("5. **The sheet is not mirrored into `game/datafiles/art/`.** `tools/sync_art.py` does that and adds the "
-        "entry to `title_manifest.json`; R28 (the map wiring) owns that step, so this card did not run it.")
     add("")
     return "\n".join(lines)
 
@@ -901,57 +1116,122 @@ def contact_sheet(sheet):
     return sheet.resize((sheet.width * 3, sheet.height * 3), resample)
 
 
+def before_after(before_path, after_image, out_path, title, before_label, after_label, scale=3):
+    """One labelled sheet: the before picture on top, the after picture under it, both at 3x."""
+    if not os.path.isfile(before_path):
+        print("make_quay_tiles: no before picture at %s, the pair sheet is skipped"
+              % os.path.relpath(before_path, ROOT))
+        return False
+    resample = getattr(Image, "NEAREST", None) or Image.Resampling.NEAREST
+    before = Image.open(before_path).convert("RGBA")
+    after = after_image.convert("RGBA")
+    width = max(before.width, after.width) * scale
+    band = 12
+    height = (before.height + after.height) * scale + band * 2
+    canvas = Image.new("RGBA", (width, height), (0, 0, 0, 255))
+    draw = ImageDraw.Draw(canvas)
+    canvas.paste(before.resize((before.width * scale, before.height * scale), resample), (0, band))
+    canvas.paste(after.resize((after.width * scale, after.height * scale), resample),
+                 (0, band + before.height * scale + band))
+    draw.text((2, 1), "%s: %s" % (title, before_label), fill=(248, 216, 120, 255))
+    draw.text((2, band + before.height * scale + 1), "%s: %s" % (title, after_label),
+              fill=(248, 216, 120, 255))
+    write_png(out_path, canvas)
+    return True
+
+
+def frame_note(path, name, card):
+    write_json(path, {
+        "format": 1,
+        "kind": "frame_note",
+        "frame": name,
+        "card": card,
+        "backdrop": {"entry": ROLE_ENTRY["ink"][0], "hex": "#000000"},
+        "note": ("a 256x240 mock composed only from the quay tile sheet, so the frame audit measures the "
+                 "same art the map will use"),
+    })
+
+
+def stale(path, image):
+    if not os.path.isfile(path):
+        return True
+    with open(path, "rb") as handle:
+        on_disk = hashlib.sha256(handle.read()).hexdigest()
+    buffer = os.path.join(OUTPUT, "_quay_tiles_stale_probe.png")
+    os.makedirs(OUTPUT, exist_ok=True)
+    image.save(buffer)
+    with open(buffer, "rb") as handle:
+        fresh = hashlib.sha256(handle.read()).hexdigest()
+    os.remove(buffer)
+    return on_disk != fresh
+
+
 def main(argv=None):
-    parser = argparse.ArgumentParser(description="Draw the quay tile set.")
-    parser.add_argument("--check", action="store_true", help="write nothing; exit 1 if the PNG on disk is stale")
+    parser = argparse.ArgumentParser(description="Draw the quay tile set, night and hurricane, in style B.")
+    parser.add_argument("--check", action="store_true", help="write nothing; exit 1 if a PNG on disk is stale")
     args = parser.parse_args(argv)
 
-    rendered, sheet = build()
-    payload = manifest(rendered, sheet)
-    text = tiles_markdown(rendered, payload)
+    rendered, sheet = build(False)
+    storm_rendered, storm_sheet = build(True)
 
     if args.check:
-        if not os.path.isfile(SHEET_PNG):
-            print("make_quay_tiles: no sheet on disk")
+        bad = [path for path, image in ((SHEET_PNG, sheet), (STORM_PNG, storm_sheet)) if stale(path, image)]
+        if bad:
+            print("make_quay_tiles: STALE %s" % ", ".join(os.path.relpath(path, ROOT) for path in bad))
             return 1
-        with open(SHEET_PNG, "rb") as handle:
-            on_disk = hashlib.sha256(handle.read()).hexdigest()
-        buffer = os.path.join(OUTPUT, "_quay_tiles_stale_probe.png")
-        os.makedirs(OUTPUT, exist_ok=True)
-        sheet.save(buffer)
-        with open(buffer, "rb") as handle:
-            fresh = hashlib.sha256(handle.read()).hexdigest()
-        os.remove(buffer)
-        print("make_quay_tiles: %s" % ("fresh" if on_disk == fresh else "STALE"))
-        return 0 if on_disk == fresh else 1
+        print("make_quay_tiles: both sheets are fresh")
+        return 0
 
-    write_png(SHEET_PNG, sheet)
-    write_json(SHEET_JSON, payload)
-    write_text(TILES_MD, text + "\n")
+    for sheet_png, sheet_json, tiles_md, tiles, image, is_storm in (
+            (SHEET_PNG, SHEET_JSON, TILES_MD, rendered, sheet, False),
+            (STORM_PNG, STORM_JSON, STORM_MD, storm_rendered, storm_sheet, True)):
+        payload = manifest(tiles, image, is_storm)
+        payload["rules"] = sheet_measures(image, tiles)
+        write_png(sheet_png, image)
+        write_json(sheet_json, payload)
+        write_text(tiles_md, tiles_markdown(tiles, payload, is_storm) + "\n")
+
     write_png(os.path.join(OUTPUT, "quay_tiles_3x.png"), contact_sheet(sheet))
+    write_png(os.path.join(OUTPUT, "quay_storm_tiles_3x.png"), contact_sheet(storm_sheet))
 
-    for name, layout in (("quay_block", BLOCK), ("quay_office", OFFICE)):
-        frame = compose(layout)
+    for name, layout, is_storm in (("quay_block", BLOCK, False), ("quay_office", OFFICE, False),
+                                   ("quay_storm_block", BLOCK, True)):
+        frame = compose(layout, is_storm)
         write_png(os.path.join(OUTPUT, "%s_preview.png" % name), frame)
-        write_json(os.path.join(OUTPUT, "%s_preview.json" % name), {
-            "format": 1,
-            "kind": "frame_note",
-            "frame": "%s_preview.png" % name,
-            "card": "R46 QUAY-TILES (t_abfb6024)",
-            "backdrop": {"entry": ROLE_ENTRY["ink"][0], "hex": "#000000"},
-            "note": ("a 256x240 mock composed only from the quay tile sheet, so the frame audit measures the "
-                     "same art the map will use"),
-        })
+        frame_note(os.path.join(OUTPUT, "%s_preview.json" % name), "%s_preview.png" % name,
+                   "ART-B-MAPS (t_d0566ebc)")
 
-    colours = len({COLOUR[role] for role in ROLE_ENTRY})
-    print("make_quay_tiles: %d tiles, %d colours, sheet %dx%d" % (len(rendered), colours, sheet.width, sheet.height))
-    gated = [tile for tile in rendered if tile["blob_gated"]]
-    failing = [tile for tile in gated if tile["blob_verdict"] != "pass"]
-    print("  blob test: %d gated tile(s), %d pass, %d fail" % (len(gated), len(gated) - len(failing), len(failing)))
-    for tile in failing:
-        print("    FAIL %s: %s" % (tile["name"], tile["blob_verdict"]))
-    print("  sheet: %s" % os.path.relpath(SHEET_PNG, ROOT).replace(os.sep, "/"))
-    print("  table: %s" % os.path.relpath(TILES_MD, ROOT).replace(os.sep, "/"))
+    before_after(os.path.join(BEFORE_DIR, "quay_tiles_before.png"), sheet,
+                 os.path.join(PAIR_DIR, "quay_before_after_3x.png"),
+                 "Town Quay tiles", "R46 (before)", "style B (after)")
+    before_after(os.path.join(BEFORE_DIR, "quay_block_before.png"), compose(BLOCK, False),
+                 os.path.join(PAIR_DIR, "quay_before_after_frame_3x.png"),
+                 "Town Quay block", "R46 frame (before)", "style B frame (after)")
+    before_after(os.path.join(BEFORE_DIR, "quay_block_before.png"), compose(BLOCK, True),
+                 os.path.join(PAIR_DIR, "quay_storm_before_after_3x.png"),
+                 "Town Quay hurricane block", "calm block (before, no storm art existed)",
+                 "storm block in style B (after)")
+
+    for label, tiles, image in (("night", rendered, sheet), ("storm", storm_rendered, storm_sheet)):
+        gated = [tile for tile in tiles if tile["blob_gated"]]
+        failing = [tile for tile in gated if tile["blob_verdict"] != "pass"]
+        colours = len({COLOUR[role] for role in ROLE_ENTRY})
+        rules = sheet_measures(image, tiles)
+        print("make_quay_tiles %s: %d tiles, %d colours, sheet %dx%d" % (label, len(tiles), colours,
+                                                                         image.width, image.height))
+        print("  blob test: %d gated tile(s), %d pass, %d fail" % (len(gated), len(gated) - len(failing),
+                                                                   len(failing)))
+        print("  rules: orphans %d, dither %d, light %d/%d, off palette %d"
+              % (rules["orphan_pixels"], rules["dither_patches"], rules["light_direction_correct"],
+                 rules["light_direction_wrong"], rules["off_palette_pixels"]))
+        for tile in failing:
+            print("    FAIL %s: %s" % (tile["name"], tile["blob_verdict"]))
+    print("  sheets: %s, %s" % (os.path.relpath(SHEET_PNG, ROOT).replace(os.sep, "/"),
+                                os.path.relpath(STORM_PNG, ROOT).replace(os.sep, "/")))
+    print("  tables: %s, %s" % (os.path.relpath(TILES_MD, ROOT).replace(os.sep, "/"),
+                                os.path.relpath(STORM_MD, ROOT).replace(os.sep, "/")))
+    failing = [tile for tiles in (rendered, storm_rendered) for tile in tiles
+               if tile["blob_gated"] and tile["blob_verdict"] != "pass"]
     return 1 if failing else 0
 
 
