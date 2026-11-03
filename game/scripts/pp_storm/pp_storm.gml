@@ -1,17 +1,11 @@
 /// pp_storm: the hurricane over the Town Quay (final scope 2026-11-03, item 8). Drawn on top of the quay only.
-/// Every pixel it draws is one of the room's declared colours: the dark look is a 25 percent ink dither (spec 13 allows
-/// two dithers, never a blend), the rain and the gust streaks are one pixel strokes in declared roles, and a lightning
-/// flash is a flood of the text role followed by dithers, so nothing here is an alpha blend and no new colour is
-/// spent. Nothing here reads the game's seeded streams: the storm owns one private stream (pp_rng_new) and everything
+/// Only the lightning is drawn (a flood of the text role followed by dithers, never an alpha blend). Nothing here reads the game's seeded streams: the storm owns one private stream (pp_rng_new) and everything
 /// else is arithmetic on the storm's step count, so the same steps always draw the same storm.
 /// The hook is two calls in pp_overworld.gml: pp_storm_step at the top of pp_overworld_step and pp_storm_draw straight
 /// after the above plane. Both do nothing in any room but PP_STORM_ROOM.
 
 #macro PP_STORM_ROOM "southampton_town_quay"
 #macro PP_STORM_SEED 20261103
-#macro PP_STORM_DROPS 120
-#macro PP_STORM_GUSTS 4
-#macro PP_STORM_SPLASHES 9
 // A flash is 8 steps: 3 of near white, 2 of the white dither at 50 percent, 3 of the dark tail (ink at 50 percent).
 #macro PP_STORM_FLASH_STEPS 8
 #macro PP_STORM_WAIT_MIN 210
@@ -40,11 +34,6 @@ function pp_storm_active(_world) {
     return is_struct(_world) && is_struct(_world.map) && _world.map.id == PP_STORM_ROOM;
 }
 
-/// The wind: a gust strength 0..3 that swells and drops about every ten seconds, which slants the rain.
-function pp_storm_gust(_steps) {
-    return floor(1.5 + 1.5 * sin(_steps / 95));
-}
-
 /// One step of the storm: the clock and the lightning. Called every overworld step, scenes and talk included.
 function pp_storm_step(_world) {
     if (!pp_storm_active(_world)) return;
@@ -70,66 +59,15 @@ function pp_storm_step(_world) {
     show_debug_message("PP: storm lightning " + string(_s.flash_count));
 }
 
-/// One rain stroke: a 1 px wide dash of `_len` rows with a one pixel kink, so a streak reads as slanted at 1x.
-function pp_storm_streak(_x, _y, _len) {
-    draw_rectangle(_x, _y, _x, _y + _len - 1, false);
-    draw_rectangle(_x - 1, _y + _len, _x - 1, _y + _len + 1, false);
-}
-
-/// Draw the storm over the world: darkness, rain, gust streaks, splashes, then the flash. Before the dialogue box, so
-/// text is never rained on.
+/// Draw the storm over the world. The author removed the grain (dither darkening and rain streaks): only the lightning
+/// flash is drawn now. Before the dialogue box, so text is never flashed over.
 function pp_storm_draw(_world) {
     if (!pp_storm_active(_world)) return;
     var _s = pp_storm_state();
-    var _t = _s.steps;
     var _w = PP_FRAME_W;
     var _h = PP_FRAME_H;
 
-    // 1. The darker look: one ink pixel in four over the whole frame.
-    pp_art_draw_tiled("spr_pp_dither25", 0, 0, pp_role_colour("ink"), 1);
-
-    // 2. Rain, in three depths: far (short, slow, dim), middle and near (long, fast, bright). The gust slants all of it.
-    var _gust = pp_storm_gust(_t);
-    var _far = pp_role_colour("sea_3");
-    var _mid = pp_role_colour("grey_3");
-    var _near = pp_role_colour("text");
-    for (var _i = 0; _i < PP_STORM_DROPS; _i += 1) {
-        var _layer = _i mod 3;
-        var _vy = 5 + _layer * 2;
-        var _vx = -(1 + _layer + _gust);
-        var _x = (((_i * 53 + _layer * 29) mod _w) + _t * _vx) mod _w;
-        if (_x < 0) _x += _w;
-        var _y = (((_i * 37 + _layer * 11) mod _h) + _t * _vy) mod (_h + 8);
-        var _rain = _near;
-        if (_layer == 0) _rain = _far;
-        else if (_layer == 1) _rain = _mid;
-        draw_set_colour(_rain);
-        pp_storm_streak(_x, _y - 8, 3 + _layer);
-    }
-
-    // 3. The wind: a few long horizontal dashes that cross the screen fast, faster in a gust.
-    draw_set_colour(_mid);
-    for (var _k = 0; _k < PP_STORM_GUSTS; _k += 1) {
-        var _gx = ((_k * 97 + _t * (7 + _gust * 2)) mod (_w + 64)) - 32;
-        var _gy = 14 + ((_k * 61 + (_t div 70) * 37) mod 200);
-        draw_rectangle(_gx, _gy, _gx + 9 + _k * 2, _gy, false);
-    }
-
-    // 4. Splashes on the stone: a small crown that lives for three steps at a new spot every 24.
-    draw_set_colour(_far);
-    for (var _p = 0; _p < PP_STORM_SPLASHES; _p += 1) {
-        var _phase = (_t + _p * 13) mod 24;
-        if (_phase < 3) {
-            var _round = (_t + _p * 13) div 24;
-            var _sx = 8 + ((_p * 61 + _round * 29) mod 240);
-            var _sy = 40 + ((_p * 43 + _round * 17) mod 180);
-            draw_rectangle(_sx, _sy, _sx + 2, _sy, false);
-            draw_rectangle(_sx - 1, _sy - 1, _sx - 1, _sy - 1, false);
-            draw_rectangle(_sx + 3, _sy - 1, _sx + 3, _sy - 1, false);
-        }
-    }
-
-    // 5. Lightning: a near white flood, the same white as a 50 percent dither, then a dark tail.
+    // Lightning: a near white flood, the same white as a 50 percent dither, then a dark tail.
     if (_s.flash_left > 0) {
         var _n = PP_STORM_FLASH_STEPS - _s.flash_left;
         if (_n < 3) {

@@ -553,11 +553,31 @@ function pp_talk_options(_battle) {
 function pp_talk_apply(_battle, _record) {
     var _before = _battle.talk_mercy;
     var _delta = clamp(_record.delta, -20, 20);
+    // Playtest fix (2026-11-03): an encounter may carry talk_mercy, the mercy each effect earns, so two or three talks
+    // fill the meter. When the talk opens the spare gate the meter reads full, so SPARE never waits on an empty looking bar.
+    var _boost = pp_talk_boost(_battle, _record.effect);
+    if (!is_undefined(_boost)) _delta = _boost;
     _battle.talk_mercy = clamp(_before + _delta, 0, 100);
+    if (!is_undefined(_boost) && is_struct(_battle.enemy) && variable_struct_exists(_battle.enemy, "trust_to_spare")
+        && _battle.trust >= _battle.enemy.trust_to_spare) {
+        _battle.talk_mercy = 100;
+    }
     _battle.talk_effect = _record.effect;
     _battle.talk_mood = _record.mood;
     _battle.talk_delta = _battle.talk_mercy - _before;
+    _battle.mercy_popup = _battle.talk_delta;
+    _battle.mercy_popup_steps = (_battle.talk_delta > 0) ? 80 : 0;
     return _battle.talk_delta;
+}
+
+/// The mercy this effect earns on this encounter, or undefined when the encounter has no talk_mercy table.
+function pp_talk_boost(_battle, _effect) {
+    if (!is_struct(_battle) || !is_struct(_battle.encounter)) return undefined;
+    if (!variable_struct_exists(_battle.encounter, "talk_mercy") || !is_struct(_battle.encounter.talk_mercy)) return undefined;
+    var _table = _battle.encounter.talk_mercy;
+    var _key = string(_effect);
+    if (!variable_struct_exists(_table, _key)) return undefined;
+    return _table[$ _key];
 }
 
 /// Card THREE-BATTLES (2026-11-01): the stated spare condition, as the line under the TALK box. Data only: the enemy row's
@@ -602,9 +622,19 @@ function pp_talk_step(_battle) {
     }
 
     var _dir = pp_menu_axis("up", "down");
+    if (_dir == 0) _dir = pp_menu_axis("left", "right");
     if (_dir != 0) {
         _battle.talk_cursor = ((_battle.talk_cursor + _dir) mod _count + _count) mod _count;
         pp_audio_play("menu_move");
+    }
+    // X backs out of the options to the command menu: the TALK press is taken back whole (turn and trust).
+    if (pp_pressed("cancel")) {
+        _battle.talk_stage = "";
+        _battle.talk_options = [];
+        _battle.trust = max(0, _battle.trust - _battle.encounter.trust_per_talk);
+        _battle.turn = max(0, _battle.turn - 1);
+        pp_audio_play("menu_cancel");
+        return;
     }
     if (!pp_pressed("confirm")) return;
 

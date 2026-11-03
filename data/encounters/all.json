@@ -148,7 +148,8 @@
       "win_dialogue_kill": "quay_percy_win_kill",
       "win_dialogue_spare": "quay_percy_win_spare",
       "lose_dialogue": "battle_lose",
-      "trust_per_talk": 1,
+      "trust_per_talk": 2,
+      "talk_mercy": { "soften": 50, "nudge": 35, "setback": 20, "none": 35 },
       "flags_on_kill": [
         "percy_killed",
         "demo_complete"
@@ -173,7 +174,8 @@
       "win_dialogue_kill": "quay_morgan_win_kill",
       "win_dialogue_spare": "quay_morgan_win_spare",
       "lose_dialogue": "battle_lose",
-      "trust_per_talk": 1,
+      "trust_per_talk": 2,
+      "talk_mercy": { "soften": 50, "nudge": 35, "setback": 20, "none": 35 },
       "flags_on_kill": [
         "morgan_killed",
         "morgan_resolved"

@@ -70,6 +70,9 @@
 #macro PP_DISSOLVE_STEPS 78
 #macro PP_DISSOLVE_BLOCK 4
 
+// FINAL-SCOPE 2026-11-03: how long a member's POWER animation plays inside the message phase.
+#macro PP_POWER_FX_STEPS 54
+
 // Fight bar (spec 07 T7): power 100 at the bullseye, 0 at the ends, 60 steps end to end.
 #macro PP_FIGHT_SWEEP_STEPS 60
 #macro PP_FIGHT_DAMAGE_MIN 2

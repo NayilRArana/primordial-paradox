@@ -70,6 +70,19 @@ function pp_command_move(_battle, _dir) {
     return _battle.cursor;
 }
 
+/// LEFT and RIGHT: cross to the other column of the same row (the menu is two columns wide). A row with no partner
+/// keeps the cursor where it is.
+function pp_command_move_h(_battle, _dir) {
+    var _n = array_length(pp_command_table());
+    var _to = _battle.cursor + ((_battle.cursor mod 2 == 0) ? 1 : -1);
+    if (_to >= 0 && _to < _n) {
+        _battle.cursor = _to;
+        _battle.cursor_note = "";
+        pp_audio_play("menu_move");
+    }
+    return _battle.cursor;
+}
+
 /// The entry under the cursor.
 function pp_command_current(_battle) {
     var _t = pp_command_table();

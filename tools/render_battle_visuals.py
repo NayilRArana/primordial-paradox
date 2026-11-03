@@ -153,7 +153,7 @@ class Renderer:
         self.window(p["x"], p["y"], p["w"], p["h"])
         self.centre(c["name"], p["x"] + p["w"] * 4, p["name_y"])
         frac = c["hp"] / float(max(1, c["hp_max"]))
-        self.text("HP", p["label_x"], p["hp_y"])
+        self.text("HP %d/%d" % (c["hp"], c["hp_max"]), p["label_x"], p["hp_y"])
         self.bar(p["bar_x"], p["hp_y"] + 1, p["bar_w"], p["bar_h"], frac, "hp" if frac > 0.3 else "low",
                  "hp_hi" if frac > 0.3 else "low_hi")
         self.text("MERCY", p["label_x"], p["mercy_y"])
@@ -169,6 +169,14 @@ class Renderer:
             self.im.paste(f0, (px, q["party_y"]), f0)
             self.centre(label, px + q["name_dx"], q["name_y"])
         self.swatch("grey", q["rule_x"], q["party_y"] + 1, 1, 30)
+        if c.get("turn") is not None:
+            ax = q["party_x"] + c["turn"] * q["party_step"] + 12
+            for r in range(6):
+                self.swatch("gold", ax - (11 - r * 2) // 2, q["party_y"] - 14 + r, 11 - r * 2, 1)
+            label = self.party()[c["turn"]][1] + "'S TURN"
+            tiles = max(3, min(32, len(label) + 2))
+            self.window((256 - tiles * 8) // 2, 8, tiles, 3)
+            self.text(label, (256 - tiles * 8) // 2 + 8, 12)
         if c.get("strike"):
             name, fr = c["strike"]
             sw = load("game", "sprites_src", "weapons", name + ".png")
@@ -254,6 +262,8 @@ def main():
     r.compose(pq).save(os.path.join(OUT, "percy_quay.png"))
     mq = dict(cases[0], out="morgan_name", name="CAPTAIN MORGAN")
     r.compose(mq).save(os.path.join(OUT, "morgan_name.png"))
+    for n in (0, 1, 2):
+        r.compose(dict(mq, out="turn_%d" % n, turn=n, hp=17, mercy=70)).save(os.path.join(OUT, "turn_%d.png" % n))
     for who, wname, idx in (("zander", "spr_pp_master_bolt", 0), ("konrad", "spr_pp_adamantine_scythe", 1),
                             ("hadrian", "spr_pp_bident", 2)):
         s = dict(mq, out="strike_" + who, strike=(wname, 2), striker=idx, attack_frame=3, frame=2,

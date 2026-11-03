@@ -321,6 +321,7 @@ function pp_title_step(_params) {
     if (_s.phase == "menu") {
         var _count = array_length(_s.data.menu);
         var _dir = pp_menu_axis("up", "down");
+        if (_dir == 0) _dir = pp_menu_axis("left", "right");
         if (_dir != 0 && _count > 0) {
             _s.menu_index = (_s.menu_index + _dir + _count) mod _count;
             pp_audio_play("menu_move");

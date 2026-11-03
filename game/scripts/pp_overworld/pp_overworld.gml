@@ -769,22 +769,15 @@ function pp_overworld_step(_world) {
     }
     _world.scene = undefined;
 
-    // A dialogue opened by a `say` trigger owns the screen, but a held direction LEAVES it (card t_7baa8fb4): the step
-    // closes the box and then falls through to the walk, so the press that leaves the box is the press that moves him
-    // and plays its footstep. Before this the branch returned unconditionally, so a box left open on the field ate
-    // every direction press: no walk, no footstep, and the recording stalled on the field.
-    // A page that offers a choice keeps the d-pad, because up and down are that page's cursor (D2.4), so the gate's
-    // three replies can never be closed out from under the player halfway through a pick.
+    // A dialogue opened by a `say` trigger or an actor owns the screen until its last page is confirmed (FLOW 2026-11-03,
+    // author playtest): a held direction no longer leaves the box, so nobody walks off mid line. Only confirm advances
+    // it, the box closes after the last page, and then the walk is the player's again.
     if (!pp_dialogue_closed(_world.dialogue)) {
-        if ((pp_walk_x() != 0 || pp_walk_y() != 0) && !pp_dialogue_on_choice_page(_world.dialogue)) {
-            pp_dialogue_leave(_world.dialogue);
-        } else {
-            if (pp_pressed("confirm")) pp_dialogue_advance(_world.dialogue);
-            pp_dialogue_step(_world.dialogue);
-            if (pp_dialogue_closed(_world.dialogue)) _world.dialogue = undefined;
-            pp_overworld_clock_step(_world);
-            return;
-        }
+        if (pp_pressed("confirm")) pp_dialogue_advance(_world.dialogue);
+        pp_dialogue_step(_world.dialogue);
+        if (pp_dialogue_closed(_world.dialogue)) _world.dialogue = undefined;
+        pp_overworld_clock_step(_world);
+        return;
     }
     _world.dialogue = undefined;
 
@@ -969,6 +962,13 @@ function pp_overworld_draw(_world) {
 
     // The hurricane over everything in the world and under the dialogue box (quay only, pp_storm.gml).
     pp_storm_draw(_world);
+
+    // Card FLOW: the box a scene's `say` command opens lives on the runner, and nothing drew it before the quay.
+    if (pp_scene_running(_world.scene) && variable_struct_exists(_world.scene, "dialogue")
+        && !is_undefined(_world.scene.dialogue) && !pp_dialogue_closed(_world.scene.dialogue)) {
+        pp_dialogue_draw(_world.scene.dialogue);
+        draw_set_halign(fa_left);
+    }
 
     if (!pp_dialogue_closed(_world.dialogue)) {
         pp_dialogue_draw(_world.dialogue);

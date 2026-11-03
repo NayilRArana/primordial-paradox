@@ -416,16 +416,16 @@
       "suffix": "_big"
     },
     "plate": {
-      "x": 128,
-      "y": 8,
+      "x": 8,
+      "y": 52,
       "w": 15,
       "h": 4,
-      "name_y": 12,
-      "hp_y": 21,
-      "mercy_y": 29,
-      "label_x": 136,
-      "bar_x": 184,
-      "bar_w": 56,
+      "name_y": 56,
+      "hp_y": 65,
+      "mercy_y": 73,
+      "label_x": 16,
+      "bar_x": 80,
+      "bar_w": 40,
       "bar_h": 6
     },
     "panel": {

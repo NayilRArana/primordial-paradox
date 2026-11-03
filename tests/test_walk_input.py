@@ -72,42 +72,13 @@ def dialogue_branch(step):
 # 1. The GML: the leave is read before the box is stepped, and the branch only returns on the else side.
 
 
-def test_a_held_direction_is_read_in_the_dialogue_branch_before_the_box_is_stepped():
-    step = function_body(read(OVERWORLD_GML), "pp_overworld_step")
-    branch = dialogue_branch(step)
-    assert "pp_walk_x()" in branch and "pp_walk_y()" in branch, (
-        "the dialogue branch reads no direction, so a box still eats every walk press: %s" % branch)
-    assert "pp_dialogue_leave(_world.dialogue)" in branch, (
-        "the dialogue branch never calls pp_dialogue_leave, so the box cannot be left: %s" % branch)
-    leave = branch.index("pp_dialogue_leave(")
-    assert leave < branch.index("pp_dialogue_step("), (
-        "the box is stepped before the leave is read, so the press that leaves it is spent on the box")
+# RETIRED by FLOW 2026-11-03: test_a_held_direction_is_read_in_the_dialogue_branch_before_the_box_is_stepped pinned that a held direction leaves a say box. The author's playtest ruled the opposite; see the lock tests below.
 
 
-def test_a_box_that_offers_a_choice_keeps_the_d_pad():
-    step = function_body(read(OVERWORLD_GML), "pp_overworld_step")
-    branch = dialogue_branch(step)
-    assert "!pp_dialogue_on_choice_page(" in branch, (
-        "the leave is not gated on the choice page, so a Down meant for the choice cursor would close the box: %s"
-        % branch)
-    gated = branch.index("!pp_dialogue_on_choice_page(")
-    assert gated < branch.index("pp_dialogue_leave("), (
-        "the choice page is asked after the leave, which is too late")
+# RETIRED by FLOW 2026-11-03: test_a_box_that_offers_a_choice_keeps_the_d_pad pinned that a held direction leaves a say box. The author's playtest ruled the opposite; see the lock tests below.
 
 
-def test_leaving_the_walks_box_falls_through_to_the_walk_instead_of_returning():
-    step = function_body(read(OVERWORLD_GML), "pp_overworld_step")
-    branch = dialogue_branch(step)
-    # The branch has exactly one `return`, and it sits on the else side: the leave side falls through to the
-    # battle request and then to pp_world_free_step, which is what plays the footstep.
-    assert branch.count("return;") == 1, "the dialogue branch returns on both sides, so leaving it cannot walk"
-    return_at = branch.index("return;")
-    leave_at = branch.index("pp_dialogue_leave(")
-    else_at = branch.index("} else {")
-    assert leave_at < else_at < return_at, (
-        "the only return in the branch is not on the else (box-stepped) side, so a leaving step still returns")
-    assert step.index(branch) < step.index("pp_world_free_step(_world)"), (
-        "the walk runs before the dialogue branch, so the press that left the box would be spent for nothing")
+# RETIRED by FLOW 2026-11-03: test_leaving_the_walks_box_falls_through_to_the_walk_instead_of_returning pinned that a held direction leaves a say box. The author's playtest ruled the opposite; see the lock tests below.
 
 
 def test_leaving_applies_the_entrys_sets_before_it_closes():
@@ -156,3 +127,41 @@ def test_the_choice_page_keeps_its_cursor_for_every_direction():
 def test_no_direction_leaves_the_box_and_a_closed_box_is_left_alone():
     assert leaves_box(0, 0, False, False) is False
     assert leaves_box(1, 0, False, True) is False
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# FLOW 2026-11-03: a say box locks walking until the last page is confirmed.
+
+
+def test_a_movement_key_while_a_say_box_is_open_changes_neither_position_nor_box():
+    step = function_body(read(OVERWORLD_GML), "pp_overworld_step")
+    branch = dialogue_branch(step)
+    assert "pp_dialogue_leave" not in branch, "a held direction can still close the box"
+    assert "pp_walk_x" not in branch and "pp_walk_y" not in branch, "the box reads the walk keys"
+    assert branch.count("return;") == 1 and branch.index("pp_dialogue_advance(") < branch.index("return;")
+    # the branch returns before anything that moves the hero or fires a trigger
+    assert step.index(branch) < step.index("pp_world_free_step(_world)")
+    assert step.index(branch) < step.index("pp_overworld_fire(")
+    # the box only ends through its own closed flag after a confirm advance
+    assert 'pp_pressed("confirm")) pp_dialogue_advance(_world.dialogue)' in branch
+    assert "_world.dialogue = undefined" in branch and branch.index("pp_dialogue_closed(") < branch.index("_world.dialogue = undefined")
+
+
+def test_the_pages_advance_only_on_confirm_and_close_after_the_last():
+    body = function_body(read(DIALOGUE_GML), "pp_dialogue_advance")
+    assert "closed = true" in body or "pp_dialogue_close" in body, body
+    # nothing but advance and leave closes a box, and leave has no caller on the field any more
+    callers = [n for n in ("pp_overworld", "pp_scene", "pp_app") if "pp_dialogue_leave(" in read(
+        os.path.join(ROOT, "game", "scripts", n, n + ".gml"))]
+    assert callers == [], callers
+
+
+def test_a_scene_say_box_never_reaches_the_walk():
+    scene = read(os.path.join(ROOT, "game", "scripts", "pp_scene", "pp_scene.gml"))
+    state = scene[scene.index('        case "dialogue":'):]
+    state = state[:state.index('        case "move":')]
+    assert "pp_walk_x" not in state and "pp_dialogue_leave" not in state
+    assert 'pp_pressed("confirm")' in state and "pp_scene_advance(_sc, _world)" in state
+    step = function_body(read(OVERWORLD_GML), "pp_overworld_step")
+    scene_branch = step[step.index("if (pp_scene_running(_world.scene))"):]
+    assert scene_branch.index("return;") < scene_branch.index("pp_world_free_step") if "pp_world_free_step" in scene_branch else True

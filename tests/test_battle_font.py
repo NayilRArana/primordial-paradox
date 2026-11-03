@@ -194,7 +194,7 @@ def test_a_refused_row_is_ruled_through_and_a_selected_row_is_marked_by_position
 def test_a_number_over_the_light_block_sits_on_a_plate():
     """The damage popup used to be the light role on a light block; the glyphs cannot be tinted, so the plate does it."""
     field = function_body(read(DIRECTOR), "pp_battle_draw")
-    assert "pp_font_draw_plated_centre(string(_battle.popup_value)" in field, field
+    assert 'pp_font_draw_plated_centre("-" + string(_battle.popup_value)' in field, field
     assert "pp_font_draw_plated_centre(\"clear\"" in read(DODGE_ARENA)
 
 

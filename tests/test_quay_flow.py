@@ -290,3 +290,57 @@ def test_the_state_is_derived_from_the_saved_flags():
     assert 'string(_id) + "_killed"' in overworld and 'string(_id) + "_spared"' in overworld
     save = _text("game", "scripts", "pp_save", "pp_save.gml")
     assert "pp_save_flag_allowed" in save and "global.pp_data.flags.flags" in save
+
+
+# ------------------------------------------------------------------------------------------------ 5. every text box id loads
+
+
+def _battle_reader(row):
+    """The battle's pp_battle_dialogue: lines when the row has them, otherwise its pages flattened in order."""
+    if "lines" in row:
+        return list(row["lines"])
+    out = [line for page in row.get("pages", []) for line in page["lines"]]
+    return out or None
+
+
+def _scene_reader(row):
+    """pp_dialogue_open: a row is exactly one of lines or pages, and every page carries rows to draw."""
+    if "lines" in row:
+        return [row["lines"]]
+    return [page["lines"] for page in row["pages"]]
+
+
+def test_every_dialogue_id_encounters_scenes_and_actors_name_loads_through_both_readers():
+    ids = set()
+    for enc in ENCOUNTERS.values():
+        for key in ("intro_dialogue", "win_dialogue_kill", "win_dialogue_spare", "lose_dialogue"):
+            if enc.get(key):
+                ids.add(enc[key])
+        if enc.get("talk", {}).get("options_dialogue"):
+            ids.add(enc["talk"]["options_dialogue"])
+    for scene in SCENES.values():
+        ids |= {c["id"] for c in scene["commands"] if c["cmd"] == "say"}
+    for m in MAPS.values():
+        ids |= {a["dialogue"] for a in m.get("actors", [])}
+        ids |= {t["id"] for t in m["triggers"] if t["kind"] == "say"}
+    assert ids
+    for dialogue_id in sorted(ids):
+        assert dialogue_id in DIALOGUE, dialogue_id
+        assert _battle_reader(DIALOGUE[dialogue_id]), dialogue_id
+        assert _scene_reader(DIALOGUE[dialogue_id]), dialogue_id
+
+
+def test_the_gml_readers_accept_pages_and_the_overworld_draws_a_scene_box():
+    director = _text("game", "scripts", "pp_battle_director", "pp_battle_director.gml")
+    body = director[director.index("function pp_battle_dialogue(_id)"):]
+    body = body[:body.index("function pp_battle_dialogue_lines")]
+    assert 'variable_struct_exists(_d, "lines")' in body and 'variable_struct_exists(_d, "pages")' in body
+    overworld = _text("game", "scripts", "pp_overworld", "pp_overworld.gml")
+    draw = overworld[overworld.index("function pp_overworld_draw(_world)"):]
+    assert "pp_dialogue_draw(_world.scene.dialogue)" in draw[:draw.index("function ", 10)]
+
+
+def test_the_encounter_scenes_wait_a_beat_before_the_fight_so_the_box_is_closed():
+    for scene_id in ("quay_morgan_encounter", "quay_percy_encounter"):
+        cmds = [c["cmd"] for c in SCENES[scene_id]["commands"]]
+        assert cmds.index("battle") > cmds.index("say") and cmds[cmds.index("battle") - 1] == "wait"

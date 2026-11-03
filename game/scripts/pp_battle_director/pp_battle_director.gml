@@ -85,6 +85,14 @@ function pp_battle_new(_encounter, _enemy, _party, _ledger) {
         // fight_count how many FIGHTs have resolved, so the first FIGHT is the first member's weapon, the next the second's.
         striker: -1,
         fight_count: 0,
+        // FINAL-SCOPE 2026-11-03 (playtest): the party acts in order. active is the slot whose command is being
+        // chosen; it passes through every slot each round, and the enemy answers after the last one.
+        active: 0,
+        sub_stage: "",
+        power_anim: "",
+        mercy_popup: 0,
+        popup_enemy: false,
+        mercy_popup_steps: 0,
         dissolve_active: false,
         dissolve_steps: 0,
         dissolve_lines: [],
@@ -248,7 +256,29 @@ function pp_battle_member_weapon(_member) {
 function pp_battle_next_striker(_battle) {
     var _n = array_length(pp_battle_party_slots());
     if (_n <= 0) return -1;
-    return _battle.fight_count mod _n;
+    return clamp(_battle.active, 0, _n - 1);
+}
+
+/// The member whose command is being chosen, as the layout's slot (id, name, ...), or undefined.
+function pp_battle_active_slot(_battle) {
+    var _i = pp_battle_next_striker(_battle);
+    if (_i < 0) return undefined;
+    return pp_battle_party_slots()[_i];
+}
+
+/// Pass the turn to the next member. Returns true while another member still has to choose this round; at the end of
+/// the round the order starts over at the first member and the enemy answers.
+function pp_battle_member_advance(_battle) {
+    var _n = array_length(pp_battle_party_slots());
+    if (_n <= 1) return false;
+    if (_battle.active < _n - 1) {
+        _battle.active += 1;
+        pp_battle_strike_ready(_battle);
+        return true;
+    }
+    _battle.active = 0;
+    pp_battle_strike_ready(_battle);
+    return false;
 }
 
 /// Put the next striker's weapon in the actor's hand, so the menu's HELD line and the FIGHT lines read it. A member with
@@ -269,10 +299,10 @@ function pp_battle_strike_begin(_battle) {
 
 /// The swing is over (the FIGHT board has closed): the weapon of the member after this one is the held one.
 function pp_battle_strike_end(_battle) {
+    _battle.power_anim = "";
     if (_battle.striker < 0) return;
     _battle.striker = -1;
     _battle.fight_count += 1;
-    pp_battle_strike_ready(_battle);
 }
 
 /// The held weapon row of a fight, or undefined.
@@ -372,6 +402,7 @@ function pp_battle_phase_set(_battle, _phase) {
 function pp_battle_step(_battle) {
     _battle.phase_steps += 1;
     if (_battle.popup_steps > 0) _battle.popup_steps -= 1;
+    if (_battle.mercy_popup_steps > 0) _battle.mercy_popup_steps -= 1;
     if (_battle.cursor_note_steps > 0) _battle.cursor_note_steps -= 1;
     if (_battle.hurt_flash > 0) _battle.hurt_flash -= 1;
     if (_battle.shake > 0) _battle.shake -= 1;
@@ -436,9 +467,17 @@ function pp_battle_step_menu(_battle) {
         pp_talk_step(_battle);
         return;
     }
+    // POWER and ITEM open a one row list first; X backs out of it to the command menu (nothing is spent).
+    if (_battle.sub_stage != "") {
+        pp_battle_sub_step(_battle);
+        return;
+    }
 
     var _dir = pp_menu_axis("up", "down");
     if (_dir != 0) pp_command_move(_battle, _dir);
+    // Playtest fix: LEFT and RIGHT cross between the two columns of the menu.
+    var _dir_h = pp_menu_axis("left", "right");
+    if (_dir_h != 0) pp_command_move_h(_battle, _dir_h);
 
     if (pp_pressed("confirm")) {
         var _entry = pp_command_current(_battle);
@@ -449,10 +488,61 @@ function pp_battle_step_menu(_battle) {
             _battle.cursor_note_steps = 30;
             return;
         }
+        if (_entry.id == PPCommand.power || _entry.id == PPCommand.item) {
+            _battle.sub_stage = (_entry.id == PPCommand.power) ? "power" : "item";
+            pp_audio_play("menu_select");
+            return;
+        }
         _battle.action = _entry.id;
         _battle.turn += 1;
         pp_battle_begin_action(_battle);
     }
+    // X in the command menu: a member who already acted cannot be taken back (their turn has been played), so it only
+    // says so; for the first member there is nothing to go back to.
+    if (pp_pressed("cancel")) {
+        pp_audio_play("menu_cancel");
+        if (_battle.active > 0) {
+            _battle.cursor_note = "that turn is played";
+            _battle.cursor_note_steps = 30;
+        }
+    }
+}
+
+/// One step of the POWER or ITEM row. Z uses it (the turn is spent here, exactly as the old direct press did), X goes back.
+function pp_battle_sub_step(_battle) {
+    if (pp_pressed("cancel")) {
+        _battle.sub_stage = "";
+        pp_audio_play("menu_cancel");
+        return;
+    }
+    if (!pp_pressed("confirm")) return;
+    var _which = _battle.sub_stage;
+    _battle.sub_stage = "";
+    _battle.action = (_which == "power") ? PPCommand.power : PPCommand.item;
+    _battle.turn += 1;
+    pp_battle_begin_action(_battle);
+}
+
+/// The power this member uses: the power row whose wielder is the active member, else the actor's first power.
+function pp_battle_member_power(_battle) {
+    var _slot = pp_battle_active_slot(_battle);
+    if (is_struct(_slot) && variable_global_exists("pp_data") && is_struct(global.pp_data)
+        && variable_struct_exists(global.pp_data, "power_by_id") && is_struct(global.pp_data.power_by_id)) {
+        var _by = global.pp_data.power_by_id;
+        var _names = variable_struct_get_names(_by);
+        for (var i = 0; i < array_length(_names); i++) {
+            var _row = _by[$ _names[i]];
+            if (is_struct(_row) && variable_struct_exists(_row, "wielder") && string(_row.wielder) == string(_slot.id)) return _row;
+        }
+    }
+    if (array_length(_battle.actor.powers) > 0) return _battle.actor.powers[0];
+    return undefined;
+}
+
+/// True while a POWER animation is still playing in the message phase (the board waits for it).
+function pp_battle_fx_running(_battle) {
+    return (_battle.power_anim != "" && _battle.action == PPCommand.power && _battle.phase == PPBattlePhase.message
+            && _battle.phase_steps < PP_POWER_FX_STEPS);
 }
 
 /// Start the chosen command. FIGHT opens the timing bar, the rest resolve at once.
@@ -485,13 +575,19 @@ function pp_battle_begin_action(_battle) {
             break;
 
         case PPCommand.power:
-            var _power = _battle.actor.powers[0];
+            var _power = pp_battle_member_power(_battle);
             if (is_undefined(_power)) break;
             _battle.actor.will = max(0, _battle.actor.will - _power.cost);
             // Card t_8dcd842f: the resource meter this hud shows moved, so the log says so before the hit lands.
             pp_battle_hud_refresh(_battle, "will spent");
+            // FINAL-SCOPE 2026-11-03: each member's own POWER, named in the message line and played as its own animation.
+            pp_battle_strike_begin(_battle);
+            _battle.power_anim = variable_struct_exists(_power, "anim") ? string(_power.anim) : "";
+            if (_battle.power_anim == "quake") _battle.shake = 36;
             pp_battle_hurt_enemy(_battle, _power.power);
-            pp_battle_say(_battle, ["* " + _power.name + " lands for " + string(_power.power) + "."], "enemy_turn");
+            var _who = pp_battle_active_slot(_battle);
+            var _label = is_struct(_who) ? string(_who.name) : "";
+            pp_battle_say(_battle, ["* " + _label + " uses " + _power.name + ".", "* It lands for " + string(_power.power) + "."], "enemy_turn");
             break;
 
         case PPCommand.talk:
@@ -567,7 +663,8 @@ function pp_battle_hurt_enemy(_battle, _damage) {
     // Card t_8dcd842f: the hook, called by the damage path itself.
     pp_battle_hud_refresh(_battle, "enemy damage");
     _battle.popup_value = _damage;
-    _battle.popup_steps = PP_DAMAGE_POPUP_STEPS;
+    _battle.popup_steps = PP_DAMAGE_POPUP_STEPS + 20;
+    _battle.popup_enemy = true;
     if (_battle.enemy_hp <= 0 && _battle.result == PPResult.none) _battle.result = PPResult.kill;
     // Spec 18 section 1: rule 3 (the kill) beats rule 5 (a crossing), so a blow that ends the fight crosses nothing.
     if (_battle.enemy_hp > 0) pp_battle_enemy_phase_sync(_battle);
@@ -593,7 +690,7 @@ function pp_battle_step_message(_battle) {
 
     if (pp_pressed("confirm") && !pp_text_board_done(_battle.messages)) {
         pp_text_board_skip_line(_battle.messages);
-    } else if (pp_text_board_done(_battle.messages)) {
+    } else if (pp_text_board_done(_battle.messages) && !pp_battle_fx_running(_battle)) {
         pp_battle_after_message(_battle);
     }
 }
@@ -624,6 +721,12 @@ function pp_battle_after_message(_battle) {
             var _line_id = _battle.phase_line;
             _battle.phase_line = "";
             pp_battle_say(_battle, pp_battle_dialogue_lines(_line_id), "enemy_turn");
+            return;
+        }
+        // The party acts in order: the next member chooses before the enemy answers (message to menu is a transition
+        // the phase machine already has, so the model needs no new state).
+        if (pp_battle_member_advance(_battle)) {
+            pp_battle_phase_set(_battle, PPBattlePhase.menu);
             return;
         }
         // An ACT that made the enemy lose its turn (enemy row act_responses, skip_turn) spends it here, once.
@@ -705,6 +808,7 @@ function pp_battle_step_dodge(_battle) {
         pp_battle_hud_refresh(_battle, "party hit");
         _battle.popup_value = _battle.arena.attack;
         _battle.popup_steps = PP_DAMAGE_POPUP_STEPS;
+        _battle.popup_enemy = false;
         // Hit feedback: a screen flash, a shake of the party row and the existing hit cue.
         _battle.hurt_flash = 6;
         _battle.shake = 12;
@@ -918,6 +1022,7 @@ function pp_battle_step_gameover(_battle) {
 
     var _rows = pp_battle_gameover_rows();
     var _dir = pp_menu_axis("up", "down");
+    if (_dir == 0) _dir = pp_menu_axis("left", "right");
     if (_dir != 0) {
         _battle.gameover_cursor = (_battle.gameover_cursor + _dir + array_length(_rows)) mod array_length(_rows);
         pp_audio_play("menu_move");
@@ -1131,7 +1236,17 @@ function pp_battle_enter_interrupt(_battle) {
 function pp_battle_dialogue(_id) {
     var _d = pp_data_find(global.pp_data.dialogue.dialogue, _id);
     if (is_undefined(_d)) return undefined;
-    return _d.lines;
+    if (variable_struct_exists(_d, "lines")) return _d.lines;
+    // FLOW 2026-11-03: a row written as pages is read as its lines in order, so the battle prints it the same way.
+    var _out = [];
+    if (variable_struct_exists(_d, "pages") && is_array(_d.pages)) {
+        for (var _p = 0; _p < array_length(_d.pages); _p += 1) {
+            var _page_lines = _d.pages[_p].lines;
+            for (var _l = 0; _l < array_length(_page_lines); _l += 1) array_push(_out, _page_lines[_l]);
+        }
+    }
+    if (array_length(_out) == 0) return undefined;
+    return _out;
 }
 
 function pp_battle_dialogue_lines(_id) {
@@ -1585,11 +1700,12 @@ function pp_battle_draw(_battle) {
     // drawn after the party so the arc crosses in front of the actors, and before the HUD so the enemy's name and
     // bars stay readable over it.
     pp_battle_draw_slash(_battle, _enemy_slot);
+    pp_battle_draw_power_fx(_battle, _enemy_slot);
 
     if (!is_undefined(_layout_b)) {
         // 2026-11-01 battle screen B: the enemy's plate (name, HP, MERCY) is one window. It steps aside while the
         // timing bar, the telegraph line and the arena own the top of the field.
-        if (_battle.phase != PPBattlePhase.resolve && _battle.phase != PPBattlePhase.telegraph && _battle.phase != PPBattlePhase.dodge) {
+        if (_battle.phase != PPBattlePhase.dodge) {
             pp_battle_draw_plate_b(_battle, _layout_b);
         }
     }
@@ -1663,6 +1779,13 @@ function pp_battle_draw(_battle) {
         pp_battle_draw_hud_field(_battle);
     }
 
+    // Playtest fix: whose turn it is, named in a window at the top of the field while a command is being chosen.
+    if (!is_undefined(_layout_b) && _battle.phase == PPBattlePhase.menu && is_undefined(_battle.messages)
+        && !pp_talk_live_open_now(_battle)) {
+        var _who = pp_battle_active_slot(_battle);
+        if (!is_undefined(_who)) pp_battle_draw_telegraph_b(string(_who.name) + "'S TURN");
+    }
+
     if (!is_undefined(_layout_b) && _battle.phase != PPBattlePhase.menu && _battle.phase != PPBattlePhase.resolve) {
         pp_battle_draw_band_frame();
     }
@@ -1673,6 +1796,7 @@ function pp_battle_draw(_battle) {
         // panel away from the player mid sentence and no command can be picked underneath a text box.
         if (pp_talk_live_open_now(_battle)) pp_battle_draw_band_empty();
         else if (_battle.talk_stage != "") pp_talk_draw_options(_battle);
+        else if (_battle.sub_stage != "") pp_battle_draw_sub(_battle);
         else pp_battle_draw_menu(_battle);
     }
 
@@ -1698,12 +1822,20 @@ function pp_battle_draw(_battle) {
         }
     }
 
-    if (_battle.popup_steps > 0 && !is_undefined(_enemy_slot)) {
+    // Playtest fix: after a TALK the mercy it earned shows beside the enemy for a second, as "+35 MERCY".
+    if (_battle.mercy_popup_steps > 0 && !is_undefined(_enemy_slot)) {
+        // The font has no plus glyph, so the sign is two bars drawn into the two leading spaces of the line.
+        var _mercy_text = "  " + string(_battle.mercy_popup) + " " + string(pp_talk_live_data().will_label);
+        var _mercy_cx = _enemy_slot.x + _enemy_slot.w * 0.5;
+        pp_font_draw_plated_centre(_mercy_text, _mercy_cx, 62, 1);
+        pp_battle_draw_plus(floor(_mercy_cx - pp_font_width(_mercy_text) * 0.5) + 4, 62 + 4);
+    }
+    if (_battle.popup_steps > 0 && _battle.popup_enemy && !is_undefined(_enemy_slot)) {
         // Card BATTLE-FONT-WIRE: the number is the sheet's glyphs on a plate of the room's ink, because it rises over
         // the enemy's sheet, and white on a light body is not a number a player can read. Card t_4275136f moves it
         // from x 200 to the enemy's own slot centre with the enemy it belongs to.
-        pp_font_draw_plated_centre(string(_battle.popup_value), _enemy_slot.x + _enemy_slot.w * 0.5,
-                                   (is_undefined(_layout_b) ? 120 : 84) - (PP_DAMAGE_POPUP_STEPS - _battle.popup_steps), 1);
+        pp_font_draw_plated_centre("-" + string(_battle.popup_value), _enemy_slot.x + _enemy_slot.w * 0.5,
+                                   (is_undefined(_layout_b) ? 120 : 84) - clamp(PP_DAMAGE_POPUP_STEPS + 20 - _battle.popup_steps, 0, PP_DAMAGE_POPUP_STEPS), 1);
     }
 
     if (_battle.phase == PPBattlePhase.telegraph) {
@@ -1999,7 +2131,11 @@ function pp_battle_draw_enemy_big(_battle) {
     var _hit = pp_battle_enemy_hit_now(_battle);
     var _shake = 0;
     if (_hit) _shake = ((_battle.phase_steps div 2) mod 2 == 0) ? 2 : -2;
+    if (pp_battle_fx_running(_battle) && _battle.power_anim == "quake") _shake = ((_battle.phase_steps div 2) mod 2 == 0) ? 3 : -3;
     var _name = pp_battle_enemy_big_name(_battle);
+    if (_name != "" && pp_battle_fx_running(_battle) && _battle.power_anim == "age") {
+        return pp_battle_draw_aged(_battle, _name, _e.cx - _e.frame_w div 2, _e.feet - _e.frame_h + 1, _e.frame_w, _e.frame_h);
+    }
     if (_name != "" && _battle.dissolve_active) {
         return pp_battle_draw_dissolve(_battle, _name, _e.cx - _e.frame_w div 2, _e.feet - _e.frame_h + 1, _e.frame_w, _e.frame_h);
     }
@@ -2024,23 +2160,164 @@ function pp_battle_draw_enemy_big(_battle) {
     return false;
 }
 
-/// FINAL-SCOPE D2: the last slot wears the helm of invisibility, and now and then its figure flickers through a row
-/// dither (alternate rows on alternate steps), which is how a NES shows a sprite that is not quite there. A row is a
-/// whole 1 pixel part of the sheet, so no colour is blended.
-function pp_battle_flicker_now(_battle, _slot_index) {
-    var _slots = pp_battle_party_slots();
-    if (array_length(_slots) < 3 || _slot_index != array_length(_slots) - 1) return false;
-    return ((_battle.turn * 120 + _battle.phase_steps) mod 180) < 24;
+// ---------------------------------------------------------------------------------------------------------------
+// FINAL-SCOPE 2026-11-03: the three POWER animations. Every mark is a flat rectangle cut from the HUD swatch atlas (or
+// the enemy's own sheet), so no colour outside the strip's art is ever drawn. `phase_steps` of the message that
+// announces the move is the clock, PP_POWER_FX_STEPS long.
+
+/// A hash that is the same on every machine: the animations place their parts with it.
+function pp_battle_fx_hash(_a, _b) {
+    return ((_a * 73 + _b * 151 + _a * _b * 7) mod 97 + 97) mod 97;
 }
 
-function pp_battle_draw_flicker(_name, _frame, _x, _y, _step) {
-    var _info = pp_art_info(_name);
-    if (is_undefined(_info)) return false;
-    var _parity = (_step div 2) mod 2;
-    for (var r = _parity; r < _info.frame_h; r += 2) {
-        draw_sprite_part_ext(_info.sprite, 0, _frame * _info.frame_w, r, _info.frame_w, 1, _x, _y + r, 1, 1, PP_UNTINTED, 1);
+function pp_battle_draw_power_fx(_battle, _slot) {
+    if (is_undefined(_slot) || !pp_battle_fx_running(_battle)) return false;
+    var _s = _battle.phase_steps;
+    var _cx = _slot.x + _slot.w div 2;
+    var _feet = _slot.y + _slot.h;
+    switch (_battle.power_anim) {
+        case "bolt_sky":
+            // A charge flash, then a thick jagged bolt falls from the top of the frame onto the enemy, then a ring.
+            if (_s < 10 && (_s div 2) mod 2 == 0) pp_battle_swatch("white", 0, 48, PP_FRAME_W, 4);
+            if (_s >= 10 && _s < 44) {
+                var _top = 48;
+                var _bottom = _slot.y + _slot.h div 2;
+                var _reach = min(_bottom, _top + (_s - 10) * 14);
+                for (var _by = _top; _by < _reach; _by += 6) {
+                    var _off = ((_by div 6) mod 2 == 0) ? -5 : 5;
+                    pp_battle_swatch("will_hi", _cx + _off - 3, _by, 10, 6);
+                    pp_battle_swatch("white", _cx + _off - 1, _by, 5, 6);
+                }
+                if (_s >= 14 && pp_art_has("spr_pp_master_bolt")) {
+                    var _f = 1 + min(2, (_s - 14) div 8);
+                    var _info = pp_art_info("spr_pp_master_bolt");
+                    draw_sprite_part_ext(_info.sprite, 0, _f * _info.frame_w, 0, _info.frame_w, _info.frame_h,
+                                         _cx - _info.frame_w, _slot.y + _slot.h div 2 - _info.frame_h, 2, 2, PP_UNTINTED, 1);
+                }
+                if (_s >= 16 && (_s div 3) mod 2 == 0) pp_battle_swatch("white", _slot.x - 8, _slot.y + 8, _slot.w + 16, 2);
+            }
+            break;
+        case "age":
+            pp_battle_draw_hourglass(_cx + _slot.w div 2 + 8, _slot.y + 14, _s);
+            break;
+        case "quake":
+            // Gem shards rise out of the ground in a row under the enemy, each a pointed prism.
+            var _keys = ["mercy_hi", "will_hi", "hp_hi", "gold", "mercy", "will_hi", "gold"];
+            for (var i = 0; i < 7; i++) {
+                var _cap = 14 + (pp_battle_fx_hash(i, 5) mod 14);
+                var _h = floor(clamp((_s - i * 3) * 1.4, 0, _cap));
+                if (_h <= 0) continue;
+                var _gx = _cx - 42 + i * 14;
+                for (var r = 0; r < _h; r++) {
+                    var _w = (r < 6) ? 2 + r : 8;
+                    var _yy = _feet + 4 - _h + r;
+                    pp_battle_swatch(_keys[i], _gx - _w div 2, _yy, _w, 1);
+                    pp_battle_swatch("white", _gx - _w div 2 + 1, _yy, 1, 1);
+                }
+            }
+            // The ground splits: dark cracks run out from under the enemy.
+            if (_s > 4) {
+                for (var c = 0; c < 6; c++) {
+                    var _len = min(28, (_s - 4) * 2);
+                    pp_battle_swatch("k", _cx - 44 + c * 16, _feet + 6 + (c mod 2) * 3, _len div 3, 2);
+                }
+            }
+            break;
     }
     return true;
+}
+
+/// A clock motif: an hourglass whose sand runs from the top bulb to the bottom while the enemy ages.
+function pp_battle_draw_hourglass(_x, _y, _s) {
+    var _p = clamp(_s / (PP_POWER_FX_STEPS - 6), 0, 1);
+    for (var r = 0; r < 8; r++) {
+        var _w = 14 - r * 2;
+        pp_battle_swatch("white", _x + (14 - _w) div 2, _y + r, _w, 1);
+        pp_battle_swatch("white", _x + (14 - _w) div 2, _y + 15 - r, _w, 1);
+    }
+    pp_battle_swatch("white", _x - 2, _y - 2, 18, 2);
+    pp_battle_swatch("white", _x - 2, _y + 16, 18, 2);
+    // sand: the top bulb drains, the bottom pile grows, one falling grain between
+    var _top = floor(6 * (1 - _p));
+    for (var s = 0; s < _top; s++) pp_battle_swatch("gold", _x + 3 + s div 2, _y + 1 + (6 - s), 8 - s, 1);
+    var _bot = floor(6 * _p);
+    for (var s = 0; s < _bot; s++) pp_battle_swatch("gold", _x + 3 + s div 2, _y + 14 - s, 8 - s, 1);
+    if (_p < 1) pp_battle_swatch("gold", _x + 6, _y + 7 + (_s mod 4), 2, 2);
+    // clock ticks beside it, one more lit every few steps
+    var _ticks = floor(_s / 5) mod 8;
+    for (var t = 0; t <= _ticks; t++) pp_battle_swatch("grey", _x - 8 + (t mod 2) * 30, _y + t * 3, 2, 2);
+}
+
+/// The enemy growing old: bands of its sheet fade to a scanline dither one after another, black cracks spread over it,
+/// the top of the figure sags, and in the last steps the lowest bands crumble away and fall as grey grit.
+function pp_battle_draw_aged(_battle, _name, _x, _y, _w, _h) {
+    var _info = pp_art_info(_name);
+    if (is_undefined(_info)) return false;
+    var _s = _battle.phase_steps;
+    var _p = clamp(_s / (PP_POWER_FX_STEPS - 8), 0, 1);
+    var _band = 4;
+    var _bands = _h div _band;
+    for (var b = 0; b < _bands; b++) {
+        var _sag = floor(_p * 3 * (1 - b / _bands));
+        var _old = (pp_battle_fx_hash(b, 3) < _p * 97);
+        var _drop = (_s > PP_POWER_FX_STEPS - 22 && b > _bands - 7
+                     && pp_battle_fx_hash(b, 9) < (_s - (PP_POWER_FX_STEPS - 22)) * 5);
+        if (_drop) continue;
+        if (_old) {
+            for (var r = (_s div 2) mod 2; r < _band; r += 2) {
+                draw_sprite_part_ext(_info.sprite, 0, 0, b * _band + r, _w, 1, _x, _y + b * _band + r + _sag, 1, 1, PP_UNTINTED, 1);
+            }
+        } else {
+            draw_sprite_part_ext(_info.sprite, 0, 0, b * _band, _w, _band, _x, _y + b * _band + _sag, 1, 1, PP_UNTINTED, 1);
+        }
+    }
+    if (_s > PP_POWER_FX_STEPS - 22) {
+        for (var c = 0; c < 14; c++) {
+            var _gx = _x + 8 + (pp_battle_fx_hash(c, 2) * (_w - 16)) div 97;
+            var _gy = _y + _h - 14 + (_s - (PP_POWER_FX_STEPS - 22)) * 2 + (c mod 3) * 3;
+            if (_gy < _y + _h + 24) pp_battle_swatch("grey", _gx, _gy, 3, 3);
+        }
+    }
+    var _cracks = floor(_p * 7);
+    for (var k = 0; k < _cracks; k++) {
+        var _kx = _x + 8 + (pp_battle_fx_hash(k, 11) * (_w - 16)) div 97;
+        var _ky = _y + 10 + (pp_battle_fx_hash(k, 17) * (_h - 30)) div 97;
+        for (var j = 0; j < 7; j++) pp_battle_swatch("k", _kx + ((j mod 2) * 2) - j div 2, _ky + j * 2, 2, 2);
+    }
+    return true;
+}
+
+/// The one row POWER or ITEM opens in the command band: what it is, what it does, and the two keys.
+function pp_battle_draw_sub(_battle) {
+    pp_battle_draw_band_frame();
+    var _y = PP_MENU_TOP + 10;
+    if (_battle.sub_stage == "power") {
+        var _power = pp_battle_member_power(_battle);
+        var _who = pp_battle_active_slot(_battle);
+        if (is_undefined(_power)) return false;
+        pp_font_draw(string(is_struct(_who) ? _who.name : "") + ": " + string(_power.name), 24, _y, 1);
+        pp_font_draw("DAMAGE " + string(_power.power) + "  COST " + string(_power.cost), 24, _y + 14, 1);
+    } else {
+        var _item = (array_length(_battle.actor.items) > 0) ? _battle.actor.items[0] : undefined;
+        if (is_undefined(_item)) return false;
+        pp_font_draw(string(_item.name), 24, _y, 1);
+        pp_font_draw("HEAL " + string(_item.heal) + "  LEFT " + string(array_length(_battle.actor.items)), 24, _y + 14, 1);
+    }
+    pp_font_draw("Z USE   X BACK", 24, _y + 34, 1);
+    return true;
+}
+
+/// A plus sign, 7 pixels across, centred on a point: two bars cut from the white swatch.
+function pp_battle_draw_plus(_cx, _cy) {
+    pp_battle_swatch("white", _cx - 3, _cy - 1, 7, 2);
+    pp_battle_swatch("white", _cx - 1, _cy - 3, 2, 7);
+    return true;
+}
+
+/// True while this slot's marker is drawn: its command is being chosen, or its swing is playing.
+function pp_battle_turn_marker_now(_battle, _slot_index) {
+    if (_battle.phase == PPBattlePhase.menu || _battle.phase == PPBattlePhase.resolve) return true;
+    return (_battle.phase == PPBattlePhase.message && _battle.striker == _slot_index);
 }
 
 /// The party panel: the layout's party members as portraits, then one shared HP bar and one shared WILL bar.
@@ -2061,8 +2338,14 @@ function pp_battle_draw_party_b(_battle, _lb) {
             _f = 2 + min(2, _battle.phase_steps div PP_SLASH_FRAME_STEPS);
         }
         var _px = _q.party_x + i * _q.party_step + _shake_x;
-        if (pp_battle_flicker_now(_battle, i) && pp_art_has(_name)) pp_battle_draw_flicker(_name, _f, _px, _q.party_y, _battle.phase_steps);
-        else pp_art_draw(_name, _f, _px, _q.party_y, PP_UNTINTED, 1);
+        pp_art_draw(_name, _f, _px, _q.party_y, PP_UNTINTED, 1);
+        // Playtest fix: the member whose command is being chosen carries a bobbing gold arrow above the portrait.
+        if (i == pp_battle_next_striker(_battle) && pp_battle_turn_marker_now(_battle, i)) {
+            var _bob = (_battle.phase_steps div 10) mod 2;
+            for (var _r = 0; _r < 6; _r++) {
+                pp_battle_swatch("gold", _px + 12 - (11 - _r * 2) div 2, _q.party_y - 14 + _r + _bob, 11 - _r * 2, 1);
+            }
+        }
         // The member's name under the portrait (the layout's own `name`), centred on the 24 px sheet.
         pp_font_draw_centre(_slots[i].name, _px + _q.name_dx, _q.name_y, 1);
         _drawn += 1;
@@ -2087,7 +2370,7 @@ function pp_battle_draw_plate_b(_battle, _lb) {
     // Card t_8dcd842f: the plate's two meters read the same struct as the party's, so the MERCY bar the TALK
     // options move is drawn from the value the fight holds and not from a second clamp at the draw call.
     var _hud = pp_battle_hud_state(_battle);
-    pp_font_draw("HP", _p.label_x, _p.hp_y, 1);
+    pp_font_draw("HP " + string(_hud.enemy_hp) + "/" + string(_hud.enemy_max), _p.label_x, _p.hp_y, 1);
     pp_battle_bar_b(_p.bar_x, _p.hp_y + 1, _p.bar_w, _p.bar_h, _hud.enemy_frac,
                     _hud.enemy_low ? "low" : "hp", _hud.enemy_low ? "low_hi" : "hp_hi");
     pp_font_draw(_hud.mercy_label, _p.label_x, _p.mercy_y, 1);

@@ -9,6 +9,39 @@
       "power": 6,
       "effect": "attack",
       "element": "sea"
+    },
+    {
+      "id": "sky_splitter",
+      "name": "Sky Splitter",
+      "wielder": "zander",
+      "cost": 1,
+      "power": 18,
+      "effect": "attack",
+      "element": "storm",
+      "anim": "bolt_sky",
+      "note": "FINAL-SCOPE 2026-11-03: a heavier Master Bolt strike, a big bolt from above."
+    },
+    {
+      "id": "entropy",
+      "name": "Entropy",
+      "wielder": "konrad",
+      "cost": 1,
+      "power": 15,
+      "effect": "attack",
+      "element": "time",
+      "anim": "age",
+      "note": "FINAL-SCOPE 2026-11-03: time runs fast on the enemy; it ages, cracks and crumbles under an hourglass."
+    },
+    {
+      "id": "gem_quake",
+      "name": "Gem Quake",
+      "wielder": "hadrian",
+      "cost": 1,
+      "power": 14,
+      "effect": "attack",
+      "element": "earth",
+      "anim": "quake",
+      "note": "FINAL-SCOPE 2026-11-03: an earthquake, gemstones rising out of the ground under the enemy."
     }
   ]
 }

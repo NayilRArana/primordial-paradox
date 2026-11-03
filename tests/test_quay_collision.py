@@ -118,13 +118,13 @@ def test_the_storm_blends_nothing_and_asks_only_for_roles_the_quay_declares():
     assert asked and asked <= set(declared), sorted(asked - set(declared))
 
 
-def test_the_dither_mask_is_one_pixel_in_four_and_the_thunder_cue_exists():
-    mask = Image.open(os.path.join(CHARS, "..", "title", "spr_pp_dither25.png")).convert("RGBA")
-    drawn = [(x, y) for y in range(mask.height) for x in range(mask.width) if mask.getpixel((x, y))[3]]
-    assert mask.size == (16, 16) and len(drawn) == 64 and all(x % 2 == 0 and y % 2 == 0 for x, y in drawn)
-    assert "spr_pp_dither25" in read(STORM)
-    audio = json.loads(read(os.path.join(ROOT, "data", "audio.json")))
-    assert any(row.get("id") == "thunder_soft" for row in audio["cues"] if isinstance(row, dict)) or "thunder_soft" in json.dumps(audio)
+def test_the_storm_draws_only_the_lightning_and_the_thunder_cue_exists():
+    storm = code(read(STORM))
+    for gone in ("spr_pp_dither25", "pp_storm_streak", "PP_STORM_DROPS", "pp_storm_gust"):
+        assert gone not in storm, gone   # the author removed the grain: no dither darkening, no rain streaks
+    assert "PP_STORM_FLASH_STEPS" in storm and 'pp_audio_play("thunder_soft")' in storm
+    assert "PP: storm lightning" in storm
+    assert "thunder_soft" in read(os.path.join(ROOT, "data", "audio.json"))
 
 
 def test_the_storm_script_is_registered_and_has_no_long_dash():

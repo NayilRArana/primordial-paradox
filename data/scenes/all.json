@@ -47,6 +47,10 @@
           "id": "quay_morgan_pre"
         },
         {
+          "cmd": "wait",
+          "steps": 20
+        },
+        {
           "cmd": "battle",
           "id": "morgan_gate"
         },
@@ -153,6 +157,10 @@
         {
           "cmd": "say",
           "id": "quay_percy_pre"
+        },
+        {
+          "cmd": "wait",
+          "steps": 20
         },
         {
           "cmd": "battle",
