@@ -173,14 +173,21 @@ def game_pids(image=EXE_NAME):
 class LogTail:
     """New lines of the game log, each stamped with the poll that saw it."""
 
-    def __init__(self, path):
+    def __init__(self, path, from_end=True):
         self.path = path
-        self.offset = 0
         self.rest = b""
+        # A log that exists before the game starts holds the PREVIOUS run: start at its end, never replay it.
+        self.offset = 0
+        if from_end and os.path.isfile(path):
+            self.offset = os.path.getsize(path)
 
     def poll(self):
         out = []
         try:
+            # The game truncates its log at launch: a file shorter than the offset is a new run, read it from 0.
+            if os.path.getsize(self.path) < self.offset:
+                self.offset = 0
+                self.rest = b""
             with open(self.path, "rb") as handle:
                 handle.seek(self.offset)
                 data = handle.read()

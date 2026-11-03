@@ -121,7 +121,8 @@
       "beat": 7,
       "note": "the drive fades in: the verge, the gantry sign, the night layers, PP-02",
       "marker": "PP: music PP-02 requested",
-      "marker_delay_steps": 0
+      "marker_delay_steps": 6,
+      "marker_wait_s": 90
     },
     {
       "id": "r008",
@@ -147,8 +148,9 @@
       "kind": "note",
       "beat": 20,
       "note": "the quay loads at the spawn tile 24,1 and the gate trigger is at 8,10, so the walk is nine tile rows down, five steps back up onto row 9 to pass the gatekeeper, sixteen tiles west along row 9, and eight steps down onto the checkpoint tile",
-      "marker": "PP: music PP-03 requested",
-      "marker_delay_steps": 6
+      "marker": "PP route: step drive handed to step arrival",
+      "marker_delay_steps": 30,
+      "marker_wait_s": 60
     },
     {
       "id": "r011",
@@ -311,8 +313,9 @@
       "kind": "note",
       "beat": 28,
       "note": "the battle frame opens on Morgan at the Town Quay gate. Each talk takes the third option (the captain is coming), which costs Morgan his turn, so a talk is about 520 steps",
-      "marker": "PP: battle start morgan_gate",
-      "marker_delay_steps": 6
+      "marker": "PP: battle menu, turn 0, cursor 0",
+      "marker_delay_steps": 20,
+      "marker_wait_s": 120
     },
     {
       "id": "m02",
@@ -368,7 +371,10 @@
       "kind": "key",
       "beat": 28,
       "note": "Confirm: TALK opens the option panel (talk 2 of 3)",
-      "key": "confirm"
+      "key": "confirm",
+      "marker": "PP: battle menu, turn 1, cursor 2",
+      "marker_delay_steps": 20,
+      "marker_wait_s": 120
     },
     {
       "id": "m09",
@@ -400,7 +406,10 @@
       "kind": "key",
       "beat": 28,
       "note": "Confirm: TALK opens the option panel (talk 3 of 3)",
-      "key": "confirm"
+      "key": "confirm",
+      "marker": "PP: battle menu, turn 2, cursor 2",
+      "marker_delay_steps": 20,
+      "marker_wait_s": 120
     },
     {
       "id": "m13",
@@ -432,7 +441,10 @@
       "kind": "key",
       "beat": 28,
       "note": "Down: the cursor moves from TALK to SPARE",
-      "key": "down"
+      "key": "down",
+      "marker": "PP: battle menu, turn 3, cursor 2",
+      "marker_delay_steps": 20,
+      "marker_wait_s": 120
     },
     {
       "id": "m17",
@@ -449,7 +461,8 @@
       "beat": 28,
       "note": "the result panel names the outcome the game chose",
       "marker": "PP: fight result spare",
-      "marker_delay_steps": 8
+      "marker_delay_steps": 6,
+      "marker_wait_s": 120
     },
     {
       "id": "m19",
@@ -474,7 +487,8 @@
       "beat": 22,
       "note": "the office loads: a counter, a lamp, a ledger, the clerk and the Navy man",
       "marker": "PP route: step gate handed to step office",
-      "marker_delay_steps": 6
+      "marker_delay_steps": 100,
+      "marker_wait_s": 120
     },
     {
       "id": "r028",
@@ -533,6 +547,33 @@
       "key": "confirm"
     },
     {
+      "id": "t2201a",
+      "step": 6335,
+      "kind": "key",
+      "beat": 22,
+      "note": "backspace 1 of 3: clears any stray character the box took before the word (an empty box answers with a low blip)",
+      "key": "backspace",
+      "marker": "PP: talk scene open, npc nye",
+      "marker_delay_steps": 30,
+      "marker_wait_s": 120
+    },
+    {
+      "id": "t2201b",
+      "step": 6345,
+      "kind": "key",
+      "beat": 22,
+      "note": "backspace 2 of 3: clears any stray character the box took before the word (an empty box answers with a low blip)",
+      "key": "backspace"
+    },
+    {
+      "id": "t2201c",
+      "step": 6355,
+      "kind": "key",
+      "beat": 22,
+      "note": "backspace 3 of 3: clears any stray character the box took before the word (an empty box answers with a low blip)",
+      "key": "backspace"
+    },
+    {
       "id": "t2202",
       "step": 6365,
       "kind": "key",
@@ -586,7 +627,10 @@
       "kind": "key",
       "beat": 22,
       "note": "read the answer: confirm closes the reply so the scene walks on to the pass line",
-      "key": "confirm"
+      "key": "confirm",
+      "marker": "PP: talk scene answer, npc nye",
+      "marker_delay_steps": 60,
+      "marker_wait_s": 120
     },
     {
       "id": "t2209",
@@ -594,7 +638,10 @@
       "kind": "key",
       "beat": 22,
       "note": "the pass line, three pages (two presses a page): press 1 of 6",
-      "key": "confirm"
+      "key": "confirm",
+      "marker": "PP scene: quay_dock_office_play talk done with nye",
+      "marker_delay_steps": 40,
+      "marker_wait_s": 60
     },
     {
       "id": "t2210",
@@ -643,7 +690,8 @@
       "beat": 25,
       "note": "the boarding scene: the horn shakes the deck, the camera moves to the door",
       "marker": "PP route: step office handed to step boarding",
-      "marker_delay_steps": 6
+      "marker_delay_steps": 6,
+      "marker_wait_s": 120
     },
     {
       "id": "r041",
@@ -684,7 +732,8 @@
       "beat": 28,
       "note": "the battle frame opens on the Deck Watch",
       "marker": "PP: battle start tutorial_sailors",
-      "marker_delay_steps": 6
+      "marker_delay_steps": 6,
+      "marker_wait_s": 120
     },
     {
       "id": "r046",
@@ -692,7 +741,10 @@
       "kind": "key",
       "beat": 28,
       "note": "Down: the cursor leaves FIGHT",
-      "key": "down"
+      "key": "down",
+      "marker": "PP: battle menu, turn 0, cursor 0",
+      "marker_delay_steps": 20,
+      "marker_wait_s": 120
     },
     {
       "id": "r047",
@@ -724,7 +776,10 @@
       "kind": "key",
       "beat": 28,
       "note": "Confirm: TALK opens the option panel (talk 2 of 3); the command cursor stayed on TALK after turn 1, so there is no Down here",
-      "key": "confirm"
+      "key": "confirm",
+      "marker": "PP: battle menu, turn 1, cursor 2",
+      "marker_delay_steps": 20,
+      "marker_wait_s": 120
     },
     {
       "id": "r050",
@@ -748,7 +803,10 @@
       "kind": "key",
       "beat": 28,
       "note": "Confirm: TALK opens the option panel (talk 3 of 3)",
-      "key": "confirm"
+      "key": "confirm",
+      "marker": "PP: battle menu, turn 2, cursor 2",
+      "marker_delay_steps": 20,
+      "marker_wait_s": 120
     },
     {
       "id": "r052",
@@ -780,7 +838,10 @@
       "kind": "key",
       "beat": 28,
       "note": "Down: the command cursor moves from TALK to SPARE",
-      "key": "down"
+      "key": "down",
+      "marker": "PP: battle menu, turn 3, cursor 2",
+      "marker_delay_steps": 20,
+      "marker_wait_s": 120
     },
     {
       "id": "r055",
@@ -795,7 +856,10 @@
       "step": 9775,
       "kind": "note",
       "beat": 28,
-      "note": "the result panel names the outcome the game chose"
+      "note": "the result panel names the outcome the game chose",
+      "marker": "PP: fight result spare",
+      "marker_delay_steps": 6,
+      "marker_wait_s": 120
     },
     {
       "id": "r057",
@@ -888,7 +952,8 @@
       "beat": 27,
       "note": "the game's own line that the log wrote the save",
       "marker": "PP: ship's log",
-      "marker_delay_steps": 6
+      "marker_delay_steps": 6,
+      "marker_wait_s": 120
     },
     {
       "id": "r077",
@@ -971,8 +1036,9 @@
       "kind": "note",
       "beat": 29,
       "note": "the battle frame opens on Percy in his office. Each talk takes the first option and the dodge is stood through (the seeded stream, 771, survives three turns)",
-      "marker": "PP: battle start percy",
-      "marker_delay_steps": 6
+      "marker": "PP: battle menu, turn 0, cursor 0",
+      "marker_delay_steps": 20,
+      "marker_wait_s": 120
     },
     {
       "id": "p02",
@@ -1012,7 +1078,10 @@
       "kind": "key",
       "beat": 29,
       "note": "Confirm: TALK opens the option panel (talk 2 of 3)",
-      "key": "confirm"
+      "key": "confirm",
+      "marker": "PP: battle menu, turn 1, cursor 2",
+      "marker_delay_steps": 20,
+      "marker_wait_s": 120
     },
     {
       "id": "p07",
@@ -1028,7 +1097,10 @@
       "kind": "key",
       "beat": 29,
       "note": "Confirm: TALK opens the option panel (talk 3 of 3)",
-      "key": "confirm"
+      "key": "confirm",
+      "marker": "PP: battle menu, turn 2, cursor 2",
+      "marker_delay_steps": 20,
+      "marker_wait_s": 120
     },
     {
       "id": "p09",
@@ -1044,7 +1116,10 @@
       "kind": "key",
       "beat": 29,
       "note": "Down: the cursor moves from TALK to SPARE",
-      "key": "down"
+      "key": "down",
+      "marker": "PP: battle menu, turn 3, cursor 2",
+      "marker_delay_steps": 20,
+      "marker_wait_s": 120
     },
     {
       "id": "p11",
@@ -1061,7 +1136,8 @@
       "beat": 29,
       "note": "the result panel names the outcome the game chose",
       "marker": "PP: fight result spare",
-      "marker_delay_steps": 8
+      "marker_delay_steps": 6,
+      "marker_wait_s": 120
     },
     {
       "id": "p13",

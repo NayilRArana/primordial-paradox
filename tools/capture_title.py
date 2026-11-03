@@ -2159,6 +2159,7 @@ def run_intro_capture():
 # game\scripts\pp_input\pp_input.gml.
 KEY_CODES = {
     "enter": 0x0D,
+    "backspace": 0x08,
     "confirm": 0x5A,
     "z": 0x5A,
     "cancel": 0x58,
