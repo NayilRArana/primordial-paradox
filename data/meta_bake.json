@@ -17,7 +17,7 @@
     "angry"
   ],
   "bake": {
-    "created_at": "2026-10-28T00:01:30Z",
+    "created_at": "2026-11-03T00:47:56Z",
     "mode": "replay",
     "offline": true,
     "backend": "meta",
@@ -43,6 +43,12 @@
         "options_dialogue": "talk_deck_hound"
       },
       {
+        "card": "morgan",
+        "enemy": "morgan",
+        "phase": "",
+        "options_dialogue": "talk_morgan"
+      },
+      {
         "card": "navy_sailor",
         "enemy": "navy_sailor",
         "phase": "",
@@ -59,12 +65,6 @@
         "enemy": "percy",
         "phase": "percy_phase2",
         "options_dialogue": "talk_percy_phase2"
-      },
-      {
-        "card": "morgan",
-        "enemy": "morgan",
-        "phase": "",
-        "options_dialogue": "talk_morgan"
       }
     ],
     "npc": [
@@ -118,7 +118,7 @@
       "hint": "ASK ABOUT THE CLIPBOARD",
       "model": "muse-spark-1.3",
       "request_hash": "257c54d95a763e3f64190e3c3250222824c499ef4995f6bb0a0a4cf7adc3dc2d",
-      "created_at": "2026-10-28T00:01:30Z",
+      "created_at": "2026-11-03T00:47:56Z",
       "source": "live",
       "network": true,
       "reason": "",
@@ -206,7 +206,7 @@
       "hint": "CLIPBOARD, ORDERS, RAIN.",
       "model": "muse-spark-1.3",
       "request_hash": "7aed7dac828b5cb98c199c49dd1acfa3dfa222b2cb5f8cf9bbf457e7410299fb",
-      "created_at": "2026-10-28T00:01:30Z",
+      "created_at": "2026-11-03T00:47:56Z",
       "source": "live",
       "network": true,
       "reason": "",
@@ -294,7 +294,7 @@
       "hint": "THE LONG WATCH",
       "model": "muse-spark-1.3",
       "request_hash": "ffaf0333dec155abf8e0359fcc77008b3c4c7850a1e173ebbacb4e1427731209",
-      "created_at": "2026-10-28T00:01:30Z",
+      "created_at": "2026-11-03T00:47:56Z",
       "source": "live",
       "network": true,
       "reason": "",
@@ -382,7 +382,7 @@
       "hint": "THE MANIFEST OR LEDGER",
       "model": "muse-spark-1.3",
       "request_hash": "968c6ca4398290e5b0795ab70f9cc58d4390674b967364dfe44d3c46a58bc5b9",
-      "created_at": "2026-10-28T00:01:30Z",
+      "created_at": "2026-11-03T00:47:56Z",
       "source": "live",
       "network": true,
       "reason": "",
@@ -470,7 +470,7 @@
       "hint": "THE LEDGER, THE LAST LINE",
       "model": "muse-spark-1.3",
       "request_hash": "fe1a264a06ec3ec4d61257c85e3a950f5e4b2cf2aa1ad6e4de7d186662c4d42a",
-      "created_at": "2026-10-28T00:01:30Z",
+      "created_at": "2026-11-03T00:47:56Z",
       "source": "live",
       "network": true,
       "reason": "",
@@ -558,7 +558,7 @@
       "hint": "THE LEDGER",
       "model": "muse-spark-1.3",
       "request_hash": "5377dbacda916a4f72a443c73b2d2a005a64acd88f60aa243692357520882add",
-      "created_at": "2026-10-28T00:01:30Z",
+      "created_at": "2026-11-03T00:47:56Z",
       "source": "live",
       "network": true,
       "reason": "",
@@ -646,7 +646,7 @@
       "hint": "SALT ON YOUR HANDS",
       "model": "muse-spark-1.3",
       "request_hash": "5c9a8ddb99896c8091f9d50e6987d93dd48b23d49ba28171ca473486e40ce382",
-      "created_at": "2026-10-28T00:01:30Z",
+      "created_at": "2026-11-03T00:47:56Z",
       "source": "live",
       "network": true,
       "reason": "",
@@ -743,7 +743,7 @@
       "hint": "SALT ON HANDS",
       "model": "muse-spark-1.3",
       "request_hash": "1e25b7c5b6d8e124160d39c13112a377e60a5858b204cfba7e5e1d3c698a578b",
-      "created_at": "2026-10-28T00:01:30Z",
+      "created_at": "2026-11-03T00:47:56Z",
       "source": "live",
       "network": true,
       "reason": "",
@@ -842,7 +842,7 @@
       "hint": "",
       "model": "muse-spark-1.3",
       "request_hash": "a87016604d99bbd9eb4745019f6621e5c51c9ab25af81b4fc4a32d6b062ce06a",
-      "created_at": "2026-10-28T00:01:30Z",
+      "created_at": "2026-11-03T00:47:56Z",
       "source": "fallback",
       "network": false,
       "reason": "no live answer: no recorded answer for chat with model muse-spark-1.3 (looked for 25cc356fcd3271b92b958a5631ff3c3cb307aeabcf90f1972b398703cbb67f02.json). Record it with PP_AI_M",
@@ -930,6 +930,276 @@
       }
     },
     {
+      "id": "fight/morgan/1",
+      "scene": "fight",
+      "text": [
+        "FORM FIRST. THEN WE TALK."
+      ],
+      "mood": "warm",
+      "effect": "soften",
+      "hint": "THE PAPERWORK.",
+      "model": "muse-spark-1.3",
+      "request_hash": "26754cf81935c4e042f4ba60d09ef96008b3d06bc56534c732dbbf9c537b30c0",
+      "created_at": "2026-11-03T00:47:56Z",
+      "source": "fallback",
+      "network": false,
+      "reason": "no live answer: no recorded answer for chat with model muse-spark-1.3 (looked for 9f8cebcaa73da253d877e0bb726bd23e13848273e29c8fc8a72d255b39f0c353.json). Record it with PP_AI_M",
+      "request": {
+        "system_sha256": "7beca544a167f7f213fb0a74259f67e33722be8237cad3d5cccdfde8c323da9d",
+        "system_chars": 2408,
+        "character": {
+          "id": "morgan",
+          "name": "Morgan",
+          "voice": "Brisk, clipped, faintly bored authority; short sentences.",
+          "wants": [
+            "a deck that passes inspection",
+            "the paperwork to be correct the first time"
+          ],
+          "fears": [
+            "the captain walking past during an inspection",
+            "an untidy ledger"
+          ],
+          "weak_topics": [
+            {
+              "topic": "the paperwork"
+            },
+            {
+              "topic": "the young crew"
+            }
+          ],
+          "strong_topics": [
+            {
+              "topic": "rank and respect"
+            },
+            {
+              "topic": "shirking"
+            }
+          ],
+          "phase_note": ""
+        },
+        "scene": {
+          "scene": "fight",
+          "turn": 1,
+          "enemy_hp_band": "unhurt",
+          "player_hp_band": "steady",
+          "mercy": 0,
+          "mood": "guarded",
+          "last_effect": "none",
+          "last_reply": "",
+          "required_effect": "soften",
+          "allowed": [
+            "none",
+            "nudge",
+            "soften",
+            "setback"
+          ]
+        },
+        "player_line": "May I see the form?"
+      },
+      "npc": "",
+      "card": "morgan",
+      "enemy": "morgan",
+      "phase": "",
+      "option": 1,
+      "turn": 1,
+      "options_dialogue": "talk_morgan",
+      "player_line": "May I see the form?",
+      "fallback": {
+        "source": "talk_cards",
+        "id": "morgan:weak:0",
+        "card": "morgan",
+        "pool": "weak",
+        "index": 0,
+        "source_text": "Form first. Then we talk.",
+        "text": [
+          "FORM FIRST. THEN WE TALK."
+        ],
+        "mood": "warm",
+        "effect": "soften",
+        "hint": "THE PAPERWORK."
+      }
+    },
+    {
+      "id": "fight/morgan/2",
+      "scene": "fight",
+      "text": [
+        "STATE YOUR BUSINESS."
+      ],
+      "mood": "calm",
+      "effect": "nudge",
+      "hint": "",
+      "model": "muse-spark-1.3",
+      "request_hash": "1f2c38215f76465e44801d837421ca65d65400dde51ea1b4c24eb16169735e2b",
+      "created_at": "2026-11-03T00:47:56Z",
+      "source": "fallback",
+      "network": false,
+      "reason": "no live answer: no recorded answer for chat with model muse-spark-1.3 (looked for 7e55453c3d6bcb8e739b79d3f4d89156b56482c26b910d8e641684f5c6355dc5.json). Record it with PP_AI_M",
+      "request": {
+        "system_sha256": "7beca544a167f7f213fb0a74259f67e33722be8237cad3d5cccdfde8c323da9d",
+        "system_chars": 2408,
+        "character": {
+          "id": "morgan",
+          "name": "Morgan",
+          "voice": "Brisk, clipped, faintly bored authority; short sentences.",
+          "wants": [
+            "a deck that passes inspection",
+            "the paperwork to be correct the first time"
+          ],
+          "fears": [
+            "the captain walking past during an inspection",
+            "an untidy ledger"
+          ],
+          "weak_topics": [
+            {
+              "topic": "the paperwork"
+            },
+            {
+              "topic": "the young crew"
+            }
+          ],
+          "strong_topics": [
+            {
+              "topic": "rank and respect"
+            },
+            {
+              "topic": "shirking"
+            }
+          ],
+          "phase_note": ""
+        },
+        "scene": {
+          "scene": "fight",
+          "turn": 2,
+          "enemy_hp_band": "unhurt",
+          "player_hp_band": "steady",
+          "mercy": 20,
+          "mood": "guarded",
+          "last_effect": "none",
+          "last_reply": "FORM FIRST. THEN WE TALK.",
+          "required_effect": "nudge",
+          "allowed": [
+            "none",
+            "nudge",
+            "soften",
+            "setback"
+          ]
+        },
+        "player_line": "Lovely handwriting."
+      },
+      "npc": "",
+      "card": "morgan",
+      "enemy": "morgan",
+      "phase": "",
+      "option": 2,
+      "turn": 2,
+      "options_dialogue": "talk_morgan",
+      "player_line": "Lovely handwriting.",
+      "fallback": {
+        "source": "talk_cards",
+        "id": "morgan:neutral:1",
+        "card": "morgan",
+        "pool": "neutral",
+        "index": 1,
+        "source_text": "State your business.",
+        "text": [
+          "STATE YOUR BUSINESS."
+        ],
+        "mood": "calm",
+        "effect": "nudge",
+        "hint": ""
+      }
+    },
+    {
+      "id": "fight/morgan/3",
+      "scene": "fight",
+      "text": [
+        "YOU WILL NOT SKIP THIS."
+      ],
+      "mood": "angry",
+      "effect": "setback",
+      "hint": "",
+      "model": "muse-spark-1.3",
+      "request_hash": "d76f9791224488713266fd7f5d5c165de71ad1808e6cbe972cb4b15afd9cc2b5",
+      "created_at": "2026-11-03T00:47:56Z",
+      "source": "fallback",
+      "network": false,
+      "reason": "no live answer: no recorded answer for chat with model muse-spark-1.3 (looked for 3904e04bd412c82fafb061f8eb52da2852bc20e1d59f69eeff3ce025a9cfca98.json). Record it with PP_AI_M",
+      "request": {
+        "system_sha256": "7beca544a167f7f213fb0a74259f67e33722be8237cad3d5cccdfde8c323da9d",
+        "system_chars": 2408,
+        "character": {
+          "id": "morgan",
+          "name": "Morgan",
+          "voice": "Brisk, clipped, faintly bored authority; short sentences.",
+          "wants": [
+            "a deck that passes inspection",
+            "the paperwork to be correct the first time"
+          ],
+          "fears": [
+            "the captain walking past during an inspection",
+            "an untidy ledger"
+          ],
+          "weak_topics": [
+            {
+              "topic": "the paperwork"
+            },
+            {
+              "topic": "the young crew"
+            }
+          ],
+          "strong_topics": [
+            {
+              "topic": "rank and respect"
+            },
+            {
+              "topic": "shirking"
+            }
+          ],
+          "phase_note": ""
+        },
+        "scene": {
+          "scene": "fight",
+          "turn": 3,
+          "enemy_hp_band": "unhurt",
+          "player_hp_band": "steady",
+          "mercy": 40,
+          "mood": "guarded",
+          "last_effect": "none",
+          "last_reply": "STATE YOUR BUSINESS.",
+          "required_effect": "setback",
+          "allowed": [
+            "none",
+            "nudge",
+            "soften",
+            "setback"
+          ]
+        },
+        "player_line": "The captain is coming!"
+      },
+      "npc": "",
+      "card": "morgan",
+      "enemy": "morgan",
+      "phase": "",
+      "option": 3,
+      "turn": 3,
+      "options_dialogue": "talk_morgan",
+      "player_line": "The captain is coming!",
+      "fallback": {
+        "source": "talk_cards",
+        "id": "morgan:strong:2",
+        "card": "morgan",
+        "pool": "strong",
+        "index": 2,
+        "source_text": "You will not skip this.",
+        "text": [
+          "YOU WILL NOT SKIP THIS."
+        ],
+        "mood": "angry",
+        "effect": "setback",
+        "hint": ""
+      }
+    },
+    {
       "id": "fight/navy_sailor/1",
       "scene": "fight",
       "text": [
@@ -941,7 +1211,7 @@
       "hint": "THE LONG WATCH",
       "model": "muse-spark-1.3",
       "request_hash": "883c9fd746e02f459788abb2c084ba58a31304e14f1ee717b919e451ca826448",
-      "created_at": "2026-10-28T00:01:30Z",
+      "created_at": "2026-11-03T00:47:56Z",
       "source": "live",
       "network": true,
       "reason": "",
@@ -1049,7 +1319,7 @@
       "hint": "THE LONG WATCH",
       "model": "muse-spark-1.3",
       "request_hash": "90538e9319d3af76a3677527ecb9c79468169e63f163f5bba4f0d07f7035e936",
-      "created_at": "2026-10-28T00:01:30Z",
+      "created_at": "2026-11-03T00:47:56Z",
       "source": "live",
       "network": true,
       "reason": "",
@@ -1159,7 +1429,7 @@
       "hint": "SMOKE, SEA, HOME PORT",
       "model": "muse-spark-1.3",
       "request_hash": "ade8f0ece8cb803989db2e50f1f66db5fa68e1cef43ed86beabccdb710e96bc7",
-      "created_at": "2026-10-28T00:01:30Z",
+      "created_at": "2026-11-03T00:47:56Z",
       "source": "live",
       "network": true,
       "reason": "",
@@ -1267,7 +1537,7 @@
       "hint": "PLAIN SPEECH.",
       "model": "muse-spark-1.3",
       "request_hash": "d1b3f43aba0729c1e69d6b0011a73704d55e2aac3efa2f23f11e3a96a093d83d",
-      "created_at": "2026-10-28T00:01:30Z",
+      "created_at": "2026-11-03T00:47:56Z",
       "source": "fallback",
       "network": false,
       "reason": "no live answer: no recorded answer for chat with model muse-spark-1.3 (looked for 3336d187b6d3bb7dd489649e0b96080111229fb5ae9ac946199d576e435cf965.json). Record it with PP_AI_M",
@@ -1374,7 +1644,7 @@
       "hint": "",
       "model": "muse-spark-1.3",
       "request_hash": "9b0e42fb4729fe84f76755accdd259ec1ffd3987fcdc685fd0ed9f13eea10ab3",
-      "created_at": "2026-10-28T00:01:30Z",
+      "created_at": "2026-11-03T00:47:56Z",
       "source": "fallback",
       "network": false,
       "reason": "no live answer: no recorded answer for chat with model muse-spark-1.3 (looked for c3a022b0d984645447966014e8ac678c9e25422859a85c169813949401e8d153.json). Record it with PP_AI_M",
@@ -1481,7 +1751,7 @@
       "hint": "",
       "model": "muse-spark-1.3",
       "request_hash": "9d814dfcf32c124e4a590e1cf80f50ee6146800b920fbc5534935f26d5bef356",
-      "created_at": "2026-10-28T00:01:30Z",
+      "created_at": "2026-11-03T00:47:56Z",
       "source": "fallback",
       "network": false,
       "reason": "no live answer: no recorded answer for chat with model muse-spark-1.3 (looked for 97597c869a1dbac4065dbac016f1db8453c5562664047ad7d42fc398e74b9644.json). Record it with PP_AI_M",
@@ -1588,7 +1858,7 @@
       "hint": "THE VEIL ANSWERED.",
       "model": "muse-spark-1.3",
       "request_hash": "2a63f4e6f3ead18cef66f12bc298a986ebb24bb18f6fce766b42d87a215ad79c",
-      "created_at": "2026-10-28T00:01:30Z",
+      "created_at": "2026-11-03T00:47:56Z",
       "source": "fallback",
       "network": false,
       "reason": "no live answer: no recorded answer for chat with model muse-spark-1.3 (looked for 5d9133b54969accba9383b610483a59ec78e1960876a56f620e77144155f7384.json). Record it with PP_AI_M",
@@ -1695,7 +1965,7 @@
       "hint": "",
       "model": "muse-spark-1.3",
       "request_hash": "c1b4c37718c5f068d31e8eede9a9dd0310a9a74f812b0a30a6ec761860f2257b",
-      "created_at": "2026-10-28T00:01:30Z",
+      "created_at": "2026-11-03T00:47:56Z",
       "source": "fallback",
       "network": false,
       "reason": "no live answer: no recorded answer for chat with model muse-spark-1.3 (looked for 3fd376fdcebf495df0a74a90d81fb1fdc16660195fc455c803fd27d81c9e0e0f.json). Record it with PP_AI_M",
@@ -1803,7 +2073,7 @@
       "hint": "",
       "model": "muse-spark-1.3",
       "request_hash": "b27d9166ba7d06214b91c91d3aaf7fd14f15c72278681fc74ad1ad3a3fb0627b",
-      "created_at": "2026-10-28T00:01:30Z",
+      "created_at": "2026-11-03T00:47:56Z",
       "source": "fallback",
       "network": false,
       "reason": "no live answer: no recorded answer for chat with model muse-spark-1.3 (looked for f8061d8e17295d7009e878ff5cd365b4086f5639b9b581031ee66e8d76f5a7bf.json). Record it with PP_AI_M",
@@ -1894,276 +2164,6 @@
         "text": [
           "A WOUND DOES NOT MAKE YOU",
           "RIGHT."
-        ],
-        "mood": "angry",
-        "effect": "setback",
-        "hint": ""
-      }
-    },
-    {
-      "id": "fight/morgan/1",
-      "scene": "fight",
-      "text": [
-        "FORM FIRST. THEN WE TALK."
-      ],
-      "mood": "warm",
-      "effect": "soften",
-      "hint": "THE PAPERWORK.",
-      "model": "muse-spark-1.3",
-      "request_hash": "af0557448223cadb18cec8486c3b2d0a57e946e0a4a73c644fbb0f8fa7b9128f",
-      "created_at": "2026-10-28T00:01:30Z",
-      "source": "fallback",
-      "network": false,
-      "reason": "no live answer: no recorded answer for chat with model muse-spark-1.3 (looked for c7f51d2aa920e7ef85c174f8788ed89bd8dd7c1bd684999ab85f940be6de7e9e.json). Record it with PP_AI_M",
-      "request": {
-        "system_sha256": "7beca544a167f7f213fb0a74259f67e33722be8237cad3d5cccdfde8c323da9d",
-        "system_chars": 2408,
-        "character": {
-          "id": "morgan",
-          "name": "Petty Officer",
-          "voice": "Brisk, clipped, faintly bored authority; short sentences.",
-          "wants": [
-            "a deck that passes inspection",
-            "the paperwork to be correct the first time"
-          ],
-          "fears": [
-            "the captain walking past during an inspection",
-            "an untidy ledger"
-          ],
-          "weak_topics": [
-            {
-              "topic": "the paperwork"
-            },
-            {
-              "topic": "the young crew"
-            }
-          ],
-          "strong_topics": [
-            {
-              "topic": "rank and respect"
-            },
-            {
-              "topic": "shirking"
-            }
-          ],
-          "phase_note": ""
-        },
-        "scene": {
-          "scene": "fight",
-          "turn": 1,
-          "enemy_hp_band": "unhurt",
-          "player_hp_band": "steady",
-          "mercy": 0,
-          "mood": "guarded",
-          "last_effect": "none",
-          "last_reply": "",
-          "required_effect": "soften",
-          "allowed": [
-            "none",
-            "nudge",
-            "soften",
-            "setback"
-          ]
-        },
-        "player_line": "May I see the form?"
-      },
-      "npc": "",
-      "card": "morgan",
-      "enemy": "morgan",
-      "phase": "",
-      "option": 1,
-      "turn": 1,
-      "options_dialogue": "talk_morgan",
-      "player_line": "May I see the form?",
-      "fallback": {
-        "source": "talk_cards",
-        "id": "morgan:weak:0",
-        "card": "morgan",
-        "pool": "weak",
-        "index": 0,
-        "source_text": "Form first. Then we talk.",
-        "text": [
-          "FORM FIRST. THEN WE TALK."
-        ],
-        "mood": "warm",
-        "effect": "soften",
-        "hint": "THE PAPERWORK."
-      }
-    },
-    {
-      "id": "fight/morgan/2",
-      "scene": "fight",
-      "text": [
-        "STATE YOUR BUSINESS."
-      ],
-      "mood": "calm",
-      "effect": "nudge",
-      "hint": "",
-      "model": "muse-spark-1.3",
-      "request_hash": "5d81ba06de3f4ec272fe38ac3c2b889f9d83d7be66069dac043f29dcadc8c356",
-      "created_at": "2026-10-28T00:01:30Z",
-      "source": "fallback",
-      "network": false,
-      "reason": "no live answer: no recorded answer for chat with model muse-spark-1.3 (looked for 14f86c419c00f6f7c25fb9317fee37a2c379df23a8404bca1201fe66bf10fdb4.json). Record it with PP_AI_M",
-      "request": {
-        "system_sha256": "7beca544a167f7f213fb0a74259f67e33722be8237cad3d5cccdfde8c323da9d",
-        "system_chars": 2408,
-        "character": {
-          "id": "morgan",
-          "name": "Petty Officer",
-          "voice": "Brisk, clipped, faintly bored authority; short sentences.",
-          "wants": [
-            "a deck that passes inspection",
-            "the paperwork to be correct the first time"
-          ],
-          "fears": [
-            "the captain walking past during an inspection",
-            "an untidy ledger"
-          ],
-          "weak_topics": [
-            {
-              "topic": "the paperwork"
-            },
-            {
-              "topic": "the young crew"
-            }
-          ],
-          "strong_topics": [
-            {
-              "topic": "rank and respect"
-            },
-            {
-              "topic": "shirking"
-            }
-          ],
-          "phase_note": ""
-        },
-        "scene": {
-          "scene": "fight",
-          "turn": 2,
-          "enemy_hp_band": "unhurt",
-          "player_hp_band": "steady",
-          "mercy": 20,
-          "mood": "guarded",
-          "last_effect": "none",
-          "last_reply": "FORM FIRST. THEN WE TALK.",
-          "required_effect": "nudge",
-          "allowed": [
-            "none",
-            "nudge",
-            "soften",
-            "setback"
-          ]
-        },
-        "player_line": "Lovely handwriting."
-      },
-      "npc": "",
-      "card": "morgan",
-      "enemy": "morgan",
-      "phase": "",
-      "option": 2,
-      "turn": 2,
-      "options_dialogue": "talk_morgan",
-      "player_line": "Lovely handwriting.",
-      "fallback": {
-        "source": "talk_cards",
-        "id": "morgan:neutral:1",
-        "card": "morgan",
-        "pool": "neutral",
-        "index": 1,
-        "source_text": "State your business.",
-        "text": [
-          "STATE YOUR BUSINESS."
-        ],
-        "mood": "calm",
-        "effect": "nudge",
-        "hint": ""
-      }
-    },
-    {
-      "id": "fight/morgan/3",
-      "scene": "fight",
-      "text": [
-        "YOU WILL NOT SKIP THIS."
-      ],
-      "mood": "angry",
-      "effect": "setback",
-      "hint": "",
-      "model": "muse-spark-1.3",
-      "request_hash": "f2885410b85b34f71988c682bd5e504ccf3e1dcdb742dcb561285bbedda33b4c",
-      "created_at": "2026-10-28T00:01:30Z",
-      "source": "fallback",
-      "network": false,
-      "reason": "no live answer: no recorded answer for chat with model muse-spark-1.3 (looked for ed3bf73ddf0caade31acbed01e99ec0840b1f9c97e7dfa36302503014287e6c0.json). Record it with PP_AI_M",
-      "request": {
-        "system_sha256": "7beca544a167f7f213fb0a74259f67e33722be8237cad3d5cccdfde8c323da9d",
-        "system_chars": 2408,
-        "character": {
-          "id": "morgan",
-          "name": "Petty Officer",
-          "voice": "Brisk, clipped, faintly bored authority; short sentences.",
-          "wants": [
-            "a deck that passes inspection",
-            "the paperwork to be correct the first time"
-          ],
-          "fears": [
-            "the captain walking past during an inspection",
-            "an untidy ledger"
-          ],
-          "weak_topics": [
-            {
-              "topic": "the paperwork"
-            },
-            {
-              "topic": "the young crew"
-            }
-          ],
-          "strong_topics": [
-            {
-              "topic": "rank and respect"
-            },
-            {
-              "topic": "shirking"
-            }
-          ],
-          "phase_note": ""
-        },
-        "scene": {
-          "scene": "fight",
-          "turn": 3,
-          "enemy_hp_band": "unhurt",
-          "player_hp_band": "steady",
-          "mercy": 40,
-          "mood": "guarded",
-          "last_effect": "none",
-          "last_reply": "STATE YOUR BUSINESS.",
-          "required_effect": "setback",
-          "allowed": [
-            "none",
-            "nudge",
-            "soften",
-            "setback"
-          ]
-        },
-        "player_line": "The captain is coming!"
-      },
-      "npc": "",
-      "card": "morgan",
-      "enemy": "morgan",
-      "phase": "",
-      "option": 3,
-      "turn": 3,
-      "options_dialogue": "talk_morgan",
-      "player_line": "The captain is coming!",
-      "fallback": {
-        "source": "talk_cards",
-        "id": "morgan:strong:2",
-        "card": "morgan",
-        "pool": "strong",
-        "index": 2,
-        "source_text": "You will not skip this.",
-        "text": [
-          "YOU WILL NOT SKIP THIS."
         ],
         "mood": "angry",
         "effect": "setback",

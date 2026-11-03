@@ -623,12 +623,17 @@ def _served_rows():
 
     served: dict[str, dict] = {}
     missing: list[str] = []
-    last_reply: dict[str, str] = {}
+    # Two chains, because the producer keeps two (tools/bake_meta.py build_rows: last_npc_reply and
+    # last_fight_reply). One map keyed by id leaked the NPC Morgan's closing line into the fight card
+    # Morgan's scene, which is a request nobody ever sent, so fight/morgan/1..3 reported missing
+    # against a correct bake (measured 2026-11-02, card t_9f3a128f).
+    npc_reply: dict[str, str] = {}
+    fight_reply: dict[str, str] = {}
 
     for unit in bake_meta.npc_plan(bank, blocks):
         npc = unit["npc"]
         scene = {"scene": "npc", "npc": npc["id"], "place": npc["place"], "turn": unit["turn"],
-                 "mood": "guarded", "last_reply": last_reply.get(npc["id"], ""),
+                 "mood": "guarded", "last_reply": npc_reply.get(npc["id"], ""),
                  "allowed": list(bake_meta.NPC_EFFECTS)}
         _echo, digest = bake_meta.build_request("chat", model, system, unit["block"], scene, "")
         row_id = "npc/%s/turn_%d" % (npc["id"], unit["turn"])
@@ -637,7 +642,7 @@ def _served_rows():
             missing.append("%s (hash %s)" % (row_id, digest[:12]))
             continue
         served[row_id] = row
-        last_reply[npc["id"]] = " ".join(row["text"])[:bake_meta.MAX_LAST_REPLY]
+        npc_reply[npc["id"]] = " ".join(row["text"])[:bake_meta.MAX_LAST_REPLY]
 
     units, _skipped = bake_meta.fight_plan(cards, enemies, dialogue)
     for unit in units:
@@ -647,7 +652,7 @@ def _served_rows():
             scene = {"scene": "fight", "turn": index, "enemy_hp_band": "unhurt",
                      "player_hp_band": "steady", "mercy": (index - 1) * 20, "mood": "guarded",
                      "last_effect": "none",
-                     "last_reply": last_reply.get(card["id"], ""),
+                     "last_reply": fight_reply.get(card["id"], ""),
                      # The producer sends the effect the authored option is meant to move, so a
                      # live answer that moves a different one cannot become the row for it. The
                      # rebuild has to carry it too, or every fight hash here is a request nobody
@@ -664,7 +669,7 @@ def _served_rows():
                 missing.append("%s (hash %s)" % (row_id, digest[:12]))
                 continue
             served[row_id] = row
-            last_reply[card["id"]] = " ".join(row["text"])[:bake_meta.MAX_LAST_REPLY]
+            fight_reply[card["id"]] = " ".join(row["text"])[:bake_meta.MAX_LAST_REPLY]
 
     return served, missing, rows
 
