@@ -59,6 +59,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(HERE)))
 sys.path.insert(0, os.path.join(ROOT, "tools"))
 import humanize  # noqa: E402
+import land_asset  # noqa: E402
 
 PPQ = 480
 EIGHTH = PPQ // 2                  # 240
@@ -541,6 +542,16 @@ def main():
         handle.write("\n")
     print("\nseam: FIGHT bar 16 == CALM bar 1 (lead and triangle), by construction")
     print("wrote", ", ".join(row["file"] for row in rows))
+    # Land the scores before returning (card t_8f1f3465). This build writes build inputs and stops
+    # there, so the mirror and the .yyp were left for a person: tools/land_asset.py runs
+    # tools/sync_art.py and tools/gen_project.py, stages what changed under this project, and judges
+    # the staged pair with the tools/check_build_inputs.py --staged that the commit gate runs. The
+    # .mid files themselves are gitignored, which land_asset.py reports and skips rather than
+    # refusing the run.
+    landed = land_asset.land([os.path.join(HERE, row["file"]) for row in rows])
+    if landed != 0:
+        print("land_asset exit %d: the scores are written but not landed" % landed)
+        return landed
     return 0
 
 

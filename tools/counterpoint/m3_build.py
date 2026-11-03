@@ -41,6 +41,7 @@ for path in (HERE, TOOLS):
         sys.path.insert(0, path)
 
 import m3_cues  # noqa: E402
+import land_asset  # noqa: E402
 
 PYTHON = os.path.join(ROOT, ".venv", "Scripts", "python.exe")
 TARGET_LUFS = -14.0
@@ -139,8 +140,9 @@ def main(argv=None):
     parser.add_argument("--slug", required=True)
     parser.add_argument("--loop-bars", type=int, required=True)
     parser.add_argument("--seed", type=int, default=1)
-    parser.add_argument("--variant", type=int, choices=(1, 2), default=1,
-                        help="1 is the first take, 2 is take B (the other way round)")
+    parser.add_argument("--variant", type=int, choices=(1, 2, 3), default=1,
+                        help="1 is the first take, 2 is take B (the other way round), "
+                             "3 is take C (the hook in the top voice)")
     args = parser.parse_args(argv)
 
     asset_dir = os.path.abspath(os.path.join(ROOT, args.asset_dir))
@@ -163,10 +165,20 @@ def main(argv=None):
     piece, report = m3_cues.build(args.piece, args.seed, args.variant)
     notes = dict(piece.notes)
     if args.piece == "fight":
-        notes.update(m3_cues.drums_fight_drive(piece) if args.variant == 2
-                     else m3_cues.drums_fight(piece))
+        if args.variant == 3:
+            notes.update(m3_cues.drums_fight_hook(piece))
+        elif args.variant == 2:
+            notes.update(m3_cues.drums_fight_drive(piece))
+        else:
+            notes.update(m3_cues.drums_fight(piece))
     cc = {"pulse 1": {12: [(0, 2)], 11: [(0, 104)], 1: [(0, 4)], 20: [(0, 1)]},
           "pulse 2": {12: [(0, 1)], 11: [(0, 88)], 1: [(0, 3)], 20: [(0, 2)]}}
+    if args.variant == 3:
+        # Round 2's changes the ear asked for by name: a duty change at bar 9 so the second
+        # half of the loop is a different colour, and a delayed vibrato on the triangle so
+        # the bass roots stop sounding static.
+        cc["pulse 1"][12] = [(0, 2), (8 * 4 * 480, 1)]
+        cc["triangle"] = {1: [(0, 4)], 20: [(0, 2)]}
     m3_cues.write_midi(notes, midi, piece.time_sig, piece.bpm, cc)
     report["midi"] = midi
 
@@ -238,9 +250,20 @@ def main(argv=None):
              TARGET_LUFS, CEILING_DBTP, level_ok, ceiling_ok))
     if hook:
         print("   hook score %s / 100 (v9 title was 83)"
-              % hook.get("score", hook.get("total")))
-    return 0 if (report["hard"] == 0 and level_ok and ceiling_ok
-                 and checks["cue_gate"]["exit"] in (0, 3)) else 1
+              % (hook.get("score", hook.get("total"))))
+    ok = (report["hard"] == 0 and level_ok and ceiling_ok
+          and checks["cue_gate"]["exit"] in (0, 3))
+    # Land the stream before returning (card t_8f1f3465). The .ogg this run delivers becomes an
+    # Included File the moment tools/sync_art.py mirrors it and tools/gen_project.py writes the .yyp,
+    # and this script called neither, so the pair sat in the working tree while the commit gate
+    # refused every lane that regenerated the project: pp_04_fight_baroque_v3 and v4 were the
+    # seventh and eighth recurrence. land_asset.land() runs both, stages the stream and the .yyp,
+    # and judges the pair with the same check_build_inputs.py --staged the gate runs.
+    landed = land_asset.land([midi, ogg])
+    if landed != 0:
+        print("   land_asset exit %d: the stream is written but not landed" % landed)
+        return 1
+    return 0 if ok else 1
 
 
 if __name__ == "__main__":
