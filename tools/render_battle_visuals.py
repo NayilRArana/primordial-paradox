@@ -176,7 +176,7 @@ class Renderer:
             label = self.party()[c["turn"]][1] + "'S TURN"
             tiles = max(3, min(32, len(label) + 2))
             self.window((256 - tiles * 8) // 2, 8, tiles, 3)
-            self.text(label, (256 - tiles * 8) // 2 + 8, 12)
+            self.text(label, (256 - tiles * 8) // 2 + 8, 16)
         if c.get("strike"):
             name, fr = c["strike"]
             sw = load("game", "sprites_src", "weapons", name + ".png")
@@ -201,8 +201,13 @@ class Renderer:
         else:
             g = L["message"]
             self.window(g["x"], g["y"], g["w"], g["h"])
-            for j, line in enumerate(c["message"]):
-                self.text(line, 16, 16 + j * 10)
+            if c.get("talk"):
+                for j, line in enumerate(c["message"]):
+                    self.text(line, 16, 8 + j * 8)
+                self.text(c["talk"], 16, 40)
+            else:
+                for j, line in enumerate(c["message"]):
+                    self.text(line, 16, 16 + j * 10)
 
         # Card t_855887d8: the victory panel, drawn last and from the same row pp_battle_draw_victory reads. The nine
         # slice frame first, the paper field inside its 8 pixel border, the dim rule under the title, then the three
@@ -262,6 +267,11 @@ def main():
     r.compose(pq).save(os.path.join(OUT, "percy_quay.png"))
     mq = dict(cases[0], out="morgan_name", name="CAPTAIN MORGAN")
     r.compose(mq).save(os.path.join(OUT, "morgan_name.png"))
+    tk = dict(mq, out="talk_hint", message=["* FORM FIRST.", "* HE LOOKS UP.", "* THE WIND DROPS."],
+              talk="HEAR HIM OUT: 1 MORE TALKS.", held="")
+    r.compose(tk).save(os.path.join(OUT, "talk_hint.png"))
+    r.compose(dict(mq, out="board3", message=["* LINE ONE OF THREE.", "* LINE TWO OF THREE.", "* LINE THREE OF THREE."],
+                   held="")).save(os.path.join(OUT, "board3.png"))
     for n in (0, 1, 2):
         r.compose(dict(mq, out="turn_%d" % n, turn=n, hp=17, mercy=70)).save(os.path.join(OUT, "turn_%d.png" % n))
     for who, wname, idx in (("zander", "spr_pp_master_bolt", 0), ("konrad", "spr_pp_adamantine_scythe", 1),

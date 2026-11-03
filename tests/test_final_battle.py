@@ -167,7 +167,7 @@ def test_party_turn_order_is_real_and_visible():
     for name in ("zander", "konrad", "hadrian"):
         assert name not in code, "a member is named in code"
     draw = body("pp_battle_draw")
-    assert "'S TURN\"" in draw and "pp_battle_draw_telegraph_b(" in draw, "the turn banner is gone"
+    assert "'S TURN\"" in draw and "pp_battle_draw_turn_banner(" in draw, "the turn banner is gone"
     party = body("pp_battle_draw_party_b")
     assert "_battle.striker == i" in party and 'pp_battle_swatch("gold"' in party, "the turn arrow is gone"
     assert "pp_battle_flicker" not in read(DIRECTOR), "the helm flicker must not read as a turn cue"
@@ -304,3 +304,30 @@ def test_cancel_out_of_talk_restores_trust_and_turn():
     trust, turn = trust + per, turn + 1
     trust, turn = max(0, trust - per), max(0, turn - 1)
     assert (trust, turn) == (0, 4)
+
+
+def test_no_message_row_falls_on_a_window_border():
+    """The 8 px border ring of a window is not text area: every glyph row must sit inside the interior."""
+    msg = load("data", "ui_layouts.json")["battle_b"]["message"]
+    interior_bottom = msg["y"] + msg["h"] * 8 - 8  # first pixel row of the bottom ring
+    for first_row, rows in ((16, 3 * 10 - 2), (8, 4 * 8 + 8)):  # the 3 line board, the talk reply block with its hint
+        assert first_row >= msg["y"] + 8 and first_row + rows <= interior_bottom + 2, (first_row, rows, interior_bottom)
+    assert 40 + 8 <= interior_bottom, "the talk hint row must clear the bottom ring"
+    plate = load("data", "ui_layouts.json")["battle_b"]["plate"]
+    assert plate["y"] >= msg["h"] * 8, "the enemy plate must start below the message window"
+    banner = body("pp_battle_draw_turn_banner")
+    assert "pp_battle_window_b(_x, 8, _tiles, 3)" in banner and "_x + 8, 16" in banner, "banner text must sit on the interior row"
+
+
+def test_the_fight_tour_confirms_a_sub_row():
+    overworld = read(os.path.join(ROOT, "game", "scripts", "pp_overworld", "pp_overworld.gml"))
+    tour = overworld[overworld.index("function pp_fight_tour_think("):]
+    assert '_b.sub_stage != ""' in tour and tour.index('_b.sub_stage != ""') < tour.index("var _target = PPCommand.fight;")
+
+
+def test_the_talk_hint_waits_for_the_reply_to_finish_typing():
+    draw = body("pp_battle_draw")
+    assert "if (pp_text_board_done(_battle.messages)) pp_talk_hint_draw(_battle.talk_hint);" in draw
+    # the reply block (4 lines at 8 px from y 8) and the hint row at y 40 all sit inside the 7 tile window's interior
+    msg = load("data", "ui_layouts.json")["battle_b"]["message"]
+    assert 8 + 4 * 8 + 8 <= msg["h"] * 8 - 8 + 8 and 40 + 8 <= msg["h"] * 8 - 8

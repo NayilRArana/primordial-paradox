@@ -1350,6 +1350,11 @@ function pp_fight_tour_think() {
                 }
                 break;
             }
+            // POWER and ITEM open a one row panel first: Z uses it (the tour never backs out).
+            if (_b.sub_stage != "") {
+                pp_fight_tour_press(_t, "confirm", 8);
+                break;
+            }
             var _target = PPCommand.fight;
             if (_job.path == "spare") {
                 if (pp_command_state(_b, PPCommand.spare).enabled) _target = PPCommand.spare;

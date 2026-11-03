@@ -1783,7 +1783,7 @@ function pp_battle_draw(_battle) {
     if (!is_undefined(_layout_b) && _battle.phase == PPBattlePhase.menu && is_undefined(_battle.messages)
         && !pp_talk_live_open_now(_battle)) {
         var _who = pp_battle_active_slot(_battle);
-        if (!is_undefined(_who)) pp_battle_draw_telegraph_b(string(_who.name) + "'S TURN");
+        if (!is_undefined(_who)) pp_battle_draw_turn_banner(string(_who.name) + "'S TURN");
     }
 
     if (!is_undefined(_layout_b) && _battle.phase != PPBattlePhase.menu && _battle.phase != PPBattlePhase.resolve) {
@@ -1816,7 +1816,8 @@ function pp_battle_draw(_battle) {
         // every other line keeps spec 05's pitch. The window does not grow for either.
         if (_battle.talk_reply) {
             pp_talk_board_draw(_battle.messages, pp_talk_text_x(), pp_talk_text_y());
-            pp_talk_hint_draw(_battle.talk_hint);
+            // The hint waits until the reply has finished typing, so a half typed line never sits above a whole hint.
+            if (pp_text_board_done(_battle.messages)) pp_talk_hint_draw(_battle.talk_hint);
         } else {
             pp_text_board_draw(_battle.messages, 16, 16);
         }
@@ -2304,6 +2305,16 @@ function pp_battle_draw_sub(_battle) {
         pp_font_draw("HEAL " + string(_item.heal) + "  LEFT " + string(array_length(_battle.actor.items)), 24, _y + 14, 1);
     }
     pp_font_draw("Z USE   X BACK", 24, _y + 34, 1);
+    return true;
+}
+
+/// The turn banner: a window at the top of the field with its text on the first interior row (the window's own top
+/// ring is the 8 pixels above it), so no glyph row falls on the border.
+function pp_battle_draw_turn_banner(_text) {
+    var _tiles = clamp(string_length(_text) + 2, 3, 32);
+    var _x = (PP_FRAME_W - _tiles * 8) div 2;
+    pp_battle_window_b(_x, 8, _tiles, 3);
+    pp_font_draw(_text, _x + 8, 16, 1);
     return true;
 }
 
