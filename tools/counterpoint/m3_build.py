@@ -140,9 +140,10 @@ def main(argv=None):
     parser.add_argument("--slug", required=True)
     parser.add_argument("--loop-bars", type=int, required=True)
     parser.add_argument("--seed", type=int, default=1)
-    parser.add_argument("--variant", type=int, choices=(1, 2, 3), default=1,
+    parser.add_argument("--variant", type=int, choices=(1, 2, 3, 4, 5), default=1,
                         help="1 is the first take, 2 is take B (the other way round), "
-                             "3 is take C (the hook in the top voice)")
+                             "3 is take C (the hook in the top voice), 4 is take D, "
+                             "5 is take D round 2")
     args = parser.parse_args(argv)
 
     asset_dir = os.path.abspath(os.path.join(ROOT, args.asset_dir))
@@ -165,7 +166,11 @@ def main(argv=None):
     piece, report = m3_cues.build(args.piece, args.seed, args.variant)
     notes = dict(piece.notes)
     if args.piece == "fight":
-        if args.variant == 3:
+        if args.variant == 5:
+            notes.update(m3_cues.drums_fight_r5(piece))
+        elif args.variant == 4:
+            notes.update(m3_cues.drums_fight_r4(piece))
+        elif args.variant == 3:
             notes.update(m3_cues.drums_fight_hook(piece))
         elif args.variant == 2:
             notes.update(m3_cues.drums_fight_drive(piece))
@@ -173,12 +178,21 @@ def main(argv=None):
             notes.update(m3_cues.drums_fight(piece))
     cc = {"pulse 1": {12: [(0, 2)], 11: [(0, 104)], 1: [(0, 4)], 20: [(0, 1)]},
           "pulse 2": {12: [(0, 1)], 11: [(0, 88)], 1: [(0, 3)], 20: [(0, 2)]}}
-    if args.variant == 3:
+    if args.variant in (3, 4, 5):
         # Round 2's changes the ear asked for by name: a duty change at bar 9 so the second
         # half of the loop is a different colour, and a delayed vibrato on the triangle so
         # the bass roots stop sounding static.
         cc["pulse 1"][12] = [(0, 2), (8 * 4 * 480, 1)]
         cc["triangle"] = {1: [(0, 4)], 20: [(0, 2)]}
+    if args.variant in (4, 5):
+        # Take D: pulse 2 opens its duty at bar 5 so the answer is a different colour from
+        # the subject, which is free variety on a channel that is not the motif carrier.
+        cc["pulse 2"][12] = [(0, 1), (4 * 4 * 480, 2)]
+    if args.variant == 5:
+        # Round 2, ear change 3: the sustained notes deepen their vibrato at bar 13 and the
+        # triangle rolls into pitch a little later, so the climax is not the same colour.
+        cc["pulse 2"][12] = [(0, 1), (4 * 4 * 480, 2), (12 * 4 * 480, 1)]
+        cc["triangle"] = {1: [(0, 4), (12 * 4 * 480, 5)], 20: [(0, 3)]}
     m3_cues.write_midi(notes, midi, piece.time_sig, piece.bpm, cc)
     report["midi"] = midi
 
