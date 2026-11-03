@@ -24,6 +24,7 @@ OUT = os.path.join(ROOT, "output", "battle_visuals_2026-11-01")
 if os.environ.get("PP_BATTLE_OUT"):
     OUT = os.path.abspath(os.environ["PP_BATTLE_OUT"])
 GLYPHS = " !\"'()*,-./0123456789:?ABCDEFGHIJKLMNOPQRSTUVWXYZ[]abcdefghijklmnopqrstuvwxyz"
+DISSOLVE_STEPS = 78
 COMMANDS = ("FIGHT", "POWER", "TALK", "SPARE", "ITEM")
 
 
@@ -105,9 +106,32 @@ class Renderer:
         self.swatch(fill, x + 1, y + 1, n, h - 2)
         self.swatch(hi, x + 1, y + 1, n, 1)
 
+    def dissolve(self, frame, x0, y0, steps):
+        """The kill's disintegration, the same arithmetic as pp_battle_draw_dissolve in the director."""
+        b, life = 4, DISSOLVE_STEPS - 40
+        cols, rows = frame.width // b, frame.height // b
+        for by in range(rows):
+            for bx in range(cols):
+                delay = (bx * 37 + by * 91) % 40
+                tt = steps - delay
+                dx = dy = 0
+                if tt > 0:
+                    if tt >= life:
+                        continue
+                    speed = 0.35 + ((bx * 13 + by * 7) % 5) * 0.12
+                    dx = int((bx - cols * 0.5) * tt * 0.09 // 1) + ((bx + by) % 3 - 1)
+                    dy = -int(tt * speed // 1)
+                    k = (bx + by + steps) % 4
+                    if tt > life * 0.8 and k != 0:
+                        continue
+                    if tt > life * 0.5 and k % 2 == 1:
+                        continue
+                blk = frame.crop((bx * b, by * b, bx * b + b, by * b + b))
+                self.im.paste(blk, (x0 + bx * b + dx, y0 + by * b + dy), blk)
+
     def party(self):
         """The party column the director draws: the legacy battle screen's `party` rows, in the file's own order.
-        `member` is the sheet id lowered; `name` is the word printed under the portrait (ZEUS, KRONOS, HADES)."""
+        `member` is the sheet id lowered; `name` is the word printed under the portrait (ZANDER, KONRAD, HADRIAN)."""
         screens = data("data", "ui_layouts.json")["screens"]
         rows = [s for s in screens if s.get("name") == "battle"][0]["party"]
         return [(r["member"].lower(), r.get("name", r["member"].upper())) for r in rows]
@@ -120,7 +144,10 @@ class Renderer:
         sheet = load("game", "sprites_src", "enemies", "%s%s.png" % (c["enemy"], e["suffix"]))
         fw, fh = e["frame_w"], e["frame_h"]
         frame = sheet.crop((c.get("frame", 0) * fw, 0, c.get("frame", 0) * fw + fw, fh))
-        self.im.paste(frame, (e["cx"] - fw // 2, e["feet"] - (fh - 1)), frame)
+        if c.get("dissolve") is None:
+            self.im.paste(frame, (e["cx"] - fw // 2, e["feet"] - (fh - 1)), frame)
+        elif c["dissolve"] < DISSOLVE_STEPS:
+            self.dissolve(sheet.crop((0, 0, fw, fh)), e["cx"] - fw // 2, e["feet"] - (fh - 1), c["dissolve"])
 
         p = L["plate"]
         self.window(p["x"], p["y"], p["w"], p["h"])
@@ -136,11 +163,18 @@ class Renderer:
         self.window(q["x"], q["y"], q["w"], q["h"])
         for i, (pid, label) in enumerate(self.party()):
             sheet = load("game", "sprites_src", "chars", "%s_battle.png" % pid)
-            f0 = sheet.crop((0, 0, 24, 32))
+            fi = c.get("attack_frame", 2) if c.get("striker") == i else 0
+            f0 = sheet.crop((fi * 24, 0, fi * 24 + 24, 32))
             px = q["party_x"] + i * q["party_step"]
             self.im.paste(f0, (px, q["party_y"]), f0)
             self.centre(label, px + q["name_dx"], q["name_y"])
         self.swatch("grey", q["rule_x"], q["party_y"] + 1, 1, 30)
+        if c.get("strike"):
+            name, fr = c["strike"]
+            sw = load("game", "sprites_src", "weapons", name + ".png")
+            fwid = sw.height
+            ov = sw.crop((fr * fwid, 0, fr * fwid + fwid, fwid))
+            self.im.paste(ov, (e["cx"] - fwid // 2, e["feet"] - fh // 2 - fwid // 2), ov)
         self.text("HP %d/%d" % (c["php"], c["php_max"]), q["stat_x"], q["hp_y"])
         self.bar(q["stat_x"], q["hp_bar_y"], q["bar_w"], q["bar_h"], c["php"] / float(c["php_max"]), "hp", "hp_hi")
         self.text("WILL %d/%d" % (c["will"], c["will_max"]), q["stat_x"], q["will_y"])
@@ -186,7 +220,7 @@ def main():
     held = ""
     rows = items.get("items", []) if isinstance(items, dict) else []
     for row in rows:
-        if row.get("id") == "dads_good_knife":
+        if row.get("id") == "master_bolt":
             held = str(row.get("name", ""))
 
     def row(eid, fallback_name, fallback_hp):
@@ -215,6 +249,19 @@ def main():
     im = r.compose(v)
     im.save(os.path.join(OUT, "navy_deck_victory.png"))
     im.resize((768, 720), Image.NEAREST).save(os.path.join(OUT, "navy_deck_victory_3x.png"))
+    # FINAL-SCOPE 2026-11-03: the Percy fight on the quay, the weapon strikes and the kill's disintegration.
+    pq = dict(cases[2], out="percy_quay", scene="quay_town", name="PERCY")
+    r.compose(pq).save(os.path.join(OUT, "percy_quay.png"))
+    mq = dict(cases[0], out="morgan_name", name="CAPTAIN MORGAN")
+    r.compose(mq).save(os.path.join(OUT, "morgan_name.png"))
+    for who, wname, idx in (("zander", "spr_pp_master_bolt", 0), ("konrad", "spr_pp_adamantine_scythe", 1),
+                            ("hadrian", "spr_pp_bident", 2)):
+        s = dict(mq, out="strike_" + who, strike=(wname, 2), striker=idx, attack_frame=3, frame=2,
+                 message=["* swing"], held="")
+        r.compose(s).save(os.path.join(OUT, "strike_%s.png" % who))
+    for n in (0, 14, 30, 46, 62):
+        d = dict(mq, out="dissolve_%02d" % n, dissolve=n, hp=0)
+        r.compose(d).save(os.path.join(OUT, "dissolve_%02d.png" % n))
     print("rendered:", ", ".join(c["out"] for c in cases), ", navy_deck_victory")
 
 

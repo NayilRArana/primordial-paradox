@@ -230,7 +230,7 @@ def test_the_audit_is_clean_for_the_quay(room):
     assert by_kind["reachability"][0]["unreachable_count"] == 0
     assert by_kind["snag"][0]["snag_count"] == 0
     assert by_kind["dead_end"][0]["unrewarded_dead_ends"] == []
-    assert by_kind["readability"][0]["phantom_wall"] == [] and by_kind["readability"][0]["blocked_floor"] == []
+    assert by_kind["readability"][0]["phantom_wall"] == [] and [c for c in by_kind["readability"][0]["blocked_floor"] if c[1] > 0] == []  # row 0 is the map edge guard (WORLD, 2026-11-03)
     problems = [f for f in findings if f["kind"] in ("dangling_door", "missing_spawn", "landing_blocked", "landing_boxed",
                                                      "asymmetric_door", "one_way_door")]
     assert problems == [], problems
@@ -313,31 +313,26 @@ def test_vessels_are_sized_and_ordered_as_the_guide_says(grid):
 def test_no_walkable_tile_on_the_map_edge_except_the_arrival_street(room):
     walk = audit.room_walkables(room)
     edge = sorted(t for t in walk if t[0] in (0, 47) or t[1] in (0, 44))
-    assert edge == [(x, 0) for x in range(22, 26)], edge
+    assert edge == [], edge   # final scope 2026-11-03: row 0 of the arrival street is an edge guard, the street is entered from row 1
 
 
 def test_the_anchors_of_the_brief_are_all_there(room, built):
-    sp, trig = room["spawns"], {(t["id"], t["x"], t["y"]): t for t in room["triggers"]}
+    # FLOW 2026-11-03: the gate, the dock office door and the gangway doors are gone; the anchors are the arrival tile,
+    # the two people, the bridge wind and Morgan's fight spot. The legacy spawns stay for the retired rooms.
+    sp = room["spawns"]
     assert set(sp) == {"start", "from_gate", "from_office", "from_pier"}
     assert sp["start"]["y"] <= 2 and 22 <= sp["start"]["x"] <= 25, "the arrival tile is top centre"
-    office = [t for t in room["triggers"] if t["id"] == "quay_dock_office"]
-    assert len(office) == 1 and office[0]["kind"] == "map" and office[0]["spawn"] == "from_quay"
-    assert room["tiles"][office[0]["y"]][office[0]["x"]] == "D"
-    assert (sp["from_office"]["x"], sp["from_office"]["y"]) == (office[0]["x"], office[0]["y"] + 1)
-    boarding = [t for t in room["triggers"] if t["id"] == "ship_small"]
-    assert boarding and all(t["kind"] == "map" and t["spawn"] == "start" for t in boarding)
-    assert all(room["tiles"][t["y"]][t["x"]] == "g" for t in boarding), "boarding triggers stand on gangway tiles"
-    assert min(max(abs(sp["from_pier"]["x"] - t["x"]), abs(sp["from_pier"]["y"] - t["y"])) for t in boarding) <= 1
-    assert ("quay_gate_checkpoint", 8, 10) in trig and ("quay_yard_walk", 8, 12) in trig
+    assert not [t for t in room["triggers"] if t["kind"] == "map"], "nothing on the quay leads to another room"
+    actors = {a["id"]: a for a in room["actors"]}
+    assert set(actors) == {"morgan", "percy"}
+    assert (actors["morgan"]["x"], actors["morgan"]["y"]) == (6, 9) and (actors["percy"]["x"], actors["percy"]["y"]) == (23, 37)
+    wind = [t for t in room["triggers"] if t["id"] == "quay_bridge_wind"]
+    assert sorted((t["x"], t["y"]) for t in wind) == [(22, 32), (23, 32), (24, 32)]
     walk = audit.room_walkables(room)
-    yard = [(8, 10), (8, 11), (8, 12), (9, 12), (10, 12), (11, 12)]
-    assert [t for t in yard if t not in walk and t != (8, 11)] == [], "the scripted yard walk needs these tiles"
     spots = built["directives"]["fightspots"]
     assert spots and spots[0]["id"] == "morgan_gate"
     fx, fy = spots[0]["x"], spots[0]["y"]
-    # 2026-11-01 (three battles): the one fight spot is Morgan's, met at the gate, so it stands within two tiles of
-    # the gate checkpoint trigger (8,10); it used to be the dock office door, which the old petty officer guarded.
-    assert (fx, fy) in walk and max(abs(fx - 8), abs(fy - 10)) <= 2
+    assert (fx, fy) in walk and max(abs(fx - 6), abs(fy - 9)) <= 2
 
 
 def test_every_door_tile_carries_a_trigger_and_the_gate_barrier_is_one_overlay(room):
@@ -346,7 +341,8 @@ def test_every_door_tile_carries_a_trigger_and_the_gate_barrier_is_one_overlay(r
     firing = {(t["x"], t["y"]) for t in room["triggers"]}
     assert doors <= firing, sorted(doors - firing)
     story = [(x, y) for y, row in enumerate(room["collision"]) for x, ch in enumerate(row) if ch == "2"]
-    assert story == [(8, 8)] and room["story_flag"] == "gate_passed"
+    assert story == [], "the gate is gone (final scope D5): the bollard at (8,8) is plain solid now"
+    assert room["collision"][8][8] == "1"
 
 
 def test_the_osm_link_is_recorded_for_the_eight_named_places():

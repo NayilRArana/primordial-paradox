@@ -207,6 +207,11 @@ def route_fight() -> dict:
     """
     route = read_json("data", "slice.json")["route"]["steps"]
     fight = [step for step in route if step.get("kind") == "battle"]
+    scene_map = None
+    if not fight:
+        # FLOW 2026-11-03: the final route starts its fights from scenes, so there is no battle step. The verifier checks
+        # the draw pipeline (sheet, strip, palette), not the story, so it keeps the retired deck watch as its fixture.
+        fight = [{"id": "fight", "encounter": "tutorial_sailors"}]
     if not fight:
         fail("data/slice.json's route names no battle step")
     encounter_id = fight[0]["encounter"]
@@ -230,6 +235,8 @@ def route_fight() -> dict:
                 break
         if fight_map is not None:
             break
+    if fight_map is None and scene_map is not None:
+        fight_map = maps[scene_map]
     if fight_map is None:
         fail("no map carries a battle trigger for %r" % encounter_id)
     room_set = str(fight_map.get("room_palette") or "")
@@ -286,12 +293,19 @@ def compose(fight: dict, index: dict) -> tuple:
     slot = enemy_slot()
     enemy_name = fight["enemy"]
     enemy_row = index.get(enemy_name)
+    big = False
+    if enemy_row is None and index.get(enemy_name + "_big") is not None:
+        # FLOW 2026-11-03: Captain Morgan is drawn from his big sheet (pp_battle_draw_enemy_big), not the slot sheet.
+        enemy_name, big = enemy_name + "_big", True
+        enemy_row = index.get(enemy_name)
     if enemy_row is None:
         fail("the art index carries no %r sheet" % enemy_name)
     sheet = first_frame(layer(enemy_name, index), enemy_row)
-    if sheet.size != (slot["w"], slot["h"]):
+    if not big and sheet.size != (slot["w"], slot["h"]):
         fail("the %r sheet is %dx%d and the slot is %dx%d, so a draw would stretch it"
              % (enemy_name, sheet.size[0], sheet.size[1], slot["w"], slot["h"]))
+    if big:
+        sheet = sheet.crop((0, 0, slot["w"], slot["h"]))
     frame.alpha_composite(sheet, (slot["x"], slot["y"]))
     return frame, {"strip": strip_name, "strip_row": strip_row, "enemy": enemy_name,
                    "enemy_row": enemy_row, "slot": slot, "sheet": sheet, "strip_image": strip}

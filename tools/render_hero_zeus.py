@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "output", "hero_zeus_2026-11-02")
 CH = os.path.join(ROOT, "game", "sprites_src", "chars")
 T = 16
-HERO8_DY = -8
+HERO8_DY = 0
 VECTORS = {"down": (0, 1), "down_left": (-1, 1), "left": (-1, 0), "up_left": (-1, -1), "up": (0, -1), "up_right": (1, -1),
            "right": (1, 0), "down_right": (1, 1)}
 
@@ -47,7 +47,7 @@ def frames(path, w, h):
 
 
 OLD = frames(os.path.join(CH, "zander_ow_v2.png"), 16, 16)
-NEW = frames(os.path.join(CH, "zeus_ow_walk8.png"), 16, 24)
+NEW = frames(os.path.join(CH, "zeus_ow_walk8.png"), 16, 16)
 meta = json.load(io.open(os.path.join(CH, "zeus_ow_walk8.json"), encoding="utf-8-sig"))
 assert [k for k in VECTORS] == meta["directions"], "direction order differs from the sheet json"
 
@@ -61,7 +61,7 @@ def new_frame(dx, dy, step):
 
 
 def contact(pick, title, scale=3):
-    cw, ch, pad, top = 16 * scale + 16, 24 * scale + 24, 6, 34
+    cw, ch, pad, top = 16 * scale + 16, 16 * scale + 24, 6, 34
     im = Image.new("RGB", (cw * 8 + pad, top + (ch + 14) * 2 + pad), (70, 70, 80))
     d = ImageDraw.Draw(im)
     d.text((6, 4), title, fill=(255, 255, 255))
@@ -82,7 +82,7 @@ def contact(pick, title, scale=3):
 def main():
     os.makedirs(OUT, exist_ok=True)
     contact(old_frame, "BEFORE: zander_ow_v2 16x16, 4 directions (diagonal = horizontal half); red line = feet row").save(os.path.join(OUT, "hero_8dir_before.png"))
-    contact(new_frame, "AFTER: zeus_ow_walk8 16x24, 8 directions; red line = same feet row (draw dy %d)" % HERO8_DY).save(os.path.join(OUT, "hero_8dir_after.png"))
+    contact(new_frame, "AFTER: zeus_ow_walk8 16x16, 8 directions; red line = same feet row (draw dy %d)" % HERO8_DY).save(os.path.join(OUT, "hero_8dir_after.png"))
     import render_quay_v2 as q
     import render_ship_rooms as s
     maps = {m["id"]: m for m in json.load(io.open(os.path.join(ROOT, "data", "maps", "all.json"), encoding="utf-8-sig"))["maps"]}

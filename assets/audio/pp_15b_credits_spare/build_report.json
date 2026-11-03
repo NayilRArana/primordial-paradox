@@ -1,0 +1,115 @@
+{
+ "audio_key_top3": [
+  [
+   0.721,
+   "A major"
+  ],
+  [
+   0.657,
+   "E major"
+  ],
+  [
+   0.469,
+   "A minor"
+  ]
+ ],
+ "audio_tempo": {
+  "full_band": {
+   "bar_seconds": 1.6665,
+   "bpm": 144.01,
+   "peak_autocorr": 0.832
+  },
+  "kick_band": {
+   "bar_seconds": 1.6656,
+   "bpm": 144.09,
+   "peak_autocorr": 0.122
+  }
+ },
+ "bars": 32,
+ "beats_per_bar": 4,
+ "bpm": 144,
+ "cue_gate": {
+  "exit": 0,
+  "stdout": "assets/audio/pp_15b_credits_spare/pp_15b_credits_spare.mid: PASS"
+ },
+ "cue_gate_summary": [
+  "G1 CP-01 raw clashes on a strong beat: 0   G2 CP-09 parallel perfect intervals: 0",
+  "state: PASS   0 raw clashes on a strong beat and 0 parallel perfect fifths or octaves between the outer voices"
+ ],
+ "declared_key": "A major",
+ "delivered": {
+  "loudness": {
+   "integrated_lufs": -14.12,
+   "lra_lu": 0.4,
+   "offset": -0.02,
+   "threshold": -24.12,
+   "true_peak_dbtp": -1.23
+  },
+  "mean_volume_db": -12.3,
+  "samples": 2352000,
+  "seconds": 53.3333
+ },
+ "loop_samples": 2352000,
+ "master_attempts": [
+  {
+   "dbtp": -1.52,
+   "gain_db": 0.0,
+   "limit_db": -1.9,
+   "lufs": -16.46
+  },
+  {
+   "dbtp": -0.7,
+   "gain_db": 2.46,
+   "limit_db": -1.9,
+   "lufs": -14.18
+  },
+  {
+   "dbtp": -1.23,
+   "gain_db": 2.64,
+   "limit_db": -2.35,
+   "lufs": -14.12
+  }
+ ],
+ "midi_key_top3": [
+  [
+   0.908,
+   "A major"
+  ],
+  [
+   0.778,
+   "E major"
+  ],
+  [
+   0.554,
+   "D major"
+  ]
+ ],
+ "notes": {
+  "dpcm": 144,
+  "noise": 320,
+  "pulse 1": 128,
+  "pulse 2": 76,
+  "triangle": 256,
+  "vrc6 pulse a": 158,
+  "vrc6 pulse b": 76,
+  "vrc6 saw": 32
+ },
+ "periodicity_max_abs_diff_first_second": 0.536682,
+ "periodicity_max_abs_diff_whole": 0.621155,
+ "periodicity_rms_diff_db": -26.31,
+ "periodicity_share_samples_differing": 0.36827,
+ "seam": {
+  "body_rms_dbfs": -12.27,
+  "head_rms_dbfs": -11.83,
+  "loop_end_sample": 2352000,
+  "loop_seconds": 53.333333,
+  "loop_start_sample": 0,
+  "seam_level_delta_db": -0.82,
+  "step_reference_dbfs": -8.98,
+  "tail_rms_dbfs": -13.1,
+  "verdict": "clean",
+  "wrap_jump_dbfs": -38.61
+ },
+ "slug": "pp_15b_credits_spare",
+ "title": "Mercy"
+}

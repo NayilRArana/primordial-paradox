@@ -72,17 +72,8 @@ function pp_overworld_new(_map_id, _spawn_name) {
     if (is_array(_map.actors)) {
         for (var _i = 0; _i < array_length(_map.actors); _i += 1) {
             var _a = _map.actors[_i];
-            _world.actors[$ string(_a.id)] = {
-                name: _a.id,
-                kind: _a.kind,
-                dialogue: _a.dialogue,
-                facing: _a.facing,
-                tx: _a.x,
-                ty: _a.y,
-                px: _a.x * PP_TILE,
-                py: _a.y * PP_TILE,
-                walk: 0
-            };
+            var _live = pp_overworld_actor_new(_a);
+            if (!is_undefined(_live)) _world.actors[$ string(_a.id)] = _live;
         }
     }
     return _world;
@@ -528,6 +519,8 @@ function pp_overworld_battle_finished(_world, _encounter_id, _outcome, _handoff_
         }
     }
     _world.trigger_lock = PP_TRIGGER_LOCK_STEPS;
+    // Card FLOW: the D7 result line, the killed actor gone from the room, the spared one released from the storm.
+    pp_flow_battle_result(_world, _encounter_id, _outcome);
     // Card t_009836b9: the route follows the fight out too, so the step after the demo's first fight is the save step
     // the route authors. The call sits before the handoff branch because an interrupted fight hands a scene over and
     // the route still has to move on from the fight row.
@@ -560,7 +553,16 @@ function pp_overworld_trigger_flag(_world, _trigger) {
 function pp_overworld_fire(_world, _trigger) {
     if (is_undefined(_trigger)) return;
     if (_trigger.once && pp_overworld_trigger_seen(_world, _trigger)) return;
-    if (_trigger.condition != "" && !pp_ledger_flag(global.pp_ledger, _trigger.condition)) return;
+    if (_trigger.condition != "") {
+        // Card FLOW: a leading ! says the flag must NOT be set (the bridge wind while Morgan is unresolved).
+        var _cond = string(_trigger.condition);
+        var _want = true;
+        if (string_char_at(_cond, 1) == "!") {
+            _want = false;
+            _cond = string_delete(_cond, 1, 1);
+        }
+        if (pp_ledger_flag(global.pp_ledger, _cond) != _want) return;
+    }
 
     switch (_trigger.kind) {
         case "say":
@@ -725,6 +727,8 @@ function pp_overworld_step(_world) {
     // Clocks that run whether or not anything else does. The world clock climbs every step so the animated tiles keep
     // moving through a scene, a dialogue or a walk; pp_map_draw reads it on the same frame it is drawn.
     _world.steps += 1;
+    // Final scope 2026-11-03: the hurricane's own clock and lightning, quay only (pp_storm.gml).
+    pp_storm_step(_world);
     if (_world.shake_steps > 0) _world.shake_steps -= 1;
     // The flash counts down here, at the top of the step, exactly as the shake does, so the frame that asked for it
     // draws it: N on the step it is set, N-1 on the next, and off when it reaches zero. A `flash` command spends no
@@ -846,6 +850,12 @@ function pp_overworld_step(_world) {
                 return;
             }
         }
+        // Card FLOW: a trigger row with touch true fires when the feet enter its tile (the wind on the bridge).
+        if (!is_undefined(_here) && _here.kind != "marker" && pp_trigger_is_touch(_here) && _world.trigger_lock <= 0) {
+            pp_overworld_fire(_world, _here);
+            pp_overworld_clock_step(_world);
+            return;
+        }
     }
 
     if (_world.trigger_lock <= 0 && pp_pressed("confirm")) {
@@ -854,7 +864,13 @@ function pp_overworld_step(_world) {
             // Card R30 (spec 19 section 2, Q5 and Q10): an actor whose id the bake carries a conversation for talks
             // from data/meta_bake.json, and any other actor keeps its authored dialogue id. One door, in
             // pp_talk_actor_open, so the map data decides who speaks and this branch decides nothing by name.
-            _world.dialogue = pp_talk_actor_open(_talk, _world);
+            // Card FLOW: an actor with a scene starts it; a spared one speaks its own line, never the gate bake.
+            if (pp_flow_actor_scene_due(_talk)) {
+                pp_flow_actor_scene_start(_talk, _world);
+                pp_overworld_clock_step(_world);
+                return;
+            }
+            _world.dialogue = pp_flow_actor_talk(_talk, _world);
             if (is_undefined(_world.dialogue)) _world.dialogue = undefined;
             // Card t_11f6a125: one unconditional line whenever a confirm opens a conversation, naming the box, the
             // person and the tile they stand on. It is the same kind of proof line as the battle start line above:
@@ -868,7 +884,7 @@ function pp_overworld_step(_world) {
             return;
         }
         var _target = pp_overworld_confirm_target(_world);
-        if (!is_undefined(_target) && _target.kind != "marker") {
+        if (!is_undefined(_target) && _target.kind != "marker" && !pp_trigger_is_touch(_target)) {
             pp_overworld_fire(_world, _target);
             pp_overworld_clock_step(_world);
             return;
@@ -950,6 +966,9 @@ function pp_overworld_draw(_world) {
     // The above plane of the tile art, over the hero and the actors: a lamp post, a harbour sign, the things a
     // walker passes behind (card R28). Drawn after him so the overlap is the layer order and not a coincidence.
     pp_map_draw_above(_world.map, floor(_world.cam_x) + _ox, floor(_world.cam_y) + _oy, _world.steps);
+
+    // The hurricane over everything in the world and under the dialogue box (quay only, pp_storm.gml).
+    pp_storm_draw(_world);
 
     if (!pp_dialogue_closed(_world.dialogue)) {
         pp_dialogue_draw(_world.dialogue);
@@ -1383,10 +1402,10 @@ function pp_fight_tour_think() {
 #macro PP_SAILOR_SHEET "sailor_ow_v2"
 // Card HERO-ZEUS: the style B Zeus, 16x24, eight directions, two frames each (frame = direction * 2 + step; step 0
 // stands). Direction order is the sheet's own: down, down_left, left, up_left, up, up_right, right, down_right.
-// The figure is 8 pixels taller than the 16x16 tile he stands on, so it is drawn 8 pixels higher: the feet row stays
-// the tile's bottom row, exactly where the old 16x16 hero's feet were.
+// Final scope 2026-11-03: the figure is 16x16, exactly the sailor's height, so it is drawn on the tile with no offset
+// (it was 16x24 and drawn 8 higher, which made him taller than every other person on the map).
 #macro PP_HERO_SHEET8 "zeus_ow_walk8"
-#macro PP_HERO8_DY (-8)
+#macro PP_HERO8_DY 0
 
 /// Index (0..7) of a direction in the eight direction sheet, from the SIGNS of the movement vector. (0, 0) is down.
 function pp_world_dir8_index(_dx, _dy) {
@@ -1499,6 +1518,14 @@ function pp_overworld_draw_hero(_world, _ox, _oy) {
     }
 }
 
+/// The sheet an actor is drawn from. Percy has his own figure (the trident); everyone else on a map is a sailor. Every
+/// sheet named here is 16 px tall, the hero's height (final scope 2026-11-03 item 3, pinned by tests/test_quay_collision.py).
+#macro PP_PERCY_SHEET "percy_ow_v2"
+function pp_world_actor_sheet(_actor) {
+    if (_actor.name == "percy" && pp_art_has(PP_PERCY_SHEET)) return PP_PERCY_SHEET;
+    return PP_SAILOR_SHEET;
+}
+
 function pp_overworld_draw_actors(_world, _ox, _oy) {
     var _names = variable_struct_get_names(_world.actors);
     var _i = 0;
@@ -1507,8 +1534,11 @@ function pp_overworld_draw_actors(_world, _ox, _oy) {
         // Whole pixels, exactly as the hero and the map (card PP-FREE-MOVE rule 5).
         var _sx = floor(_a.px) - floor(_world.cam_x) + _ox;
         var _sy = floor(_a.py) - floor(_world.cam_y) + _oy;
-        var _frame = pp_world_sheet_frame(PP_SAILOR_SHEET, _a.facing, false, 0);
-        if (!pp_art_draw(PP_SAILOR_SHEET, _frame, _sx, _sy, PP_UNTINTED, 1)) {
+        var _sheet = pp_world_actor_sheet(_a);
+        var _frame = pp_world_sheet_frame(_sheet, _a.facing, false, 0);
+        if (pp_art_draw(_sheet, _frame, _sx, _sy, PP_UNTINTED, 1)) {
+            pp_possession_draw(_a, _sx, _sy, _world.steps);
+        } else {
             // Blocks: navy jacket with a white collar, cap, so a sailor does not read as the hero.
             draw_set_colour(pp_role_colour("dim"));
             draw_rectangle(_sx + 3, _sy + 2, _sx + 12, _sy + 6, false);
@@ -1519,4 +1549,125 @@ function pp_overworld_draw_actors(_world, _ox, _oy) {
         }
         _i += 1;
     }
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+// Card FLOW (2026-11-03): the Town Quay story. Two people (Captain Morgan, Percy) start a scene when talked to, stay
+// gone once killed, and the outcome of their fights is one derived state per person.
+
+/// Does this trigger row fire on entry (touch true) instead of on confirm?
+function pp_trigger_is_touch(_trigger) {
+    return is_struct(_trigger) && variable_struct_exists(_trigger, "touch") && _trigger.touch == true;
+}
+
+/// The outcome of one person's fight as the persisted flags say it: "", "spared" or "killed". This is the morgan_state
+/// and percy_state of contract C2; it is derived from the booleans the save already carries, never stored twice.
+function pp_flow_state(_id) {
+    if (pp_ledger_flag(global.pp_ledger, string(_id) + "_killed")) return "killed";
+    if (pp_ledger_flag(global.pp_ledger, string(_id) + "_spared")) return "spared";
+    return "";
+}
+
+/// A live actor from a map row, or undefined when the row's gone_flag is set (a killed person is not placed, which is
+/// what keeps them gone after a save and a load: the flag is in the save).
+function pp_overworld_actor_new(_a) {
+    if (variable_struct_exists(_a, "gone_flag") && string(_a.gone_flag) != ""
+        && pp_ledger_flag(global.pp_ledger, string(_a.gone_flag))) return undefined;
+    return {
+        name: _a.id,
+        kind: _a.kind,
+        dialogue: _a.dialogue,
+        scene: (variable_struct_exists(_a, "scene") ? string(_a.scene) : ""),
+        done_flag: (variable_struct_exists(_a, "done_flag") ? string(_a.done_flag) : ""),
+        gone_flag: (variable_struct_exists(_a, "gone_flag") ? string(_a.gone_flag) : ""),
+        facing: _a.facing,
+        tx: _a.x,
+        ty: _a.y,
+        px: _a.x * PP_TILE,
+        py: _a.y * PP_TILE,
+        walk: 0,
+        moving: false,
+        from_x: _a.x * PP_TILE,
+        from_y: _a.y * PP_TILE,
+        to_x: _a.x * PP_TILE,
+        to_y: _a.y * PP_TILE,
+        steps: 0,
+        total: 1
+    };
+}
+
+/// True when talking to this actor starts its scene: it has one and its done_flag is not set.
+function pp_flow_actor_scene_due(_actor) {
+    if (!is_struct(_actor) || !variable_struct_exists(_actor, "scene") || string(_actor.scene) == "") return false;
+    if (string(_actor.done_flag) != "" && pp_ledger_flag(global.pp_ledger, string(_actor.done_flag))) return false;
+    return true;
+}
+
+function pp_flow_actor_scene_start(_actor, _world) {
+    show_debug_message("PP dialogue: scene " + string(_actor.scene) + " with " + string(_actor.name) + " on "
+        + string(_world.map.id) + " " + string(_actor.tx) + "," + string(_actor.ty));
+    pp_overworld_start_scene(_world, _actor.scene);
+    return true;
+}
+
+/// The box an actor opens when it has no scene due. An actor that carries a scene speaks its authored dialogue row, so
+/// the baked gate conversation that shares the id "morgan" never answers; every other actor keeps the old door.
+function pp_flow_actor_talk(_actor, _world) {
+    if (is_struct(_actor) && variable_struct_exists(_actor, "scene") && string(_actor.scene) != "") {
+        return pp_dialogue_open(_actor.dialogue);
+    }
+    return pp_talk_actor_open(_actor, _world);
+}
+
+/// The enemy id a finished encounter fought ("morgan", "percy"), or "".
+function pp_flow_encounter_enemy(_encounter_id) {
+    var _enc = pp_data_find(global.pp_data.encounters.encounters, _encounter_id);
+    if (is_undefined(_enc) || !is_array(_enc.enemies) || array_length(_enc.enemies) == 0) return "";
+    return string(_enc.enemies[0]);
+}
+
+/// The D7 start line. Called when a fight opens, whichever door opened it.
+function pp_flow_encounter_start(_encounter_id) {
+    var _enemy = pp_flow_encounter_enemy(_encounter_id);
+    if (_enemy == "morgan" || _enemy == "percy") show_debug_message("PP: encounter start " + _enemy);
+    return _enemy;
+}
+
+/// The fight is over and the world has the outcome. Contract C1: BATTLE sets global.pp.last_battle; when it did not (or
+/// named another enemy) the outcome the fight reported is used. Prints the D7 result line for a kill or a spare, takes a
+/// killed person off the room now, and lets the storm go of a spared one.
+function pp_flow_battle_result(_world, _encounter_id, _outcome) {
+    var _enemy = pp_flow_encounter_enemy(_encounter_id);
+    if (_enemy != "morgan" && _enemy != "percy") return false;
+    var _result = string(_outcome);
+    if (is_struct(global.pp) && variable_struct_exists(global.pp, "last_battle") && is_struct(global.pp.last_battle)
+        && string(global.pp.last_battle.enemy) == _enemy) {
+        _result = string(global.pp.last_battle.outcome);
+    }
+    global.pp.last_battle = { enemy: _enemy, outcome: _result };
+    if (_result != "kill" && _result != "spare") return false;
+    show_debug_message("PP: encounter result " + _enemy + " " + _result);
+    if (_result == "kill") {
+        pp_ledger_set_flag(global.pp_ledger, _enemy + "_killed", true);
+        pp_world_destroy_actor(_world, _enemy);
+    } else {
+        pp_ledger_set_flag(global.pp_ledger, _enemy + "_spared", true);
+        var _tint = asset_get_index("pp_possession_tint");
+        if (_tint >= 0 && script_exists(_tint)) script_execute(_tint, _enemy, false);
+    }
+    return true;
+}
+
+/// Start the credits for a variant ("spare" or "kill"). pp_credits_start is CREDITS' door; when the build has no such
+/// script the player is sent to the title instead of being left on a map with nothing to do.
+function pp_flow_credits_start(_variant) {
+    // pp_credits_start prints the D7 line "PP: credits start <variant>" itself, once.
+    var _fn = asset_get_index("pp_credits_start");
+    if (_fn >= 0 && script_exists(_fn)) {
+        script_execute(_fn, string(_variant));
+        return true;
+    }
+    show_debug_message("PP: credits start " + string(_variant) + " (script missing, back to the title)");
+    pp_app_enter_room(PPMode.title, {}, rm_pp_title);
+    return false;
 }

@@ -24,6 +24,90 @@
       "name_note": "Card PP-KNIFE: this is the ONE field the name lives in. The battle attack line, the damage line, the menu row and the sprite's own sidecar all read it, so Nayil renames the knife here and nothing else moves. Working name; the final one comes from PP-SCENES-1."
     },
     {
+        "id": "master_bolt",
+        "kind": "weapon",
+        "name": "Master Bolt",
+        "wielder": "zander",
+        "description": "The lightning bolt that ends arguments.",
+        "attack_line": "* ZANDER hurls the {name}.",
+        "damage_line": "* It lands for {damage}. Thunder follows.",
+        "damage_min": 2,
+        "damage_max": 12,
+        "hits": 1,
+        "hit_chance": 100,
+        "sprite": "spr_pp_master_bolt",
+        "icon_frame": 0,
+        "slash_frames": [
+          1,
+          2,
+          3
+        ],
+        "balance_note": "FINAL-SCOPE D2 (2026-11-03): the same 2 to 12 band as every FIGHT; only the picture and the words differ."
+      },
+      {
+        "id": "adamantine_scythe",
+        "kind": "weapon",
+        "name": "Adamantine Scythe",
+        "wielder": "konrad",
+        "description": "An unbreakable blade, grey as old weather.",
+        "attack_line": "* KONRAD swings the {name}.",
+        "damage_line": "* It lands for {damage}. Time bends.",
+        "damage_min": 2,
+        "damage_max": 12,
+        "hits": 1,
+        "hit_chance": 100,
+        "sprite": "spr_pp_adamantine_scythe",
+        "icon_frame": 0,
+        "slash_frames": [
+          1,
+          2,
+          3
+        ],
+        "balance_note": "FINAL-SCOPE D2 (2026-11-03): the same 2 to 12 band as every FIGHT; only the picture and the words differ."
+      },
+      {
+        "id": "bident",
+        "kind": "weapon",
+        "name": "Bident",
+        "wielder": "hadrian",
+        "description": "Two prongs and a helm nobody can see.",
+        "attack_line": "* HADRIAN thrusts the {name}.",
+        "damage_line": "* It lands for {damage}. Quietly.",
+        "damage_min": 2,
+        "damage_max": 12,
+        "hits": 1,
+        "hit_chance": 100,
+        "sprite": "spr_pp_bident",
+        "icon_frame": 0,
+        "slash_frames": [
+          1,
+          2,
+          3
+        ],
+        "balance_note": "FINAL-SCOPE D2 (2026-11-03): the same 2 to 12 band as every FIGHT; only the picture and the words differ."
+      },
+      {
+        "id": "trident",
+        "kind": "weapon",
+        "name": "Trident",
+        "wielder": "percy",
+        "description": "The sea's own fork.",
+        "attack_line": "* PERCY raises the {name}.",
+        "damage_line": "* It lands for {damage}. Spray everywhere.",
+        "damage_min": 2,
+        "damage_max": 12,
+        "hits": 1,
+        "hit_chance": 100,
+        "sprite": "spr_pp_trident",
+        "icon_frame": 0,
+        "slash_frames": [
+          1,
+          2,
+          3
+        ],
+        "balance_note": "FINAL-SCOPE D2 (2026-11-03): the same 2 to 12 band as every FIGHT; only the picture and the words differ."
+      },
+    {
       "id": "salve",
       "name": "Salt Salve",
       "heal": 6,

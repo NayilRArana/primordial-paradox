@@ -258,7 +258,7 @@
       "id": "battle_lose",
       "speaker": "narrator",
       "lines": [
-        "* The deck rises to meet you.",
+        "* The wind knocks you flat.",
         "* Your last save still stands."
       ]
     },
@@ -295,205 +295,6 @@
         "* The hound rolls over.",
         "* It lets you pass the rope.",
         "* It keeps the knot."
-      ]
-    },
-    {
-      "id": "quay_gate_checkpoint",
-      "speaker": "narrator",
-      "pages": [
-        {
-          "speaker": "narrator",
-          "lines": [
-            "* Rain on the barrier arm.",
-            "* A hut. One lit window.",
-            "* The guard hides a form."
-          ]
-        },
-        {
-          "speaker": "guard",
-          "portrait": "guard",
-          "lines": [
-            "* \"That is far enough.\"",
-            "* \"Name and business.\"",
-            "* He caps his pen twice."
-          ]
-        },
-        {
-          "speaker": "narrator",
-          "lines": [
-            "* Past him the yard is dark.",
-            "* Past that, a grey hull.",
-            "* The Itchen takes the rain."
-          ]
-        }
-      ]
-    },
-    {
-      "id": "quay_gate_choice",
-      "speaker": "guard",
-      "portrait": "guard",
-      "pages": [
-        {
-          "speaker": "guard",
-          "portrait": "guard",
-          "lines": [
-            "* \"No pass, no gate.\"",
-            "* \"So. What is it?\"",
-            "* The pen waits. It is dry."
-          ]
-        }
-      ],
-      "choices": [
-        {
-          "label": "No pass.",
-          "sets": [
-            "gate_passed",
-            "gate_truth"
-          ],
-          "goto": "quay_gate_truth"
-        },
-        {
-          "label": "Crew list.",
-          "sets": [
-            "gate_passed",
-            "gate_bluff"
-          ],
-          "goto": "quay_gate_bluff"
-        },
-        {
-          "label": "Officer.",
-          "sets": [
-            "gate_passed",
-            "gate_authority"
-          ],
-          "goto": "quay_gate_authority"
-        }
-      ]
-    },
-    {
-      "id": "quay_gate_truth",
-      "speaker": "guard",
-      "portrait": "guard",
-      "pages": [
-        {
-          "speaker": "guard",
-          "portrait": "guard",
-          "lines": [
-            "* \"Honest. That is new.\"",
-            "* \"Office. Sign in.\""
-          ]
-        },
-        {
-          "speaker": "narrator",
-          "lines": [
-            "* He lifts the arm himself."
-          ]
-        }
-      ]
-    },
-    {
-      "id": "quay_gate_bluff",
-      "speaker": "guard",
-      "portrait": "guard",
-      "pages": [
-        {
-          "speaker": "guard",
-          "portrait": "guard",
-          "lines": [
-            "* \"The list is full.\"",
-            "* \"Office, then. Sign.\""
-          ]
-        },
-        {
-          "speaker": "narrator",
-          "lines": [
-            "* The page says TEA."
-          ]
-        }
-      ]
-    },
-    {
-      "id": "quay_gate_authority",
-      "speaker": "guard",
-      "portrait": "guard",
-      "pages": [
-        {
-          "speaker": "guard",
-          "portrait": "guard",
-          "lines": [
-            "* \"My officer is asleep.\"",
-            "* \"Office. Now.\""
-          ]
-        },
-        {
-          "speaker": "narrator",
-          "lines": [
-            "* The kettle snores too."
-          ]
-        }
-      ]
-    },
-    {
-      "id": "quay_dock_office",
-      "speaker": "narrator",
-      "pages": [
-        {
-          "speaker": "narrator",
-          "lines": [
-            "* Counter. A lamp. A ledger.",
-            "* Two men. One is Navy.",
-            "* The other owns the kettle."
-          ]
-        },
-        {
-          "speaker": "clerk",
-          "lines": [
-            "* \"You are the last one.\"",
-            "* \"Name, then. Slowly.\"",
-            "* The pen is already wet."
-          ]
-        },
-        {
-          "speaker": "narrator",
-          "lines": [
-            "* A line left in the ledger.",
-            "* The ink on it is dry.",
-            "* Beside it: a tea ring."
-          ]
-        }
-      ]
-    },
-    {
-      "id": "quay_dock_office_pass",
-      "speaker": "clerk",
-      "pages": [
-        {
-          "speaker": "clerk",
-          "lines": [
-            "* \"Berth nine. Deck two.\"",
-            "* \"Do not leave the cabin.\"",
-            "* He tears a pink slip."
-          ]
-        },
-        {
-          "speaker": "sailor",
-          "lines": [
-            "* \"Sign it and come on.\"",
-            "* \"I have a ladder to hold.\"",
-            "* \"It is holding my tea.\""
-          ]
-        },
-        {
-          "speaker": "narrator",
-          "lines": [
-            "* The slip changes hands.",
-            "* It is warm from a pocket.",
-            "* The gate shuts behind you."
-          ]
-        }
-      ],
-      "sets": [
-        "has_boarding_pass"
       ]
     },
     {
@@ -731,6 +532,359 @@
         "* END OF THE DEMO.",
         "* The veil thins tonight.",
         "* Thank you for playing."
+      ]
+    },
+    {
+      "id": "quay_morgan_pre",
+      "speaker": "narrator",
+      "pages": [
+        {
+          "speaker": "narrator",
+          "lines": [
+            "* Rain walks sideways here.",
+            "* Captain Morgan waits,",
+            "* clipboard bone dry."
+          ]
+        },
+        {
+          "speaker": "morgan",
+          "portrait": "guard",
+          "lines": [
+            "* \"Name. Business. STORM.\"",
+            "* His eyes are all cloud.",
+            "* The pen crackles."
+          ]
+        },
+        {
+          "speaker": "narrator",
+          "lines": [
+            "* The storm is wearing him.",
+            "* Free him, somehow."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "quay_morgan_intro",
+      "speaker": "narrator",
+      "pages": [
+        {
+          "speaker": "narrator",
+          "lines": [
+            "* Captain Morgan salutes.",
+            "* Thunder salutes back.",
+            "* Talk him round, or fight."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "quay_morgan_win_spare",
+      "speaker": "narrator",
+      "pages": [
+        {
+          "speaker": "narrator",
+          "lines": [
+            "* The cloud leaves his eyes.",
+            "* \"Was I shouting? Sorry.\"",
+            "* He puts the pen away."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "quay_morgan_win_kill",
+      "speaker": "narrator",
+      "pages": [
+        {
+          "speaker": "narrator",
+          "lines": [
+            "* Captain Morgan sits down.",
+            "* The clipboard floats off.",
+            "* The rain does not stop."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "quay_morgan_after_spare",
+      "speaker": "morgan",
+      "portrait": "guard",
+      "pages": [
+        {
+          "speaker": "morgan",
+          "portrait": "guard",
+          "lines": [
+            "* \"Where did my cap go?\"",
+            "* \"Never mind. Thank you.\"",
+            "* \"Go. Percy is worse.\""
+          ]
+        },
+        {
+          "speaker": "narrator",
+          "lines": [
+            "* The wind sulks south.",
+            "* The bridge is calling."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "quay_morgan_after_kill",
+      "speaker": "narrator",
+      "pages": [
+        {
+          "speaker": "narrator",
+          "lines": [
+            "* Morgan does not get up.",
+            "* The wind keeps his cap.",
+            "* Nobody says anything."
+          ]
+        },
+        {
+          "speaker": "narrator",
+          "lines": [
+            "* The bridge is calling."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "quay_morgan_thanks",
+      "speaker": "morgan",
+      "portrait": "guard",
+      "pages": [
+        {
+          "speaker": "morgan",
+          "portrait": "guard",
+          "lines": [
+            "* \"Thank you. Truly.\"",
+            "* \"The clipboard says go.\"",
+            "* \"I never did read it.\""
+          ]
+        }
+      ]
+    },
+    {
+      "id": "quay_bridge_wind",
+      "speaker": "narrator",
+      "pages": [
+        {
+          "speaker": "narrator",
+          "lines": [
+            "* The wind shoves you back.",
+            "* The bridge is not for you.",
+            "* Not while Morgan rages."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "quay_percy_pre",
+      "speaker": "narrator",
+      "pages": [
+        {
+          "speaker": "narrator",
+          "lines": [
+            "* The bridge groans.",
+            "* Percy stands at its end,",
+            "* trident up, hair wild."
+          ]
+        },
+        {
+          "speaker": "percy",
+          "portrait": "percy",
+          "lines": [
+            "* \"I CALLED THE STORM.\"",
+            "* \"No. It called ME.\"",
+            "* \"STAND BACK. I CANNOT.\""
+          ]
+        },
+        {
+          "speaker": "narrator",
+          "lines": [
+            "* This hurricane is his.",
+            "* Stop him. Bring him back."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "quay_percy_intro",
+      "speaker": "narrator",
+      "pages": [
+        {
+          "speaker": "narrator",
+          "lines": [
+            "* Percy raises the trident.",
+            "* The sea stands behind him.",
+            "* Talk him down, or fight."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "quay_percy_flicker",
+      "speaker": "percy",
+      "portrait": "percy",
+      "pages": [
+        {
+          "speaker": "percy",
+          "portrait": "percy",
+          "lines": [
+            "* \"Wait. Who says my name?\"",
+            "* The trident dips an inch."
+          ]
+        },
+        {
+          "speaker": "narrator",
+          "lines": [
+            "* Then the storm yanks him",
+            "* back. Again!"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "quay_percy_win_spare",
+      "speaker": "percy",
+      "portrait": "percy",
+      "pages": [
+        {
+          "speaker": "percy",
+          "portrait": "percy",
+          "lines": [
+            "* \"The sea... is quiet?\"",
+            "* \"Did I do all this?\""
+          ]
+        }
+      ]
+    },
+    {
+      "id": "quay_percy_win_kill",
+      "speaker": "narrator",
+      "pages": [
+        {
+          "speaker": "narrator",
+          "lines": [
+            "* The trident falls first.",
+            "* Then the man.",
+            "* The sea goes flat."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "quay_percy_after_spare",
+      "speaker": "percy",
+      "portrait": "percy",
+      "pages": [
+        {
+          "speaker": "percy",
+          "portrait": "percy",
+          "lines": [
+            "* \"I remember. All of it.\"",
+            "* \"Sorry about the roofs.\"",
+            "* \"And the weather.\""
+          ]
+        },
+        {
+          "speaker": "narrator",
+          "lines": [
+            "* The clouds tear open.",
+            "* Gulls, of all things."
+          ]
+        },
+        {
+          "speaker": "narrator",
+          "lines": [
+            "* PERCY JOINS THE PARTY!"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "quay_percy_after_kill",
+      "speaker": "narrator",
+      "pages": [
+        {
+          "speaker": "narrator",
+          "lines": [
+            "* The wind drops at once.",
+            "* One gull complains.",
+            "* It is very quiet."
+          ]
+        },
+        {
+          "speaker": "narrator",
+          "lines": [
+            "* The sea is a mirror.",
+            "* You did this too."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "quay_dock_office",
+      "speaker": "narrator",
+      "pages": [
+        {
+          "speaker": "narrator",
+          "lines": [
+            "* Counter. A lamp. A ledger.",
+            "* Two men. One is Navy.",
+            "* The other owns the kettle."
+          ]
+        },
+        {
+          "speaker": "clerk",
+          "lines": [
+            "* \"You are the last one.\"",
+            "* \"Name, then. Slowly.\"",
+            "* The pen is already wet."
+          ]
+        },
+        {
+          "speaker": "narrator",
+          "lines": [
+            "* A line left in the ledger.",
+            "* The ink on it is dry.",
+            "* Beside it: a tea ring."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "quay_dock_office_pass",
+      "speaker": "clerk",
+      "pages": [
+        {
+          "speaker": "clerk",
+          "lines": [
+            "* \"Berth nine. Deck two.\"",
+            "* \"Do not leave the cabin.\"",
+            "* He tears a pink slip."
+          ]
+        },
+        {
+          "speaker": "sailor",
+          "lines": [
+            "* \"Sign it and come on.\"",
+            "* \"I have a ladder to hold.\"",
+            "* \"It is holding my tea.\""
+          ]
+        },
+        {
+          "speaker": "narrator",
+          "lines": [
+            "* The slip changes hands.",
+            "* It is warm from a pocket.",
+            "* The gate shuts behind you."
+          ]
+        }
+      ],
+      "sets": [
+        "has_boarding_pass"
       ]
     }
   ]

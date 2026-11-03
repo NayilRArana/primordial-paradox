@@ -51,6 +51,7 @@ COMMAND_ARGS = {
     "talk": ({"npc"}, {"npc", "plate"}),
     "setflag": ({"name"}, {"name", "value"}),
     "branch": ({"flag", "scene"}, {"flag", "scene"}),
+    "credits": ({"variant"}, {"variant"}),
     "end": (set(), set()),
 }
 
@@ -113,7 +114,7 @@ def test_runner_command_list_and_switch_agree_in_both_directions():
     commands = runner_commands(text)
     assert commands == [
         "say", "move", "face", "wait", "fade", "music", "sfx", "camera", "shake", "flash",
-        "spawn", "destroy", "battle", "talk", "setflag", "branch", "end",
+        "spawn", "destroy", "battle", "talk", "setflag", "branch", "credits", "end",
     ], "the runner's command list changed; spec 06's table has to change with it"
 
     start = gml_function(text, "pp_scene_command_start")

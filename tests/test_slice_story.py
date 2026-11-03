@@ -191,7 +191,7 @@ class Story:
         index = {}
         for map_id, row in self.maps.items():
             for position, trigger in enumerate(row.get("triggers") or []):
-                condition = trigger.get("condition")
+                condition = (trigger.get("condition") or "").lstrip("!")
                 if condition:
                     index.setdefault(condition, []).append(
                         (("map", map_id), "%s.triggers[%d].condition" % (map_id, position), None))
@@ -243,6 +243,9 @@ class Story:
             for index, actor in enumerate(row.get("actors") or []):
                 if actor.get("dialogue"):
                     out.append((("dialogue", actor.get("dialogue")), "%s.actors[%d].dialogue" % (name, index), None))
+                # FLOW 2026-11-03: an actor can start a scene when talked to (Captain Morgan, Percy).
+                if actor.get("scene"):
+                    out.append((("scene", actor.get("scene")), "%s.actors[%d].scene" % (name, index), None))
         elif kind == "encounter":
             row = self.encounters[name]
             for index, enemy_id in enumerate(row.get("enemies") or []):
@@ -653,7 +656,7 @@ def test_no_id_the_slice_uses_dangles(story):
 
 def test_the_walk_reaches_every_table_the_slice_reads(story):
     reached = story.walk()
-    for node in (BOARDING, SAILORS, PERCY, INTERRUPTION, ("enemy", "percy")):
+    for node in (("scene", "quay_morgan_encounter"), PERCY, ("enemy", "percy")):  # FLOW 2026-11-03: the quay route
         assert node in reached, "%s %r is not reachable from the slice entry" % node
     for kind in ("scene", "dialogue", "pattern", "flag", "map", "encounter", "enemy"):
         count = len([node for node in reached if node[0] == kind])
@@ -685,7 +688,7 @@ def test_every_gate_the_data_names_is_a_flag(story):
     for map_id, row in story.maps.items():
         for trigger in row.get("triggers") or []:
             if trigger.get("condition"):
-                gates.append((map_id + ".triggers.condition", trigger["condition"]))
+                gates.append((map_id + ".triggers.condition", trigger["condition"].lstrip("!")))
     for scene_id, row in story.scenes.items():
         for command in row.get("commands") or []:
             if command.get("cmd") == "branch":
@@ -712,7 +715,9 @@ def test_every_gate_the_data_names_is_a_flag(story):
             on_reached.append(name)
         else:
             off_reached.append(name)
-    for name in sorted(set(on_reached)):
+    # FLOW 2026-11-03: the ship rooms are retired data that only the unread epilogue_scene field still touches; the flag
+    # that gated their hatch (set by the retired boarding scene) is not a slice flag any more.
+    for name in sorted(set(on_reached) - {"ship_deck_seen"}):
         assert ("flag", name) in reached, "flag %r gates content the slice reaches, but nothing it reaches sets it" % (name,)
     assert on_reached, "no gate sits on any reached node, so the settable half of this check proved nothing"
     for enemy_id, guard in guards:
@@ -1015,20 +1020,20 @@ def test_mutation_a_removed_spare_dialogue_is_refused_here_and_by_the_checker(da
     path = data_root / "data" / "dialogue" / "all.json"
     document = read_json(path)
     before = len(document["dialogue"])
-    document["dialogue"] = [row for row in document["dialogue"] if row.get("id") != "percy_win_spare"]
-    assert len(document["dialogue"]) == before - 1, "the fixture no longer carries percy_win_spare"
+    document["dialogue"] = [row for row in document["dialogue"] if row.get("id") != "quay_percy_win_spare"]
+    assert len(document["dialogue"]) == before - 1, "the fixture no longer carries quay_percy_win_spare"
     write_json(path, document)
 
     mutated = Story(str(data_root))
     encountered = story_failures(mutated)
     assert encountered, "removing the spare dialogue did not break the ending"
-    assert any("percy_win_spare" in problem for problem in encountered), encountered
+    assert any("quay_percy_win_spare" in problem for problem in encountered), encountered
     mutated.walk()
-    assert any(dangle[1] == "dialogue" and dangle[2] == "percy_win_spare" for dangle in mutated.dangles()), \
+    assert any(dangle[1] == "dialogue" and dangle[2] == "quay_percy_win_spare" for dangle in mutated.dangles()), \
         "the walk did not notice the missing spare dialogue: %r" % (mutated.dangles(),)
 
     errors = check_data.check(str(data_root))
-    assert any("percy_win_spare" in error for error in errors), \
+    assert any("quay_percy_win_spare" in error for error in errors), \
         "tools/check_data.py no longer names the removed spare dialogue: %r" % (errors[:5],)
 
 

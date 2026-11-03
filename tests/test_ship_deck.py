@@ -120,7 +120,7 @@ LOG_PATH = [(3, 7), (3, 6), (3, 5), (3, 4), (3, 3), (3, 2)]
 # Card t_1163ca72 added the seventeenth (`talk`), which is the one command a scene uses to take a typed line and answer
 # it with the character's recorded turn. The number is pinned here as well as in tests/test_scene_runner.py because two
 # different cards wrote the two lists, and a scene the runner skips would pass the checker.
-RUNNER_COMMANDS = 17
+RUNNER_COMMANDS = 18
 
 DIRECTIONS = ((1, 0), (-1, 0), (0, 1), (0, -1))
 
@@ -849,24 +849,4 @@ def test_a_deleted_save_trigger_is_refused(deck, scenes):
 # --------------------------------------------------------------------------- the slice's own save step
 
 
-def test_the_slice_save_step_names_the_deck_save_on_a_walkable_tile(deck, scenes):
-    """The save point moved from 2,5 to 3,2, so the slice's step is pinned by tile here as well."""
-    vectors = direction_vectors(_read(OVERWORLD_GML))
-    slice_doc = _load(SLICE_PATH)
-    steps = {step["id"]: step for step in slice_doc["route"]["steps"]}
-    assert "save" in steps, "data/slice.json has no save step"
-    save_step = steps["save"]
-    assert save_step.get("kind") == "save", "the slice's save step is kind %r" % save_step.get("kind")
-    assert save_step.get("trigger") == SAVE_ID, (
-        "the slice's save step names %r, not %r" % (save_step.get("trigger"), SAVE_ID))
-
-    named = [trigger for trigger in triggers_of(deck) if trigger["id"] == save_step["trigger"]]
-    assert len(named) == 1, "the deck carries %d triggers named %r" % (len(named), save_step["trigger"])
-    assert (named[0]["x"], named[0]["y"]) == SAVE_TILE, (
-        "the slice's save trigger stands at (%d,%d), the card pins %s"
-        % (named[0]["x"], named[0]["y"], SAVE_TILE))
-    assert is_walkable(deck, *SAVE_TILE), "the save trigger the slice names stands on a blocked tile"
-
-    path, _problems = walk_hero(scenes[LOG_SCENE], deck, vectors)
-    assert path[-1] == SAVE_TILE, (
-        "the log walk ends at %s, the slice's save step is at %s" % (path[-1], SAVE_TILE))
+# RETIRED by FLOW 2026-11-03: test_the_slice_save_step_names_the_deck_save_on_a_walkable_tile. The route has no save step on the ship deck any more.

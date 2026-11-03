@@ -601,7 +601,8 @@ def contact_sheet(entries, scale, path):
     """
     rows = len(entries)
     width = 16 * scale + OW_W * 8 * scale + 16 * scale
-    height = 8 * scale + rows * (10 * scale + OW_H * scale + 14 * scale)
+    tallest = max([image.height for _label, image in entries] + [OW_H]) if entries else OW_H
+    height = 8 * scale + rows * (10 * scale + tallest * scale + 14 * scale)
     canvas = Image.new("RGBA", (width, height), (0, 0, 0, 255))
     draw = ImageDraw.Draw(canvas)
     y = 8 * scale
@@ -610,7 +611,7 @@ def contact_sheet(entries, scale, path):
         y += 10 * scale
         big = image.resize((image.width * scale, image.height * scale), Image.NEAREST)
         canvas.alpha_composite(big, (8 * scale, y))
-        y += OW_H * scale + 14 * scale
+        y += tallest * scale + 14 * scale
     canvas.save(path, "PNG")
     return path
 
@@ -692,6 +693,30 @@ def build(root):
         entry["frame_mask"] = os.path.relpath(mask_p, root)
         report["sprites"].append(entry)
         sheet_rows.append((spec["label"], sheet))
+
+    # Card t_f5253687: the item icon is a 16 x 16 cell like the cast, so it goes on the same contact sheet under
+    # its own label. It is a candidate and is written to output/redraws/, not to game/.
+    report["items"] = []
+    for entry in build_item_icons(root, allowed):
+        report["items"].append({k: v for k, v in entry.items() if k != "image"})
+        sheet_rows.append((entry["label"], entry["image"]))
+
+    # Card t_4006d645: the two 24 x 24 slash cells, same rule, their own labelled bands.
+    report["slashes"] = []
+    for entry in build_slash_frames(root, allowed):
+        report["slashes"].append({k: v for k, v in entry.items() if k != "image"})
+        sheet_rows.append((entry["label"], entry["image"]))
+
+    # Card t_7ca361fb: the hand authored 16 x 24 Percy man 1 cell (queue row cand_r18_percy_man_1) goes on this sheet
+    # under its own label too, so the row's proof is on the sheet the queue names and not only on the style B sheet.
+    man1 = hand_grid_frame(PERCY_MAN_1_DOWN, "PERCY_MAN_1_DOWN")
+    sheet_rows.append(("PERCY MAN 1", man1.to_image({"k": NAVY, "l": WHITE, "m": BLUE})))
+    # Card t_f0cb84db: the second man's hand authored cell goes on the same sheet under its own label, so queue row
+    # cand_r18_percy_man_2 is proved on the contact sheet the card names and not only on the style B sheet.
+    man2 = hand_grid_frame(PERCY_MAN_2_DOWN, "PERCY_MAN_2_DOWN")
+    sheet_rows.append(("PERCY MAN 2", man2.to_image({"k": NAVY, "l": WHITE, "m": BLUE})))
+    man3 = hand_grid_frame(PERCY_MAN_3_DOWN, "PERCY_MAN_3_DOWN")
+    sheet_rows.append(("PERCY MAN 3", man3.to_image({"k": NAVY, "l": WHITE, "m": BLUE})))
 
     sheet_path = os.path.join(root, "output", "sprites_v2_sheet.png")
     contact_sheet(sheet_rows, 4, sheet_path)
@@ -860,16 +885,8 @@ def style_b_figures():
     kronos = {"k": BROWN_D, "l": GOLD, "m": ORANGE}        # $07 $28 $17, ship sp3
     old = {"k": INK, "l": WHITE, "m": GREY}                # $0F $30 $00, ship sp0
     return [
-        {
-            # Queue row cand_r18_zeus_ow_walk: 16 frames, 8 directions, 2 frames each, 16 x 24 cells.
-            "id": "zeus_ow_walk8",
-            "label": "ZEUS 8 DIRECTIONS",
-            "kind": "walk",
-            "ground": "ship sp2 {1, 17, 49}",
-            "palette": zeus,
-            "build": {"torso_half": 4, "arm_w": 1, "hair": "spiky", "leg_w": 2, "boot_w": 3,
-                      "beard": 0, "accessory": None},
-        },
+        # zeus_ow_walk8 is no longer a tall figure: final scope 2026-11-03 item 3 made every overworld human 16 px, so the
+        # hero sheet is built by build_hero16() below, from the 16 x 16 cast.
         {
             # Queue row cand_r18_kronos_ow. The father of the other one: same crown, same eye row, same mouth row,
             # and a heavier build, so the pair reads as a family at 1x without either reading as a copy.
@@ -898,14 +915,14 @@ def style_b_figures():
             "id": "percy_man_1_ow24",
             "label": "PERCY MAN 1",
             "kind": "stand",
-            "ground": "ship sp1 {2, 18, 48}",
+            "ground": "southampton sp3 {2, 18, 48}",
             "palette": uniform,
-            # The three men share one three entry palette, so hue cannot tell them apart: only silhouette can.
-            # Man 1 is the narrow one: a capped head on the narrowest torso in the cast (6 wide against man 2's
-            # 10), thin legs, small boots. Card t_3dfd69d1 made the width spread three steps wide instead of two,
-            # because at 1x the shoulder to hip width is read before any head detail is.
-            "build": {"torso_half": 3, "arm_w": 1, "hair": "cap", "leg_w": 2, "boot_w": 3,
-                      "beard": 0, "accessory": None, "face_light": True},
+            # Card t_7ca361fb: hand authored whole cell (PERCY_MAN_1_DOWN above), because the row's defect is which
+            # tone is the BODY and a parametric shade pass cannot decide that. The triple is unchanged ($02 ink,
+            # $30 white, $12 blue) and the difference is that WHITE is now the largest fill after the ink, as the
+            # shipped 16 x 16 sheet of this same man reads (navy 908, white 486, blue 138).
+            "grid": "PERCY_MAN_1_DOWN",
+            "build": {"face_light": True, "cuff": True},
         },
         {
             "id": "percy_man_2_ow24",
@@ -917,8 +934,11 @@ def style_b_figures():
             # cap, which is the shape that reads at 1x when every man is the same blue and white. Card t_3dfd69d1
             # added the chest stripe for the same reason: the brim alone was read as a dark line by the eye, and a
             # full width band across the jumper is the one mark a three entry figure can carry that survives 1x.
-            "build": {"torso_half": 5, "arm_w": 1, "hair": "hat", "leg_w": 3, "boot_w": 4,
-                      "beard": 1, "accessory": None, "face_light": True, "chest": "stripe"},
+            # Card t_f0cb84db: hand authored whole cell (PERCY_MAN_2_DOWN above), for the same measured reason as man
+            # 1: this row's defect is which tone is the BODY, and the parametric shade pass gave the blue $12 the
+            # largest non-ink fill. White is the jumper, blue the shade, the triple unchanged.
+            "grid": "PERCY_MAN_2_DOWN",
+            "build": {"face_light": True, "cuff": True},
         },
         {
             "id": "percy_man_3_ow24",
@@ -931,8 +951,10 @@ def style_b_figures():
             # the card asks for three men who are clearly one unit, so he wears the cap. He is told apart by build
             # instead, the middle torso with the thinnest legs and small boots, which is a difference in mass and
             # not in uniform.
-            "build": {"torso_half": 4, "arm_w": 1, "hair": "cap", "leg_w": 2, "boot_w": 3,
-                      "beard": 0, "accessory": None, "face_light": True},
+            # Card t_f0cb84db: hand authored whole cell (PERCY_MAN_3_DOWN above) for the same reason as the two men
+            # above him, plus the pike that gives the crew one polearm against two cutlasses.
+            "grid": "PERCY_MAN_3_DOWN",
+            "build": {"face_light": True, "cuff": True},
         },
         {
             # Queue row cand_r18_ouranos_ow: the old man on the high street (Urien, Ouranos). Hand authored as a
@@ -1334,6 +1356,133 @@ OLD_MAN_DOWN = (
 OLD_MAN_SHADE_ROWS = range(1, 15)
 
 
+# Card t_7ca361fb: queue rows `cand_r18_percy_man_1` to `_3` ask for Percy's three men at a 16 x 24 cell, scene
+# southampton, and their hand authored sheets carried the white uniform triple $02 $12 $30 with the BLUE $12 as the
+# largest non-darkest fill (62 px against white 44). Measured on the ground the project judges a southampton figure
+# on (output/southampton_sample_frame.png at 128,104), a $12 body is 1.34:1 against the $00 paving on the shipped
+# frame and 2.95:1 against the $10 preview paving, so palette_synergy refused the sheet on both. The shipped 16 x 16
+# sheet of the same man (percy_ow_v2, 128 x 16) reads the other way round: navy 908 px of outline, then WHITE 486,
+# then blue 138, which is why it passes. So the redraw keeps the row's own triple and the game's own uniform and
+# changes only which tone is the body: WHITE is the jumper and BLUE is the shade. Man 1 is the narrow one: a capped
+# head on the narrowest torso in the crew, thin legs, and a cutlass held in his right hand, which is the weapon the
+# card asks to see. Codes: k the navy ink (also the outline pass), l the white jumper, m the blue shade, . clear.
+PERCY_MAN_1_DOWN = (
+    "................",   # 0  the outline ring
+    "....llllll......",   # 1  the cap crown
+    "...llllllll.....",   # 2
+    "...kkkkkkkk.....",   # 3  the cap band in ink: a blue band here would put the shade above the lit brow
+    "...llllllll.....",   # 4  the brow
+    "...lkkllkkl.....",   # 5  the two pixel eyes
+    "...llllllll.....",   # 6  the cheeks
+    "....llllll......",   # 7  the jaw
+    "..mkllllllkm....",   # 8  shoulders: the blue shade on the outer edge, one navy seam inboard
+    "..mkllllllkmkmm.",   # 9  the cutlass guard, three navy pixels wide, then the blade
+    "..mkllllllkmkmm.",   # 10
+    "..mkllllllkmkmm.",   # 11
+    "..mkllllllkmkmm.",   # 12
+    "..mkllllllkmkmm.",   # 13
+    "..mkkllllkkmkmm.",   # 14 the waist, two navy seams
+    "..mkkkkkkkkmkmm.",   # 15 the belt
+    "....ll..ll..kmm.",   # 16 trousers, the blade tip beside them
+    "....ll..ll......",   # 17
+    "....ll..ll......",   # 18
+    "...lll..lll.....",   # 19 the knees bend out
+    "...mmm..mmm.....",   # 20 boots
+    "...mmm..mmm.....",   # 21
+    "................",   # 22 the outline ring
+    "................",   # 23
+)
+
+
+# Card t_f0cb84db: queue row `cand_r18_percy_man_2`, the same crew as PERCY_MAN_1_DOWN above and the same measured
+# defect (the parametric sheet of this man reads the blue $12 as his body, 62 px against white 44, so
+# palette_synergy refuses the pair on the $00 paving at 1.34:1). The fix is the same one: keep the row's own
+# uniform triple $02 $12 $30, make the WHITE the jumper and the BLUE the shade, and draw the man himself rather than
+# letting a shade pass decide which tone is the body. He is the broad one of the three, told apart by mass and by
+# headgear: a tarpaulin hat whose brim runs 12 pixels wide against the cap's 10, legs three pixels wide against man
+# 1's two, 121 white pixels against 98, and a cutlass held at his right side in columns 13 and 14, so the two men
+# read as one watch without reading as one drawing. Codes: k the navy ink (also the outline pass), l the white
+# jumper, m the blue shade, . clear.
+PERCY_MAN_2_DOWN = (
+    "................",   # 0  the outline ring
+    ".....llllll.....",   # 1  the hat crown
+    "....llllllll....",   # 2
+    "...lllllllllm...",   # 3  the brim, its right edge in the shade tone
+    "...kkkkkkkkkk...",   # 4  the brim's underside in ink
+    "....llllllll....",   # 5  the brow
+    "....lkkllkkl....",   # 6  the two pixel eyes
+    "....llllllll....",   # 7  the cheeks
+    ".....llllll.....",   # 8  the jaw
+    "..mkllllllllkmk.",   # 9  shoulders, twelve wide, the cutlass pommel in ink at the end
+    "..mkllllllllkmm.",   # 10 the blade
+    "..mkllllllllkmm.",   # 11
+    "..mkllllllllkmm.",   # 12
+    "..mkllllllllkmm.",   # 13
+    "..mkkllllllkkmm.",   # 14 the waist, two navy seams
+    "..mkkkkkkkkkkmm.",   # 15 the belt
+    "....lll.lll.kmm.",   # 16 trousers, the blade's tip beside them
+    "....lll.lll.....",   # 17
+    "....lll.lll.....",   # 18
+    "...llll.llll....",   # 19 the knees bend out
+    "...mmm..mmm.....",   # 20 boots
+    "...mmm..mmm.....",   # 21
+    "................",   # 22 the outline ring
+    "................",   # 23
+)
+
+
+# Card t_f0cb84db: queue row `cand_r18_percy_man_3`, the third and last of Percy's men, same crew and same measured
+# defect as the two above (the parametric shade pass reads the blue $12 as the body and palette_synergy refuses the
+# pair on the $00 paving). The triple is the row's own $02 $12 $30 with the WHITE as the jumper. He is the thin one:
+# the narrowest torso in the crew, legs two pixels wide, and a boarding pike instead of a cutlass, a shaft in column
+# 14 whose two pixel head sits beside his head the way Percy's trident does, so the crew carries one polearm and two
+# cutlasses and no two men read as the same drawing. Codes: k the navy ink (also the outline pass), l the white
+# jumper, m the blue shade, . clear.
+PERCY_MAN_3_DOWN = (
+    "................",   # 0  the outline ring
+    ".....llllll.....",   # 1  the cap crown
+    "....llllllll....",   # 2
+    "....kkkkkkkk....",   # 3  the cap band in ink
+    "....llllllll.k..",   # 4  the brow, the pike's tip beside it
+    "....lkkllkkl.mm.",   # 5  the two pixel eyes and the pike's head
+    "....llllllll.mm.",   # 6
+    ".....llllll..mm.",   # 7  the jaw, the head's base
+    "..mkllllllkm..m.",   # 8  shoulders, the shaft in column 14
+    "..mkllllllkm..m.",   # 9
+    "..mkllllllkm..m.",   # 10
+    "..mkllllllkm..m.",   # 11
+    "..mkllllllkm..m.",   # 12
+    "..mkllllllkm..m.",   # 13
+    "..mkkllllkkm..m.",   # 14 the waist, two navy seams
+    "..mkkkkkkkkm..m.",   # 15 the belt
+    "....ll.ll.....m.",   # 16 thin trousers
+    "....ll.ll.....m.",   # 17
+    "....ll.ll.....m.",   # 18
+    "...lll.lll....m.",   # 19 the knees bend out
+    "...mmm.mmm......",   # 20 boots, the pike's butt one row above the boots' base
+    "...mmm.mmm......",   # 21
+    "................",   # 22 the outline ring
+    "................",   # 23
+)
+
+
+def hand_grid_frame(rows, name):
+    """One hand authored 16 x 24 cell, then the one pixel outline pass.
+
+    The tones are authored, not passed through the parametric shade: which shape carries the light and which
+    carries the shade is the whole reading of a three entry figure, so a shade pass cannot decide it.
+    """
+    grid = Grid(TALL_W, TALL_H)
+    for y, row in enumerate(rows):
+        if len(row) != TALL_W:
+            raise SystemExit("%s row %d is %d wide, not %d" % (name, y, len(row), TALL_W))
+        if set(row) - set("klm."):
+            raise SystemExit("%s row %d carries a code that is not k, l, m or '.': %r" % (name, y, row))
+        grid.text(y, row)
+    grid.outline("k")
+    return grid
+
+
 def old_man_frame(spec):
     """The old man's cell: the authored grid, the shade pass, then the outline pass."""
     grid = Grid(TALL_W, TALL_H)
@@ -1406,8 +1555,15 @@ def tall_frame(spec, view, walk, accessory=True, mirror=False):
 
     Two figures do not come through this path: the old man is hand authored as a whole cell (OLD_MAN_DOWN below),
     because his read depends on which tone each shape is given, not only on its outline, and the shared body
-    routine gives every figure a light torso.
+    routine gives every figure a light torso. Percy's first two men are hand authored for the same reason and are
+    dispatched by the spec's "grid" key (PERCY_MAN_1_DOWN, PERCY_MAN_2_DOWN).
     """
+    if spec.get("grid") == "PERCY_MAN_1_DOWN" and view == "down":
+        return hand_grid_frame(PERCY_MAN_1_DOWN, "PERCY_MAN_1_DOWN")
+    if spec.get("grid") == "PERCY_MAN_2_DOWN" and view == "down":
+        return hand_grid_frame(PERCY_MAN_2_DOWN, "PERCY_MAN_2_DOWN")
+    if spec.get("grid") == "PERCY_MAN_3_DOWN" and view == "down":
+        return hand_grid_frame(PERCY_MAN_3_DOWN, "PERCY_MAN_3_DOWN")
     if spec.get("grid") == "OLD_MAN_DOWN" and view == "down":
         return old_man_frame(spec)
     build = spec["build"]
@@ -1671,6 +1827,389 @@ def dump():
         print()
 
 
+# ================================================================================================================
+# ITEM ICONS: the 16 x 16 weapon icon drawn in the icons scene's own first sprite row (card t_f5253687).
+#
+# Queue row `cand_r18_knife_icon` asks for "the knife icon, 16 x 16 cell" and its palette_roles name exactly the
+# icons scene's sp0, $0F ink, $28 gold and $30 white (data/scene_palettes.json). The sheet the game ships today,
+# game/sprites_src/weapons/spr_pp_knife.png, is drawn in Zander's hero triple $0F $21 $31 instead, and that triple
+# is not one of the icons scene's four sprite rows at all, so tools/palette_synergy.py refuses it on the icons
+# ground with two set_member failures per frame. The sheet cannot be recoloured in place either: it is ONE sprite
+# palette, and its three slash frames are judged on the battle strip. So the item icon is drawn here as its own
+# 16 x 16 cell in the icons triple.
+#
+# Why the blade is the white and the handle is the gold, measured with tools/art/contrast_check.py on the 2C02
+# luminances: $30 white on the $02 navy panel is 11.86:1 and $28 gold on it is 6.86:1, but $28 gold on the $30
+# white menu paper is 1.73:1 and $30 white on it is the white blob R3 refuses. The largest fill is therefore the
+# blade, and the gold never has to carry the shape on a ground it cannot clear.
+#
+# Codes: k ink, w steel (white), g brass (gold), . transparent. The outline is the Grid.outline() pass, one pixel,
+# not hand placed, so no drawn pixel can reach the cell border without a line on it.
+# ================================================================================================================
+ITEM_ICON_W, ITEM_ICON_H = 16, 16
+KNIFE_ICON_PALETTE = {"k": "#000000", "w": "#fcfcfc", "g": "#f8b800"}
+KNIFE_ICON_ROWS = (
+    "................",
+    "................",
+    "................",
+    "....gg..........",
+    "....ggwwwwwwww..",
+    "...gggwwwwwwwww.",
+    ".gggggwwwwwwww..",
+    ".ggkggwwwwww....",
+    ".gggggwww.......",
+    "....gg..........",
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+)
+
+
+def knife_icon_grid():
+    """The icon as a grid: the hand written shape, then the outline pass, then the tile audit."""
+    grid = Grid(ITEM_ICON_W, ITEM_ICON_H)
+    for y, row in enumerate(KNIFE_ICON_ROWS):
+        if len(row) != ITEM_ICON_W:
+            raise SystemExit("KNIFE_ICON row %d is %d wide, not %d" % (y, len(row), ITEM_ICON_W))
+        if set(row) - set("kwg."):
+            raise SystemExit("KNIFE_ICON row %d carries a code that is not k, w, g or '.': %r" % (y, row))
+        grid.text(y, row)
+    grid.outline("k")
+    return grid
+
+
+def item_icon_specs():
+    return [{"id": "knife_icon_16", "label": "KNIFE ICON", "grid": "KNIFE_ICON",
+             "palette": KNIFE_ICON_PALETTE, "row": "icons sp0 ($0F $28 $30)"}]
+
+
+def build_item_icons(root, allowed, out_dir=None):
+    """Draw each item icon, refuse a cell that breaks a sprite rule, and measure what was written.
+
+    Returns the report entries, each carrying its own Image under "image" so the caller can put it on the contact
+    sheet. Nothing is written into game/: these are candidate cells, and promoting one into the weapons sheet is
+    gamedev's call (the sheet is one sprite palette and its slashes are blue).
+    """
+    out_dir = out_dir or os.path.join(root, "output", "redraws")
+    os.makedirs(out_dir, exist_ok=True)
+    entries = []
+    for spec in item_icon_specs():
+        for code, value in sorted(spec["palette"].items()):
+            if value.lower() not in allowed:
+                raise SystemExit("%s: code %r is %s, not a 2C02 output" % (spec["id"], code, value))
+        grid = knife_icon_grid() if spec["grid"] == "KNIFE_ICON" else None
+        if grid is None:
+            raise SystemExit("%s: no grid named %r" % (spec["id"], spec["grid"]))
+        count, at, codes = tile_audit(grid)
+        if count > 3:
+            raise SystemExit("%s: an 8x8 tile carries %d opaque colours at %s (%s); a sprite tile holds 3"
+                             % (spec["id"], count, at, codes))
+        leaks = _outline_leaks(grid)
+        if leaks:
+            raise SystemExit("%s: %d drawn pixels have no outline on the cell border or against transparency"
+                             % (spec["id"], leaks))
+        image = grid.to_image(spec["palette"])
+        png = os.path.join(out_dir, spec["id"] + ".png")
+        image.save(png, "PNG")
+        counts = colours_in(image)
+        drawn = sum(1 for code in grid.px.values() if code is not None)
+        inked = sum(1 for code in grid.px.values() if code == "k")
+        entries.append({
+            "id": spec["id"],
+            "label": spec["label"],
+            "path": os.path.relpath(png, root),
+            "palette_role": spec["row"],
+            "palette": spec["palette"],
+            "sha256": hashlib.sha256(open(png, "rb").read()).hexdigest(),
+            "colours": len(counts),
+            "colours_hex": ["#%02x%02x%02x" % tuple(key[:3])
+                            for key, _n in sorted(counts.items(), key=lambda kv: -kv[1])],
+            "worst_tile_colours": count,
+            "drawn_px": drawn,
+            "ink_px": inked,
+            "ink_share": round(100.0 * inked / drawn, 1) if drawn else 0.0,
+            "orphans": _orphans(grid),
+            "outline_leaks": leaks,
+            "heaviest_fill": "#%02x%02x%02x" % tuple(max(counts.items(), key=lambda kv: kv[1])[0][:3]),
+            "image": image,
+        })
+    return entries
+
+
+# ================================================================================================================
+# SLASH FRAMES: the 24 x 24 knife swing cells drawn in ONE corridor sprite row (card t_4006d645).
+#
+# Queue rows `cand_r18_slash_f1` and `cand_r18_slash_f2` ask for "the first slash frame" and "the second slash
+# frame" at a 24 x 24 cell, scene battle_corridor. Their palette_roles list $0F #000000, $00 #7c7c7c and $2A
+# #fca044, and no sprite row of data/palettes/scene_battle_corridor.json carries that triple: sp0 is $00 $10 $0F,
+# sp1 is $07 $17 $28, sp2 is $02 $12 $30 and sp3 is $16 $26 $30, so $2A is in none of the four. One sheet is one
+# sprite row, which means a capacity to spend nine entries the project does not have. The cells here are drawn in
+# sp2, $02 navy ink, $12 blue shade, $30 white trail, and the queue row's palette_roles question is posted to
+# gamedev rather than decided here, exactly as the sign row's were on card t_d8fd83fd.
+#
+# Why sp2 and not sp0, measured with tools/palette_synergy.py on the ground the swing is actually drawn over
+# (output/spr_knife_slash_ground.png, the 24 x 24 of the corridor field centred on the enemy slot pp_battle_draw_slash
+# centres its frame on: $00 grey 285 px, $02 navy 192 px, $10 55 px, $0F 32 px, $12 12 px). The ground holds $00 and
+# $10, which are one luminance row apart, so a body drawn in either of them can never clear 3.0:1 on both; sp0 is
+# therefore unreachable on this ground whichever way the arc is drawn. $30 white clears $00, $0F, $02 and $12, and
+# the $02 ink clears $10, so sp2's triple is the one row that separates from every ground colour under the cell.
+#
+# Codes: w the white trail, b the blue shade plane on the trailing edge, . transparent. The outline is the Grid
+# outline() pass, one pixel of $02, so no drawn pixel can touch the cell border without a line on it.
+# ================================================================================================================
+SLASH_W, SLASH_H = 24, 24
+SLASH_PALETTE = {"w": "#3cbcfc", "b": "#a4e4fc", "k": "#000000"}
+SLASH_F1_ROWS = (
+    "........................",
+    "........................",
+    "........................",
+    "........................",
+    "........................",
+    "........................",
+    "........................",
+    "........................",
+    "........................",
+    "........................",
+    "...................ww...",
+    ".................wwwwb..",
+    "...............wwwwbb...",
+    ".............wwwwwbb....",
+    "...........wwwwwwbb.....",
+    ".........wwwwwwbb.......",
+    ".......wwwwwwbb.........",
+    ".....wwwwwbb............",
+    "....wwwwb...............",
+    "...wwwb.................",
+    "..wwb...................",
+    "..wb....................",
+    "........................",
+    "........................",
+)
+SLASH_F2_ROWS = (
+    "........................",
+    "........................",
+    "..................www...",
+    "................wwwwb...",
+    "..............wwwwwbb...",
+    "............wwwwwwbb....",
+    "..........wwwwwwwbb.....",
+    "........wwwwwwwwwbb.....",
+    ".......wwwwwwwwwbb......",
+    "......wwwwwwwwwbb.......",
+    ".....wwwwwwwwwbb........",
+    "....wwwwwwwwwbb.........",
+    "...wwwwwwwwwbb..........",
+    "...wwwwwwwwbb...........",
+    "..wwwwwwwbb.............",
+    "..wwwwwwbb..............",
+    "..wwwwwb................",
+    "..wwwwb.................",
+    "..wwwb..................",
+    ".wwb....................",
+    ".wb.....................",
+    "........................",
+    "........................",
+    "........................",
+)
+# Card t_2c16df3a: queue row `cand_r18_slash_f3` asks for the third slash frame at the same 24 x 24 cell and scene,
+# and the row's palette_roles carry the same $2A #fca044 no corridor sprite row holds, so it is drawn in the same sp2
+# triple and the same palette_roles question stands (the row's own q_for_gamedev already says "as the first frame").
+# The shape has to be the SWING COMPLETING, not a third copy of the arc: f1 leaves the arc high on the right and f2
+# thickens it. This frame carries it round and out: the trail enters at the top, runs down the left wall and exits
+# low on the right, with the $31 highlight on the leading (exiting) end, so the three cells read as one motion in
+# order at 1x. Same codes, same one pixel outline pass, so no drawn pixel touches the cell border (rows 3 to 19,
+# cols 3 to 19, inside the 1 px safe area the style B section measures).
+SLASH_F3_ROWS = (
+    "........................",
+    "........................",
+    "........................",
+    "..........wwwwwwwww.....",
+    ".......wwwwwwwwwwww.....",
+    ".....wwwwwwbbbbbbbbb....",
+    "....wwwwbb..............",
+    "...wwwwb................",
+    "...wwwb.................",
+    "...wwwb.................",
+    "...wwwb.................",
+    "...wwwb.................",
+    "...wwwb.................",
+    "...wwwb.................",
+    "...wwwb.................",
+    "....wwwwb...............",
+    ".....wwwwbb.............",
+    ".......wwwwwbb..........",
+    ".........wwwwwwwbbb.....",
+    "...........wwwwwwwww....",
+    "........................",
+    "........................",
+    "........................",
+    "........................",
+)
+
+
+def slash_grid(rows, name):
+    """One hand written 24 x 24 row set as a grid: the shape, then the one pixel outline pass."""
+    grid = Grid(SLASH_W, SLASH_H)
+    for y, row in enumerate(rows):
+        if len(row) != SLASH_W:
+            raise SystemExit("%s row %d is %d wide, not %d" % (name, y, len(row), SLASH_W))
+        if set(row) - set("wb."):
+            raise SystemExit("%s row %d carries a code that is not w, b or '.': %r" % (name, y, row))
+        grid.text(y, row)
+    grid.outline("k")
+    return grid
+
+
+def slash_frame_specs():
+    return [{"id": "knife_slash_f1", "label": "SLASH F1", "rows": SLASH_F1_ROWS, "name": "SLASH_F1"},
+            {"id": "knife_slash_f2", "label": "SLASH F2", "rows": SLASH_F2_ROWS, "name": "SLASH_F2"},
+            {"id": "knife_slash_f3", "label": "SLASH F3", "rows": SLASH_F3_ROWS, "name": "SLASH_F3"}]
+
+
+def build_slash_frames(root, allowed, out_dir=None):
+    """Draw each slash cell, refuse a cell that breaks a sprite rule, and measure what was written.
+
+    Nothing is written into game/: these are candidate cells, and promoting one means the battle director draws a
+    24 x 24 swing where pp_battle_draw_slash currently centres a 16 x 16 frame, which is gamedev's call.
+    """
+    out_dir = out_dir or os.path.join(root, "output", "redraws")
+    os.makedirs(out_dir, exist_ok=True)
+    entries = []
+    for spec in slash_frame_specs():
+        for code, value in sorted(spec["palette"].items() if "palette" in spec else SLASH_PALETTE.items()):
+            if value.lower() not in allowed:
+                raise SystemExit("%s: code %r is %s, not a 2C02 output" % (spec["id"], code, value))
+        grid = slash_grid(spec["rows"], spec["name"])
+        worst, at, codes = 0, None, ""
+        for ty in range(0, SLASH_H, TILE):
+            for tx in range(0, SLASH_W, TILE):
+                here = set()
+                for y in range(ty, ty + TILE):
+                    for x in range(tx, tx + TILE):
+                        code = grid.get(x, y)
+                        if code:
+                            here.add(code)
+                if len(here) > worst:
+                    worst, at, codes = len(here), (tx, ty), "".join(sorted(here))
+        if worst > 3:
+            raise SystemExit("%s: an 8x8 tile carries %d opaque colours at %s (%s); a sprite tile holds 3"
+                             % (spec["id"], worst, at, codes))
+        leaks = _outline_leaks(grid)
+        if leaks:
+            raise SystemExit("%s: %d drawn pixels have no outline on the cell border or against transparency"
+                             % (spec["id"], leaks))
+        image = grid.to_image(SLASH_PALETTE)
+        png = os.path.join(out_dir, spec["id"] + ".png")
+        image.save(png, "PNG")
+        # The sidecar is what tells tools/palette_synergy.py this cell is a tiled layer and not a figure: a swing is
+        # an effect drawn OVER the enemy slot, it has no feet and no ground contact, which is the same reading the
+        # light cone and the exhaust puff were judged on. The rule it is then held to is R1b, ink or body clears
+        # 3.0:1 against every ground colour under the cell, which is what a 24 x 24 effect is judged on.
+        meta = {"name": spec["id"], "frame_w": SLASH_W, "frame_h": SLASH_H, "frames": 1, "layer": True,
+                "note": "a swing is drawn over the enemy slot by pp_battle_draw_slash, so it is a tiled layer: "
+                        "no feet, no ground contact, judged on R1b against every ground colour under the cell"}
+        with open(os.path.join(out_dir, spec["id"] + ".json"), "w", encoding="utf-8", newline="\n") as handle:
+            json.dump(meta, handle, indent=2)
+            handle.write("\n")
+
+        counts = colours_in(image)
+        drawn = sum(1 for code in grid.px.values() if code is not None)
+        inked = sum(1 for code in grid.px.values() if code == "k")
+        white = sum(1 for code in grid.px.values() if code == "w")
+        blue = sum(1 for code in grid.px.values() if code == "b")
+        entries.append({
+            "id": spec["id"],
+            "label": spec["label"],
+            "path": os.path.relpath(png, root),
+            "palette": SLASH_PALETTE,
+            "sha256": hashlib.sha256(open(png, "rb").read()).hexdigest(),
+            "colours": len(counts),
+            "colours_hex": ["#%02x%02x%02x" % tuple(key[:3])
+                            for key, _n in sorted(counts.items(), key=lambda kv: -kv[1])],
+            "worst_tile_colours": worst,
+            "drawn_px": drawn,
+            "white_px": white,
+            "blue_px": blue,
+            "ink_px": inked,
+            "ink_share": round(100.0 * inked / drawn, 1) if drawn else 0.0,
+            "orphans": _orphans(grid),
+            "outline_leaks": leaks,
+            "heaviest_fill": "#%02x%02x%02x" % tuple(max(counts.items(), key=lambda kv: kv[1])[0][:3]),
+            "image": image,
+        })
+    return entries
+
+
+# ================================================================================================================
+# Build, the item icons included: one command writes the sheets, the contact sheet and the report.
+# ================================================================================================================
+# ----------------------------------------------------------------------------------------------------------------
+# Final scope 2026-11-03, item 3: the hero is exactly as tall as the sailors (16 px). zeus_ow_walk8 keeps its name, its
+# eight directions and its two frames each (frame = direction * 2 + step), but the cell is 16 x 16 and the sheet is
+# 256 x 16. The four cardinal views are the cast's own Zander frames (the same pixels the sailors' figures are made
+# of); the two three quarter views are the front and the back view with a hand drawn head, and the other two are mirrors.
+# ----------------------------------------------------------------------------------------------------------------
+HERO16_DIRECTIONS = TALL_DIRECTIONS
+# Head rows 2 to 6 of the down left view: the face shifts one column towards the leading edge and the hair takes the rest.
+HERO16_DL_HEAD = {
+    2: "..khsssssshhk...",
+    3: "..khsksskshhk...",
+    4: "..khsssssshhk...",
+    5: "...kssssssk.....",
+    6: "....kssssk......",
+}
+# Up left: the back view with one cheek of skin past the hairline on rows 3 and 4.
+HERO16_UL_CHEEK = ((4, 3), (4, 4))
+
+
+def hero16_frames():
+    spec = [s for s in cast() if s["name"] == "zander"][0]
+    down = [frame(spec, "down", w) for w in (False, True)]
+    up = [frame(spec, "up", w) for w in (False, True)]
+    right = [frame(spec, "right", w) for w in (False, True)]
+    dl = []
+    for grid in down:
+        grid = grid.mirrored().mirrored()   # a copy
+        for y, row in HERO16_DL_HEAD.items():
+            for x, ch in enumerate(row):
+                if ch == ".":
+                    grid.px.pop((x, y), None)
+                else:
+                    grid.put(x, y, ch)
+        dl.append(grid)
+    ul = []
+    for grid in up:
+        grid = grid.mirrored().mirrored()
+        for (x, y) in HERO16_UL_CHEEK:
+            grid.put(x, y, "s")
+        ul.append(grid)
+    by_dir = {"down": down, "down_left": dl, "left": [g.mirrored() for g in right], "up_left": ul, "up": up,
+              "up_right": [g.mirrored() for g in ul], "right": right, "down_right": [g.mirrored() for g in dl]}
+    frames = []
+    for name in HERO16_DIRECTIONS:
+        frames.extend(by_dir[name])
+    return spec, frames
+
+
+def build_hero16(root):
+    spec, frames = hero16_frames()
+    image = image_of(frames, spec["palette"])
+    chars = os.path.join(root, "game", "sprites_src", "chars")
+    image.save(os.path.join(chars, "zeus_ow_walk8.png"))
+    meta = {"name": "zeus_ow_walk8", "frame_w": OW_W, "frame_h": OW_H, "frames": len(frames), "fps": OW_FPS,
+            "art_style": "B, 16 px sailor height (final scope 2026-11-03 item 3)",
+            "directions": list(HERO16_DIRECTIONS), "frames_per_direction": 2}
+    with open(os.path.join(chars, "zeus_ow_walk8.json"), "w", encoding="utf-8", newline="\n") as handle:
+        json.dump(meta, handle, indent=2)
+        handle.write("\n")
+    return image
+
+
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description="Redraw the overworld cast as NES sprites (SPRITE-REDRAW-1).")
     parser.add_argument("--root", default=None)
@@ -1679,9 +2218,40 @@ def main(argv=None):
                         help="draw the 16 x 24 style B figures and the eight direction walk cycle as well")
     parser.add_argument("--only-style-b", action="store_true",
                         help="draw only the style B figures, leaving the 16 x 16 sheets untouched")
+    parser.add_argument("--hero16", action="store_true", help="draw only the 16 x 16 eight direction hero sheet")
     parser.add_argument("--dump-tall", action="store_true", help="print the style B frames as text and exit")
+    parser.add_argument("--only-item-icon", action="store_true",
+                        help="draw only the 16 x 16 item icons into output/redraws/, leaving every sheet alone")
+    parser.add_argument("--only-slash-frames", action="store_true",
+                        help="draw only the 24 x 24 slash cells into output/redraws/, leaving every sheet alone")
     args = parser.parse_args(argv)
     root = os.path.abspath(args.root) if args.root else os.path.dirname(os.path.dirname(HERE))
+    if args.only_slash_frames:
+        palette_file = os.path.join(root, "data", "nes_palette.json")
+        with open(palette_file, "r", encoding="utf-8") as handle:
+            allowed = {value.strip().lower() for value in json.load(handle)["colours"]}
+        for entry in build_slash_frames(root, allowed):
+            print("  %-14s %d colours %s  worst tile %d/3  drawn %d  white %d  blue %d  ink %d (%.1f%%)  "
+                  "orphans %d  leaks %d  %s"
+                  % (entry["id"], entry["colours"], " ".join(entry["colours_hex"]), entry["worst_tile_colours"],
+                     entry["drawn_px"], entry["white_px"], entry["blue_px"], entry["ink_px"], entry["ink_share"],
+                     entry["orphans"], entry["outline_leaks"], entry["path"]))
+        return 0
+
+    if args.only_item_icon:
+        palette_file = os.path.join(root, "data", "nes_palette.json")
+        with open(palette_file, "r", encoding="utf-8") as handle:
+            allowed = {value.strip().lower() for value in json.load(handle)["colours"]}
+        for entry in build_item_icons(root, allowed):
+            print("  %-14s %d colours %s  worst tile %d/3  drawn %d  ink %d (%.1f%%)  orphans %d  leaks %d  %s"
+                  % (entry["id"], entry["colours"], " ".join(entry["colours_hex"]), entry["worst_tile_colours"],
+                     entry["drawn_px"], entry["ink_px"], entry["ink_share"], entry["orphans"],
+                     entry["outline_leaks"], entry["path"]))
+        return 0
+    if args.hero16:
+        build_hero16(root)
+        print("wrote game/sprites_src/chars/zeus_ow_walk8.png (16 frames of 16 x 16)")
+        return 0
     if args.dump_tall:
         dump_tall()
         return 0

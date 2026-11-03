@@ -67,6 +67,10 @@ CUE_IDS = [
 # beyond these seventeen plus PP-17 still fails the invented-id pin below.
 GAMEDEV_CUE_IDS = ["PP-17"]
 
+# FINAL SCOPE 2026-11-03 (MUSIC role): PP-18 is the old calm Harbor, kept registered when PP-03 became the
+# storm theme. PP-03, PP-06, PP-15a and PP-15b changed files, not ids. Recorded so the id list stays exact.
+FINAL_SCOPE_CUE_IDS = ["PP-18"]
+
 # The rows no map, scene or encounter asks for today. Pinned exactly so a row added to or dropped
 # from the table cannot slip into or out of this list unnoticed. This is a recorded gap, not an
 # approval: data\\audio.json has no field that marks a cue unused on purpose.
@@ -99,9 +103,11 @@ GAMEDEV_CUE_IDS = ["PP-17"]
 #   PP-15a not composed. The genocide ending; falls back to PP-01.
 #   PP-15b not composed. The mercy ending; falls back to PP-01.
 #   PP-16  not composed. No folder; falls back to PP-01.
+# 2026-11-03: PP-18 joined (the old calm Harbor). PP-15a and PP-15b are landed now (the credits themes) but no
+# map, scene or encounter asks for them (the credits code does), so they stay listed.
 RECORDED_UNREFERENCED = [
     "PP-01", "PP-08", "PP-09", "PP-10", "PP-11", "PP-12",
-    "PP-13", "PP-14", "PP-15a", "PP-15b", "PP-16",
+    "PP-13", "PP-14", "PP-15a", "PP-15b", "PP-16", "PP-18",
 ]
 
 CUE_ID_RE = re.compile(r"^PP-[0-9]{2}[ab]?$")
@@ -217,11 +223,11 @@ def test_cue_table_is_the_musicians_ids_plus_the_boarding_row():
     the game would otherwise be. PP-17 is counted, not absorbed: it is named in GAMEDEV_CUE_IDS
     and every one of the musician's seventeen must still be present."""
     ids = _cue_ids()
-    assert len(ids) == 18
-    assert sorted(ids) == sorted(CUE_IDS + GAMEDEV_CUE_IDS)
+    assert len(ids) == 19
+    assert sorted(ids) == sorted(CUE_IDS + GAMEDEV_CUE_IDS + FINAL_SCOPE_CUE_IDS)
     missing = sorted(_musician_ids() - set(ids))
     assert missing == [], "the table and the musician's own list disagree: %s missing" % missing
-    assert sorted(set(ids) - _musician_ids()) == GAMEDEV_CUE_IDS, \
+    assert sorted(set(ids) - _musician_ids()) == GAMEDEV_CUE_IDS + FINAL_SCOPE_CUE_IDS, \
         "a cue id arrived that is neither the musician's nor a recorded gamedev row"
     assert all(CUE_ID_RE.match(row_id) for row_id in ids), "every id must look like PP-01 or PP-15a"
 
@@ -273,7 +279,7 @@ def test_no_cue_id_was_invented_against_the_musicians_note():
     exception: PP-17 Boarding, ruled in by gamedev D1 and D1a. A code side name he never chose is still
     a red, so the exception list is exact, not a wildcard."""
     invented = sorted(set(_cue_ids()) - _musician_ids())
-    assert invented == GAMEDEV_CUE_IDS, "cue ids the musician never wrote: %s" % invented
+    assert invented == GAMEDEV_CUE_IDS + FINAL_SCOPE_CUE_IDS, "cue ids the musician never wrote: %s" % invented
 
 
 def test_the_copied_cue_table_lives_in_the_game_and_stays_out_of_the_build_bundle():
@@ -331,7 +337,7 @@ def test_the_three_cues_the_card_left_out_are_rows_with_the_musicians_own_assets
     # the same renders at -14 LUFS integrated under a -0.5 dBTP ceiling, with the loop trim recorded in each
     # folder's own sidecar. The title is unchanged, so a rename is still what this test catches.
     wanted = {
-        "PP-03": ("Harbor", "pp_03_harbor_master1"),
+        "PP-03": ("Harbor Storm", "pp_03_quay_storm"),  # 2026-11-03 final scope: the quay plays the storm theme
         "PP-04": ("Navy Sailors", "pp_04_navy_sailors_master1"),
         "PP-13": ("Titan Employees", "pp_13_titan_employees"),
     }
@@ -498,12 +504,19 @@ def test_check_data_refuses_an_unknown_cue_id_in_a_map(data_root, read_json, wri
 def test_check_data_refuses_an_unknown_cue_id_in_a_scene(data_root, read_json, write_json):
     path = data_root / "data" / "scenes" / "all.json"
     data = read_json(path)
-    for command in data["scenes"][0]["commands"]:
-        if command.get("cmd") == "music":
-            command["id"] = "PP-98"
+    # 2026-11-03: the first scene no longer carries a music command (the route was cut down), so the
+    # first scene that does is the one to break.
+    for scene in data["scenes"]:
+        done = False
+        for command in scene["commands"]:
+            if command.get("cmd") == "music":
+                command["id"] = "PP-98"
+                done = True
+                break
+        if done:
             break
     else:
-        raise AssertionError("the first scene has no music command to break")
+        raise AssertionError("no scene has a music command to break")
     write_json(path, data)
 
     errors = check_data.check(str(data_root))
@@ -725,7 +738,7 @@ def test_a_landed_cue_opens_the_file_its_ledger_row_names():
     from a source one level under assets/audio, and that source is on disk.
     """
     rows = [row for row in _cue_rows() if row.get("pending") is False]
-    assert len(rows) == 7, "the landed set moved: %s" % [row["id"] for row in rows]
+    assert len(rows) == 10, "the landed set moved: %s" % [row["id"] for row in rows]
     module = _text(MODULE)
     music_dir = _music_dir(_code(module))
     audio_src = os.path.join(ROOT, "assets", "audio")

@@ -24,6 +24,16 @@ did not make; R43 REVIEW-META-BAKE checks exactly that, and a fallback row's `te
 `hint` must be its fallback's four fields byte for byte, so a fallback row cannot show words no fallback
 holds (`--check` compares them, R43 B2).
 
+The effect is the row's own, so the model cannot answer an option away
+=======================================================================
+An authored option carries the effect its pool names: the first softens, the second nudges, the third sets
+back (spec 19 section 6, spec 16 section 2). The structured output schema is built per call, so
+`talk_reply_schema()` narrows its `effect` enum to that one effect for a fight option (and to `none` or `end`
+for an NPC turn) instead of spec 19's whole five. Measured 2026-10-27 on a live bake that asked with the whole
+enum: muse-spark-1.3 answered the weak option of three of the four fight cards with `none` and the fourth with
+`setback`, so the first fight's authored ladder moved nothing and three authored talks no longer reached the
+spare gate. The refusal in `attempt()` stays underneath as the guard for an answer the schema did not offer.
+
 The `bake` block is derived from the calls, not from the environment (R43 B1)
 ==================================================================================
 `resolve_mode()` reads what the environment permits; it is never evidence that a call happened. The block
@@ -60,7 +70,9 @@ What --check refuses
     1. a line over 28 characters, more than 4 lines, an empty line, or a character outside the font
        (read from `data\\ui_layouts.json`, not typed here) or outside spec 19 section 4's pattern;
     2. a mood outside the five, or an effect outside spec 19's enum, or `end` in a fight, or soften,
-       nudge or setback in chat (spec 19 section 6 rule 2);
+       nudge or setback in chat (spec 19 section 6 rule 2), or a fight option row whose effect is not the
+       one its own pool names (option 1 soften from the weak pool, 2 nudge from the neutral pool, 3
+       setback from the strong pool);
     3. a fallback id that does not resolve: a talk_cards id (`<card>:<pool>:<index>`) whose card is not in
        `data\\talk_cards.json` or whose pool or index does not exist, or a gate_dialogue id that is not a
        line id in `knowledge\\GATE-DIALOGUE.md`, and either kind whose stored text is not the text that id
@@ -84,6 +96,7 @@ Usage
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import json
 import os
@@ -508,6 +521,37 @@ TALK_REPLY_SCHEMA = {
 }
 
 
+def row_effects(scene):
+    """The effects this row's own class may move, read from the scene the row is asked with.
+
+    A fight option carries the effect its pool names (soften the weak pool, nudge the neutral pool, setback
+    the strong pool), so that row may move exactly one effect. An NPC turn may move only the two the NPC
+    scene allows. Nothing here is invented: both sets come from the constants spec 19 fixes.
+    """
+    if scene.get("scene") == "npc":
+        allowed = scene.get("allowed") or NPC_EFFECTS
+        return [effect for effect in allowed if effect in EFFECTS] or list(NPC_EFFECTS)
+    required = scene.get("required_effect")
+    if required in EFFECTS:
+        return [required]
+    allowed = scene.get("allowed") or FIGHT_EFFECTS
+    return [effect for effect in allowed if effect in EFFECTS] or list(FIGHT_EFFECTS)
+
+
+def talk_reply_schema(scene):
+    """TALK_REPLY_SCHEMA with the effect enum narrowed to what this row's own class may move.
+
+    Measured 2026-10-27 on a live bake asked with the whole five effect enum: muse-spark-1.3 answered `none`
+    for the weak option of three of the four fight cards and `setback` for the fourth, so the first fight's
+    authored ladder moved nothing and the spare gate no longer opened on three authored talks. The schema is
+    already built per call, so the enum is the row's own here: the model is offered the one effect its pool
+    names and cannot pick another, so the answer is live instead of refused, and no effect is hand written.
+    """
+    schema = copy.deepcopy(TALK_REPLY_SCHEMA)
+    schema["properties"]["effect"]["enum"] = row_effects(scene)
+    return schema
+
+
 def row_base(row_id, scene, request_echo, request_hash, model, stamp):
     return {"id": row_id, "scene": scene, "text": [], "mood": "", "effect": "", "hint": "",
             "model": model, "request_hash": request_hash, "created_at": stamp,
@@ -556,7 +600,7 @@ def attempt(reply_builder, base, fallback, mode, state, scene, glyphs, tokens):
     transport = {}
     try:
         answer = call_model(render_messages(mode["system"], base["request"]["character"], scene,
-                                          base["request"]["player_line"]), TALK_REPLY_SCHEMA,
+                                          base["request"]["player_line"]), talk_reply_schema(scene),
                             transport=transport)
     except Exception as exc:  # noqa: BLE001 - any client failure is a labelled fallback, never a hole
         state["failed"] += 1
@@ -573,6 +617,8 @@ def attempt(reply_builder, base, fallback, mode, state, scene, glyphs, tokens):
     # spec 16 section 2's rows), so a live answer that moves something else cannot be the row for
     # it: measured 2026-10-27, a live bake answered "none" for all three of the first fight's
     # options, which leaves the authored ladder dead and the fight unwinnable by picking them.
+    # The schema above already offers that one effect, so this fires only for an answer the schema
+    # did not allow (a non strict client), and the row falls back labelled rather than lying.
     required = scene.get("required_effect")
     if ok and required and answer.get("effect") != required:
         ok = False
@@ -944,6 +990,8 @@ def _check_row(row, seen, cards, glyphs, tokens, bank):
                                                   glyphs, tokens)[1])
     if row.get("source") not in ("live", "fallback"):
         problems.append("%s: source %r is neither live nor fallback" % (row_id, row.get("source")))
+    if scene == "fight":
+        problems.extend(_check_option_effect(row, row_id))
     if row.get("source") == "fallback":
         if not row.get("reason"):
             problems.append("%s: an offline row must say why it is offline" % row_id)
@@ -959,6 +1007,20 @@ def _check_row(row, seen, cards, glyphs, tokens, bank):
     problems.extend(_check_hash(row, row_id))
     problems.extend(_check_fallback(row, row_id, cards, glyphs, bank))
     return problems
+
+
+def _check_option_effect(row, row_id):
+    """A fight option row must move the effect its own pool names (the row's own `option`, 1 to 3)."""
+    option = row.get("option")
+    if not isinstance(option, int) or not 1 <= option <= len(OPTION_EFFECTS):
+        return ["%s: option %r is not 1 to %d, so the row cannot be matched to a pool"
+                % (row_id, option, len(OPTION_EFFECTS))]
+    want = OPTION_EFFECTS[option - 1]
+    effect = row.get("effect")
+    if effect != want:
+        return ["%s: the row moves %r, and option %d's own pool names %r"
+                % (row_id, effect, option, want)]
+    return []
 
 
 def _check_reason(row, row_id):

@@ -1,0 +1,145 @@
+{
+ "audio_key_top3": [
+  [
+   0.698,
+   "A minor"
+  ],
+  [
+   0.669,
+   "E major"
+  ],
+  [
+   0.652,
+   "E minor"
+  ]
+ ],
+ "audio_tempo": {
+  "full_band": {
+   "bar_seconds": 3.3327,
+   "bpm": 72.01,
+   "peak_autocorr": 0.871
+  },
+  "kick_band": {
+   "bar_seconds": 3.3327,
+   "bpm": 72.01,
+   "peak_autocorr": 0.771
+  }
+ },
+ "bars": 24,
+ "beats_per_bar": 4,
+ "bpm": 72,
+ "cue_gate": {
+  "exit": 0,
+  "stdout": "assets/audio/pp_15a_credits_kill/pp_15a_credits_kill.mid: PASS"
+ },
+ "cue_gate_summary": [
+  "G1 CP-01 raw clashes on a strong beat: 0   G2 CP-09 parallel perfect intervals: 0",
+  "state: PASS   0 raw clashes on a strong beat and 0 parallel perfect fifths or octaves between the outer voices"
+ ],
+ "declared_key": "A minor",
+ "delivered": {
+  "loudness": {
+   "integrated_lufs": -14.09,
+   "lra_lu": 2.1,
+   "offset": 0.26,
+   "threshold": -24.19,
+   "true_peak_dbtp": -1.15
+  },
+  "mean_volume_db": -12.3,
+  "samples": 3528000,
+  "seconds": 80.0
+ },
+ "loop_samples": 3528000,
+ "master_attempts": [
+  {
+   "dbtp": -1.57,
+   "gain_db": 0.0,
+   "limit_db": -1.9,
+   "lufs": -19.26
+  },
+  {
+   "dbtp": -0.77,
+   "gain_db": 5.26,
+   "limit_db": -1.9,
+   "lufs": -15.02
+  },
+  {
+   "dbtp": -0.83,
+   "gain_db": 6.28,
+   "limit_db": -2.28,
+   "lufs": -14.64
+  },
+  {
+   "dbtp": -1.24,
+   "gain_db": 6.92,
+   "limit_db": -2.6,
+   "lufs": -14.49
+  },
+  {
+   "dbtp": -0.95,
+   "gain_db": 7.41,
+   "limit_db": -2.6,
+   "lufs": -14.28
+  },
+  {
+   "dbtp": -1.17,
+   "gain_db": 7.69,
+   "limit_db": -2.8,
+   "lufs": -14.27
+  },
+  {
+   "dbtp": -1.1,
+   "gain_db": 7.96,
+   "limit_db": -2.8,
+   "lufs": -14.15
+  },
+  {
+   "dbtp": -1.15,
+   "gain_db": 8.11,
+   "limit_db": -2.8,
+   "lufs": -14.09
+  }
+ ],
+ "midi_key_top3": [
+  [
+   0.811,
+   "A minor"
+  ],
+  [
+   0.678,
+   "E minor"
+  ],
+  [
+   0.651,
+   "E major"
+  ]
+ ],
+ "notes": {
+  "dpcm": 24,
+  "noise": 96,
+  "pulse 1": 160,
+  "pulse 2": 22,
+  "triangle": 41,
+  "vrc6 pulse a": 34,
+  "vrc6 pulse b": 23,
+  "vrc6 saw": 24
+ },
+ "periodicity_max_abs_diff_first_second": 0.413116,
+ "periodicity_max_abs_diff_whole": 0.484161,
+ "periodicity_rms_diff_db": -31.24,
+ "periodicity_share_samples_differing": 0.11754,
+ "seam": {
+  "body_rms_dbfs": -12.27,
+  "head_rms_dbfs": -10.83,
+  "loop_end_sample": 3528000,
+  "loop_seconds": 80.0,
+  "loop_start_sample": 0,
+  "seam_level_delta_db": 1.44,
+  "step_reference_dbfs": -6.57,
+  "tail_rms_dbfs": -7.68,
+  "verdict": "clean",
+  "wrap_jump_dbfs": -60.23
+ },
+ "slug": "pp_15a_credits_kill",
+ "title": "Entropy"
+}

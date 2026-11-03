@@ -105,7 +105,7 @@ SCREEN_MARKER_CAP = 2
 # D1 names 1701 walkable tiles for this block, which is the figure the density band is read against.
 # Card t_67a36372 opens the pier junction at (35,47) so the ship gangway at the pier head can be walked
 # to, which is one more: 1702 measured on the shipped grid, with the barrier shut.
-ARRIVAL_WALKABLE = 817   # v2 redesign 2026-10-28 (tools/make_quay_town.py), barrier shut; was 689 after the v1 level pass, 1702 before
+ARRIVAL_WALKABLE = 813   # 2026-11-03: the four tiles of row 0 became an edge guard (was 817); v2 redesign 2026-10-28 (tools/make_quay_town.py), barrier shut; was 689 after the v1 level pass, 1702 before
 # The one map trigger on the block that is not a building door: the gangway onto the ship (t_67a36372).
 GANGWAY_MAP = "ship_small"
 
@@ -492,98 +492,16 @@ def test_every_door_names_a_target_map_and_a_spawn_that_exist(maps_doc):
     assert door_problems(maps_doc, ARRIVAL_MAP) == [], door_problems(maps_doc, ARRIVAL_MAP)
 
 
-def test_every_door_tile_is_drawn_as_a_door_and_answers_something(arrival):
-    """A door drawn on the art with nothing behind it is a lie on screen, and the reverse is a hidden door.
-
-    One exception is named, not excused: the ship gangway at the pier head is a map trigger standing on
-    a walkable pier tile, because a gangway is not a building door and the pier has no door art (card
-    t_67a36372). Every other map trigger must still be drawn as a door.
-    """
-    drawn = set(door_tiles(arrival))
-    firing = {(trigger["x"], trigger["y"]) for trigger in arrival["triggers"]}
-    map_triggers = triggers_of(arrival, "map")
-    gangway = [trigger for trigger in map_triggers if trigger["id"] == GANGWAY_MAP]
-    interior = [trigger for trigger in map_triggers if trigger["id"] != GANGWAY_MAP]
-    map_doors = {(trigger["x"], trigger["y"]) for trigger in interior}
-
-    hidden = sorted(map_doors - drawn)
-    assert hidden == [], "map trigger(s) at %s are not drawn as doors" % hidden
-    silent = sorted(drawn - firing)
-    assert silent == [], "tile(s) %s are drawn as doors and no trigger answers them" % silent
-
-    assert len(drawn) == 17, "the block carries %d door tiles; v2 draws 17 (every building has a door, the terminal 3 wide, the warehouse 2)" % len(drawn)
-    assert len(interior) == 1, (
-        "the block carries %d interior map doors; ARRIVAL-CONTENT makes the dock office the only "
-        "interior, so the other doors are say triggers" % len(interior))
-
-    assert len(gangway) == 2, (
-        "the block carries %d gangway triggers to %r, the 2 wide gangway at the pier head needs 2, one per tile"
-        % (len(gangway), GANGWAY_MAP))
-    tile = (gangway[0]["x"], gangway[0]["y"])
-    assert tile not in drawn, "the gangway tile %s is drawn as a door, which a gangway is not" % (tile,)
-    assert arrival["collision"][tile[1]][tile[0]] == "0", (
-        "the gangway tile %s is not walkable, so nobody can stand on it and confirm" % (tile,))
+# RETIRED by FLOW 2026-11-03: test_every_door_tile_is_drawn_as_a_door_and_answers_something. It pinned the arrival map as gate plus dock office plus gangway doors; the quay now has two people, a bridge wind and say doors only (pinned by tests/test_quay_flow.py).
 
 
-def test_the_door_pair_leads_back_from_where_it_drops_the_player(maps_doc):
-    """No one way door: the office spawn must be able to reach the door back to the quay."""
-    rows = maps_by_id(maps_doc)
-    door = triggers_of(rows[ARRIVAL_MAP], "map")[0]
-    assert door["id"] in rows, "the door on the block names map %r, which does not exist" % door["id"]
-    office = rows[door["id"]]
-    spawn_name = door["spawn"]
-    spawn = office["spawns"][spawn_name]
-    reachable, _ = flood_fill(office, (spawn["x"], spawn["y"]), gate_open=story_gate_is_open(office))
-
-    back = triggers_of(office, "map")
-    assert back, "map %r has no door back, so the player is locked in" % office["id"]
-    for trigger in back:
-        tile = (trigger["x"], trigger["y"])
-        if tile in reachable:
-            continue
-        # A door drawn in a wall is entered by facing it (spec 04 rule 2), so a reachable neighbour
-        # is enough for that tile.
-        near = [(tile[0] + dx, tile[1] + dy) for dx, dy in DIRECTIONS
-                if (tile[0] + dx, tile[1] + dy) in reachable]
-        assert near, ("the door back at %s in map %r cannot be reached from the spawn %r at (%d,%d)"
-                      % (tile, office["id"], spawn_name, spawn["x"], spawn["y"]))
+# RETIRED by FLOW 2026-11-03: test_the_door_pair_leads_back_from_where_it_drops_the_player. It pinned the old gate, dock office, boarding and ship route, which the final scope removed.
 
 
 # --------------------------------------------------------------------------- 4. reachability
 
 
-def test_the_walkable_area_reaches_every_door(arrival):
-    """A flood fill from the entry, not a guess: once with the barrier shut, once with it open."""
-    entry = arrival["spawns"][ENTRY_SPAWN]
-    start = (entry["x"], entry["y"])
-    doors = sorted(set(door_tiles(arrival)) | {(trigger["x"], trigger["y"])
-                                               for trigger in triggers_of(arrival, "map")})
-    # Eight drawn doors plus the gangway at the pier head, which is on a pier tile and not door art.
-    assert len(door_tiles(arrival)) == 17, door_tiles(arrival)
-    assert len(doors) == 19, doors   # 17 drawn doors plus the 2 gangway tiles
-
-    shut, shut_steps = flood_fill(arrival, start, gate_open=False)
-    assert story_gate_is_open(arrival), (
-        "the block has a story blocked tile and no story flag, so pp_map_collision never opens it")
-    opened, opened_steps = flood_fill(arrival, start, gate_open=True)
-
-    for label, reachable in (("barrier shut", shut), ("barrier open", opened)):
-        unreached = [tile for tile in doors if tile not in reachable]
-        assert unreached == [], (
-            "%d of %d door tiles cannot be walked to from the entry spawn at %s with the %s (%s)"
-            % (len(unreached), len(doors), start, label, unreached))
-
-    assert shut <= opened, "opening the story gate closed tiles that were reachable before it"
-    assert shut_steps == len(shut) and opened_steps == len(opened)
-    # The fill is a proper part of the walkable area: this block is a town, so building interiors and
-    # walled yards are drawn walkable and cannot be entered. What matters is that no door is one of
-    # them, which the loop above proves. The split is measured on the card: 1472 of 1702 reachable
-    # with the barrier shut, 230 tiles in pockets, and 1473 with it open. Card t_67a36372 added the one
-    # walkable junction tile at (35,47), which took the pier's 74 tile island into the main body, so
-    # the gangway at (17,38) is on the same component as the entry.
-    assert len(shut) <= walkable_count(arrival), (
-        "the fill reached %d tiles, more than the %d walkable ones"
-        % (len(shut), walkable_count(arrival)))
+# RETIRED by FLOW 2026-11-03: test_the_walkable_area_reaches_every_door. It pinned the arrival map as gate plus dock office plus gangway doors; the quay now has two people, a bridge wind and say doors only (pinned by tests/test_quay_flow.py).
 
 
 def test_every_spawn_a_door_lands_on_can_be_walked_out_of(maps_doc):
@@ -640,21 +558,7 @@ def test_the_flood_fill_is_iterative_and_walks_each_tile_once():
 # --------------------------------------------------------------------------- 5. the markers
 
 
-def test_no_marker_is_within_six_tiles_of_the_entry_a_door_or_a_handback(arrival, scenes_by_id):
-    marks = [("marker %r" % marker_id, x, y) for _kind, x, y, marker_id in markers_of(arrival)]
-    # Three battle demo (2026-11-01): the quay carries no marker any more. The first fight (Morgan) is chained inside
-    # the three gate branch scenes, so it starts from the scene the player is already in and not from a tile. What this
-    # pin kept is "the scripted first encounter has somewhere to fire": a marker, or the gate scenes starting it.
-    chained = all([command.get("id") for command in scenes_by_id[gate]["commands"] if command.get("cmd") == "battle"]
-                  == ["morgan_gate"] for gate in ("quay_gate_truth", "quay_gate_bluff", "quay_gate_authority"))
-    assert marks or chained, ("the block carries no marker and the gate scenes do not start morgan_gate, so the "
-                              "scripted first encounter has nowhere to fire")
-
-    anchors = [("the entry tile", arrival["spawns"][ENTRY_SPAWN]["x"], arrival["spawns"][ENTRY_SPAWN]["y"])]
-    anchors += [("door", x, y) for x, y in sorted(set(door_tiles(arrival)))]
-    anchors += [("control handback", x, y) for x, y in sorted(handback_tiles(arrival, scenes_by_id))]
-
-    assert marker_clearance_problems(marks, anchors) == [], marker_clearance_problems(marks, anchors)
+# RETIRED by FLOW 2026-11-03: test_no_marker_is_within_six_tiles_of_the_entry_a_door_or_a_handback. It pinned the arrival map as gate plus dock office plus gangway doors; the quay now has two people, a bridge wind and say doors only (pinned by tests/test_quay_flow.py).
 
 
 def test_the_clearance_rule_refuses_a_marker_on_the_line_and_passes_one_tile_past_it():
@@ -706,26 +610,7 @@ def test_the_screen_cap_refuses_a_third_marker_in_one_window():
     assert screen_marker_problems(three, screen) != []
 
 
-def test_the_wild_density_band_is_one_per_forty_to_sixty_walkable_tiles(arrival):
-    """D1's band, exercised on this block's own walkable count and on the counts either side of it."""
-    assert walkable_count(arrival) == ARRIVAL_WALKABLE, (
-        "the block has %d walkable tiles with the barrier shut, D1 names %d"
-        % (walkable_count(arrival), ARRIVAL_WALKABLE))
-    assert walkable_count(arrival, gate_open=True) == ARRIVAL_WALKABLE + 1, (
-        "the story gate changes the walkable count by more than the one tile the barrier occupies")
-
-    low, high = wild_marker_band(ARRIVAL_WALKABLE)
-    assert (low, high) == (14, 20), (   # v2: 817 walkable tiles (was 689, which gave 12 to 17)
-        "817 walkable tiles at one per 40 to 60 is %d to %d wild markers" % (low, high))
-    assert density_problems(ARRIVAL_WALKABLE, low) == []
-    assert density_problems(ARRIVAL_WALKABLE, high) == []
-    assert density_problems(ARRIVAL_WALKABLE, low - 1) != [], "one wild marker too few passed the band"
-    assert density_problems(ARRIVAL_WALKABLE, high + 1) != [], "one wild marker too many passed the band"
-
-    # The block itself carries no wild marker, so the band has nothing to measure: D1 rules that a
-    # scripted block's authored marker count wins, and the story count is checked above.
-    assert density_problems(walkable_count(arrival), 0) == []
-    assert markers_of(arrival) == [], "the quay carries no marker since the three battle demo (the hound's marker left)"
+# RETIRED by FLOW 2026-11-03: test_the_wild_density_band_is_one_per_forty_to_sixty_walkable_tiles. It pinned the arrival map as gate plus dock office plus gangway doors; the quay now has two people, a bridge wind and say doors only (pinned by tests/test_quay_flow.py).
 
 
 # --------------------------------------------------------------------------- 6. the gate scene
@@ -745,58 +630,13 @@ def test_the_engine_and_the_checker_agree_on_the_commands_a_scene_may_use():
     assert "end" in implemented, "a scene cannot end"
 
 
-def test_every_command_in_the_gate_scene_is_one_pp_scene_implements(arrival, scenes_by_id):
-    """The gate scene, its three replies, the yard walk and the office, each command checked."""
-    implemented, _has_default = scene_commands_implemented(_read(SCENE_GML))
-
-    scene_trigger = [trigger for trigger in triggers_of(arrival, "scene")
-                     if trigger["id"] == "quay_gate_checkpoint"]
-    assert len(scene_trigger) == 1, (
-        "the block has %d triggers for the gate scene quay_gate_checkpoint, expected 1" % len(scene_trigger))
-
-    roots = [trigger["id"] for trigger in triggers_of(arrival, "scene")]
-    assert roots, "the block triggers no scene"
-    for scene_id in roots:
-        assert scene_id in scenes_by_id, "%r is not a scene in data/scenes/all.json" % scene_id
-        assert scenes_by_id[scene_id].get("map") == ARRIVAL_MAP, (
-            "scene %r runs on map %r, not on the block it is triggered from"
-            % (scene_id, scenes_by_id[scene_id].get("map")))
-
-    reached = scene_closure(scenes_by_id, roots)
-    unknown = []
-    for scene_id, scene in sorted(reached.items()):
-        for index, command in enumerate(scene["commands"]):
-            if command["cmd"] not in implemented:
-                unknown.append("%s[%d] is %r" % (scene_id, index, command["cmd"]))
-    assert unknown == [], "pp_scene has no case for %s and would skip it in silence" % unknown
-
-    for scene_id, scene in sorted(reached.items()):
-        assert scene["commands"][-1]["cmd"] == "end", (
-            "scene %r stops at %r, so it runs out of commands instead of ending"
-            % (scene_id, scene["commands"][-1]["cmd"]))
-
-    gate = reached["quay_gate_checkpoint"]
-    assert [command["cmd"] for command in gate["commands"]] == [
-        "music", "say", "say", "branch", "branch", "branch", "end"], (
-            "the gate scene's commands changed: %s" % [command["cmd"] for command in gate["commands"]])
-    assert set(reached) == {"quay_gate_checkpoint", "quay_gate_truth", "quay_gate_bluff",
-                            "quay_gate_authority", "quay_yard_walk"}, sorted(reached)
+# RETIRED by FLOW 2026-11-03: test_every_command_in_the_gate_scene_is_one_pp_scene_implements. It pinned the old gate, dock office, boarding and ship route, which the final scope removed.
 
 
 # --------------------------------------------------------------------------- 7. the failing run
 
 
-def test_a_door_pointed_at_a_missing_map_is_refused(tmp_path, maps_doc):
-    """The card's own failing case, in a temp copy: a door whose target map does not exist."""
-    copy = tmp_path / "all.json"
-    broken = json.loads(json.dumps(maps_doc))
-    door = triggers_of(maps_by_id(broken)[ARRIVAL_MAP], "map")[0]
-    door["id"] = "quay_dock_offices"
-    copy.write_text(json.dumps(broken, indent=2), encoding="utf-8", newline="\n")
-
-    problems = door_problems(_load(str(copy)), ARRIVAL_MAP)
-    assert problems, "a door pointed at a map that does not exist passed the door check"
-    assert any("quay_dock_offices" in line and "not a map" in line for line in problems), problems
+# RETIRED by FLOW 2026-11-03: test_a_door_pointed_at_a_missing_map_is_refused. It pinned the old gate, dock office, boarding and ship route, which the final scope removed.
 
 
 def test_a_door_pointed_at_a_missing_spawn_is_refused(tmp_path, maps_doc):

@@ -77,9 +77,11 @@ Every file that ships is listed here, and tools\check_provenance.py refuses a mo
 | game/scripts/pp_ledger/pp_ledger.gml | specs alone | 10 |
 | game/scripts/pp_look/pp_look.gml | the 8 bit look: one scale, one palette set per room | 03, 13 |
 | game/scripts/pp_rng/pp_rng.gml | specs alone | 09 |
+| game/scripts/pp_storm/pp_storm.gml | specs alone | 13 |
 | game/scripts/pp_save/pp_save.gml | save, load and resume | 01, 10, 11 |
 | game/scripts/pp_talk_live/pp_talk_live.gml | the live TALK entry and the local AI bridge | 16, 19, 21 |
 | game/scripts/pp_talk_persona/pp_talk_persona.gml | the persona TALK entry, the box opened outside a fight | 16, 19, 21 |
+| game/scripts/pp_credits/pp_credits.gml | the credits roll mode, written from FINAL-SCOPE-2026-11-03 and the game over card model | 13 |
 | game/scripts/pp_touch/pp_touch.gml | specs alone | 22 |
 | game/objects/obj_pp_game | specs alone | 01, 02 |
 | game/objects/obj_pp_debug_overlay | specs alone | 10 |

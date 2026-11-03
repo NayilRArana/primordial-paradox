@@ -207,6 +207,32 @@ def uncommitted_sources(sync, tracked, repo):
     return sorted(set(out))
 
 
+def project_resources(yyp_text):
+    """Every resource path the .yyp declares (scripts, objects, rooms, sprites), relative to game/."""
+    try:
+        data = json.loads(yyp_text)
+        return sorted({item["id"]["path"] for item in data.get("resources", []) if item.get("id", {}).get("path")})
+    except (ValueError, AttributeError, KeyError, TypeError):
+        return sorted(set(re.findall(r'"path":\s*"([^"]+\.yy)"', yyp_text)))
+
+
+def resource_problems(yyp_text, tracked, repo):
+    """Direction D: a declared resource that is not on disk, or on disk and not in the commit.
+
+    Pure apart from os.path: `tracked` is the set of repository-relative paths git carries.
+    """
+    problems = []
+    for rel_path in project_resources(yyp_text):
+        absolute = os.path.join(ROOT, "game", rel_path)
+        if not os.path.isfile(absolute):
+            problems.append("NOT ON DISK " + rel_path)
+            continue
+        target = os.path.relpath(absolute, repo).replace(os.sep, "/")
+        if target not in tracked:
+            problems.append("NOT IN GIT " + rel_path)
+    return sorted(set(problems))
+
+
 def repo_root():
     result = subprocess.run(
         ["git", "-C", ROOT, "rev-parse", "--show-toplevel"],

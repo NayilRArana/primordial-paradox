@@ -167,6 +167,15 @@
         "scene": { "type": "string", "minLength": 1, "description": "Scene id to continue at when the flag is set." }
       }
     },
+    "credits": {
+      "type": "object",
+      "required": ["cmd", "variant"],
+      "additionalProperties": false,
+      "properties": {
+        "cmd": { "const": "credits" },
+        "variant": { "enum": ["spare", "kill"], "description": "Which closing the credits play (pp_credits_start)." }
+      }
+    },
     "end": {
       "type": "object",
       "required": ["cmd"],
@@ -194,6 +203,7 @@
         { "$ref": "#/$defs/talk" },
         { "$ref": "#/$defs/setflag" },
         { "$ref": "#/$defs/branch" },
+        { "$ref": "#/$defs/credits" },
         { "$ref": "#/$defs/end" }
       ]
     },

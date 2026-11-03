@@ -131,8 +131,6 @@ def percy(pose):
     c.ellipse(9, 69, 4, 3, WHT)
     c.rect(51, 50, 58, 62, BLU)
     c.rect(51, 58, 58, 59, GLD)
-    c.line(14, 62, 6, 77, BRN, 2)
-    c.rect(11, 58, 18, 60, GLD)
     head(c, s, pose == "hit")
     c.poly([(25, 47), (39, 47), (32, 57)], WHT)
     c.rect(31, 50, 33, 58, K)
@@ -144,9 +142,11 @@ def percy(pose):
     c.rect(9, 48, 19, 51, GLD)
     c.rect(45, 48, 55, 51, GLD)
     c.rect(14, 68, 50, 68, K)
-    c.line(56, 61, 62, 38, BRN, 3)
-    c.rect(59, 46, 62, 47, GLD)
-    c.rect(60, 36, 63, 39, GLD)
+    # FINAL-SCOPE D2: the trident, planted in his right fist: a gold shaft, a crossbar and three prongs.
+    c.line(58, 77, 58, 17, GLD, 3)
+    c.rect(52, 15, 63, 17, GLD)
+    for px, top in ((52, 8), (57, 7), (62, 8)):
+        c.rect(px, top, px + 1, 15, GLD)
     c.ellipse(56, 62, 3, 3, WHT)
     return c.a
 
@@ -191,7 +191,7 @@ def frames(builder):
 ENEMIES = (
     ("morgan", "Morgan, Royal Navy dock checkpoint man: white cap, navy coat, clipboard", morgan),
     ("navy_sailor", "Navy Sailor on deck watch: dixie cap, sailor collar, mop", sailor),
-    ("percy", "Lieutenant Percy Skye, 23, Royal Navy: officer's cap, gold buttons and cuffs, spyglass, sabre", percy),
+    ("percy", "Lieutenant Percy Skye, 23, Royal Navy: officer's cap, gold buttons and cuffs, the trident", percy),
 )
 
 

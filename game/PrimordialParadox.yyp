@@ -798,10 +798,37 @@
     },
     {
       "$GMIncludedFile": "",
+      "%Name": "spr_pp_adamantine_scythe.png",
+      "CopyToMask": -1,
+      "filePath": "datafiles/art",
+      "name": "spr_pp_adamantine_scythe.png",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "spr_pp_bident.png",
+      "CopyToMask": -1,
+      "filePath": "datafiles/art",
+      "name": "spr_pp_bident.png",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
       "%Name": "spr_pp_dither.png",
       "CopyToMask": -1,
       "filePath": "datafiles/art",
       "name": "spr_pp_dither.png",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "spr_pp_dither25.png",
+      "CopyToMask": -1,
+      "filePath": "datafiles/art",
+      "name": "spr_pp_dither25.png",
       "resourceType": "GMIncludedFile",
       "resourceVersion": "2.0"
     },
@@ -820,6 +847,15 @@
       "CopyToMask": -1,
       "filePath": "datafiles/art",
       "name": "spr_pp_knife.png",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "spr_pp_master_bolt.png",
+      "CopyToMask": -1,
+      "filePath": "datafiles/art",
+      "name": "spr_pp_master_bolt.png",
       "resourceType": "GMIncludedFile",
       "resourceVersion": "2.0"
     },
@@ -865,6 +901,15 @@
       "CopyToMask": -1,
       "filePath": "datafiles/art",
       "name": "spr_pp_title_logo.png",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "spr_pp_trident.png",
+      "CopyToMask": -1,
+      "filePath": "datafiles/art",
+      "name": "spr_pp_trident.png",
       "resourceType": "GMIncludedFile",
       "resourceVersion": "2.0"
     },
@@ -2634,6 +2679,15 @@
     },
     {
       "$GMIncludedFile": "",
+      "%Name": "pp_03_quay_storm.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "pp_03_quay_storm.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
       "%Name": "pp_04_fight_baroque_v1.ogg",
       "CopyToMask": -1,
       "filePath": "datafiles/streams",
@@ -2782,6 +2836,33 @@
       "CopyToMask": -1,
       "filePath": "datafiles/streams",
       "name": "pp_05_small_ship_v6.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "pp_06_percy_possessed.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "pp_06_percy_possessed.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "pp_15a_credits_kill.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "pp_15a_credits_kill.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "pp_15b_credits_spare.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "pp_15b_credits_spare.ogg",
       "resourceType": "GMIncludedFile",
       "resourceVersion": "2.0"
     },
@@ -3185,6 +3266,12 @@
     },
     {
       "id": {
+        "name": "pp_credits",
+        "path": "scripts/pp_credits/pp_credits.yy"
+      }
+    },
+    {
+      "id": {
         "name": "pp_data",
         "path": "scripts/pp_data/pp_data.yy"
       }
@@ -3271,6 +3358,12 @@
       "id": {
         "name": "pp_scene",
         "path": "scripts/pp_scene/pp_scene.yy"
+      }
+    },
+    {
+      "id": {
+        "name": "pp_storm",
+        "path": "scripts/pp_storm/pp_storm.yy"
       }
     },
     {

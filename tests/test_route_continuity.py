@@ -68,41 +68,19 @@ def route() -> dict:
 # 1. The chain a player walks: crawl, drive, arrival, gate, boarding, fight.
 
 def test_the_route_chain_reaches_the_first_fight_through_the_maps_own_trigger():
+    # FLOW 2026-11-03: the drive, gate, office and boarding are gone. The crawl hands to the quay; Captain Morgan and
+    # Percy are scene rows the player starts by talking, so the route parks on them (`player` true).
     steps = route()
-    assert steps["crawl"]["next"] == "drive"
-    assert steps["drive"]["kind"] == "scene" and steps["drive"]["scene"] == DRIVE_SCENE
-    assert steps["drive"]["next"] == "arrival"
-
-    maps = rows(MAPS_PATH, "maps")
+    assert steps["crawl"]["next"] == "quay"
+    assert steps["quay"]["kind"] == "map" and steps["quay"]["map"] == QUAY_MAP
+    assert steps["quay"]["next"] == "morgan" and steps["morgan"]["next"] == "percy"
     scenes = rows(SCENES_PATH, "scenes")
-    assert scenes[DRIVE_SCENE]["map"] == DRIVE_MAP
-    assert steps["arrival"]["kind"] == "map" and steps["arrival"]["map"] == QUAY_MAP
-    assert steps["arrival"]["next"] == "gate"
-
-    gate_triggers = [trigger for trigger in maps[QUAY_MAP]["triggers"]
-                     if trigger.get("kind") == "scene" and trigger.get("id") == GATE_SCENE]
-    assert gate_triggers, "southampton_town_quay carries no %r scene trigger, so the arrival has no gate" % GATE_SCENE
-    assert steps["gate"]["kind"] == "scene" and steps["gate"]["scene"] == GATE_SCENE
-    # Card t_785b61f0: the dock office and its boarding pass sit between the gate and the boarding, so the demo's S5
-    # shot is on the route and not only on the map. The office row has to be the scene the office map carries.
-    assert steps["gate"]["next"] == OFFICE_STEP
-    assert steps[OFFICE_STEP]["kind"] == "scene" and steps[OFFICE_STEP]["scene"] == OFFICE_SCENE
-    assert steps[OFFICE_STEP]["next"] == "boarding"
-    assert scenes[OFFICE_SCENE]["map"] == OFFICE_MAP, (
-        "the office scene %r runs on %r, and the route's office row names %r, so the pass is shown on the wrong map"
-        % (OFFICE_SCENE, scenes[OFFICE_SCENE]["map"], OFFICE_MAP))
-
-    assert scenes[BOARDING_SCENE]["map"] == SHIP_MAP
-    assert steps["boarding"]["kind"] == "scene" and steps["boarding"]["scene"] == BOARDING_SCENE
-    assert steps["boarding"]["next"] == "fight"
-
-    # The route's fight step is a row the player completes from the map, so the map has to carry the trigger, and that
-    # trigger has to be the one the route names.
-    assert steps["fight"]["kind"] == "battle" and steps["fight"]["encounter"] == FIRST_FIGHT
-    battle_triggers = [trigger for trigger in maps[SHIP_MAP]["triggers"]
-                       if trigger.get("kind") == "battle" and trigger.get("id") == FIRST_FIGHT]
-    assert battle_triggers, "the deck carries no %r battle trigger, so the route's fight step has nothing to start it" % (
-        FIRST_FIGHT)
+    maps = rows(MAPS_PATH, "maps")
+    for step_id in ("morgan", "percy"):
+        assert steps[step_id]["kind"] == "scene" and steps[step_id].get("player") is True
+        scene = scenes[steps[step_id]["scene"]]
+        assert scene["map"] == QUAY_MAP
+        assert [a for a in maps[QUAY_MAP]["actors"] if a.get("scene") == scene["id"]], "no actor starts " + scene["id"]
 
 
 def test_the_boarding_scene_ends_next_to_the_first_fights_trigger():

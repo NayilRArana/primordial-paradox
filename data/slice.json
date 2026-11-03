@@ -1,10 +1,10 @@
 {
   "format": 1,
   "kind": "slice",
-  "map": "ship_small",
+  "map": "southampton_town_quay",
   "spawn": "start",
-  "scene": "ship_boarding",
-  "encounter": "tutorial_sailors",
+  "scene": "quay_arrival",
+  "encounter": "morgan_gate",
   "route": {
     "first": "title",
     "steps": [
@@ -20,63 +20,30 @@
         "kind": "crawl",
         "label": "the intro crawl",
         "text": "intro_text",
-        "next": "drive"
+        "next": "quay"
       },
       {
-        "id": "drive",
-        "kind": "scene",
-        "label": "the drive to Southampton",
-        "scene": "drive_to_southampton",
-        "next": "arrival"
-      },
-      {
-        "id": "arrival",
+        "id": "quay",
         "kind": "map",
-        "label": "arrival at Town Quay",
+        "label": "the Town Quay in the hurricane",
         "map": "southampton_town_quay",
-        "next": "gate"
+        "spawn": "start",
+        "next": "morgan"
       },
       {
-        "id": "gate",
+        "id": "morgan",
         "kind": "scene",
-        "label": "the gate checkpoint and its three replies",
-        "scene": "quay_gate_checkpoint",
-        "next": "office"
+        "label": "Captain Morgan: talk or fight",
+        "scene": "quay_morgan_encounter",
+        "player": true,
+        "next": "percy"
       },
       {
-        "id": "office",
+        "id": "percy",
         "kind": "scene",
-        "label": "the dock office and the boarding pass",
-        "scene": "quay_dock_office_play",
-        "next": "boarding"
-      },
-      {
-        "id": "boarding",
-        "kind": "scene",
-        "label": "boarding the ship",
-        "scene": "ship_boarding",
-        "next": "fight"
-      },
-      {
-        "id": "fight",
-        "kind": "battle",
-        "label": "the first fight",
-        "encounter": "tutorial_sailors",
-        "next": "save",
-        "lose": "gameover"
-      },
-      {
-        "id": "save",
-        "kind": "save",
-        "label": "the ship's log save",
-        "trigger": "deck_save",
-        "next": ""
-      },
-      {
-        "id": "gameover",
-        "kind": "branch",
-        "label": "the game over screen, then the title again",
-        "to": "title",
+        "label": "Percy at the bridge: talk or fight, then the credits",
+        "scene": "quay_percy_encounter",
+        "player": true,
         "next": ""
       }
     ]

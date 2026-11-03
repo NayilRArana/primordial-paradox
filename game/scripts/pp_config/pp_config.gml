@@ -65,6 +65,11 @@
 #macro PP_RESULT_STEPS 30
 #macro PP_DAMAGE_POPUP_STEPS 24
 
+// FINAL-SCOPE D3 (2026-11-03): a killed enemy breaks into pixel blocks that drift up and outward for this many steps
+// (60 to 90 asked for) before the closing board opens. Blocks are PP_DISSOLVE_BLOCK pixels square.
+#macro PP_DISSOLVE_STEPS 78
+#macro PP_DISSOLVE_BLOCK 4
+
 // Fight bar (spec 07 T7): power 100 at the bullseye, 0 at the ends, 60 steps end to end.
 #macro PP_FIGHT_SWEEP_STEPS 60
 #macro PP_FIGHT_DAMAGE_MIN 2
@@ -82,7 +87,8 @@ enum PPMode {
     cutscene = 3,
     battle = 4,
     menu = 5,
-    talk_persona = 6
+    talk_persona = 6,
+    credits = 7
 }
 
 /// Battle phases. Every transition goes through pp_battle_phase_set() in pp_battle_director.
@@ -187,11 +193,12 @@ enum PPElement {
 #macro PP_WALK_STEPS_RAIL 8
 #macro PP_TRIGGER_LOCK_STEPS 20
 #macro PP_MARKER_RESPAWN_STEPS 30
-// The feet (card PP-FREE-MOVE rule 2): a 10x6 hitbox at the bottom middle of the 16x16 figure is what collides, what
+// The feet (card PP-FREE-MOVE rule 2): a 10x8 hitbox at the bottom middle of the 16x16 figure is what collides, what
 // fires a trigger and what a confirm reaches from. PP_CORNER_NUDGE is how far round a corner he slides when a push is
 // blocked by that much or less, and PP_REACH is how far in front of the feet a person or a door is still reachable.
 #macro PP_HERO_FEET_W 10
-#macro PP_HERO_FEET_H 6
+// Final scope 2026-11-03: 8 tall (was 6), so a 16 px figure overlaps the wall tile in front of it by half, not by 10 px.
+#macro PP_HERO_FEET_H 8
 #macro PP_CORNER_NUDGE 3
 #macro PP_REACH 14
 // The two frame walk cycle is counted in pixels walked, not in steps held (card PP-FREE-MOVE rule 3): a frame every 8
@@ -210,7 +217,7 @@ enum PPElement {
 // and not a search. data\slice.json and data\project.json already named ship_small as the slice's map, and
 // ROADMAP-2026-10-22 puts the first two fights on this deck, so the constant follows the data instead of the
 // provisional lower deck the ASSEMBLE card wrote when the deck did not exist yet.
-#macro PP_NEW_GAME_MAP "ship_small"
+#macro PP_NEW_GAME_MAP "southampton_town_quay"
 #macro PP_NEW_GAME_SPAWN "start"
 #macro PP_NEW_GAME_ROOM "rm_pp_ship"
 

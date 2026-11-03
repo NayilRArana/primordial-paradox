@@ -175,12 +175,16 @@ def route_walk_events(first_s, gap_s):
 
     maps = {row["id"]: row for row in load("maps/all.json")["maps"]}
     route = load("slice.json")["route"]["steps"]
-    arrival = next(step for step in route if step.get("id") == "arrival")
+    arrival = next(step for step in route if step.get("id") in ("arrival", "quay"))  # FLOW 2026-11-03: the step is "quay" now
     map_row = maps[arrival["map"]]
     spawn_name = arrival.get("spawn") if arrival.get("spawn") in map_row.get("spawns", {}) else "start"
     start = map_row["spawns"][spawn_name]
     gate = next((trigger for trigger in map_row.get("triggers", [])
                  if trigger.get("kind") == "scene" and trigger.get("id") == "quay_gate_checkpoint"), None)
+    if gate is None:
+        # FLOW 2026-11-03: no gate; the arrival walk ends beside Captain Morgan, the scene start of his encounter.
+        start_tile = next(scene["start"] for scene in load("scenes/all.json")["scenes"] if scene["id"] == "quay_morgan_encounter")
+        gate = {"x": start_tile["x"], "y": start_tile["y"]}
     if gate is None:
         raise SystemExit("capture_first_fight: southampton_town_quay carries no quay_gate_checkpoint scene trigger, "
                          "so the arrival walk has nowhere to end")

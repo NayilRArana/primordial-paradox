@@ -1,0 +1,121 @@
+{
+ "audio_key_top3": [
+  [
+   0.605,
+   "A minor"
+  ],
+  [
+   0.492,
+   "E minor"
+  ],
+  [
+   0.432,
+   "A major"
+  ]
+ ],
+ "audio_tempo": {
+  "full_band": {
+   "bar_seconds": 1.4997,
+   "bpm": 160.03,
+   "peak_autocorr": 0.78
+  },
+  "kick_band": {
+   "bar_seconds": 1.4994,
+   "bpm": 160.07,
+   "peak_autocorr": 0.461
+  }
+ },
+ "bars": 48,
+ "beats_per_bar": 4,
+ "bpm": 160,
+ "cue_gate": {
+  "exit": 0,
+  "stdout": "assets/audio/pp_03_quay_storm/pp_03_quay_storm.mid: PASS"
+ },
+ "cue_gate_summary": [
+  "G1 CP-01 raw clashes on a strong beat: 0   G2 CP-09 parallel perfect intervals: 0",
+  "state: PASS   0 raw clashes on a strong beat and 0 parallel perfect fifths or octaves between the outer voices"
+ ],
+ "declared_key": "A minor",
+ "delivered": {
+  "loudness": {
+   "integrated_lufs": -14.06,
+   "lra_lu": 5.1,
+   "offset": 0.03,
+   "threshold": -24.17,
+   "true_peak_dbtp": -1.31
+  },
+  "mean_volume_db": -12.4,
+  "samples": 3175200,
+  "seconds": 72.0
+ },
+ "loop_samples": 3175200,
+ "master_attempts": [
+  {
+   "dbtp": -0.96,
+   "gain_db": 0.0,
+   "limit_db": -1.9,
+   "lufs": -16.95
+  },
+  {
+   "dbtp": -0.74,
+   "gain_db": 2.95,
+   "limit_db": -2.09,
+   "lufs": -14.33
+  },
+  {
+   "dbtp": -1.2,
+   "gain_db": 3.28,
+   "limit_db": -2.5,
+   "lufs": -14.19
+  },
+  {
+   "dbtp": -1.31,
+   "gain_db": 3.47,
+   "limit_db": -2.5,
+   "lufs": -14.06
+  }
+ ],
+ "midi_key_top3": [
+  [
+   0.752,
+   "A minor"
+  ],
+  [
+   0.532,
+   "E minor"
+  ],
+  [
+   0.46,
+   "A major"
+  ]
+ ],
+ "notes": {
+  "dpcm": 273,
+  "noise": 704,
+  "pulse 1": 704,
+  "pulse 2": 134,
+  "triangle": 336,
+  "vrc6 pulse a": 191,
+  "vrc6 pulse b": 84,
+  "vrc6 saw": 88
+ },
+ "periodicity_max_abs_diff_first_second": 0.0,
+ "periodicity_max_abs_diff_whole": 0.0,
+ "periodicity_rms_diff_db": -180.0,
+ "periodicity_share_samples_differing": 0.0,
+ "seam": {
+  "body_rms_dbfs": -12.36,
+  "head_rms_dbfs": -10.3,
+  "loop_end_sample": 3175200,
+  "loop_seconds": 72.0,
+  "loop_start_sample": 0,
+  "seam_level_delta_db": -0.54,
+  "step_reference_dbfs": -8.46,
+  "tail_rms_dbfs": -12.9,
+  "verdict": "clean",
+  "wrap_jump_dbfs": -90.3
+ },
+ "slug": "pp_03_quay_storm",
+ "title": "Harbor Storm"
+}

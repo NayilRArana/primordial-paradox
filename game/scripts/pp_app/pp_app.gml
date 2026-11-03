@@ -368,6 +368,8 @@ function pp_mode_battle() {
         enter: function(_params) {
             var _battle = undefined;
             global.pp.battle_encounter = "";
+            // Card FLOW (D7): the log line a human playthrough proves the fight started with.
+            pp_flow_encounter_start(_params.encounter_id);
             var _enc = pp_data_find(global.pp_data.encounters.encounters, _params.encounter_id);
             if (!is_undefined(_enc)) {
                 global.pp.battle_encounter = _enc.id;
@@ -897,6 +899,11 @@ function pp_route_take_next(_row) {
         return false;
     }
     _app.route_step = _next_id;
+    // Card FLOW: a row that says `player` is started by the player's own talk or walk, so the route only parks on it.
+    if (variable_struct_exists(_next, "player") && _next.player == true) {
+        pp_route_note("step " + _next_id + " (" + pp_slice_label(_next) + ") waits for the player on the map");
+        return true;
+    }
     if (pp_slice_kind(_next) == PPSliceKind.battle) {
         var _here = "the map";
         if (is_struct(global.pp.world) && is_struct(global.pp.world.map)) _here = string(global.pp.world.map.id);

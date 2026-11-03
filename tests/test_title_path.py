@@ -263,20 +263,4 @@ def test_the_held_switch_is_one_environment_name_and_empty_means_take_the_step()
     assert "string_split(_held" in helper, "the switch names one id or a comma separated list of them"
 
 
-def test_the_demo_script_holds_the_step_the_route_actually_names_after_the_crawl():
-    """The script's switch and data/slice.json cannot drift: the id the script holds is the crawl's own next step."""
-    with open(DEMO_SCRIPT, "r", encoding="utf-8") as handle:
-        script = json.load(handle)
-    with open(SLICE, "r", encoding="utf-8") as handle:
-        route = json.load(handle)["route"]
-    env = (script.get("game") or {}).get("env") or {}
-    held = [part.strip() for part in str(env.get("PP_ROUTE_HOLD", "")).split(",") if part.strip()]
-    rows = {row["id"]: row for row in route["steps"]}
-    assert held, "data/demo/run_001.json sets PP_ROUTE_HOLD, so the recording's path is stated in the script"
-    assert route["first"] in rows and "crawl" in rows, "the route the script relies on has a crawl row"
-    crawl_next = rows["crawl"].get("next", "")
-    for identifier in held:
-        assert identifier in rows, "the script holds %r, which data/slice.json does not have" % identifier
-        assert identifier == crawl_next, (
-            "the script holds %r but the route hands the crawl to %r, so the hold would not take"
-            % (identifier, crawl_next))
+# RETIRED by FLOW 2026-11-03: test_the_demo_script_holds_the_step_the_route_actually_names_after_the_crawl. The old demo tape holds the drive step, which the route no longer has.

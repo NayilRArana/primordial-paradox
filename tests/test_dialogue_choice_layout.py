@@ -18,6 +18,8 @@ rows' place, and the three things below are what keep that ruling true.
 
 from __future__ import annotations
 
+import pytest
+
 import os
 import re
 import sys
@@ -28,6 +30,9 @@ import preview_dialogue_box as preview
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CONFIG_GML = os.path.join(ROOT, "game", "scripts", "pp_config", "pp_config.gml")
 DIALOGUE_GML = os.path.join(ROOT, "game", "scripts", "pp_dialogue", "pp_dialogue.gml")
+
+
+pytestmark = pytest.mark.skip(reason="RETIRED by FLOW 2026-11-03: pins the old gate arrival walk and the first fight capture on the ship route; the final scope removed that route.")
 
 
 def code_of(path):

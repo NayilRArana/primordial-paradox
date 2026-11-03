@@ -121,35 +121,42 @@ BEARD = [
     ".kkkkkk.",
     "..kkkk..",
 ]
+# The sailor's and the officer's uniform: white cloth, ink outline, and the Royal Navy blue used for
+# two different jobs so the hit frame can tell them apart. "m" is navy that is always navy (the cap
+# band, the jacket placket, the belt, the cuffs, the boots), "s" is navy that is only a shade plane on
+# the right of a mass. The flash frame lights the shade plane and leaves the trim navy, so frame 3
+# spends the same three entries as frames 0 and 1, which is the defect the eye measured on six of
+# these seven enemies (data/sprite_redraw_queue.json, spr_pp_navy_sailor). The body of the figure is
+# the white, not the navy, because the enemy is drawn on the open sea, which is flat $02 navy.
 TORSO_JACKET = [
     "...kkkkkkkk...",
+    "..kllllllllk..",
+    "..klllmmlllk..",
+    "..klllmmllsk..",
+    "..klllmmllsk..",
+    "..klllmmllsk..",
+    "..kllllllssk..",
     "..kmmmmmmmmk..",
-    "..kmmllllmmk..",
-    "..kmmllllmmk..",
-    "..kmmmmmmmmk..",
-    "..kmmkmmmmmk..",
-    "..kmmmmmmmmk..",
-    "..kmmkmmmmmk..",
     "..kkkkkkkkkk..",
 ]
 ARM = [
     ".kk",
-    "kmm",
-    "kmm",
-    "kmm",
-    "kmm",
-    "kmm",
     "kll",
+    "kll",
+    "kls",
+    "kls",
+    "kls",
+    "kmm",
     ".kk",
 ]
 LEG = [
     ".kkk.",
-    "kmmmk",
-    "kmmmk",
-    "kmmmk",
-    "kmmmk",
-    ".kkk.",
     "klllk",
+    "klslk",
+    "klslk",
+    "klslk",
+    ".kkk.",
+    "kmmmk",
     "kkkkk",
 ]
 CLIPBOARD = [
@@ -312,9 +319,11 @@ class Grid:
 # ----------------------------------------------------------------------------------------------------------------
 # The cast. One draw function per enemy, taking the frame index, so the idle frame is a real second pose.
 # ----------------------------------------------------------------------------------------------------------------
-def draw_sailor(frame):
+def draw_sailor(frame, hit=False):
     grid = Grid()
     dy = 1 if frame == 1 else 0
+    if hit:
+        dy = -1     # the flash frame is the figure knocked back a pixel, not the idle pose repainted
     grid.stamp(CAP_WHITE, 10, 1 + dy)
     grid.stamp(HEAD, 11, 5 + dy)
     grid.stamp(TORSO_JACKET, 9, 13 + dy)
@@ -333,9 +342,11 @@ def draw_sailor(frame):
     return grid
 
 
-def draw_officer(frame):
+def draw_officer(frame, hit=False):
     grid = Grid()
     dy = 1 if frame == 1 else 0
+    if hit:
+        dy = -1
     grid.stamp(CAP_PEAKED, 9, 0 + dy)
     grid.stamp(HEAD, 11, 5 + dy)
     grid.stamp(BEARD, 13, 9 + dy)
@@ -353,24 +364,30 @@ def draw_officer(frame):
     return grid
 
 
-def draw_rat(frame):
+def draw_rat(frame, hit=False):
     grid = Grid()
     dy = 1 if frame == 1 else 0
-    # tail first, curling up behind the body
+    # tail first, curling up behind the body: brown trim, kept brown in every frame
     grid.line(8, 23, 4, 21, "m")
     grid.line(4, 21, 2, 17, "m")
     grid.line(2, 17, 3, 12, "m")
     grid.line(3, 12, 6, 9, "m")
     grid.set(5, 9, "l")
-    # feet
+    # feet, brown trim
     for x in (9, 13, 17, 21):
         grid.rect(x, 26, x + 2, 28, "m")
-    grid.ellipse(14, 20 - dy, 10, 6, "m")
+    # the fur: the lit mass is the amber, not the brown. The deck rat walks on the night sea, which is
+    # flat $02 navy, and a brown body reads 1.24:1 against it (palette_synergy, 2026-10-24), so the
+    # largest mass moved to the palette's light tone and the brown became the trim and the shade plane.
+    grid.ellipse(14, 20 - dy, 10, 6, "l")
     grid.ellipse(13, 23 - dy, 6, 3, "l")
-    grid.ellipse(24, 16 + dy, 5, 4, "m")
-    grid.rect(27, 17 + dy, 29, 19 + dy, "m")
-    grid.ellipse(23, 10 + dy, 3, 3, "m")
-    grid.ellipse(23, 10 + dy, 1, 1, "l")
+    grid.ellipse(24, 16 + dy, 5, 4, "l")
+    grid.rect(27, 17 + dy, 29, 19 + dy, "l")
+    grid.ellipse(23, 10 + dy, 3, 3, "l")
+    grid.ellipse(23, 10 + dy, 1, 1, "m")
+    # the shade plane: brown along the underside of the body and the haunch, lit on the hit frame
+    grid.ellipse(12, 24 - dy, 6, 2, "s")
+    grid.rect(24, 20 + dy, 26, 20 + dy, "s")
     grid.outline()
     # face, after the outline so the eye is not eaten by it
     grid.rect(24, 14 + dy, 25, 15 + dy, "k")
@@ -378,35 +395,64 @@ def draw_rat(frame):
     grid.set(28, 21 + dy, "l")
     grid.set(30, 17 + dy, "k")
     grid.set(30, 20 + dy, "k")
+    if hit:
+        grid.recolour({"s": "l"})
     return grid
 
 
-def draw_gull(frame):
+def draw_gull(frame, hit=False):
+    """The gull: a white diving bird with a cyan rim, drawn on the flat navy sea.
+
+    Card t_ae4bbd15: this sheet spent its outline and its beak in "k", which in the sea's own palette
+    (sp3_sea: k #0000bc, m #3cbcfc, l #fcfcfc) is the ground colour to the pixel, so the eye measured 43.0
+    percent of the figure as the colour behind it (output/EYE_AUTO_2026-10-24_R10.md, fix 2). The rim and
+    the beak are now "m" cyan, the body stays "l" white, and "k" is spent only as the 2 x 2 pupil, where a
+    dark dot is what an eye is. The hit frame is drawn here rather than recoloured: the old flash mapped
+    "m" to "l", which dropped the cyan and gave the last frame two colours instead of three.
+    """
     grid = Grid()
-    folded = frame == 1
+    folded = frame == 1 and not hit
+    lift = 1 if hit else 0
     wing = WING_FOLDED if folded else WING_SPREAD
     # body dives from the upper left to the lower right
     for step in range(0, 11):
         x = 9 + step
-        y = 8 + step
+        y = 8 + step - lift
         grid.blob(x, y, 3 if step < 8 else 2, "l")
-    # head and the dark beak pointing down
-    grid.ellipse(22, 21, 3, 3, "l")
-    grid.rect(24, 22, 26, 23, "k")
-    grid.set(27, 24, "k")
+    # head and the cyan beak, open on the hit frame
+    grid.ellipse(22, 21 - lift, 3, 3, "l")
+    grid.rect(24, 21 - lift, 26, 22 - lift, "m")
+    grid.set(27, 23 - lift, "m")
+    if hit:
+        grid.rect(24, 24, 26, 24, "m")
+        grid.set(27, 24, "m")
     # tail feathers
-    grid.rect(6, 6, 9, 8, "l")
-    grid.set(7, 5, "m")
-    grid.set(8, 5, "m")
+    grid.rect(6, 6 - lift, 9, 8 - lift, "l")
+    grid.set(7, 5 - lift, "m")
+    grid.set(8, 5 - lift, "m")
     # wings: the far one up and left, the near one swept back
-    grid.stamp(wing, 2, 12 if not folded else 14)
-    grid.stamp(mirrored(wing), 16, 2 if not folded else 4)
-    grid.outline()
-    grid.rect(22, 20, 22, 21, "k")
+    grid.stamp(wing, 2, (12 if not folded else 14) - lift)
+    grid.stamp(mirrored(wing), 16, (2 if not folded else 4) - lift)
+    grid.outline("m")
+    # the eye: a dark pupil, the one place "k" is still spent, because a pupil is the ground showing dark
+    if hit:
+        grid.rect(21, 19 - lift, 23, 21 - lift, "k")
+    else:
+        grid.rect(22, 20 - lift, 23, 21 - lift, "k")
     return grid
 
 
-def draw_wave(frame):
+
+def draw_wave(frame, hit=False):
+    """The rogue wave: a swell with a foam rim, drawn on the flat navy sea.
+
+    Card t_5e488e26: this sheet spent its outline in "k", which in the sea's own palette (sp3_sea:
+    k #0000bc, m #3cbcfc, l #fcfcfc) is the ground colour to the pixel, so the eye measured 627
+    pixels (30.1 percent of the figure) as the colour behind it (round 10, new_finding on
+    spr_pp_rogue_wave). The rim is now "l" foam, the same answer the gull got, and "k" is spent only
+    where a dark is the subject: the two pupils and the mouth. The shade plane "s" carries the same
+    hex as the mid tone and is what the hit frame lights, so all three frames keep three entries.
+    """
     grid = Grid()
     # the swell: frame 1 lifts the whole body one pixel and throws a different spray, so the silhouette moves
     # across its whole width instead of only at the crest points
@@ -416,6 +462,12 @@ def draw_wave(frame):
     grid.ellipse(14, 18 - rise, 12, 9, "m")
     grid.carve(25, 13 - rise, 8, 6)
     grid.ring(20, 15 - rise, 8, 6, "m", thickness=2)
+    # the shade plane: the lower half of the swell, so the flash frame has something to light that is
+    # not the whole body. Same hex as the mid tone in frames 0 and 1, so it costs no entry.
+    for y in range(0, H):
+        for x in range(0, W):
+            if y >= 23 and grid.get(x, y) == "m":
+                grid.set(x, y, "s")
     # foam along the crest
     for x, y in ((3, 17), (4, 15), (6, 13), (8, 12), (10, 11), (12, 10 + dy), (14, 10 + dy),
                  (16, 11 + dy), (18, 12 + dy), (20, 14 + dy), (21, 17 + dy)):
@@ -429,7 +481,10 @@ def draw_wave(frame):
     # foam band on the deck at the bottom, which the body lifts away from
     for x in range(3, 30, 4):
         grid.rect(x, 29, x + 2, 30, "l")
-    grid.outline()
+    # the rim is foam "l", not ink: in sp3_sea the ink is #0000bc, which is the sea to the pixel, so an
+    # ink rim is an invisible rim on this ground (the eye's round 10 finding, 627 pixels measured as the
+    # ground colour). White foam on navy is what a breaker actually looks like at the crest anyway.
+    grid.outline("l")
     # the eyes, two blocks with a navy pupil, the thing that makes it alive
     grid.rect(10, 19, 13, 21, "l")
     grid.rect(17, 19, 20, 21, "l")
@@ -438,24 +493,37 @@ def draw_wave(frame):
     # a mouth of foam under the eyes
     for x in range(12, 19):
         grid.set(x, 24, "k")
+    if hit:
+        # the flash lights the shade plane and throws the crest higher, so the frame reads as a hit
+        # while the cyan body, the foam rim and the ink eyes all stay on the sheet
+        grid.recolour({"s": "l"})
+        for x, y in ((6, 6), (13, 2), (22, 4), (28, 8)):
+            grid.set(x, y, "l")
+            grid.set(x, y + 1, "l")
     return grid
 
 
-def draw_rope(frame):
+def draw_rope(frame, hit=False):
     grid = Grid()
     # frame 1 tightens: the whole knot sits one pixel higher and the loose end flicks the other way
     dy = 0 if frame == 0 else 1
-    grid.ring(10, 19 - dy, 6, 6, "m", thickness=2)
-    grid.ring(21, 19 - dy, 6, 6, "m", thickness=2)
-    grid.ring(15, 12 - dy, 6, 5, "m", thickness=2)
+    loops = ((10, 19 - dy, 6, 6), (21, 19 - dy, 6, 6), (15, 12 - dy, 6, 5))
+    for cx, cy, rx, ry in loops:
+        grid.ring(cx, cy, rx, ry, "l", thickness=2)
+    # the shaded face of the rope: brown under each loop, so the lit coil is the amber above and the
+    # brown below. The knot is fought on the night sea, which is flat $02 navy, and a brown body reads
+    # 1.24:1 against it (palette_synergy, 2026-10-24), so the largest mass moved to the light tone.
+    for cx, cy, rx, ry in loops:
+        for x in range(cx - rx + 2, cx + rx - 1):
+            grid.set(x, cy + ry - 1, "s")
     grid.outline()
-    # the twist of the rope: light dashes around each loop
+    # the twist of the rope: brown dashes around each loop
     for index in range(0, 12, 3):
-        grid.set(4 + index % 4, 15 - dy + index // 4, "l")
-        grid.set(17 + index % 4, 15 - dy + index // 4, "l")
-        grid.set(10 + index % 5, 8 - dy + index // 5, "l")
+        grid.set(4 + index % 4, 15 - dy + index // 4, "m")
+        grid.set(17 + index % 4, 15 - dy + index // 4, "m")
+        grid.set(10 + index % 5, 8 - dy + index // 5, "m")
     # the knot core, with the two eyes buried in it
-    grid.ellipse(15, 19 - dy, 4, 4, "m")
+    grid.ellipse(15, 19 - dy, 4, 4, "s")
     grid.outline()
     grid.set(13, 18 - dy, "k")
     grid.set(17, 18 - dy, "k")
@@ -470,10 +538,19 @@ def draw_rope(frame):
         grid.line(23, 25, 28, 30, "m")
         grid.set(29, 30, "l")
         grid.set(30, 29, "l")
+    if hit:
+        grid.recolour({"s": "l"})
     return grid
 
 
-def draw_slime(frame):
+def draw_slime(frame, hit=False):
+    """The bilge slime: green mass, ink rim, wet highlight, drawn on the flat navy sea.
+
+    Card t_5e488e26: the hit frame used to be frame 0 with every mid tone repainted light, so the last
+    frame spent two entries and dropped #00a800 (the eye's round 8 defect, spr_pp_bilge_slime). The
+    lower half of the mass is now the shade plane "s", which carries the mid hex in frames 0 and 1 and
+    is what the flash lights, so all three frames keep ink, green and lit green.
+    """
     grid = Grid()
     dy = 1 if frame == 1 else 0
     grid.ellipse(16, 25, 12, 5, "m")
@@ -481,6 +558,12 @@ def draw_slime(frame):
     grid.ellipse(7, 27 + dy, 2, 2 + dy, "m")
     grid.ellipse(25, 27 + dy, 2, 3 + dy, "m")
     grid.ellipse(16, 30, 13, 2, "m")
+    # the shade plane: the lower half of the mass, so the flash has a plane to light that is not the
+    # whole body. Same hex as the mid tone in frames 0 and 1, so it costs no entry.
+    for y in range(0, H):
+        for x in range(0, W):
+            if y >= 21 and grid.get(x, y) == "m":
+                grid.set(x, y, "s")
     grid.outline()
     # wet highlight, then the face
     for x, y in ((11, 13), (12, 12), (13, 12), (14, 13), (11, 14)):
@@ -491,6 +574,13 @@ def draw_slime(frame):
     grid.rect(20, 17, 20, 18, "k")
     for x, y in ((14, 21), (15, 22), (16, 22), (17, 22), (18, 21)):
         grid.set(x, y, "k")
+    if hit:
+        # the flash lights the shade plane and the mass bubbles up, so the frame reads as a hit while
+        # the ink rim, the green body and the lit green all stay on the sheet
+        grid.recolour({"s": "l"})
+        for x, y in ((9, 9), (23, 10), (5, 22), (27, 20)):
+            grid.set(x, y, "l")
+            grid.set(x + 1, y, "l")
     return grid
 
 
@@ -503,6 +593,8 @@ CAST = [
         "sprite": "spr_pp_sailor",
         "palette": "sp0_navy_white",
         "draw": draw_sailor,
+        "hit_draw": lambda: draw_sailor(0, hit=True),
+        "hit_map": {"s": "l"},
         "hp": 15,
         "role": "tutorial enemy",
         "personality": "Two years of night watches and a mop he treats like a rifle: tired, decent, and not paid enough to care who you are.",
@@ -530,6 +622,8 @@ CAST = [
         "sprite": "spr_pp_petty_officer",
         "palette": "sp0_navy_white",
         "draw": draw_officer,
+        "hit_draw": lambda: draw_officer(0, hit=True),
+        "hit_map": {"s": "l"},
         "hp": 28,
         "role": "tougher regular enemy",
         "personality": "A clipboard with a man attached: he has written your name down already and he is disappointed in the handwriting.",
@@ -552,6 +646,8 @@ CAST = [
         "sprite": "spr_pp_deck_rat",
         "palette": "sp1_brown_gold",
         "draw": draw_rat,
+        "hit_draw": lambda: draw_rat(0, hit=True),
+        "hit_map": {"s": "l"},
         "hp": 12,
         "role": "regular enemy",
         "personality": "Has eaten better than the crew for three years and knows exactly which stores hatch is loose.",
@@ -574,6 +670,7 @@ CAST = [
         "sprite": "spr_pp_gull",
         "palette": "sp3_sea",
         "draw": draw_gull,
+        "hit_draw": lambda: draw_gull(0, hit=True),
         "hp": 10,
         "role": "regular enemy",
         "personality": "Screaming, thieving, entirely convinced the ship was built as a restaurant for one.",
@@ -596,6 +693,8 @@ CAST = [
         "sprite": "spr_pp_rogue_wave",
         "palette": "sp3_sea",
         "draw": draw_wave,
+        "hit_draw": lambda: draw_wave(0, hit=True),
+        "hit_map": {"s": "l"},
         "hp": 40,
         "role": "minion in the Percy fight",
         "personality": "The sea got tired of being told what to do and grew eyes about it.",
@@ -618,6 +717,8 @@ CAST = [
         "sprite": "spr_pp_rope_knot",
         "palette": "sp1_brown_gold",
         "draw": draw_rope,
+        "hit_draw": lambda: draw_rope(0, hit=True),
+        "hit_map": {"s": "l"},
         "hp": 22,
         "role": "regular enemy",
         "personality": "Nobody tied it and nobody can untie it, and it has opinions about both facts.",
@@ -640,6 +741,8 @@ CAST = [
         "sprite": "spr_pp_bilge_slime",
         "palette": "sp2_green",
         "draw": draw_slime,
+        "hit_draw": lambda: draw_slime(0, hit=True),
+        "hit_map": {"s": "l"},
         "hp": 18,
         "role": "regular enemy",
         "personality": "The bottom of the ship learned to want things: warmth, a biscuit, and the sound of someone saying its name.",
@@ -660,9 +763,17 @@ CAST = [
 
 def enemy_frames(spec):
     frames = [spec["draw"](0), spec["draw"](1)]
-    hit = spec["draw"](0)
-    hit.recolour({"m": "l"})
-    frames.append(hit)
+    # The flash frame used to be frame 0 with every mid tone repainted light, which dropped the mid
+    # entry from the frame. A sheet whose three frames spend different entries needs a second sprite
+    # palette to place its last frame, and the eye measured that on seven of these enemies (round 8).
+    # An enemy whose drawing keeps its trim in "m" and its shading in "s" names its own hit_map, so the
+    # flash lights the shading and leaves the trim, and all three frames spend the same three entries.
+    if spec.get("hit_draw"):
+        frames.append(spec["hit_draw"]())
+    else:
+        hit = spec["draw"](0)
+        hit.recolour(spec.get("hit_map", {"m": "l"}))
+        frames.append(hit)
     return frames
 
 
@@ -688,6 +799,9 @@ def palette_hexes(root, name):
     hexes = {}
     for code, value in spec["hex"].items():
         hexes[code] = value
+    # "s" is the shade code: the same hex as the mid tone, so a part can carry a plane the flash frame
+    # lights while the trim stays navy. It is not a second colour and it does not reach the palette.
+    hexes["s"] = spec["hex"]["m"]
     for entry in spec["entries"]:
         if not 0 <= entry < len(colours):
             raise SystemExit("%s: entry %d is outside the 2C02 palette" % (name, entry))

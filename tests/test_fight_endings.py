@@ -67,7 +67,7 @@ NAVY = "tutorial_sailors"
 PERCY = "percy"
 
 # The four outcome ids this card is about, and the fight each one belongs to.
-OUTCOMES = ((PERCY, "kill", "percy_win_kill"), (PERCY, "spare", "percy_win_spare"),
+OUTCOMES = ((PERCY, "kill", "quay_percy_win_kill"), (PERCY, "spare", "quay_percy_win_spare"),
             (NAVY, "kill", "navy_win_kill"), (NAVY, "spare", "navy_win_spare"))
 
 # The route a fight happens on when the player has already killed a boss (spec 10), which is what makes the refusal

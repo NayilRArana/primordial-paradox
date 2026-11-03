@@ -8,6 +8,7 @@ than the positive one here.
 """
 
 import importlib.util
+import json
 import os
 import subprocess
 
@@ -216,3 +217,31 @@ def test_the_flag_absent_leaves_the_worktree_directions_alone(tmp_path):
 def test_the_staged_direction_passes_on_this_repositorys_index():
     """`python tools/check_build_inputs.py --staged` exits 0 on the clean index (its own measure)."""
     assert check().main(staged=True) == 0
+
+
+def test_a_project_resource_git_does_not_carry_is_named():
+    """Direction D. The .yyp can name a script the commit does not carry, which is how pp_talk_live cost two
+    builds on 2026-10-26: on disk, in the project file, in nobody's commit. Passing an empty tracked set is the
+    cheapest way to ask that question without depending on the live tree's current state."""
+    module = check()
+    repo = module.repo_root()
+    yyp = json.dumps({"resources": [{"id": {"name": "pp_app", "path": "scripts/pp_app/pp_app.yy"}}]})
+    assert module.resource_problems(yyp, module.tracked_files(repo), repo) == []
+    assert module.resource_problems(yyp, set(), repo) == ["NOT IN GIT scripts/pp_app/pp_app.yy"]
+
+
+def test_a_project_resource_missing_from_disk_is_named():
+    """The other direction: declared, absent. gen_project.py normally prevents this, which is exactly why a
+    checker must still say so if the generator is bypassed."""
+    module = check()
+    repo = module.repo_root()
+    yyp = json.dumps({"resources": [{"id": {"name": "ghost", "path": "scripts/zz_ghost/zz_ghost.yy"}}]})
+    assert module.resource_problems(yyp, module.tracked_files(repo), repo) == [
+        "NOT ON DISK scripts/zz_ghost/zz_ghost.yy"]
+
+
+def test_the_real_project_file_declares_resources_at_all():
+    """A scan that reads no resources would pass the rows above and prove nothing."""
+    module = check()
+    with open(module.YPP, "r", encoding="utf-8") as handle:
+        assert len(module.project_resources(handle.read())) >= 20

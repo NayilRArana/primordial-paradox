@@ -269,7 +269,8 @@ def test_the_swing_is_drawn_over_the_enemy_slot_between_the_party_and_the_hud():
     assert order == sorted(order), "the swing must draw after the party and before the enemy's name"
     slash = body("pp_battle_draw_slash")
     assert "PP_UNTINTED" in slash, "the sheet's own three colours are the strip's palette, so no tint"
-    assert '_slot.x + (_slot.w - 16) div 2' in slash, "the swing must sit inside the enemy's own slot"
+    # FINAL-SCOPE D2: the swing is centred by the sheet's own frame size (the gods' sheets are 32x32, the knife's 16x16).
+    assert '_slot.x + (_slot.w - _fw) div 2' in slash, "the swing must sit inside the enemy's own slot"
 
 
 def test_the_menu_says_what_the_hand_is_holding():

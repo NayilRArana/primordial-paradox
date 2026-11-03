@@ -19,6 +19,11 @@ What these tests hold down, and why each one earns its place:
      to refuse a layout that would touch either;
   6. THE DEAD BADGE IS ONLY DRAWN WHEN THE FILE SAYS DEAD, and the network line says the same thing the
      file's own `offline` and `network` fields say, in both states.
+  7. THE NES TALK BOX IS THE RECORD AND NOTHING ELSE. Its reply lines are the bake row's own `text`, its
+     verdict is the judge map's word for that row's effect, and the id it prints is looked up in
+     data/receipts/meta_receipts.jsonl, so a row whose verdict receipt was never logged refuses rather
+     than printing a made up id. A fallback row is drawn only labelled, and the box never covers S5's
+     dialogue box, which the frame test compares byte for byte like the plate's own rules do.
 
 Run: python -m pytest tests/test_demo_overlay.py -q
 """
@@ -350,3 +355,86 @@ def test_the_cli_prints_the_rows_and_exits_zero(overlay, capsys):
     assert payload["shot"] == "S5"
     assert payload["rows"] == ["npc/nye/turn_1"]
     assert any(line["tier"] == "hash" for line in payload["lines"])
+
+
+# 7. The NES talk box: the row's words, its verdict, and the receipt that backs it
+
+
+def test_the_talk_box_draws_the_rows_own_words_verdict_and_receipt(overlay, live_bake_file):
+    bake, index = overlay.load_bake(live_bake_file)
+    layout = overlay.plan("S5", bake, index, talk_box=True)
+    talk = layout["talk_box"]
+    row = [item for item in bake["rows"] if item["id"] == "npc/nye/turn_1"][0]
+    verdicts = overlay.load_verdicts()
+    entry = verdicts[row["effect"]]
+    texts = [line["source_text"] for line in talk["lines"]]
+    assert texts[1:1 + len(row["text"])] == row["text"], "the box draws the bake row's own reply lines"
+    assert texts[1 + len(row["text"])] == "VERDICT %s, WILL %s%s" % (
+        entry["verdict"].upper(), "+" if entry["will_delta"] > 0 else "", entry["will_delta"])
+    assert talk["verdict"] == entry["verdict"]
+    assert talk["receipt"] in overlay.load_ledger(), "the id the box prints is a logged receipt"
+    assert any(talk["receipt"] in piece for piece in texts)
+    assert texts[-1].endswith("LIVE")
+
+
+def test_a_verdict_whose_receipt_is_not_logged_is_refused(overlay):
+    with pytest.raises(overlay.OverlayError) as error:
+        overlay.row_receipt_id({"id": "npc/nye/turn_1"}, ledger={})
+    assert "tools\\receipts.py --row npc/nye/turn_1" in str(error.value)
+
+
+def test_the_talk_box_refuses_a_row_the_verdict_map_does_not_hold(overlay):
+    verdicts = overlay.load_verdicts()
+    row = {"id": "x/y/1", "text": ["ONE LINE."], "effect": "tickle", "source": "live", "network": True}
+    with pytest.raises(overlay.OverlayError) as error:
+        overlay.talk_box_lines("S5", row, verdicts, "rcpt-0000000000000000")
+    assert "no entry" in str(error.value)
+
+
+def test_the_talk_box_labels_a_fallback_row_and_refuses_it_unlabelled(overlay):
+    verdicts = overlay.load_verdicts()
+    row = {"id": "x/y/1", "text": ["ONE LINE."], "effect": "none", "source": "fallback", "network": False}
+    with pytest.raises(overlay.OverlayError) as error:
+        overlay.talk_box_lines("S5", row, verdicts, "rcpt-0000000000000000")
+    assert "not a live answer" in str(error.value)
+    lines = overlay.talk_box_lines("S5", row, verdicts, "rcpt-0000000000000000", allow_fallback=True)
+    texts = [piece for _tier, piece, _role in lines]
+    assert "FALLBACK, NOT A LIVE ANSWER" in texts
+    assert texts[-1].endswith("FALLBACK")
+
+
+def test_the_talk_box_is_refused_on_a_shot_whose_claim_is_not_the_box(overlay):
+    verdicts = overlay.load_verdicts()
+    row = {"id": "x/y/1", "text": ["ONE LINE."], "effect": "none", "source": "live", "network": True}
+    with pytest.raises(overlay.OverlayError) as error:
+        overlay.talk_box_lines("S6", row, verdicts, "rcpt-0000000000000000")
+    assert "S5" in str(error.value)
+
+
+def test_s5_talk_box_frame_test_passes_and_the_dialogue_box_is_untouched(overlay, frame_file, tmp_path):
+    out = str(tmp_path / "s5_talk.png")
+    render_shot(overlay, "S5", BAKE, frame_file, out, talk_box=True)
+    bake, index = overlay.load_bake(BAKE)
+    report = overlay.check_frame(frame_file, out, "S5", bake, index, talk_box=True)
+    assert report["ok"], [item for item in report["checks"] if not item["ok"]]
+    source = Image.open(frame_file).convert("RGB")
+    rendered = Image.open(out).convert("RGB")
+    dialogue = overlay.scale_rect(overlay.DIALOGUE_BOX)
+    assert ImageChops.difference(source.crop(dialogue), rendered.crop(dialogue)).getbbox() is None
+    assert report["talk_box"] is not None
+    assert not overlay.intersects(report["talk_box"]["rect"], dialogue)
+    assert not overlay.intersects(report["talk_box"]["rect"], report["plate"])
+    named = [item["name"] for item in report["checks"]]
+    assert any(name.startswith("ink on the box line") for name in named)
+    assert any(name.startswith("the receipt id is printed") for name in named)
+    assert "no box text outside the lines' reserved band" in named
+
+
+def test_the_talk_box_cli_prints_the_box_and_exits_zero(overlay, capsys):
+    assert overlay.main(["--shot", "S5", "--rows", "--talk-box"]) == 0
+    payload = json.loads(capsys.readouterr().out)
+    talk = payload["talk_box"]
+    assert talk["receipt"] in overlay.load_ledger()
+    verdicts = overlay.load_verdicts()
+    assert talk["verdict"] in [entry["verdict"] for entry in verdicts.values()]
+    assert any(talk["receipt"] in line["text"] for line in talk["lines"])

@@ -161,10 +161,10 @@ def test_the_party_is_zeus_kronos_hades_and_percy_is_not_in_it():
     The member is the sheet id, the name is what the party panel prints under the portrait, in this order."""
     rows = battle_screen()["party"]
     assert [(row["member"].lower(), row["name"]) for row in rows] == [
-        ("zander", "ZEUS"), ("konrad", "KRONOS"), ("hadrian", "HADES")]
+        ("zander", "ZANDER"), ("konrad", "KONRAD"), ("hadrian", "HADRIAN")]
     assert "percy" not in [slot["id"] for slot in resolved_party()]
     status = battle_screen()["text"]["status_rows"]
-    assert [row.split()[0] for row in status] == ["ZEUS", "KRONOS", "HADES"]
+    assert [row.split()[0] for row in status] == ["ZANDER", "KONRAD", "HADRIAN"]
 
 
 def test_the_party_panel_prints_each_name_under_its_portrait_inside_the_panel():

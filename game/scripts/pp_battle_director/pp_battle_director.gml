@@ -80,6 +80,14 @@ function pp_battle_new(_encounter, _enemy, _party, _ledger) {
         popup_steps: 0,
         result: PPResult.none,
         recorded: false,
+        // FINAL-SCOPE D3: the kill's disintegration. dissolve_lines is the closing board it hands over to.
+        // FINAL-SCOPE D2: FIGHT rotates through the party. striker is the slot swinging now (-1 between swings) and
+        // fight_count how many FIGHTs have resolved, so the first FIGHT is the first member's weapon, the next the second's.
+        striker: -1,
+        fight_count: 0,
+        dissolve_active: false,
+        dissolve_steps: 0,
+        dissolve_lines: [],
         defeated: false,
         // Card BATTLE-FULL (2026-10-27): hit feedback and the ACT effect. hurt_flash and shake count down from the step
         // the marker is hit; skip_enemy_turn is set by a TALK option whose enemy row says skip_turn (act_responses).
@@ -109,6 +117,7 @@ function pp_battle_new(_encounter, _enemy, _party, _ledger) {
     _battle.bg_name = pp_battle_bg_name(_battle);
     if (variable_struct_exists(_enemy, "talk_dialogue")) _battle.talk_set = _enemy.talk_dialogue;
     pp_talk_live_state_init(_battle);
+    pp_battle_strike_ready(_battle);
 
     pp_battle_phase_set(_battle, PPBattlePhase.intro);
     // Card t_8dcd842f: the readout's first line, so a recording's log carries "HP 20/20" at fight start without
@@ -215,6 +224,57 @@ function pp_battle_weapon(_party) {
     return _row;
 }
 
+// ---------------------------------------------------------------------------------------------------------------
+// FINAL-SCOPE D2 (2026-11-03): every party member holds a signature weapon and FIGHT rotates through them. The weapon
+// rows are data (data/items.json, kind weapon, `wielder` = the member's sheet id), so no member or weapon is named here.
+
+/// The weapon row whose wielder is this member id, or undefined.
+function pp_battle_member_weapon(_member) {
+    if (!variable_global_exists("pp") || !is_struct(global.pp)) return undefined;
+    if (!variable_struct_exists(global.pp, "data") || !is_struct(global.pp.data)) return undefined;
+    if (!variable_struct_exists(global.pp.data, "item_by_id") || !is_struct(global.pp.data.item_by_id)) return undefined;
+    var _by = global.pp.data.item_by_id;
+    var _names = variable_struct_get_names(_by);
+    for (var i = 0; i < array_length(_names); i++) {
+        var _row = _by[$ _names[i]];
+        if (!is_struct(_row) || !variable_struct_exists(_row, "wielder")) continue;
+        if (!variable_struct_exists(_row, "kind") || string(_row.kind) != "weapon") continue;
+        if (string(_row.wielder) == string(_member)) return _row;
+    }
+    return undefined;
+}
+
+/// The party slot that swings on the next FIGHT, or -1 when the party column has no members.
+function pp_battle_next_striker(_battle) {
+    var _n = array_length(pp_battle_party_slots());
+    if (_n <= 0) return -1;
+    return _battle.fight_count mod _n;
+}
+
+/// Put the next striker's weapon in the actor's hand, so the menu's HELD line and the FIGHT lines read it. A member with
+/// no weapon row leaves the actor's own weapon (the knife of the party row) in place.
+function pp_battle_strike_ready(_battle) {
+    var _slot = pp_battle_next_striker(_battle);
+    if (_slot < 0) return false;
+    var _row = pp_battle_member_weapon(pp_battle_party_slots()[_slot].id);
+    if (is_undefined(_row)) return false;
+    _battle.actor.weapon = _row;
+    return true;
+}
+
+/// A FIGHT lands: the next member is the one swinging.
+function pp_battle_strike_begin(_battle) {
+    _battle.striker = pp_battle_next_striker(_battle);
+}
+
+/// The swing is over (the FIGHT board has closed): the weapon of the member after this one is the held one.
+function pp_battle_strike_end(_battle) {
+    if (_battle.striker < 0) return;
+    _battle.striker = -1;
+    _battle.fight_count += 1;
+    pp_battle_strike_ready(_battle);
+}
+
 /// The held weapon row of a fight, or undefined.
 function pp_battle_weapon_row(_battle) {
     if (!is_struct(_battle)) return undefined;
@@ -291,8 +351,10 @@ function pp_battle_draw_slash(_battle, _slot) {
     if (!variable_struct_exists(_w, "sprite")) return false;
     var _name = string(_w.sprite);
     if (_name == "" || !pp_art_has(_name)) return false;
-    var _x = _slot.x + (_slot.w - 16) div 2;
-    var _y = _slot.y + (_slot.h - 16) div 2;
+    var _fw = pp_art_info(_name).frame_w;
+    var _fh = pp_art_info(_name).frame_h;
+    var _x = _slot.x + (_slot.w - _fw) div 2;
+    var _y = _slot.y + (_slot.h - _fh) div 2;
     return pp_art_draw(_name, _frame, _x, _y, PP_UNTINTED, 1);
 }
 
@@ -487,6 +549,7 @@ function pp_battle_step_resolve(_battle) {
     if (pp_pressed("confirm") || _battle.bar_steps >= PP_FIGHT_SWEEP_STEPS * 2) {
         _battle.power = round(100 - abs(_battle.bar_pos - 50) * 2);
         var _damage = pp_battle_fight_damage(_battle, _battle.power);
+        pp_battle_strike_begin(_battle);
         pp_battle_hurt_enemy(_battle, _damage);
         pp_battle_say(_battle, pp_battle_fight_lines(_battle, _damage), "enemy_turn");
     }
@@ -520,6 +583,7 @@ function pp_battle_say(_battle, _lines, _after) {
 }
 
 function pp_battle_step_message(_battle) {
+    if (pp_battle_dissolve_step(_battle)) return;
     if (is_undefined(_battle.messages)) {
         pp_battle_after_message(_battle);
         return;
@@ -535,6 +599,7 @@ function pp_battle_step_message(_battle) {
 }
 
 function pp_battle_after_message(_battle) {
+    pp_battle_strike_end(_battle);
     _battle.messages = undefined;
     var _after = _battle.after_message;
     _battle.after_message = "";
@@ -679,7 +744,74 @@ function pp_battle_enter_result(_battle) {
     else if (_battle.result == PPResult.kill) _lines = pp_battle_dialogue_lines(_battle.encounter.win_dialogue_kill);
     else _lines = ["* The fight ends."];
 
+    // FINAL-SCOPE D3: a kill shows the enemy breaking apart first, then the closing board. It stays inside the message
+    // phase (a board with no text), so the phase machine has no new state.
+    if (_battle.result == PPResult.kill && !_battle.defeated && pp_battle_dissolve_possible(_battle)) {
+        pp_battle_dissolve_begin(_battle, _lines);
+        return;
+    }
+
     pp_battle_say(_battle, _lines, "_closing");
+}
+
+/// True when the fight's enemy has a big sheet to break apart.
+function pp_battle_dissolve_possible(_battle) {
+    return pp_battle_enemy_big_name(_battle) != "";
+}
+
+/// Start the disintegration: no board, the message phase counts it down, then opens the closing board.
+function pp_battle_dissolve_begin(_battle, _lines) {
+    _battle.dissolve_active = true;
+    _battle.dissolve_steps = 0;
+    _battle.dissolve_lines = _lines;
+    _battle.messages = undefined;
+    _battle.after_message = "";
+    pp_battle_phase_set(_battle, PPBattlePhase.message);
+    pp_audio_play("hit_heavy");
+    show_debug_message("PP: battle dissolve start, " + string(PP_DISSOLVE_STEPS) + " steps");
+    return _battle;
+}
+
+/// One step of the disintegration. Returns true while it still owns the message phase.
+function pp_battle_dissolve_step(_battle) {
+    if (!_battle.dissolve_active) return false;
+    _battle.dissolve_steps += 1;
+    if (_battle.dissolve_steps == 30) pp_audio_play("crit");
+    if (_battle.dissolve_steps >= PP_DISSOLVE_STEPS) {
+        _battle.dissolve_active = false;
+        pp_battle_say(_battle, _battle.dissolve_lines, "_closing");
+    }
+    return true;
+}
+
+/// Draw the enemy's first frame as blocks that rise and spread, then thin out on a dither (no blended colour). Block
+/// (bx, by) starts moving after its own delay, so the figure peels away rather than vanishing at once.
+function pp_battle_draw_dissolve(_battle, _name, _x, _y, _w, _h) {
+    var _info = pp_art_info(_name);
+    if (is_undefined(_info)) return false;
+    var _b = PP_DISSOLVE_BLOCK;
+    var _cols = _w div _b;
+    var _rows = _h div _b;
+    var _life = PP_DISSOLVE_STEPS - 40;
+    for (var by = 0; by < _rows; by++) {
+        for (var bx = 0; bx < _cols; bx++) {
+            var _delay = (bx * 37 + by * 91) mod 40;
+            var _t = _battle.dissolve_steps - _delay;
+            var _dx = 0;
+            var _dy = 0;
+            if (_t > 0) {
+                if (_t >= _life) continue;
+                var _speed = 0.35 + ((bx * 13 + by * 7) mod 5) * 0.12;
+                _dx = floor((bx - _cols * 0.5) * _t * 0.09) + (((bx + by) mod 3) - 1);
+                _dy = -floor(_t * _speed);
+                var _k = (bx + by + _battle.dissolve_steps) mod 4;
+                if (_t > _life * 0.8 && _k != 0) continue;
+                if (_t > _life * 0.5 && (_k mod 2) == 1) continue;
+            }
+            draw_sprite_part_ext(_info.sprite, 0, bx * _b, by * _b, _b, _b, _x + bx * _b + _dx, _y + by * _b + _dy, 1, 1, PP_UNTINTED, 1);
+        }
+    }
+    return true;
 }
 
 function pp_battle_record(_battle) {
@@ -704,7 +836,25 @@ function pp_battle_record(_battle) {
         _battle.ledger.hp = _battle.actor.hp;
     }
     _battle.recorded = true;
+    // FINAL-SCOPE C1 (2026-11-03): the route reads the fight's result from one place.
+    pp_battle_publish_outcome(_battle);
     return _battle;
+}
+
+/// FINAL-SCOPE C1 (2026-11-03): tell the route how this fight ended. The record door runs exactly once per fight, on
+/// every road out of it (a kill, a spare, a defeat, an interruption), and it runs before control can return to the
+/// route, so one write here is always in place when the route looks. The enemy word is the enemy row's own id and the
+/// outcome word is pp_battle_outcome's: "spare", "kill" or "defeat" on the Town Quay ("interrupted" and "unresolved"
+/// exist only on the old ship route, where no run goes). The line is the proof a human playthrough prints.
+function pp_battle_publish_outcome(_battle) {
+    var _enemy = "";
+    if (is_struct(_battle.enemy) && variable_struct_exists(_battle.enemy, "id")) _enemy = string(_battle.enemy.id);
+    var _outcome = pp_battle_outcome(_battle);
+    if (variable_global_exists("pp") && is_struct(global.pp)) {
+        global.pp.last_battle = { enemy: _enemy, outcome: _outcome };
+    }
+    show_debug_message("PP: battle outcome " + _enemy + " " + _outcome);
+    return _outcome;
 }
 
 // ---------------------------------------------------------------------------------------------------------------
@@ -903,6 +1053,9 @@ function pp_battle_interrupt_block(_enemy) {
 function pp_battle_interrupt_ready(_battle) {
     if (_battle.enemy_hp <= 0) return false;
     if (pp_battle_spare_allowed(_battle)) return false;
+    // FINAL-SCOPE D3: the Town Quay fights end in spare, kill or defeat only. An encounter row may switch the enemy's
+    // interrupt off (interrupt_off), which only ever removes behaviours the formal model already allows.
+    if (variable_struct_exists(_battle.encounter, "interrupt_off") && _battle.encounter.interrupt_off) return false;
     var _block = pp_battle_interrupt_block(_battle.enemy);
     if (is_undefined(_block)) return false;
     if (!variable_struct_exists(_block, "on") || _block.on != "spare_refused") return false;
@@ -1847,6 +2000,13 @@ function pp_battle_draw_enemy_big(_battle) {
     var _shake = 0;
     if (_hit) _shake = ((_battle.phase_steps div 2) mod 2 == 0) ? 2 : -2;
     var _name = pp_battle_enemy_big_name(_battle);
+    if (_name != "" && _battle.dissolve_active) {
+        return pp_battle_draw_dissolve(_battle, _name, _e.cx - _e.frame_w div 2, _e.feet - _e.frame_h + 1, _e.frame_w, _e.frame_h);
+    }
+    if (_name != "" && _battle.result == PPResult.kill && _battle.phase != PPBattlePhase.menu) {
+        // Once it has broken apart the enemy stays gone for the closing board and the victory panel.
+        if (_battle.dissolve_steps >= PP_DISSOLVE_STEPS) return true;
+    }
     if (_name != "") {
         var _f = (_battle.phase_steps div 30) mod 2;
         if (_hit && pp_art_frames(_name) > 2) _f = 2;
@@ -1864,6 +2024,25 @@ function pp_battle_draw_enemy_big(_battle) {
     return false;
 }
 
+/// FINAL-SCOPE D2: the last slot wears the helm of invisibility, and now and then its figure flickers through a row
+/// dither (alternate rows on alternate steps), which is how a NES shows a sprite that is not quite there. A row is a
+/// whole 1 pixel part of the sheet, so no colour is blended.
+function pp_battle_flicker_now(_battle, _slot_index) {
+    var _slots = pp_battle_party_slots();
+    if (array_length(_slots) < 3 || _slot_index != array_length(_slots) - 1) return false;
+    return ((_battle.turn * 120 + _battle.phase_steps) mod 180) < 24;
+}
+
+function pp_battle_draw_flicker(_name, _frame, _x, _y, _step) {
+    var _info = pp_art_info(_name);
+    if (is_undefined(_info)) return false;
+    var _parity = (_step div 2) mod 2;
+    for (var r = _parity; r < _info.frame_h; r += 2) {
+        draw_sprite_part_ext(_info.sprite, 0, _frame * _info.frame_w, r, _info.frame_w, 1, _x, _y + r, 1, 1, PP_UNTINTED, 1);
+    }
+    return true;
+}
+
 /// The party panel: the layout's party members as portraits, then one shared HP bar and one shared WILL bar.
 function pp_battle_draw_party_b(_battle, _lb) {
     var _q = _lb.panel;
@@ -1877,9 +2056,14 @@ function pp_battle_draw_party_b(_battle, _lb) {
         if (!pp_art_has(_name)) continue;
         var _f = 0;
         if (_battle.actor.hp <= 0 && pp_art_frames(_name) > 6) _f = 6;
+        // FINAL-SCOPE D2: the member swinging shows the sheet's three attack frames, one every PP_SLASH_FRAME_STEPS.
+        if (_battle.striker == i && _battle.phase == PPBattlePhase.message && pp_art_frames(_name) > 4) {
+            _f = 2 + min(2, _battle.phase_steps div PP_SLASH_FRAME_STEPS);
+        }
         var _px = _q.party_x + i * _q.party_step + _shake_x;
-        pp_art_draw(_name, _f, _px, _q.party_y, PP_UNTINTED, 1);
-        // The member's name under the portrait (ZEUS, KRONOS, HADES), centred on the 24 px sheet.
+        if (pp_battle_flicker_now(_battle, i) && pp_art_has(_name)) pp_battle_draw_flicker(_name, _f, _px, _q.party_y, _battle.phase_steps);
+        else pp_art_draw(_name, _f, _px, _q.party_y, PP_UNTINTED, 1);
+        // The member's name under the portrait (the layout's own `name`), centred on the 24 px sheet.
         pp_font_draw_centre(_slots[i].name, _px + _q.name_dx, _q.name_y, 1);
         _drawn += 1;
     }

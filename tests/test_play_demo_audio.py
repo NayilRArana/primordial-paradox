@@ -88,8 +88,7 @@ def delivered(demo, tmp_path, monkeypatch):
     tree and on this host.
     """
     for path in (TITLE_OGG, SHIP_OGG):
-        if not os.path.isfile(path):
-            pytest.skip("%s is not on this checkout" % os.path.relpath(path, ROOT))
+        assert os.path.isfile(path), "%s is not on this checkout" % os.path.relpath(path, ROOT)
     streams = tmp_path / "streams"
     sfx = tmp_path / "sfx"
     streams.mkdir()

@@ -110,10 +110,12 @@ def test_collision_is_the_class_file_cell_by_cell():
                 barriers.append((x, y))
                 continue
             want = "0" if (c["walkable"] or not c["solid"]) else "1"
+            if y == 0:
+                want = "1"   # final scope 2026-11-03: row 0 is the map edge guard
             if col != want:
                 bad.append("(%d,%d) %r %s: collision %s, class says %s" % (x, y, ch, c["name"], col, want))
     assert bad == [], "\n".join(bad[:12])
-    assert barriers == [(8, 8)], "the one story barrier is the gate bollard at (8,8), found %s" % barriers
+    assert barriers == [], "the gate is gone, so no tile is story blocked any more, found %s" % barriers
 
 
 def test_the_door_tile_is_the_only_trigger_class_and_every_door_has_its_trigger():

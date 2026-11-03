@@ -34,7 +34,8 @@
         "kind": { "enum": ["scene", "battle", "map", "say", "flag", "marker", "save", "persona"] },
         "id": { "type": "string", "minLength": 1 },
         "once": { "type": "boolean" },
-        "condition": { "type": "string", "description": "A flag name that must be set, or the empty string for no condition." },
+        "condition": { "type": "string", "description": "A flag name that must be set, or the empty string for no condition. A leading ! means the flag must NOT be set." },
+        "touch": { "type": "boolean", "description": "True: the trigger fires when the feet enter its tile, never on confirm (the bridge wind)." },
         "spawn": { "type": "string", "minLength": 1, "description": "Required when kind is map: the spawn point on the destination map." },
         "marker_kind": { "enum": ["story", "wild"], "description": "Only on a marker trigger. A story marker is authored in the row and its count wins; a wild marker is drawn from the random table and obeys the 40 to 60 tile density (D1 of knowledge/GAMEDEV-DECISIONS-2026-10-22.md). The trigger kind stays marker, because that word is the table selector. Read this field for the marker kind." }
       },
@@ -140,7 +141,10 @@
         "y": { "type": "integer", "minimum": 0 },
         "facing": { "enum": ["up", "down", "left", "right"] },
         "kind": { "type": "string", "minLength": 1, "description": "Which figure the renderer draws. sailor today." },
-        "dialogue": { "type": "string", "minLength": 1, "description": "A dialogue id in data/dialogue/all.json." }
+        "dialogue": { "type": "string", "minLength": 1, "description": "A dialogue id in data/dialogue/all.json." },
+        "scene": { "type": "string", "minLength": 1, "description": "A scene id a confirm starts while done_flag is not set." },
+        "done_flag": { "type": "string", "minLength": 1, "description": "Once this flag is set the actor speaks dialogue instead of starting scene." },
+        "gone_flag": { "type": "string", "minLength": 1, "description": "While this flag is set the actor is not placed on the map (killed)." }
       }
     }
   }

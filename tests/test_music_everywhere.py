@@ -187,7 +187,7 @@ def test_the_named_rooms_carry_the_cues_the_story_gave_them():
 def test_pending_cues_fall_back_to_a_landed_cue_so_nothing_is_silent():
     rows = _cue_rows()
     pending = [cue for cue, row in rows.items() if row.get("pending")]
-    for wanted in ("PP-07", "PP-08", "PP-09", "PP-10", "PP-11", "PP-12", "PP-13", "PP-14", "PP-15a", "PP-15b", "PP-16"):
+    for wanted in ("PP-07", "PP-08", "PP-09", "PP-10", "PP-11", "PP-12", "PP-13", "PP-14", "PP-16"):  # PP-15a and PP-15b landed 2026-11-03 (credits themes)
         assert wanted in pending, "%s is expected to be a pending cue today; if it landed, drop it from this list" % wanted
     for cue in pending:
         played, name = _resolve(cue)

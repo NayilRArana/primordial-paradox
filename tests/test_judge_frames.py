@@ -177,8 +177,9 @@ def test_difference_rows_call_identical_frames_the_same_picture(tmp_path):
 def test_the_newest_nightly_reaches_a_verdict_and_names_its_frame_times():
     """A finding a reader cannot locate is the failure this card exists to stop."""
     video = judge_panel.newest_nightly()
-    if not video or not os.path.exists(video):
+    if not video:
         pytest.skip("no nightly capture under output/demo, and output/ is gitignored")
+    assert os.path.exists(video), "the newest nightly names a file that is not on disk: %s" % video
     if not shutil.which("ffmpeg") or not shutil.which("ffprobe"):
         pytest.skip("ffmpeg or ffprobe is not on PATH, so no frame can be taken")
     report = jfc.check(video, folder=os.path.join(ROOT, "output", "_judge_frames_test"), log=False)

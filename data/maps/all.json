@@ -410,7 +410,7 @@
         "____-________-________-________-________-_______"
       ],
       "collision": [
-        "111111111111111111111100001111111111111111111111",
+        "111111111111111111111111111111111111111111111111",
         "111111111111111111111100001111111111111111111111",
         "111111111111111111111100001111111111111111111111",
         "111111111111111111111000000111111111111111111111",
@@ -418,7 +418,7 @@
         "111111111111111111111000000111111111111111111111",
         "111111111111111111111000000111111111111111111111",
         "111101111011111011111100001110111111101111011111",
-        "110000002000000000000000000000000000000000000011",
+        "110000001000000000000000000000000000000000000011",
         "110000000000000000000000000000000000000000000011",
         "110000000000000000000000000000000000000000000011",
         "111111110000111000011111111100001111111111111111",
@@ -457,7 +457,6 @@
         "111111111111111111111111111111111111111111111111"
       ],
       "music": "PP-03",
-      "story_flag": "gate_passed",
       "room_palette": "quay_night",
       "palette_indices": [
         0,
@@ -623,61 +622,37 @@
         {
           "x": 30,
           "y": 25,
-          "kind": "map",
-          "id": "quay_dock_office",
-          "spawn": "from_quay",
+          "kind": "say",
+          "id": "say_door_register",
           "once": false,
           "condition": ""
         },
         {
-          "x": 8,
-          "y": 10,
+          "x": 22,
+          "y": 32,
           "kind": "scene",
-          "id": "quay_gate_checkpoint",
-          "once": true,
-          "condition": ""
-        },
-        {
-          "x": 8,
-          "y": 12,
-          "kind": "scene",
-          "id": "quay_yard_walk",
-          "once": true,
-          "condition": "gate_passed"
+          "id": "quay_bridge_wind",
+          "once": false,
+          "condition": "!morgan_resolved",
+          "touch": true
         },
         {
           "x": 23,
-          "y": 40,
-          "kind": "map",
-          "id": "ship_small",
-          "spawn": "start",
+          "y": 32,
+          "kind": "scene",
+          "id": "quay_bridge_wind",
           "once": false,
-          "condition": ""
+          "condition": "!morgan_resolved",
+          "touch": true
         },
         {
           "x": 24,
-          "y": 40,
-          "kind": "map",
-          "id": "ship_small",
-          "spawn": "start",
+          "y": 32,
+          "kind": "scene",
+          "id": "quay_bridge_wind",
           "once": false,
-          "condition": ""
-        },
-        {
-          "x": 23,
-          "y": 38,
-          "kind": "say",
-          "id": "ship_aboard",
-          "once": false,
-          "condition": ""
-        },
-        {
-          "x": 24,
-          "y": 38,
-          "kind": "say",
-          "id": "ship_aboard",
-          "once": false,
-          "condition": ""
+          "condition": "!morgan_resolved",
+          "touch": true
         },
         {
           "x": 23,
@@ -699,11 +674,25 @@
       "actors": [
         {
           "id": "morgan",
-          "x": 9,
-          "y": 10,
-          "facing": "left",
+          "x": 6,
+          "y": 9,
+          "facing": "right",
           "kind": "sailor",
-          "dialogue": "quay_gate_checkpoint"
+          "dialogue": "quay_morgan_thanks",
+          "scene": "quay_morgan_encounter",
+          "done_flag": "morgan_spared",
+          "gone_flag": "morgan_killed"
+        },
+        {
+          "id": "percy",
+          "x": 23,
+          "y": 37,
+          "facing": "up",
+          "kind": "sailor",
+          "dialogue": "quay_percy_after_spare",
+          "scene": "quay_percy_encounter",
+          "done_flag": "percy_spared",
+          "gone_flag": "percy_killed"
         }
       ],
       "rails": [],

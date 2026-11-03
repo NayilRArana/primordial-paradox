@@ -370,7 +370,7 @@ def test_the_run_is_faster_than_the_walk_and_is_derived_the_same_way():
 
 def test_the_feet_the_corner_and_the_reach_are_the_sizes_the_card_asked_for():
     """The card's own numbers: about 10x6 at the feet, a 3 pixel corner nudge, a short reach."""
-    assert (FEET_W, FEET_H) == (10, 6), (FEET_W, FEET_H)
+    assert (FEET_W, FEET_H) == (10, 8), (FEET_W, FEET_H)   # 2026-11-03: 8 tall, see pp_config.gml
     assert FEET_W < TILE and FEET_H < TILE, "the feet box is bigger than a tile, so it can never fit anywhere"
     assert CORNER == 3, CORNER
     assert 0 < REACH <= TILE, "a reach of %d pixels is not a short reach, it is a tile and a half" % REACH

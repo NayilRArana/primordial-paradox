@@ -75,7 +75,7 @@ def test_the_drawn_direction_is_kept_while_standing_and_follows_the_move_vector(
 def test_the_hero_draw_uses_the_style_b_sheet_with_the_feet_offset_and_keeps_the_old_fallback():
     assert '#macro PP_HERO_SHEET8 "zeus_ow_walk8"' in SRC
     assert '#macro PP_HERO_SHEET "zander_ow_v2"' in SRC, "the 16x16 fallback sheet macro is pinned"
-    assert "#macro PP_HERO8_DY (-8)" in SRC
+    assert "#macro PP_HERO8_DY 0" in SRC
     draw = body("pp_overworld_draw_hero")
     assert "pp_art_draw(PP_HERO_SHEET8, pp_world_hero_frame8(_hero), _sx, _sy + PP_HERO8_DY" in draw, draw
     assert "pp_art_draw(PP_HERO_SHEET, _frame, _sx, _sy, PP_UNTINTED, 1)" in draw, "fallback lost"
@@ -83,20 +83,20 @@ def test_the_hero_draw_uses_the_style_b_sheet_with_the_feet_offset_and_keeps_the
     assert "var _sy = floor(_hero.py) - floor(_world.cam_y) + _oy;" in draw
 
 
-def test_the_sheet_is_16_frames_of_16x24_in_the_json_order_and_feet_sit_on_the_tile_bottom():
+def test_the_sheet_is_16_frames_of_16x16_in_the_json_order_and_feet_sit_on_the_tile_bottom():
     meta = json.load(io.open(os.path.join(CHARS, "zeus_ow_walk8.json"), encoding="utf-8-sig"))
     assert meta["directions"] == DIRS and meta["frames_per_direction"] == 2
     im = Image.open(os.path.join(CHARS, "zeus_ow_walk8.png")).convert("RGBA")
-    assert im.size == (16 * 16, 24)
+    assert im.size == (16 * 16, 16), "the hero is the sailors height (final scope item 3)"
     old = Image.open(os.path.join(CHARS, "zander_ow_v2.png")).convert("RGBA")
     assert old.size == (128, 16)
     for k in range(16):
-        bbox = im.crop((k * 16, 0, k * 16 + 16, 24)).getchannel("A").getbbox()
-        assert bbox[3] == 24, "frame %d feet are not on the bottom row" % k
+        bbox = im.crop((k * 16, 0, k * 16 + 16, 16)).getchannel("A").getbbox()
+        assert bbox[3] == 16 and bbox[1] == 0, "frame %d feet are not on the bottom row" % k
     for k in range(8):
         assert old.crop((k * 16, 0, k * 16 + 16, 16)).getchannel("A").getbbox()[3] == 16
-    # new feet row = sy + 24 - 8 = sy + 16 = the old feet row (sy + 16): same row, no float, no sink.
-    assert 24 + (-8) == 16
+    # parity: the hero and the sailor are the same height.
+    assert Image.open(os.path.join(CHARS, "sailor_ow_v2.png")).size[1] == im.size[1] == 16
     manifest = json.load(io.open(os.path.join(ROOT, "game", "datafiles", "art", "title_manifest.json"), encoding="utf-8-sig"))
     row = [r for r in manifest["animations"] if r["name"] == "zeus_ow_walk8"][0]
-    assert (row["frame_w"], row["frame_h"], row["frames"]) == (16, 24, 16)
+    assert (row["frame_w"], row["frame_h"], row["frames"]) == (16, 16, 16)

@@ -60,9 +60,11 @@ review's method: the "clean-room re-review 2026-10-19" section at the end of `kn
 | game/scripts/pp_map_tile/pp_map_tile.gml | reviewed | code-review | 2026-10-23 |
 | game/scripts/pp_overworld/pp_overworld.gml | rewritten | code-review | 2026-10-19 |
 | game/scripts/pp_rng/pp_rng.gml | confirmed | code-review | 2026-10-19 |
+| game/scripts/pp_storm/pp_storm.gml | confirmed | code-review | 2026-11-03 |
 | game/scripts/pp_save/pp_save.gml | confirmed | gamedev review | 2026-10-22 |
 | game/scripts/pp_talk_live/pp_talk_live.gml | reviewed | gamedev | 2026-10-26 |
 | game/scripts/pp_talk_persona/pp_talk_persona.gml | reviewed | gamedev | 2026-10-30 |
+| game/scripts/pp_credits/pp_credits.gml | reviewed | credits | 2026-11-03 |
 | game/scripts/pp_scene/pp_scene.gml | confirmed | code-review | 2026-10-22 |
 | game/scripts/pp_text/pp_text.gml | confirmed | gamedev review | 2026-10-22 |
 | game/scripts/pp_title/pp_title.gml | reviewed | gamedev | 2026-10-21 |

@@ -55,6 +55,7 @@ LEDGER_PATH = os.path.join(ROOT, "data", "receipts", "meta_receipts.jsonl")
 BAKE_PATH = os.path.join(ROOT, "data", "meta_bake.json")
 SCRIPT_PATH = os.path.join(ROOT, "knowledge", "DEMO-SCRIPT.md")
 BRIDGE_DIR = os.path.join(ROOT, "data", "ai_cache", "bridge")
+JUDGE_PATH = os.path.join(ROOT, "data", "talk", "sailor_judge.json")
 
 LABELS = ("measured", "computed", "inferred")
 
@@ -214,6 +215,59 @@ def meta_numbers(ledger_path=LEDGER_PATH, bake_path=BAKE_PATH, script_path=SCRIP
     return numbers
 
 
+def row_numbers(row_ids, bake_path=BAKE_PATH, judge_path=JUDGE_PATH):
+    """One receipt per bake row: the verdict the judge map puts on the effect that row records.
+
+    Card t_2ef3aa6f. The S5 NES box prints a receipt id beside the verdict, so the id it prints has to
+    be a receipt this ledger really holds; this function is the only thing that writes one for a row.
+
+    The number receipted is the WILL the verdict map assigns (data/talk/sailor_judge.json "verdicts"),
+    labelled computed and never measured, because the model picks an effect and the map, not the model,
+    decides what the bar moves by (the map's own `verdict_source`). The locator names the row and the
+    map key, so a different row is a different number and therefore a different receipt id.
+    """
+    bake = _read_json(bake_path)
+    bake_sha = sha256_file(bake_path)
+    if not bake_sha:
+        raise ReceiptError("cannot hash %s, so no row receipt can be written" % _rel(bake_path))
+    rows = {}
+    for row in bake.get("rows") or []:
+        if isinstance(row, dict) and row.get("id"):
+            rows[row["id"]] = row
+    judge = _read_json(judge_path)
+    verdicts = judge.get("verdicts")
+    if not isinstance(verdicts, dict) or not verdicts:
+        raise ReceiptError("%s has no verdicts block, so no row verdict can be receipted" % _rel(judge_path))
+
+    out = []
+    for row_id in row_ids:
+        if row_id not in rows:
+            raise ReceiptError("%s holds no row %r, so there is no receipt to write for it"
+                               % (_rel(bake_path), row_id))
+        effect = rows[row_id].get("effect")
+        entry = verdicts.get(effect) if isinstance(effect, str) else None
+        if not isinstance(entry, dict) or "verdict" not in entry or "will_delta" not in entry:
+            raise ReceiptError("row %r carries effect %r, and %s has no verdict and will_delta for it"
+                               % (row_id, effect, _rel(judge_path)))
+        delta = entry["will_delta"]
+        if isinstance(delta, bool) or not isinstance(delta, (int, float)):
+            raise ReceiptError("the verdict for effect %r carries %r, and a receipted number is a number"
+                               % (effect, delta))
+        out.append(_number(
+            name="meta.row_verdict_will_delta",
+            value=delta,
+            label="computed",
+            source=_rel(bake_path),
+            locator="bake.rows[id=%s].effect %r through data/talk/sailor_judge.json verdicts[%r].will_delta "
+                    "(verdict %r)" % (row_id, effect, effect, entry["verdict"]),
+            why="the WILL bar movement the verdict map assigns to the effect this bake row records; "
+                "the model picks the effect, the map decides the number",
+            formula="data/talk/sailor_judge.json verdicts[rows[id=%s].effect].will_delta" % row_id,
+            sha=bake_sha,
+        ))
+    return out
+
+
 def read_ledger(ledger_path=LEDGER_PATH):
     """Every receipt row already logged, in file order, keyed by id."""
     rows = {}
@@ -292,6 +346,8 @@ def main(argv=None):
     parser.add_argument("--write", default=None, metavar="VERIFY",
                         help="also write the meta_numbers block into this verify file")
     parser.add_argument("--ledger", default=LEDGER_PATH)
+    parser.add_argument("--row", action="append", default=None, metavar="ROW_ID",
+                        help="also log the verdict receipt for this bake row (the S5 NES box prints its id)")
     parser.add_argument("--json", action="store_true", help="print the numbers as JSON")
     args = parser.parse_args(argv)
 
@@ -299,6 +355,9 @@ def main(argv=None):
         numbers = meta_numbers(ledger_path=args.ledger)
         if args.write:
             write_into(args.write, numbers=numbers, ledger_path=args.ledger)
+        row_receipts = row_numbers(args.row) if args.row else []
+        if row_receipts:
+            _log(row_receipts, ledger_path=args.ledger)
     except ReceiptError as exc:
         print("FAIL %s" % exc)
         return 1
@@ -309,6 +368,10 @@ def main(argv=None):
         for line in summary_lines(numbers):
             print(line)
     logged = read_ledger(args.ledger)
+    if row_receipts:
+        for row in row_receipts:
+            print("row verdict receipt %s: %s = %s, %s"
+                  % (row["receipt"], row["name"], row["value"], row["locator"]))
     labels = {}
     for row in numbers:
         labels[row["label"]] = labels.get(row["label"], 0) + 1

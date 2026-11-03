@@ -86,6 +86,10 @@ def parse_directives(dirs):
         elif op == "actor":
             out["actors"].append({"id": t[1], "x": int(t[2]), "y": int(t[3]), "facing": t[4], "kind": t[5],
                                   "dialogue": t[6]})
+            # Final scope 2026-11-03 (FLOW): optional key=value tokens after the dialogue id: scene, done_flag, gone_flag.
+            for token in t[7:]:
+                key, value = token.split("=", 1)
+                out["actors"][-1][key] = value
         elif op == "trigger":
             row = {"x": int(t[1]), "y": int(t[2]), "kind": t[3], "id": t[4]}
             opts = dict(o.split("=", 1) for o in t[5:])
@@ -95,6 +99,8 @@ def parse_directives(dirs):
             row["condition"] = opts.get("condition", "")
             if "marker_kind" in opts:
                 row["marker_kind"] = opts["marker_kind"]
+            if opts.get("touch") == "true":
+                row["touch"] = True
             out["triggers"].append(row)
         elif op == "barrier":
             out["barriers"].append((int(t[1]), int(t[2]), t[3]))
@@ -293,7 +299,12 @@ def build_room(base_room, grid, d, classes):
     collision = [[collision_char(classes[ch]) for ch in row] for row in tiles]
     for (x, y, glyph) in d["barriers"]:
         tiles[y][x] = glyph
-        collision[y][x] = "2"
+        # Final scope 2026-11-03 (D5): the gate is gone, so the bollard is plain solid, never a story tile.
+        collision[y][x] = "1"
+    # The top row of the arrival street is a map edge guard: a 16 px figure standing on row 0 would walk off the screen.
+    for x in range(WIDTH):
+        if collision[0][x] == "0":
+            collision[0][x] = "1"
     tiles = ["".join(r) for r in tiles]
     collision = ["".join(r) for r in collision]
     used = sorted(set("".join(tiles)), key=lambda ch: classes[ch]["index"])
@@ -430,7 +441,7 @@ def write_provenance(d, changes):
                            "God's House Tower": "the tower A7 at the west end of the quay (door 3,28)",
                            "Town Quay pier": "the boarding pier A10 on the axis x22..24", "Red Funnel Terminal 1": "the terminal A5"},
         "anchors": {"spawns": d["spawns"],
-                    "dock_office_door": [t for t in d["triggers"] if t["id"] == "quay_dock_office"][0],
+                    "dock_office_door": ([t for t in d["triggers"] if t["id"] == "quay_dock_office"] or [None])[0],
                     "boarding_triggers": [t for t in d["triggers"] if t["id"] == "ship_small"],
                     "fight_spots": d["fightspots"]},
         "changes_against_appendix_a": len(changes),

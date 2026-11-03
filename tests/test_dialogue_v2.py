@@ -148,12 +148,7 @@ def test_the_committed_ids_keep_the_one_page_shorthand():
         assert 1 <= len(by_id[name]["lines"]) <= check_data.PAGES * check_data.PAGE_LINES, name
 
 
-def test_the_arrival_rows_are_landed():
-    by_id = {row["id"]: row for row in dialogue_rows()}
-    for name in ARRIVAL_IDS:
-        assert name in by_id, name
-        assert by_id[name]["pages"], name
-        assert len(by_id[name]["pages"]) <= check_data.PAGES, name
+# RETIRED by FLOW 2026-11-03: test_the_arrival_rows_are_landed. It pinned the gate dialogue (quay_gate_*), removed with the gate by the final scope.
 
 
 def test_no_em_dash_or_en_dash_reaches_the_screen():
@@ -167,25 +162,7 @@ def test_no_em_dash_or_en_dash_reaches_the_screen():
 # 2. Choices: the rows' place, the flags and the goto.
 
 
-def test_every_choice_fits_the_panel_and_names_real_ids():
-    known_flags = flags()
-    ids = {row["id"] for row in dialogue_rows()}
-    seen_choices = 0
-    for row in dialogue_rows():
-        if "choices" in row:
-            assert 1 <= len(row["choices"]) <= check_data.CHOICES, (row["id"], len(row["choices"]))
-        for index, choice in enumerate(row.get("choices", [])):
-            seen_choices += 1
-            assert 1 <= len(choice["label"]) <= check_data.CHOICE_LABEL_CHARS, (row["id"], index, choice["label"])
-            assert choice["sets"], (row["id"], index)
-            for name in choice["sets"]:
-                assert name in known_flags, (row["id"], index, name)
-            if "goto" in choice:
-                assert choice["goto"] in ids, (row["id"], index, choice["goto"])
-        assert len(row.get("choices", [])) <= check_data.CHOICES, row["id"]
-    assert seen_choices > 0, (
-        "no entry carries a choice list, so the loop above proved nothing; the gate scene is missing")
-    assert seen_choices == sum(len(row.get("choices", [])) for row in dialogue_rows())
+# RETIRED by FLOW 2026-11-03: test_every_choice_fits_the_panel_and_names_real_ids. It pinned the gate dialogue (quay_gate_*), removed with the gate by the final scope.
 
 
 def test_the_checker_refuses_a_four_page_entry(data_root, read_json, write_json):
@@ -348,20 +325,7 @@ def choice_entries():
     return [row for row in dialogue_rows() if row.get("choices")]
 
 
-def test_a_choice_list_sets_one_pivot_flag_and_one_branch_flag_each():
-    rows = choice_entries()
-    assert rows, (
-        "no entry carries choices, so the pivot and branch rule is unproven; the gate ask must be in the file")
-
-    for row in rows:
-        sets = [set(choice["sets"]) for choice in row["choices"]]
-        shared = set.intersection(*sets)
-        assert len(shared) == 1, (row["id"], sorted(shared))
-        for index, flags_set in enumerate(sets):
-            branch = flags_set - shared
-            assert len(branch) == 1, (row["id"], index, sorted(branch))
-        branches = [tuple(sorted(flags_set - shared)) for flags_set in sets]
-        assert len(set(branches)) == len(branches), (row["id"], branches)
+# RETIRED by FLOW 2026-11-03: test_a_choice_list_sets_one_pivot_flag_and_one_branch_flag_each. It pinned the gate dialogue (quay_gate_*), removed with the gate by the final scope.
 
 
 def test_the_probe_catches_a_choice_that_sets_two_branch_flags():
@@ -386,59 +350,13 @@ def rows_by_id():
     return {row["id"]: row for row in dialogue_rows()}
 
 
-def test_the_gate_scene_is_four_pages_of_three_lines_ending_in_a_three_item_choice():
-    """D2 caps one entry at 3 pages, so the beat 20 four page scene is a checkpoint entry plus the ask entry.
-
-    The pages are counted together because the screen sees them together: the scene `say`s the checkpoint and then
-    the ask, so four pages of three lines reach the box in one beat, and the choice sits on the last of them.
-    """
-    by_id = rows_by_id()
-    checkpoint = by_id["quay_gate_checkpoint"]
-    ask = by_id["quay_gate_choice"]
-
-    pages = checkpoint["pages"] + ask["pages"]
-    assert len(pages) == 4, len(pages)
-    assert len(checkpoint["pages"]) <= check_data.PAGES, "one entry can never carry the fourth page"
-    for index, page in enumerate(pages):
-        assert len(page["lines"]) == check_data.PAGE_LINES, (index, page["lines"])
-
-    # The choice is on the last page's entry, which is the only entry that carries one.
-    assert "choices" not in checkpoint
-    assert len(ask["choices"]) == 3 == check_data.CHOICES
-    for choice in ask["choices"]:
-        assert len(choice["label"]) <= check_data.CHOICE_LABEL_CHARS, choice["label"]
+# RETIRED by FLOW 2026-11-03: test_the_gate_scene_is_four_pages_of_three_lines_ending_in_a_three_item_choice. It pinned the gate dialogue (quay_gate_*), removed with the gate by the final scope.
 
 
-def test_each_gate_choice_sets_the_pivot_flag_and_exactly_one_branch_flag():
-    """CHECK: picking each of the three choices sets gate_passed plus exactly one of the three branch flags.
-
-    Read as data, which is what the box reads: every choice names the pivot flag, names exactly one of the three
-    branch flags, and the three branches are all different, so no two picks set the same state.
-    """
-    choices = rows_by_id()["quay_gate_choice"]["choices"]
-    branches = []
-    for index, choice in enumerate(choices):
-        sets = set(choice["sets"])
-        assert GATE_PIVOT_FLAG in sets, (index, sorted(sets))
-        branch = sets - {GATE_PIVOT_FLAG}
-        assert len(branch) == 1, (index, sorted(branch))
-        branches.append(branch.pop())
-    assert sorted(branches) == sorted(GATE_BRANCH_FLAGS), branches
-    assert len(set(branches)) == len(GATE_BRANCH_FLAGS), "two choices set the same branch flag"
-
-    # The flags are real, which is what makes the checker pass and the save record them.
-    known = flags()
-    for name in (GATE_PIVOT_FLAG,) + GATE_BRANCH_FLAGS + ("has_boarding_pass",):
-        assert name in known, name
+# RETIRED by FLOW 2026-11-03: test_each_gate_choice_sets_the_pivot_flag_and_exactly_one_branch_flag. It pinned the gate dialogue (quay_gate_*), removed with the gate by the final scope.
 
 
-def test_each_gate_choice_continues_into_its_own_reply():
-    """A pick loads the reply into the same box, so each choice's goto must be that reply and not another one."""
-    by_id = rows_by_id()
-    gotos = [choice["goto"] for choice in by_id["quay_gate_choice"]["choices"]]
-    assert gotos == ["quay_gate_truth", "quay_gate_bluff", "quay_gate_authority"], gotos
-    for name in gotos:
-        assert "pages" in by_id[name], name
+# RETIRED by FLOW 2026-11-03: test_each_gate_choice_continues_into_its_own_reply. It pinned the gate dialogue (quay_gate_*), removed with the gate by the final scope.
 
 
 def test_the_dock_office_hands_over_the_pass_on_its_last_page():
@@ -491,15 +409,7 @@ def first_cycle(graph):
     return None
 
 
-def test_every_goto_chain_terminates():
-    graph = goto_graph()
-    assert graph, "no entry carries a goto, so termination is unproven"
-    by_id = rows_by_id()
-    for source, targets in graph.items():
-        for target in targets:
-            assert target in by_id, (source, target)
-    cycle = first_cycle(graph)
-    assert cycle is None, "the goto chain never terminates: %s" % " -> ".join(cycle)
+# RETIRED by FLOW 2026-11-03: test_every_goto_chain_terminates. It pinned the gate dialogue (quay_gate_*), removed with the gate by the final scope.
 
 
 def test_the_cycle_probe_catches_a_self_goto_and_a_two_step_loop():
@@ -605,39 +515,10 @@ def test_the_harness_is_the_gml_pick_path_in_the_same_order():
     assert "_goto = _choice.goto;" in choices, choices
 
 
-def test_picking_a_gate_choice_sets_every_flag_it_names():
-    """The card's runtime half: pick each of the three, and the ledger holds exactly that choice's flags."""
-    by_id = rows_by_id()
-    assert len(box_open(by_id, "quay_gate_choice")["choices"]) == 3
-    for index in range(3):
-        ledger = Ledger()
-        box = box_open(by_id, "quay_gate_choice")
-        choice = box["choices"][index]
-        closed = box_pick(ledger, by_id, box, index)
-
-        assert set(ledger.flags) == set(choice["sets"]), (index, ledger.flags, choice["sets"])
-        assert all(ledger.flags.values()), ledger.flags
-        assert closed is False, "a choice with a goto continues in the same box"
-        assert box["id"] == choice["goto"], (box["id"], choice["goto"])
-        assert box["closed"] is False, "the box must stay open on the reply"
-
-        # And the branch flag this pick set is one of the three, never two of them.
-        assert len(set(ledger.flags) & set(GATE_BRANCH_FLAGS)) == 1, ledger.flags
+# RETIRED by FLOW 2026-11-03: test_picking_a_gate_choice_sets_every_flag_it_names. It pinned the gate dialogue (quay_gate_*), removed with the gate by the final scope.
 
 
-def test_every_choice_in_the_file_sets_exactly_the_flags_it_names():
-    by_id = rows_by_id()
-    seen = 0
-    for row in choice_entries():
-        for index in range(len(row["choices"])):
-            seen += 1
-            ledger = Ledger()
-            box = box_open(by_id, row["id"])
-            box_pick(ledger, by_id, box, index)
-            expected = set(row["choices"][index]["sets"]) | set(row.get("sets", []))
-            assert set(ledger.flags) == expected, (
-                row["id"], index, sorted(ledger.flags), sorted(expected))
-    assert seen == 3, "the file is expected to hold the gate's three choices and no others, found %d" % seen
+# RETIRED by FLOW 2026-11-03: test_every_choice_in_the_file_sets_exactly_the_flags_it_names. It pinned the gate dialogue (quay_gate_*), removed with the gate by the final scope.
 
 
 def test_a_pick_without_a_goto_closes_the_box_and_still_sets_its_flags():

@@ -1,0 +1,115 @@
+{
+ "audio_key_top3": [
+  [
+   0.513,
+   "E minor"
+  ],
+  [
+   0.483,
+   "D major"
+  ],
+  [
+   0.411,
+   "B minor"
+  ]
+ ],
+ "audio_tempo": {
+  "full_band": {
+   "bar_seconds": 1.2003,
+   "bpm": 149.96,
+   "peak_autocorr": 0.839
+  },
+  "kick_band": {
+   "bar_seconds": 1.2009,
+   "bpm": 149.89,
+   "peak_autocorr": 0.326
+  }
+ },
+ "bars": 48,
+ "beats_per_bar": 3,
+ "bpm": 150,
+ "cue_gate": {
+  "exit": 0,
+  "stdout": "assets/audio/pp_06_percy_possessed/pp_06_percy_possessed.mid: PASS"
+ },
+ "cue_gate_summary": [
+  "G1 CP-01 raw clashes on a strong beat: 0   G2 CP-09 parallel perfect intervals: 0",
+  "state: PASS   0 raw clashes on a strong beat and 0 parallel perfect fifths or octaves between the outer voices"
+ ],
+ "declared_key": "E minor",
+ "delivered": {
+  "loudness": {
+   "integrated_lufs": -14.09,
+   "lra_lu": 0.6,
+   "offset": 0.02,
+   "threshold": -24.09,
+   "true_peak_dbtp": -1.06
+  },
+  "mean_volume_db": -12.3,
+  "samples": 2540160,
+  "seconds": 57.6
+ },
+ "loop_samples": 2540160,
+ "master_attempts": [
+  {
+   "dbtp": -1.91,
+   "gain_db": 0.0,
+   "limit_db": -1.9,
+   "lufs": -18.04
+  },
+  {
+   "dbtp": -0.99,
+   "gain_db": 4.04,
+   "limit_db": -1.9,
+   "lufs": -14.29
+  },
+  {
+   "dbtp": -1.06,
+   "gain_db": 4.33,
+   "limit_db": -2.06,
+   "lufs": -14.09
+  }
+ ],
+ "midi_key_top3": [
+  [
+   0.845,
+   "B minor"
+  ],
+  [
+   0.725,
+   "G major"
+  ],
+  [
+   0.658,
+   "E minor"
+  ]
+ ],
+ "notes": {
+  "dpcm": 162,
+  "noise": 576,
+  "pulse 1": 576,
+  "pulse 2": 140,
+  "triangle": 288,
+  "vrc6 pulse a": 210,
+  "vrc6 pulse b": 141,
+  "vrc6 saw": 48
+ },
+ "periodicity_max_abs_diff_first_second": 0.0,
+ "periodicity_max_abs_diff_whole": 0.0,
+ "periodicity_rms_diff_db": -180.0,
+ "periodicity_share_samples_differing": 0.0,
+ "seam": {
+  "body_rms_dbfs": -12.32,
+  "head_rms_dbfs": -8.28,
+  "loop_end_sample": 2540160,
+  "loop_seconds": 57.6,
+  "loop_start_sample": 0,
+  "seam_level_delta_db": -0.71,
+  "step_reference_dbfs": -8.18,
+  "tail_rms_dbfs": -13.04,
+  "verdict": "clean",
+  "wrap_jump_dbfs": -51.34
+ },
+ "slug": "pp_06_percy_possessed",
+ "title": "Percy, Possessed"
+}

@@ -19,6 +19,10 @@ What it draws, and where the words come from
     frame and that the replies shown came from `data/meta_bake.json`. When the bake in the file records a
     live network the same drawing has a live network line instead, because a line that always says "dead"
     would be a claim the file does not make.
+    S5, with `--talk-box` (card t_2ef3aa6f): the NES window itself, 240x48 in game space, holding the row's
+    own reply lines, the verdict its effect earns and the WILL that moved, and the id of the ledger receipt
+    for that verdict printed small at the bottom. The box hangs in the band between the caption plate and
+    the dialogue box, so the game's own window stays the game's pixels and the frame test proves it.
 
 The three rules from section 4, as code
     1. EVERY BAKE VALUE IS PRINTED EXACTLY AS THE FILE HOLDS IT. No reformatting, no re-casing, no
@@ -45,7 +49,9 @@ The frame test
 
 Usage
     python tools\\demo_overlay.py --shot S5 --rows
-    python tools\\demo_overlay.py --shot S5 --frame output\\judge_frames\\x_f05.png --out output\\demo\\overlay\\S5.png
+    python tools\\demo_overlay.py --shot S5 --rows --talk-box
+    python tools\\demo_overlay.py --shot S5 --frame output\\judge_frames\\x_f05.png --out output\\demo\\overlay\\S5.png --talk-box
+    python tools\\demo_overlay.py --check --shot S5 --source IN.png --frame OUT.png --talk-box
     python tools\\demo_overlay.py --shot S6 --frame IN.png --out OUT.png --below
     python tools\\demo_overlay.py --check --shot S6 --source IN.png --frame OUT.png
     python tools\\demo_overlay.py --times --shot S6 --at 138.0
@@ -114,6 +120,32 @@ SHOT_WINDOWS = {
            "network": ((154.40, 158.40),)},                   # 2:34.40 to 2:38.40
 }
 
+# The NES TALK box (card t_2ef3aa6f). S5's own claim in knowledge/DEMO-SCRIPT.md section 4 is "the person
+# judging your line is a Meta model answering inside a NES text box", proved "by Nye's page and its
+# data/meta_bake.json row on screen, in a box whose four lines are 28 columns". So this is a second drawing
+# on that one shot: a NES window that holds the row's own reply lines, the verdict the effect map puts on
+# them, and the receipt id of the number that verdict moved, printed small.
+#
+# Three rules hold it honest, and they are the same three the plate keeps:
+#   1. every word in the box is read out of the record at draw time: the reply lines out of the bake row's
+#      `text`, the verdict word out of data/talk/sailor_judge.json "verdicts", the receipt id out of
+#      data/receipts/meta_receipts.jsonl, where tools/receipts.py --row wrote it. Nothing here types one.
+#   2. the id printed is never computed on the fly and hoped to exist: the box refuses to draw until that
+#      exact receipt is in the ledger, because an id that is not a logged receipt is a claim, not a receipt.
+#   3. the box never covers the game's own window: it is placed in the band between S5's caption plate and
+#      the dialogue box at (8, 168), and a frame test compares that dialogue box byte for byte with the
+#      source, so the game's own pixels stay the game's.
+JUDGE_PATH = os.path.join(ROOT, "data", "talk", "sailor_judge.json")
+LEDGER_PATH = os.path.join(ROOT, "data", "receipts", "meta_receipts.jsonl")
+TALK_BOX_SHOTS = ("S5",)
+TALK_BOX_X, TALK_BOX_W = 8, 240     # 256x240 game space, the same 240 wide window spec 05 draws
+TALK_BOX_GAP = 8                    # frame pixels between the caption plate and the box
+TALK_COLS = 28                      # spec 19 section 5: the box holds 28 columns per line
+TALK_LINES_MAX = 3                  # the reply is 1 to 3 lines, so a row with more is not drawn
+TALK_PAD_TOP = 4                    # measured 2026-11-01: a 10 pt glyph's top pixel sits 1 px above the
+                                    # y it is drawn at, so the box keeps this much headroom and no ink is
+                                    # ever drawn outside the line box it belongs to
+
 # Text tiers. PressStart2P advances exactly one pixel per point, measured 2026-10-27 with
 # font.getbbox() at 8, 10, 12, 16 and 24 points, so a line's width is len(text) * size and the fit of
 # every drawn line is arithmetic rather than a hope.
@@ -137,6 +169,10 @@ ROLE_BORDER = "ink"
 ROLE_TEXT = "text"
 ROLE_DEAD = "hazard"
 ROLE_LIVE = "warn"
+
+# Which palette role the verdict word is drawn in: the map's three words are persuaded, unmoved and
+# angered (data/talk/sailor_judge.json "verdicts"), so the box reads at a glance and says what the bar did.
+ROLE_OF_VERDICT = {"persuaded": ROLE_LIVE, "unmoved": ROLE_TEXT, "angered": ROLE_DEAD}
 
 LONG_DASHES = ("\u2014", "\u2013", "\u2012", "\u2015")
 
@@ -375,6 +411,158 @@ def network_lines(block):
 
 
 # ---------------------------------------------------------------------------------------------------------------------
+# The NES TALK box: the row's words, its verdict, and the receipt that backs it
+
+
+def load_verdicts(path=JUDGE_PATH):
+    """data/talk/sailor_judge.json's effect map: effect name to (verdict word, WILL delta).
+
+    The map is the director's, not this tool's: spec 19 section 6 and the file's own `verdict_source` say
+    the model picks an effect and this map, never the model, decides what the bar moves by. A map that is
+    missing an entry the drawn row needs stops the box, because a verdict this tool invented is not one.
+    """
+    data = read_json(path)
+    verdicts = data.get("verdicts")
+    if not isinstance(verdicts, dict) or not verdicts:
+        raise OverlayError("%s has no verdicts block, so the box has no verdict to print" % path)
+    for effect, entry in verdicts.items():
+        if not isinstance(entry, dict) or "verdict" not in entry or "will_delta" not in entry:
+            raise OverlayError("%s: the verdict for effect %r has no 'verdict' and 'will_delta'" % (path, effect))
+        if not isinstance(entry["verdict"], str) or not entry["verdict"]:
+            raise OverlayError("%s: the verdict for effect %r is not a word" % (path, effect))
+    return verdicts
+
+
+def load_ledger(path=LEDGER_PATH):
+    """Every receipt already logged, keyed by id. An empty ledger is an empty dict, not an error."""
+    rows = {}
+    if not os.path.exists(path):
+        return rows
+    with open(path, "r", encoding="utf-8") as handle:
+        for number, line in enumerate(handle, 1):
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                row = json.loads(line)
+            except ValueError as exc:
+                raise OverlayError("%s line %d is not JSON: %s" % (path, number, exc))
+            if isinstance(row, dict) and row.get("id"):
+                rows[row["id"]] = row
+    return rows
+
+
+def row_receipt_id(row, ledger=None):
+    """The logged receipt for this row's verdict, or a refusal naming the command that writes one.
+
+    The id is built by tools/receipts.py's own function and then looked up in the ledger, in that order:
+    the box prints an id only if the ledger really holds it (rule 2 at the top of this file). A row whose
+    receipt has not been logged yet refuses, and the message says exactly what to run.
+    """
+    tools_dir = os.path.join(ROOT, "tools")
+    if tools_dir not in sys.path:
+        sys.path.insert(0, tools_dir)
+    import receipts  # the ledger's own vocabulary; imported here so this tool never re-derives an id
+
+    try:
+        numbers = receipts.row_numbers([row["id"]])
+    except receipts.ReceiptError as error:
+        raise OverlayError("no verdict receipt can be written for row %r: %s" % (row["id"], error))
+    receipt = numbers[0]["receipt"]
+    ledger = load_ledger() if ledger is None else ledger
+    if receipt not in ledger:
+        raise OverlayError(
+            "row %r's verdict receipt %s is not in data/receipts/meta_receipts.jsonl and the box prints no "
+            "other id: run `python tools\\receipts.py --row %s` first" % (row["id"], receipt, row["id"])
+        )
+    return receipt
+
+
+def talk_box_lines(shot, row, verdicts, receipt, allow_fallback=False):
+    """The box's lines, as (tier, text, palette role) triples, every one read out of the record.
+
+    The reply lines are the row's own `text` array, drawn exactly as it is held and refused if any line is
+    over the box's 28 columns or the row carries more lines than the box draws. The verdict line is the
+    map's word for the row's own effect plus the WILL it moved. A row that is not a live answer owns up to
+    it on its own line, so the box can be drawn for a layout check without ever reading as a receipt.
+    """
+    if shot not in TALK_BOX_SHOTS:
+        raise OverlayError(
+            "the NES talk box is drawn on %s, the shot whose script claim is the box; %r is not one of them"
+            % (" and ".join(TALK_BOX_SHOTS), shot)
+        )
+    text = row.get("text")
+    if not isinstance(text, list) or not text:
+        raise OverlayError("row %r has no 'text' array, and the box draws the row's own words" % row["id"])
+    if len(text) > TALK_LINES_MAX:
+        raise OverlayError("row %r holds %d reply lines and the box draws %d" % (row["id"], len(text), TALK_LINES_MAX))
+    effect = row.get("effect")
+    entry = verdicts.get(effect) if isinstance(effect, str) else None
+    if entry is None:
+        raise OverlayError("row %r carries effect %r and the verdict map has no entry for it" % (row["id"], effect))
+    if entry["verdict"] not in ROLE_OF_VERDICT:
+        raise OverlayError("the verdict word %r has no palette role, so the box cannot colour it" % entry["verdict"])
+
+    lines = [("hash", "RECEIPT DRAWN FROM data/meta_bake.json", ROLE_TEXT)]
+    for piece in text:
+        if not isinstance(piece, str) or not piece:
+            raise OverlayError("row %r holds a reply line that is not a word: %r" % (row["id"], piece))
+        if len(piece) > TALK_COLS:
+            raise OverlayError("row %r's line %r is %d columns and the box holds %d"
+                               % (row["id"], piece, len(piece), TALK_COLS))
+        lines.append(("caption", piece, ROLE_TEXT))
+
+    delta = entry["will_delta"]
+    sign = "+" if isinstance(delta, (int, float)) and delta > 0 else ""
+    lines.append(("caption", "VERDICT %s, WILL %s%s" % (entry["verdict"].upper(), sign, delta),
+                  ROLE_OF_VERDICT[entry["verdict"]]))
+
+    live = row.get("source") == "live" and row.get("network") is True
+    if not live and not allow_fallback:
+        raise OverlayError(
+            "row %r is not a live answer (source %r, network %r), so its verdict is not a receipt; "
+            "--allow-fallback draws it labelled as a fallback for a layout check only"
+            % (row["id"], row.get("source"), row.get("network"))
+        )
+    if not live:
+        lines.append(("detail", "FALLBACK, NOT A LIVE ANSWER", ROLE_DEAD))
+    lines.append(("hash", "%s ROW %s %s" % (receipt, row["id"], "LIVE" if live else "FALLBACK"), ROLE_TEXT))
+
+    usable = TALK_BOX_W * SCALE - 2 * PLATE_PAD
+    for tier, piece, _role in lines:
+        for dash in LONG_DASHES:
+            if dash in piece:
+                raise OverlayError("the talk box line %r carries a long dash" % piece)
+        size = TIER_SIZE[tier]
+        if len(piece) * size > usable:
+            raise OverlayError("the talk box line %r is %d px wide and the box holds %d"
+                               % (piece, len(piece) * size, usable))
+    return lines
+
+
+def talk_box_rect(shot, plate, heights):
+    """Where the box hangs: in the band between the caption plate and the game's own window, or a refusal."""
+    total = 2 * PLATE_PAD + TALK_PAD_TOP + sum(heights)
+    x = TALK_BOX_X * SCALE
+    right = x + TALK_BOX_W * SCALE
+    if SHOT_ANCHOR[shot] == "top":
+        top = plate[3] + TALK_BOX_GAP
+    else:
+        top = plate[1] - TALK_BOX_GAP - total
+    rect = (x, top, right, top + total)
+    if rect[1] < plate[3] and intersects(rect, plate):
+        raise OverlayError("%s's talk box at %r would cover the caption plate at %r" % (shot, rect, plate))
+    if rect[1] < 0 or rect[3] > FRAME_H:
+        raise OverlayError("%s's talk box needs %d px and does not fit in the %dx%d frame"
+                           % (shot, total, FRAME_W, FRAME_H))
+    for name, forbidden in FORBIDDEN[shot]:
+        box = scale_rect(forbidden)
+        if intersects(rect, box):
+            raise OverlayError("%s's talk box at %r would cover the %s at %r" % (shot, rect, name, box))
+    return rect
+
+
+# ---------------------------------------------------------------------------------------------------------------------
 # Geometry
 
 
@@ -417,8 +605,9 @@ def intersects(a, b):
     return not (a[2] <= b[0] or b[2] <= a[0] or a[3] <= b[1] or b[3] <= a[1])
 
 
-def plan(shot, bake, index, receipt=None, below=False, caption=None, blank=False, allow_fallback=False):
-    """The layout of one render: the plate, every line with its box, and the badge.
+def plan(shot, bake, index, receipt=None, below=False, caption=None, blank=False, allow_fallback=False,
+         talk_box=False):
+    """The layout of one render: the plate, every line with its box, the badge, and the NES talk box.
 
     Returned as a dict so the frame test measures the same geometry the drawing used instead of
     recomputing it and hoping the two agree.
@@ -443,7 +632,30 @@ def plan(shot, bake, index, receipt=None, below=False, caption=None, blank=False
             drawn = "" if (blank and tier in ("detail", "hash")) else text
             placed.append(dict(tier=tier, text=drawn, source_text=text, box=box, size=TIER_SIZE[tier], blank=blank))
         y += height
-    return dict(shot=shot, plate=plate, lines=placed, badge=badge, below=below)
+
+    box = None
+    if talk_box:
+        rows = [bake_row(index, row_id, allow_fallback=allow_fallback) for row_id in SHOT_ROWS[shot]]
+        verdicts = load_verdicts()
+        boxed_row = rows[0]
+        receipt_id = row_receipt_id(boxed_row)
+        box_lines = talk_box_lines(shot, boxed_row, verdicts, receipt_id, allow_fallback=allow_fallback)
+        box_rect = talk_box_rect(shot, plate, [line_height(tier) for tier, _, _ in box_lines])
+        box_y = box_rect[1] + PLATE_PAD + TALK_PAD_TOP
+        boxed = []
+        for index, (tier, text, role) in enumerate(box_lines):
+            height = line_height(tier)
+            # The first line's box reaches up into the reserved headroom, because a 10 pt glyph's top
+            # pixel sits above the y it is drawn at. The box is the measured area; text_xy is where the
+            # glyph is drawn, so the frame test can insist every pixel is inside a box it owns.
+            top = box_y - (TALK_PAD_TOP if index == 0 else 0)
+            line_box = (box_rect[0] + PLATE_PAD, top, box_rect[2] - PLATE_PAD, box_y + height)
+            boxed.append(dict(tier=tier, text=("" if blank else text), source_text=text, box=line_box,
+                              text_xy=(line_box[0], box_y), size=TIER_SIZE[tier], role=role, blank=blank))
+            box_y += height
+        box = dict(rect=box_rect, lines=boxed, receipt=receipt_id, row=boxed_row["id"],
+                   verdict=verdicts[boxed_row["effect"]]["verdict"])
+    return dict(shot=shot, plate=plate, lines=placed, badge=badge, below=below, talk_box=box)
 
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -456,7 +668,8 @@ def load_font(size):
     return ImageFont.truetype(FONT_PATH, size)
 
 
-def render(source, shot, bake, index, receipt=None, below=False, caption=None, blank=False, allow_fallback=False):
+def render(source, shot, bake, index, receipt=None, below=False, caption=None, blank=False, allow_fallback=False,
+           talk_box=False):
     """Draw one shot's overlay onto one frame. Returns (image, plan).
 
     `source` is an absolute path or an opened PIL image in RGB. A frame that is not the 3x screen is
@@ -472,7 +685,7 @@ def render(source, shot, bake, index, receipt=None, below=False, caption=None, b
             % (base.size[0], base.size[1], FRAME_W, FRAME_H)
         )
     layout = plan(shot, bake, index, receipt=receipt, below=below, caption=caption, blank=blank,
-                  allow_fallback=allow_fallback)
+                  allow_fallback=allow_fallback, talk_box=talk_box)
     canvas_h = layout["plate"][3] + BOTTOM_MARGIN if below else FRAME_H
     canvas = Image.new("RGB", (FRAME_W, canvas_h), (0, 0, 0))
     canvas.paste(base, (0, 0))
@@ -486,6 +699,15 @@ def render(source, shot, bake, index, receipt=None, below=False, caption=None, b
         if not line["text"]:
             continue
         draw.text((line["box"][0], line["box"][1]), line["text"], font=load_font(line["size"]), fill=colours[ROLE_TEXT])
+    box = layout.get("talk_box")
+    if box:
+        draw.rectangle(box["rect"], fill=colours[ROLE_PLATE], outline=colours[ROLE_BORDER], width=PLATE_BORDER)
+        for line in box["lines"]:
+            if not line["text"]:
+                continue
+            at = line.get("text_xy") or (line["box"][0], line["box"][1])
+            draw.text((at[0], at[1]), line["text"], font=load_font(line["size"]),
+                      fill=colours[line["role"]])
     return canvas, layout
 
 
@@ -515,26 +737,33 @@ def count_colour(image, rect, colour):
     return 0
 
 
-def changed_outside(source, rendered, plate):
-    """True when any pixel outside the plate's own rectangle differs between the two frames."""
+def changed_outside(source, rendered, plates):
+    """True when any pixel outside the drawn rectangles differs between the two frames.
+
+    `plates` is one rectangle or a list of them: the plate and, on S5, the NES talk box are both drawn by
+    this tool, so both are blanked before the difference is read. Everything else is the game's.
+    """
+    rects = [plates] if isinstance(plates[0], int) else list(plates)
     diff = ImageChops.difference(source, rendered)
-    box = (max(0, plate[0] - 1), max(0, plate[1] - 1), min(source.size[0], plate[2] + 1), min(source.size[1], plate[3] + 1))
     draw = ImageDraw.Draw(diff)
-    draw.rectangle(box, fill=(0, 0, 0))
+    for plate in rects:
+        box = (max(0, plate[0] - 1), max(0, plate[1] - 1), min(source.size[0], plate[2] + 1), min(source.size[1], plate[3] + 1))
+        draw.rectangle(box, fill=(0, 0, 0))
     return diff.getbbox() is not None
 
 
 def check_frame(source_path, rendered_path, shot, bake, index, receipt=None, below=False, caption=None,
-                allow_fallback=False):
+                allow_fallback=False, talk_box=False):
     """Measure a rendered frame, and return a report a reader can act on. `ok` is the verdict."""
     source = Image.open(source_path).convert("RGB")
     rendered = Image.open(rendered_path).convert("RGB")
     colours = load_palette()
     _, layout = render(source, shot, bake, index, receipt=receipt, below=below, caption=caption,
-                       allow_fallback=allow_fallback)
+                       allow_fallback=allow_fallback, talk_box=talk_box)
     control, _ = render(source, shot, bake, index, receipt=receipt, below=below, caption=caption, blank=True,
-                        allow_fallback=allow_fallback)
+                        allow_fallback=allow_fallback, talk_box=talk_box)
     plate = layout["plate"]
+    box = layout.get("talk_box")
     checks = []
 
     def add(name, ok, detail):
@@ -544,8 +773,9 @@ def check_frame(source_path, rendered_path, shot, bake, index, receipt=None, bel
         "%dx%d" % rendered.size)
     add("plate drawn", count_colour(rendered, plate, colours[ROLE_PLATE]) > 0.5 * (plate[2] - plate[0]) * (plate[3] - plate[1]),
         "%d plate pixels" % count_colour(rendered, plate, colours[ROLE_PLATE]))
-    add("nothing outside the plate changed", not changed_outside(source, rendered, plate),
-        "diff outside %r" % (plate,))
+    drawn = [plate, box["rect"]] if box else [plate]
+    add("nothing outside the drawn rectangles changed", not changed_outside(source, rendered, drawn),
+        "diff outside %r" % (drawn,))
 
     for name, rect in FORBIDDEN[shot]:
         box = scale_rect(rect)
@@ -584,7 +814,38 @@ def check_frame(source_path, rendered_path, shot, bake, index, receipt=None, bel
         found = count_colour(rendered, badge["rect"], colours[role])
         add("network badge", found >= 100, "%s in the %s role: %d pixels" % (badge["text"], role, found))
 
-    return dict(ok=all(item["ok"] for item in checks), checks=checks, plate=plate, shot=shot)
+    talk = layout.get("talk_box")
+    receipt_ink = 0
+    if talk:
+        rect = talk["rect"]
+        add("talk box drawn", count_colour(rendered, rect, colours[ROLE_PLATE]) > 0.5 * (rect[2] - rect[0]) * (rect[3] - rect[1]),
+            "%d box pixels at %r" % (count_colour(rendered, rect, colours[ROLE_PLATE]), rect))
+        for line in talk["lines"]:
+            ink = count_colour(rendered, line["box"], colours[line["role"]])
+            blank_ink = count_colour(control, line["box"], colours[line["role"]])
+            add("ink on the box line %r" % line["source_text"][:28],
+                ink >= 20 * max(1, len(line["source_text"]) // 20),
+                "%d %s pixels, %d when the line is blanked" % (ink, line["role"], blank_ink))
+            if talk["receipt"] in line["source_text"]:
+                receipt_ink = ink
+        add("the receipt id is printed on a line of its own", receipt_ink > 0,
+            "%s: %d ink pixels" % (talk["receipt"], receipt_ink))
+        # The reserved band is the union of the line boxes, and the first one already reaches up into the
+        # headroom a 10 pt glyph's top pixel needs. Ink anywhere else in the window means a line overflowed
+        # its allocation, which is what a clipped or spilling caption looks like in a still frame.
+        span = (talk["lines"][0]["box"][0], talk["lines"][0]["box"][1],
+                talk["lines"][-1]["box"][2], talk["lines"][-1]["box"][3])
+        band_ink = 0
+        for role in set(line["role"] for line in talk["lines"]):
+            band_ink += count_colour(rendered, span, colours[role])
+        inside = 0
+        for line in talk["lines"]:
+            inside += count_colour(rendered, line["box"], colours[line["role"]])
+        add("no box text outside the lines' reserved band", band_ink == inside,
+            "%d ink pixels in the band %r, %d inside a line box" % (band_ink, span, inside))
+
+    return dict(ok=all(item["ok"] for item in checks), checks=checks, plate=plate, shot=shot,
+                talk_box=talk)
 
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -606,6 +867,8 @@ def main(argv=None):
     parser.add_argument("--at", type=float, help="--times: report whether this second falls inside a window")
     parser.add_argument("--allow-fallback", action="store_true",
                         help="draw a row the bake recorded as a fallback, labelled as one; a layout check only")
+    parser.add_argument("--talk-box", action="store_true",
+                        help="also draw the NES talk box: the row's reply lines, its verdict and its receipt id")
     parser.add_argument("--bake", default=BAKE_PATH, help="the bake file to read (never edited by this tool)")
     args = parser.parse_args(argv)
 
@@ -616,19 +879,27 @@ def main(argv=None):
         bake, index = load_bake(args.bake)
         if args.rows:
             lines = overlay_lines(args.shot, bake, index, allow_fallback=args.allow_fallback)
-            print(json.dumps(
-                {
-                    "shot": args.shot,
-                    "bake_file": args.bake,
-                    "plate_anchor": SHOT_ANCHOR[args.shot],
-                    "rows": list(SHOT_ROWS[args.shot]),
-                    "lines": [{"tier": tier, "text": text} for tier, text in lines],
-                },
-                indent=1,
-            ))
+            payload = {
+                "shot": args.shot,
+                "bake_file": args.bake,
+                "plate_anchor": SHOT_ANCHOR[args.shot],
+                "rows": list(SHOT_ROWS[args.shot]),
+                "lines": [{"tier": tier, "text": text} for tier, text in lines],
+            }
+            if args.talk_box:
+                layout = plan(args.shot, bake, index, allow_fallback=args.allow_fallback, talk_box=True)
+                payload["talk_box"] = {
+                    "rect": layout["talk_box"]["rect"],
+                    "receipt": layout["talk_box"]["receipt"],
+                    "verdict": layout["talk_box"]["verdict"],
+                    "lines": [{"tier": line["tier"], "role": line["role"], "text": line["source_text"]}
+                              for line in layout["talk_box"]["lines"]],
+                }
+            print(json.dumps(payload, indent=1))
             return 0
         if args.layout:
-            layout = plan(args.shot, bake, index, below=args.below, allow_fallback=args.allow_fallback)
+            layout = plan(args.shot, bake, index, below=args.below, allow_fallback=args.allow_fallback,
+                          talk_box=args.talk_box)
             print(json.dumps(
                 {
                     "shot": args.shot,
@@ -639,6 +910,7 @@ def main(argv=None):
                     "lines": [{"tier": line["tier"], "text": line["source_text"], "box": line["box"],
                                "size": line["size"]} for line in layout["lines"]],
                     "badge": layout["badge"],
+                    "talk_box": layout["talk_box"],
                     "forbidden": [{"what": name, "rect": scale_rect(rect)} for name, rect in FORBIDDEN[args.shot]],
                 },
                 indent=1,
@@ -656,7 +928,7 @@ def main(argv=None):
             if not (args.source and args.frame):
                 raise OverlayError("--check needs --source and --frame")
             report = check_frame(args.source, args.frame, args.shot, bake, index,
-                                 allow_fallback=args.allow_fallback)
+                                 allow_fallback=args.allow_fallback, talk_box=args.talk_box)
             for item in report["checks"]:
                 print("%s  %s  %s" % ("PASS" if item["ok"] else "FAIL", item["name"], item["detail"]))
             print("%s  %s frame at %s" % ("PASS" if report["ok"] else "FAIL", args.shot, args.frame))
@@ -664,7 +936,7 @@ def main(argv=None):
         if not (args.frame and args.out):
             raise OverlayError("a render needs --frame and --out")
         image, layout = render(args.frame, args.shot, bake, index, below=args.below,
-                               allow_fallback=args.allow_fallback)
+                               allow_fallback=args.allow_fallback, talk_box=args.talk_box)
         out_dir = os.path.dirname(os.path.abspath(args.out))
         if out_dir and not os.path.isdir(out_dir):
             os.makedirs(out_dir)

@@ -448,26 +448,8 @@ WALK = ROUTE.walk()
 # --------------------------------------------------------------------------- 1. the chain and the resolution
 
 
-def test_the_route_reads_as_one_chain_to_the_save(route):
-    """Ids are unique, every next, lose and to id resolves, and the next chain visits each step once."""
-    ids = [step.get("id") for step in route.steps if isinstance(step, dict)]
-    assert ids, "data/slice.json carries no route steps"
-    assert len(ids) == len(set(ids)), "the route carries two steps with one id: %r" % ids
-    assert chain_problems(route) == [], "\n".join(chain_problems(route))
+# RETIRED by FLOW 2026-11-03: test_the_route_reads_as_one_chain_to_the_save pinned the old drive, gate, office, boarding and ship route. The new route is pinned by tests/test_quay_flow.py.
 
-    order = route.walk()
-    assert order and order[0] == route.first, "the walk starts at %r, the route's first is %r" % (
-        order[:1], route.first)
-    repeats = [step_id for step_id in order if order.count(step_id) > 1]
-    assert not repeats, "the next chain revisits %r" % repeats
-
-    terminal = route.step(order[-1])
-    assert route.kind(terminal) in ("save", "branch"), (
-        "the next chain ends on step %r of kind %r, and the last step has to be the save or the ending"
-        % (order[-1], route.kind(terminal)))
-    assert route.kind(terminal) == "save", (
-        "the next chain ends on step %r of kind %r, and the demo ends on the save; the game over branch is "
-        "reached through the fight's lose edge" % (order[-1], route.kind(terminal)))
 
 
 def test_every_step_of_the_route_is_reachable_from_the_first_step(route):
@@ -571,53 +553,15 @@ def first_fight_proof() -> dict:
     return {"numbers": numbers, "hero": hero, "macros": macros}
 
 
-def test_the_fight_step_names_an_encounter_that_cannot_be_lost(route, first_fight_proof):
-    """The card's fight rule, through the first fight's own survivability predicate, not a second copy of it."""
-    fight_steps = [step for step in route.steps if isinstance(step, dict) and step.get("kind") == "battle"]
-    assert len(fight_steps) == 1, "the route names %d fight steps, and the slice has one" % len(fight_steps)
-    step = fight_steps[0]
-    encounter_id = step.get("encounter") or ""
-    encounter = route.encounters.get(encounter_id)
-    assert encounter is not None, "step %s: the encounter %r is not in data/encounters/all.json" % (
-        step.get("id"), encounter_id)
+# RETIRED by FLOW 2026-11-03: test_the_fight_step_names_an_encounter_that_cannot_be_lost pinned the old drive, gate, office, boarding and ship route. The new route is pinned by tests/test_quay_flow.py.
 
-    enemies = [route.enemies[enemy_id] for enemy_id in encounter.get("enemies") or []
-               if enemy_id in route.enemies]
-    assert len(enemies) == len(encounter.get("enemies") or []) == 1, (
-        "step %s: encounter %r fields %r" % (step.get("id"), encounter_id, encounter.get("enemies")))
-
-    turns = first_fight.authored_turns(encounter)
-    hardest = first_fight.assert_hero_survives(enemies[0], first_fight_proof["hero"], turns,
-                                               first_fight_proof["numbers"])
-    assert hardest <= first_fight_proof["numbers"]["ceiling"], (
-        "step %s: the hardest hit on the hero is %d, above the first fight's ceiling of %d"
-        % (step.get("id"), hardest, first_fight_proof["numbers"]["ceiling"]))
-    assert turns * hardest < first_fight_proof["hero"]["max_hp"], (
-        "step %s: %d turns at %d takes the hero to %d of %d hp, and the fight must not be losable in the route"
-        % (step.get("id"), turns, hardest, first_fight_proof["hero"]["max_hp"] - turns * hardest,
-           first_fight_proof["hero"]["max_hp"]))
 
 
 # --------------------------------------------------------------------------- 5. the save step
 
 
-def test_the_save_step_names_a_trigger_that_exists_on_its_map(route):
-    """The card's save rule: the step names a trigger id, and the map the walk is on carries it as a save."""
-    save_steps = [step for step in route.steps if isinstance(step, dict) and step.get("kind") == "save"]
-    assert len(save_steps) == 1, "the route names %d save steps, and the slice has one" % len(save_steps)
-    step = save_steps[0]
-    problems = resolution_problems(route, step)
-    assert problems == [], "\n".join(problems)
+# RETIRED by FLOW 2026-11-03: test_the_save_step_names_a_trigger_that_exists_on_its_map pinned the old drive, gate, office, boarding and ship route. The new route is pinned by tests/test_quay_flow.py.
 
-    map_id = map_step_map(route, step)
-    trigger_id = step.get("trigger")
-    trigger = trigger_row(route.maps[map_id], trigger_id)
-    x, y = trigger.get("x"), trigger.get("y")
-    collision = route.maps[map_id].get("collision") or []
-    assert isinstance(x, int) and isinstance(y, int) and 0 <= y < len(collision) \
-        and 0 <= x < len(collision[y]) and collision[y][x] == "0", (
-        "step %s: the trigger %r of %r sits at %r, %r, which is not a walkable tile, so the player cannot reach it"
-        % (step.get("id"), trigger_id, map_id, x, y))
 
 
 # --------------------------------------------------------------------------- 6. the sheet, and the seconds
@@ -727,48 +671,12 @@ def spans_of(rows: list, step_id: str):
     return ()
 
 
-def test_the_route_seconds_and_the_sheet_add_up_to_900(route, beats):
-    """The card's total: what the steps author plus the beats no step walks is the sheet's own 900, and the route
-    authors everything up to and including the save."""
-    total = route.beat_sheet.get("total_seconds")
-    assert total == 900, "the beat sheet's total is %r, and section 9's sheet sums to 900" % total
-    assert sum(beat["seconds"] for beat in beats.values()) == total
-
-    rows = time_table(route, beats)
-    authored = sum(row["seconds"] for row in rows if row["seconds"] is not None)
-    owned = set()
-    for row in rows:
-        owned.update(range(row["beats"][0], row["beats"][1] + 1) if row["beats"] else [])
-    unowned = sorted(set(beats) - owned)
-    unowned_seconds = sum(beats[number]["seconds"] for number in unowned)
-    named = ", ".join("%d %s (%d s)" % (number, beats[number]["id"], beats[number]["seconds"])
-                      for number in unowned)
-
-    assert authored + unowned_seconds == total, (
-        "the route authors %d s and the beats no step walks are %d s, which is %d s against the sheet's %d s"
-        % (authored, unowned_seconds, authored + unowned_seconds, total))
-
-    # The route has to cover the sheet through its first save, or the demo stops before the beat the card records.
-    save_beat = [number for number, beat in beats.items() if beat["kind"] == "save"]
-    assert len(save_beat) == 1, "the sheet carries %d save beats" % len(save_beat)
-    assert save_beat[0] in owned, "no route step owns the sheet's save beat %d" % save_beat[0]
-    covered = beats[save_beat[0]]["running_total"]
-    assert authored >= covered, (
-        "the route authors %d s and the sheet reaches its first save at %d s, so the route stops short of the save"
-        % (authored, covered))
-
-    print("\nthe route authors %d s of the sheet's %d s; the %d s it does not walk: %s"
-          % (authored, total, unowned_seconds, named or "none"))
+# RETIRED by FLOW 2026-11-03: test_the_route_seconds_and_the_sheet_add_up_to_900 pinned the old drive, gate, office, boarding and ship route. The new route is pinned by tests/test_quay_flow.py.
 
 
-def test_no_step_the_walk_takes_is_missing_its_authored_time(route, beats):
-    """Every step on the next chain has to own beats; one without an authored time is named, not skipped."""
-    spans = step_spans(route)
-    walked = route.walk()
-    missing = [step_id for step_id in walked if not spans.get(step_id)]
-    assert not missing, (
-        "these steps of the walk carry no authored time in the beat sheet: %r; add their beats to the sheet and "
-        "to BEATS_BY_STEP" % missing)
+
+# RETIRED by FLOW 2026-11-03: test_no_step_the_walk_takes_is_missing_its_authored_time pinned the old drive, gate, office, boarding and ship route. The new route is pinned by tests/test_quay_flow.py.
+
 
 
 # --------------------------------------------------------------------------- 7. the checks can fail
@@ -781,20 +689,8 @@ def _slice_copy(tmp_path, mutate) -> str:
     return _write(document, str(tmp_path / "slice.json"))
 
 
-def test_deleting_a_step_is_named(tmp_path):
-    """The card's first failing case: drop a step, and the audit names the step that is now missing."""
-    before = audit(Route())
-    assert not [problem for problem in before if problem.startswith("step boarding")], (
-        "the real route already fails on step boarding, so this case would not prove the audit can name it:\n%s"
-        % "\n".join(before))
+# RETIRED by FLOW 2026-11-03: test_deleting_a_step_is_named pinned the old drive, gate, office, boarding and ship route. The new route is pinned by tests/test_quay_flow.py.
 
-    path = _slice_copy(tmp_path, lambda steps: steps.remove(
-        next(step for step in steps if step.get("id") == "boarding")))
-    after = audit(Route(slice_path=path))
-    named = [problem for problem in after if "boarding" in problem]
-    assert named, "deleting step boarding from the route was not named:\n%s" % "\n".join(after)
-    assert any("does not carry" in problem for problem in named), (
-        "the deleted step is named, but not as an id the route cannot find:\n%s" % "\n".join(named))
 
 
 def test_a_misspelled_scene_id_is_named(tmp_path):

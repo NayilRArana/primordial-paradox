@@ -538,7 +538,9 @@ def test_the_world_talk_branch_opens_the_bake_before_the_authored_dialogue(talk_
     assert opener.index("pp_talk_npc_open") < opener.index("pp_dialogue_open"), opener
     overworld = code_only(_read(OVERWORLD_GML))
     branch = function_body(overworld, "pp_overworld_step")
-    assert "pp_talk_actor_open(_talk, _world)" in branch, branch
+    # FLOW 2026-11-03: the step calls pp_flow_actor_talk, which keeps the bake door for every actor without a scene.
+    assert "pp_flow_actor_talk(_talk, _world)" in branch, branch
+    assert "pp_talk_actor_open(_actor, _world)" in function_body(overworld, "pp_flow_actor_talk")
     assert "pp_talk_npc_hint(_world.dialogue)" in overworld
 
 

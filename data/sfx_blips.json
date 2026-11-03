@@ -85,6 +85,11 @@
       "why": "The same word, kept explicit so a reader can see it is mapped rather than defaulted."
     },
     {
+      "alias": "morgan",
+      "speaker": "narrator",
+      "why": "Captain Morgan (final scope 2026-11-03) speaks in the same neutral tick the gate guard he replaced had."
+    },
+    {
       "alias": "guard",
       "speaker": "narrator",
       "why": "A nameless guard gets the neutral tick: the card names five voices and none of them is a guard."

@@ -267,8 +267,8 @@ def character_specs():
             "cloth_d": BLACK,
             "accent": BLUE_L,
             "ow_parts": ["long_hair", "streaks", "close_beard", "lanyard", "watch"],
-            "battle": {"hair_back": 6, "beard": True, "collar": "shirt", "weapon": "sickle",
-                       "weapon_in_normal": False, "gem": None},
+            "battle": {"hair_back": 6, "beard": True, "collar": "shirt", "weapon": "scythe",
+                       "weapon_in_normal": True, "gem": None},
         },
         {
             "name": "zander",
@@ -285,7 +285,7 @@ def character_specs():
             "accent": WHITE,
             "ow_parts": ["messy_hair", "bomber", "earbuds"],
             "battle": {"hair_back": 4, "beard": False, "collar": "bomber", "weapon": "bolt",
-                       "weapon_in_normal": False, "gem": None},
+                       "weapon_in_normal": True, "gem": None},
         },
         {
             "name": "percy",
@@ -319,7 +319,7 @@ def character_specs():
             "accent": PURPLE,
             "ow_parts": ["sleek_hair", "gems", "dark_circles"],
             "battle": {"hair_back": 5, "beard": False, "collar": "shirt", "weapon": "bident",
-                       "weapon_in_normal": False, "gem": PURPLE, "helm": True},
+                       "weapon_in_normal": True, "gem": PURPLE, "helm": True, "helm_in_normal": True},
         },
         {
             "name": "sailor",
@@ -572,7 +572,7 @@ def battle_frame(spec, pose, god):
         weapon = spec["battle"]["weapon"]
     elif spec["battle"].get("weapon_in_normal"):
         weapon = spec["battle"]["weapon"]
-    if god and spec["battle"].get("helm"):
+    if (god or spec["battle"].get("helm_in_normal")) and spec["battle"].get("helm"):
         draw_helm(grid, lean, head_dy)
     grid.outline("k")
     if weapon:
@@ -620,6 +620,9 @@ def draw_helm(grid, lean, head_dy):
     grid.fill(hx - 6, hy - 1, hx + 5, hy + 1, "k")
     grid.fill(hx + 2, hy, hx + 4, hy + 3, "k")
     grid.fill(hx - 5, hy - 5, hx + 3, hy - 3, "d")
+    grid.fill(hx - 5, hy - 2, hx + 4, hy - 2, "c")
+    grid.fill(hx - 5, hy - 1, hx + 5, hy - 1, "c")
+    grid.fill(hx - 6, hy, hx + 5, hy, "c")
     grid.put(hx - 4, hy - 4, "C")
     grid.put(hx + 1, hy - 2, "C")
 
@@ -652,8 +655,26 @@ def draw_weapon(spec, grid, weapon, pose, hand, god):
                 grid.put(min(BATTLE_W - 1, max(0, tip[0] + dx)),
                          min(BATTLE_H - 1, max(0, tip[1] + dy)), "t")
     elif weapon == "bident":
-        tip = pole(2, "k", "k", "d")
+        # FINAL-SCOPE D2: drawn in the accent role so the two prongs read against the dark panel.
+        tip = pole(2, "c", "c", "c")
         grid.put(tip[0], tip[1] - 1, "a")
+    elif weapon == "scythe":
+        # FINAL-SCOPE D2: Konrad's adamantine scythe. A long shaft held in the fist, and a blade that sweeps forward
+        # from the top of it and curls back down, so the silhouette is a hook and not a stick.
+        base = (min(BATTLE_W - 4, hx + 1), min(BATTLE_H - 1, max(hy + 8, 27)))
+        top = (min(BATTLE_W - 5, hx + 1), max(6, hy - 14))
+        grid.stroke(base[0], base[1], top[0], top[1], "c", 2)
+        tx, ty = top
+        for dx in range(-1, 4):
+            grid.put(tx + dx, ty - 2, "M")
+            grid.put(tx + dx, ty - 1, "M")
+        for dx, dy in ((4, -1), (4, 0), (3, 1)):
+            grid.put(tx + dx, ty + dy, "M")
+        # Leather wrapped grips, so the shaft carries the body colour too and every tile of it stays a carrier.
+        for gy in (18, 19, 20, 24, 25, 26):
+            for gx in range(BATTLE_W):
+                if grid.get(gx, gy) == "m":
+                    grid.put(gx, gy, "c")
     elif weapon == "sickle":
         # A curved blade: the arc of a circle of radius 5 above the fist, then a short handle.
         cx, cy = hx, hy - 5
@@ -666,7 +687,9 @@ def draw_weapon(spec, grid, weapon, pose, hand, god):
         grid.stroke(hx, hy, cx, cy, "m", 1)
     elif weapon == "bolt":
         # A zigzag, four segments, thicker than a line so it reads at 24 px.
-        points = [(hx, hy - 9), (hx + 4, hy - 5), (hx - 1, hy - 2), (hx + 3, hy + 2)]
+        # FINAL-SCOPE D2: the master bolt, held up beside the head: five segments, tall enough to read at 24 px.
+        points = [(hx + 1, hy - 17), (hx + 5, hy - 12), (hx, hy - 8), (hx + 4, hy - 3), (hx + 1, hy + 2)]
+        points = [(min(BATTLE_W - 2, x), max(1, y)) for x, y in points]
         for i in range(len(points) - 1):
             grid.stroke(points[i][0], points[i][1], points[i + 1][0], points[i + 1][1], "a", 2)
         grid.stroke(points[0][0], points[0][1], points[1][0], points[1][1], "M", 1)

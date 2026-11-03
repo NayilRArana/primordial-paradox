@@ -1,0 +1,39 @@
+{
+  "format": 1,
+  "kind": "weapon_frames",
+  "name": "spr_pp_adamantine_scythe",
+  "size": "128x32",
+  "frame_w": 32,
+  "frame_h": 32,
+  "frames": 4,
+  "fps": 8.0,
+  "transparent": true,
+  "layer": true,
+  "frame_roles": {
+    "icon": 0,
+    "slash_frames": [
+      1,
+      2,
+      3
+    ]
+  },
+  "colour_count": 3,
+  "sprite_palettes_used": [
+    "konrad"
+  ],
+  "colours_used": [
+    {
+      "index": 0,
+      "role": "ink"
+    },
+    {
+      "index": 15,
+      "role": "body"
+    },
+    {
+      "index": 39,
+      "role": "accent"
+    }
+  ],
+  "note": "FINAL-SCOPE D2. Overlay in konrad's reserved hero triple. Built by tools/art/make_god_weapons.py."
+}

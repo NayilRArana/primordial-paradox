@@ -19,7 +19,7 @@ import battle_sim as sim
 
 ROOT = sim.ROOT
 THREE = ("morgan_gate", "tutorial_sailors", "percy")
-ROOM = {"morgan_gate": "southampton_town_quay", "tutorial_sailors": "ship_small", "percy": "ship_cabin"}
+ROOM = {"morgan_gate": "southampton_town_quay", "tutorial_sailors": "ship_small", "percy": "southampton_town_quay"}
 ROOM_MUSIC = {"southampton_town_quay": "PP-03", "ship_small": "PP-05", "ship_cabin": "PP-05"}
 BARS = [60, 100, 55, 80, 70, 90, 65, 85, 75, 95]
 
@@ -118,7 +118,8 @@ def test_a_fight_takes_about_one_to_two_minutes(enc_id):
 
 @pytest.mark.parametrize("enc_id", THREE)
 def test_each_fight_starts_in_one_room_with_room_music_and_a_walkable_return_tile(enc_id):
-    pts = sim.start_points(enc_id)
+    # FLOW 2026-11-03: the ship cabin scenes are retired data nothing leads to; only reachable rooms count.
+    pts = [p for p in sim.start_points(enc_id) if p[0] != "ship_cabin"]
     assert pts and {room for room, _, _ in pts} == {ROOM[enc_id]}, pts
     room = sim.MAPS[ROOM[enc_id]]
     assert room["music"] == ROOM_MUSIC[ROOM[enc_id]] and room["music"] != sim.ENCOUNTERS[enc_id]["music"]
@@ -153,13 +154,21 @@ def test_exactly_three_fights_and_the_hound_is_kept_but_never_triggered():
     assert "petty_officer" not in sim.ENEMIES and "dock_petty_officer" not in sim.ENCOUNTERS
 
 
-@pytest.mark.parametrize("choice", [0, 1, 2])
 @pytest.mark.parametrize("outcome", ["spare", "kill"])
-def test_morgan_fight_follows_the_gate_scene_for_every_reply(choice, outcome):
-    out = sim.run_scene("quay_gate_checkpoint", set(), {"morgan_gate": outcome}, choice=choice)
+def test_morgan_fight_follows_the_quay_scene(outcome):
+    # FLOW 2026-11-03: the gate is gone; Captain Morgan's fight starts from his own encounter scene on the quay.
+    out = sim.run_scene("quay_morgan_encounter", set(), {"morgan_gate": outcome})
     assert out["started"] == ["morgan_gate"] and out["map"] == "southampton_town_quay"
-    assert "gate_passed" in out["flags"] and ("morgan_" + ("spared" if outcome == "spare" else "killed")) in out["flags"]
+    assert ("morgan_" + ("spared" if outcome == "spare" else "killed")) in out["flags"] and "morgan_resolved" in out["flags"]
     assert ("morgan_killed" in out["flags"]) != ("morgan_spared" in out["flags"])
+    assert out["last"] == ("quay_morgan_spare" if outcome == "spare" else "quay_morgan_kill")
+
+
+@pytest.mark.parametrize("outcome", ["spare", "kill"])
+def test_percy_fight_follows_the_quay_scene(outcome):
+    out = sim.run_scene("quay_percy_encounter", set(), {"percy": outcome})
+    assert out["started"] == ["percy"] and out["map"] == "southampton_town_quay" and "demo_complete" in out["flags"]
+    assert out["last"] == ("quay_percy_spare" if outcome == "spare" else "quay_percy_kill")
 
 
 @pytest.mark.parametrize("outcome", ["spare", "kill"])

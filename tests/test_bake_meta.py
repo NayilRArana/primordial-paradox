@@ -15,7 +15,7 @@ What is pinned here, in the order the card argues it:
 4. The offline bake never calls the client, a valid live answer is written as live, and a refused answer
    falls back with the reason recorded, so no row can claim a call it did not make (R43's check 4). R43 B1
    is pinned the way the review measured it: backend meta, a placeholder key and replay mode with nothing
-   cached writes mode offline, network false and an offline note over 18 fallback rows, and the live header
+   cached writes mode offline, network false and an offline note over 21 fallback rows, and the live header
    the old code wrote over those same rows is refused.
 5. R43 B2 is pinned the same way: a fallback row whose text, mood, effect or hint is not its fallback's is
    refused, and a reason that names none of the bake's causes ("because") is refused too.
@@ -357,21 +357,28 @@ def _dump(path, document):
 def test_a_replay_run_cannot_write_a_live_header_and_the_old_one_is_refused(monkeypatch, tmp_path):
     """R43 B1, measured the way the review measured it: backend meta, a placeholder key, replay mode.
 
-    Every call raises CacheMiss, so all 18 rows are honest fallbacks. The block the old code built
+    Every call raises CacheMiss, so every row is an honest fallback. The block the old code built
     from the environment said mode live, network true and the live note over these rows; the run now
     writes mode offline, and that old block pasted onto the same rows is refused.
+
+    The row count is read from the plan, not typed: it is three option rows for every fight phase the
+    data can reach plus the three turns of each of the two NPCs. It said 18 until 2026-10-27, when
+    data/dialogue/all.json and data/enemies/all.json grew a fifth fight phase (petty_officer) and the
+    literal went stale under a rebake that is otherwise green (card t_f441d8be).
     """
     _door(monkeypatch, chosen="replay",
           error=RuntimeError("CacheMiss: replay mode found no recorded answer for this request"))
-    document, _mode, state, _skipped, _units = bake_meta.run_bake(offline=False)
+    document, _mode, state, _skipped, units = bake_meta.run_bake(offline=False)
     rows = document["rows"]
     bake = document["bake"]
-    assert state["calls"] == len(rows) == 18, "every row asks, so every row can answer"
+    expected = bake_meta.OPTIONS_PER_UNIT * (len(units) + len(bake_meta.NPCS))
+    assert expected == len(rows), "the plan says %d rows and the run wrote %d" % (expected, len(rows))
+    assert state["calls"] == len(rows) == expected, "every row asks, so every row can answer"
     assert state["live"] == 0
     assert all(row["source"] == "fallback" for row in rows)
     assert all(row["reason"].startswith("no live answer:") for row in rows)
     assert bake["mode"] == "offline", "a run that answered nothing is not live, however it was configured"
-    assert (bake["live"], bake["fallback"]) == (0, 18)
+    assert (bake["live"], bake["fallback"]) == (0, expected)
     assert bake["network"] is False and bake["offline"] is True
     assert bake["note"].startswith("offline:"), bake["note"]
 
@@ -515,7 +522,7 @@ def test_the_effects_table_is_the_spec_enum_and_maps_to_existing_pool_names():
 # README: "For every Python tool, PP_AI_MODE=replay reads the recorded answers in data/ai_cache and
 # makes no request, so it needs no key." Measured 2026-10-27 (card TALK-REPLAY-NOKEY t_209e764c):
 # resolve_mode() answered "offline: no key" before it ever read PP_AI_MODE, so a keyless replay wrote
-# 18 hand written fallbacks and never read the cache. These pin the mode, and one pins that the
+# 21 hand written fallbacks and never read the cache. These pin the mode, and one pins that the
 # decision reaches the calls, so the promise holds at the level the README makes it.
 
 def _no_key_at_all(monkeypatch):
@@ -562,3 +569,66 @@ def test_a_keyless_replay_bake_asks_the_cache_for_every_row(monkeypatch):
     assert all(row["source"] != "fallback" or row["reason"] != "offline: no key in the environment "
                "(MODEL_API_KEY then META_API_KEY), so every row is the fallback"
                for row in document["rows"]), "a keyless replay fell back as if it were offline"
+
+
+# ----------------------------------------------------------------- the effect is the row's own
+# Measured 2026-10-27 (card BAKE-EFFECTS t_0cc52618): asking a fight option with the whole effect enum
+# let the model move another effect, and the first fight's three authored talks stopped reaching the
+# spare gate. The schema is built per call, so the enum is narrowed to the row's own class instead.
+
+def test_a_fight_option_is_asked_with_only_the_effect_its_pool_names():
+    scene = {"scene": "fight", "turn": 1, "required_effect": "soften",
+             "allowed": list(bake_meta.FIGHT_EFFECTS)}
+    assert bake_meta.talk_reply_schema(scene)["properties"]["effect"]["enum"] == ["soften"]
+    scene = {"scene": "fight", "turn": 3, "required_effect": "setback",
+             "allowed": list(bake_meta.FIGHT_EFFECTS)}
+    assert bake_meta.talk_reply_schema(scene)["properties"]["effect"]["enum"] == ["setback"]
+    assert bake_meta.TALK_REPLY_SCHEMA["properties"]["effect"]["enum"] == list(bake_meta.EFFECTS), (
+        "the module level schema is the spec enum and the row copy must not narrow it in place")
+
+
+def test_an_npc_turn_is_asked_with_only_the_two_effects_its_scene_allows():
+    scene = {"scene": "npc", "turn": 1, "allowed": list(bake_meta.NPC_EFFECTS)}
+    assert bake_meta.talk_reply_schema(scene)["properties"]["effect"]["enum"] == ["none", "end"]
+
+
+def test_every_row_asks_the_model_for_the_one_effect_its_own_pool_names(monkeypatch):
+    """A fight option is offered its own effect, so the answer is live instead of refused."""
+    asks = []
+
+    def call(messages, schema=None, sleep=None, transport=None):
+        effects = schema["properties"]["effect"]["enum"] if schema else []
+        asks.append(effects)
+        if transport is not None:
+            transport.update({"backend": "meta", "mode": "live", "cached": False, "network": True})
+        effect = effects[0]
+        return {"text": ["IT SNIFFS YOUR HAND."], "mood": bake_meta.EFFECT_TO_MOOD[effect],
+                "effect": effect, "hint": ""}
+
+    monkeypatch.setenv("MODEL_API_KEY", "dummy-not-a-real-key")
+    monkeypatch.delenv("META_API_KEY", raising=False)
+    monkeypatch.setenv("PP_AI_BACKEND", "meta")
+    monkeypatch.setenv("PP_AI_MODE", "live")
+    monkeypatch.setattr(bake_meta, "call_model", call)
+    document, _mode, state, _skipped, _units = bake_meta.run_bake(offline=False)
+    rows = document["rows"]
+    assert state["calls"] == len(rows) == len(asks), "one call per row, and no re-ask is needed"
+    for row, effects in zip(rows, asks):
+        assert row["effect"] in effects, row["id"]
+        if row["scene"] == "fight":
+            assert effects == [bake_meta.OPTION_EFFECTS[row["option"] - 1]], row["id"]
+    fights = [row for row in rows if row["scene"] == "fight"]
+    assert all(row["source"] == "live" for row in fights), [
+        (row["id"], row["reason"]) for row in fights if row["source"] != "live"]
+    deck = [row for row in fights if row["card"] == "deck_hound"]
+    assert [row["effect"] for row in deck] == ["soften", "nudge", "setback"]
+
+
+def test_check_refuses_a_fight_row_that_moves_another_pools_effect(offline_copy):
+    def mutate(document):
+        row = next(row for row in document["rows"] if row["scene"] == "fight" and row["option"] == 1)
+        row["effect"] = "setback"
+
+    emitted = io.StringIO()
+    assert bake_meta.check_file(offline_copy(mutate), stream=emitted) > 0
+    assert "own pool names" in emitted.getvalue(), emitted.getvalue()

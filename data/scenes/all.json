@@ -3,6 +3,237 @@
   "kind": "scenes",
   "scenes": [
     {
+      "id": "quay_arrival",
+      "name": "The Town Quay, arrival (no scene plays)",
+      "map": "southampton_town_quay",
+      "start": {
+        "x": 24,
+        "y": 1
+      },
+      "commands": [
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "quay_morgan_encounter",
+      "name": "Captain Morgan: the words, the fight, the outcome",
+      "map": "southampton_town_quay",
+      "start": {
+        "x": 7,
+        "y": 9
+      },
+      "commands": [
+        {
+          "cmd": "face",
+          "dir": "left"
+        },
+        {
+          "cmd": "face",
+          "actor": "morgan",
+          "dir": "right"
+        },
+        {
+          "cmd": "sfx",
+          "id": "thunder_soft"
+        },
+        {
+          "cmd": "flash",
+          "steps": 2
+        },
+        {
+          "cmd": "say",
+          "id": "quay_morgan_pre"
+        },
+        {
+          "cmd": "battle",
+          "id": "morgan_gate"
+        },
+        {
+          "cmd": "branch",
+          "flag": "morgan_killed",
+          "scene": "quay_morgan_kill"
+        },
+        {
+          "cmd": "branch",
+          "flag": "morgan_spared",
+          "scene": "quay_morgan_spare"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "quay_morgan_spare",
+      "name": "Captain Morgan comes to his senses",
+      "map": "southampton_town_quay",
+      "start": {
+        "x": 7,
+        "y": 9
+      },
+      "commands": [
+        {
+          "cmd": "say",
+          "id": "quay_morgan_after_spare"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "quay_morgan_kill",
+      "name": "Captain Morgan is gone",
+      "map": "southampton_town_quay",
+      "start": {
+        "x": 7,
+        "y": 9
+      },
+      "commands": [
+        {
+          "cmd": "say",
+          "id": "quay_morgan_after_kill"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "quay_bridge_wind",
+      "name": "The wind keeps the bridge shut until Morgan is dealt with",
+      "map": "southampton_town_quay",
+      "start": {
+        "x": 23,
+        "y": 32
+      },
+      "commands": [
+        {
+          "cmd": "say",
+          "id": "quay_bridge_wind"
+        },
+        {
+          "cmd": "move",
+          "dir": "up",
+          "tiles": 2
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "quay_percy_encounter",
+      "name": "Percy at the bridge: the words, the fight, the outcome",
+      "map": "southampton_town_quay",
+      "start": {
+        "x": 23,
+        "y": 36
+      },
+      "commands": [
+        {
+          "cmd": "face",
+          "dir": "down"
+        },
+        {
+          "cmd": "face",
+          "actor": "percy",
+          "dir": "up"
+        },
+        {
+          "cmd": "sfx",
+          "id": "thunder_soft"
+        },
+        {
+          "cmd": "flash",
+          "steps": 2
+        },
+        {
+          "cmd": "say",
+          "id": "quay_percy_pre"
+        },
+        {
+          "cmd": "battle",
+          "id": "percy"
+        },
+        {
+          "cmd": "branch",
+          "flag": "percy_killed",
+          "scene": "quay_percy_kill"
+        },
+        {
+          "cmd": "branch",
+          "flag": "percy_spared",
+          "scene": "quay_percy_spare"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "quay_percy_spare",
+      "name": "Percy is himself and joins the party, then the credits",
+      "map": "southampton_town_quay",
+      "start": {
+        "x": 23,
+        "y": 36
+      },
+      "commands": [
+        {
+          "cmd": "setflag",
+          "name": "percy_recruited"
+        },
+        {
+          "cmd": "sfx",
+          "id": "save_jingle"
+        },
+        {
+          "cmd": "say",
+          "id": "quay_percy_after_spare"
+        },
+        {
+          "cmd": "wait",
+          "steps": 60
+        },
+        {
+          "cmd": "credits",
+          "variant": "spare"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "quay_percy_kill",
+      "name": "Percy falls, then the credits",
+      "map": "southampton_town_quay",
+      "start": {
+        "x": 23,
+        "y": 36
+      },
+      "commands": [
+        {
+          "cmd": "say",
+          "id": "quay_percy_after_kill"
+        },
+        {
+          "cmd": "wait",
+          "steps": 60
+        },
+        {
+          "cmd": "credits",
+          "variant": "kill"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
       "id": "ship_boarding",
       "name": "Ship boarding: the gangway, the horn, the deck, the door",
       "map": "ship_small",
@@ -117,66 +348,6 @@
       ]
     },
     {
-      "id": "percy_lore_stop",
-      "name": "Percy's office: the fight",
-      "map": "ship_cabin",
-      "start": {
-        "x": 7,
-        "y": 3
-      },
-      "commands": [
-        {
-          "cmd": "say",
-          "id": "percy_lore_stop"
-        },
-        {
-          "cmd": "battle",
-          "id": "percy"
-        },
-        {
-          "cmd": "branch",
-          "flag": "percy_killed",
-          "scene": "percy_aftermath_kill"
-        },
-        {
-          "cmd": "branch",
-          "flag": "percy_spared",
-          "scene": "percy_aftermath"
-        },
-        {
-          "cmd": "end"
-        }
-      ]
-    },
-    {
-      "id": "percy_rematch",
-      "name": "Percy's office: the rematch",
-      "map": "ship_cabin",
-      "start": {
-        "x": 7,
-        "y": 3
-      },
-      "commands": [
-        {
-          "cmd": "battle",
-          "id": "percy"
-        },
-        {
-          "cmd": "branch",
-          "flag": "percy_killed",
-          "scene": "percy_aftermath_kill"
-        },
-        {
-          "cmd": "branch",
-          "flag": "percy_spared",
-          "scene": "percy_aftermath"
-        },
-        {
-          "cmd": "end"
-        }
-      ]
-    },
-    {
       "id": "prometheus_interrupt",
       "name": "Cabin: the interruption",
       "map": "ship_cabin",
@@ -263,185 +434,6 @@
         {
           "cmd": "say",
           "id": "demo_end_card"
-        },
-        {
-          "cmd": "end"
-        }
-      ]
-    },
-    {
-      "id": "quay_gate_checkpoint",
-      "name": "The gate checkpoint",
-      "map": "southampton_town_quay",
-      "start": {
-        "x": 8,
-        "y": 10
-      },
-      "commands": [
-        {
-          "cmd": "music",
-          "id": "PP-03"
-        },
-        {
-          "cmd": "say",
-          "id": "quay_gate_checkpoint"
-        },
-        {
-          "cmd": "say",
-          "id": "quay_gate_choice"
-        },
-        {
-          "cmd": "branch",
-          "flag": "gate_truth",
-          "scene": "quay_gate_truth"
-        },
-        {
-          "cmd": "branch",
-          "flag": "gate_bluff",
-          "scene": "quay_gate_bluff"
-        },
-        {
-          "cmd": "branch",
-          "flag": "gate_authority",
-          "scene": "quay_gate_authority"
-        },
-        {
-          "cmd": "end"
-        }
-      ]
-    },
-    {
-      "id": "quay_gate_truth",
-      "name": "The gate checkpoint: truth",
-      "map": "southampton_town_quay",
-      "start": {
-        "x": 8,
-        "y": 10
-      },
-      "commands": [
-        {
-          "cmd": "wait",
-          "steps": 20
-        },
-        {
-          "cmd": "battle",
-          "id": "morgan_gate"
-        },
-        {
-          "cmd": "end"
-        }
-      ]
-    },
-    {
-      "id": "quay_gate_bluff",
-      "name": "The gate checkpoint: bluff",
-      "map": "southampton_town_quay",
-      "start": {
-        "x": 8,
-        "y": 10
-      },
-      "commands": [
-        {
-          "cmd": "wait",
-          "steps": 20
-        },
-        {
-          "cmd": "battle",
-          "id": "morgan_gate"
-        },
-        {
-          "cmd": "end"
-        }
-      ]
-    },
-    {
-      "id": "quay_gate_authority",
-      "name": "The gate checkpoint: authority",
-      "map": "southampton_town_quay",
-      "start": {
-        "x": 8,
-        "y": 10
-      },
-      "commands": [
-        {
-          "cmd": "wait",
-          "steps": 20
-        },
-        {
-          "cmd": "battle",
-          "id": "morgan_gate"
-        },
-        {
-          "cmd": "end"
-        }
-      ]
-    },
-    {
-      "id": "quay_yard_walk",
-      "name": "The yard walk",
-      "map": "southampton_town_quay",
-      "start": {
-        "x": 8,
-        "y": 10
-      },
-      "commands": [
-        {
-          "cmd": "move",
-          "actor": "hero",
-          "dir": "down",
-          "tiles": 2
-        },
-        {
-          "cmd": "wait",
-          "steps": 20
-        },
-        {
-          "cmd": "move",
-          "actor": "hero",
-          "dir": "right",
-          "tiles": 3
-        },
-        {
-          "cmd": "wait",
-          "steps": 20
-        },
-        {
-          "cmd": "end"
-        }
-      ]
-    },
-    {
-      "id": "quay_dock_office_play",
-      "name": "The dock office",
-      "map": "quay_dock_office",
-      "start": {
-        "x": 6,
-        "y": 12
-      },
-      "commands": [
-        {
-          "cmd": "move",
-          "actor": "hero",
-          "dir": "up",
-          "tiles": 3
-        },
-        {
-          "cmd": "face",
-          "actor": "hero",
-          "dir": "up"
-        },
-        {
-          "cmd": "say",
-          "id": "quay_dock_office"
-        },
-        {
-          "cmd": "talk",
-          "npc": "nye",
-          "plate": "NYE"
-        },
-        {
-          "cmd": "say",
-          "id": "quay_dock_office_pass"
         },
         {
           "cmd": "end"
@@ -770,6 +762,104 @@
         {
           "cmd": "fade",
           "mode": "out"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "percy_lore_stop",
+      "name": "Percy's office: the fight",
+      "map": "ship_cabin",
+      "start": {
+        "x": 7,
+        "y": 3
+      },
+      "commands": [
+        {
+          "cmd": "say",
+          "id": "percy_lore_stop"
+        },
+        {
+          "cmd": "battle",
+          "id": "percy"
+        },
+        {
+          "cmd": "branch",
+          "flag": "percy_killed",
+          "scene": "percy_aftermath_kill"
+        },
+        {
+          "cmd": "branch",
+          "flag": "percy_spared",
+          "scene": "percy_aftermath"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "percy_rematch",
+      "name": "Percy's office: the rematch",
+      "map": "ship_cabin",
+      "start": {
+        "x": 7,
+        "y": 3
+      },
+      "commands": [
+        {
+          "cmd": "battle",
+          "id": "percy"
+        },
+        {
+          "cmd": "branch",
+          "flag": "percy_killed",
+          "scene": "percy_aftermath_kill"
+        },
+        {
+          "cmd": "branch",
+          "flag": "percy_spared",
+          "scene": "percy_aftermath"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "quay_dock_office_play",
+      "name": "The dock office",
+      "map": "quay_dock_office",
+      "start": {
+        "x": 6,
+        "y": 12
+      },
+      "commands": [
+        {
+          "cmd": "move",
+          "actor": "hero",
+          "dir": "up",
+          "tiles": 3
+        },
+        {
+          "cmd": "face",
+          "actor": "hero",
+          "dir": "up"
+        },
+        {
+          "cmd": "say",
+          "id": "quay_dock_office"
+        },
+        {
+          "cmd": "talk",
+          "npc": "nye",
+          "plate": "NYE"
+        },
+        {
+          "cmd": "say",
+          "id": "quay_dock_office_pass"
         },
         {
           "cmd": "end"

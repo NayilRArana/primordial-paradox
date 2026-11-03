@@ -111,7 +111,7 @@ TRIGGER_ID_TABLES = {
 }
 SCENE_COMMANDS = {
     "say", "move", "face", "wait", "fade", "music", "sfx", "camera",
-    "shake", "flash", "spawn", "destroy", "battle", "talk", "setflag", "branch", "end",
+    "shake", "flash", "spawn", "destroy", "battle", "talk", "setflag", "branch", "credits", "end",
 }
 DIRECTIONS = {"up", "down", "left", "right"}
 AUDIO_KINDS = {"music", "sfx", "ui"}
@@ -1469,7 +1469,7 @@ class Checker:
                     del once
                     condition = self.want(trigger, "condition", "str", filename, trigger_path)
                     if condition:
-                        self.ref(ids, "flag", condition, filename, trigger_path + ".condition")
+                        self.ref(ids, "flag", condition.lstrip("!"), filename, trigger_path + ".condition")
                     if kind == "map":
                         entry_spawn = self.want(trigger, "spawn", "str", filename, trigger_path)
                         if entry_spawn is None:
@@ -1501,6 +1501,10 @@ class Checker:
                         self.error(filename, actor_path + ".facing", "must be up, down, left or right")
                     self.ref(ids, "dialogue", self.require(actor, "dialogue", "str", filename, actor_path),
                              filename, actor_path + ".dialogue")
+                    for key, table in (("scene", "scene"), ("done_flag", "flag"), ("gone_flag", "flag")):
+                        value = self.want(actor, key, "str", filename, actor_path)
+                        if value:
+                            self.ref(ids, table, value, filename, actor_path + "." + key)
 
             if tile_size is not None and isinstance(width, int):
                 span = width * tile_size
@@ -1677,6 +1681,9 @@ class Checker:
                         value = self.want(command, axis, "int", filename, command_path)
                         if value is not None:
                             self.in_range(value, 0, 999, filename, command_path + "." + axis)
+                elif cmd == "credits":
+                    if self.want(command, "variant", "str", filename, command_path) not in ("spare", "kill"):
+                        self.error(filename, command_path + ".variant", "must be spare or kill")
                 elif cmd == "destroy":
                     self.require(command, "actor", "str", filename, command_path)
                 elif cmd == "shake":

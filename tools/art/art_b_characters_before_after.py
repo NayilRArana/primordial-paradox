@@ -36,7 +36,7 @@ BACKDROP = (0, 0, 0, 255)
 
 # label, before path (relative to the repo root, at HEAD or on disk), before cell, after sheet, after cell
 ROWS = [
-    ("ZEUS", "HEAD:" + CHARS + "/zander_ow_v2.png", (16, 16), "zeus_ow_walk8.png", (16, 24)),
+    ("ZEUS", "HEAD:" + CHARS + "/zander_ow_v2.png", (16, 16), "zeus_ow_walk8.png", (16, 16)),
     ("KRONOS", "HEAD:" + CHARS + "/konrad_ow_v2.png", (16, 16), "kronos_ow24.png", (16, 24)),
     ("LT. PERCY", "HEAD:" + CHARS + "/percy_ow_v2.png", (16, 16), "percy_ow24.png", (16, 24)),
     ("PERCY MAN 1", "HEAD:" + CHARS + "/sailor_ow_v2.png", (16, 16), "percy_man_1_ow24.png", (16, 24)),

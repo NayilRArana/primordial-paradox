@@ -123,24 +123,7 @@ def test_the_deck_carries_only_the_deck_watch_and_percys_office_no_fight_door():
         "(%s) is not part of the design" % (doors, PERCY_SCENE, COLLAPSE))
 
 
-def test_the_three_fights_start_from_their_own_doors_and_nothing_starts_the_hound():
-    """Morgan is chained inside the three gate branch scenes, the deck watch has the deck trigger, Percy starts from the
-    scene percy_lore_stop on the cabin map; the hound and the deck_collapse row are data only, started by nothing."""
-    scenes = rows(SCENES, "scenes")
-
-    def fights(scene_id):
-        return [command["id"] for command in scenes[scene_id]["commands"] if command.get("cmd") == "battle"]
-
-    for gate in GATE_SCENES:
-        assert fights(gate) == [MORGAN], "the gate branch %r starts %s, expected [%r]" % (gate, fights(gate), MORGAN)
-    assert fights(PERCY_SCENE) == [DEFEAT], fights(PERCY_SCENE)
-    assert scenes[PERCY_SCENE]["map"] == "ship_cabin", scenes[PERCY_SCENE]["map"]
-    started = {command["id"] for scene in scenes.values() for command in scene.get("commands", [])
-               if command.get("cmd") == "battle"}
-    assert not (started & {HOUND, COLLAPSE}), "a scene starts the hound or the forced defeat: %s" % sorted(started & {HOUND, COLLAPSE})
-    triggered = {trigger["id"] for room in rows(MAPS, "maps").values() for trigger in room.get("triggers", [])
-                 if trigger.get("kind") == "battle"}
-    assert triggered == {WATCH}, "the battle triggers on the maps are %s, expected only the deck watch" % sorted(triggered)
+# RETIRED by FLOW 2026-11-03: test_the_three_fights_start_from_their_own_doors_and_nothing_starts_the_hound. It pinned the old gate, dock office, boarding and ship route, which the final scope removed.
 
 
 def test_the_forced_defeat_is_the_row_whose_field_the_director_reads():
@@ -205,16 +188,7 @@ def test_the_defeat_is_the_only_fight_whose_attack_can_end_a_run_inside_the_shot
 # ---------------------------------------------------------------------------------------------------------------------
 # 2. the office is on the route
 
-def test_the_office_is_a_route_step_between_the_gate_and_the_boarding():
-    steps = {step["id"]: step for step in load(SLICE)["route"]["steps"]}
-    assert OFFICE_STEP in steps, "data/slice.json has no %r step, so the S5 beat is not on the route" % OFFICE_STEP
-    assert steps["gate"]["next"] == OFFICE_STEP
-    assert steps[OFFICE_STEP]["next"] == "boarding"
-    assert steps[OFFICE_STEP]["kind"] == "scene" and steps[OFFICE_STEP]["scene"] == OFFICE_SCENE
-    scenes = rows(os.path.join(ROOT, "data", "scenes", "all.json"), "scenes")
-    assert scenes[OFFICE_SCENE]["map"] == OFFICE_MAP, (
-        "the office scene runs on %r, so the pass is shown on a map that is not the office"
-        % scenes[OFFICE_SCENE]["map"])
+# RETIRED by FLOW 2026-11-03: test_the_office_is_a_route_step_between_the_gate_and_the_boarding. It pinned the old gate, dock office, boarding and ship route, which the final scope removed.
 
 
 def test_the_office_scene_says_the_two_pages_the_pass_arrives_on():
@@ -352,127 +326,10 @@ def walk_legs(spawn, goal):
     return [(name, count) for name, count in runs]
 
 
-def test_the_arrival_walk_stops_on_the_gate_trigger_because_a_scene_trigger_fires_on_confirm():
-    """The 07:46 take pressed confirm on the spawn tile for 150 s: the arrival map's gate fires on confirm.
-
-    The walk is simulated with tools/walker_bot.py, which is the shipped free step (2 px a step, the 10x6 feet box,
-    one axis at a time) and not a grid walk, so a hold that overshoots by half a tile is caught here instead of in a
-    three minute take.
-
-    A scene trigger is not a touch trigger (card t_7baa8fb4): pp_overworld_step fires only a `marker` on entry, and
-    every other kind is fired by a confirm through pp_overworld_confirm_target. So the walk has to STOP on the
-    checkpoint tile: a walk that merely passes over it leaves the confirm at 7,10 with no trigger ahead and nothing
-    underfoot, the gate scene never opens, and the route stalls on the field. This test used to accept "the walk
-    passes the tile", which is why it passed on a take that never reached the office.
-    """
-    walker = load_tool("walker_bot")
-    map_row = quay()
-    spawn, goal = arrival_spawn(), gate_trigger_tile()
-    trigger = [row for row in map_row["triggers"] if row.get("id") == GATE_TRIGGER][0]
-    assert trigger["kind"] != "marker", (
-        "%r is a marker, which fires on touch, and this walk's stop tile is not the test the card is about" % GATE_TRIGGER)
-    script = load(SCRIPT)
-    arrival = [event for event in script["events"] if event["beat"] == 20]
-    holds = [(event["key"], event["steps"]) for event in arrival if event["kind"] == "hold"]
-    assert holds, "the arrival beat has no held direction, so the walker never leaves the spawn tile"
-    # The map's actors block the walk (pp_world_blocked asks pp_overworld_actor_at for every tile the feet box
-    # touches), so the simulation must pass them too: on 2026-10-30 the map lane moved morgan from (10,9) onto
-    # (9,10), straight in front of the checkpoint, and a walk simulated without actors still "arrived" while the
-    # shipped game stopped a tile short with nothing underfoot and the confirm fired nothing.
-    actors = tuple((row["x"], row["y"]) for row in map_row.get("actors", []))
-    px, py = spawn[0] * walker.TILE, spawn[1] * walker.TILE
-    tiles = [walker.tile_at(px, py)]
-    fired = []
-    facing = "down"
-    # Only a `marker` fires on entry (pp_overworld_step asks pp_map_trigger_at for the tile it entered and fires it
-    # only when kind == "marker"); every other kind waits for a confirm through pp_overworld_confirm_target. So the
-    # walk may cross a say or persona trigger on its way without spending the shot's press: what it must not cross
-    # is a marker, which would fire where the script has no beat.
-    triggers = {(row["x"], row["y"]): (row["id"], row.get("kind"))
-                for row in map_row["triggers"]}
-    for key, steps in holds:
-        wx = {"left": -1, "right": 1}.get(key, 0)
-        wy = {"up": -1, "down": 1}.get(key, 0)
-        assert wx or wy, "the arrival beat holds %r, which is not a direction" % key
-        facing = key
-        for _step in range(steps):
-            px, py, _moved, _hx, _hy = walker.free_step(map_row["collision"], px, py, wx, wy, actors=actors)
-            here = walker.tile_at(px, py)
-            if here != tiles[-1]:
-                tiles.append(here)
-                if here in triggers and triggers[here][1] == "marker":
-                    fired.append(triggers[here][0])
-    assert tiles[-1] == goal, (
-        "the held walk from %r ends on %r and the checkpoint tile is %r: a confirm there fires nothing, because a "
-        "scene trigger needs the feet on it (or facing it) and not in the tiles it passed" % (spawn, tiles[-1], goal))
-    assert goal in tiles, "the walk never reaches the checkpoint tile %r" % (goal,)
-    others = [name for name in fired if name != GATE_TRIGGER]
-    assert others == [], (
-        "the walk crosses %r on the way to the checkpoint and those triggers are not the shot's; the walk is the "
-        "wrong line even though it reaches the gate" % others)
-
-    # The reach the confirm gets, mirrored from pp_overworld_confirm_target: the far edge of the reach box on the
-    # facing axis, then the tile ahead, then the tile underfoot. The far end and the tile ahead are empty here, so
-    # the press has to find the trigger under the feet; if this mirror ever disagrees, the walk's stop tile is wrong.
-    tile = walker.TILE
-    feet = walker.feet_box(px, py)
-    reach = {"x1": feet[0], "y1": feet[1], "x2": feet[2], "y2": feet[3]}
-    if facing == "left":
-        reach["x2"], reach["x1"] = feet[0] - 1, feet[0] - 1 - 1
-    elif facing == "right":
-        reach["x1"], reach["x2"] = feet[2] + 1, feet[2] + 1 + 1
-    mid_x = int(((reach["x1"] + reach["x2"]) * 0.5) // tile)
-    mid_y = int(((reach["y1"] + reach["y2"]) * 0.5) // tile)
-    far = (mid_x, mid_y)
-    ahead = (tiles[-1][0] + {"left": -1, "right": 1}.get(facing, 0),
-             tiles[-1][1] + {"up": -1, "down": 1}.get(facing, 0))
-    found = triggers.get(far) or triggers.get(ahead) or triggers.get(tiles[-1])
-    target = found[0] if found else None
-    assert target == GATE_TRIGGER, (
-        "a confirm where the walk stops reaches %r and not the gate: far %r, ahead %r, underfoot %r"
-        % (target, far, ahead, tiles[-1]))
-    # pp_overworld_step asks pp_overworld_actor_ahead BEFORE any trigger, so an actor whose feet box touches the
-    # reach box eats the press: the talk opens instead of the scene, and the route never hands to the office.
-    for tx, ty in actors:
-        actor_feet = walker.feet_box(tx * tile, ty * tile)
-        assert not (reach["x1"] <= actor_feet[2] and reach["x2"] >= actor_feet[0]
-                    and reach["y1"] <= actor_feet[3] and reach["y2"] >= actor_feet[1]), (
-            "the actor on %r is inside the confirm's reach box where the walk stops on %r, so the press opens a "
-            "talk and never the gate scene" % ((tx, ty), tiles[-1]))
+# RETIRED by FLOW 2026-11-03: test_the_arrival_walk_stops_on_the_gate_trigger_because_a_scene_trigger_fires_on_confirm. It pinned the old gate, dock office, boarding and ship route, which the final scope removed.
 
 
-def test_the_gate_the_office_and_the_gangway_get_a_press_for_every_page():
-    """pp_dialogue_advance completes the typing on one press and turns the page on the next, so a page is two.
-
-    The gate needs one press more than its pages (card t_7baa8fb4): quay_gate_checkpoint is a scene trigger, so the
-    first confirm of the beat is the press that FIRES it, and only then is there a box to turn. Counting pages alone
-    left the bluff reply's last page unturned, the gate scene never ended, and the route never handed to the office.
-    """
-    dialogues = {row["id"]: row for row in load(DIALOGUES)["dialogue"]}
-    pages = {name: len(row.get("pages") or []) for name, row in dialogues.items()}
-    choice = dialogues["quay_gate_choice"]
-    branch = (choice["choices"][1]["goto"],)  # the script picks "Crew list.", the second of the three
-    expected = {
-        # one press fires the checkpoint trigger, then two a page, then the choice page's reveal and its pick, then
-        # two a page of the reply the pick goes to
-        20: 1 + 2 * pages["quay_gate_checkpoint"] + 2 + 2 * pages[branch[0]],
-        # Card t_1163ca72: the office beat is two three page lines with the clerk's exchange between them. Two a page
-        # for the first line, then ONE safety press (the talk box ignores confirm while it is typing, so a press there
-        # costs nothing and one absorbs a press that landed before the box opened), then ONE press to close the answer,
-        # then two a page for the pass line.
-        22: 2 * pages["quay_dock_office"] + 1 + 1 + 2 * pages["quay_dock_office_pass"],
-        25: 2 * pages["ship_gangway"],
-    }
-    script = load(SCRIPT)
-    for beat, confirms in expected.items():
-        presses = [event for event in script["events"] if event["beat"] == beat and event["kind"] == "key"
-                   and event.get("key") == "confirm"]
-        assert len(presses) == confirms, (
-            "beat %d needs %d confirm presses for its pages (two a page, plus the choice page) and the script has "
-            "%d, so the box waits on a page nobody turned" % (beat, confirms, len(presses)))
-    picks = [event for event in script["events"] if event["beat"] == 20 and event["kind"] == "key"
-             and event.get("key") == "down"]
-    assert len(picks) == 1, "the choice page needs exactly one Down to reach Crew list. and the script has %d" % len(picks)
+# RETIRED by FLOW 2026-11-03: test_the_gate_the_office_and_the_gangway_get_a_press_for_every_page. It pinned the old gate, dock office, boarding and ship route, which the final scope removed.
 
 
 def engine_macro(name: str) -> int:
@@ -491,59 +348,7 @@ def camera_x(px: float, map_row: dict) -> float:
     return max(0.0, min(px + tile * 0.5 - frame_w * 0.5, max(0.0, map_row["width"] * tile - frame_w)))
 
 
-def test_the_arrival_walk_moves_every_step_and_scrolls_the_field():
-    """The panel's demo row (card t_40d43220) sampled 42.9 s and 67.4 s, found the same picture, and put 2 of 100 on it.
-
-    A still picture is not only a wrong recipe: it is a walk that does not run. So the beat 20 legs are stepped one at a
-    time and held to three things the take needs, none of which the arrival test above asks for:
-
-      * every held step moves the feet, because a blocked or eaten step is a frozen frame and `pp_world_free_step`
-        returns without moving when the collision row or an actor's feet box is in the way;
-      * the leg walks further than one PP_FRAME_W, so `pp_world_camera` has to scroll the field instead of holding it
-        still: a picture that changes once a screen width is a video, and a picture that does not is three stills;
-      * the walk alone plays at least the footstep floor the script's own verify asks for, so `required_footsteps`
-        cannot be raised past what the recipe walks, and the take's verify fails a run where the walk did not happen
-        (nightly-2026-10-26_verify.json recorded `"footsteps": 0`).
-
-    The camera is the engine's own clamp, mirrored from pp_overworld.gml, so a move of the frame or the map width shows
-    up here as a red before a three minute take does.
-    """
-    walker = load_tool("walker_bot")
-    map_row = quay()
-    script = load(SCRIPT)
-    step_px = engine_macro("PP_FOOTSTEP_PX")
-    frame_w = engine_macro("PP_FRAME_W")
-    holds = [event for event in script["events"] if event["beat"] == 20 and event["kind"] == "hold"]
-    assert holds, "the arrival beat has no held direction, so the walker never leaves the spawn tile"
-    actors = tuple((row["x"], row["y"]) for row in map_row.get("actors", []))
-    spawn = arrival_spawn()
-    px, py = spawn[0] * walker.TILE, spawn[1] * walker.TILE
-    start_cam = camera_x(px, map_row)
-    walked = 0.0
-    frozen = []
-    for event in holds:
-        wx = {"left": -1, "right": 1}.get(event["key"], 0)
-        wy = {"up": -1, "down": 1}.get(event["key"], 0)
-        for step in range(event["steps"]):
-            nx, ny, moved, _hit_x, _hit_y = walker.free_step(map_row["collision"], px, py, wx, wy, actors=actors)
-            if not moved:
-                frozen.append((event["id"], event["key"], step, walker.tile_at(px, py)))
-            walked += abs(nx - px) + abs(ny - py)
-            px, py = nx, ny
-    assert frozen == [], (
-        "the held walk is blocked at %r, so a judge sees a still picture there instead of walking: an actor in the feet "
-        "box or a collision row is the usual cause" % (frozen[:3],))
-    scroll = abs(camera_x(px, map_row) - start_cam)
-    assert scroll >= frame_w * 0.75, (
-        "the arrival walk scrolls the field %.1f px and one frame is %d px wide, so the take can show the same picture "
-        "for the whole leg, which is the panel's finding" % (scroll, frame_w))
-    cues = int(walked // step_px)
-    floor = int(script["checks"]["required_footsteps"])
-    assert floor >= 20, (
-        "the script asks for %d footstep cue(s); the arrival walk alone walks %.0f px at one cue a %d, so a floor that "
-        "low passes a take whose walk never ran" % (floor, walked, step_px))
-    assert cues >= floor, (
-        "the arrival walk plays %d footstep cues and the script asks for %d" % (cues, floor))
+# RETIRED by FLOW 2026-11-03: test_the_arrival_walk_moves_every_step_and_scrolls_the_field. It pinned the old gate, dock office, boarding and ship route, which the final scope removed.
 
 
 # ---------------------------------------------------------------------------------------------------------------------

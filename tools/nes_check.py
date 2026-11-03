@@ -253,6 +253,8 @@ def check_mask(image: Image.Image) -> list:
     problems = []
     drawn = 0
     off_checker = 0
+    # Spec 13 allows two dithers: the 50 percent checker and 25 percent (one pixel in four, even x and even y).
+    quarter = sum(1 for yy in range(image.height) for xx in range(image.width) if pixels[xx, yy][3]) * 4 == image.width * image.height
     not_white = Counter()
     partial = 0
     for y in range(image.height):
@@ -265,7 +267,10 @@ def check_mask(image: Image.Image) -> list:
                 partial += 1
             if (r, g, b) != (255, 255, 255):
                 not_white[(r, g, b)] += 1
-            if (x + y) % 2:
+            if quarter:
+                if x % 2 or y % 2:
+                    off_checker += 1
+            elif (x + y) % 2:
                 off_checker += 1
     if partial:
         problems.append({"rule": "mask", "detail": "%d pixel(s) are partly transparent, a mask is opaque or a hole"
@@ -276,7 +281,7 @@ def check_mask(image: Image.Image) -> list:
     if off_checker:
         problems.append({"rule": "mask", "detail": "%d drawn pixel(s) are not on the 50 percent checker" % off_checker})
     total = image.width * image.height
-    if drawn * 2 != total:
+    if drawn * 2 != total and not quarter:
         problems.append({"rule": "mask", "detail": "%d of %d pixels are drawn, a 50 percent checker draws half"
                                                   % (drawn, total)})
     return problems

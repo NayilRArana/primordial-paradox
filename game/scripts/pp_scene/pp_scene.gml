@@ -15,7 +15,7 @@
 /// handful of frames, which is a palette change on steps the scene already spends and never a wait of its own.
 function pp_scene_commands() {
     return ["say", "move", "face", "wait", "fade", "music", "sfx", "camera", "shake", "flash",
-            "spawn", "destroy", "battle", "talk", "setflag", "branch", "end"];
+            "spawn", "destroy", "battle", "talk", "setflag", "branch", "credits", "end"];
 }
 
 /// The environment flag that switches on the F1 scene self test. Defined here, next to its only reader, and split so
@@ -133,24 +133,9 @@ function pp_scene_world_place(_world, _map_id, _start) {
             var _i = 0;
             while (_i < array_length(_map.actors)) {
                 var _a = _map.actors[_i];
-                _world.actors[$ string(_a.id)] = {
-                    name: _a.id,
-                    kind: _a.kind,
-                    dialogue: _a.dialogue,
-                    facing: _a.facing,
-                    tx: _a.x,
-                    ty: _a.y,
-                    px: _a.x * PP_TILE,
-                    py: _a.y * PP_TILE,
-                    walk: 0,
-                    moving: false,
-                    from_x: _a.x * PP_TILE,
-                    from_y: _a.y * PP_TILE,
-                    to_x: _a.x * PP_TILE,
-                    to_y: _a.y * PP_TILE,
-                    steps: 0,
-                    total: 1
-                };
+                // Card FLOW: one door builds a live actor, and a killed one is not placed (pp_overworld_actor_new).
+                var _live = pp_overworld_actor_new(_a);
+                if (!is_undefined(_live)) _world.actors[$ string(_a.id)] = _live;
                 _i += 1;
             }
         }
@@ -376,6 +361,8 @@ function pp_scene_command_start(_sc, _world) {
                 return;
             }
             _sc.state = "battle";
+            // Card FLOW: a fight a scene starts puts the route on the row that names it, as a trigger's fight does.
+            pp_route_battle_started(_cmd.id);
             if (_sc.autoplay) {
                 // The self test never opens a fight; it asks the world for the outcome the fight would hand back, so the
                 // wait for battle_done is the same wait a real fight goes through.
@@ -446,6 +433,19 @@ function pp_scene_command_start(_sc, _world) {
                 return;
             }
             pp_scene_advance(_sc, _world);
+            return;
+
+        case "credits":
+            // Card FLOW: the closing. The self test only notes it; a real run starts the credits and the scene holds
+            // still until the app swaps the mode (the credits end back at the title).
+            var _credits_variant = (variable_struct_exists(_cmd, "variant") ? string(_cmd.variant) : "spare");
+            if (_sc.autoplay) {
+                show_debug_message("PP scene trace: credits " + _credits_variant + " answered by the self test");
+                pp_scene_advance(_sc, _world);
+                return;
+            }
+            pp_flow_credits_start(_credits_variant);
+            _sc.state = "credits";
             return;
 
         case "end":
@@ -581,6 +581,9 @@ function pp_scene_step(_sc, _world) {
                 _sc.talk = undefined;
                 pp_scene_advance(_sc, _world);
             }
+            return;
+
+        case "credits":
             return;
 
         default:

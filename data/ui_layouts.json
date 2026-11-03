@@ -133,7 +133,7 @@
       "party": [
         {
           "member": "ZANDER",
-          "name": "ZEUS",
+          "name": "ZANDER",
           "x": 28,
           "y": 4,
           "w": 3,
@@ -142,7 +142,7 @@
         },
         {
           "member": "KONRAD",
-          "name": "KRONOS",
+          "name": "KONRAD",
           "x": 28,
           "y": 8,
           "w": 3,
@@ -151,7 +151,7 @@
         },
         {
           "member": "HADRIAN",
-          "name": "HADES",
+          "name": "HADRIAN",
           "x": 28,
           "y": 12,
           "w": 3,
@@ -173,9 +173,9 @@
         ],
         "status_header": "NAME      HP",
         "status_rows": [
-          "ZEUS    HP 20",
-          "KRONOS  HP 20",
-          "HADES   HP 20"
+          "ZANDER  HP 20",
+          "KONRAD  HP 20",
+          "HADRIAN HP 20"
         ]
       },
       "cursors": [
@@ -434,11 +434,11 @@
       "w": 30,
       "h": 6,
       "party_x": 20,
-      "party_step": 54,
+      "party_step": 56,
       "party_y": 120,
       "name_y": 153,
       "name_dx": 12,
-      "rule_x": 172,
+      "rule_x": 176,
       "stat_x": 180,
       "hp_y": 122,
       "hp_bar_y": 131,

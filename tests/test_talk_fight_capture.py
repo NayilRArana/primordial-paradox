@@ -33,6 +33,9 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TOOL = os.path.join(ROOT, "tools", "capture_talk_fight.py")
 
 
+pytestmark = pytest.mark.skip(reason="RETIRED by FLOW 2026-11-03: pins the old gate arrival walk and the first fight capture on the ship route; the final scope removed that route.")
+
+
 def load_tool():
     """The tool, imported by name from tools/ (tests/conftest.py puts that directory on sys.path).
 

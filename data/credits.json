@@ -43,189 +43,358 @@
       "text": "(c) OpenStreetMap contributors, Open Database Licence (ODbL) 1.0, https://www.openstreetmap.org/copyright"
     }
   ],
-  "notes": "One screen, drawn with spr_pp_font8 at 8 px a glyph: 32 characters a row and 30 rows. The font has one ink, so style is a role for a future second weight and never a colour today. Every text row is checked against the runtime glyph set from pp_font_glyphs() and against the row budget, because a row that runs past the frame cannot be seen and the sheet has no semicolon. The notices below are data that must travel inside the build, not screen text: data/ is mirrored into game/datafiles/, knowledge/ is not.",
-  "screens": [
-    {
-      "id": "credits",
-      "rows": [
-        {
-          "align": "centre",
-          "style": "title",
-          "text": "PRIMORDIAL PARADOX",
-          "x": 128,
-          "y": 16
+  "notes": "The credits roll (card CREDITS, FINAL-SCOPE 2026-11-03): a scroll drawn with spr_pp_font8, one ink, 77 glyphs, rows of at most 30 characters, centred. roll.sections are shared, roll.variants.<spare|kill> add the closing block about Percy and name the music cue (falls back to music_fallback when the cue is not registered). Meta model names are read from data/meta_bake.json and knowledge/MODELS-USED.md, never invented. The licence notices in licences and sources are data that must travel inside the build and are never drawn whole.",
+  "roll": {
+    "head_h": 18,
+    "hint_steps": 360,
+    "hold_steps": 300,
+    "lead_in_steps": 90,
+    "leave_steps": 45,
+    "line_h": 12,
+    "max_chars": 30,
+    "models": [
+      {
+        "display": "MUSE SPARK 1.3",
+        "model_id": "muse-spark-1.3"
+      },
+      {
+        "display": "MUSE IMAGE 1.0",
+        "model_id": "muse-image-1.0"
+      },
+      {
+        "display": "SAM 3.1",
+        "model_id": "sam-3.1"
+      }
+    ],
+    "music_fade_steps": 30,
+    "section_gap_rows": 2,
+    "sections": [
+      {
+        "id": "title",
+        "rows": [
+          {
+            "style": "title",
+            "text": "PRIMORDIAL PARADOX"
+          },
+          {
+            "style": "text",
+            "text": "A GAME BY NAYILINIST"
+          }
+        ]
+      },
+      {
+        "id": "hackathon",
+        "rows": [
+          {
+            "style": "text",
+            "text": "MADE FOR THE"
+          },
+          {
+            "style": "text",
+            "text": "META GLOBAL AI DEVELOPER"
+          },
+          {
+            "style": "text",
+            "text": "HACKATHON 2026"
+          }
+        ]
+      },
+      {
+        "id": "cast",
+        "rows": [
+          {
+            "style": "heading",
+            "text": "CAST"
+          },
+          {
+            "style": "text",
+            "text": "ZANDER"
+          },
+          {
+            "style": "text",
+            "text": "KONRAD"
+          },
+          {
+            "style": "text",
+            "text": "HADRIAN"
+          },
+          {
+            "style": "text",
+            "text": "PERCY"
+          },
+          {
+            "style": "text",
+            "text": "CAPTAIN MORGAN"
+          },
+          {
+            "style": "text",
+            "text": "AND THE HURRICANE"
+          }
+        ]
+      },
+      {
+        "id": "meta",
+        "rows": [
+          {
+            "style": "heading",
+            "text": "THE META MODELS"
+          },
+          {
+            "style": "text",
+            "text": "MUSE SPARK 1.3"
+          },
+          {
+            "style": "text",
+            "text": "the talk judge"
+          },
+          {
+            "style": "text",
+            "text": "and the art critic"
+          },
+          {
+            "style": "gap"
+          },
+          {
+            "style": "text",
+            "text": "MUSE IMAGE 1.0"
+          },
+          {
+            "style": "text",
+            "text": "concept art"
+          },
+          {
+            "style": "gap"
+          },
+          {
+            "style": "text",
+            "text": "SAM 3.1"
+          },
+          {
+            "style": "text",
+            "text": "cut the pictures out"
+          }
+        ]
+      },
+      {
+        "id": "crew",
+        "rows": [
+          {
+            "style": "heading",
+            "text": "THE BOTS"
+          },
+          {
+            "style": "text",
+            "text": "One human and a crew of"
+          },
+          {
+            "style": "text",
+            "text": "AI agents who drew, wrote,"
+          },
+          {
+            "style": "text",
+            "text": "composed, tested and checked"
+          },
+          {
+            "style": "text",
+            "text": "every single pixel."
+          },
+          {
+            "style": "gap"
+          },
+          {
+            "style": "text",
+            "text": "None of them slept."
+          },
+          {
+            "style": "text",
+            "text": "All of them retried."
+          }
+        ]
+      },
+      {
+        "id": "nodes",
+        "rows": [
+          {
+            "style": "heading",
+            "text": "THE NODES"
+          },
+          {
+            "style": "text",
+            "text": "A desktop"
+          },
+          {
+            "style": "text",
+            "text": "A tiny single board computer"
+          },
+          {
+            "style": "text",
+            "text": "Cloud GPU notebooks"
+          },
+          {
+            "style": "gap"
+          },
+          {
+            "style": "text",
+            "text": "Thank you for the cycles."
+          }
+        ]
+      },
+      {
+        "id": "tools",
+        "rows": [
+          {
+            "style": "heading",
+            "text": "ALSO THANKS TO"
+          },
+          {
+            "style": "text",
+            "text": "GAMEMAKER LTS2026"
+          },
+          {
+            "style": "text",
+            "text": "BY YOYO GAMES LTD"
+          },
+          {
+            "style": "gap"
+          },
+          {
+            "style": "text",
+            "text": "PRESS START 2P"
+          },
+          {
+            "style": "text",
+            "text": "BY CODEMAN38"
+          },
+          {
+            "style": "text",
+            "text": "(c) 2012 THE PRESS START 2P"
+          },
+          {
+            "style": "text",
+            "text": "PROJECT AUTHORS"
+          },
+          {
+            "style": "text",
+            "text": "SIL OPEN FONT LICENCE 1.1"
+          },
+          {
+            "style": "gap"
+          },
+          {
+            "style": "text",
+            "text": "MAP DATA"
+          },
+          {
+            "style": "text",
+            "text": "(c) OPENSTREETMAP"
+          },
+          {
+            "style": "text",
+            "text": "CONTRIBUTORS"
+          },
+          {
+            "style": "text",
+            "text": "OPEN DATABASE LICENCE 1.0"
+          },
+          {
+            "style": "text",
+            "text": "openstreetmap.org/copyright"
+          },
+          {
+            "style": "gap"
+          },
+          {
+            "style": "text",
+            "text": "MUSIC, ART AND CODE"
+          },
+          {
+            "style": "text",
+            "text": "ORIGINAL TO THIS PROJECT"
+          }
+        ]
+      }
+    ],
+    "skip_hold_steps": 30,
+    "speed": 0.5,
+    "variants": {
+      "kill": {
+        "closing": {
+          "id": "closing_kill",
+          "rows": [
+            {
+              "style": "heading",
+              "text": "THE STORM IS OVER"
+            },
+            {
+              "style": "text",
+              "text": "The wind has dropped."
+            },
+            {
+              "style": "text",
+              "text": "The sea is very quiet."
+            },
+            {
+              "style": "text",
+              "text": "Percy is gone."
+            },
+            {
+              "style": "text",
+              "text": "The tide remembers."
+            },
+            {
+              "style": "gap"
+            },
+            {
+              "style": "title",
+              "text": "THANK YOU FOR PLAYING"
+            }
+          ]
         },
-        {
-          "align": "centre",
-          "style": "value",
-          "text": "A GAME BY NAYIL ARANA",
-          "x": 128,
-          "y": 24
+        "music_cue": "PP-15a",
+        "music_fallback": "PP-01"
+      },
+      "spare": {
+        "closing": {
+          "id": "closing_spare",
+          "rows": [
+            {
+              "style": "heading",
+              "text": "THE STORM IS OVER"
+            },
+            {
+              "style": "text",
+              "text": "Percy is himself again."
+            },
+            {
+              "style": "text",
+              "text": "He joins the party."
+            },
+            {
+              "style": "text",
+              "text": "Zander and Konrad and Hadrian"
+            },
+            {
+              "style": "text",
+              "text": "have a new friend."
+            },
+            {
+              "style": "text",
+              "text": "The sea sends its regards."
+            },
+            {
+              "style": "gap"
+            },
+            {
+              "style": "title",
+              "text": "THANK YOU FOR PLAYING"
+            }
+          ]
         },
-        {
-          "align": "centre",
-          "style": "blank",
-          "text": "",
-          "x": 128,
-          "y": 32
-        },
-        {
-          "align": "centre",
-          "style": "label",
-          "text": "ENGINE",
-          "x": 128,
-          "y": 40
-        },
-        {
-          "align": "centre",
-          "style": "value",
-          "text": "GAMEMAKER LTS2026",
-          "x": 128,
-          "y": 48
-        },
-        {
-          "align": "centre",
-          "style": "value",
-          "text": "BY YOYO GAMES LTD",
-          "x": 128,
-          "y": 56
-        },
-        {
-          "align": "centre",
-          "style": "blank",
-          "text": "",
-          "x": 128,
-          "y": 64
-        },
-        {
-          "align": "centre",
-          "style": "label",
-          "text": "FONT",
-          "x": 128,
-          "y": 72
-        },
-        {
-          "align": "centre",
-          "style": "value",
-          "text": "PRESS START 2P",
-          "x": 128,
-          "y": 80
-        },
-        {
-          "align": "centre",
-          "style": "value",
-          "text": "BY CODEMAN38",
-          "x": 128,
-          "y": 88
-        },
-        {
-          "align": "centre",
-          "style": "legal",
-          "text": "(C) 2012 THE PRESS START 2P",
-          "x": 128,
-          "y": 96
-        },
-        {
-          "align": "centre",
-          "style": "legal",
-          "text": "PROJECT AUTHORS",
-          "x": 128,
-          "y": 104
-        },
-        {
-          "align": "centre",
-          "style": "legal",
-          "text": "SIL OPEN FONT LICENCE 1.1",
-          "x": 128,
-          "y": 112
-        },
-        {
-          "align": "centre",
-          "style": "blank",
-          "text": "",
-          "x": 128,
-          "y": 120
-        },
-        {
-          "align": "centre",
-          "style": "label",
-          "text": "MAP DATA",
-          "x": 128,
-          "y": 128
-        },
-        {
-          "align": "centre",
-          "style": "legal",
-          "text": "(C) OPENSTREETMAP",
-          "x": 128,
-          "y": 136
-        },
-        {
-          "align": "centre",
-          "style": "legal",
-          "text": "CONTRIBUTORS",
-          "x": 128,
-          "y": 144
-        },
-        {
-          "align": "centre",
-          "style": "legal",
-          "text": "OPEN DATABASE LICENCE 1.0",
-          "x": 128,
-          "y": 152
-        },
-        {
-          "align": "centre",
-          "style": "legal",
-          "text": "OPENSTREETMAP.ORG",
-          "x": 128,
-          "y": 160
-        },
-        {
-          "align": "centre",
-          "style": "legal",
-          "text": "COPYRIGHT PAGE",
-          "x": 128,
-          "y": 168
-        },
-        {
-          "align": "centre",
-          "style": "blank",
-          "text": "",
-          "x": 128,
-          "y": 176
-        },
-        {
-          "align": "centre",
-          "style": "label",
-          "text": "MUSIC, ART AND CODE",
-          "x": 128,
-          "y": 184
-        },
-        {
-          "align": "centre",
-          "style": "value",
-          "text": "ORIGINAL TO THIS PROJECT",
-          "x": 128,
-          "y": 192
-        },
-        {
-          "align": "centre",
-          "style": "blank",
-          "text": "",
-          "x": 128,
-          "y": 200
-        },
-        {
-          "align": "centre",
-          "style": "legal",
-          "text": "(C) 2026 NAYIL ARANA",
-          "x": 128,
-          "y": 208
-        }
-      ]
+        "music_cue": "PP-15b",
+        "music_fallback": "PP-01"
+      }
     }
-  ],
+  },
   "sources": [
     {
       "holder": "Copyright 2012 The Press Start 2P Project Authors (cody@zone38.net)",

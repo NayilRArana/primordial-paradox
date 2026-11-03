@@ -33,7 +33,7 @@
     },
     {
       "id": "percy",
-      "name": "Percy",
+      "name": "PERCY",
       "max_hp": 40,
       "attack": {
         "min": 3,
@@ -116,7 +116,7 @@
     },
     {
       "id": "morgan",
-      "name": "Morgan",
+      "name": "CAPTAIN MORGAN",
       "max_hp": 28,
       "attack": {
         "min": 2,

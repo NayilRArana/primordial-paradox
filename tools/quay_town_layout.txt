@@ -56,10 +56,11 @@ ff===b:::b====L==b===LpppL==b==L==b==b===b===fff
 @spawn from_gate 8 10
 @spawn from_office 30 26
 @spawn from_pier 23 39
-@actor morgan 9 10 left sailor quay_gate_checkpoint
+@actor morgan 6 9 right sailor quay_morgan_thanks scene=quay_morgan_encounter done_flag=morgan_spared gone_flag=morgan_killed
+@actor percy 23 37 up sailor quay_percy_after_spare scene=quay_percy_encounter done_flag=percy_spared gone_flag=percy_killed
 @barrier 8 8 b
 @plaza 19 23 27 29
-@fightspot morgan_gate 8 11
+@fightspot morgan_gate 7 9
 @osm 9 7 A1 11 0 Southampton Register Office
 @osm 15 7 A3 1 11 Kuti's Brasserie
 @osm 42 7 A1 51 5 Oceana Boulevard
@@ -84,12 +85,9 @@ ff===b:::b====L==b===LpppL==b==L==b==b===b===fff
 @trigger 37 25 say say_door_playhouse
 @trigger 38 25 say say_door_playhouse
 @trigger 3 28 say say_door_playhouse
-@trigger 30 25 map quay_dock_office spawn=from_quay
-@trigger 8 10 scene quay_gate_checkpoint once=true
-@trigger 8 12 scene quay_yard_walk once=true condition=gate_passed
-@trigger 23 40 map ship_small spawn=start
-@trigger 24 40 map ship_small spawn=start
-@trigger 23 38 say ship_aboard
-@trigger 24 38 say ship_aboard
+@trigger 30 25 say say_door_register
+@trigger 22 32 scene quay_bridge_wind condition=!morgan_resolved touch=true
+@trigger 23 32 scene quay_bridge_wind condition=!morgan_resolved touch=true
+@trigger 24 32 scene quay_bridge_wind condition=!morgan_resolved touch=true
 @trigger 23 35 save quay_rest_pier
 @trigger 5 30 save quay_rest_tower

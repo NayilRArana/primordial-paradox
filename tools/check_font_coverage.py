@@ -33,6 +33,7 @@ What it reads, and why each part is read rather than typed here:
      data/title.json           nothing: its rows name art files and layer speeds, the menu words live in GML
      data/meta_bake.json       rows[].text[], rows[].hint, rows[].fallback.text[]
      data/enemies/all.json     enemies[].name
+     data/items.json           items[].name, items[].description, items[].attack_line, items[].damage_line
 
 Usage:
     python tools/check_font_coverage.py             scan, print covered and missing, exit 1 on any missing character
@@ -75,6 +76,10 @@ PRINTED_FIELDS = (
     ("data/title.json", (), ()),
     ("data/meta_bake.json", ("rows",), ("text", "hint", "fallback.text")),
     ("data/enemies/all.json", ("enemies",), ("name",)),
+    # Card PP-KNIFE (t_503707c8): an item's name, its one line description and the two lines the battle screen prints
+    # are text on screen. The knife's attack line carries an apostrophe, so this row is also what proves the sheet
+    # has the glyph before a fight prints a hole where it should be.
+    ("data/items.json", ("items",), ("name", "description", "attack_line", "damage_line")),
 )
 
 
@@ -267,8 +272,18 @@ def _field_strings(row, dotted):
     return out
 
 
+TOKEN_PLACEHOLDERS = {"{name}": "NAME", "{damage}": "8"}
+
+
 def scan_printed(root, wanted):
-    """Return ([{file, field, text}], [files read with no printed field])."""
+    """Return ([{file, field, text}], [files read with no printed field]).
+
+    A data line may carry a template token, and the game fills it at run time (card PP-KNIFE: the knife's attack line
+    is `* You brandish {name}.` and the director puts the item's own name in it). The brace is not a character the
+    font has to carry, so a token is replaced with a placeholder made of glyphs the sheet already needs before the
+    text is scanned; `{name}` becomes NAME and `{damage}` becomes 8, which is what the player reads on screen.
+    A token this table does not know is left alone, so a new token is a change to this map and not a silent gap.
+    """
     found = []
     silent = []
     for path, row_path, fields in PRINTED_FIELDS:
@@ -282,6 +297,8 @@ def scan_printed(root, wanted):
             for row in _rows(document, row_path):
                 for field in fields:
                     for text in _field_strings(row, field):
+                        for token, value in TOKEN_PLACEHOLDERS.items():
+                            text = text.replace(token, value)
                         found.append({"file": path, "field": field, "text": text})
                         count += 1
         if count == 0:

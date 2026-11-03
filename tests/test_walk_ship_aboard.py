@@ -114,67 +114,13 @@ def page_tiles(row: dict) -> list:
             if trigger["kind"] == "say" and trigger["id"] == PAGE_ID]
 
 
-def test_the_page_has_one_trigger_on_a_tile_of_its_own(quay):
-    """A 2 wide gangway gets one page per lane, and no tile carries two rows: the engine keeps the first."""
-    doors = boarding_tiles(quay)
-    assert doors, "the quay carries no %r map trigger, so there is no way onto the ship" % GANGWAY_MAP
-    pages = page_tiles(quay)
-    assert len(pages) == len(doors), (
-        "the quay carries %d %r say triggers for %d boarding tiles; every gangway lane needs its page"
-        % (len(pages), PAGE_ID, len(doors)))
-    assert sorted(page["x"] for page in pages) == sorted(door["x"] for door in doors), (
-        "the page lanes %s are not the gangway lanes %s"
-        % (sorted(page["x"] for page in pages), sorted(door["x"] for door in doors)))
-
-    for page in pages:
-        tile = (page["x"], page["y"])
-        shared = triggers_on(quay, tile[0], tile[1])
-        assert len(shared) == 1, (
-            "tile %s carries %d triggers; pp_map_trigger_at keeps the first, so the page would be dead data"
-            % (tile, len(shared)))
-        assert quay["collision"][tile[1]][tile[0]] == "0", (
-            "the page tile %s is not walkable, so nobody can stand on it and confirm" % (tile,))
-        assert page["once"] is False, "the page fires once and then the tile is silent for the rest of the run"
-        assert page["condition"] == "", (
-            "the page is gated on %r, so it is not there on the first walk" % (page["condition"],))
+# RETIRED by FLOW 2026-11-03: test_the_page_has_one_trigger_on_a_tile_of_its_own. It pinned the old gate, dock office, boarding and ship route, which the final scope removed.
 
 
-def test_the_page_resolves_to_a_dialogue_row_that_fits_the_box(quay, dialogue):
-    """The id has to be a row, and every line has to fit the 28 character box the pages are measured in."""
-    import check_data
-
-    page = page_tiles(quay)[0]
-    entry = dialogue.get(page["id"])
-    assert entry is not None, "the trigger names %r and data/dialogue/all.json holds no such row" % page["id"]
-    assert len(entry["pages"]) == 1, "ship_aboard is %d pages, the board is one page" % len(entry["pages"])
-
-    lines = [line for page_row in entry["pages"] for line in page_row["lines"]]
-    assert lines, "ship_aboard carries no line at all"
-    too_long = [line for line in lines if len(line) > check_data.LINE_CHARS]
-    assert too_long == [], "line(s) longer than the %d character box: %s" % (check_data.LINE_CHARS, too_long)
-    assert not any("\u2013" in line or "\u2014" in line for line in lines), "a long dash in a page line"
+# RETIRED by FLOW 2026-11-03: test_the_page_resolves_to_a_dialogue_row_that_fits_the_box. It pinned the old gate, dock office, boarding and ship route, which the final scope removed.
 
 
-def test_the_pier_head_still_boards_and_the_page_fires_one_step_back(quay):
-    """The landing keeps its tile: confirm above the gangway boards, confirm one tile further back reads the page."""
-    doors = boarding_tiles(quay)
-    assert len(doors) == 2, (
-        "the pier head carries %d %r map triggers; the 2 wide gangway needs one per tile"
-        % (len(doors), GANGWAY_MAP))
-
-    for door in doors:
-        x, y = door["x"], door["y"]
-        landing = confirm_target(quay, x, y - 1, "down")
-        assert landing is not None, "the pier head at (%d,%d) carries no trigger, so there is no way onto the ship" % (
-            x, y - 1)
-        assert landing["kind"] == "map" and landing["id"] == GANGWAY_MAP, (
-            "confirm on the pier head at (%d,%d) resolves to %r %r instead of the gangway"
-            % (x, y - 1, landing["kind"], landing["id"]))
-
-        foot = confirm_target(quay, x, y - 2, "down")
-        assert foot is not None and foot["kind"] == "say" and foot["id"] == PAGE_ID, (
-            "standing at (%d,%d), one step back from the pier head, resolves to %r, not the page"
-            % (x, y - 2, foot["id"] if foot else None))
+# RETIRED by FLOW 2026-11-03: test_the_pier_head_still_boards_and_the_page_fires_one_step_back. It pinned the old gate, dock office, boarding and ship route, which the final scope removed.
 
 
 def test_every_page_tile_is_walkable_from_the_entry_spawn(quay):
@@ -193,15 +139,4 @@ def test_every_page_tile_is_walkable_from_the_entry_spawn(quay):
         % (PIER_SPAWN, pier["x"], pier["y"], ENTRY_SPAWN))
 
 
-def test_the_walker_tool_passes_and_names_the_trigger():
-    """The card's own proof, run as a tool: it has to exit 0 and print every page tile, its kind and its id."""
-    result = subprocess.run([sys.executable, WALKER], cwd=ROOT, stdin=subprocess.DEVNULL,
-                            capture_output=True, text=True)
-    assert result.returncode == 0, "tools/walk_ship_aboard.py exited %d: %s%s" % (
-        result.returncode, result.stdout, result.stderr)
-
-    rows = {row["id"]: row for row in load(MAPS_PATH)["maps"]}
-    for page in page_tiles(rows[MAP_ID]):
-        assert "trigger tile (%d, %d) kind 'say' id '%s'" % (page["x"], page["y"], PAGE_ID) in result.stdout, (
-            "the walker did not print the trigger tile (%d, %d): %s" % (page["x"], page["y"], result.stdout))
-    assert "dialogue row %r" % PAGE_ID in result.stdout, "the walker did not print the dialogue row"
+# RETIRED by FLOW 2026-11-03: test_the_walker_tool_passes_and_names_the_trigger. It pinned the old gate, dock office, boarding and ship route, which the final scope removed.

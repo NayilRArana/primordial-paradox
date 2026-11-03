@@ -281,40 +281,13 @@
           "y": 39
         }
       },
-      "dock_office_door": {
-        "x": 30,
-        "y": 25,
-        "kind": "map",
-        "id": "quay_dock_office",
-        "spawn": "from_quay",
-        "once": false,
-        "condition": ""
-      },
-      "boarding_triggers": [
-        {
-          "x": 23,
-          "y": 40,
-          "kind": "map",
-          "id": "ship_small",
-          "spawn": "start",
-          "once": false,
-          "condition": ""
-        },
-        {
-          "x": 24,
-          "y": 40,
-          "kind": "map",
-          "id": "ship_small",
-          "spawn": "start",
-          "once": false,
-          "condition": ""
-        }
-      ],
+      "dock_office_door": null,
+      "boarding_triggers": [],
       "fight_spots": [
         {
           "id": "morgan_gate",
-          "x": 8,
-          "y": 11
+          "x": 7,
+          "y": 9
         }
       ]
     },

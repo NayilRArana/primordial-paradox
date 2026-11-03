@@ -325,7 +325,10 @@ CUE_IDS = ["PP-01", "PP-02", "PP-03", "PP-04", "PP-05", "PP-06", "PP-07", "PP-08
            # PP-17 Boarding is gamedev's own row (ruling D1, amended by D1a on 2026-10-29): the
            # boarding scene needs its own cue and hands back to PP-05. It is the only id here the
            # musician did not write, and it is the only row whose placeholder flag is false.
-           "PP-17"]
+           "PP-17",
+           # PP-18 Harbor, Calm: the old PP-03 file, kept registered when PP-03 became the storm theme
+           # (final scope 2026-11-03).
+           "PP-18"]
 ROOT_DATA = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data")
 
 
@@ -335,7 +338,7 @@ def test_cue_registry_uses_the_musicians_own_ids_and_count_is_pinned(read_json):
     cue that is quietly dropped from the table fails here instead of failing as silence."""
     data = read_json(os.path.join(ROOT_DATA, "audio.json"))
     assert [row["id"] for row in data["cues"]] == CUE_IDS
-    assert len(data["cues"]) == 18
+    assert len(data["cues"]) == 19
     for row in data["cues"]:
         if row["id"] == "PP-17":
             # The one row that claims a real delivered take, so it must be able to prove it.
@@ -390,9 +393,14 @@ def test_missing_slice_cue_is_named(data_root, read_json, write_json):
 def test_unknown_cue_id_in_a_scene_is_named(data_root, read_json, write_json):
     path = data_root / "data" / "scenes" / "all.json"
     data = read_json(path)
-    for command in data["scenes"][0]["commands"]:
-        if command.get("cmd") == "music":
-            command["id"] = "PP-99"
+    done = False
+    for scene in data["scenes"]:
+        for command in scene["commands"]:
+            if command.get("cmd") == "music":
+                command["id"] = "PP-99"
+                done = True
+                break
+        if done:
             break
     write_json(path, data)
 

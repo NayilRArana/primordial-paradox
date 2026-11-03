@@ -136,16 +136,17 @@
     },
     {
       "id": "percy",
-      "background": "ship_office",
-      "name": "Percy",
+      "interrupt_off": true,
+      "background": "quay_town",
+      "name": "Percy, Town Quay",
       "enemies": [
         "percy"
       ],
       "seed": 771,
       "music": "PP-06",
-      "intro_dialogue": "percy_entry",
-      "win_dialogue_kill": "percy_win_kill",
-      "win_dialogue_spare": "percy_win_spare",
+      "intro_dialogue": "quay_percy_intro",
+      "win_dialogue_kill": "quay_percy_win_kill",
+      "win_dialogue_spare": "quay_percy_win_spare",
       "lose_dialogue": "battle_lose",
       "trust_per_talk": 1,
       "flags_on_kill": [
@@ -162,22 +163,24 @@
     {
       "id": "morgan_gate",
       "background": "quay_town",
-      "name": "Morgan, Town Quay Gate",
+      "name": "Captain Morgan, Town Quay",
       "enemies": [
         "morgan"
       ],
       "seed": 20261027,
       "music": "PP-04",
-      "intro_dialogue": "battle_intro_morgan",
-      "win_dialogue_kill": "morgan_win_kill",
-      "win_dialogue_spare": "morgan_win_spare",
+      "intro_dialogue": "quay_morgan_intro",
+      "win_dialogue_kill": "quay_morgan_win_kill",
+      "win_dialogue_spare": "quay_morgan_win_spare",
       "lose_dialogue": "battle_lose",
       "trust_per_talk": 1,
       "flags_on_kill": [
-        "morgan_killed"
+        "morgan_killed",
+        "morgan_resolved"
       ],
       "flags_on_spare": [
-        "morgan_spared"
+        "morgan_spared",
+        "morgan_resolved"
       ],
       "talk": {
         "card": "morgan",
