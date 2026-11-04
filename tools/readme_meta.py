@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """readme_meta.py: every README in this project is written by a Meta model, and this tool is the gate that proves it.
 
 Why: the author wants the front pages to read like a person wrote them (the model that the project is built to showcase), not like the
@@ -25,9 +25,10 @@ BASE = os.environ.get("META_API_BASE", "https://api.meta.ai/v1").rstrip("/")
 MODEL = os.environ.get("README_META_MODEL", "muse-spark-1.3")
 STAMP_RX = re.compile(r"\n*<!-- readme-author: (\S+) body-sha256: ([0-9a-f]{64}) -->\s*$")
 SYSTEM = ("You are a clear technical writer preparing a hackathon project page for judges and curious readers. Rewrite the Markdown you are given so it is easy for a human to read: "
-          "plain direct English, short paragraphs (three sentences at most), concrete verbs, short bullet lists where natural, explain jargon in half a sentence, no hype words, keep the author's honest voice. "
+          "plain direct English, short paragraphs (three sentences at most), concrete verbs, short bullet lists where natural, explain only terms a game-jam judge could not know, and do not add glossary asides for well known words such as GameMaker, Python, NES, pixel or Meta, no hype words, keep the author's honest voice. "
           "HARD RULES: keep EVERY fact, number, date, file path, URL, command, code block and table row exactly as given (you may tighten the words around them). Keep any heading line unchanged. "
           "Add no new claims and no new numbers. Never use an em dash or an en dash; use commas, colons or periods. Output only the rewritten Markdown.")
+LIMIT = int(os.environ.get("README_CHUNK", "1200"))
 NUM = re.compile(r"\d[\d,]*(?:\.\d+)?")
 TICK = re.compile(r"`[^`\n]+`")
 URL = re.compile(r"https?://[^\s)>\]]+")
@@ -63,9 +64,9 @@ def call(text, extra=""):
     body = json.dumps({"model": MODEL, "temperature": 0.2, "max_tokens": 4000,
                        "messages": [{"role": "system", "content": SYSTEM + extra}, {"role": "user", "content": text}]}).encode("utf-8")
     req = urllib.request.Request(BASE + "/chat/completions", data=body, headers={"Content-Type": "application/json", "Authorization": "Bearer " + key})
-    for attempt in range(4):
+    for attempt in range(3):
         try:
-            with urllib.request.urlopen(req, timeout=180) as r:
+            with urllib.request.urlopen(req, timeout=100) as r:
                 return json.load(r)["choices"][0]["message"]["content"].strip()
         except urllib.error.HTTPError as e:
             if e.code in (429, 500, 502, 503):
@@ -108,31 +109,42 @@ def chunks(body, limit=2600):
     return out
 
 
-def rewrite(path):
+def rewrite_piece(piece):
+    """Returns (text, ok, bad). A piece the model garbles, or does not answer, keeps its text."""
+    new = call(piece)
+    ok, bad = valid(piece, new)
+    if not ok:
+        new = call(piece, " A previous attempt dropped or changed these items, keep them verbatim: %s." % json.dumps(bad[:12]))
+        ok, bad = valid(piece, new)
+    return (new.rstrip("\n") if ok else piece.rstrip("\n")), ok, bad
+
+
+def rewrite(path, workers=6):
+    from concurrent.futures import ThreadPoolExecutor
     text = open(path, encoding="utf-8").read()
     body, _a, _d = split_stamp(text)
     parts = [p for p in re.split(r"(?m)(?=^## )", body) if p.strip()]
-    result, changed, kept = [], 0, 0
+    pieces = []
     for part in parts:
-        pieces = [part] if len(part) <= 2600 else chunks(part)
-        for piece in pieces:
-            if len(piece.strip()) < 140 or piece.lstrip().startswith("|"):
-                result.append(piece.rstrip("\n")); continue
-            new = call(piece)
-            ok, bad = valid(piece, new)
-            if not ok:
-                new = call(piece, " A previous attempt dropped or changed these items, keep them verbatim: %s." % json.dumps(bad[:12]))
-                ok, bad = valid(piece, new)
-            if ok:
-                result.append(new.rstrip("\n")); changed += 1
-            else:
-                result.append(piece.rstrip("\n")); kept += 1
-                print("  kept the original of a piece starting %r (%s)" % (piece.strip().splitlines()[0][:50], bad[:4]))
-    final = "\n\n".join(result).rstrip("\n") + "\n"
+        pieces.extend([part] if len(part) <= LIMIT else chunks(part, LIMIT))
+    todo = [i for i, p in enumerate(pieces) if len(p.strip()) >= 140 and not p.lstrip().startswith("|")]
+    print("%s: %d pieces, %d to send to %s with %d workers" % (path, len(pieces), len(todo), MODEL, workers), flush=True)
+    results = {i: (pieces[i].rstrip("\n"), None, []) for i in range(len(pieces))}
+    done = [0]
+
+    def work(i):
+        r = rewrite_piece(pieces[i])
+        results[i] = r
+        done[0] += 1
+        print("  piece %d of %d done (%s), %d of %d finished" % (i + 1, len(pieces), "rewritten" if r[1] else "kept original: %s" % r[2][:3], done[0], len(todo)), flush=True)
+
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        list(pool.map(work, todo))
+    final = "\n\n".join(results[i][0] for i in range(len(pieces))).rstrip("\n") + "\n"
     stamp = "\n<!-- readme-author: %s body-sha256: %s -->\n" % (MODEL, body_hash(final))
     open(path, "w", encoding="utf-8", newline="\n").write(final + stamp)
-    print("%s: %d pieces rewritten by %s, %d kept; stamped" % (path, changed, MODEL, kept))
-
+    changed = sum(1 for i in todo if results[i][1])
+    print("%s: %d pieces rewritten by %s, %d kept; stamped" % (path, changed, MODEL, len(todo) - changed), flush=True)
 
 def main(argv):
     if len(argv) < 2 or argv[0] not in ("rewrite", "check", "hash"):
