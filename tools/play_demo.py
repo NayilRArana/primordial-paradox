@@ -2731,7 +2731,11 @@ def run_demo(script, keep_raw=False, shot_table=None):
     process = run.process
     # Card ROUTE-STALL: the replay may hold at every marker_wait_s event, so the harness watchdog allows the same budget the
     # recorder bound does (the 2026-11-02 19:47 run was killed at 493 s, which was the plan plus 240 s with no hold budget).
-    cap.start_watchdog(process, int(record_bound_seconds(script, seconds)) + 240)
+    # Card RECORDER-ORPHAN: the recorder starts after the watchdog, so the watchdog gets a one element holder and the
+    # recorder is put into it below; when the watchdog fires it then stops the recorder too, so a kill can never leave
+    # ffmpeg recording the desktop after the harness is gone.
+    recorder_holder: list = [None]
+    cap.start_watchdog(process, int(record_bound_seconds(script, seconds)) + 240, recorder=recorder_holder)
     failures = []
     recorder = None
     recorder_log = None
@@ -2803,6 +2807,7 @@ def run_demo(script, keep_raw=False, shot_table=None):
         # instant, so a rebuilt track is placed on the same clock the video runs on.
         audio_started_at = time.monotonic()
         recorder, recorder_log, recorder_log_path = start_recorder(rect, raw_path, record_seconds, fps, loopback)
+        recorder_holder[0] = recorder
         print("recording up to %.1f s of the window to %s (stopped by hand %.1f s after the replay)"
               % (record_bound, raw_path, RECORD_TAIL_S))
         log_audio = LogAudioWatch(log_path, audio_started_at)

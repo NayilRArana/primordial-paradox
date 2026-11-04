@@ -936,12 +936,21 @@ def kill_tree(process):
             pass
 
 
-def start_watchdog(process, seconds):
-    """Kill the child and this process if the harness overruns, so a run can never hang the lane."""
+def start_watchdog(process, seconds, recorder=None):
+    """Kill the child, the recorder and this process if the harness overruns, so a run can never hang the lane.
+
+    recorder is the recording subprocess the harness started, or None when it has none. play_demo starts its
+    recorder after the watchdog, so it passes a one element list and puts the recorder into it once it starts;
+    the watchdog reads the list when it fires, so a recorder that starts late is still stopped. kill_tree
+    ignores a recorder that already exited, so a finished recorder needs no special case here.
+    """
     def watchdog():
         time.sleep(seconds)
         print("watchdog: the harness overran %.0f s, killing the game and exiting" % seconds, flush=True)
         kill_tree(process)
+        if recorder is not None:
+            target = recorder[0] if isinstance(recorder, list) else recorder
+            kill_tree(target)
         os._exit(3)
 
     thread = threading.Thread(target=watchdog, daemon=True)
