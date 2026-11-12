@@ -1,0 +1,30 @@
+{
+  "answer": {
+    "effect": "none",
+    "model": "microsoft_phi-4-mini-instruct",
+    "mood": "guarded",
+    "repaired": [
+      "dropped_extra_lines",
+      "uppercased"
+    ],
+    "source": "open-weights",
+    "text": [
+      "WRITE 'NAYIL' IN THE LEDGER.",
+      "THE SHIP SAILS AT DAWN."
+    ]
+  },
+  "created_at": "2026-11-01T20:26:33Z",
+  "endpoint": "http://127.0.0.1:51235/v1",
+  "key": "6040025532b7fa10c92884e654ed866066d58cc3f8b53c2678091e30c2b75240",
+  "kind": "talk",
+  "model": "microsoft_phi-4-mini-instruct",
+  "network": false,
+  "request": {
+    "encounter_id": "tutorial_sailors",
+    "npc": "nye",
+    "player_chars": 16,
+    "player_sha256": "abf9cb7a0dc09e076639c77eef992a85abd12af284fd3450b4a2daf5125a4bb8",
+    "scene": "npc"
+  },
+  "source": "open-weights"
+}

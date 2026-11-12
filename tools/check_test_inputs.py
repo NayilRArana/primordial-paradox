@@ -88,6 +88,12 @@ FIXTURES = (
     "output/drive/pp_drive_shot_10.png",
     "output/drive/pp_drive_shot_11.png",
     "output/drive/pp_drive_shot_12.png",
+    # Card t_6cb8f419: the S6 offline stage's source recording. data/receipts/meta_receipts.jsonl hashes it
+    # (rcpt-95d81b3b69338f64, rcpt-952cf8158a3b7c47) and tests/test_receipts.py re-hashes it through
+    # tools/check_receipts.py, which fails the row with `source output/first_fight_talk_capture.mp4 does not
+    # exist` in any checkout that lacks it. It was green here and red on the Pine shard for that reason, and
+    # the .mp4 is excluded by output/* and dropped by that zip's SKIP_EXT, so both rules name it one by one.
+    "output/first_fight_talk_capture.mp4",
 )
 
 # The calls that answer "is this input here". A skip guarded by one of these is the defect.

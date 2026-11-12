@@ -66,6 +66,16 @@ output/*
 !output/southampton_sample_frame.png
 !output/westminster_sample_frame.png
 !output/winchester_sample_frame.png
+# The recording two receipts hash, not a preview. data/receipts/meta_receipts.jsonl carries
+# rcpt-95d81b3b69338f64 (meta.s6_offline_source_seconds) and rcpt-952cf8158a3b7c47
+# (meta.s6_offline_cut_seconds) against this file's sha256 a461ecae..., and
+# tests/test_receipts.py::test_the_committed_ledger_holds_at_least_three_real_receipts re-hashes it
+# through tools/check_receipts.py, which reports `source output/first_fight_talk_capture.mp4 does not
+# exist` when a checkout lacks it. Measured 2026-11-12 (card t_6cb8f419): the row was green here and
+# red on the Pine shard for exactly that reason, because output/* excluded it and no commit carried
+# it. 2,263,901 bytes, written once by tools/capture_talk_fight.py from a real game run, so it is the
+# measurement's own source and a rerun cannot reproduce it byte for byte.
+!output/first_fight_talk_capture.mp4
 
 # The twelve drive captures tests/test_eye_drive.py samples. tools/eye_drive.py reads
 # output\drive\pp_drive_shot_01.png to _12.png, which the game writes from inside its own draw
@@ -84,3 +94,4 @@ output/*
 output/drive/*
 !output/drive/pp_drive_shot_??.png
 cache/
+.venv/
