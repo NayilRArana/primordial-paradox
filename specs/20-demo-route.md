@@ -4,13 +4,36 @@ Status: spec, 2026-10-26, card t_009836b9. Numbers are DECISIONS. It documents t
 R32 and DRIVE-MAP built, and rules the three questions that card found open. Read it beside data/slice.json, spec 06
 (the cutscene runner) and spec 04 (triggers).
 
+## Superseded in part, 2026-11-12 (card t_6e10768e)
+
+The chain in the next section is the one `data/slice.json` stood at on 2026-10-26. The author's scope,
+`..\arananet\manager\FINAL-SCOPE-2026-11-03.md`, replaced it, and commit `28d407a2` executed the replacement: the file
+now carries five steps, `title, crawl, quay, morgan, percy` (kinds title, crawl, map, scene, scene), and the drive,
+arrival, gate, office, boarding, fight, save and gameover rows are gone.
+
+What still holds: decision 1 and its rules 1 to 5 (a route scene hands to its row's `next`, the branch adoption, the
+battle row that parks, the `PP route:` line), because they are the handoff contract and the current five step chain
+walks through them.
+
+What the cut retired: decisions 2 and 3, which are about the drive and the corridor. `drive_m4_corridor` is still a map
+with one trigger out to the quay, and the `skippable` flag and the thirty step cancel hold are still engine support
+that works, but no route step names the drive any more, so nothing on a player's run arms them. The quay map carries
+two save points instead (`quay_rest_pier` at (23,35), `quay_rest_tower` at (5,30)), the fights are `morgan_gate` and
+`percy` from the two talk scenes, and the run ends on the `credits` command in `quay_percy_spare` and
+`quay_percy_kill`.
+
+What pins the current chain: `tests/test_quay_flow.py`. The old pins in `tests/test_demo_shots.py` carry
+`RETIRED by FLOW 2026-11-03`. Which document governs the demo picture, the six shot script or the route above, is
+ruled in `knowledge/DEMO-AUTHORITY-RULING-2026-11-12.md`: the route governs content, the script governs only the
+demo's shape.
+
 ## What the route is
 
 data/slice.json carries one row per step: an id, the kind of handoff the step names, the room, scene, map or encounter
 the handoff goes to, and the id of the step it hands to next. The step kinds are title, crawl, scene, map, battle,
 save and branch (pp_slice_kind). The route is read once and walked by id, never by array position.
 
-The demo's chain, as the file stands:
+The demo's chain as the file stood on 2026-10-26, kept as the record and superseded by the section above:
 
 | step | kind | target | next |
 | --- | --- | --- | --- |
