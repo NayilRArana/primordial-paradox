@@ -13,7 +13,8 @@ What it does, in order, and it stops on the first refusal
        frame, so the battle's own stage and text boxes stay the game's pixels);
     2. measures the result with demo_overlay.check_frame, and writes the still only if every check passes;
     3. writes a verify file beside the still carrying the frame's sha256, every drawn line, the receipt ids
-       the box printed, and the frame test's own rows.
+       the box printed, and the frame test's own rows, then labels and logs the Meta numbers the box shows
+       (tools\\\\receipts.py), so no number in the file stands without a receipt.
 
 Usage
     python tools\\render_talk_box_still.py --frame output\\first_fight_talk_frames\\t_0025.png
@@ -38,6 +39,7 @@ if TOOLS not in sys.path:
     sys.path.insert(0, TOOLS)
 
 import demo_overlay  # noqa: E402  the drawing and the frame test, never a second copy of them
+import receipts  # noqa: E402  the ledger the box reads, so the file labels every number it shows
 
 
 def sha256_file(path):
@@ -97,6 +99,16 @@ def main(argv=None):
     }
     with open(verify, "w", encoding="utf-8", newline="\n") as handle:
         handle.write(json.dumps(payload, indent=2, sort_keys=True) + "\n")
+
+    # The numbers the box prints are labelled and logged in the same pass (card t_b9173f05): a re-render used
+    # to write a clean verify file and quietly drop the `meta_numbers` block, so tools/check_receipts.py found
+    # nothing to check and the still's two build numbers stood unlabelled. Refusing here is the whole point of
+    # the block, so a receipt that cannot be written fails the still rather than passing without one.
+    try:
+        receipts.write_into(verify)
+    except receipts.ReceiptError as error:
+        print("FAIL  the receipt block could not be written: %s" % error)
+        return 1
 
     failed = [item for item in report["checks"] if not item["ok"]]
     for item in failed:
