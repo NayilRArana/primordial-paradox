@@ -128,7 +128,7 @@ def build_frame(index: int) -> Image.Image:
         for line in range(0, 9):
             rows[line] = ["."] + rows[line][:-1]
         turn = index - 4
-        mouth = {0: (6, 7), 1: (5, 7), 2: (5, 8), 3: (5, 8)}[turn]
+        mouth = {0: (6, 7), 1: (5, 7), 2: (5, 8), 3: (5, 9)}[turn]
         for column in range(mouth[0], mouth[1] + 1):
             rows[7][column] = "K"
 

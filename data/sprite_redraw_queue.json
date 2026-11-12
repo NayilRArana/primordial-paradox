@@ -2024,7 +2024,7 @@
         "ruling": "knowledge/PALETTE-RULINGS-2026-11-12.md section 2.5",
         "why": "the queue measures the authored tree game/sprites_src. game/art was untracked, gitignored and deleted by card t_4e54cc9e, and the runtime reads game/datafiles/art, which tools/sync_art.py rebuilds from game/sprites_src. Every number in this row was measured from this path on 2026-11-12.",
         "sidecar": "game/sprites_src/title/spr_title_zander.json",
-        "sha256": "26a1c43d277a5d1c460bfa830dceabb081a1c4ffa56ed332605529afa1d6fac7"
+        "sha256": "d07934b8c30567931d64e3c3f7cfad91e152488a03bcaa6de7dd55dd39be71b1"
       },
       "palette_roles_check": {
         "shipped_entries": [
@@ -2035,7 +2035,7 @@
         "listed_entries_not_spent": [],
         "note": "measured from the landed sheet on 2026-11-12: the row's palette_roles were rewritten to sp1's three by the ruling, and the sheet spends exactly those three, so nothing it lists is unspent"
       },
-      "status_note": "Done on 2026-11-12 by card t_8cc3afaa. The ruling that closes it is knowledge/PALETTE-RULINGS-2026-11-12.md section 2.5 (gamedev card t_8df7aab4): the bust is drawn in title sp1 $09 $00 $20 with $20 as the body, because a 16x16 frame is read WHOLE by R6 and only $20 clears 3:1 on the $0C glass. He is NOT in his reserved hero triple $0F $21 $31: no title sprite row carries it, and re-solving sp1 to it would uncover all 144 tiles of spr_title_sign.png, so the light blue waits for a card that repaints the sign. Measured on the landed sheet: 128x16, 32 tiles, 3 colours, drawn 920 px, $20 389 px (42.3 percent, the largest fill), $09 353 px (38.4), $00 178 px (19.3), worst 8x8 tile 3 of 3, and all 220 outer boundary pixels on $09, so SP-021 holds in every frame. palette_synergy on the masked rear window ground: PASS, 0 failing pair(s) of 8, body $20 row 2, palettes that fit [1], 32 inked tiles 0 uncovered. The ground written for this row is output/spr_title_zander_ground.png, the REAR window pane the passenger sits in (x 11 to 25, rows 8 to 15, 15x8, $0C alone), which is the pane make_title_bust_v2.build_ground measures; note that konrad's own ground file is the same rear pane although he sits at x 31 in the front one, and both panes are $0C alone after the D1 mask, so no number on either row changes.",
+      "status_note": "Done on 2026-11-12 by card t_8cc3afaa. The ruling that closes it is knowledge/PALETTE-RULINGS-2026-11-12.md section 2.5 (gamedev card t_8df7aab4): the bust is drawn in title sp1 $09 $00 $20 with $20 as the body, because a 16x16 frame is read WHOLE by R6 and only $20 clears 3:1 on the $0C glass. He is NOT in his reserved hero triple $0F $21 $31: no title sprite row carries it, and re-solving sp1 to it would uncover all 144 tiles of spr_title_sign.png, so the light blue waits for a card that repaints the sign. Measured on the landed sheet: 128x16, 32 tiles, 3 colours, drawn 920 px, $20 388 px (42.2 percent, the largest fill in all eight frames), $09 354 px (38.5), $00 178 px (19.3), worst 8x8 tile 3 of 3, and all 220 outer boundary pixels on $09, so SP-021 holds in every frame. palette_synergy on the masked rear window ground: PASS, 0 failing pair(s) of 8, body $20 row 2, palettes that fit [1], 32 inked tiles 0 uncovered. The ground written for this row is output/spr_title_zander_ground.png, the REAR window pane the passenger sits in (x 11 to 25, rows 8 to 15, 15x8, $0C alone), which is the pane make_title_bust_v2.build_ground measures; note that konrad's own ground file is the same rear pane although he sits at x 31 in the front one, and both panes are $0C alone after the D1 mask, so no number on either row changes.",
       "redraw": {
         "card": "t_8cc3afaa",
         "date": "2026-11-12",
@@ -2045,9 +2045,9 @@
         "ground": "output/spr_title_zander_ground.png, 15x8, entries ['#004058'], the rear window pane at x 11 to 25 rows 8 to 15 with the car body masked to alpha 0",
         "row": "title sp1 $09 $00 $20",
         "entries": {
-          "$09 #007800": "353 px, 38.4 percent, the 1 px outline, the eyes, the mouth, the jacket seams and the hem",
+          "$09 #007800": "354 px, 38.5 percent, the 1 px outline, the eyes, the mouth, the jacket seams and the hem",
           "$00 #7c7c7c": "178 px, 19.3 percent, the mid: hair streaks and fringe, the jaw shadow, the collar and the zip placket",
-          "$20 #f8f8f8": "389 px, 42.3 percent, the body: skin, hair and the bomber, the largest fill in all 8 frames"
+          "$20 #f8f8f8": "388 px, 42.2 percent, the body: skin, hair and the bomber, the largest fill in all 8 frames"
         },
         "measured": {
           "sheet_px": [
@@ -2058,8 +2058,8 @@
           "colours": 3,
           "drawn_px": 920,
           "largest_entry": "#f8f8f8",
-          "largest_entry_px": 389,
-          "largest_entry_pct": 42.3,
+          "largest_entry_px": 388,
+          "largest_entry_pct": 42.2,
           "largest_fill_per_frame_px": [
             51,
             44,
@@ -2068,7 +2068,7 @@
             51,
             50,
             49,
-            49
+            48
           ],
           "worst_tile_opaque": 3,
           "outer_boundary_px": 220,
@@ -2077,7 +2077,7 @@
           "nes_check": "PASS, 128x16, 32 tiles, 3 colours",
           "palette_synergy": "PASS, 0 failing pair(s), body $20 row 2 hue grey, palettes that fit [1]"
         },
-        "animation": "frames 1 and 3 are the idle bob, the same drawing one pixel down with the hem stamped back onto the last row so the outline ring closes in every frame; frames 4 to 7 are the turn to speak, the head sliding one column towards the driver and the mouth opening one pixel a frame under the nose",
+        "animation": "frames 1 and 3 are the idle bob, the same drawing one pixel down with the hem stamped back onto the last row so the outline ring closes in every frame; frames 4 to 7 are the turn to speak, the head sliding one column towards the driver and the mouth opening a pixel a frame under the nose (2, 3, 4 and 5 px wide on frames 4 to 7)",
         "craft": "SP-021 (1 px outline round the silhouette), SP-012 (2 px eyes with a white pixel before the outline on each side), SP-010 (face in 6 rows with the jaw read off the grey neck shadow), SP-042 to SP-044 (modern clothes: the bomber is the largest shape, the mid carries the shade). SP-042's own 'light tone under 30 percent' is an inference written for a four-tone cell and cannot hold here: RULE 0 point 2 leaves this frame one body entry and it has to be the largest fill, so the light is on the clothes and the mid on the shade",
         "not_spent": "$36 skin and $02 are in no title sprite row; $21 and $31 are the reserved hero triple and would need the sign repainted; $0F is not in sp1"
       },
