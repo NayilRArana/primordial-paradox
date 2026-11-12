@@ -1,0 +1,14 @@
+{
+  "kind": "cue",
+  "asset": "pp_15a_credits_kill_v2",
+  "sample_rate": 44100,
+  "channels": 1,
+  "bpm": 72,
+  "beats_per_bar": 4,
+  "loop_bars": 32,
+  "loop_start_sample": 0,
+  "loop_end_sample": 4704000,
+  "loop_seconds": 106.666667,
+  "seam_sample_difference_first_second": 0.459198,
+  "method": "three pass render, middle pass cut"
+}

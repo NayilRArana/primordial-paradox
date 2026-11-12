@@ -1,0 +1,127 @@
+{
+ "audio_key_top3": [
+  [
+   0.702,
+   "E major"
+  ],
+  [
+   0.626,
+   "E minor"
+  ],
+  [
+   0.603,
+   "A major"
+  ]
+ ],
+ "audio_tempo": {
+  "full_band": {
+   "bar_seconds": 3.3328,
+   "bpm": 72.01,
+   "peak_autocorr": 0.868
+  },
+  "kick_band": {
+   "bar_seconds": 3.3328,
+   "bpm": 72.01,
+   "peak_autocorr": 0.722
+  }
+ },
+ "bars": 32,
+ "beats_per_bar": 4,
+ "bpm": 72,
+ "cue_gate": {
+  "exit": 0,
+  "stdout": "assets/audio/pp_15a_credits_kill_v2/pp_15a_credits_kill_v2.mid: PASS"
+ },
+ "cue_gate_summary": [
+  "G1 CP-01 raw clashes on a strong beat: 0   G2 CP-09 parallel perfect intervals: 0",
+  "state: PASS   0 raw clashes on a strong beat and 0 parallel perfect fifths or octaves between the outer voices"
+ ],
+ "declared_key": "A minor",
+ "delivered": {
+  "loudness": {
+   "integrated_lufs": -14.07,
+   "lra_lu": 1.9,
+   "offset": 0.03,
+   "threshold": -24.22,
+   "true_peak_dbtp": -1.18
+  },
+  "mean_volume_db": -12.4,
+  "samples": 4704000,
+  "seconds": 106.6667
+ },
+ "loop_samples": 4704000,
+ "master_attempts": [
+  {
+   "dbtp": -1.55,
+   "gain_db": 0.0,
+   "limit_db": -1.9,
+   "lufs": -18.96
+  },
+  {
+   "dbtp": -0.83,
+   "gain_db": 4.96,
+   "limit_db": -1.9,
+   "lufs": -14.6
+  },
+  {
+   "dbtp": -1.19,
+   "gain_db": 5.56,
+   "limit_db": -2.22,
+   "lufs": -14.34
+  },
+  {
+   "dbtp": -1.19,
+   "gain_db": 5.9,
+   "limit_db": -2.22,
+   "lufs": -14.15
+  },
+  {
+   "dbtp": -1.18,
+   "gain_db": 6.05,
+   "limit_db": -2.22,
+   "lufs": -14.07
+  }
+ ],
+ "midi_key_top3": [
+  [
+   0.747,
+   "A minor"
+  ],
+  [
+   0.721,
+   "E major"
+  ],
+  [
+   0.687,
+   "A major"
+  ]
+ ],
+ "notes": {
+  "dpcm": 120,
+  "noise": 240,
+  "pulse 1": 104,
+  "pulse 2": 38,
+  "triangle": 56,
+  "vrc6 pulse a": 167,
+  "vrc6 pulse b": 93,
+  "vrc6 saw": 33
+ },
+ "periodicity_max_abs_diff_first_second": 0.459198,
+ "periodicity_max_abs_diff_whole": 0.551971,
+ "periodicity_rms_diff_db": -28.53,
+ "periodicity_share_samples_differing": 0.23058,
+ "seam": {
+  "body_rms_dbfs": -12.36,
+  "head_rms_dbfs": -8.38,
+  "loop_end_sample": 4704000,
+  "loop_seconds": 106.666667,
+  "loop_start_sample": 0,
+  "seam_level_delta_db": 3.84,
+  "step_reference_dbfs": -6.55,
+  "tail_rms_dbfs": -8.51,
+  "verdict": "clean",
+  "wrap_jump_dbfs": -60.92
+ },
+ "slug": "pp_15a_credits_kill_v2",
+ "title": "Entropy (take B)"
+}
