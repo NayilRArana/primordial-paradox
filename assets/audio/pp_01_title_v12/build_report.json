@@ -1,0 +1,127 @@
+{
+ "audio_key_top3": [
+  [
+   0.692,
+   "A minor"
+  ],
+  [
+   0.65,
+   "A major"
+  ],
+  [
+   0.552,
+   "E major"
+  ]
+ ],
+ "audio_tempo": {
+  "full_band": {
+   "bar_seconds": 1.4284,
+   "bpm": 126.01,
+   "peak_autocorr": 0.831
+  },
+  "kick_band": {
+   "bar_seconds": 1.4281,
+   "bpm": 126.04,
+   "peak_autocorr": 0.227
+  }
+ },
+ "bars": 32,
+ "beats_per_bar": 3,
+ "bpm": 126,
+ "cue_gate": {
+  "exit": 0,
+  "stdout": "assets/audio/pp_01_title_v12/pp_01_title_v12.mid: PASS"
+ },
+ "cue_gate_summary": [
+  "G1 CP-01 raw clashes on a strong beat: 0   G2 CP-09 parallel perfect intervals: 0",
+  "state: PASS   0 raw clashes on a strong beat and 0 parallel perfect fifths or octaves between the outer voices"
+ ],
+ "declared_key": "A minor",
+ "delivered": {
+  "loudness": {
+   "integrated_lufs": -14.14,
+   "lra_lu": 0.7,
+   "offset": 0.02,
+   "threshold": -24.14,
+   "true_peak_dbtp": -1.49
+  },
+  "mean_volume_db": -12.1,
+  "samples": 2016000,
+  "seconds": 45.7143
+ },
+ "loop_samples": 2016000,
+ "master_attempts": [
+  {
+   "dbtp": -1.1,
+   "gain_db": 0.0,
+   "limit_db": -1.9,
+   "lufs": -16.64
+  },
+  {
+   "dbtp": -0.22,
+   "gain_db": 2.64,
+   "limit_db": -1.9,
+   "lufs": -14.25
+  },
+  {
+   "dbtp": -1.02,
+   "gain_db": 2.89,
+   "limit_db": -2.83,
+   "lufs": -14.34
+  },
+  {
+   "dbtp": -0.89,
+   "gain_db": 3.23,
+   "limit_db": -2.83,
+   "lufs": -14.13
+  },
+  {
+   "dbtp": -1.49,
+   "gain_db": 3.36,
+   "limit_db": -3.09,
+   "lufs": -14.14
+  }
+ ],
+ "midi_key_top3": [
+  [
+   0.846,
+   "A minor"
+  ],
+  [
+   0.812,
+   "A major"
+  ],
+  [
+   0.533,
+   "E major"
+  ]
+ ],
+ "notes": {
+  "dpcm": 132,
+  "noise": 384,
+  "pulse 1": 192,
+  "pulse 2": 20,
+  "triangle": 94,
+  "vrc6 pulse a": 162,
+  "vrc6 pulse b": 80,
+  "vrc6 saw": 32
+ },
+ "periodicity_max_abs_diff_first_second": 0.549683,
+ "periodicity_max_abs_diff_whole": 0.593994,
+ "periodicity_rms_diff_db": -24.57,
+ "periodicity_share_samples_differing": 0.53148,
+ "seam": {
+  "body_rms_dbfs": -12.06,
+  "head_rms_dbfs": -12.13,
+  "loop_end_sample": 2016000,
+  "loop_seconds": 45.714286,
+  "loop_start_sample": 0,
+  "seam_level_delta_db": -1.05,
+  "step_reference_dbfs": -8.4,
+  "tail_rms_dbfs": -13.11,
+  "verdict": "clean",
+  "wrap_jump_dbfs": -30.28
+ },
+ "slug": "pp_01_title_v12",
+ "title": "Title Theme (take C)"
+}

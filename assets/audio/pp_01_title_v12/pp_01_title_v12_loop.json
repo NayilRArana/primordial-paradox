@@ -1,0 +1,14 @@
+{
+  "kind": "cue",
+  "asset": "pp_01_title_v12",
+  "sample_rate": 44100,
+  "channels": 1,
+  "bpm": 126,
+  "beats_per_bar": 3,
+  "loop_bars": 32,
+  "loop_start_sample": 0,
+  "loop_end_sample": 2016000,
+  "loop_seconds": 45.714286,
+  "seam_sample_difference_first_second": 0.549683,
+  "method": "three pass render, middle pass cut"
+}

@@ -2598,6 +2598,15 @@
     },
     {
       "$GMIncludedFile": "",
+      "%Name": "pp_01_title_v12.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "pp_01_title_v12.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
       "%Name": "pp_01_title_v6.ogg",
       "CopyToMask": -1,
       "filePath": "datafiles/streams",
