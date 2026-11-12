@@ -32,7 +32,7 @@
     "note": "no other game's art was opened, compared or traced; every redraw is hand authored from this repo's bibles"
   },
   "mirror_note": "Resolved on 2026-10-23 by card t_4e54cc9e. The queue measures game/sprites_src, which is the authored tree, and game/art is deleted: the folder was untracked and gitignored, the runtime reads game/datafiles/art, which tools/sync_art.py rebuilds from game/sprites_src/{title,env,chars,env/quay}, and the game's .yyp names datafiles 246 times and game/art zero times (knowledge/PALETTE-RULINGS-2026-10-23.md, ruling 3). Fifteen rows were repointed with their numbers re-measured from the new path, two were renamed to the shipped names, and two were retired with the only copy kept at assets/retired_art/. The same card removed .gitignore's game/art line, fixed tools/sync_art.py's docstring, pointed the three redraw tools at output/redraws/ instead of the retired folder, and pointed tests/test_make_font_row.py at the shipped font. Original note, kept as history: game/art was the folder the 2026-10-21 art lane wrote, and a redraw in it never reached the running game, because sync_art rewrites the mirror from sprites_src.",
-  "count": 42,
+  "count": 52,
   "entries": [
     {
       "id": "runtime_role_colours_not_2c02",
@@ -1676,7 +1676,7 @@
         "means": "must print PASS: every pixel a data/nes_palette.json entry, width and height multiples of 8, at most 3 opaque colours per 8x8 tile, at most 25 colours per sheet",
         "result": "PASS on 2026-10-23 by card t_4e54cc9e, re-measured from this path"
       },
-      "status": "queued",
+      "status": "done",
       "retired_row_id": "spr_title_ronan",
       "measured_source": {
         "path": "game/sprites_src/title/spr_title_konrad.png",
@@ -1700,7 +1700,7 @@
         ],
         "note": "measured from the shipped sheet on 2026-10-23; a listed entry the sheet does not spend is a palette_roles question for gamedev, not a defect this card decides"
       },
-      "status_note": "Still queued after card t_b15e9c7a, and now for a measured reason rather than an unread one. The redraw exists at output/redraws/spr_title_konrad.png (tools/art/make_title_bust_v2.py): 8 frames of 16x16, hand written 12x12 grids, three entries $0F ink, $00 grey and $28 gold, which is exactly hero_palettes.konrad, nes_check PASS and 0 of 4 tiles uncovered by title sp0. It cannot be marked done because palette_synergy fails 4 of 8 pairs on the only ground this sheet has, the car's glass pane, and the numbers under ground_measurement show that no entry of any title sprite palette clears both entries of that pane. Q: knowledge/PALETTE-RULINGS-2026-10-25.md section 2 tables spr_title_konrad as a figure because its window is one ground, the car interior behind the glass. Measured, that window holds $0C on 103 px and $20 on 14 px. Either the $20 reflection comes out of the car sheet, or the bust is classified again, or the bust is given an entry that sits between the two, and all three are gamedev's. Until then the row stays queued and no redraw can clear it.",
+      "status_note": "Done on 2026-11-12 by card t_8df7aab4: the ground question is ruled (the car body is masked out of the glass pane, so the ground is $0C alone), the redraw passes palette_synergy with 0 failing pairs and nes_check, and every number is in the ruling block. The one entry drift from hero_palettes.konrad ($28 spent, $27 reserved) is named in the row and in knowledge/PALETTE-RULINGS-2026-11-12.md section 2.4.",
       "ground_measurement": {
         "measured_by": "tools/art/make_title_bust_v2.py build_ground, card t_b15e9c7a",
         "ground": "output/spr_title_konrad_ground.png, the 15 x 8 glass pane of game/sprites_src/title/spr_title_car.png at x 11 to 25, rows 8 to 15, read with the composer's own window reader",
@@ -1711,6 +1711,43 @@
         "why_no_entry_passes": "no entry of the title's four sprite palettes separates from both: $0F is 1.87:1 at 0 rows on $0C, $00 is 2.68:1 at 0 rows on $0C, $28 is 6.32:1 on $0C but 1.67:1 at 0 rows on $20, and a probe drawn in title sp2 ($0C $10 $20) reports body $10 at 5.90:1 on $0C but 1.79:1 one row from $20, so 4 of 8 pairs still fail. Contrasts measured with tools/art/contrast_check.py on the 2C02 luminances",
         "consequence": "the pane's two entries sit two luminance rows apart at the ends, which is the same arithmetic that made the exhaust puff a tiled layer on card t_474cde50, so on this ground no 16x16 figure can pass RULE 0 point 2, and the drawing is not what decides it",
         "question_for_gamedev": "Q: knowledge/PALETTE-RULINGS-2026-10-25.md section 2 tables spr_title_konrad as a figure because its window is one ground, the car interior behind the glass. Measured, that window holds $0C on 103 px and $20 on 14 px. Either the $20 reflection comes out of the car sheet, or the bust is classified again, or the bust is given an entry that sits between the two, and all three are gamedev's. Until then the row stays queued and no redraw can clear it."
+      },
+      "remeasured_2026_11_12": {
+        "date": "2026-11-12",
+        "card": "t_f16d433d",
+        "why": "the car sheet was rewritten on 2026-10-27, so the pane the two busts stand on was measured again before the old wall was trusted",
+        "car_file": "game/sprites_src/title/spr_title_car.png",
+        "car_sheet_px": [
+          192,
+          32
+        ],
+        "car_bytes": 598,
+        "car_sha256": "6525913013b3b97dc4acbd5a008b55911eb6338877fbb099be2bc537459cae90",
+        "pane_box": "x 11 to 25, rows 8 to 15, 120 px",
+        "pane_entries": {
+          "$0C #004058": 103,
+          "$20 #f8f8f8": 14,
+          "transparent": 3
+        },
+        "unchanged_from": "cards t_b15e9c7a, t_a61c01b7 and t_255c054d measured $0C 103 and $20 14 on the same box",
+        "no_drawing_can_pass": "tools/palette_synergy.py:248 ground_pixels() counts every pixel with alpha in the whole frame box, so the ground set is the box and not the pixels under the sprite's opaque marks; a bust cannot dodge the 14 px streak by covering it",
+        "luminance_band": "$0C 0.044 and $20 0.913 are two rows apart at the ends of the grid, so an entry must clear 3:1 from both, which is luminance 0.232 to 0.271; none of sp0 $0F $00 $28, sp1 $09 $00 $20, sp2 $0C $10 $20, sp3 $0C $0B $20 carries an entry there, and R7 set_member refuses any master entry outside those rows",
+        "verdict": "the blocker is that no legal entry exists, not the choice among twelve; the Q card t_b15e9c7a wrote stands and the row stays queued"
+      },
+      "ruling": {
+        "card": "t_8df7aab4",
+        "date": "2026-11-12",
+        "file": "knowledge/PALETTE-RULINGS-2026-11-12.md",
+        "decision": "D1: the car body comes out of the ground, nothing else moves. $20 in both glass panes is the car BODY (tools/art/title_car_v2.py BODY = 0x20: the pillars, the roof edge and the single diagonal moonlight glint), and the car is drawn after the bust, so those pixels are covered, not stood on. The pane holds $0C 103 px, $20 14 px and 3 transparent in the rear window, and $0C 132 px, $20 4 px in the front one.",
+        "why_not_the_other_two": "the streak was not removed from the car (it is the car's only read on the glass, and deleting it buys exactly what masking the body buys), the busts were not reclassified as layers (section 2 of the 25 October file grants a layer to a sheet with NO single ground, and this one has one), and no entry between the two was bought (the 3:1-on-both band is luminance 0.232 to 0.271 and holds exactly $17 0.2419 and $23 0.2689, neither of which any title sprite row carries).",
+        "landed": "tools/art/make_title_bust_v2.py build_ground(): every non-glass pixel of the pane is masked to alpha 0 and the count is printed. palette_synergy.ground_pixels() already skips alpha 0, so no rule code moved.",
+        "measured": {
+          "python tools/art/make_title_bust_v2.py": "14 car-body px masked, pane entries ['#004058']",
+          "python tools/palette_synergy.py --scene title --background output/spr_title_konrad_ground.png --sprite output/redraws/spr_title_konrad.png": "PASS, 0 failing pair(s), 8 frames, body $28, palettes that fit [0], 32 inked 8x8 tiles, 0 uncovered",
+          "python tools/nes_check.py output/redraws/spr_title_konrad.png --type sprite": "PASS, 128x16, 32 tiles, 3 colours"
+        },
+        "named_cost": "data/scene_palettes.json hero_palettes.konrad is $0F $00 $27 (amber #fca044). The bust spends $28 (gold #f8b800) because title sp0 carries $28 and re-solving sp0 to $27 would repaint the logo's 230 tiles, which sp0 alone carries. One entry, both read as amber.",
+        "redraw": "output/redraws/spr_title_konrad.png, 8 frames of 16x16, entries $0F $00 $28"
       }
     },
     {
@@ -1898,14 +1935,12 @@
       },
       "palette_roles": {
         "legal_entries": [
-          "$0F ink",
-          "$28 hair",
-          "$36 skin",
-          "$21 bomber body",
-          "$31 bomber accent"
+          "$09 dark green outline",
+          "$00 grey mid",
+          "$20 white body"
         ],
-        "scene_palette_set": "title sp0 [$0F, $00, $28] with hero palette zander [$0F, $21, $31]",
-        "why": "Zander has a reserved hero palette in ART-BIBLE RULE 0 point 3, so his bust may spend $21 and $31 and no other blue"
+        "scene_palette_set": "title sp1 [$09, $00, $20]",
+        "why": "rewritten by the ruling (knowledge/PALETTE-RULINGS-2026-11-12.md section 2.5, card t_8df7aab4): a 16x16 frame is read WHOLE by R6, so the bust lives in ONE title sprite row, and sp1 is the row that carries $20, the only entry that clears 3:1 on the $0C glass. The row used to list $0F $28 $36 $21 $31, four of which no title sprite row carries; $36 is in no title row at all and $21/$31 would need the road sign repainted."
       },
       "nes_grid": {
         "frame_w": 16,
@@ -1922,14 +1957,15 @@
       },
       "drawn_by": {
         "tool": "tools/art/make_title_car.py",
-        "commit": "67a3e89",
-        "date": "2026-10-22",
-        "note": "the tool now writes spr_title_zander.png at 128x16 with 16x16 frames, 5 colours, 0 off palette"
+        "cells_drawn_by": "tools/art/make_title_zander_v2.py",
+        "card": "t_8cc3afaa",
+        "date": "2026-11-12",
+        "note": "make_title_car.py owns the name and asks make_title_zander_v2.build_frame() for the eight 16x16 cells, the same way it asks make_title_exhaust_v2 for the puff. The sheet is in its CHIP_DRAWN_SHEETS and not in its FRAMES: the cells are already the shipping size and position. 128x16, 8 frames of 16x16, 3 colours, 0 off palette"
       },
       "defect": {
         "name": "old_identity_at_an_impossible_size_in_the_retired_copy",
         "measured_from": "game/sprites_src/title/spr_title_zander.png",
-        "measured": {
+        "measured_before_2026_11_12": {
           "sheet_px": [
             128,
             16
@@ -1972,36 +2008,81 @@
       "check": {
         "command": "python tools/nes_check.py game/sprites_src/title/spr_title_zander.png --type sprite",
         "means": "must print PASS: every pixel a data/nes_palette.json entry, width and height multiples of 8, at most 3 opaque colours per 8x8 tile, at most 25 colours per sheet",
-        "result": "PASS on 2026-10-23 by card t_4e54cc9e, re-measured from this path"
+        "result": "PASS on 2026-11-12 by card t_8cc3afaa, measured from this path on the landed sheet: 128x16, 32 tiles, 3 colours"
       },
-      "status": "queued",
+      "check_scene": {
+        "command": "python tools/palette_synergy.py --scene title --background output/spr_title_zander_ground.png --sprite game/sprites_src/title/spr_title_zander.png",
+        "result": "PASS, 0 failing pair(s), 8 frames, body $20 row 2, palettes that fit [1], 32 inked 8x8 tiles, 0 uncovered, exit 0",
+        "was": "FAIL, 16 failing pair(s) on the same ground before this card: 8 sprite_tile and 8 palette_count, one per frame"
+      },
+      "status": "done",
       "retired_row_id": "spr_title_theo",
       "measured_source": {
         "path": "game/sprites_src/title/spr_title_zander.png",
-        "card": "t_4e54cc9e",
-        "date": "2026-10-23",
-        "ruling": "knowledge/PALETTE-RULINGS-2026-10-23.md ruling 3",
-        "why": "the queue measures the authored tree game/sprites_src. game/art was untracked, gitignored and deleted by this card, and the runtime reads game/datafiles/art, which tools/sync_art.py rebuilds from game/sprites_src. Every number in this row was measured from this path on 2026-10-23.",
-        "sidecar": "game/sprites_src/title/spr_title_zander.png.json",
-        "sha256": "d22ee53116d48272b5d813d4d9a64a057bcbe08aeae369113043fd5c83c72873"
+        "card": "t_8cc3afaa",
+        "date": "2026-11-12",
+        "ruling": "knowledge/PALETTE-RULINGS-2026-11-12.md section 2.5",
+        "why": "the queue measures the authored tree game/sprites_src. game/art was untracked, gitignored and deleted by card t_4e54cc9e, and the runtime reads game/datafiles/art, which tools/sync_art.py rebuilds from game/sprites_src. Every number in this row was measured from this path on 2026-11-12.",
+        "sidecar": "game/sprites_src/title/spr_title_zander.json",
+        "sha256": "26a1c43d277a5d1c460bfa830dceabb081a1c4ffa56ed332605529afa1d6fac7"
       },
       "palette_roles_check": {
         "shipped_entries": [
           "$00",
-          "$0C",
-          "$0F",
-          "$10",
-          "$28"
+          "$09",
+          "$20"
         ],
-        "listed_entries_not_spent": [
-          "$21",
-          "$31",
-          "$36"
-        ],
-        "note": "measured from the shipped sheet on 2026-10-23; a listed entry the sheet does not spend is a palette_roles question for gamedev, not a defect this card decides"
+        "listed_entries_not_spent": [],
+        "note": "measured from the landed sheet on 2026-11-12: the row's palette_roles were rewritten to sp1's three by the ruling, and the sheet spends exactly those three, so nothing it lists is unspent"
       },
-      "status_note": "Still queued after card t_b15e9c7a: this bust sits in the same pane as Konrad's and is refused by the same arithmetic, so no redraw of it can pass RULE 0 point 2 before the ground question is answered. Q: knowledge/PALETTE-RULINGS-2026-10-25.md section 2 tables spr_title_konrad as a figure because its window is one ground, the car interior behind the glass. Measured, that window holds $0C on 103 px and $20 on 14 px. Either the $20 reflection comes out of the car sheet, or the bust is classified again, or the bust is given an entry that sits between the two, and all three are gamedev's. Until then the row stays queued and no redraw can clear it.",
-      "ground_measurement": {
+      "status_note": "Done on 2026-11-12 by card t_8cc3afaa. The ruling that closes it is knowledge/PALETTE-RULINGS-2026-11-12.md section 2.5 (gamedev card t_8df7aab4): the bust is drawn in title sp1 $09 $00 $20 with $20 as the body, because a 16x16 frame is read WHOLE by R6 and only $20 clears 3:1 on the $0C glass. He is NOT in his reserved hero triple $0F $21 $31: no title sprite row carries it, and re-solving sp1 to it would uncover all 144 tiles of spr_title_sign.png, so the light blue waits for a card that repaints the sign. Measured on the landed sheet: 128x16, 32 tiles, 3 colours, drawn 920 px, $20 389 px (42.3 percent, the largest fill), $09 353 px (38.4), $00 178 px (19.3), worst 8x8 tile 3 of 3, and all 220 outer boundary pixels on $09, so SP-021 holds in every frame. palette_synergy on the masked rear window ground: PASS, 0 failing pair(s) of 8, body $20 row 2, palettes that fit [1], 32 inked tiles 0 uncovered. The ground written for this row is output/spr_title_zander_ground.png, the REAR window pane the passenger sits in (x 11 to 25, rows 8 to 15, 15x8, $0C alone), which is the pane make_title_bust_v2.build_ground measures; note that konrad's own ground file is the same rear pane although he sits at x 31 in the front one, and both panes are $0C alone after the D1 mask, so no number on either row changes.",
+      "redraw": {
+        "card": "t_8cc3afaa",
+        "date": "2026-11-12",
+        "drawn_by": "tools/art/make_title_zander_v2.py, landed by tools/art/make_title_car.py",
+        "sheet": "game/sprites_src/title/spr_title_zander.png, 128x16, 8 frames of 16x16, 12x12 art at frame (2, 4)",
+        "redraw_artifact": "output/redraws/spr_title_zander.png",
+        "ground": "output/spr_title_zander_ground.png, 15x8, entries ['#004058'], the rear window pane at x 11 to 25 rows 8 to 15 with the car body masked to alpha 0",
+        "row": "title sp1 $09 $00 $20",
+        "entries": {
+          "$09 #007800": "353 px, 38.4 percent, the 1 px outline, the eyes, the mouth, the jacket seams and the hem",
+          "$00 #7c7c7c": "178 px, 19.3 percent, the mid: hair streaks and fringe, the jaw shadow, the collar and the zip placket",
+          "$20 #f8f8f8": "389 px, 42.3 percent, the body: skin, hair and the bomber, the largest fill in all 8 frames"
+        },
+        "measured": {
+          "sheet_px": [
+            128,
+            16
+          ],
+          "tiles": 32,
+          "colours": 3,
+          "drawn_px": 920,
+          "largest_entry": "#f8f8f8",
+          "largest_entry_px": 389,
+          "largest_entry_pct": 42.3,
+          "largest_fill_per_frame_px": [
+            51,
+            44,
+            51,
+            44,
+            51,
+            50,
+            49,
+            49
+          ],
+          "worst_tile_opaque": 3,
+          "outer_boundary_px": 220,
+          "outer_boundary_px_on_the_outline": 220,
+          "off_palette_px": 0,
+          "nes_check": "PASS, 128x16, 32 tiles, 3 colours",
+          "palette_synergy": "PASS, 0 failing pair(s), body $20 row 2 hue grey, palettes that fit [1]"
+        },
+        "animation": "frames 1 and 3 are the idle bob, the same drawing one pixel down with the hem stamped back onto the last row so the outline ring closes in every frame; frames 4 to 7 are the turn to speak, the head sliding one column towards the driver and the mouth opening one pixel a frame under the nose",
+        "craft": "SP-021 (1 px outline round the silhouette), SP-012 (2 px eyes with a white pixel before the outline on each side), SP-010 (face in 6 rows with the jaw read off the grey neck shadow), SP-042 to SP-044 (modern clothes: the bomber is the largest shape, the mid carries the shade). SP-042's own 'light tone under 30 percent' is an inference written for a four-tone cell and cannot hold here: RULE 0 point 2 leaves this frame one body entry and it has to be the largest fill, so the light is on the clothes and the mid on the shade",
+        "not_spent": "$36 skin and $02 are in no title sprite row; $21 and $31 are the reserved hero triple and would need the sign repainted; $0F is not in sp1"
+      },
+      "ground_measurement_before_d1": {
+        "superseded": "this block measured the pane BEFORE D1, when the car body was still counted as ground ($0C 103 px and $20 14 px in the same box). knowledge/PALETTE-RULINGS-2026-11-12.md D1 masks the car body out and the ground is $0C alone; the redraw block above carries the current measurement. Kept as written so the wall that held the row for two cards stays readable.",
         "measured_by": "tools/art/make_title_bust_v2.py build_ground, card t_b15e9c7a",
         "ground": "output/spr_title_konrad_ground.png, the 15 x 8 glass pane of game/sprites_src/title/spr_title_car.png at x 11 to 25, rows 8 to 15, read with the composer's own window reader",
         "entries": {
@@ -2011,6 +2092,40 @@
         "why_no_entry_passes": "no entry of the title's four sprite palettes separates from both: $0F is 1.87:1 at 0 rows on $0C, $00 is 2.68:1 at 0 rows on $0C, $28 is 6.32:1 on $0C but 1.67:1 at 0 rows on $20, and a probe drawn in title sp2 ($0C $10 $20) reports body $10 at 5.90:1 on $0C but 1.79:1 one row from $20, so 4 of 8 pairs still fail. Contrasts measured with tools/art/contrast_check.py on the 2C02 luminances",
         "consequence": "the pane's two entries sit two luminance rows apart at the ends, which is the same arithmetic that made the exhaust puff a tiled layer on card t_474cde50, so on this ground no 16x16 figure can pass RULE 0 point 2, and the drawing is not what decides it",
         "question_for_gamedev": "Q: knowledge/PALETTE-RULINGS-2026-10-25.md section 2 tables spr_title_konrad as a figure because its window is one ground, the car interior behind the glass. Measured, that window holds $0C on 103 px and $20 on 14 px. Either the $20 reflection comes out of the car sheet, or the bust is classified again, or the bust is given an entry that sits between the two, and all three are gamedev's. Until then the row stays queued and no redraw can clear it."
+      },
+      "remeasured_2026_11_12": {
+        "date": "2026-11-12",
+        "card": "t_f16d433d",
+        "why": "the car sheet was rewritten on 2026-10-27, so the pane the two busts stand on was measured again before the old wall was trusted",
+        "car_file": "game/sprites_src/title/spr_title_car.png",
+        "car_sheet_px": [
+          192,
+          32
+        ],
+        "car_bytes": 598,
+        "car_sha256": "6525913013b3b97dc4acbd5a008b55911eb6338877fbb099be2bc537459cae90",
+        "pane_box": "x 11 to 25, rows 8 to 15, 120 px",
+        "pane_entries": {
+          "$0C #004058": 103,
+          "$20 #f8f8f8": 14,
+          "transparent": 3
+        },
+        "unchanged_from": "cards t_b15e9c7a, t_a61c01b7 and t_255c054d measured $0C 103 and $20 14 on the same box",
+        "no_drawing_can_pass": "tools/palette_synergy.py:248 ground_pixels() counts every pixel with alpha in the whole frame box, so the ground set is the box and not the pixels under the sprite's opaque marks; a bust cannot dodge the 14 px streak by covering it",
+        "luminance_band": "$0C 0.044 and $20 0.913 are two rows apart at the ends of the grid, so an entry must clear 3:1 from both, which is luminance 0.232 to 0.271; none of sp0 $0F $00 $28, sp1 $09 $00 $20, sp2 $0C $10 $20, sp3 $0C $0B $20 carries an entry there, and R7 set_member refuses any master entry outside those rows",
+        "verdict": "the blocker is that no legal entry exists, not the choice among twelve; the Q card t_b15e9c7a wrote stands and the row stays queued"
+      },
+      "ruling": {
+        "card": "t_8df7aab4",
+        "date": "2026-11-12",
+        "file": "knowledge/PALETTE-RULINGS-2026-11-12.md",
+        "ground": "the same glass pane as spr_title_konrad, and the same D1 ruling applies: the ground is $0C alone, because $20 in the pane is the car body drawn over the bust.",
+        "row": "title sp1 ($09 $00 $20)",
+        "body": "$20",
+        "why": "a 16x16 frame is read WHOLE by R6 (RULE 0, amendment on card t_af6fd431), so the bust needs ONE sprite row. On the $0C glass the candidates read $20 10.55:1, $10 5.90:1, $00 2.68:1, $09 1.97:1, $28 6.32:1, $0C 1.00:1 and $0B 1.28:1, and of sp1's three entries only $20 clears 3:1 and is two rows away in the same reading. $09 is a different hue family from the teal glass, which is what RULE 0 point 2 asks of an outline.",
+        "why_not_his_hero_triple": "hero_palettes.zander is $0F $21 $31 and no title sprite row carries it. Measured over every PNG in game/sprites_src/title: sp0 $0F $00 $28 carries the logo's 230 tiles and nothing else carries them, sp1 $09 $00 $20 carries the sign's 144 tiles and nothing else carries them, sp2 $0C $10 $20 carries the cloud, the bubble and the star, sp3 $0C $0B $20 carries the car (69 tiles) and the wheel (16). Re-solving sp1 to $0F $21 $31 uncovers all 144 sign tiles.",
+        "named_cost": "he is not in his reserved light blue on the title. A light-blue title bust needs a row carrying $21 and $31, and the cheapest route is a repaint of the sign's 144 tiles.",
+        "measured_today": "the shipped 128x16 sheet spends $0F $00 $02 $10 $28 and reads 16 fails on the ruled ground (8 sprite_tile and 8 palette_count), so this row is a redraw and the row and the body above are what it is drawn in."
       }
     },
     {
@@ -2418,8 +2533,51 @@
         "means": "must print PASS: every pixel a data/nes_palette.json entry, width and height multiples of 8, at most 3 opaque colours per 8x8 tile, at most 25 colours per sheet",
         "result": "PASS on 2026-10-23 by card t_4e54cc9e, re-measured from this path"
       },
-      "status": "queued_by_eye",
-      "after": null,
+      "status": "redrawn",
+      "after": {
+        "card": "t_255c054d",
+        "date": "2026-11-11",
+        "drawn_by": "tools/art/make_dialogue_busts.py, the generator that owns every spr_pp_portrait_* name: percy_grid() was redrawn and a new percy_marks() pass draws three marks AFTER the mirror, so the shipped sheet is the owner's own output and no second copy of the drawing exists",
+        "file": "game/sprites_src/chars/spr_pp_portrait_percy.png",
+        "sha256": "336db50ff809175f2aff61ef30725416bef29ba71f49e74f80ce6275d1af1573",
+        "before_sha256": "6c85144283d6e9ba629fd49bd2f922f63aacfea40d58379c823e07e7d356625c",
+        "sheet_px": [
+          48,
+          48
+        ],
+        "frames": 1,
+        "colours": 4,
+        "entries_after": [
+          "$02 #0000bc 55.3 percent",
+          "$30 #fcfcfc 18.8 percent",
+          "$0F #000000 17.8 percent",
+          "$36 #f0d0b0 8.1 percent"
+        ],
+        "entries_before": [
+          "$02 #0000bc 1478 px, 64.1 percent, the panel the figure stands on",
+          "$30 #fcfcfc 386 px, 16.8 percent, the frame, the hair mass and the beard",
+          "$0F #000000 375 px, 16.3 percent, the ink silhouette and every feature",
+          "$36 #f0d0b0 65 px, 2.8 percent, the face"
+        ],
+        "drawn_px": "2304 before, 2304 after: every pixel of the sheet is drawn, the frame is drawn into it",
+        "worst_tile_opaque": 3,
+        "worst_tile_at": [
+          0,
+          0
+        ],
+        "what_changed_in_the_drawing": "The four entries are unchanged ($02 panel, $0F ink, $36 skin, $30 accent), which is the palette the generator's own geometry note fixes for every bust. What changed is the construction, because the row's named defect is one_construction_for_three_faces and a mirrored head cannot be un-mirrored by changing its hair colour: 1) a new percy_marks() pass draws AFTER Grid.mirror_x(), the same device prometheus_licks() uses, so three parts of this head exist on one side of the axis only: a fringe lowered over the brow, a beard fork with one tongue left of the axis at rows 37 to 39, and a trident. 2) The trident is the row's own answer to a weapon the other two busts do not carry: three two pixel prongs over a crossbar, a two pixel shaft with an ink edge beside it from row 6 to row 34, and an ink butt, drawn with explicit ink edges because a two pixel vertical stroke touching panel on both sides would be recoloured to ink whole by outline(). 3) The hair is one row higher and one pixel wider than the guard's watch helmet, has no brim, and the sideburn stops above the brow, so the guard, Percy and Prometheus no longer read as one drawing with three hair masses.",
+        "nes_check": "PASS: python tools/nes_check.py game/sprites_src/chars/spr_pp_portrait_percy.png --type sprite -> 48x48, 36 tiles, 4 colours, 0 off palette pixels, worst 8x8 tile 3 of the 3 a sprite tile carries",
+        "own_audit": "python tools/art/make_dialogue_busts.py --audit -> guard ok, percy ok, prometheus ok, exit 0: 48x48, 4 entries, 1 pixel frame drawn into the sheet, no transparent pixel inside the frame, at most 3 colours in any 8x8 tile. guard and prometheus are byte identical to their previous sheets (sha256 27cd4124... and fd74b9a7... did not move), so this card changed one row's drawing and nothing else's",
+        "palette_synergy": "FAIL, 1 sprite file, 2 failing pairs on the ground the prometheus card used, and neither pair is the drawing: python tools/palette_synergy.py --scene ui --background output/spr_pp_portrait_ground.png --sprite game/sprites_src/chars/spr_pp_portrait_percy.png --frame-w 48 --frame-h 48 --at 0,0. (1) set_member: $36 #f0d0b0 is in none of the ui scene's four sprite palettes (sp0 0F/28/30, sp1 0F/00/30, sp2 0F/00/28, sp3 02/00/30), so no skin entry is available to any dialogue bust in scene ui. (2) overlay_contrast: body $02 reads 1.00:1 and ink $0F 1.73:1 on a ground that is $02, because the bust's own panel is that ground colour",
+        "ground_note": "That probe is wrong and this card measured it: output/spr_pp_portrait_ground.png is 48x48 of the dialogue window's fill $02, but the window starts at y 168 and the bust ends at y 167, so the pixels under the bust are the map. output/spr_pp_portrait_ground_map.png is the true 48x48 crop at (16,120) of the shipped 3x dialogue capture output/talk_live_capture/reply.png reduced to 256x240: $0F black on 2112 of 2304 pixels, $00 grey on 176, $20 white on 16. On that ground the same sheet fails 4 pairs: set_member $36, overlay_contrast with body $02 at 1.73:1 and ink $0F at 1.00:1 on $0F, plus two pairs that belong to the capture (its own $20 white text and the background area's $00), not to the sprite. The conclusion does not move: no entry of the three a bust can spend clears 3:1 on the night map either, so the classification is still gamedev's",
+        "contact_sheet": "output/sprites_v2_sheet.png rebuilt by tools/art/make_title_rows_v2.py at 1040x5888: the dialogue busts band reads the three SHIPPED sheets, so it carries this redraw at 2x in the order guard, percy, prometheus (144x48 of art)",
+        "tests": "not run: the change is a drawing inside the owning generator, and the box's pytest run is not in this card's 45 minute budget. The generator's own audit is the check that covers this file",
+        "q_for_gamedev": [
+          "Q1 and Q2 are the two open on spr_pp_portrait_prometheus (card t_a61c01b7) and this row inherits them, unchanged and not re-argued: Q1, may the ui scene spend a skin entry at all, since none of its four sprite palettes carries one and every dialogue bust spends $36; Q2, which rule judges a framed 48x48 portrait whose interior is the box's own fill, because under R1b its body is the ground and the pairing can never clear 3:1",
+          "Q1b, new and measured here: the ground the portrait rows have been paired with is the window's fill at y 168 and above, while the bust occupies y 120 to 167. On the real pixels ($0F black on 92 percent of the crop) body $02 is 1.73:1 and ink $0F is 1.00:1, so no entry a bust is allowed clears R1b on the map either. Is the bust a figure that must separate from the map behind it, or a self-contained panel that the frame alone has to separate from it? The second reading would let a portrait pass on frame contrast, which $30 at 19.0:1 on $0F already does"
+        ],
+        "pick_note": "This card took spr_pp_portrait_percy rather than the two P1 title rows above it, for the reason the cards before it recorded and this card re-measured: spr_title_konrad and spr_title_zander are held on the car's glass pane, which carries $0C on 103 px and $20 on 14 px, and no entry of any title sprite palette separates from both, so a redraw would trade a look for a palette_count failure that is gamedev's to settle. The portrait row's named defect is a drawing defect this lane can fix and prove, and it did"
+      },
       "source": {
         "sheet": "H",
         "tile": 5,
@@ -2436,7 +2594,18 @@
         "sidecar": "game/sprites_src/chars/spr_pp_portrait_percy.png.json",
         "sha256": "e30d47e3d2932ef0d1924801b2d65da4ba5024b97636c892dccea9234e2f5db4"
       },
-      "status_note": "Status left at queued_by_eye: the eye's reading stands and the numbers now come from the file the row names."
+      "status_note": "Redrawn on 2026-11-11 by card t_255c054d and still at redrawn, not done: the row's own defect is measured fixed, and both open questions are now answered in the ruling block (skins on sp3, panel out of the sprite layer, R1b asked of the figure and not of the box's fill). What is left is the drawing change and the two ui rows, which land together on one card. knowledge/PALETTE-RULINGS-2026-11-12.md is the file.",
+      "ruling": {
+        "card": "t_8df7aab4",
+        "date": "2026-11-12",
+        "file": "knowledge/PALETTE-RULINGS-2026-11-12.md",
+        "q1_skin_entry": "yes. sp2 becomes $0F $28 $36 and sp3 becomes $0F $30 $36. Measured, those are the two ui rows nothing spends (cursor {28} fits sp0 or sp2, party {00 0F 30} fits sp1, enemy {0F 28 30} fits sp0), and scene_ui.json already calls sp3 spare.",
+        "the_panel": "every $02 pixel of the three bust sheets becomes transparent. $02 is the dialogue window's fill, a BACKGROUND colour bg0 already carries, and with it drawn as sprite pixels the three sheets need five sprite rows where the ui scene has four.",
+        "q2_classification": "a framed 48x48 portrait IS in scope for R1b, and it passes on R1b's existing two instruments once its panel is not sprite pixels: body $30 reads 20.47:1 on $0F, 4.07:1 on $00 and 1.02:1 on $20 with the ink $0F at 19.77:1 there; body $28 reads 11.85:1 on $0F and 2.35:1 on $00 with the ink $0F at 5.03:1 there. No rule change.",
+        "measured_after": "with the panel out and the two rows spent: fits [3] for guard and percy and [2] for prometheus, body $30 $30 $28, and the only remaining problem on each is one ground set_member ($20 under the sprite is not in a ui background palette), which is the capture's own white and not the sprite.",
+        "carded": "the drawing change and the two palette rows land together, because re-solving sp2 and sp3 before the panels are transparent would leave no row carrying $02 while the shipped sheets still paint it.",
+        "row": "ui scene, sp3 $0F $30 $36 (with the guard)"
+      }
     },
     {
       "id": "spr_pp_portrait_prometheus",
@@ -2517,8 +2686,46 @@
         "means": "must print PASS: every pixel a data/nes_palette.json entry, width and height multiples of 8, at most 3 opaque colours per 8x8 tile, at most 25 colours per sheet",
         "result": "PASS on 2026-10-23 by card t_4e54cc9e, re-measured from this path"
       },
-      "status": "queued_by_eye",
-      "after": null,
+      "status": "redrawn",
+      "after": {
+        "card": "t_a61c01b7",
+        "date": "2026-11-11",
+        "drawn_by": "tools/art/make_dialogue_busts.py, the generator that owns every spr_pp_portrait_* name: prometheus_grid() and prometheus_licks() were changed in place, so the shipped sheet is the owner's own output and no second copy of the drawing exists",
+        "file": "game/sprites_src/chars/spr_pp_portrait_prometheus.png",
+        "sha256": "fd74b9a797f9e186afc1c3810fcb555ee1c7ff98924c43f42ef766a3d8a45bc8",
+        "before_sha256": "737077d8c1019db6e15c1a0ffb06ac5b2d74d247204760f13f97444ef04135ab",
+        "sheet_px": [
+          48,
+          48
+        ],
+        "frames": 1,
+        "colours": 4,
+        "entries_after": [
+          "$02 #0000bc 62.2 percent, the dialogue window's own fill, the panel the figure stands on",
+          "$0F #000000 17.3 percent, the ink silhouette and every feature",
+          "$28 #f8b800 12.5 percent, the flame mass, the chest band and the frame",
+          "$36 #f0d0b0 8.0 percent, the pale skin the guard and Percy already spend"
+        ],
+        "entries_before": [
+          "$02 #0000bc 1463 px, 63.5 percent",
+          "$0F #000000 347 px, 15.1 percent",
+          "$28 #f8b800 275 px, 11.9 percent",
+          "$37 #fce0a8 219 px, 9.5 percent"
+        ],
+        "drawn_px": "2304 before, 2304 after: every pixel of the sheet is drawn, the frame is drawn into it",
+        "what_changed_in_the_drawing": "1) The flame is one continuous gold mass on rows 3 to 11, stepped only at the left temple. The two notches the shipped draft cut into it (x 17 row 5, x 19 row 4) are gone, so the mass the ink edge traces is a single shape. 2) The three interior ink strokes (rows 9 and 10) are gone: they split the gold into specks, which is exactly the row's named defect, a pale hair mass without an outline of its own. 3) The two tongues and the three notches they needed are replaced by one lick above the mass, right of the axis only, so the fire is not a symmetric crown. 4) The collar is two gold rows (40 and 41) with an ink row above and below, so the outline pass cannot eat it: the shipped one row band was entirely recoloured to ink, which is why the sheet carried no second gold mass. 5) Skin $37 becomes $36, the entry the guard and Percy spend.",
+        "nes_check": "PASS: python tools/nes_check.py game/sprites_src/chars/spr_pp_portrait_prometheus.png --type sprite -> 48x48, 36 tiles, 4 colours, 0 off palette pixels, worst 8x8 tile inside the 3 opaque colour ceiling",
+        "own_audit": "python tools/art/make_dialogue_busts.py -> guard, percy, prometheus all ok, exit 0: 48x48, 4 entries, 1 pixel frame drawn into the sheet, no transparent pixel inside the frame, at most 3 colours in any 8x8 tile, and guard and Percy are byte identical to their previous sheets (their shas did not move)",
+        "palette_synergy": "FAIL, 1 sprite file, 2 failing pairs, and neither pair is the drawing: python tools/palette_synergy.py --scene ui --background output/spr_pp_portrait_ground.png --sprite game/sprites_src/chars/spr_pp_portrait_prometheus.png --frame-w 48 --frame-h 48 --at 0,0. (1) set_member: sprite colour #f0d0b0 ($36) is not in any of the scene's 4 sprite palettes, and neither is $37, so no skin entry is available to a dialogue bust in scene ui at all. (2) overlay_contrast: the frame's body reads $02 at 1.00:1 on a ground that is $02, and its ink $0F 1.73:1, because the bust's own panel IS the window fill, so body-against-ground is the same colour by construction",
+        "before_would_also_fail": "measured this card on the git HEAD blob (sha256 737077d8...): the same 2 pairs fail, set_member on $37 and overlay_contrast on $02 against $02. The redraw does not remove either pair and no redraw can: the ui scene's sprite palettes are 3 entries each (sp0 15/40/48, sp1 15/0/48, sp2 15/0/40, sp3 2/0/48) and none carries a skin entry, while a bust spends 4 opaque entries across its tiles",
+        "contact_sheet": "output/sprites_v2_sheet.png rebuilt by tools/art/make_title_rows_v2.py at 1040x5888: the dialogue busts band was added this card because the sheet carried no 48x48 portrait at all, and it reads the three SHIPPED sheets so it cannot disagree with them. The band is at 2x, 144x48 of art, and it holds guard, percy and prometheus in that order",
+        "tests": "not run: the change is a drawing inside the owning generator and this box has no pytest run for it in the card's 45 minute budget",
+        "q_for_gamedev": [
+          "Q1 the skin entry: data/palettes/scene_ui.json gives the ui scene four sprite palettes of three entries (sp0 15/40/48, sp1 15/0/48, sp2 15/0/40, sp3 2/0/48), and NONE of them carries a skin entry, so every dialogue bust fails palette_synergy set_member whatever it is drawn from. May sp3 (unused, $02/$00/$30) take a skin entry, or does a bust get its own palette row?",
+          "Q2 the classification: a bust stands at 16,120 with its own $02 panel inside its frame, and tools/palette_synergy.py reads its largest fill as the body, so body against a $02 ground is 1.00:1 by construction and overlay_contrast can never pass. Is a framed portrait whose interior is the box's own fill in scope for R1b (it is neither a figure with feet nor a tiled layer over the map), and if not, which rule judges it?"
+        ],
+        "status_note": "Redrawn on 2026-11-11 by card t_a61c01b7 and left at redrawn, not done: the row's own defect (pale_hair_mass_without_an_outline) is measured fixed in the shipped sheet, nes_check passes, and the drawing is the owning generator's output. palette_synergy still fails 2 pairs and both are the ui scene's palette set and the tool's reading of a framed portrait, which are gamedev's, so they are posted as Q1 and Q2 rather than decided here."
+      },
       "source": {
         "sheet": "H",
         "tile": 6,
@@ -2535,7 +2742,18 @@
         "sidecar": "game/sprites_src/chars/spr_pp_portrait_prometheus.png.json",
         "sha256": "ed5642c963554240f7bf139543ba50292ff6d6ffe5f85a264dba3d9f57836126"
       },
-      "status_note": "Status left at queued_by_eye: the reading stands, the check command is still the placeholder it was."
+      "status_note": "Redrawn on 2026-11-11 by card t_a61c01b7 and still at redrawn, not done: the row's own defect is measured fixed, and both open questions are now answered in the ruling block (skins on sp3, panel out of the sprite layer, R1b asked of the figure and not of the box's fill). What is left is the drawing change and the two ui rows, which land together on one card. knowledge/PALETTE-RULINGS-2026-11-12.md is the file.",
+      "ruling": {
+        "card": "t_8df7aab4",
+        "date": "2026-11-12",
+        "file": "knowledge/PALETTE-RULINGS-2026-11-12.md",
+        "q1_skin_entry": "yes. sp2 becomes $0F $28 $36 and sp3 becomes $0F $30 $36. Measured, those are the two ui rows nothing spends (cursor {28} fits sp0 or sp2, party {00 0F 30} fits sp1, enemy {0F 28 30} fits sp0), and scene_ui.json already calls sp3 spare.",
+        "the_panel": "every $02 pixel of the three bust sheets becomes transparent. $02 is the dialogue window's fill, a BACKGROUND colour bg0 already carries, and with it drawn as sprite pixels the three sheets need five sprite rows where the ui scene has four.",
+        "q2_classification": "a framed 48x48 portrait IS in scope for R1b, and it passes on R1b's existing two instruments once its panel is not sprite pixels: body $30 reads 20.47:1 on $0F, 4.07:1 on $00 and 1.02:1 on $20 with the ink $0F at 19.77:1 there; body $28 reads 11.85:1 on $0F and 2.35:1 on $00 with the ink $0F at 5.03:1 there. No rule change.",
+        "measured_after": "with the panel out and the two rows spent: fits [3] for guard and percy and [2] for prometheus, body $30 $30 $28, and the only remaining problem on each is one ground set_member ($20 under the sprite is not in a ui background palette), which is the capture's own white and not the sprite.",
+        "carded": "the drawing change and the two palette rows land together, because re-solving sp2 and sp3 before the panels are transparent would leave no row carrying $02 while the shipped sheets still paint it.",
+        "row": "ui scene, sp2 $0F $28 $36"
+      }
     },
     {
       "id": "hadrian_ow_v2",
@@ -2619,48 +2837,23 @@
         "means": "must print PASS: every pixel a data/nes_palette.json entry, width and height multiples of 8, at most 3 opaque colours per 8x8 tile, at most 25 colours per sheet",
         "result": "PASS on 2026-10-23 by card t_4e54cc9e, re-measured from this path"
       },
-      "status": "redrawn",
+      "status": "done",
       "after": {
-        "drawn_by": "tools/art/make_characters_v2.py, the generator that owns this name: the hadrian spec's body code moved from ink to grey, and a bident decor was added to decorate()",
-        "card": "t_bd32a72e",
-        "file": "game/sprites_src/chars/hadrian_ow_v2.png, mirrored to game/datafiles/art/hadrian_ow_v2.png by tools/sync_art.py",
-        "sheet_px": [
-          128,
-          16
-        ],
-        "frames": 8,
-        "frame_px": [
-          16,
-          16
-        ],
-        "colours": 3,
-        "entries": [
-          "$0F ink (#000000) 902 px, 60.7 percent: the outline, the interior seams and the sleek hair",
-          "$00 grey (#7c7c7c) 296 px, 19.9 percent: the mid body of the suit",
-          "$30 pale (#fcfcfc) 288 px, 19.4 percent: the face, the lit rim and the bident"
-        ],
-        "drawn_px": 1486,
-        "off_palette_px": 0,
-        "worst_tile_opaque": 3,
-        "worst_tile_at": [
-          0,
-          8
-        ],
-        "head_band_codes": "hks",
-        "body_band_codes": "abk",
-        "body_band_colour_count_excluding_ink": 2,
+        "card": "t_a2b9d880",
+        "date": "2026-11-12",
+        "what_changed": "no pixel changed in this card. The drawing landed on t_bd32a72e and t_454c1876 and the row stayed redrawn because it had only ever been measured on the wrong grounds; this card measured it on the ground the scene file judges it on and recorded the numbers",
         "before_vs_after": {
-          "ink_share_pct": "85.2 before, 60.7 after",
-          "largest_non_ink_entry_pct": "5.4 before, 19.9 after",
-          "worst_tile_opaque_colours": "2 before, 3 after, which is the 3 colour ceiling a sprite tile carries",
-          "drawn_px": "1186 before, 1486 after, the extra 300 being the bident and the grey body",
-          "colours": "3 before, 3 after: no entry was added"
+          "one_entry_share": "85.2 percent on $0F ink before the redraw (1010 of 1186 drawn px, the suit and the outline being the same entry), 60.7 percent on $0F after (902 of 1486), with $30 pale at 31.2 percent as the mid body",
+          "worst_tile_opaque": "2 before, 3 after, which is the 3 colour ceiling a sprite tile carries",
+          "drawn_px": "1186 before, 1486 after, the extra 300 being the bident and the pale suit",
+          "colours": "3 before, 3 after: no entry was added",
+          "body_ground": "body $00 grey 0 rows from the street's $00 paving before (invisible), body $30 pale 3 rows above both street entries after"
         },
-        "what_changed_in_the_drawing": "1) the body code a was INK, so the suit and the outline were the same entry and the figure was one black mass; a is now GREY, which is RULE 0 point 3's mid body, and ink keeps the outline, the collar knot (row 9), the waist line (row 11) and the hair. 2) a bident decor was added: two pale prongs at cols 13 and 15 on row 3 and 4 over an ink socket at col 14, and the shaft down col 14, rows 5 to 14, in the pale accent, which is Percy's trident construction at two prongs instead of three. It costs no fourth colour because the head band tile has already spent ink, skin and one accent and the body band tile has already spent ink, grey and pale.",
-        "nes_check": "PASS on Pine, 2026-10-23 16:25: 128x16, 32 tiles, 3 colours, 0 off palette pixels (data/results/offload-hadrian2-0.json in the pine project)",
-        "tests": "tests/test_make_characters_v2.py and tests/test_make_title_ui.py on Pine the same run: 25 passed, 1 skipped in 6.67 s. test_committed_sheet_is_the_generator_output is one of them, so the sheet on disk is the generator's own output.",
-        "contact_sheet": "output/sprites_v2_sheet.png rebuilt by tools/art/make_title_rows_v2.py at 1024x1728, 13 colours. The hadrian band is the exact 4x nearest upscale of this strip, found at (32, 712) on the sheet by a pixel search, so the sheet carries this drawing and not the old one.",
-        "palette_synergy": "Two grounds measured, and the difference between them is the finding. (a) The ship composite ground (output/sprite_v2_frames/ship_background_1x.png, ts_ship tiled, sprite at 120,120): FAIL, 50 failing pairs, and the shipped sheet from git HEAD failed the same 50 before the redraw, by the same rules (white_blob 18, body_ground 14, invisible 8, palette_count 8, same_hue_row 2). The ground under a 16x16 box there spans all four luminance rows, so no body colour can clear RULE 0 point 2 in it; percy fails 40 pairs there and konrad 66, so the cast cannot pass on that pairing. (b) A real scene ground, output/bg_battle_deck_night_frame.png with --scene battle_deck_night at 120,120: percy PASSES 0 failing pairs (the control that proves the pairing is right), and hadrian is FAIL with 12: palette_count on all 8 frames, body_ground 2 and same_hue_row 2. So on the correct pairing the art breaks no rule and the whole remainder is the palette set: no sprite palette of battle_deck_night or battle_quay_dusk carries hadrian's triple ($0F, $00, $30), and see Q2 for why no legal triple fixes it."
+        "nes_check": "PASS on Pine 2026-11-12 05:39: python tools/nes_check.py game/sprites_src/chars/hadrian_ow_v2.png --type sprite -> 128x16, 32 tiles, 3 colours, 0 off palette pixels, NES_EXIT=0 (data/results/offload-sprite-hadrian-0.json in the pine project)",
+        "palette_synergy": "PASS, 1 sprite file(s), 0 failing pair(s) of 128, SYN_EXIT=0, on Pine and locally: python tools/palette_synergy.py --scene southampton --background output/southampton_sample_frame.png --sprite game/sprites_src/chars/hadrian_ow_v2.png --frame-w 16 --frame-h 16 --at 128,112",
+        "why_this_ground": "data/palettes/scene_southampton.json's judged row lists game/sprites_src/chars/hadrian_ow_v2.png as one of the party's four walking sheets on output/southampton_sample_frame.png at 128,112, under card t_dec4e92c's ruling, and card t_454c1876 moved his suit to pale $30 on that same ground. The two grounds the 2026-10-23 card refused him on, the ship composite and battle_deck_night, are not this row's pairing: percy fails 40 pairs on the first and 0 on the deck. The per frame lines still print 'pairs failing 5 of 8', which is the count of scene palette rows that would refuse the frame if it were drawn in them, not a failure of this one: the summary line and the exit code are 0",
+        "frame_line_note": "every one of the 8 frames reports body $30 row 3 hue grey, palettes that fit [0] (southampton sp0 $00 $0F $30), 4 inked 8x8 tiles and 0 uncovered",
+        "contact_sheet": "output/sprites_v2_sheet.png regenerated by tools/art/make_title_rows_v2.py at 1040x5888, 69473 bytes, sha256 63ce894d6e7ed36319e031f382d67fc136f0be99aee30bc776d581f805f677a3. The exact 4x nearest upscale of this 128x16 strip (flattened on the sheet's black backdrop, as the composer composites it) is at (32, 712) and is the only match on the sheet, so the HADRIAN band carries this drawing and not an older one"
       },
       "q_for_gamedev": [
         "Q1 which ground a character row is judged on. palette_synergy on the ship composite ground (output/sprite_v2_frames/ship_background_1x.png, ts_ship tiled, sprite placed at 120,120 with --frame-w 16 --frame-h 16) fails for every cast sheet: hadrian 50 pairs, percy 40, konrad 66. The ground under a 16x16 box there spans all four luminance rows ($0F row 0, $00 row 0, $10 row 1, $17 row 1, $28 row 2, $30 row 3), and RULE 0 point 2 asks the body to be 2 rows from the ground, so no body colour can satisfy every ground colour in that box. That is a pairing question, not an art one: is the cast judged on this pairing, or on one scene ground?",
@@ -2685,7 +2878,35 @@
         "sha256": "78fad6a88cfb9b2835b26495d25183c0618abea72424f3ac33ad20249305198f",
         "sha256_note": "re-measured after card t_bd32a72e redrew the sheet; the hash the row carried before the redraw was a690904f9f7356ff5d3b24ffcc0cfd113bf568041c0ca00008a4c17f335d8677"
       },
-      "status_note": "Redrawn on 2026-10-23 by card t_bd32a72e through the tool that owns the name. The measured defect (85.2 percent of the opaque pixels on one entry, worst tile 2 of the 3 a sprite tile carries) is gone: 60.7 percent ink, a 19.9 percent grey mid body, worst tile 3. nes_check PASS, 25 tests passed on Pine, and the contact sheet carries this strip. palette_synergy is still red, but the two grounds disagree and that is the finding: on the ship composite ground it fails 50 pairs exactly as it did before the redraw and every cast sheet fails there, while on the scene ground that percy passes with 0 fails it fails 12, all of them palette-set consequences (palette_count on 8 frames, body_ground and same_hue_row on the 2 up-view frames). No entry swap inside his three colours fixes that, and no scene palette in the project carries a purple, so what is left is gamedev's: Q1, Q2, Q2b and Q3 in this row."
+      "status_note": "Done on 2026-11-12 by card t_a2b9d880. The row was left redrawn on 2026-10-23 by card t_bd32a72e, then refused palette_synergy on the ship composite ground (50 pair(s)) and on battle_deck_night (12), and neither of those is the ground this row is judged on: data/palettes/scene_southampton.json's judged row names hadrian_ow_v2 as one of the party's four walking sheets on output/southampton_sample_frame.png at 128,112 under card t_dec4e92c's ruling, and card t_454c1876 moved his suit from grey $00 to pale $30 on that ground precisely so the body clears the street. Measured there the sheet is PASS with 0 failing pair(s) of 128 and exit code 0, on Pine and locally, nes_check PASS, and a rerun of the owning generator reproduces the shipped file byte for byte. Two questions on this row remain gamedev's and are not decided here: Q3, whether a bident may stay on a 16 x 16 walker, and the RULE 0 point 3 identity line that reserves Hadrian as near black and purple while his sheet spends $0F $00 $30 and no purple. Neither was the row's named defect.",
+      "sheet": {
+        "sha256": "558303ae9b984df6f41d86ee148b8cc6bfab90947e6feafef16f843be21b2e1e",
+        "sheet_px": [
+          128,
+          16
+        ],
+        "frames": 8,
+        "frame_px": [
+          16,
+          16
+        ],
+        "colours": 3,
+        "entries": [
+          "$0F ink #000000 902 px, 60.7 percent: the outline, the interior seams and the sleek hair",
+          "$30 pale #fcfcfc 464 px, 31.2 percent: the suit body, the face and the lit rim",
+          "$00 grey #7c7c7c 120 px, 8.1 percent: the shaded rim on the shoulders and sleeves"
+        ],
+        "drawn_px": 1486,
+        "transparent_px": 562,
+        "worst_tile_opaque": 3,
+        "worst_tile_at": [
+          0,
+          8
+        ],
+        "off_palette_px": 0,
+        "generator": "tools/art/make_characters_v2.py, the hadrian spec: 'a' moved from INK to GREY on card t_bd32a72e and the suit moved from grey $00 to pale $30 on card t_454c1876 (knowledge/PALETTE-RULINGS-2026-10-25.md section 20)",
+        "reproduced": "a rerun of python tools/art/make_characters_v2.py on 2026-11-12 rewrote all five cast sheets and every sha256 was unchanged, so the shipped file is the generator's own output and no second copy of the drawing exists"
+      }
     },
     {
       "id": "ts_exterior",
@@ -2778,9 +2999,9 @@
       "check": {
         "command": "python tools/check_ts_exterior.py",
         "means": "must print PASS: every pixel a data/nes_palette.json entry, at most 3 colours besides the shared backdrop per 16x16 attribute area, at most 25 colours per sheet. The project's own tool for this set, tools/check_ts_exterior.py, runs this and 56 more checks",
-        "result": "PASS, 57 checks, 0 failed (tools/check_ts_exterior.py, which runs nes_check --type background on this sheet) on 2026-10-23 by card t_4e54cc9e, re-measured from this path"
+        "result": "PASS, 58 checks, 0 failed (python tools/check_ts_exterior.py, re-run on 2026-11-12 by card t_8df7aab4)"
       },
-      "status": "queued_by_eye",
+      "status": "done",
       "after": null,
       "source": {
         "sheet": "H",
@@ -2800,7 +3021,21 @@
         "sidecar": "game/sprites_src/env/ts_exterior.png.json",
         "sha256": "b0a562a8dad88742569454d9fb7821d0e18a77d9268e06198d78147f9c18e9b2"
       },
-      "status_note": "Status left at queued_by_eye: the reading stands. The check command is no longer a placeholder."
+      "status_note": "Done on 2026-11-12 by card t_8df7aab4, ruling knowledge/PALETTE-RULINGS-2026-11-12.md section 5: the palette is legal, the check passes 58 of 58, the tile inventory and the colour budget are written down in the ruling, and the 'busy' reading is refused as a defect. The stale '5 palettes' rule string in the sidecar is carded separately.",
+      "ruling": {
+        "card": "t_8df7aab4",
+        "date": "2026-11-12",
+        "file": "knowledge/PALETTE-RULINGS-2026-11-12.md",
+        "decision": "'tiles too busy to read as parts' is not a defect and no redraw follows. byte for byte the sheet is legal and the reading has no number behind it.",
+        "measured": {
+          "python tools/check_ts_exterior.py": "PASS, 58 checks, 0 failed (the row recorded 57; one check was added since, none failed then and none fails now)",
+          "sheet": "256x64, 64 tiles of 16x16, 256 8x8 subtiles of which 204 are distinct, 13 entries, largest entry 26.7 percent of the pixels",
+          "tiles": "18 distinct 16x16 colour sets, the largest three entries plus the shared backdrop $0F"
+        },
+        "colour_budget": "3 entries plus the one shared backdrop $0F per 16x16 attribute area, at most 4 background palettes per frame, and the atlas's 6 declared groups are the pool a scene picks 4 from (the three composed town frames measure 8 distinct colour sets covered by 3 palettes of the 4 allowed).",
+        "tile_list": "the sidecar's own inventory, 24 feature groups and 64 named tiles, unchanged by this card.",
+        "defect_found": "the sidecar's rule string still reads '5 background palettes of 3 entries, a scene spends at most 4 of them' while the file declares SIX (bg0_stone, bg1_brick, bg2_green, bg3_water, bg4_red, bg5_plant). One line in the generator that writes it; carded."
+      }
     },
     {
       "id": "spr_pp_bilge_slime",
@@ -4488,7 +4723,7 @@
       "frames": 16,
       "frame_px": [
         16,
-        24
+        16
       ],
       "priority": "P2",
       "reference": {
@@ -5917,14 +6152,52 @@
         "command": "python tools/nes_check.py <candidate file> --type sprite",
         "means": "PASS: every pixel a data/nes_palette.json entry, 8 px grid, at most 3 opaque colours per 8x8 tile"
       },
-      "status": "queued_by_eye",
+      "status": "done",
       "owner_card": "t_f96847c9",
       "card": "t_f96847c9",
       "written_on": "2026-10-26",
-      "q_for_gamedev": [
-        "a 16 frame cycle where the two frames of a direction are a real step, and whether the 1 px outline may eat into the 16 x 24 cell the walk is built on"
-      ],
-      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (no Gemini key was present in the worker), so no eye score exists yet and nothing is promoted."
+      "status_note": "Done on 2026-11-12 by card t_ba759a40. The row was left at redrawn on 2026-10-27 because palette_synergy refused it on the ship deck plate ground, and that pairing was the wrong ground, not the drawing: this row's own palette_roles name the scene southampton, and data/palettes/scene_southampton.json's judged row is output/southampton_sample_frame.png at 128,112, the street the party's 16 px feet stand on at row 127 (the same pairing card t_6a550bcf measured ouranos clean on). Measured on that ground the sheet is 0 failing pairs of 128 and exit code 0: body $31 (row 3) is 3 luminance rows from the street's $00 (row 0) and 3 from its $0F (row 0). The body is light blue and not near white at 0.70, and the ground is 0.20, so R3 does not fire. The 2026-10-27 Q3 is answered by measurement rather than left open: the two frames of each direction differ by 6 to 13 px of 256, so the cycle is a real step, and the 16 x 24 cell the Q asked about no longer exists because final scope 2026-11-03 item 3 made the hero 16 px.",
+      "after": {
+        "card": "t_ba759a40",
+        "date": "2026-11-12",
+        "sheet_px": [
+          256,
+          16
+        ],
+        "frames": 16,
+        "frame_px": [
+          16,
+          16
+        ],
+        "colours": 3,
+        "entries": [
+          "$01 ink #0000fc, 1406 px",
+          "$31 body #a4e4fc, 640 px",
+          "$11 shade #0078f8, 348 px"
+        ],
+        "drawn_px": 2394,
+        "worst_tile_opaque": 3,
+        "tiles": 64,
+        "walk_step_px": "6 to 13 differing px of 256 between the two frames of each direction",
+        "nes_check": "PASS: 256x16, 64 tiles, 3 colours, 0 off palette pixels, worst 8x8 tile 3 opaque colours",
+        "palette_synergy": "PASS, 1 sprite file(s), 0 failing pair(s) of 128, exit code 0. python tools/palette_synergy.py --scene southampton --background output/southampton_sample_frame.png --sprite game/sprites_src/chars/zeus_ow_walk8.png --frame-w 16 --frame-h 16 --at 128,112. Ground entries $00 and $0F; body $31 row 3 against $00 row 0 is 3 rows apart and against $0F row 0 is 3 rows apart",
+        "ground": "output/southampton_sample_frame.png, the 16 x 16 window at 128,112, entries $00 #7c7c7c and $0F #000000: the judged ground in data/palettes/scene_southampton.json, whose party box puts a 16 px figure's feet on row 127",
+        "contact_sheet": "output/sprites_v2_sheet.png, 1040x5888, the style B strip at 3x with this sheet in it and the same three figures at 3x on the southampton street at 128,104 with the feet on row 127",
+        "sha256_redraw": "7595ffeb9cc910c45340bc8f693a7314e24826744d97e6a7f7e09c7b62afbb7d",
+        "before": {
+          "ground": "output/ship_deck_plate_ground.png at 0,0, the pairing card t_4b68f597 used",
+          "palette_synergy": "FAIL, 26 failing pairs",
+          "frame_px_in_row": [
+            16,
+            24
+          ],
+          "frame_px_on_disk": [
+            16,
+            16
+          ]
+        }
+      },
+      "frame_px_note": "corrected 2026-11-12: this row asked a 16 x 24 cell, and final scope 2026-11-03 item 3 made every overworld human 16 px, so tools/art/make_characters_v2.py --hero16 writes zeus_ow_walk8 as 256x16, 16 frames of 16x16. Measured at that size the sheet has 16 frames; measured at 16x24 it has 0 frames and every verdict is a vacuous 0 of 0, which is the trap row cand_r18_kronos_ow's card Q1 recorded for ts_ship.png"
     },
     {
       "id": "cand_r18_kronos_ow",
@@ -6056,14 +6329,65 @@
         "command": "python tools/nes_check.py <candidate file> --type sprite",
         "means": "PASS: every pixel a data/nes_palette.json entry, 8 px grid, at most 3 opaque colours per 8x8 tile"
       },
-      "status": "queued_by_eye",
+      "status": "done",
       "owner_card": "t_f96847c9",
       "card": "t_f96847c9",
       "written_on": "2026-10-26",
-      "q_for_gamedev": [
-        "a stander only: no walk exists for him"
-      ],
-      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (no Gemini key was present in the worker), so no eye score exists yet and nothing is promoted."
+      "status_note": "Done on 2026-11-12 by card t_ba759a40, redrawn through tools/art/make_characters_v2.py as a hand authored 16 x 24 grid (KRONOS_OW_DOWN) because the row's defect was which entry is the BODY. The parametric sheet gave the orange $17 the largest non-ink fill, and body $17 is 1 luminance row from the southampton street's $00 at 1.16:1, which RULE 0 point 2 refuses: that was the last failing pair. The robe is now GOLD $28, which is 2 rows from $00 and 3 rows from $0F, and the orange $17 is the shade plane on his right and lower rows. The triple is the row's own ($07 $17 $28) and did not change, so Q2 of the 2026-10-27 card is answered without moving off the triple. Measured on the scene's own judged ground at 128,104: 0 failing pairs, exit code 0. The tool's own audit: worst tile 3 of 3, ink 44.0 percent, light 14 ok and 0 wrong, orphans 0, outline leaks 0, dither 0.",
+      "after": {
+        "card": "t_ba759a40",
+        "date": "2026-11-12",
+        "drawn_by": "tools/art/make_characters_v2.py --only-style-b, the hand authored grid KRONOS_OW_DOWN",
+        "sheet_px": [
+          16,
+          24
+        ],
+        "frames": 1,
+        "frame_px": [
+          16,
+          24
+        ],
+        "colours": 3,
+        "entries": [
+          "$28 body gold #f8b800, 126 px",
+          "$07 ink #881400, 118 px",
+          "$17 shade #e45c10, 24 px"
+        ],
+        "drawn_px": 268,
+        "worst_tile_opaque": 3,
+        "tiles": 6,
+        "tool_audit": {
+          "ink_pct_frame0": 44.0,
+          "light_correct": 14,
+          "light_wrong": 0,
+          "orphans": 0,
+          "outline_leaks": 0,
+          "dither_patches": 0,
+          "silhouette_width_frame0": {
+            "head": 12,
+            "shoulders": 14,
+            "torso": 14
+          }
+        },
+        "nes_check": "PASS: 16x24, 6 tiles, 3 colours, 0 off palette pixels, worst 8x8 tile 3 opaque colours",
+        "palette_synergy": "PASS, 1 sprite file(s), 0 failing pair(s) of 8, exit code 0. python tools/palette_synergy.py --scene southampton --background output/southampton_sample_frame.png --sprite game/sprites_src/chars/kronos_ow24.png --frame-w 16 --frame-h 24 --at 128,104. Ground entries $00 #7c7c7c and $0F #000000; body $28 row 2 against $00 row 0 is 2 rows apart and against $0F row 0 is 2 rows apart",
+        "ground": "output/southampton_sample_frame.png, the 16 x 24 window at 128,104, entries $00 and $0F: the judged street in data/palettes/scene_southampton.json with a 24 px figure's feet on row 127, which is the placement card t_6a550bcf measured ouranos clean on",
+        "contact_sheet": "output/sprites_v2_sheet.png, 1040x5888, an exact 3x copy of this sheet at x 824 y 4328 in the style B strip band, and the figures at 3x on the southampton street at y 4496",
+        "sha256_redraw": "5d1064e0a97a0df14912ec83186ba9ea5d5c9d27dc76dd111b62ecd610530547",
+        "before": {
+          "drawn_by": "tools/art/make_characters_v2.py --only-style-b, the parametric tall_frame path",
+          "colours": 3,
+          "entries": [
+            "$07 #881400, 107 px",
+            "$17 #e45c10, 82 px",
+            "$28 #f8b800, 70 px"
+          ],
+          "body": "$17 #e45c10, the largest non-ink fill at 82 px",
+          "drawn_px": 259,
+          "palette_synergy": "FAIL, 1 failing pair of 8, exit code 1: body $17 (row 1) and ground $00 (row 0) are 1 luminance row apart at 1.16:1, and RULE 0 point 2 wants 2 rows or 3.0:1. Judged on the ship deck plate at 0,0 the same sheet was FAIL at 2 failing pairs, and at 128,112 (feet on row 135) at 4",
+          "sha256": "173f67ed48d61b6e1f42c2008eaf256b637aeb97c2ef457d3c9e92159afcf389"
+        }
+      }
     },
     {
       "id": "cand_r18_percy_ow",
@@ -6099,9 +6423,10 @@
         "max_opaque_per_tile": 3
       },
       "drawn_by": {
-        "tool": "kaggle-concept-art/concept_art_cast_r18.py on Kaggle GPU, quantised by kaggle-concept-art/r18_batches_measure.py",
+        "tool": "tools/art/make_characters_v2.py, the hand authored PERCY_OW_DOWN grid",
         "commit": null,
-        "note": "this card, 2026-10-26"
+        "date": "2026-11-04",
+        "note": "16 columns by 24 rows, no model, no traced art; the parametric build in the same spec is kept only as the record of what the tool drew before this card"
       },
       "candidates": [
         {
@@ -6192,17 +6517,80 @@
         }
       ],
       "check": {
-        "command": "python tools/nes_check.py <candidate file> --type sprite",
-        "means": "PASS: every pixel a data/nes_palette.json entry, 8 px grid, at most 3 opaque colours per 8x8 tile"
+        "command": "python tools/nes_check.py game/sprites_src/chars/percy_ow24.png --type sprite and python tools/palette_synergy.py --scene southampton --background output/southampton_sample_frame.png --sprite game/sprites_src/chars/percy_ow24.png --frame-w 16 --frame-h 24 --at 128,104",
+        "means": "both must pass: every pixel a data/nes_palette.json entry, 8 px grid, at most 3 opaque colours per 8x8 tile, at most 25 colours per sheet, and 0 failing body_ground, same_hue_row, white_blob, sprite_tile, palette_count or set_member pairs on the southampton ground the figure stands on",
+        "result": "PASS both, 2026-11-04 by card t_088f0523, on this machine and re-run on Pine"
       },
-      "status": "queued_by_eye",
+      "status": "done",
       "owner_card": "t_f96847c9",
       "card": "t_f96847c9",
       "written_on": "2026-10-26",
       "q_for_gamedev": [
         "a stander only: no walk exists for him"
       ],
-      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (no Gemini key was present in the worker), so no eye score exists yet and nothing is promoted."
+      "status_note": "Done on 2026-11-04 by card t_088f0523. The sheet this row owns is now a hand authored 16 x 24 grid (PERCY_OW_DOWN in tools/art/make_characters_v2.py) instead of the parametric body, for the same measured reason as his three men (cards t_7ca361fb and t_f0cb84db): the row's only measured defect was WHICH tone is the body. The parametric sheet read navy 148 px of ink, BLUE 82 px as the largest non-darkest fill and white 73 px, so palette_synergy failed body_ground with body $12 (row 1) against the $00 paving (row 0) at 1.34:1, in the 16 x 24 cell the game would stand on that tile. The hand authored cell keeps the row's own uniform triple $02 $12 $30, unchanged, and makes the WHITE the jumper and the blue the shade: white 117 px, navy 138 px, blue 39 px, so the body is $30 at row 3 and palette_synergy PASSES with 0 failing pairs on the ground the project judges a southampton figure on. nes_check PASS, worst 8x8 tile 3 of 3, ink 46.9 percent, light direction 6 ok and 0 wrong, orphans 0, outline leaks 0, dither 0. He is the lieutenant and not one of the men: the trident's three prongs sit beside his head in columns 12 to 14 with the shaft down column 13, against man 3's single pointed pike, which is both the weapon this card asks to see and the crew's one polearm of rank.",
+      "measured_2026_10_30": {
+        "card": "t_6a550bcf",
+        "date": "2026-10-30",
+        "sheet": "game/sprites_src/chars/percy_ow24.png, sha256 7ac09c376b57cf16df87f01405ec6b4aaa5434eb9bd4c894aef83520b3dfddaf, 16x24, 1 frame, 3 entries $02 $12 $30, nes_check PASS",
+        "ground_a": {
+          "background": "output/southampton_sample_frame.png, the judged row's ground",
+          "command": "python tools/palette_synergy.py --scene southampton --background output/southampton_sample_frame.png --sprite game/sprites_src/chars/percy_ow24.png --frame-w 16 --frame-h 24 --at 128,104",
+          "verdict": "FAIL, 1 failing pair: body_ground, body $12 (row 1) and ground $00 (row 0) are 1 luminance row apart at 1.34:1",
+          "palette_membership": "palettes that fit [3], so the triple is southampton sp3 ($02 $12 $30) and the palette set is not the problem"
+        },
+        "ground_b": {
+          "background": "output/art_b/ART-B-MAPS/street_frame_1x.png crop at x 121 y 416, 384 of 384 pixels $10 #bcbcbc",
+          "command": "python tools/palette_synergy.py --scene southampton --background output/ouranos_street_ground.png --sprite game/sprites_src/chars/percy_ow24.png --frame-w 16 --frame-h 24 --at 0,0",
+          "verdict": "FAIL, 1 failing pair: body_ground, body $12 (row 1) and ground $10 (row 1) are 0 luminance rows apart at 2.95:1, which is 0.05 under the 3.0 floor"
+        },
+        "why_no_redraw_fixes_it": "the tool reads the body as the largest fill that is not the darkest entry. Percy's triple is $02 (darkest, so the outline), $12 and $30. A body of $12 fails both grounds, and a body of $30 is refused as a white blob wherever the ground is above 0.25 luminance. So the drawing can move pixels between $12 and $30 but cannot produce a passing body on either ground. Measured the same day: the three men fail the same way, 1 pair each, on both grounds",
+        "what_would_fix_it": "the same answer that closed the towns for the party on 2026-10-25 is not available here: the party's bodies are $30, $28 and $31, which clear the $00 paving, while a sailor's uniform body is the mid blue $12. Either the uniform's body entry changes (a scene palette change, so gamedev's), or the paving goes light enough that the white blob rule refuses $30 too, which is worse, or the row accepts that a $12 bodied figure reads on $00 paving by its ink outline alone and the tool is told so",
+        "q_for_gamedev": "Q for gamedev: the hand authored 16 x 24 Percy, and his three men, carry the white uniform triple $02 $12 $30 and their body reads $12. On the shipped southampton paving ($00) that is 1.34:1 and on the style B preview paving ($10) it is 2.95:1 against a 3.0 floor, so palette_synergy refuses all four sheets on both grounds while their silhouette, outline and 3 colour cell all measure clean. Percy_ow_v2, the 16 x 16 sheet the game draws today, passes because its body is $30 white. Which does gamedev want: the 16 x 24 crew redrawn with the white as its largest fill (as the 16 x 16 sheet reads), the uniform's body entry changed in a scene palette, or the row recorded as passing on its ink separation without a body colour that clears the ground?"
+      },
+      "after": {
+        "card": "t_088f0523",
+        "date": "2026-11-04",
+        "drawn_by": "tools/art/make_characters_v2.py, the hand authored PERCY_OW_DOWN grid (16 columns by 24 rows, no model, no traced art), drawn by the hand_grid_frame path and reproduced by re-running the generator",
+        "file": "game/sprites_src/chars/percy_ow24.png",
+        "sheet_px": [
+          16,
+          24
+        ],
+        "frames": 1,
+        "frame_px": [
+          16,
+          24
+        ],
+        "colours": 3,
+        "entries": [
+          "$30 white #fcfcfc 117 px, 39.8 percent: the jumper, the face, the cap crown and the trousers (the body the tool reads)",
+          "$02 navy #0000bc 138 px, 46.9 percent: the outline, the cap band, the eyes, the mouth, the seams, the belt, the trident's prongs and collar",
+          "$12 blue #0058f8 39 px, 13.3 percent: the trident shaft and crossbar, the shade on each mass, the boots"
+        ],
+        "drawn_px": 294,
+        "drawn_pct_of_cell": 76.6,
+        "worst_tile_opaque": 3,
+        "light_correct": 6,
+        "light_wrong": 0,
+        "orphans": 0,
+        "outline_leaks": 0,
+        "dither_patches": 0,
+        "silhouette_width": {
+          "head": 14,
+          "shoulders": 14,
+          "torso": 14,
+          "note": "every band reads 14 because the trident's prong tips and shaft sit in columns 12 to 14 in all three bands; the figure's own shoulder run of white is 8 columns"
+        },
+        "sha256": "4d737115003fdd76cfdaa00b209784695905629b7b6b3cb8d423325ad88b1305",
+        "nes_check": "PASS: python tools/nes_check.py game/sprites_src/chars/percy_ow24.png --type sprite -> 16x24, 6 tiles, 3 colours, 0 off palette pixels (also run on Pine, card t_088f0523)",
+        "palette_synergy": {
+          "command": "python tools/palette_synergy.py --scene southampton --background output/southampton_sample_frame.png --sprite game/sprites_src/chars/percy_ow24.png --frame-w 16 --frame-h 24 --at 128,104",
+          "verdict": "PASS, 1 sprite file(s), 0 failing pair(s); body $30 row 3 hue grey, 6 inked 8x8 tiles and 0 of them uncovered by any sprite palette of the scene"
+        },
+        "contact_sheet": "output/sprites_v2_sheet.png carries him under the label LT PERCY as the last row (cell 4x found at 32,2376 of a 640 x 2528 sheet, label read back from the sheet's own font)",
+        "tests": "58 passed, 0 failed on this machine (pytest tests/test_make_characters_v2.py tests/test_sprite_pipe.py tests/test_palette_synergy.py) and the same 58 on Pine (12 + 26 + 20 across three shards, card t_088f0523)"
+      }
     },
     {
       "id": "cand_r18_percy_man_1",
@@ -6333,14 +6721,66 @@
         "command": "python tools/nes_check.py <candidate file> --type sprite",
         "means": "PASS: every pixel a data/nes_palette.json entry, 8 px grid, at most 3 opaque colours per 8x8 tile"
       },
-      "status": "queued_by_eye",
+      "status": "done",
       "owner_card": "t_f96847c9",
       "card": "t_f96847c9",
       "written_on": "2026-10-26",
       "q_for_gamedev": [
         "whether three men of one watch read as three people"
       ],
-      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (no Gemini key was present in the worker), so no eye score exists yet and nothing is promoted."
+      "status_note": "Done on 2026-11-02 by card t_7ca361fb. The sheet this row owns is now a hand authored 16 x 24 grid (PERCY_MAN_1_DOWN in tools/art/make_characters_v2.py) instead of the parametric body, because the row's only measured defect was WHICH tone is the body: the parametric sheet read navy 103 px of ink, blue 62 px of body and white 44 px, so palette_synergy failed body_ground with body $12 one luminance row from the $00 paving at 1.34:1. The hand authored cell keeps the row's own uniform triple $02 $12 $30 and makes the WHITE the jumper and the blue the shade: white 98 px, blue 44 px, navy 120 px, so the body is $30 at row 3 and palette_synergy PASSES with 0 failing pairs on the ground the project judges a southampton figure on. nes_check PASS, worst 8x8 tile 3 of 3, ink 45.8 percent, light direction 6 ok and 0 wrong, orphans 0, outline leaks 0, dither 0. The cell carries a cutlass in his right hand, which is the weapon the AUTO-SPRITE-NEXT card asks to see. The other two men are still queued_by_eye: this card redrew one row, and their rows keep their own numbers.",
+      "after": {
+        "card": "t_7ca361fb",
+        "date": "2026-11-02",
+        "drawn_by": "tools/art/make_characters_v2.py, the hand authored PERCY_MAN_1_DOWN grid (16 rows by 24, no model, no traced art), drawn by the hand_grid_frame path and reproduced by re-running the generator",
+        "file": "game/sprites_src/chars/percy_man_1_ow24.png",
+        "sheet_px": [
+          16,
+          24
+        ],
+        "frames": 1,
+        "frame_px": [
+          16,
+          24
+        ],
+        "colours": 3,
+        "entries": [
+          "$02 navy #0000bc 120 px, 45.8 percent: the outline, the cap band, the eyes, the seams, the belt, the weapon row",
+          "$30 white #fcfcfc 98 px, 37.4 percent: the jumper, the face, the gloves, the trousers (the body the tool reads)",
+          "$12 blue #0058f8 44 px, 16.8 percent: the shade on the outer edge of each mass, the boots, the blade"
+        ],
+        "drawn_px": 262,
+        "drawn_pct_of_cell": 68.2,
+        "worst_tile_opaque": 3,
+        "light_correct": 6,
+        "light_wrong": 0,
+        "orphans": 0,
+        "outline_leaks": 0,
+        "dither_patches": 0,
+        "silhouette_width": {
+          "head": 14,
+          "shoulders": 15,
+          "torso": 15
+        },
+        "sha256": "6db6fb63d50916f60ca40f58bfb1a7df5769a75ca5945e29c6346e6fad53451c",
+        "nes_check": "PASS: python tools/nes_check.py game/sprites_src/chars/percy_man_1_ow24.png --type sprite -> 16x24, 6 tiles, 3 colours, 0 off palette pixels",
+        "palette_synergy": {
+          "command": "python tools/palette_synergy.py --scene southampton --background output/southampton_sample_frame.png --sprite game/sprites_src/chars/percy_man_1_ow24.png --frame-w 16 --frame-h 24 --at 128,104",
+          "verdict": "PASS, 1 sprite file(s), 0 failing pair(s)",
+          "body": "body $30 row 3 hue grey",
+          "palette_membership": "palettes that fit [3], so the triple is southampton sp3 ($02 $12 $30), 6 inked 8x8 tiles and 0 of them uncovered by any sprite palette of the scene",
+          "before": "FAIL, 1 failing pair(s): body $12 (row 1) and ground $00 (row 0) are 1 luminance row apart at 1.34:1, measured the same way on the same path from git HEAD"
+        },
+        "before_vs_after": {
+          "body_entry": "$12 blue 62 px before, $30 white 98 px after",
+          "largest_entry": "navy 103 px of 209 drawn before (49.3 pct), navy 120 px of 262 drawn after (45.8 pct)",
+          "palette_synergy": "FAIL 1 pair before, PASS 0 pairs after",
+          "colours": "3 before and 3 after: no entry was added, the same row's triple $02 $12 $30",
+          "drawn_px": "209 before, 262 after, the extra being the cutlass and the wider shoulders"
+        },
+        "contact_sheet": "output/sprites_v2_sheet.png rebuilt at 640x1952 by tools/art/make_characters_v2.py, PERCY MAN 1 band found at (32, 1800) by a pixel search for the exact 4x upscale of this strip; output/style_b_figures_sheet.png rebuilt at 640x1376 with the same band at (32, 648)",
+        "tests": "python -m pytest tests/test_make_characters_v2.py -q -> 12 passed in 1.52 s, the committed sheets are the generator's own output"
+      }
     },
     {
       "id": "cand_r18_percy_man_2",
@@ -6469,17 +6909,90 @@
         }
       ],
       "check": {
-        "command": "python tools/nes_check.py <candidate file> --type sprite",
-        "means": "PASS: every pixel a data/nes_palette.json entry, 8 px grid, at most 3 opaque colours per 8x8 tile"
+        "command": "python tools/nes_check.py game/sprites_src/chars/percy_man_2_ow24.png --type sprite and python tools/palette_synergy.py --scene southampton --background output/southampton_sample_frame.png --sprite game/sprites_src/chars/percy_man_2_ow24.png --frame-w 16 --frame-h 24 --at 128,104",
+        "means": "both must pass: every pixel a data/nes_palette.json entry, 8 px grid, at most 3 opaque colours per 8x8 tile, at most 25 colours per sheet, and 0 failing body_ground, same_hue_row, white_blob, sprite_tile, palette_count or set_member pairs on the southampton ground the figure stands on",
+        "result": "PASS both, 2026-11-02 by card t_f0cb84db, on this machine and re-run on Pine"
       },
-      "status": "queued_by_eye",
+      "status": "done",
       "owner_card": "t_f96847c9",
       "card": "t_f96847c9",
       "written_on": "2026-10-26",
       "q_for_gamedev": [
         "as the first man"
       ],
-      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (no Gemini key was present in the worker), so no eye score exists yet and nothing is promoted."
+      "status_note": "Done on 2026-11-02 by card t_f0cb84db. The sheet this row owns is now a hand authored 16 x 24 grid (PERCY_MAN_2_DOWN in tools/art/make_characters_v2.py) instead of the parametric body, for the same measured reason as man 1: the row's only measured defect was WHICH tone is the body. The parametric sheet read navy 123 px of ink, BLUE 87 px as the largest non-darkest fill and white 53 px, so palette_synergy failed body_ground with body $12 (row 1) against the $00 paving (row 0) at 1.34:1, in the same 16 x 24 cell the game would stand on that tile. The hand authored cell keeps the row's own uniform triple $02 $12 $30 and makes the WHITE the jumper and the blue the shade: white 121 px, navy 112 px, blue 35 px, so the body is $30 at row 3 and palette_synergy PASSES with 0 failing pairs on the ground the project judges a southampton figure on. nes_check PASS, worst 8x8 tile 3 of 3, ink 41.8 percent, light direction 7 ok and 0 wrong, orphans 0, outline leaks 0, dither 0. He is told apart from man 1 by the tarpaulin hat (a 12 px brim against the cap's 10) and by mass (121 white pixels against 98), and he carries a cutlass in columns 13 and 14, which is the weapon the AUTO-SPRITE-NEXT card asks to see.",
+      "after": {
+        "card": "t_f0cb84db",
+        "date": "2026-11-02",
+        "drawn_by": "tools/art/make_characters_v2.py, the hand authored PERCY_MAN_2_DOWN grid (16 columns by 24 rows, no model, no traced art), drawn by the hand_grid_frame path and reproduced by re-running the generator",
+        "file": "game/sprites_src/chars/percy_man_2_ow24.png",
+        "sheet_px": [
+          16,
+          24
+        ],
+        "frames": 1,
+        "frame_px": [
+          16,
+          24
+        ],
+        "colours": 3,
+        "entries": [
+          "$30 white #fcfcfc 121 px, 45.1 percent: the jumper, the face, the hat crown and the brim, the gloves, the trousers (the body the tool reads)",
+          "$02 navy #0000bc 112 px, 41.8 percent: the outline, the brim's underside, the eyes, the seams, the belt, the weapon's guard",
+          "$12 blue #0058f8 35 px, 13.1 percent: the shade on each mass, the boots, the blade"
+        ],
+        "drawn_px": 268,
+        "drawn_pct_of_cell": 69.8,
+        "worst_tile_opaque": 3,
+        "light_correct": 7,
+        "light_wrong": 0,
+        "orphans": 0,
+        "outline_leaks": 0,
+        "dither_patches": 0,
+        "silhouette_width": {
+          "head": 13,
+          "shoulders": 15,
+          "torso": 15
+        },
+        "sha256": "d10210e6919a5b73d063f2cdaf95f10774aa4f565b97f23f80adfaee2019cb3b",
+        "nes_check": "PASS: python tools/nes_check.py game/sprites_src/chars/percy_man_2_ow24.png --type sprite -> 16x24, 6 tiles, 3 colours, 0 off palette pixels (also run on Pine, card t_f0cb84db)",
+        "palette_synergy": {
+          "command": "python tools/palette_synergy.py --scene southampton --background output/southampton_sample_frame.png --sprite game/sprites_src/chars/percy_man_2_ow24.png --frame-w 16 --frame-h 24 --at 128,104",
+          "verdict": "PASS, 1 sprite file(s), 0 failing pair(s)",
+          "body": "body $30 row 3 hue grey",
+          "palette_membership": "palettes that fit [3], so the triple is southampton sp3 ($02 $12 $30), 6 inked 8x8 tiles and 0 of them uncovered by any sprite palette of the scene",
+          "diagnostic_note": "the same run lists 5 of the 8 candidate palette rows failing on that ground; that is the tool's which-row-would-work column, and the sprite's own body $30 clears both ground entries, which is why fail_count is 0",
+          "before": "FAIL, 1 failing pair(s): body $12 (row 1) and ground $00 (row 0) are 1 luminance row apart at 1.34:1, measured the same way on the same path from git HEAD",
+          "json": "output/_synergy_percy_man_2.json"
+        },
+        "before_vs_after": {
+          "body_entry": "$12 blue 87 px before, $30 white 121 px after",
+          "largest_entry": "navy 123 px of 263 drawn before (46.8 pct), white 121 px of 268 drawn after (45.1 pct)",
+          "palette_synergy": "FAIL 1 pair before, PASS 0 pairs after",
+          "colours": "3 before and 3 after: no entry was added, the same row's triple $02 $12 $30",
+          "drawn_px": "263 before, 268 after, the extra being the hat brim and the wider blade"
+        },
+        "contact_sheet": "output/sprites_v2_sheet.png rebuilt at 640x2336 by tools/art/make_characters_v2.py, PERCY MAN 2 band found at (32, 1992) by a pixel search for the exact 4x upscale of this strip composited on the sheet's black backdrop; the PERCY MAN 1 band sits at (32, 1800) and PERCY MAN 3 at (32, 2184)",
+        "tests": "python -m pytest tests/test_make_characters_v2.py -q on Pine -> 12 passed in 0.44 s, the committed sheets are the generator's own output"
+      },
+      "before": {
+        "measured_from": "game/sprites_src/chars/percy_man_2_ow24.png at git HEAD (the parametric body, sha256 0a05c37f97bea954bb6d4b9ded83ded4070f4bdefe6dcd26aa01881ec475748d)",
+        "sheet_px": [
+          16,
+          24
+        ],
+        "colours": 3,
+        "drawn_px": 263,
+        "entries": [
+          "$02 navy #0000bc 123 px, 46.8 percent",
+          "$12 blue #0058f8 87 px, 33.1 percent (the largest non-darkest fill, so the body the tool read)",
+          "$30 white #fcfcfc 53 px, 20.2 percent"
+        ],
+        "body_entry": "$12 blue, row 1",
+        "worst_tile_opaque": 3,
+        "palette_synergy": "FAIL, 1 failing pair: body_ground body $12 (row 1) and ground $00 (row 0) are 1 luminance row apart at 1.34:1, RULE 0 point 2 wants 2 rows or 3.0:1",
+        "nes_check": "PASS"
+      }
     },
     {
       "id": "cand_r18_percy_man_3",
@@ -6608,17 +7121,90 @@
         }
       ],
       "check": {
-        "command": "python tools/nes_check.py <candidate file> --type sprite",
-        "means": "PASS: every pixel a data/nes_palette.json entry, 8 px grid, at most 3 opaque colours per 8x8 tile"
+        "command": "python tools/nes_check.py game/sprites_src/chars/percy_man_3_ow24.png --type sprite and python tools/palette_synergy.py --scene southampton --background output/southampton_sample_frame.png --sprite game/sprites_src/chars/percy_man_3_ow24.png --frame-w 16 --frame-h 24 --at 128,104",
+        "means": "both must pass: every pixel a data/nes_palette.json entry, 8 px grid, at most 3 opaque colours per 8x8 tile, at most 25 colours per sheet, and 0 failing body_ground, same_hue_row, white_blob, sprite_tile, palette_count or set_member pairs on the southampton ground the figure stands on",
+        "result": "PASS both, 2026-11-02 by card t_f0cb84db, on this machine and re-run on Pine"
       },
-      "status": "queued_by_eye",
+      "status": "done",
       "owner_card": "t_f96847c9",
       "card": "t_f96847c9",
       "written_on": "2026-10-26",
       "q_for_gamedev": [
         "as the first man"
       ],
-      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (no Gemini key was present in the worker), so no eye score exists yet and nothing is promoted."
+      "status_note": "Done on 2026-11-02 by card t_f0cb84db. The sheet this row owns is now a hand authored 16 x 24 grid (PERCY_MAN_3_DOWN in tools/art/make_characters_v2.py) instead of the parametric body, for the same measured reason as the two men above him: the parametric sheet read navy 107 px of ink, BLUE 64 px as the largest non-darkest fill and white 56 px, so palette_synergy failed body_ground with body $12 (row 1) against the $00 paving (row 0) at 1.34:1. The hand authored cell keeps the row's own uniform triple $02 $12 $30 and makes the WHITE the jumper and the blue the shade: navy 133 px, white 98 px, blue 46 px, so the body is $30 at row 3 and palette_synergy PASSES with 0 failing pairs on the same ground. nes_check PASS, worst 8x8 tile 3 of 3, ink 48.0 percent, light direction 6 ok and 0 wrong, orphans 0, outline leaks 0, dither 0. He is the thin man of the crew, two pixel legs against man 1's three, and the only one carrying a polearm: a boarding pike whose shaft runs down column 14 with a two pixel head beside his head, so the crew carries one polearm and two cutlasses and the weapon the card asks to see is visible on the cell.",
+      "after": {
+        "card": "t_f0cb84db",
+        "date": "2026-11-02",
+        "drawn_by": "tools/art/make_characters_v2.py, the hand authored PERCY_MAN_3_DOWN grid (16 columns by 24 rows, no model, no traced art), drawn by the hand_grid_frame path and reproduced by re-running the generator",
+        "file": "game/sprites_src/chars/percy_man_3_ow24.png",
+        "sheet_px": [
+          16,
+          24
+        ],
+        "frames": 1,
+        "frame_px": [
+          16,
+          24
+        ],
+        "colours": 3,
+        "entries": [
+          "$02 navy #0000bc 133 px, 48.0 percent: the outline, the cap band, the eyes, the seams, the belt, the pike's tip",
+          "$30 white #fcfcfc 98 px, 35.4 percent: the jumper, the face, the cap, the gloves, the trousers (the body the tool reads)",
+          "$12 blue #0058f8 46 px, 16.6 percent: the shade on each mass, the boots, the pike's head and shaft"
+        ],
+        "drawn_px": 277,
+        "drawn_pct_of_cell": 72.1,
+        "worst_tile_opaque": 3,
+        "light_correct": 6,
+        "light_wrong": 0,
+        "orphans": 0,
+        "outline_leaks": 0,
+        "dither_patches": 0,
+        "silhouette_width": {
+          "head": 15,
+          "shoulders": 15,
+          "torso": 15,
+          "note": "head reads 15 because the measurement band rows 1 to 8 also carries the pike's head in column 14; the figure's own head is columns 3 to 12 wide before the outline, and the pike is the reason this row's head band is no narrower than the others"
+        },
+        "sha256": "d66fab0427341df9cc2b475604253d976cb02ab877842df26aeb131a14a397f2",
+        "nes_check": "PASS: python tools/nes_check.py game/sprites_src/chars/percy_man_3_ow24.png --type sprite -> 16x24, 6 tiles, 3 colours, 0 off palette pixels (also run on Pine, card t_f0cb84db)",
+        "palette_synergy": {
+          "command": "python tools/palette_synergy.py --scene southampton --background output/southampton_sample_frame.png --sprite game/sprites_src/chars/percy_man_3_ow24.png --frame-w 16 --frame-h 24 --at 128,104",
+          "verdict": "PASS, 1 sprite file(s), 0 failing pair(s)",
+          "body": "body $30 row 3 hue grey",
+          "palette_membership": "palettes that fit [3], so the triple is southampton sp3 ($02 $12 $30), 6 inked 8x8 tiles and 0 of them uncovered by any sprite palette of the scene",
+          "before": "FAIL, 1 failing pair(s): body $12 (row 1) and ground $00 (row 0) are 1 luminance row apart at 1.34:1, measured the same way on the same path from git HEAD",
+          "json": "output/_synergy_percy_man_3.json"
+        },
+        "before_vs_after": {
+          "body_entry": "$12 blue 64 px before, $30 white 98 px after",
+          "largest_entry": "navy 107 px of 227 drawn before (47.1 pct), navy 133 px of 277 drawn after (48.0 pct), with the white second at 98 px",
+          "palette_synergy": "FAIL 1 pair before, PASS 0 pairs after",
+          "colours": "3 before and 3 after: no entry was added, the same row's triple $02 $12 $30",
+          "drawn_px": "227 before, 277 after on the same cell, the extra being the pike and the drawn head"
+        },
+        "contact_sheet": "output/sprites_v2_sheet.png rebuilt at 640x2336 by tools/art/make_characters_v2.py, PERCY MAN 3 band found at (32, 2184) by a pixel search for the exact 4x upscale of this strip composited on the sheet's black backdrop",
+        "tests": "python -m pytest tests/test_make_characters_v2.py -q on Pine -> 12 passed, the committed sheets are the generator's own output"
+      },
+      "before": {
+        "measured_from": "game/sprites_src/chars/percy_man_3_ow24.png at git HEAD (the parametric body, sha256 4d67cf7928e753539915f19e3e45de7a749cedbe4d4da19ead54fccaa209bb8a)",
+        "sheet_px": [
+          16,
+          24
+        ],
+        "colours": 3,
+        "drawn_px": 227,
+        "entries": [
+          "$02 navy #0000bc 107 px, 47.1 percent",
+          "$12 blue #0058f8 64 px, 28.2 percent (the largest non-darkest fill, so the body the tool read)",
+          "$30 white #fcfcfc 56 px, 24.7 percent"
+        ],
+        "body_entry": "$12 blue, row 1",
+        "worst_tile_opaque": 3,
+        "palette_synergy": "FAIL, 1 failing pair: body_ground body $12 (row 1) and ground $00 (row 0) are 1 luminance row apart at 1.34:1, RULE 0 point 2 wants 2 rows or 3.0:1",
+        "nes_check": "PASS"
+      }
     },
     {
       "id": "cand_r18_ouranos_ow",
@@ -6750,14 +7336,80 @@
         "command": "python tools/nes_check.py <candidate file> --type sprite",
         "means": "PASS: every pixel a data/nes_palette.json entry, 8 px grid, at most 3 opaque colours per 8x8 tile"
       },
-      "status": "queued_by_eye",
+      "status": "done",
       "owner_card": "t_f96847c9",
       "card": "t_f96847c9",
       "written_on": "2026-10-26",
       "q_for_gamedev": [
         "a stander only, and whether the staff survives a 3 colour cell"
       ],
-      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (no Gemini key was present in the worker), so no eye score exists yet and nothing is promoted."
+      "status_note": "Done on 2026-10-30 by card t_6a550bcf, which is the first card to measure this row on the ground the project judges it on. The drawing is the hand authored one card t_760a7325 landed (tools/art/make_characters_v2.py, the OLD_MAN_DOWN grid), and this card re-ran the generator and got the file back byte for byte (sha256 unchanged, f1b851fc...). nes_check PASS, palette_synergy PASS with 0 failing pair(s) on output/southampton_sample_frame.png at 128,104, the judged pairing in data/palettes/scene_southampton.json, and the contact sheet carries the strip at 3x at (32,4496). The row's own Q about a staff is answered by the drawing: the cell spends all three entries on the figure and carries no staff, so a staff would need a fourth colour or a silhouette read against the coat.",
+      "after": {
+        "card": "t_6a550bcf",
+        "date": "2026-10-30",
+        "drawn_by": "tools/art/make_characters_v2.py --only-style-b, the OLD_MAN_DOWN grid hand authored by card t_760a7325; re-run by this card and reproduced byte for byte",
+        "file": "game/sprites_src/chars/ouranos_ow24.png",
+        "sha256": "f1b851fc870559248999f7fdce11f1dae02d4c36c41186557548dcc614da212f",
+        "sheet_px": [
+          16,
+          24
+        ],
+        "frames": 1,
+        "frame_px": [
+          16,
+          24
+        ],
+        "colours": 3,
+        "entries": [
+          "$0F ink #000000 112 px, 40.0 percent of the drawn pixels: the outline, the eye holes, the cuffs, the hem",
+          "$30 white #fcfcfc 94 px, 33.6 percent: the bald crown, the face, the beard and the coat front",
+          "$00 grey #7c7c7c 74 px, 26.4 percent: the coat sides, the arm sockets, the trousers"
+        ],
+        "drawn_px": 280,
+        "drawn_pct_of_cell": 72.9,
+        "worst_tile_opaque": 3,
+        "light_correct": 18,
+        "light_wrong": 0,
+        "orphans": 0,
+        "outline_leaks": 0,
+        "dither_patches": 0,
+        "silhouette_width": {
+          "head": 14,
+          "shoulders": 14,
+          "torso": 14
+        },
+        "nes_check": "PASS: python tools/nes_check.py game/sprites_src/chars/ouranos_ow24.png --type sprite -> 16x24, 6 tiles, 3 colours, 0 off palette pixels",
+        "palette_synergy": {
+          "command": "python tools/palette_synergy.py --scene southampton --background output/southampton_sample_frame.png --sprite game/sprites_src/chars/ouranos_ow24.png --frame-w 16 --frame-h 24 --at 128,104",
+          "verdict": "PASS, 1 sprite file(s), 0 failing pair(s)",
+          "per_frame": "body $30 row 3 hue grey, palettes that fit [0], which is southampton sp0 ($00 $0F $30), 6 inked 8x8 tiles and 0 of them uncovered",
+          "why_128_104": "the judged row in data/palettes/scene_southampton.json places the party at 128,112 with 16x16 frames, so the feet of a 16x24 frame land on the same ground rows at y 104",
+          "ground": "output/southampton_sample_frame.png, sha256 8727bfe66fa74241e95bf53c75e8ae16c958d04152fd264c6cb8106be96c2849, the frame tools/art/make_exterior_maps.py composes at this map's spawn",
+          "why_it_passes": "the paving under him is $00 #7c7c7c (luminance 0.202) and the shared backdrop $0F, which is what the 2026-10-25 paving ruling left on every walkable tile. Body $30 is 3 luminance rows above $00, and white_blob does not fire because the paving sits under the 0.25 light line that rule needs"
+        },
+        "ground_that_would_refuse_him": {
+          "ground": "output/art_b/ART-B-MAPS/street_frame_1x.png, the style B preview street, crop of 16x24 at x 121 y 416 measured 384 of 384 pixels $10 #bcbcbc",
+          "command": "python tools/palette_synergy.py --scene southampton --background output/ouranos_street_ground.png --sprite game/sprites_src/chars/ouranos_ow24.png --frame-w 16 --frame-h 24 --at 0,0",
+          "verdict": "FAIL, 1 sprite file(s), 1 failing pair(s): white_blob, body $30 at luminance 0.97 on ground $10 at 0.50",
+          "note": "recorded, not hidden: on that preview pavement he is refused by the white blob rule. It is not the shipped paving. The judged row in the scene file and the 2026-10-25 paving ruling both put the walkable street on $00 and $0F, and the preview frame is a style B map set, not the ground the game draws him on. If a future frame repaints the pavement $10 again, this row's PASS stops holding and that frame is what changes, not the drawing"
+        },
+        "before_vs_after": {
+          "before": "the R18 Kaggle candidate output/art_candidates_r18/cast/cells/ouranos_ow24_t2i_seed141_cell.png: score 71.23, coverage 0.344, 3 colours, outline 62 px with 6 of them clipped, one 16 x 24 cell",
+          "after": "hand authored 16 x 24 cell: coverage 280 of 384 px (72.9 percent), 3 entries, outline 112 px (40.0 percent) with 0 leaks, worst 8x8 tile 3 of 3, light 18 correct and 0 wrong, orphans 0, dither 0",
+          "eye": "card t_760a7325 ran the Meta eye critic on both: the R18 rank 1 candidate took nes 8, readability 6, charm 3, and the hand authored cell took 7, 8, 4, so the redraw wins on the dimension the card named"
+        },
+        "contact_sheet": {
+          "path": "output/sprites_v2_sheet.png",
+          "bytes": 67000,
+          "sha256": "ac569515e52bd709de56b19e184883c319fd6d97c68759521dae0f760b2d4448",
+          "size": [
+            1040,
+            5696
+          ],
+          "where": "the style B band at 3x, found at (32,4496) by an exact pixel search and the only match on the sheet. tools/art/make_title_rows_v2.py now reads ouranos_ow24.png into that band (this card added the name), so the band cannot disagree with this row",
+          "note": "the band's own ground strip is the ship deck plate, so the map of him on the southampton paving is the palette_synergy command above and not the band"
+        }
+      }
     },
     {
       "id": "cand_r18_portrait_zeus",
@@ -6889,14 +7541,17 @@
         "command": "python tools/nes_check.py <candidate file> --type sprite",
         "means": "PASS: every pixel a data/nes_palette.json entry, 8 px grid, at most 3 opaque colours per 8x8 tile"
       },
-      "status": "queued_by_eye",
+      "status": "retired",
       "owner_card": "t_f96847c9",
       "card": "t_f96847c9",
       "written_on": "2026-10-26",
       "q_for_gamedev": [
         "a 32 x 32 face in three entries: whether a portrait this small may spend a fourth row"
       ],
-      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (no Gemini key was present in the worker), so no eye score exists yet and nothing is promoted."
+      "status_note": "Retired on 2026-11-12 by card t_8df7aab4, ruling knowledge/PALETTE-RULINGS-2026-11-12.md section 4. Candidate art stays where it is under output/art_candidates_r18/; the row is what retires.",
+      "retired_on": "2026-11-12",
+      "retired_by": "t_8df7aab4",
+      "retired_reason": "no slot and no subject. data/ui_layouts.json gives the battle screen two 32x32 ENEMY slots, three 24x32 party slots and no portrait slot; pp_dialogue.gml makes a dialogue portrait 48x48 at PP_PORTRAIT_X 16 / PP_PORTRAIT_Y 120; battle_b gives its one enemy a 64x80 frame. Zeus and Kronos are in no enemy id (data/enemies/all.json) and in no encounter (data/encounters/all.json), and Percy already ships at the size the battle screen draws as game/sprites_src/enemies/percy_big.png 192x80. Reopens when a slot in data/ui_layouts.json, a palette row carrying its colour set and a GML reader all exist."
     },
     {
       "id": "cand_r18_portrait_kronos",
@@ -7028,14 +7683,17 @@
         "command": "python tools/nes_check.py <candidate file> --type sprite",
         "means": "PASS: every pixel a data/nes_palette.json entry, 8 px grid, at most 3 opaque colours per 8x8 tile"
       },
-      "status": "queued_by_eye",
+      "status": "retired",
       "owner_card": "t_f96847c9",
       "card": "t_f96847c9",
       "written_on": "2026-10-26",
       "q_for_gamedev": [
         "as the Zeus portrait"
       ],
-      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (no Gemini key was present in the worker), so no eye score exists yet and nothing is promoted."
+      "status_note": "Retired on 2026-11-12 by card t_8df7aab4, ruling knowledge/PALETTE-RULINGS-2026-11-12.md section 4. Candidate art stays where it is under output/art_candidates_r18/; the row is what retires.",
+      "retired_on": "2026-11-12",
+      "retired_by": "t_8df7aab4",
+      "retired_reason": "no slot and no subject. data/ui_layouts.json gives the battle screen two 32x32 ENEMY slots, three 24x32 party slots and no portrait slot; pp_dialogue.gml makes a dialogue portrait 48x48 at PP_PORTRAIT_X 16 / PP_PORTRAIT_Y 120; battle_b gives its one enemy a 64x80 frame. Zeus and Kronos are in no enemy id (data/enemies/all.json) and in no encounter (data/encounters/all.json), and Percy already ships at the size the battle screen draws as game/sprites_src/enemies/percy_big.png 192x80. Reopens when a slot in data/ui_layouts.json, a palette row carrying its colour set and a GML reader all exist."
     },
     {
       "id": "cand_r18_portrait_percy",
@@ -7167,14 +7825,1185 @@
         "command": "python tools/nes_check.py <candidate file> --type sprite",
         "means": "PASS: every pixel a data/nes_palette.json entry, 8 px grid, at most 3 opaque colours per 8x8 tile"
       },
-      "status": "queued_by_eye",
+      "status": "retired",
       "owner_card": "t_f96847c9",
       "card": "t_f96847c9",
       "written_on": "2026-10-26",
       "q_for_gamedev": [
         "as the Zeus portrait, against the 48 x 48 row spr_pp_portrait_percy that already sits queued_by_eye"
       ],
-      "status_note": "candidate only. Two of eight draws kept by this card's deterministic score; the Gemini eye critic could not run (no Gemini key was present in the worker), so no eye score exists yet and nothing is promoted."
+      "status_note": "Retired on 2026-11-12 by card t_8df7aab4, ruling knowledge/PALETTE-RULINGS-2026-11-12.md section 4. Candidate art stays where it is under output/art_candidates_r18/; the row is what retires.",
+      "retired_on": "2026-11-12",
+      "retired_by": "t_8df7aab4",
+      "retired_reason": "no slot and no subject. data/ui_layouts.json gives the battle screen two 32x32 ENEMY slots, three 24x32 party slots and no portrait slot; pp_dialogue.gml makes a dialogue portrait 48x48 at PP_PORTRAIT_X 16 / PP_PORTRAIT_Y 120; battle_b gives its one enemy a 64x80 frame. Zeus and Kronos are in no enemy id (data/enemies/all.json) and in no encounter (data/encounters/all.json), and Percy already ships at the size the battle screen draws as game/sprites_src/enemies/percy_big.png 192x80. Reopens when a slot in data/ui_layouts.json, a palette row carrying its colour set and a GML reader all exist."
+    },
+    {
+      "id": "cand_r18_knife_icon",
+      "name": "the knife icon, 16 x 16 cell",
+      "path": "output/redraws/knife_icon_16.png",
+      "kind": "sprite",
+      "frames": 1,
+      "frame_px": [
+        16,
+        16
+      ],
+      "priority": "P2",
+      "reference": {
+        "art_bible": "ART-BIBLE RULE 0 (palette first) and the R18 gate page knowledge/GATE-ART-R18-2026-10-26.md",
+        "craft_rule": null,
+        "note": "a candidate row: gamedev has no ruling on this asset yet, so nothing here is shipped, replaced or wired into game/"
+      },
+      "palette_roles": {
+        "legal_entries": [
+          "#000000",
+          "#f8b800",
+          "#fcfcfc"
+        ],
+        "why": "one sprite palette row of the asset's scene for the whole cell, so a cell carries three opaque colours plus transparency",
+        "scene": "icons"
+      },
+      "nes_grid": {
+        "frame_w": 16,
+        "frame_h": 16,
+        "tiles_w": 2,
+        "tiles_h": 2,
+        "tiles_per_frame": 4,
+        "max_opaque_per_tile": 3
+      },
+      "drawn_by": {
+        "tool": "tools/art/make_characters_v2.py --only-item-icon",
+        "commit": null,
+        "date": "2026-11-01",
+        "note": "hand authored grid KNIFE_ICON in the icons scene's own sp0; written to output/redraws/, not to game/"
+      },
+      "candidates": [
+        {
+          "rank": 1,
+          "file": "output/art_candidates_r18/knife/cells/knife_icon_t2i_seed141_cell.png",
+          "seed": 141,
+          "score": 63.61,
+          "mean_delta_e": 32.29,
+          "scene": "icons",
+          "cell": [
+            16,
+            16
+          ],
+          "sprite_row": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              248,
+              184,
+              0
+            ],
+            [
+              252,
+              252,
+              252
+            ]
+          ],
+          "sprite_row_index": 0,
+          "colours": 3,
+          "colours_hex": [
+            "#000000",
+            "#f8b800",
+            "#fcfcfc"
+          ],
+          "max_colours_per_tile": 3,
+          "coverage": 0.363,
+          "components": 1,
+          "orphans_removed": 0,
+          "orphans_left": 0,
+          "outline_px": 45,
+          "outline_clipped": 5
+        },
+        {
+          "rank": 2,
+          "file": "output/art_candidates_r18/knife/cells/knife_icon_t2i_seed146_cell.png",
+          "seed": 146,
+          "score": 63.23,
+          "mean_delta_e": 35.92,
+          "scene": "icons",
+          "cell": [
+            16,
+            16
+          ],
+          "sprite_row": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              248,
+              184,
+              0
+            ],
+            [
+              252,
+              252,
+              252
+            ]
+          ],
+          "sprite_row_index": 0,
+          "colours": 3,
+          "colours_hex": [
+            "#000000",
+            "#f8b800",
+            "#fcfcfc"
+          ],
+          "max_colours_per_tile": 3,
+          "coverage": 0.344,
+          "components": 1,
+          "orphans_removed": 0,
+          "orphans_left": 0,
+          "outline_px": 24,
+          "outline_clipped": 10
+        }
+      ],
+      "check": {
+        "command": "python tools/palette_synergy.py --scene icons --background output/knife_icon_menu_ground.png --sprite output/redraws/knife_icon_16.png --frame-w 16 --frame-h 16 --at 32,32",
+        "means": "must print PASS: the frame's body separates from every ground colour under it by 2 luminance rows or 3.0:1, and every drawn colour is in one of the scene's 4 sprite palettes",
+        "result": "PASS, 1 sprite file(s), 0 failing pair(s), body $30 row 3 on ground $02 row 1 at 11.86:1, palettes that fit [0], 4 inked tiles and 0 uncovered",
+        "nes_check": "python tools/nes_check.py output/redraws/knife_icon_16.png --type sprite prints PASS, 16x16, 4 tiles, 3 colours"
+      },
+      "status": "done",
+      "owner_card": "t_f96847c9",
+      "card": "t_f96847c9",
+      "written_on": "2026-10-26",
+      "q_for_gamedev": [
+        "which of the two kept icons is the inventory knife",
+        "Q for gamedev: the item icon the game ships is frame 0 of game/sprites_src/weapons/spr_pp_knife.png, drawn in Zander's hero triple $0F $21 $31, and the icons scene's four sprite rows carry none of $21 or $31, so palette_synergy refuses that sheet on the icons ground with two set_member pairs per frame. The hand authored 16x16 icon at output/redraws/knife_icon_16.png spends icons sp0 ($0F $28 $30) and passes with 0 failing pairs. Does the item icon become its own sheet in icons sp0 (a sheet can only hold one sprite palette, so it cannot share with the three slash frames), or does the icons scene's sprite row change to Zander's triple, or does the row ship as a candidate and the shipped sheet stay as it is?"
+      ],
+      "status_note": "Done on 2026-11-01 by card t_f5253687 with the before and after numbers pasted in. The redraw is a hand authored 16x16 cell in tools/art/make_characters_v2.py (the grid KNIFE_ICON, the --only-item-icon path) drawn in exactly icons sp0, $0F ink, $30 steel and $28 brass: 3 colours, worst tile 3 of 3, 91 drawn pixels, 34 of them ink (37.4 percent), 0 orphans and 0 outline leaks, and palette_synergy PASS with 0 failing pairs on the icons panel ground, where the sheet the game ships today fails 8 pairs because its $21 and $31 are in none of the icons scene's four sprite rows. It is written to output/redraws/ and is NOT in game/: promoting it means the weapons sheet stops being one sprite palette (its three slash frames are drawn in Zander's triple for the battle strip), and that is gamedev's decision, posted as a Q.",
+      "before": {
+        "art_measured": "game/sprites_src/weapons/spr_pp_knife.png, 64x16, 4 frames of 16x16, 3 entries $0F #000000, $21 #3cbcfc, $31 #a4e4fc, nes_check PASS",
+        "why_it_is_not_on_the_icons_ground": "the icons scene's four sprite rows are sp0 $0F $28 $30, sp1 $0F $16 $30, sp2 $0F $1A $30 and sp3 $0F $12 $30 (data/scene_palettes.json), so the sheet's $21 and $31 are in none of them",
+        "command": "python tools/palette_synergy.py --scene icons --background output/knife_icon_menu_ground.png --sprite game/sprites_src/weapons/spr_pp_knife.png --frame-w 16 --frame-h 16 --at 32,32",
+        "verdict": "FAIL, 8 failing pairs, two set_member per frame: sprite colour #3cbcfc ($21) and #a4e4fc ($31) are in none of the scene's 4 sprite palettes",
+        "candidate_before": "output/art_candidates_r18/knife/cells/knife_icon_t2i_seed141_cell.png passes on this ground (0 failing pairs) but it is a downscaled generated cell, not a hand authored one: its own batch record says style B was picked after it ran, so it is not styled B and nobody drew its 8x8 tiles"
+      },
+      "after": {
+        "art": "output/redraws/knife_icon_16.png, 16x16, 1 frame, 3 entries $0F #000000, $30 #fcfcfc and $28 #f8b800, which is exactly icons sp0",
+        "hand_authored": "tools/art/make_characters_v2.py --only-item-icon, the grid KNIFE_ICON, sixteen characters a row, k ink, w steel, g brass, and the one pixel outline from Grid.outline()",
+        "command": "python tools/palette_synergy.py --scene icons --background output/knife_icon_menu_ground.png --sprite output/redraws/knife_icon_16.png --frame-w 16 --frame-h 16 --at 32,32",
+        "verdict": "PASS, 1 sprite file(s), 0 failing pair(s), body $30 row 3 on ground $02 row 1 at 11.86:1, palettes that fit [0], 4 inked tiles and 0 uncovered",
+        "numbers": {
+          "colours": 3,
+          "drawn_px": 91,
+          "ink_px": 34,
+          "ink_share_pct": 37.4,
+          "worst_tile_opaque": 3,
+          "orphans": 0,
+          "outline_leaks": 0,
+          "steel_px": 34,
+          "brass_px": 23,
+          "nes_check": "PASS, 16x16, 4 tiles, 3 colours",
+          "sha256": "ab0de83396845d5e3ee368c911367a20dadc8ff172c3ab6546b523bdadeb024b"
+        },
+        "ground": "output/knife_icon_menu_ground.png, 256x240 of $02 #0000bc, built by output/_knife_icon_ground.py from the measured fact that 58490 of 61440 pixels of the icons screen (95.2 percent, output/_icons_composite_1.json) are that one colour, so the panel an item slot sits on is one ground"
+      },
+      "measured_2026_11_01": {
+        "card": "t_f5253687",
+        "date": "2026-11-01",
+        "before": {
+          "art_measured": "game/sprites_src/weapons/spr_pp_knife.png, 64x16, 4 frames of 16x16, 3 entries $0F #000000, $21 #3cbcfc, $31 #a4e4fc, nes_check PASS",
+          "why_it_is_not_on_the_icons_ground": "the icons scene's four sprite rows are sp0 $0F $28 $30, sp1 $0F $16 $30, sp2 $0F $1A $30 and sp3 $0F $12 $30 (data/scene_palettes.json), so the sheet's $21 and $31 are in none of them",
+          "command": "python tools/palette_synergy.py --scene icons --background output/knife_icon_menu_ground.png --sprite game/sprites_src/weapons/spr_pp_knife.png --frame-w 16 --frame-h 16 --at 32,32",
+          "verdict": "FAIL, 8 failing pairs, two set_member per frame: sprite colour #3cbcfc ($21) and #a4e4fc ($31) are in none of the scene's 4 sprite palettes",
+          "candidate_before": "output/art_candidates_r18/knife/cells/knife_icon_t2i_seed141_cell.png passes on this ground (0 failing pairs) but it is a downscaled generated cell, not a hand authored one: its own batch record says style B was picked after it ran, so it is not styled B and nobody drew its 8x8 tiles"
+        },
+        "after": {
+          "art": "output/redraws/knife_icon_16.png, 16x16, 1 frame, 3 entries $0F #000000, $30 #fcfcfc and $28 #f8b800, which is exactly icons sp0",
+          "hand_authored": "tools/art/make_characters_v2.py --only-item-icon, the grid KNIFE_ICON, sixteen characters a row, k ink, w steel, g brass, and the one pixel outline from Grid.outline()",
+          "command": "python tools/palette_synergy.py --scene icons --background output/knife_icon_menu_ground.png --sprite output/redraws/knife_icon_16.png --frame-w 16 --frame-h 16 --at 32,32",
+          "verdict": "PASS, 1 sprite file(s), 0 failing pair(s), body $30 row 3 on ground $02 row 1 at 11.86:1, palettes that fit [0], 4 inked tiles and 0 uncovered",
+          "numbers": {
+            "colours": 3,
+            "drawn_px": 91,
+            "ink_px": 34,
+            "ink_share_pct": 37.4,
+            "worst_tile_opaque": 3,
+            "orphans": 0,
+            "outline_leaks": 0,
+            "steel_px": 34,
+            "brass_px": 23,
+            "nes_check": "PASS, 16x16, 4 tiles, 3 colours",
+            "sha256": "ab0de83396845d5e3ee368c911367a20dadc8ff172c3ab6546b523bdadeb024b"
+          },
+          "ground": "output/knife_icon_menu_ground.png, 256x240 of $02 #0000bc, built by output/_knife_icon_ground.py from the measured fact that 58490 of 61440 pixels of the icons screen (95.2 percent, output/_icons_composite_1.json) are that one colour, so the panel an item slot sits on is one ground"
+        }
+      }
+    },
+    {
+      "id": "cand_r18_slash_f1",
+      "name": "the first slash frame, 24 x 24 cell",
+      "path": null,
+      "kind": "sprite",
+      "frames": 1,
+      "frame_px": [
+        24,
+        24
+      ],
+      "priority": "P2",
+      "reference": {
+        "art_bible": "ART-BIBLE RULE 0 (palette first) and the R18 gate page knowledge/GATE-ART-R18-2026-10-26.md",
+        "craft_rule": null,
+        "note": "a candidate row: gamedev has no ruling on this asset yet, so nothing here is shipped, replaced or wired into game/"
+      },
+      "palette_roles": {
+        "legal_entries": [
+          "#000000",
+          "#7c7c7c",
+          "#fca044"
+        ],
+        "why": "one sprite palette row of the asset's scene for the whole cell, so a cell carries three opaque colours plus transparency",
+        "scene": "battle_corridor"
+      },
+      "nes_grid": {
+        "frame_w": 24,
+        "frame_h": 24,
+        "tiles_w": 3,
+        "tiles_h": 3,
+        "tiles_per_frame": 9,
+        "max_opaque_per_tile": 3
+      },
+      "drawn_by": {
+        "tool": "kaggle-concept-art/concept_art_knife_r18.py on Kaggle GPU, quantised by kaggle-concept-art/r18_batches_measure.py",
+        "commit": null,
+        "note": "this card, 2026-10-26"
+      },
+      "candidates": [
+        {
+          "rank": 1,
+          "file": "output/art_candidates_r18/knife/cells/slash_f1_t2i_seed141_cell.png",
+          "seed": 141,
+          "score": 69.59,
+          "mean_delta_e": 31.03,
+          "scene": "battle_corridor",
+          "cell": [
+            24,
+            24
+          ],
+          "sprite_row": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              124,
+              124,
+              124
+            ],
+            [
+              252,
+              160,
+              68
+            ]
+          ],
+          "sprite_row_index": 3,
+          "colours": 3,
+          "colours_hex": [
+            "#000000",
+            "#7c7c7c",
+            "#fca044"
+          ],
+          "max_colours_per_tile": 3,
+          "coverage": 0.295,
+          "components": 1,
+          "orphans_removed": 0,
+          "orphans_left": 0,
+          "outline_px": 80,
+          "outline_clipped": 0
+        },
+        {
+          "rank": 2,
+          "file": "output/art_candidates_r18/knife/cells/slash_f1_t2i_seed144_cell.png",
+          "seed": 144,
+          "score": 45.42,
+          "mean_delta_e": 22.72,
+          "scene": "battle_corridor",
+          "cell": [
+            24,
+            24
+          ],
+          "sprite_row": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              124,
+              124,
+              124
+            ],
+            [
+              252,
+              160,
+              68
+            ]
+          ],
+          "sprite_row_index": 3,
+          "colours": 3,
+          "colours_hex": [
+            "#000000",
+            "#7c7c7c",
+            "#fca044"
+          ],
+          "max_colours_per_tile": 3,
+          "coverage": 0.125,
+          "components": 1,
+          "orphans_removed": 0,
+          "orphans_left": 0,
+          "outline_px": 87,
+          "outline_clipped": 0
+        }
+      ],
+      "check": {
+        "command": "python tools/nes_check.py <candidate file> --type sprite",
+        "means": "PASS: every pixel a data/nes_palette.json entry, 8 px grid, at most 3 opaque colours per 8x8 tile"
+      },
+      "status": "done",
+      "owner_card": "t_f96847c9",
+      "card": "t_f96847c9",
+      "written_on": "2026-10-26",
+      "q_for_gamedev": [
+        "Q for gamedev: the row's palette_roles name $0F #000000, $00 #7c7c7c and $2A #fca044, and no sprite row of battle_corridor in data/scene_palettes.json carries that triple: sp0 is $0F $12 $28, sp1 is $03 $0F $23, sp2 is $0F $21 $31 and sp3 is $00 $0F $27, so $2A sits in none of the four and the triple cannot be drawn on this scene at all. The cells are drawn in sp2, which is Zander's reserved hero triple and the same three entries the shipped knife sheet already spends on its own slash frames. May the row's palette_roles be rewritten to sp2's three, the way the sign row's were rewritten to sp1 on card t_d8fd83fd?",
+        "Q for gamedev: whether a 24 x 24 slash cell sits on a 16 x 24 character cell. pp_battle_draw_slash centres a 16 x 16 frame in the enemy slot (game/scripts/pp_battle_director/pp_battle_director.gml line 286), so a 24 x 24 cell needs that function changed or the cell redrawn at 16 x 16. Nothing is promoted until this is answered."
+      ],
+      "status_note": "Done on 2026-11-01 by card t_4006d645. Before, this row held a Kaggle cell only (rank 1 of the kept draws, seed 141, deterministic score 69.59, coverage 0.295, 3 colours, outline clipped 0 of 80 outline pixels) and no file in the tree. After, the cell is hand written in tools/art/make_characters_v2.py (SLASH_F1_ROWS): 24 x 24, 3 colours $21 #3cbcfc the trail, $0F the outline and $31 #a4e4fc the leading highlight, 108 drawn pixels, worst 8x8 tile 3 of 3, orphans 0, outline leaks 0, nes_check PASS, and palette_synergy clears every sprite rule against the corridor ground at the enemy slot: palettes that fit [2], 0 uncovered tiles, 0 sprite side failures. Before the row could not be measured at all because there was no file; the defect this fixes is that the cell the queue asked for did not exist as drawn art.",
+      "after": {
+        "card": "t_4006d645",
+        "date": "2026-11-01",
+        "drawn_by": "tools/art/make_characters_v2.py --only-slash-frames, the hand written grid SLASH_F1_ROWS",
+        "file": "output/redraws/knife_slash_f1.png",
+        "sha256": "d6dd4505afde8b8f725250ecb7298a838cc508aef33d1bfce7bb0d1a47498466",
+        "sheet_px": [
+          24,
+          24
+        ],
+        "tiles": 9,
+        "colours": 3,
+        "entries": [
+          "$21 #3cbcfc the trail, 48 px",
+          "$0F #000000 the outline, 43 px (39.8 percent)",
+          "$31 #a4e4fc the leading highlight, 17 px"
+        ],
+        "drawn_px": 108,
+        "worst_tile_opaque": 3,
+        "orphans": 0,
+        "outline_leaks": 0,
+        "nes_check": "PASS: 24x24 9 tiles 3 colours",
+        "palette_synergy": "0 sprite side failures on output/spr_knife_slash_ground.png: set_member clears, palettes that fit [2] (corridor sp2 $0F $21 $31), 6 inked tiles and 0 uncovered. The run still prints FAIL because of two background fails on the ground crop itself (the corridor strip carries $00 $02 $10 $12 in one 16x16 area at 44,68 of the field), and a fully transparent 24x24 control sprite reproduces both, so neither belongs to this cell.",
+        "ground": "output/spr_knife_slash_ground.png, 24x24 at 28,68: the corridor backdrop plus bg_battle_corridor.png, cropped at the enemy slot centre (40,80) that pp_battle_draw_slash centres its frame on. Entries $00 285 px, $02 192 px, $10 55 px, $0F 32 px, $12 12 px."
+      }
+    },
+    {
+      "id": "cand_r18_slash_f2",
+      "name": "the second slash frame, 24 x 24 cell",
+      "path": null,
+      "kind": "sprite",
+      "frames": 1,
+      "frame_px": [
+        24,
+        24
+      ],
+      "priority": "P2",
+      "reference": {
+        "art_bible": "ART-BIBLE RULE 0 (palette first) and the R18 gate page knowledge/GATE-ART-R18-2026-10-26.md",
+        "craft_rule": null,
+        "note": "a candidate row: gamedev has no ruling on this asset yet, so nothing here is shipped, replaced or wired into game/"
+      },
+      "palette_roles": {
+        "legal_entries": [
+          "#000000",
+          "#7c7c7c",
+          "#fca044"
+        ],
+        "why": "one sprite palette row of the asset's scene for the whole cell, so a cell carries three opaque colours plus transparency",
+        "scene": "battle_corridor"
+      },
+      "nes_grid": {
+        "frame_w": 24,
+        "frame_h": 24,
+        "tiles_w": 3,
+        "tiles_h": 3,
+        "tiles_per_frame": 9,
+        "max_opaque_per_tile": 3
+      },
+      "drawn_by": {
+        "tool": "kaggle-concept-art/concept_art_knife_r18.py on Kaggle GPU, quantised by kaggle-concept-art/r18_batches_measure.py",
+        "commit": null,
+        "note": "this card, 2026-10-26"
+      },
+      "candidates": [
+        {
+          "rank": 1,
+          "file": "output/art_candidates_r18/knife/cells/slash_f2_t2i_seed141_cell.png",
+          "seed": 141,
+          "score": 70.75,
+          "mean_delta_e": 31.02,
+          "scene": "battle_corridor",
+          "cell": [
+            24,
+            24
+          ],
+          "sprite_row": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              124,
+              124,
+              124
+            ],
+            [
+              252,
+              160,
+              68
+            ]
+          ],
+          "sprite_row_index": 3,
+          "colours": 3,
+          "colours_hex": [
+            "#000000",
+            "#7c7c7c",
+            "#fca044"
+          ],
+          "max_colours_per_tile": 3,
+          "coverage": 0.309,
+          "components": 1,
+          "orphans_removed": 0,
+          "orphans_left": 0,
+          "outline_px": 82,
+          "outline_clipped": 0
+        },
+        {
+          "rank": 2,
+          "file": "output/art_candidates_r18/knife/cells/slash_f2_t2i_seed143_cell.png",
+          "seed": 143,
+          "score": 54.67,
+          "mean_delta_e": 13.07,
+          "scene": "battle_corridor",
+          "cell": [
+            24,
+            24
+          ],
+          "sprite_row": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              124,
+              124,
+              124
+            ],
+            [
+              252,
+              160,
+              68
+            ]
+          ],
+          "sprite_row_index": 3,
+          "colours": 3,
+          "colours_hex": [
+            "#000000",
+            "#7c7c7c",
+            "#fca044"
+          ],
+          "max_colours_per_tile": 2,
+          "coverage": 0.66,
+          "components": 1,
+          "orphans_removed": 0,
+          "orphans_left": 0,
+          "outline_px": 28,
+          "outline_clipped": 6
+        }
+      ],
+      "check": {
+        "command": "python tools/nes_check.py <candidate file> --type sprite",
+        "means": "PASS: every pixel a data/nes_palette.json entry, 8 px grid, at most 3 opaque colours per 8x8 tile"
+      },
+      "status": "done",
+      "owner_card": "t_f96847c9",
+      "card": "t_f96847c9",
+      "written_on": "2026-10-26",
+      "q_for_gamedev": [
+        "Q for gamedev: the row's palette_roles name $0F #000000, $00 #7c7c7c and $2A #fca044, and no sprite row of battle_corridor in data/scene_palettes.json carries that triple: sp0 is $0F $12 $28, sp1 is $03 $0F $23, sp2 is $0F $21 $31 and sp3 is $00 $0F $27, so $2A sits in none of the four and the triple cannot be drawn on this scene at all. The cells are drawn in sp2, which is Zander's reserved hero triple and the same three entries the shipped knife sheet already spends on its own slash frames. May the row's palette_roles be rewritten to sp2's three, the way the sign row's were rewritten to sp1 on card t_d8fd83fd?",
+        "Q for gamedev: whether a 24 x 24 slash cell sits on a 16 x 24 character cell. pp_battle_draw_slash centres a 16 x 16 frame in the enemy slot (game/scripts/pp_battle_director/pp_battle_director.gml line 286), so a 24 x 24 cell needs that function changed or the cell redrawn at 16 x 16. Nothing is promoted until this is answered."
+      ],
+      "status_note": "Done on 2026-11-01 by card t_4006d645. Before, this row held a Kaggle cell only (rank 1 of the kept draws, seed 141, deterministic score 70.75, coverage 0.309, 3 colours, outline clipped 0 of 82 outline pixels) and no file in the tree. After, the cell is hand written in tools/art/make_characters_v2.py (SLASH_F2_ROWS): 24 x 24, 3 colours $21 #3cbcfc the trail, $0F the outline and $31 #a4e4fc the leading highlight, 196 drawn pixels, worst 8x8 tile 3 of 3, orphans 0, outline leaks 0, nes_check PASS, and palette_synergy clears every sprite rule against the corridor ground at the enemy slot: palettes that fit [2], 0 uncovered tiles, 0 sprite side failures. Before the row could not be measured at all because there was no file; the defect this fixes is that the cell the queue asked for did not exist as drawn art.",
+      "after": {
+        "card": "t_4006d645",
+        "date": "2026-11-01",
+        "drawn_by": "tools/art/make_characters_v2.py --only-slash-frames, the hand written grid SLASH_F2_ROWS",
+        "file": "output/redraws/knife_slash_f2.png",
+        "sha256": "ff9930c030309de21bb8969a823da1c3a8d3a4e2db713e910b49b19394802d46",
+        "sheet_px": [
+          24,
+          24
+        ],
+        "tiles": 9,
+        "colours": 3,
+        "entries": [
+          "$21 #3cbcfc the trail, 115 px",
+          "$0F #000000 the outline, 51 px (26.0 percent)",
+          "$31 #a4e4fc the leading highlight, 30 px"
+        ],
+        "drawn_px": 196,
+        "worst_tile_opaque": 3,
+        "orphans": 0,
+        "outline_leaks": 0,
+        "nes_check": "PASS: 24x24 9 tiles 3 colours",
+        "palette_synergy": "0 sprite side failures on output/spr_knife_slash_ground.png: set_member clears, palettes that fit [2] (corridor sp2 $0F $21 $31), 8 inked tiles and 0 uncovered. The same two background fails the blank control reproduces are the only FAIL lines.",
+        "ground": "output/spr_knife_slash_ground.png, the same 24x24 crop as frame 1"
+      }
+    },
+    {
+      "id": "cand_r18_slash_f3",
+      "name": "the third slash frame, 24 x 24 cell",
+      "path": null,
+      "kind": "sprite",
+      "frames": 1,
+      "frame_px": [
+        24,
+        24
+      ],
+      "priority": "P2",
+      "reference": {
+        "art_bible": "ART-BIBLE RULE 0 (palette first) and the R18 gate page knowledge/GATE-ART-R18-2026-10-26.md",
+        "craft_rule": null,
+        "note": "a candidate row: gamedev has no ruling on this asset yet, so nothing here is shipped, replaced or wired into game/"
+      },
+      "palette_roles": {
+        "legal_entries": [
+          "#000000",
+          "#7c7c7c",
+          "#fca044"
+        ],
+        "why": "one sprite palette row of the asset's scene for the whole cell, so a cell carries three opaque colours plus transparency",
+        "scene": "battle_corridor"
+      },
+      "nes_grid": {
+        "frame_w": 24,
+        "frame_h": 24,
+        "tiles_w": 3,
+        "tiles_h": 3,
+        "tiles_per_frame": 9,
+        "max_opaque_per_tile": 3
+      },
+      "drawn_by": {
+        "tool": "kaggle-concept-art/concept_art_knife_r18.py on Kaggle GPU, quantised by kaggle-concept-art/r18_batches_measure.py",
+        "commit": null,
+        "note": "this card, 2026-10-26"
+      },
+      "candidates": [
+        {
+          "rank": 1,
+          "file": "output/art_candidates_r18/knife/cells/slash_f3_t2i_seed141_cell.png",
+          "seed": 141,
+          "score": 67.14,
+          "mean_delta_e": 32.39,
+          "scene": "battle_corridor",
+          "cell": [
+            24,
+            24
+          ],
+          "sprite_row": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              124,
+              124,
+              124
+            ],
+            [
+              252,
+              160,
+              68
+            ]
+          ],
+          "sprite_row_index": 3,
+          "colours": 3,
+          "colours_hex": [
+            "#000000",
+            "#7c7c7c",
+            "#fca044"
+          ],
+          "max_colours_per_tile": 3,
+          "coverage": 0.266,
+          "components": 1,
+          "orphans_removed": 0,
+          "orphans_left": 0,
+          "outline_px": 81,
+          "outline_clipped": 0
+        },
+        {
+          "rank": 2,
+          "file": "output/art_candidates_r18/knife/cells/slash_f3_t2i_seed144_cell.png",
+          "seed": 144,
+          "score": 49.9,
+          "mean_delta_e": 29.28,
+          "scene": "battle_corridor",
+          "cell": [
+            24,
+            24
+          ],
+          "sprite_row": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              124,
+              124,
+              124
+            ],
+            [
+              252,
+              160,
+              68
+            ]
+          ],
+          "sprite_row_index": 3,
+          "colours": 3,
+          "colours_hex": [
+            "#000000",
+            "#7c7c7c",
+            "#fca044"
+          ],
+          "max_colours_per_tile": 3,
+          "coverage": 0.179,
+          "components": 1,
+          "orphans_removed": 0,
+          "orphans_left": 0,
+          "outline_px": 96,
+          "outline_clipped": 0
+        }
+      ],
+      "check": {
+        "command": "python tools/nes_check.py <candidate file> --type sprite",
+        "means": "PASS: every pixel a data/nes_palette.json entry, 8 px grid, at most 3 opaque colours per 8x8 tile"
+      },
+      "status": "done",
+      "owner_card": "t_f96847c9",
+      "card": "t_f96847c9",
+      "written_on": "2026-10-26",
+      "q_for_gamedev": [
+        "as the first frame"
+      ],
+      "status_note": "Done on 2026-11-02 by card t_2c16df3a. Before, this row held a Kaggle cell only (rank 1 of the kept draws, seed 141, deterministic score 67.14, mean delta E 32.39, coverage 0.266, 3 colours, outline 81 px with 0 clipped) and no file in the tree, so the third cell of the swing the row asks for existed as a picture on Kaggle and not as drawn art. After, it is a hand written 24 x 24 grid in tools/art/make_characters_v2.py (SLASH_F3_ROWS, third entry in slash_frame_specs) drawn in corridor sp2: $21 #3cbcfc the trail 85 px, $0F the outline 76 px (40.4 percent), $31 #a4e4fc the leading highlight 27 px, 188 drawn pixels, worst 8x8 tile 3 of 3, orphans 0, outline leaks 0, nes_check PASS, and palette_synergy clears every sprite side rule against the corridor ground at the enemy slot: palettes that fit [2], 0 sprite side failures. The cell is on the contact sheet at (32, 1608) as the SLASH F3 band and in output/spr_knife_slash_f3_on_ground.png drawn on its own ground. The swing now reads as one motion in order: f1 leaves the arc high on the right, f2 thickens it, and f3 carries it down the left wall and out low on the right.",
+      "after": {
+        "card": "t_2c16df3a",
+        "date": "2026-11-02",
+        "drawn_by": "tools/art/make_characters_v2.py --only-slash-frames, the hand written grid SLASH_F3_ROWS added to slash_frame_specs beside SLASH_F1_ROWS and SLASH_F2_ROWS",
+        "file": "output/redraws/knife_slash_f3.png",
+        "sidecar": "output/redraws/knife_slash_f3.json (frame 24 x 24, 1 frame, layer true)",
+        "sha256": "9c3f9e57463954f42f016541467237567016b416e990fa5ddcf884ed39dede5b",
+        "sheet_px": [
+          24,
+          24
+        ],
+        "tiles": 9,
+        "colours": 3,
+        "entries": [
+          "$21 #3cbcfc the trail, 85 px, 45.2 percent",
+          "$0F #000000 the outline, 76 px, 40.4 percent",
+          "$31 #a4e4fc the leading highlight on the exiting end, 27 px, 14.4 percent"
+        ],
+        "drawn_px": 188,
+        "worst_tile_opaque": 3,
+        "orphans": 0,
+        "outline_leaks": 0,
+        "nes_check": "python tools/nes_check.py output/redraws/knife_slash_f3.png --type sprite -> '24x24  9 tiles  3 colours  PASS', exit 0",
+        "palette_synergy": "python tools/palette_synergy.py --scene battle_corridor --background output/spr_knife_slash_ground.png --sprite output/redraws/knife_slash_f3.png --frame-w 24 --frame-h 24 --at 0,0 -> the sprite side is clean: no problem line names the cell, the frame reads body $21 row 2 hue hue_1, 'palettes that fit [2]' (corridor sp2 $0F $21 $31) and 'tiled layer so R1b: ink $0F, separation by contrast on every ground'. The run still exits 1 on 2 failing pairs, and both belong to the ground crop, not to this cell: background_area 16x16 area at 16,0 carries 4 colours besides the backdrop, and palette_count needs $00 $02 $10 $12 in one area. Proof they are the ground's: a fully transparent 24 x 24 control cell (output/spr_knife_slash_control.png, declared layer true) run with the same command reproduces exactly those 2 failures and no other. f1 and f2 print the same verdict and the same 2 background failures today, so this cell is measured the same way the two rows already closed were.",
+        "readable_against_its_background": "the ground is output/spr_knife_slash_ground.png, sha256 abb44bdb34cf0bd4dac4a489dc77975c116c0981589cb48381c5e5bba2bebf4c, the 24 x 24 of the corridor field centred on the enemy slot pp_battle_draw_slash draws over: $00 285 px, $02 192 px, $10 55 px, $0F 32 px, $12 12 px. R1b is an OR: the ink or the body must clear 3.0:1 on every one of those colours, and on this cell it does, which is why the tool prints no problem for it. The highlight $31 sits on the exiting end so the direction of the swing is on the bright edge, and the 1 px $0F outline closes the whole silhouette against all five ground colours.",
+        "contact_sheet": "output/sprites_v2_sheet.png rebuilt by the same run at 640x1760, sha256 460ceda16b93b4b8b0bafe6c3060c39d66fd592096262bc270d2f09f86e91cff, 12 colours. The SLASH F3 band is the exact 4x nearest upscale of this cell and sits at (32, 1608), found by matching all 188 drawn pixels; the F1 and F2 bands above it are at (32, 1224) and (32, 1416). The sheet carries 5 cast rows, 1 item icon and 3 slash bands (output/_sprite_v2_report.json).",
+        "on_ground_composite": "output/spr_knife_slash_f3_on_ground.png, 320x112 at 4x: f1, f2 and f3 drawn in order on the ground crop they are drawn over, so the three cells can be read as one motion. Placed at 8,8 / 112,8 / 216,8.",
+        "before_vs_after": {
+          "file_in_the_tree": "none before (the row's own path is null and its drawn_by names a Kaggle script), output/redraws/knife_slash_f3.png after",
+          "measured_form_before": "Kaggle cell rank 1, seed 141: deterministic score 67.14, mean delta E 32.39, coverage 0.266, 3 colours, 81 outline px with 0 clipped, components 1, orphans_left 0; rank 2 seed 144 scored 49.9",
+          "measured_form_after": "hand written grid: 188 drawn px (0.327 coverage of the 576 px cell), 3 colours, worst tile 3 of 3, orphans 0, outline leaks 0, nes_check PASS, 0 sprite side palette_synergy failures",
+          "palette_synergy_sprite_side_failures": "the cell could not be measured before (no file); 0 after",
+          "colours": "3 before (as a Kaggle cell), 3 after, and both are the sp2 triple the scene actually carries"
+        },
+        "tests": "python -m pytest tests/test_make_characters_v2.py -q -> 12 passed in 0.48s (the three cells are drawn by the same function, so the two already closed rows are re-drawn and re-measured by this run)",
+        "side_effects_checked": "the full build re-wrote the five cast sheets, the item icon and the contact sheet. sha256 of every game/sprites_src/chars/*.png is identical before and after (28 files, diff empty), so nothing that ships moved; the only changed output is the contact sheet and the three slash cells.",
+        "q_for_gamedev": [
+          "as the first frame",
+          "carried from the two closed cells and unchanged by this one: the row's palette_roles name $0F #000000, $00 #7c7c7c and $2A #fca044, and no sprite row of battle_corridor carries that triple, so this cell is drawn in sp2 ($0F $21 $31) and the palette_roles rewrite is still yours.",
+          "whether the three 24 x 24 cells sit on the 16 x 24 character cell: pp_battle_draw_slash centres a 16 x 16 frame, so a 24 x 24 swing needs that function changed or the cells redrawn at 16 x 16. Nothing is promoted into game/ until this is answered."
+        ]
+      }
+    },
+    {
+      "id": "cand_r18_halls_room",
+      "name": "the Montefiore halls room plate, 256 x 240",
+      "path": null,
+      "kind": "background",
+      "frames": 1,
+      "frame_px": [
+        256,
+        240
+      ],
+      "priority": "P2",
+      "reference": {
+        "art_bible": "ART-BIBLE RULE 0 (palette first) and the R18 gate page knowledge/GATE-ART-R18-2026-10-26.md",
+        "craft_rule": null,
+        "note": "a candidate row: gamedev has no ruling on this asset yet, so nothing here is shipped, replaced or wired into game/"
+      },
+      "palette_roles": {
+        "legal_entries": null,
+        "why": "one sprite palette row of the asset's scene for the whole cell, so a cell carries three opaque colours plus transparency",
+        "scene": "battle_wardroom"
+      },
+      "nes_grid": {
+        "frame_w": 256,
+        "frame_h": 240,
+        "tiles_w": 32,
+        "tiles_h": 30,
+        "tiles_per_frame": 960,
+        "max_opaque_per_tile": null
+      },
+      "drawn_by": {
+        "tool": "kaggle-concept-art/concept_art_plates_r18.py on Kaggle GPU, quantised by kaggle-concept-art/r18_batches_measure.py",
+        "commit": null,
+        "note": "this card, 2026-10-26"
+      },
+      "candidates": [
+        {
+          "rank": 1,
+          "file": "output/art_candidates_r18/plates/cells/halls_room_t2i_seed141_256x240_cell.png",
+          "seed": 141,
+          "score": 0.0,
+          "mean_delta_e": 25.72,
+          "scene": "battle_wardroom",
+          "cell": null,
+          "colours": 7,
+          "own_check_ok": true,
+          "palettes_used": 4
+        },
+        {
+          "rank": 2,
+          "file": "output/art_candidates_r18/plates/cells/halls_room_t2i_seed142_256x240_cell.png",
+          "seed": 142,
+          "score": 0.0,
+          "mean_delta_e": 18.98,
+          "scene": "battle_wardroom",
+          "cell": null,
+          "colours": 7,
+          "own_check_ok": true,
+          "palettes_used": 2
+        }
+      ],
+      "check": {
+        "command": "python tools/nes_check.py <candidate file> --type sprite",
+        "means": "PASS: every pixel a data/nes_palette.json entry, 8 px grid, at most 3 opaque colours per 8x8 tile"
+      },
+      "status": "retired",
+      "owner_card": "t_f96847c9",
+      "card": "t_f96847c9",
+      "written_on": "2026-10-26",
+      "q_for_gamedev": [
+        "a plate is not a sprite: whether the queue is the right home for scene art"
+      ],
+      "status_note": "Retired on 2026-11-12 by card t_8df7aab4, ruling knowledge/PALETTE-RULINGS-2026-11-12.md section 4. Candidate art stays where it is under output/art_candidates_r18/; the row is what retires.",
+      "retired_on": "2026-11-12",
+      "retired_by": "t_8df7aab4",
+      "retired_reason": "a 256x240 plate is not a screen the PPU can build. Measured, the six candidates need 463, 540, 606, 649, 499 and 154 distinct 8x8 tiles; a background is one pattern table of 256 tiles and the console has two, so three of the six exceed both tables together. A screen is built from a tileset that already owns the name (tools/art/make_battle_bg.py, tools/art/make_exterior_maps.py), and the row's own check command (nes_check --type sprite) is the wrong rule set for a background. Reopens the same way: a slot, a palette row and a reader."
+    },
+    {
+      "id": "cand_r18_high_street",
+      "name": "the Southampton high street strip plate, 256 x 240",
+      "path": null,
+      "kind": "background",
+      "frames": 1,
+      "frame_px": [
+        256,
+        240
+      ],
+      "priority": "P2",
+      "reference": {
+        "art_bible": "ART-BIBLE RULE 0 (palette first) and the R18 gate page knowledge/GATE-ART-R18-2026-10-26.md",
+        "craft_rule": null,
+        "note": "a candidate row: gamedev has no ruling on this asset yet, so nothing here is shipped, replaced or wired into game/"
+      },
+      "palette_roles": {
+        "legal_entries": null,
+        "why": "one sprite palette row of the asset's scene for the whole cell, so a cell carries three opaque colours plus transparency",
+        "scene": "southampton"
+      },
+      "nes_grid": {
+        "frame_w": 256,
+        "frame_h": 240,
+        "tiles_w": 32,
+        "tiles_h": 30,
+        "tiles_per_frame": 960,
+        "max_opaque_per_tile": null
+      },
+      "drawn_by": {
+        "tool": "kaggle-concept-art/concept_art_plates_r18.py on Kaggle GPU, quantised by kaggle-concept-art/r18_batches_measure.py",
+        "commit": null,
+        "note": "this card, 2026-10-26"
+      },
+      "candidates": [
+        {
+          "rank": 1,
+          "file": "output/art_candidates_r18/plates/cells/high_street_t2i_seed141_256x240_cell.png",
+          "seed": 141,
+          "score": 0.0,
+          "mean_delta_e": 16.16,
+          "scene": "southampton",
+          "cell": null,
+          "colours": 7,
+          "own_check_ok": true,
+          "palettes_used": 2
+        },
+        {
+          "rank": 2,
+          "file": "output/art_candidates_r18/plates/cells/high_street_t2i_seed142_256x240_cell.png",
+          "seed": 142,
+          "score": 0.0,
+          "mean_delta_e": 16.51,
+          "scene": "southampton",
+          "cell": null,
+          "colours": 7,
+          "own_check_ok": true,
+          "palettes_used": 2
+        }
+      ],
+      "check": {
+        "command": "python tools/nes_check.py <candidate file> --type sprite",
+        "means": "PASS: every pixel a data/nes_palette.json entry, 8 px grid, at most 3 opaque colours per 8x8 tile"
+      },
+      "status": "retired",
+      "owner_card": "t_f96847c9",
+      "card": "t_f96847c9",
+      "written_on": "2026-10-26",
+      "q_for_gamedev": [
+        "as the halls room plate"
+      ],
+      "status_note": "Retired on 2026-11-12 by card t_8df7aab4, ruling knowledge/PALETTE-RULINGS-2026-11-12.md section 4. Candidate art stays where it is under output/art_candidates_r18/; the row is what retires.",
+      "retired_on": "2026-11-12",
+      "retired_by": "t_8df7aab4",
+      "retired_reason": "a 256x240 plate is not a screen the PPU can build. Measured, the six candidates need 463, 540, 606, 649, 499 and 154 distinct 8x8 tiles; a background is one pattern table of 256 tiles and the console has two, so three of the six exceed both tables together. A screen is built from a tileset that already owns the name (tools/art/make_battle_bg.py, tools/art/make_exterior_maps.py), and the row's own check command (nes_check --type sprite) is the wrong rule set for a background. Reopens the same way: a slot, a palette row and a reader."
+    },
+    {
+      "id": "cand_r18_town_quay_hurricane",
+      "name": "Town Quay in the hurricane plate, 256 x 240",
+      "path": null,
+      "kind": "background",
+      "frames": 1,
+      "frame_px": [
+        256,
+        240
+      ],
+      "priority": "P2",
+      "reference": {
+        "art_bible": "ART-BIBLE RULE 0 (palette first) and the R18 gate page knowledge/GATE-ART-R18-2026-10-26.md",
+        "craft_rule": null,
+        "note": "a candidate row: gamedev has no ruling on this asset yet, so nothing here is shipped, replaced or wired into game/"
+      },
+      "palette_roles": {
+        "legal_entries": null,
+        "why": "one sprite palette row of the asset's scene for the whole cell, so a cell carries three opaque colours plus transparency",
+        "scene": "southampton"
+      },
+      "nes_grid": {
+        "frame_w": 256,
+        "frame_h": 240,
+        "tiles_w": 32,
+        "tiles_h": 30,
+        "tiles_per_frame": 960,
+        "max_opaque_per_tile": null
+      },
+      "drawn_by": {
+        "tool": "kaggle-concept-art/concept_art_plates_r18.py on Kaggle GPU, quantised by kaggle-concept-art/r18_batches_measure.py",
+        "commit": null,
+        "note": "this card, 2026-10-26"
+      },
+      "candidates": [
+        {
+          "rank": 1,
+          "file": "output/art_candidates_r18/plates/cells/town_quay_hurricane_t2i_seed141_256x240_cell.png",
+          "seed": 141,
+          "score": 29.0,
+          "mean_delta_e": 7.1,
+          "scene": "southampton",
+          "cell": null,
+          "colours": 4,
+          "own_check_ok": true,
+          "palettes_used": 1
+        },
+        {
+          "rank": 2,
+          "file": "output/art_candidates_r18/plates/cells/town_quay_hurricane_t2i_seed146_256x240_cell.png",
+          "seed": 146,
+          "score": 24.6,
+          "mean_delta_e": 7.54,
+          "scene": "southampton",
+          "cell": null,
+          "colours": 7,
+          "own_check_ok": true,
+          "palettes_used": 2
+        }
+      ],
+      "check": {
+        "command": "python tools/nes_check.py <candidate file> --type sprite",
+        "means": "PASS: every pixel a data/nes_palette.json entry, 8 px grid, at most 3 opaque colours per 8x8 tile"
+      },
+      "status": "retired",
+      "owner_card": "t_f96847c9",
+      "card": "t_f96847c9",
+      "written_on": "2026-10-26",
+      "q_for_gamedev": [
+        "as the halls room plate"
+      ],
+      "status_note": "Retired on 2026-11-12 by card t_8df7aab4, ruling knowledge/PALETTE-RULINGS-2026-11-12.md section 4. Candidate art stays where it is under output/art_candidates_r18/; the row is what retires.",
+      "retired_on": "2026-11-12",
+      "retired_by": "t_8df7aab4",
+      "retired_reason": "a 256x240 plate is not a screen the PPU can build. Measured, the six candidates need 463, 540, 606, 649, 499 and 154 distinct 8x8 tiles; a background is one pattern table of 256 tiles and the console has two, so three of the six exceed both tables together. A screen is built from a tileset that already owns the name (tools/art/make_battle_bg.py, tools/art/make_exterior_maps.py), and the row's own check command (nes_check --type sprite) is the wrong rule set for a background. Reopens the same way: a slot, a palette row and a reader."
+    },
+    {
+      "id": "cand_r18b_halls_room",
+      "name": "the Montefiore halls room plate in direction B, 256 x 240",
+      "path": null,
+      "kind": "background",
+      "frames": 1,
+      "frame_px": [
+        256,
+        240
+      ],
+      "priority": "P2",
+      "reference": {
+        "art_bible": "ART-BIBLE RULE 0 (palette first) and the R18 gate page knowledge/GATE-ART-R18-2026-10-26.md",
+        "craft_rule": null,
+        "note": "a candidate row: gamedev has no ruling on this asset yet, so nothing here is shipped, replaced or wired into game/"
+      },
+      "palette_roles": {
+        "legal_entries": null,
+        "why": "one sprite palette row of the asset's scene for the whole cell, so a cell carries three opaque colours plus transparency",
+        "scene": "battle_wardroom"
+      },
+      "nes_grid": {
+        "frame_w": 256,
+        "frame_h": 240,
+        "tiles_w": 32,
+        "tiles_h": 30,
+        "tiles_per_frame": 960,
+        "max_opaque_per_tile": null
+      },
+      "drawn_by": {
+        "tool": "kaggle-concept-art/concept_art_plates_b_r18.py on Kaggle GPU, quantised by kaggle-concept-art/r18_batches_measure.py",
+        "commit": null,
+        "note": "this card, 2026-10-26"
+      },
+      "candidates": [
+        {
+          "rank": 1,
+          "file": "output/art_candidates_r18/plates_b/cells/halls_room_t2i_seed149_256x240_cell.png",
+          "seed": 149,
+          "score": 0.0,
+          "mean_delta_e": 20.67,
+          "scene": "battle_wardroom",
+          "cell": null,
+          "colours": 7,
+          "own_check_ok": true,
+          "palettes_used": 2
+        },
+        {
+          "rank": 2,
+          "file": "output/art_candidates_r18/plates_b/cells/halls_room_t2i_seed150_256x240_cell.png",
+          "seed": 150,
+          "score": 0.0,
+          "mean_delta_e": 24.95,
+          "scene": "battle_wardroom",
+          "cell": null,
+          "colours": 7,
+          "own_check_ok": true,
+          "palettes_used": 3
+        }
+      ],
+      "check": {
+        "command": "python tools/nes_check.py <candidate file> --type sprite",
+        "means": "PASS: every pixel a data/nes_palette.json entry, 8 px grid, at most 3 opaque colours per 8x8 tile"
+      },
+      "status": "retired",
+      "owner_card": "t_f96847c9",
+      "card": "t_f96847c9",
+      "written_on": "2026-10-26",
+      "q_for_gamedev": [
+        "whether direction B holds on a plate: bold ink outlines and three tone shading at 256 x 240"
+      ],
+      "status_note": "Retired on 2026-11-12 by card t_8df7aab4, ruling knowledge/PALETTE-RULINGS-2026-11-12.md section 4. Candidate art stays where it is under output/art_candidates_r18/; the row is what retires.",
+      "retired_on": "2026-11-12",
+      "retired_by": "t_8df7aab4",
+      "retired_reason": "a 256x240 plate is not a screen the PPU can build. Measured, the six candidates need 463, 540, 606, 649, 499 and 154 distinct 8x8 tiles; a background is one pattern table of 256 tiles and the console has two, so three of the six exceed both tables together. A screen is built from a tileset that already owns the name (tools/art/make_battle_bg.py, tools/art/make_exterior_maps.py), and the row's own check command (nes_check --type sprite) is the wrong rule set for a background. Reopens the same way: a slot, a palette row and a reader."
+    },
+    {
+      "id": "cand_r18b_high_street",
+      "name": "the Southampton high street strip plate in direction B, 256 x 240",
+      "path": null,
+      "kind": "background",
+      "frames": 1,
+      "frame_px": [
+        256,
+        240
+      ],
+      "priority": "P2",
+      "reference": {
+        "art_bible": "ART-BIBLE RULE 0 (palette first) and the R18 gate page knowledge/GATE-ART-R18-2026-10-26.md",
+        "craft_rule": null,
+        "note": "a candidate row: gamedev has no ruling on this asset yet, so nothing here is shipped, replaced or wired into game/"
+      },
+      "palette_roles": {
+        "legal_entries": null,
+        "why": "one sprite palette row of the asset's scene for the whole cell, so a cell carries three opaque colours plus transparency",
+        "scene": "southampton"
+      },
+      "nes_grid": {
+        "frame_w": 256,
+        "frame_h": 240,
+        "tiles_w": 32,
+        "tiles_h": 30,
+        "tiles_per_frame": 960,
+        "max_opaque_per_tile": null
+      },
+      "drawn_by": {
+        "tool": "kaggle-concept-art/concept_art_plates_b_r18.py on Kaggle GPU, quantised by kaggle-concept-art/r18_batches_measure.py",
+        "commit": null,
+        "note": "this card, 2026-10-26"
+      },
+      "candidates": [
+        {
+          "rank": 1,
+          "file": "output/art_candidates_r18/plates_b/cells/high_street_t2i_seed149_256x240_cell.png",
+          "seed": 149,
+          "score": 0.0,
+          "mean_delta_e": 19.08,
+          "scene": "southampton",
+          "cell": null,
+          "colours": 7,
+          "own_check_ok": true,
+          "palettes_used": 2
+        },
+        {
+          "rank": 2,
+          "file": "output/art_candidates_r18/plates_b/cells/high_street_t2i_seed150_256x240_cell.png",
+          "seed": 150,
+          "score": 0.0,
+          "mean_delta_e": 18.01,
+          "scene": "southampton",
+          "cell": null,
+          "colours": 7,
+          "own_check_ok": true,
+          "palettes_used": 2
+        }
+      ],
+      "check": {
+        "command": "python tools/nes_check.py <candidate file> --type sprite",
+        "means": "PASS: every pixel a data/nes_palette.json entry, 8 px grid, at most 3 opaque colours per 8x8 tile"
+      },
+      "status": "retired",
+      "owner_card": "t_f96847c9",
+      "card": "t_f96847c9",
+      "written_on": "2026-10-26",
+      "q_for_gamedev": [
+        "as the halls room B plate"
+      ],
+      "status_note": "Retired on 2026-11-12 by card t_8df7aab4, ruling knowledge/PALETTE-RULINGS-2026-11-12.md section 4. Candidate art stays where it is under output/art_candidates_r18/; the row is what retires.",
+      "retired_on": "2026-11-12",
+      "retired_by": "t_8df7aab4",
+      "retired_reason": "a 256x240 plate is not a screen the PPU can build. Measured, the six candidates need 463, 540, 606, 649, 499 and 154 distinct 8x8 tiles; a background is one pattern table of 256 tiles and the console has two, so three of the six exceed both tables together. A screen is built from a tileset that already owns the name (tools/art/make_battle_bg.py, tools/art/make_exterior_maps.py), and the row's own check command (nes_check --type sprite) is the wrong rule set for a background. Reopens the same way: a slot, a palette row and a reader."
+    },
+    {
+      "id": "cand_r18b_town_quay_hurricane",
+      "name": "Town Quay in the hurricane plate in direction B, 256 x 240",
+      "path": null,
+      "kind": "background",
+      "frames": 1,
+      "frame_px": [
+        256,
+        240
+      ],
+      "priority": "P2",
+      "reference": {
+        "art_bible": "ART-BIBLE RULE 0 (palette first) and the R18 gate page knowledge/GATE-ART-R18-2026-10-26.md",
+        "craft_rule": null,
+        "note": "a candidate row: gamedev has no ruling on this asset yet, so nothing here is shipped, replaced or wired into game/"
+      },
+      "palette_roles": {
+        "legal_entries": null,
+        "why": "one sprite palette row of the asset's scene for the whole cell, so a cell carries three opaque colours plus transparency",
+        "scene": "southampton"
+      },
+      "nes_grid": {
+        "frame_w": 256,
+        "frame_h": 240,
+        "tiles_w": 32,
+        "tiles_h": 30,
+        "tiles_per_frame": 960,
+        "max_opaque_per_tile": null
+      },
+      "drawn_by": {
+        "tool": "kaggle-concept-art/concept_art_plates_b_r18.py on Kaggle GPU, quantised by kaggle-concept-art/r18_batches_measure.py",
+        "commit": null,
+        "note": "this card, 2026-10-26"
+      },
+      "candidates": [
+        {
+          "rank": 1,
+          "file": "output/art_candidates_r18/plates_b/cells/town_quay_hurricane_t2i_seed150_256x240_cell.png",
+          "seed": 150,
+          "score": 16.7,
+          "mean_delta_e": 8.33,
+          "scene": "southampton",
+          "cell": null,
+          "colours": 6,
+          "own_check_ok": true,
+          "palettes_used": 2
+        },
+        {
+          "rank": 2,
+          "file": "output/art_candidates_r18/plates_b/cells/town_quay_hurricane_t2i_seed153_256x240_cell.png",
+          "seed": 153,
+          "score": 11.3,
+          "mean_delta_e": 8.87,
+          "scene": "southampton",
+          "cell": null,
+          "colours": 4,
+          "own_check_ok": true,
+          "palettes_used": 1
+        }
+      ],
+      "check": {
+        "command": "python tools/nes_check.py <candidate file> --type sprite",
+        "means": "PASS: every pixel a data/nes_palette.json entry, 8 px grid, at most 3 opaque colours per 8x8 tile"
+      },
+      "status": "retired",
+      "owner_card": "t_f96847c9",
+      "card": "t_f96847c9",
+      "written_on": "2026-10-26",
+      "q_for_gamedev": [
+        "as the halls room B plate"
+      ],
+      "status_note": "Retired on 2026-11-12 by card t_8df7aab4, ruling knowledge/PALETTE-RULINGS-2026-11-12.md section 4. Candidate art stays where it is under output/art_candidates_r18/; the row is what retires.",
+      "retired_on": "2026-11-12",
+      "retired_by": "t_8df7aab4",
+      "retired_reason": "a 256x240 plate is not a screen the PPU can build. Measured, the six candidates need 463, 540, 606, 649, 499 and 154 distinct 8x8 tiles; a background is one pattern table of 256 tiles and the console has two, so three of the six exceed both tables together. A screen is built from a tileset that already owns the name (tools/art/make_battle_bg.py, tools/art/make_exterior_maps.py), and the row's own check command (nes_check --type sprite) is the wrong rule set for a background. Reopens the same way: a slot, a palette row and a reader."
     }
   ],
   "evidence": {
@@ -8707,8 +10536,141 @@
     }
   ],
   "eye_rounds_note": "written by the assistant profile from the automatic eye rounds; these are ranked suggestions about contact sheets, kept apart from `entries`, which is one row per sprite the game asks for by name. Gamedev and Nayil own the spec and the priority order, and a conflict is resolved in gamedev's favour. Regenerated by output/_eye_r6_queue.py.",
-  "updated_by": "assistant (card t_09e10c47, the battle party member frame redrawn)",
-  "updated_on": "2026-10-26",
-  "count_note": "31 rows. The 19 rows of the 2026-10-23 source of truth card are unchanged: 15 repointed to game/sprites_src, 2 renamed to the shipped names (spr_title_konrad, spr_title_zander), 2 retired (spr_player_ow, spr_gate_sentry_ow). Card t_bd32a72e redrew hadrian_ow_v2 (status queued_by_eye to redrawn) and changed no other row. AUTO-GEMINI-EYE round 8 (card t_134cacc4) added 12 rows with status queued_by_eye and priority P2, because the eye does not own priority: the 7 enemies whose frame 3 drops a colour, the 3 v2 characters that need two sprite palettes, and the 2 battle frames with no dark boundary ring. No row measures game/art. Card t_b08c01d5 redrew spr_title_cloud (status queued to done) and changed no other row: the shipped cloud went from 94.6 percent on one entry and 4 failing palette_synergy pairs to 52.5 percent on the white body and 0 failing pairs. Card t_bd5cfad5 redrew sailor_ow_v2 (status queued_by_eye to done) and changed no other row: the last of the three v2 characters the eye measured at 4 and 5 colours per 16x16 cell went from 4 entries (ink, white, navy, skin) and 4 failing palette_synergy pairs per frame to 3 entries in exactly one deck sprite palette and 0 failing pairs, with drawn_px unchanged at 1196. Card t_a44ae3db (gamedev, 2026-10-24) ruled Q1 on that row: the three entry sheet stands and the blob floor is re-expressed for a three entry sheet in tests/test_make_characters_v2.py and SPRITE-CRAFT 8.5, because a floor of four entries needs a second sprite palette and was never a gamedev spec; the ruling and its measured numbers are in the row's gamedev_ruling key. Card t_c3ad486b redrew spr_pp_navy_sailor and spr_pp_petty_officer (both queued_by_eye to done) and changed no other row: the two enemies were [3, 3, 2] colours per frame before, the hit frame dropping the navy, and are [3, 3, 3] after, with the body moved off the sea's own $02 navy onto the uniform's $30 white, which took palette_synergy from 2 failing pairs to 0 on the sea ground the enemy is placed on. The five other enemies keep the blanket recolour that drops a colour in frame 3 and stay queued_by_eye, and that is Q1 on the sailor row. Card t_f24ada8a (2026-10-24) redrew spr_pp_deck_rat and spr_pp_rope_knot (both queued_by_eye to done), the only two rows left whose own measured check was red: both were FAIL on palette_synergy with 2 body_ground pairs each, body $07 brown at 1.24:1 on the $02 navy sea ground, and both had [3, 3, 2] colours per frame with the hit frame dropping the brown. They are now [3, 3, 3] and PASS with 0 failing pairs, body $28 gold in scene_sea sp1_brown_gold, drawn by make_enemies.py, the tool that owns both names. It changed no other row: gull and rogue_wave already measured 0 failing pairs on that ground, and bilge_slime too, so the eye round 10 rank 3 reading is now settled for four of the five enemies it named. The P0 car and the P1 title rows above these two stay queued or redrawn: their remaining defects are gamedev's (Q3 on the car's band palette, the cursor's gold, the cone's flat single entry), not a drawing this lane can fix and prove. Card t_b825be3e redrew spr_title_cone (status queued to done) and changed no other row: the shipped sheet was one entry on all 1246 drawn pixels, and the redraw is three stepped entries ($28 lamp 200 px, $10 mid 448 px, $00 far 704 px) on 1352 drawn px, nes_check PASS with the worst 8x8 tile holding one opaque colour, and palette_synergy PASS with 0 failing pairs of 16 on the road ground rebuilt from the seven shipped title layers at the cone's own placement. Whether the shipped sheet moves is gamedev's, posted as Q3 on the row. Card t_9774ff51 redrew spr_title_exhaust (status queued to redrawn) and changed no other row: the shipped sheet's body flipped from $0C in frame 0 to $20 in frames 1 to 3, and the redraw is $10 body with a $0C outline in one sprite palette (sp2), growing 5x4 to 12x10 over the four frames. nes_check PASS, palette_synergy 9 failing pairs to 4, and the 4 left are one pair repeated (body $10 at 1.79:1 on the road's $20 marking). The row is redrawn, not done: whether an effect puff is a figure or a layer is Q for gamedev, and under R1b the same sheet passes 0 of 16. Card t_474cde50 (gamedev, 2026-10-25) answered that Q and closed the row: the puff is a tiled layer, because over one scroll its 16x16 window crosses four ground entries on 2C02 rows 0 and 2 and no body entry can clear RULE 0 point 2 on both ends (failing pairs: 4 as a figure, the arithmetic floor, and 0 under R1b). The same ruling moved the body from the redraw's $10 to $20, since the puff's band is bg3 and the band pass flattens $10 (118 pixels); the generator now draws the shipping pair and the shipped sheet is #f8f8f8 118 px plus #004058 70 px, nes_check PASS, palette_synergy PASS 0 failing pairs.\nCard t_5e488e26 redrew spr_pp_rogue_wave and spr_pp_bilge_slime (both queued_by_eye to done) and changed no other row: the two frames the eye's round 8 measured at [3, 3, 2] entries are [3, 3, 3] now, because the hit frame is drawn by the tool with the shade plane lit instead of repainting every mid tone, and the wave's invisible rim (\"k\" is #0000bc in sp3_sea, the sea ground to the pixel: 627 px, 30.1 percent of the figure, were the colour behind it) is now \"l\" foam at 33 px, 1.6 percent. nes_check PASS on both, palette_synergy PASS 0 failing pairs on output/enemies_sea_ground.png for both, and the contact sheet carries both bands at (32, 1992) and (32, 2184). The P1 title rows konrad, zander, sign and wheel are still queued and were not touched: each row's own palette_roles block lists entries its title sprite palette does not carry ($36 skin and $10/$07 tweed on konrad, the hero blues $21/$31 on zander), so redrawing them would trade a look for a palette_count failure that is gamedev's to settle, and that is the same reason the card before this one left them. Card t_b15e9c7a redrew spr_pp_ui_enemy (queued_by_eye to done) and changed no other row's status: the block was 2 colours with 0 of 124 boundary pixels on the darkest entry, and is 3 colours with all 124 on ink $0F, every tile inside ui sp0, nes_check PASS, palette_synergy PASS with 0 failing pairs on a ground built from the shipped battle screen, and bands on output/sprites_v2_sheet.png at 4x and on its own floor. It also redrew spr_title_konrad to output/redraws/spr_title_konrad.png and left that row queued, because it measured why the row cannot pass: the car's glass pane carries $0C on 103 px and $20 on 14 px, no entry of any title sprite palette separates from both, and the same wall made the exhaust puff a layer. spr_pp_ui_party carries the same boundary defect and cannot be fixed without a palette gamedev does not yet carry, so it stays queued_by_eye with the arithmetic written down. Card t_09e10c47 redrew spr_pp_ui_party (status queued_by_eye to done) and changed no other row: the battle party block went from 0 of 108 outer boundary pixels on the darkest entry it spends (its only edge was the white $30 ring) to 108 of 108 on $00 grey, with the marker redrawn as a gold head and shoulders silhouette, 3 colours before and after, nes_check PASS 24x32 12 tiles and palette_synergy PASS 0 failing pairs on the 24x32 $0F sky band. The card took that row rather than a higher one because every higher row is held by gamedev, and its pick_note names each hold: the two P1 busts sit on the car glass pane arithmetic, the two 48 x 48 portraits have no reference, hadrian_ow_v2 waits on its palette set, and ts_exterior is a background tileset checked with the background rule rather than this card's sprite recipe. tools/art/make_ui_party_v2.py is the new tool that draws the row, and tools/art/make_title_rows_v2.py gained a party_strip and a party_ground band for the sheet. Card t_30746cd8 (gamedev, 2026-10-26) retired two eye rows and added one measured row, and changed no sprite row's status: eye_auto_r6_off_palette_combat_overlay and eye_auto_r6_combat_blocks_no_outline are retired with the three bg_battle fight mocks and the game over mock they named, which were deleted with the rest of the nine untracked mocks that carried data/palette.json's four design greys; eye_auto_r6_small_text_legibility lost the game over mock from its files and stays open, because its question is about the font and not about that picture. The row that replaces them is runtime_role_colours_not_2c02, P0 measured, checked by tools/check_runtime_palette.py, because the defect is the runtime resolve and not a PNG: 0 of the 54 design colours is a 2C02 output and pp_data.gml draws the design hex. The nine sha256 and the measurements are at knowledge/GATED-REDS-2026-10-26.md. Card t_54db4d0f closed runtime_role_colours_not_2c02 to done, so the count opens at 31."
+  "updated_by": "gamedev (card t_8df7aab4: ruled D1 to D4 of open_rows_2026_11_12. spr_title_konrad done, ts_exterior done, the nine cand_r18 rows retired, spr_title_zander and the two portraits carry the ruling that unblocks them. knowledge/PALETTE-RULINGS-2026-11-12.md has every number)",
+  "updated_on": "2026-11-12",
+  "count_note": "31 rows. The 19 rows of the 2026-10-23 source of truth card are unchanged: 15 repointed to game/sprites_src, 2 renamed to the shipped names (spr_title_konrad, spr_title_zander), 2 retired (spr_player_ow, spr_gate_sentry_ow). Card t_bd32a72e redrew hadrian_ow_v2 (status queued_by_eye to redrawn) and changed no other row. AUTO-GEMINI-EYE round 8 (card t_134cacc4) added 12 rows with status queued_by_eye and priority P2, because the eye does not own priority: the 7 enemies whose frame 3 drops a colour, the 3 v2 characters that need two sprite palettes, and the 2 battle frames with no dark boundary ring. No row measures game/art. Card t_b08c01d5 redrew spr_title_cloud (status queued to done) and changed no other row: the shipped cloud went from 94.6 percent on one entry and 4 failing palette_synergy pairs to 52.5 percent on the white body and 0 failing pairs. Card t_bd5cfad5 redrew sailor_ow_v2 (status queued_by_eye to done) and changed no other row: the last of the three v2 characters the eye measured at 4 and 5 colours per 16x16 cell went from 4 entries (ink, white, navy, skin) and 4 failing palette_synergy pairs per frame to 3 entries in exactly one deck sprite palette and 0 failing pairs, with drawn_px unchanged at 1196. Card t_a44ae3db (gamedev, 2026-10-24) ruled Q1 on that row: the three entry sheet stands and the blob floor is re-expressed for a three entry sheet in tests/test_make_characters_v2.py and SPRITE-CRAFT 8.5, because a floor of four entries needs a second sprite palette and was never a gamedev spec; the ruling and its measured numbers are in the row's gamedev_ruling key. Card t_c3ad486b redrew spr_pp_navy_sailor and spr_pp_petty_officer (both queued_by_eye to done) and changed no other row: the two enemies were [3, 3, 2] colours per frame before, the hit frame dropping the navy, and are [3, 3, 3] after, with the body moved off the sea's own $02 navy onto the uniform's $30 white, which took palette_synergy from 2 failing pairs to 0 on the sea ground the enemy is placed on. The five other enemies keep the blanket recolour that drops a colour in frame 3 and stay queued_by_eye, and that is Q1 on the sailor row. Card t_f24ada8a (2026-10-24) redrew spr_pp_deck_rat and spr_pp_rope_knot (both queued_by_eye to done), the only two rows left whose own measured check was red: both were FAIL on palette_synergy with 2 body_ground pairs each, body $07 brown at 1.24:1 on the $02 navy sea ground, and both had [3, 3, 2] colours per frame with the hit frame dropping the brown. They are now [3, 3, 3] and PASS with 0 failing pairs, body $28 gold in scene_sea sp1_brown_gold, drawn by make_enemies.py, the tool that owns both names. It changed no other row: gull and rogue_wave already measured 0 failing pairs on that ground, and bilge_slime too, so the eye round 10 rank 3 reading is now settled for four of the five enemies it named. The P0 car and the P1 title rows above these two stay queued or redrawn: their remaining defects are gamedev's (Q3 on the car's band palette, the cursor's gold, the cone's flat single entry), not a drawing this lane can fix and prove. Card t_b825be3e redrew spr_title_cone (status queued to done) and changed no other row: the shipped sheet was one entry on all 1246 drawn pixels, and the redraw is three stepped entries ($28 lamp 200 px, $10 mid 448 px, $00 far 704 px) on 1352 drawn px, nes_check PASS with the worst 8x8 tile holding one opaque colour, and palette_synergy PASS with 0 failing pairs of 16 on the road ground rebuilt from the seven shipped title layers at the cone's own placement. Whether the shipped sheet moves is gamedev's, posted as Q3 on the row. Card t_9774ff51 redrew spr_title_exhaust (status queued to redrawn) and changed no other row: the shipped sheet's body flipped from $0C in frame 0 to $20 in frames 1 to 3, and the redraw is $10 body with a $0C outline in one sprite palette (sp2), growing 5x4 to 12x10 over the four frames. nes_check PASS, palette_synergy 9 failing pairs to 4, and the 4 left are one pair repeated (body $10 at 1.79:1 on the road's $20 marking). The row is redrawn, not done: whether an effect puff is a figure or a layer is Q for gamedev, and under R1b the same sheet passes 0 of 16. Card t_474cde50 (gamedev, 2026-10-25) answered that Q and closed the row: the puff is a tiled layer, because over one scroll its 16x16 window crosses four ground entries on 2C02 rows 0 and 2 and no body entry can clear RULE 0 point 2 on both ends (failing pairs: 4 as a figure, the arithmetic floor, and 0 under R1b). The same ruling moved the body from the redraw's $10 to $20, since the puff's band is bg3 and the band pass flattens $10 (118 pixels); the generator now draws the shipping pair and the shipped sheet is #f8f8f8 118 px plus #004058 70 px, nes_check PASS, palette_synergy PASS 0 failing pairs.\nCard t_5e488e26 redrew spr_pp_rogue_wave and spr_pp_bilge_slime (both queued_by_eye to done) and changed no other row: the two frames the eye's round 8 measured at [3, 3, 2] entries are [3, 3, 3] now, because the hit frame is drawn by the tool with the shade plane lit instead of repainting every mid tone, and the wave's invisible rim (\"k\" is #0000bc in sp3_sea, the sea ground to the pixel: 627 px, 30.1 percent of the figure, were the colour behind it) is now \"l\" foam at 33 px, 1.6 percent. nes_check PASS on both, palette_synergy PASS 0 failing pairs on output/enemies_sea_ground.png for both, and the contact sheet carries both bands at (32, 1992) and (32, 2184). The P1 title rows konrad, zander, sign and wheel are still queued and were not touched: each row's own palette_roles block lists entries its title sprite palette does not carry ($36 skin and $10/$07 tweed on konrad, the hero blues $21/$31 on zander), so redrawing them would trade a look for a palette_count failure that is gamedev's to settle, and that is the same reason the card before this one left them. Card t_b15e9c7a redrew spr_pp_ui_enemy (queued_by_eye to done) and changed no other row's status: the block was 2 colours with 0 of 124 boundary pixels on the darkest entry, and is 3 colours with all 124 on ink $0F, every tile inside ui sp0, nes_check PASS, palette_synergy PASS with 0 failing pairs on a ground built from the shipped battle screen, and bands on output/sprites_v2_sheet.png at 4x and on its own floor. It also redrew spr_title_konrad to output/redraws/spr_title_konrad.png and left that row queued, because it measured why the row cannot pass: the car's glass pane carries $0C on 103 px and $20 on 14 px, no entry of any title sprite palette separates from both, and the same wall made the exhaust puff a layer. spr_pp_ui_party carries the same boundary defect and cannot be fixed without a palette gamedev does not yet carry, so it stays queued_by_eye with the arithmetic written down. Card t_09e10c47 redrew spr_pp_ui_party (status queued_by_eye to done) and changed no other row: the battle party block went from 0 of 108 outer boundary pixels on the darkest entry it spends (its only edge was the white $30 ring) to 108 of 108 on $00 grey, with the marker redrawn as a gold head and shoulders silhouette, 3 colours before and after, nes_check PASS 24x32 12 tiles and palette_synergy PASS 0 failing pairs on the 24x32 $0F sky band. The card took that row rather than a higher one because every higher row is held by gamedev, and its pick_note names each hold: the two P1 busts sit on the car glass pane arithmetic, the two 48 x 48 portraits have no reference, hadrian_ow_v2 waits on its palette set, and ts_exterior is a background tileset checked with the background rule rather than this card's sprite recipe. tools/art/make_ui_party_v2.py is the new tool that draws the row, and tools/art/make_title_rows_v2.py gained a party_strip and a party_ground band for the sheet. Card t_30746cd8 (gamedev, 2026-10-26) retired two eye rows and added one measured row, and changed no sprite row's status: eye_auto_r6_off_palette_combat_overlay and eye_auto_r6_combat_blocks_no_outline are retired with the three bg_battle fight mocks and the game over mock they named, which were deleted with the rest of the nine untracked mocks that carried data/palette.json's four design greys; eye_auto_r6_small_text_legibility lost the game over mock from its files and stays open, because its question is about the font and not about that picture. The row that replaces them is runtime_role_colours_not_2c02, P0 measured, checked by tools/check_runtime_palette.py, because the defect is the runtime resolve and not a PNG: 0 of the 54 design colours is a 2C02 output and pp_data.gml draws the design hex. The nine sha256 and the measurements are at knowledge/GATED-REDS-2026-10-26.md. Card t_54db4d0f closed runtime_role_colours_not_2c02 to done, so the count opens at 31. Card t_4b68f597 redrew cand_r18_zeus_ow_walk and cand_r18_kronos_ow (both queued_by_eye to redrawn, not done) and changed no other row: the two hand authored 16x24 grids are nes_check PASS with 0 uncovered 8x8 tiles and each fits exactly one ship sprite palette (zeus sp2, kronos sp3), but both fail body_ground on the deck plate ground (26 and 2 failing pairs), and no entry can pass it while the plate spends both $00 and $10, so the ground is posted as Q for gamedev. It also measured that the ship scene's judged row in data/palettes/scene_ship.json pairs 0 of 0 because ts_ship.png is 48 px tall and the cast is placed at [64,64], so its recorded '0 failing pairs' is a pairing that measures nothing. Card t_f5253687 redrew cand_r18_knife_icon (status queued_by_eye to done) and changed no other row: the icon the game ships is frame 0 of a sheet drawn in Zander's triple, which the icons scene carries in none of its four sprite rows, so it failed 8 palette_synergy pairs on the icons ground; the hand authored 16x16 cell in icons sp0 ($0F $28 $30) passes with 0 failing pairs, 3 colours, 91 drawn pixels and 34 of them ink. Card t_f0cb84db redrew cand_r18_percy_man_3 and ran after cand_r18_percy_man_2 in the same card, so both are queued_by_eye to done and no other row changed: the parametric sheets read the blue $12 as the body (87 px against white 53 on man 2, 64 against 56 on man 3) and both failed body_ground with body $12 one luminance row from the $00 paving at 1.34:1; both hand authored cells keep the row's own $02 $12 $30 triple, put the white as the jumper, and pass with body $30 row 3 and 0 failing pairs, nes_check PASS, worst tile 3 of 3. The crew question on the first man's row is now answerable from three drawings rather than one, and it is still gamedev's to answer. Card t_088f0523 redrew cand_r18_percy_ow (status queued_by_eye to done) and changed no other row: Percy's own stander went from body $12 (blue 82 px as the largest non-darkest fill, palette_synergy FAIL body_ground at 1.34:1 on the $00 southampton paving) to body $30 (white 117 px, 0 failing pairs), with the row's uniform triple $02 $12 $30 unchanged, the file still 3 colours and nes_check still PASS. Card t_255c054d redrew spr_pp_portrait_percy (status queued_by_eye to redrawn, not done) and changed no other row: the bust the eye measured as one of three faces built from one mirrored construction is now four entries as before ($02 panel, $0F ink, $36 skin, $30 accent) with a new percy_marks() pass that draws after the mirror, adding a brow fringe, a one sided beard fork and a trident (three two pixel prongs, a crossbar and a two pixel shaft, 29 rows tall), so the three busts no longer share one head. nes_check PASS, the generator's own audit ok with worst 8x8 tile 3 of 3, guard and prometheus byte identical (their shas did not move), and the dialogue busts band on output/sprites_v2_sheet.png carries the new sheet at 2x. palette_synergy still fails and this card measured why it cannot pass as a figure: no ui sprite palette carries a skin entry, and on the real ground under the bust, the $0F black map measured from a shipped dialogue capture at (16,120), body $02 is 1.73:1 and ink $0F is 1.00:1, so the classification stays gamedev's and the row stays redrawn.\nCard t_a2b9d880 moved hadrian_ow_v2 from redrawn to done and changed no other row: the 2026-10-23 card left it redrawn because palette_synergy failed on the ship composite ground and on battle_deck_night, and neither is the pairing this row is judged on. data/palettes/scene_southampton.json's judged row names game/sprites_src/chars/hadrian_ow_v2.png as one of the party's four walking sheets on output/southampton_sample_frame.png at 128,112, the pairing card t_dec4e92c ruled and card t_454c1876 used to move his suit from grey $00 to pale $30. Measured there the sheet is PASS with 0 failing pair(s) of 128 and exit code 0 on Pine and locally, nes_check PASS at 128x16, 3 colours, 0 off palette pixels, and a rerun of tools/art/make_characters_v2.py rewrote all five cast sheets with every sha256 unchanged, so the shipped file is the generator's own output and the bident and the pale suit are the drawing that ships. Its ink share went from 85.2 percent (1010 of 1186 drawn px, suit and outline one entry) to 60.7 percent (902 of 1486) with $30 pale at 31.2 percent as the mid body, and the worst 8x8 tile from 2 to 3 of the 3 a sprite tile carries. The rows above it stay as they were: the two 48 x 48 portraits are refused by the ui scene's palette set (no skin entry in any of its four sprite rows) and by the reading of a framed portrait, and the two P1 title busts sit on the car's glass pane arithmetic. All four of those are gamedev's and are already posted as Q.",
+  "open_rows_2026_11_12": {
+    "card": "t_ed17952d",
+    "date": "2026-11-12",
+    "why": "AUTO-SPRITE-NEXT took no row to done this card, and this block is the reason written down once so a later card does not spend its 45 minutes re-deriving it. All 16 open rows are held by a decision the gamedev profile owns; this lane may redraw, measure and report, and may not decide a palette or a classification.",
+    "entry_count": 52,
+    "status_counts": {
+      "done": 36,
+      "queued": 2,
+      "retired": 2,
+      "redrawn": 2,
+      "queued_by_eye": 10
+    },
+    "decisions": [
+      {
+        "id": "D1",
+        "holds": [
+          "spr_title_konrad",
+          "spr_title_zander"
+        ],
+        "question": "The two title busts stand in the car's glass pane, which carries two entries. Does the $20 reflection streak come out of the car sheet, are the busts classified again, or do they get an entry that sits between the two?",
+        "evidence": "python tools/nes_check.py game/sprites_src/title/spr_title_car.png --type sprite -> PASS; the pane at x 11 to 25, rows 8 to 15 holds $0C on 103 px and $20 on 14 px. An entry clearing 3.0:1 on both sits at luminance 0.232 to 0.271 and none of sp0 $0F $00 $28, sp1 $09 $00 $20, sp2 $0C $10 $20, sp3 $0C $0B $20 carries one.",
+        "already_drawn": "output/redraws/spr_title_konrad.png, 8 frames of 16x16, three entries, nes_check PASS, every tile inside title sp0. It cannot be marked done while the ground question is open.",
+        "owner": "gamedev"
+      },
+      {
+        "id": "D2",
+        "holds": [
+          "spr_pp_portrait_percy",
+          "spr_pp_portrait_prometheus"
+        ],
+        "question": "May the ui scene spend a skin entry at all (none of its four sprite rows carries one), and is a framed 48x48 portrait whose interior is the box's own fill in scope for R1b?",
+        "evidence": "python tools/palette_synergy.py --scene ui --background output/spr_pp_portrait_ground_map.png --sprite game/sprites_src/chars/spr_pp_portrait_percy.png --frame-w 48 --frame-h 48 --at 0,0 -> FAIL, 4 failing pairs, two of them the sprite: set_member #f0d0b0 ($36) is in no ui sprite palette, and overlay_contrast body $02 reads 1.73:1 with ink $0F 1.00:1 on ground $0F.",
+        "owner": "gamedev"
+      },
+      {
+        "id": "D3",
+        "holds": [
+          "cand_r18_portrait_zeus",
+          "cand_r18_portrait_kronos",
+          "cand_r18_portrait_percy",
+          "cand_r18_halls_room",
+          "cand_r18_high_street",
+          "cand_r18_town_quay_hurricane",
+          "cand_r18b_halls_room",
+          "cand_r18b_high_street",
+          "cand_r18b_town_quay_hurricane"
+        ],
+        "question": "Are the nine R18 candidate cells assets the game wants, and if so in which slot and which palette row? The battle screen has two 32x32 enemy slots (data/ui_layouts.json at 24,64 and 96,56) and the dialogue portrait is 48x48 (game/scripts/pp_dialogue/pp_dialogue.gml), so a 32x32 battle portrait has no slot named for it, and a 256x240 plate is a background.",
+        "evidence": "every one of the nine rows carries path null and the note that gamedev has no ruling on the asset, so nothing can be promoted, and a redraw would be a drawing for a slot nobody has named.",
+        "owner": "gamedev"
+      },
+      {
+        "id": "D4",
+        "holds": [
+          "ts_exterior"
+        ],
+        "question": "Is 'tiles too busy to read as parts' a defect to fix, and if it is, which tile list and which colour budget per 16x16 attribute area?",
+        "evidence": "python tools/check_ts_exterior.py -> PASS, 57 checks, 0 failed; 256x64, 13 entries, no entry above 26.7 percent of the pixels, and the tile inventory is gamedev's. The palette is legal, so the row's own check cannot close it and a redraw would be inventing a tile list.",
+        "owner": "gamedev"
+      }
+    ],
+    "reproduced_this_card": [
+      "python tools/palette_synergy.py --gate -> 10 entry(ies), 0 gated failure(s), 3 advisory failure(s), so the build is not red on any sprite row",
+      "python tools/palette_synergy.py --scene ui --background output/spr_pp_portrait_ground_map.png --sprite game/sprites_src/chars/spr_pp_portrait_percy.png --frame-w 48 --frame-h 48 --at 0,0 -> FAIL, 4 failing pairs (2 sprite, 2 belonging to the capture)"
+    ],
+    "verdict": "0 of the 16 open rows can be marked done before gamedev rules on D1 to D4. The four rulings are carded for gamedev from this card; this lane decided none of them.",
+    "no_row_touched": "no entry in entries was edited by this block: no status, priority, path or measured number moved"
+  },
+  "rulings_2026_11_12": {
+    "card": "t_8df7aab4",
+    "date": "2026-11-12",
+    "file": "knowledge/PALETTE-RULINGS-2026-11-12.md",
+    "source": "card t_ed17952d wrote open_rows_2026_11_12 with D1 to D4 and no row touched; this block records what gamedev ruled",
+    "decisions": {
+      "D1": {
+        "holds": [
+          "spr_title_konrad",
+          "spr_title_zander"
+        ],
+        "ruling": "the $20 in the car's glass panes is the car BODY, drawn over the bust, so the ground is $0C alone. The body is masked out of the ground crop (tools/art/make_title_bust_v2.py build_ground), the glint stays, the busts stay figures, no entry moves. Konrad is done; Zander stays queued and is drawn in title sp1 $09 $00 $20 with body $20.",
+        "closed": 1,
+        "open": 1
+      },
+      "D2": {
+        "holds": [
+          "spr_pp_portrait_percy",
+          "spr_pp_portrait_prometheus"
+        ],
+        "ruling": "the ui scene spends skin on its two spare rows, sp2 $0F $28 $36 and sp3 $0F $30 $36, and the $02 interior comes out of the sprite layer; a framed portrait is in scope for R1b and passes it once the panel is not sprite pixels. No rule change. The drawing and the two rows land together on one card.",
+        "closed": 0,
+        "open": 2
+      },
+      "D3": {
+        "holds": [
+          "cand_r18_portrait_zeus",
+          "cand_r18_portrait_kronos",
+          "cand_r18_portrait_percy",
+          "cand_r18_halls_room",
+          "cand_r18_high_street",
+          "cand_r18_town_quay_hurricane",
+          "cand_r18b_halls_room",
+          "cand_r18b_high_street",
+          "cand_r18b_town_quay_hurricane"
+        ],
+        "ruling": "all nine retire: the three 32x32 portraits have no slot and no subject (two are in no enemy and no encounter, the third duplicates percy_big.png), and the six 256x240 plates need 154 to 649 distinct 8x8 tiles against 256 in a pattern table and 512 on the console.",
+        "closed": 9,
+        "open": 0
+      },
+      "D4": {
+        "holds": [
+          "ts_exterior"
+        ],
+        "ruling": "'tiles too busy to read as parts' is not a defect: 58 of 58 checks pass, 18 distinct 16x16 colour sets, the largest three entries plus the backdrop. The inventory and the budget are written down and the row is done.",
+        "closed": 1,
+        "open": 0
+      }
+    },
+    "rows_closed": 11,
+    "rows_still_open": 3,
+    "open_rows_after": "spr_title_zander (queued, drawable now), spr_pp_portrait_percy and spr_pp_portrait_prometheus (redrawn, one card from done)",
+    "checks": {
+      "check_ts_exterior": "PASS, 58 checks, 0 failed",
+      "palette_synergy_title_konrad": "PASS, 0 failing pairs on the masked ground",
+      "palette_synergy_gate": "10 entry(ies), 0 gated failure(s), 3 advisory failure(s), 0 not measured, exit 0",
+      "nes_check_konrad_redraw": "PASS, 128x16, 32 tiles, 3 colours"
+    },
+    "no_rule_weakened": "no threshold, palette row of another scene, exemption or gate setting moved on this card. The only tool change is the ground crop, which stops counting a layer the game draws over the sheet.",
+    "status_counts": {
+      "done": 38,
+      "queued": 1,
+      "retired": 11,
+      "redrawn": 2
+    }
+  }
 }
-

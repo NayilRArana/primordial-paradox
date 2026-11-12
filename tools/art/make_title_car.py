@@ -9,7 +9,8 @@ What this writes (deterministic: no clock, no randomness, no window, no network)
   game\\sprites_src\\title\\spr_title_wheel.png    16x16 frame, 10x10 art, 4 frames (rotation)
   game\\sprites_src\\title\\spr_title_exhaust.png  16x16 frame, 12x10 art, 4 frames (puff)
   game\\sprites_src\\title\\spr_title_konrad.png   16x16 frame, 12x12 art, 8 frames (watch glance at 5 to 7)
-  game\\sprites_src\\title\\spr_title_zander.png   16x16 frame, 12x12 art, 8 frames (4 idle bob, 4 turn to speak)
+  game\\sprites_src\\title\\spr_title_zander.png   16x16 frame, 12x12 art, 8 frames (4 idle bob, 4 turn to speak),
+                                                 drawn in title sp1 by tools/art/make_title_zander_v2.py
   game\\sprites_src\\title\\spr_title_bubble.png   16x16 frame, 14x10 art, 3 frames (one dot, two dots, three dots)
   game\\sprites_src\\title\\spr_title_cloud.png    24x16 frame, 24x12 art, 3 frames (2 normal, 1 flash)
   plus one JSON beside each: {"name", "frame_w", "frame_h", "frames", "fps"}
@@ -457,7 +458,9 @@ FRAMES = {
     # spr_title_exhaust is NOT here: its four frames are hand drawn 16x16 cells in
     # tools/art/make_title_exhaust_v2.py and are already the shipping size and position (card t_474cde50).
     "spr_title_konrad": (16, 16, 2, BUST_TOP),
-    "spr_title_zander": (16, 16, 2, BUST_TOP),
+    # spr_title_zander is NOT here for the same reason as the exhaust: its eight frames are hand drawn
+    # 16x16 cells in tools/art/make_title_zander_v2.py, art at (2, 4), already the shipping size and
+    # position (card t_8cc3afaa). A FRAMES entry would composite them a second time at (2, 4).
     "spr_title_bubble": (16, 16, 1, 3),
     "spr_title_cloud": (24, 16, 0, 0),
 }
@@ -476,19 +479,21 @@ def fit_frame(image: Image.Image, name: str) -> Image.Image:
 # A 16x16 frame costs two 8x16 OAM sprites, one per 8 px column band, and each band may use three
 # entries of one sprite palette (data/palettes/scene_title.json, rule in knowledge/ART-BIBLE.md 1).
 # The art is 12 px wide at frame column 2, so art columns 0 to 5 fall in the left band and columns 6
-# to 11 in the right one. Both busts are drawn so each band lands inside a palette with no pixel left
-# over for the enforcement pass to move:
+# to 11 in the right one. Konrad's two bands are drawn so each lands inside a palette with no pixel
+# left over for the enforcement pass to move:
 #
-#   left band, frame columns 2 to 7    sp1: $0F black, $00 grey, $28 gold
-#   right band, frame columns 8 to 13  sp2: $0C dark blue, $10 light grey
+#   left band, frame columns 2 to 7    sp0: $0F black, $00 grey, $28 gold
+#   right band, frame columns 8 to 13  the same three, which is why he can keep one band per 8x16 shape
 #
 # Konrad is warm in both bands: grey-blond hair, a gold-lit face, a grey close beard and a charcoal
-# blazer with a grey shirt and a lanyard. Zander's LIT band is the blue one, which is how the light
-# blue bomber reaches a title scene whose four sprite palettes hold no skin tone and no second blue:
-# his jacket's lit half is $10 light grey against $0C dark blue, and the pale hair on that side is
-# the headlight. The cost of that budget is stated in SPRITE-CRITIQUE 3.8: a 12 px face in three
-# colours cannot carry a blond and a light blue in the same 8x16 band, so the blond is on the shaded
-# half and the blue on the lit half, the way a NES sprite splits a two-palette figure.
+# blazer with a grey shirt and a lanyard.
+#
+# Zander is NOT drawn here any more. Card t_8cc3afaa and knowledge/PALETTE-RULINGS-2026-11-12.md
+# section 2.5: a 16x16 frame is read WHOLE by palette_synergy R6, so his frame lives in ONE sprite
+# palette, title sp1 ($09 $00 $20), and it is drawn in those three chip entries by
+# tools/art/make_title_zander_v2.py. His reserved hero triple ($0F $21 $31) is carried by no title
+# sprite row, and re-solving sp1 to it would uncover all 144 tiles of spr_title_sign.png. The old
+# split of the drawing across sp1's warm left band and sp2's blue right band is what R6 refuses.
 
 # The driver, Konrad Skye, 47, AI research scientist. CHARACTER-BIBLE: long blond hair streaked
 # white and grey, a close beard, a charcoal blazer or dark knit over an open collar shirt, an ID
@@ -510,24 +515,11 @@ KONRAD_ROWS = [
 ]
 
 # The passenger, Zander Skye, 19, first year student. CHARACTER-BIBLE: messy blond hair, an oversized
-# bomber in LIGHT BLUE (not green), earbuds. Left band warm (gold hair, gold face, black edge), right
-# band pale and blue: light grey hair and face, dark blue hairline and jacket shadow, which is the
-# lit side of the bomber. The earbud is the one light pixel at the ear; at 12 px it is a dot and
-# nothing more.
-ZANDER_ROWS = [
-    "   YYYWWW   ",   # the messy hair, tufts
-    "  YYYYWWWW  ",   # the hair, blond on the shaded band and pale under the headlight
-    " DYYYYWWWWD ",   # the hair falling past the ear
-    " DYKKKUUUUD ",   # the hairline, black on the shaded band and dark blue on the lit one
-    "  YYYYWWWW  ",   # the forehead
-    "  YKKSUUWW  ",   # the eyes
-    "  YYYYKWWW  ",   # the mouth, closed until the turn
-    "  DDKKUUDD  ",   # the jaw
-    " DDYYYWWWDD ",   # the neck and the bomber collar
-    " DDKKWWWWDD ",   # the shoulders
-    " DDKDDWUWWD ",   # the jacket and its zip
-    " DDDKKWUWWD ",   # the hem
-]
+# bomber (LIGHT BLUE in the bible), earbuds. He is drawn by tools/art/make_title_zander_v2.py, in the
+# three chip entries title sp1 carries, because a 16x16 frame is read WHOLE by palette_synergy R6
+# (knowledge/PALETTE-RULINGS-2026-11-12.md section 2.5). His light blue is the named cost of that
+# ruling: $21 and $31 are in no title sprite row and re-solving sp1 to them repaints the road sign.
+ZANDER_SHEET = "spr_title_zander"
 
 
 def bust_rows(rows: list[str]) -> list[str]:
@@ -584,39 +576,16 @@ def build_konrad(frame: int) -> Image.Image:
 
 
 def build_zander(frame: int) -> Image.Image:
-    """Zander Skye, the passenger, in the costume CHARACTER-BIBLE gives him (see ZANDER_ROWS).
+    """Zander Skye, the passenger, drawn by tools/art/make_title_zander_v2.py.
 
     Frames 0 to 3 are the idle, the head bobbing on the off beat. Frames 4 to 7 are the turn to
-    speak: the head comes round towards the driver, who is to his right, and the mouth opens a row
-    at a time, so the "..." bubble lands on a mouth that is already open.
+    speak: the head comes round towards the driver, who is to his right, and the mouth opens a pixel
+    at a time, so the "..." bubble lands on a mouth that is already open. The cells are drawn at
+    their shipping size and position (16x16, 12x12 art at frame (2, 4)) in title sp1's three chip
+    entries, which is why this sheet is in CHIP_DRAWN_SHEETS and not in FRAMES.
     """
-    rows = [list(row) for row in bust_rows(ZANDER_ROWS)]
-    image = new_image(BUST_W, BUST_H)
-    if frame in (1, 3):
-        stamp_rows(image, 0, ["".join(row) for row in rows])
-        return shifted(image)
-    if frame >= 4:
-        turn = frame - 4
-        # The head comes round towards the driver, on the right of the frame.
-        for index in range(0, 8):
-            rows[index] = ["."] + rows[index][:-1]
-        if turn >= 1:
-            # The mouth opens under the nose, the left half of it in the black of the shaded band and
-            # the right half in the dark blue of the lit one.
-            rows[6][5] = "K"
-            rows[6][6] = "U"
-        if turn >= 2:
-            # The near eye comes round with the head. The head has already slid one column right, so the
-            # pair sits at 4,5 and moves to 5,6.
-            rows[5][4] = "S"
-            rows[5][6] = "K"
-        if turn >= 3:
-            # The far eye follows it and the mouth widens into the word.
-            rows[5][7] = "W"
-            rows[5][9] = "U"
-            rows[6][7] = "U"
-    stamp_rows(image, 0, ["".join(row) for row in rows])
-    return image
+    import make_title_zander_v2 as zander
+    return zander.build_frame(frame)
 
 
 # ---------------------------------------------------------------------------------------------------
@@ -722,10 +691,12 @@ def build_cloud(frame: int) -> Image.Image:
 LAYER_SHEETS = ("spr_title_cloud", "spr_title_exhaust")
 
 # Sheets drawn in data/nes_palette.json's 2C02 entries rather than the retired data/palette.json table the
-# rest of this generator draws in. Only the exhaust so far (card t_474cde50): its four cells are shared with
-# tools/art/make_title_exhaust_v2.py, which is a 2C02 tool. The scene pass is a no-op on these entries because
-# both of them are bg3's, so nothing the band plan owns moves.
-CHIP_DRAWN_SHEETS = ("spr_title_exhaust",)
+# rest of this generator draws in. The exhaust (card t_474cde50), whose four cells are shared with
+# tools/art/make_title_exhaust_v2.py, and Zander's bust (card t_8cc3afaa), whose eight cells are drawn in
+# title sp1's three entries by tools/art/make_title_zander_v2.py because a 16x16 frame is read whole by
+# palette_synergy R6. The scene pass is a no-op on these entries: every one of them is already in the row
+# the sheet is held to, so nothing the band plan owns moves.
+CHIP_DRAWN_SHEETS = ("spr_title_exhaust", "spr_title_zander")
 
 
 def save_strip(name: str, frames: list[Image.Image], fps: float, sprite_dir: str) -> str:
@@ -872,7 +843,7 @@ def dump(image: Image.Image, label: str) -> None:
             if pixel[3] == 0:
                 line += " "
                 continue
-            line += symbols.get(RGB_INDEX[pixel[:3]], "?")
+            line += symbols.get(RGB_INDEX.get(pixel[:3]), "?")
         print("%2d %s" % (y, line))
 
 
