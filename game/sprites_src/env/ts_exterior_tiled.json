@@ -18,7 +18,7 @@
     "entry": 15,
     "hex": "#000000"
   },
-  "rule": "NES: 5 background palettes of 3 entries, a scene spends at most 4 of them, a 16x16 tile carries at most 3 colours besides the shared backdrop $0F",
+  "rule": "NES: a POOL of groups, 6 background palettes of 3 entries, a scene spends at most 4 of them in one frame, a 16x16 tile carries at most 3 colours besides the shared backdrop $0F; the three composed town frames measure 8 distinct colour sets covered by 3 palettes of the 4 allowed",
   "animations": {
     "water": [
       "water_a",

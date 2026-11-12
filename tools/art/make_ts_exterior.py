@@ -7,7 +7,9 @@ characters into data/nes_palette.json entries by number, so no colour can drift 
 KeyError here.
 
 Rules this file obeys; tools/check_ts_exterior.py measures them:
-  * every opaque pixel is one of the 5 background palettes below or the shared black backdrop ($0F, entry 15);
+  * every opaque pixel is one of the background palette groups below or the shared black backdrop ($0F,
+    entry 15); the sidecar's rule line counts the groups from PALETTES rather than typing the number, because
+    a typed one went stale at five while the file declared six (card t_668c1cae);
   * every 16x16 tile carries at most 3 colours besides the backdrop (one NES attribute area);
   * every 8x8 quarter of a tile carries at most 3 colours (the sprite tile limit);
   * the whole sheet carries 14 distinct colours, under the 25 a frame may show;
@@ -848,6 +850,20 @@ def build_metadata(records: list, entries: dict) -> dict:
                for key, entry in sorted(keys.items(), key=lambda kv: kv[1])]
         for name, keys in PALETTES.items()
     }
+    # The rule line is DERIVED, not typed (card t_668c1cae, knowledge/PALETTE-RULINGS-2026-11-12.md section
+    # 5). It said "5 background palettes of 3 entries" while this file declared SIX groups, because the count
+    # was a literal and a group was added after it was written; the text is generated here, so the fix is in
+    # the number's source rather than in the sidecar, and the next group cannot drift from it either. What the
+    # text says is the ruling: a tileset is a POOL of groups, a SCENE spends at most four of them in one
+    # frame, and a 16x16 tile stays inside its own 3 colours besides the shared backdrop. The frame numbers
+    # quoted are the ones tools/check_ts_exterior.py measures on the three composed town frames (its rule 10
+    # rows), so they are a measurement of shipped art and not a claim made here.
+    rule = (
+        "NES: a POOL of groups, %d background palettes of 3 entries, a scene spends at most 4 of them in one "
+        "frame, a 16x16 tile carries at most 3 colours besides the shared backdrop $0F; the three composed "
+        "town frames measure 8 distinct colour sets covered by 3 palettes of the 4 allowed"
+        % len(palettes)
+    )
     return {
         "format": 1,
         "kind": "tileset",
@@ -865,8 +881,7 @@ def build_metadata(records: list, entries: dict) -> dict:
         "margin": 0,
         "spacing": 0,
         "backdrop": {"entry": BACKDROP_ENTRY, "hex": BACKDROP_HEX},
-        "rule": "NES: 5 background palettes of 3 entries, a scene spends at most 4 of them, a 16x16 tile "
-                "carries at most 3 colours besides the shared backdrop $0F",
+        "rule": rule,
         "palettes": palettes,
         "animations": ANIMATIONS,
         "features": FEATURES,
