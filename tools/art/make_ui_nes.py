@@ -73,6 +73,7 @@ WHITE = 0x30
 GREY = 0x00
 GOLD = 0x28
 BLACK = 0x0F
+SKIN = 0x36   # named only by the scene palette: the dialogue busts' faces, so sp2 and sp3 can carry them
 
 # The sheet's frame order, read as ASCII order. Card t_f476435e (decision D13) grew it to 77 with `/`, `[` and `]`;
 # tools/check_font_coverage.py refuses a run where this copy, the rasteriser's and pp_font_glyphs() disagree.
@@ -690,8 +691,18 @@ def scene_palette(table: dict) -> dict:
             "bg3 is spare and unused; the screens need 3 background palettes",
             "sp0 covers the cursor and the enemy block (black $0F, gold $28, white $30)",
             "sp1 covers the party block body (ink $0F, grey $00, white $30)",
-            "sp2 covers the party block's gold marker tile (ink $0F, grey $00, gold $28)",
-            "sp3 is spare; the screens need 3 sprite palettes",
+            "sp2 is the dialogue busts' gold row: ink $0F, gold $28, skin $36 carries all 36 tiles of "
+            "spr_pp_portrait_prometheus.png. Card t_299de3bc and knowledge/PALETTE-RULINGS-2026-11-12.md section "
+            "3.1 re-solved it: the $02 interior came out of the three bust sheets, so a bust needs one row and the "
+            "row it needs is its own two colours plus the ink. The party block's gold marker tile it used to name "
+            "is on no shipped ui sheet: measured 2026-11-12, spr_pp_ui_party.png spends {00 0F 30} x6, {00 0F} x4 "
+            "and {00} x2 and no gold at all, and the cursor is {28}, which sp0 carries",
+            "sp3 is the dialogue busts' white row: ink $0F, white $30, skin $36 carries all 36 tiles of "
+            "spr_pp_portrait_guard.png and spr_pp_portrait_percy.png. It stops being spare on card t_299de3bc, and "
+            "$02 leaves the sprite half with it: no shipped ui sprite sheet needs $02, the enemy is {0F 28 30} "
+            "(sp0), the party {00 0F 30} (sp1) and the cursor {28} (sp0), and the two sheets that do need it, "
+            "spr_pp_ui_window.png {02 0F 30} and spr_pp_ui_tab.png {02 0F 28}, are nine-slice background tiles "
+            "pp_window_draw() draws from bg0 and bg1",
         ],
         "background": [
             group("bg0", [FILL, WHITE, GREY]),
@@ -702,8 +713,8 @@ def scene_palette(table: dict) -> dict:
         "sprites": [
             group("sp0", [BLACK, GOLD, WHITE]),
             group("sp1", [BLACK, GREY, WHITE]),
-            group("sp2", [BLACK, GREY, GOLD]),
-            group("sp3", [FILL, GREY, WHITE]),
+            group("sp2", [BLACK, GOLD, SKIN]),
+            group("sp3", [BLACK, WHITE, SKIN]),
         ],
     }
 

@@ -127,7 +127,7 @@ def test_the_bust_geometry_and_the_art_agree():
 
 
 def test_every_bust_sheet_is_the_geometry_and_the_palette():
-    """Each sheet on disk: 48x48, one frame, a 1 pixel frame ring, 4 entries, and 3 colours in any 8x8 tile."""
+    """Each sheet on disk: 48x48, one frame, a 1 pixel frame ring, 3 entries, and 3 colours in any 8x8 tile."""
     import json
     from PIL import Image
 
@@ -158,12 +158,12 @@ def test_every_bust_sheet_is_the_geometry_and_the_palette():
         assert len(ring) == 1, "%s's frame ring is not one colour: %r" % (name, ring)
         assert all(pixel[3] == 255 for pixel in ring), "the frame ring is opaque"
 
-        # Nothing transparent inside the frame: a framed portrait, not a hole in the level.
+        # The box's fill is not a sprite entry: the bust paints no $02, and the interior is transparent wherever
+        # the dialogue window shows through it (knowledge/PALETTE-RULINGS-2026-11-12.md section 3.1).
         inside = {pixels[x, y] for y in range(1, 47) for x in range(1, 47)}
-        assert all(pixel[3] == 255 for pixel in inside), "%s leaves the level visible through its own frame" % name
-
-        colours = {pixel[:3] for pixel in inside}
-        assert len(colours) <= 4, "%s spends %d colours, a bust may spend 4" % (name, len(colours))
+        colours = {pixel[:3] for pixel in inside if pixel[3]}
+        assert (0, 0, 188) not in colours, "%s paints $02, the dialogue window's fill, as a sprite pixel" % name
+        assert len(colours) <= 3, "%s spends %d colours, a bust spends 3" % (name, len(colours))
         for colour in colours:
             hexed = "#%02x%02x%02x" % colour
             assert hexed in legal, "%s carries %s, which is not a data/nes_palette.json entry" % (name, hexed)
@@ -171,7 +171,8 @@ def test_every_bust_sheet_is_the_geometry_and_the_palette():
         # The tile budget: a sprite tile is 3 opaque colours plus transparency.
         for ty in range(6):
             for tx in range(6):
-                seen = {pixels[x, y][:3] for y in range(ty * 8, ty * 8 + 8) for x in range(tx * 8, tx * 8 + 8)}
+                seen = {pixels[x, y][:3] for y in range(ty * 8, ty * 8 + 8) for x in range(tx * 8, tx * 8 + 8)
+                        if pixels[x, y][3]}
                 assert len(seen) <= 3, "%s tile %d,%d carries %d colours" % (name, tx, ty, len(seen))
 
     # And every portrait the data names resolves to one of those sheets.

@@ -13,23 +13,31 @@ Geometry, from specs/05-dialogue.md and knowledge/GAMEDEV-DECISIONS-2026-10-23.m
 - One pixel frame, drawn INTO the sheet rather than by a rectangle at run time: the box's draw path is one sheet and
   one call, and a frame the engine paints is a second thing that can disagree with the art.
 - At most 4 colours from data/nes_palette.json, and at most 3 opaque in any 8x8 tile, because a sprite tile carries 3
-  opaque colours plus transparency (ART-BIBLE 1.1 row 16). Each bust here spends exactly 4 entries and the audit below
-  proves no tile spends more than 3.
+  opaque colours plus transparency (ART-BIBLE 1.1 row 16). Each bust here spends exactly 3 entries, two of them shared
+  with the scene's row, and the audit below proves no tile spends more than 3.
 - 48x48 is 36 sprite tiles, 6 to a scanline, inside the PPU's 8 sprites per scanline and 64 in OAM (ART-BIBLE 1.1
   rows 18 and 19). That arithmetic, and the box's 8 pixel padding, is why the bust is 48 and not 64.
 
-The four entries, and why the middle is not transparent
--------------------------------------------------------
-    panel  $02 navy, the dialogue window's own fill (data/palettes/scene_ui.json bg0)
+The three entries, and why the middle is transparent
+----------------------------------------------------
     accent one per bust: the hair or helmet, and the frame
     skin   one per bust
     ink    $0F, the canonical black: the silhouette and every feature
 
-A framed portrait with a transparent middle shows the level through its own frame, which reads as a hole rather than a
-picture. So the interior is filled with the window's fill and the figure is drawn on it as ink line art: the face is
-the one filled mass, the shoulders are an ink outline with a lapel line, and the hair or helmet is the accent. That is
-a 3 opaque colour figure, which is exactly what one sprite tile can carry, and it belongs to the dialogue box instead
-of floating over the map.
+A bust used to fill its own interior with $02, the dialogue window's navy, so that the figure read on the box's
+colour instead of on the room behind it. knowledge/PALETTE-RULINGS-2026-11-12.md section 3.1 ruled that out and
+measured why: $02 is a BACKGROUND entry, the fill data/palettes/scene_ui.json bg0 ($02 $30 $00) carries on every
+16x16 area the dialogue window covers, so a portrait that paints it as sprite pixels spends one of its three sprite
+entries on the box. It also cost the ui scene a row: with the panel drawn the three sheets between them needed five
+sprite rows while the scene has four, and with the panel out they need two, {0F 30 36} for the guard and Percy and
+{0F 28 36} for Prometheus (the two rows scene_ui.json sp2 and sp3 now carry).
+
+So every $02 pixel is transparent. The figure is ink line art over the pixels behind it: the face is the one
+filled mass, the shoulders are an ink outline with a lapel line, and the hair or helmet is the accent. That is a 3
+opaque colour figure, which is exactly what one sprite tile can carry. The bust stands on the box's top edge and
+covers none of it (pp_dialogue_draw on card t_4d6b0f4b), so what shows inside the frame is the room the box stands
+in, which is the ground this sheet is judged against: section 3.2 measured that crop at $0F on 2112 of the 2304
+pixels, $00 on 176, and $20 on the 16 the capture itself owns.
 
 How these were drawn
 --------------------
@@ -68,17 +76,18 @@ TILE = 8
 HALF = 23  # the last left half column; the mirror axis is between 23 and 24
 FPS = 1.0
 
-# The role names a grid cell may hold. The four entries a bust may spend are named by role here and resolved to NES
+# The role names a grid cell may hold. The three entries a bust may spend are named by role here and resolved to NES
 # codes below, which is the only place in this file where a palette entry number is written.
-PANEL = "panel"
 ACCENT = "accent"
 SKIN = "skin"
 INK = "ink"
 
-PANEL_CODE = "$02"   # #0000bc: the dialogue window's fill, so the bust belongs to the box it stands on
+# $02, the dialogue window's fill. A bust must paint NONE of it: the panel is the box's, drawn behind the bust as
+# background (knowledge/PALETTE-RULINGS-2026-11-12.md section 3.1), and the audit below refuses a sheet that spends it.
+PANEL_CODE = "$02"
 INK_CODE = "$0F"     # #000000, the canonical black (ART-BIBLE 1.3)
 
-# role -> NES entry, per bust. Four entries each, no more.
+# role -> NES entry, per bust. Three entries each, no more.
 BUSTS = {
     "guard": {
         "accent": "$30",  # #fcfcfc: the harbour watch's white helmet, and its frame
@@ -92,7 +101,8 @@ BUSTS = {
     },
     "prometheus": {
         "accent": "$28",  # #f8b800 gold: the flame hair, the collar band, and the frame, which is the fire
-        "skin": "$37",    # #fce0a8 a warm pale face, so the gold reads as fire and not as skin
+        "skin": "$36",    # #f0d0b0, the same pale skin the guard and Percy spend: $37 is in no scene sprite
+                          # palette, so at $37 this bust could not belong to any scene palette at all (t_a61c01b7)
         "note": "the reincarnation: gold flame hair and a gold collar band, his robe the box's own navy",
     },
 }
@@ -173,11 +183,6 @@ def outline(grid, fill):
         grid.set(x, y, INK)
 
 
-def draw_panel(grid):
-    """Fill the inside of the frame with the window's own navy: a portrait, not a hole in the level."""
-    grid.rect(1, 1, SIZE - 2, SIZE - 2, PANEL)
-
-
 def draw_face(grid):
     """The head every bust shares, drawn as the left half only: 18 pixels wide across both halves."""
     rows = [
@@ -205,10 +210,11 @@ def draw_face(grid):
 
 
 def draw_shoulders(grid):
-    """The bust half: an ink shoulder line on the panel, with one lapel line inside it.
+    """The bust half: an ink shoulder line over the room behind it, with one lapel line inside it.
 
-    The robe is the panel colour, which is how a 3 opaque colour figure pays for a body without spending a fifth
-    entry: the shape is stated by ink, the same way the face's silhouette is.
+    The robe is not painted. It is the pixels behind the bust, framed by ink, which is how a 3 opaque colour figure
+    pays for a body without spending a fourth entry: the shape is stated by ink, the same way the face's silhouette
+    is (knowledge/PALETTE-RULINGS-2026-11-12.md section 3.1).
     """
     for y in range(35, SIZE - 1):
         half = 10 + (y - 35)
@@ -234,7 +240,6 @@ def draw_frame(grid):
 
 def guard_grid():
     g = Grid()
-    draw_panel(g)
     draw_face(g)
     draw_shoulders(g)
     # Watch helmet: the accent over the skull on rows 5 to 13, one pixel wider than the face, peaked at the crown.
@@ -252,58 +257,111 @@ def guard_grid():
 
 
 def percy_grid():
+    """Percy (Poseidon): a swept head of white hair and a forked beard, on a high collar.
+
+    Card AUTO-SPRITE-NEXT (t_255c054d) redrew this bust because the queue row's own defect is
+    one_construction_for_three_faces: guard, Percy and Prometheus were the same mirrored head with a different
+    hair mass, and the eye read all three as one drawing. The four entries are unchanged ($02 panel, $0F ink,
+    $36 skin, $30 accent); what changes is the construction, and three of its parts are drawn AFTER the mirror,
+    on one side only, so the head cannot be a mirrored clone:
+      1. the hair sweeps to the LEFT (percy_marks), where the guard's helmet and Prometheus's flame are both
+         symmetric about the axis;
+      2. the beard forks with one tongue left of the axis, so the jaw line is not a mirror of itself;
+      3. the trident is a weapon in the frame (percy_marks), which no other bust carries.
+    """
     g = Grid()
-    draw_panel(g)
     draw_face(g)
     draw_shoulders(g)
-    # Hair: the accent, rows 5 to 13, one pixel wider than the face, swept back at the temples.
-    g.hline(18, HALF, 5, ACCENT)
-    g.hline(16, HALF, 6, ACCENT)
-    g.hline(14, HALF, 7, ACCENT)
-    for y in range(8, 12):
-        g.hline(13, HALF, y, ACCENT)
-    g.hline(13, 15, 12, ACCENT)
-    g.hline(13, 14, 13, ACCENT)
-    g.hline(13, 14, 14, ACCENT)
+    # Hair: a rounded crown one row higher and one pixel wider than the guard's helmet, then a short sideburn
+    # that stops above the brow so the forehead is visible and the mass reads as hair, not as a cap.
+    g.hline(19, HALF, 4, ACCENT)
+    g.hline(16, HALF, 5, ACCENT)
+    for y in range(6, 9):
+        g.hline(14, HALF, y, ACCENT)
+    g.hline(13, HALF, 9, ACCENT)
+    g.hline(13, 20, 10, ACCENT)
+    g.hline(13, 15, 11, ACCENT)
+    g.hline(13, 14, 12, ACCENT)
     outline(g, ACCENT)
-    # White brow over the ink brow, so an old god is not a young one: the face's brow ink is row 16, so this is row 14.
+    # Brow: a white row over the ink brow at row 16, so the face reads as an old god and not the guard.
     g.hline(16, 20, 14, ACCENT)
-    # Beard: the accent, rows 28 to 37, over the jaw and the neck, narrowing to 10 pixels across at the chest.
-    beard = [(28, 17), (29, 15), (30, 14), (31, 14), (32, 15), (33, 16), (34, 17), (35, 19), (36, 20), (37, 21)]
+    # Beard: from the jaw down to the chest, narrowing at row 33 and flaring into a fork at rows 36 to 39, which
+    # is a different silhouette from the guard's bare jaw and from Prometheus's collar band.
+    beard = [(28, 17), (29, 16), (30, 15), (31, 15), (32, 16), (33, 17), (34, 18), (35, 19),
+             (36, 20), (37, 21), (38, 21), (39, 21)]
     for y, x0 in beard:
         g.hline(x0, HALF, y, ACCENT)
     outline(g, ACCENT)
-    # Strands: three short ink marks down the beard, so it reads as hair and not a bib.
-    g.hline(16, 17, 31, INK)
-    g.hline(19, 20, 32, INK)
-    g.hline(16, 17, 34, INK)
+    # Strands: two short ink marks, kept off the beard's outer edge so the outline pass cannot eat them.
+    g.hline(17, 18, 32, INK)
+    g.hline(19, 20, 35, INK)
     return g
+
+
+def percy_marks(g):
+    """Percy's three asymmetric marks, drawn AFTER the mirror so the head is not a mirrored construction.
+
+    The queue row's named defect (one_construction_for_three_faces) is that all three busts were built from one
+    mirrored head. A mirrored drawing cannot be un-mirrored by changing its hair colour, so these are placed on
+    one side of the axis only, the same way prometheus_licks() breaks the fire's symmetry.
+
+    Every stroke here is two pixels thick on purpose: outline() recolours every pixel of a mass that touches a
+    different colour, so a one pixel stroke is recoloured entirely and leaves no white core at all.
+    """
+    # 1. The fringe: lowered over the brow, which no other bust has, and the first of the marks that survive the
+    #    mirror as a single mass on the left of the axis. Kept clear of the trident's ink columns at x 11 by
+    #    starting at x 13, so the weapon and the head read as two shapes.
+    g.hline(13, 15, 12, ACCENT)
+    g.hline(13, 14, 13, ACCENT)
+    outline(g, ACCENT)
+    # 2. The beard's fork: one tongue left of the axis only, rows 37 to 39, over the collar line.
+    g.hline(15, 17, 37, ACCENT)
+    g.hline(15, 16, 38, ACCENT)
+    g.hline(15, 15, 39, ACCENT)
+    outline(g, ACCENT)
+    # 3. The trident, held upright on the left of the frame, rows 2 to 34: three prongs over a crossbar and a
+    #    two pixel shaft. The white edges and the ink beside them are drawn explicitly rather than left to
+    #    outline(), because a two pixel shaft has a panel neighbour on each side and would be recoloured whole.
+    #    It clears the shoulder contour at rows 41+ and the face at x 15+ by construction.
+    for x in (5, 8):                       # the shaft's ink edges
+        g.vline(x, 6, 34, INK)
+    for x in (6, 7):                       # the shaft's two white columns
+        g.vline(x, 6, 34, ACCENT)
+    g.hline(3, 10, 6, INK)                 # the crossbar's ink underside
+    g.hline(3, 10, 5, ACCENT)              # the crossbar
+    for x in (3, 4, 6, 7, 9, 10):          # three prongs, two pixels each, rows 2 to 4
+        g.vline(x, 2, 4, ACCENT)
+    for x in (2, 5, 8, 11):                # ink between and beside the prongs
+        g.vline(x, 2, 4, INK)
+    g.hline(3, 10, 1, INK)                 # the prong tips' ink cap
+    g.hline(6, 7, 35, INK)                 # the butt of the shaft, so it ends on a line
 
 
 def prometheus_grid():
     g = Grid()
-    draw_panel(g)
     draw_face(g)
     draw_shoulders(g)
-    # Flame hair: the accent, a solid mass on rows 5 to 11 with a jagged top edge and two notches cut in it, so the
-    # silhouette reads as fire and not as a cap.
-    g.hline(21, HALF, 3, ACCENT)
-    g.hline(20, HALF, 4, ACCENT)
-    g.hline(16, HALF, 5, ACCENT)
-    g.hline(14, HALF, 6, ACCENT)
-    for y in range(7, 12):
+    # Flame hair: ONE continuous mass, rows 3 to 11, stepped at the left temple, so the silhouette reads as fire
+    # and not as a cap. Card t_a61c01b7 removed the two notches and the three interior ink strokes the shipped
+    # draft cut into this mass: measured, they broke the gold into separate specks, so the shape the ink edge was
+    # drawing round was no longer one mass. That is the row's named defect, pale_hair_mass_without_an_outline.
+    g.hline(13, HALF, 11, ACCENT)
+    for y in (7, 8, 9, 10):
         g.hline(13, HALF, y, ACCENT)
-    g.set(17, 5, PANEL)
-    g.set(19, 4, PANEL)
+    g.hline(14, HALF, 6, ACCENT)
+    g.hline(15, HALF, 5, ACCENT)
+    g.hline(17, HALF, 4, ACCENT)
+    g.hline(19, HALF, 3, ACCENT)
+    # The temple: one pixel narrower than the mass, rows 12 and 13, the hairline over the eye.
     g.hline(13, 15, 12, ACCENT)
     g.hline(13, 14, 13, ACCENT)
     outline(g, ACCENT)
-    # Strokes inside the mass, so the fire reads as flames and not as a wig.
-    g.hline(18, 19, 9, INK)
-    g.hline(15, 16, 10, INK)
-    g.hline(21, 22, 10, INK)
-    # A gold collar band across the chest, the fire carried down onto the robe.
+    # The collar band: TWO gold rows with an ink row above and below, so the outline pass cannot eat it. The shipped
+    # draft had one gold row 41 with panel on both sides, which outline() recolours entirely, so the sheet carried
+    # no second gold mass at all.
+    g.hline(13, HALF, 40, ACCENT)
     g.hline(13, HALF, 41, ACCENT)
+    g.hline(13, HALF, 39, INK)
     g.hline(13, HALF, 42, INK)
     return g
 
@@ -336,15 +394,13 @@ def prometheus_licks(g):
     """
     # Tongue one, four pixels above the mass's top edge, and tongue two taller and further right. Both start clear of
     # the frame's inner row by one panel pixel, because an ink outline that touches the frame reads as a stray line.
-    for y in range(3, 5):
-        g.set(25, y, ACCENT)
-    for y in range(2, 6):
-        g.set(28, y, ACCENT)
-    # Notches cut into the top edge, right side only: the staircase between the tongues is what makes them read as
-    # separate licks. They are cut to the panel, not to transparency, because the panel is what is behind the fire.
-    g.set(24, 4, PANEL)
-    g.set(30, 5, PANEL)
-    g.set(30, 6, PANEL)
+    # One lick above the mass, right of the axis only, so the fire is not a symmetric crown. Three gold pixels on
+    # row 2 and four on row 1 step up from the mass's top edge, and one pixel is cut out of the mass beside them so
+    # the lick separates from the rest of the fire. Card t_a61c01b7 replaced the shipped pair of tongues and the
+    # three notches they needed with this single lick, which the outline pass edges without cutting the mass open.
+    g.hline(26, 29, 2, ACCENT)
+    g.hline(27, 29, 1, ACCENT)
+    g.set(25, 2, None)                     # the cut that separates the lick: nothing, not a colour
     outline(g, ACCENT)
 
 
@@ -355,7 +411,7 @@ def shade_pass(grid, min_run=6):
     for direction B: the light comes from the top left, so the right end of a horizontal run and the bottom end
     of a vertical run are the shadow. It is applied to the finished, mirrored grid, so the axis seam cannot be
     shaded by accident, and it spends no new entry: the shadow is the ink the silhouette already uses, which is
-    what lets a four entry bust carry three tones (ink, the mass, and the panel behind it).
+    what lets a three entry bust carry three tones (ink, the mass, and the room behind it).
 
     Runs shorter than `min_run` are left alone: a two pixel shadow on a two pixel mass is a smudge, not shading.
     """
@@ -390,6 +446,8 @@ def build(name):
     grid.mirror_x()
     if name == "prometheus":
         prometheus_licks(grid)
+    if name == "percy":
+        percy_marks(grid)
     shade_pass(grid)
     draw_frame(grid)
     return grid, BUSTS[name]
@@ -398,12 +456,17 @@ def build(name):
 def audit(name, grid, pal, hexes):
     """Every rule the bust has to pass, as a list of problems. Empty means the sheet is legal."""
     problems = []
-    roles = {PANEL: PANEL_CODE, ACCENT: pal["accent"], SKIN: pal["skin"], INK: INK_CODE}
+    roles = {ACCENT: pal["accent"], SKIN: pal["skin"], INK: INK_CODE}
     if len(set(roles.values())) > 4:
         problems.append("%s spends %d entries, a bust may spend 4" % (name, len(set(roles.values()))))
     for role, code in roles.items():
         if code not in hexes:
             problems.append("%s names %s for %s, which data/nes_palette.json does not carry" % (name, code, role))
+    # The box's fill is not a sprite entry. A bust that paints $02 spends one of its three sprite colours on the
+    # dialogue window, which is drawn behind it anyway (knowledge/PALETTE-RULINGS-2026-11-12.md section 3.1).
+    if PANEL_CODE in set(roles.values()):
+        problems.append("%s paints %s, the dialogue window's fill, which belongs to the box and not to the bust"
+                        % (name, PANEL_CODE))
 
     # The frame: every pixel of the outermost ring, nothing missing.
     for x in range(SIZE):
@@ -415,11 +478,9 @@ def audit(name, grid, pal, hexes):
             if grid.get(x, y) != ACCENT:
                 problems.append("%s misses its frame at %d,%d" % (name, x, y))
 
-    # Nothing transparent inside the frame: a portrait, not a hole in the level.
-    for y in range(1, SIZE - 1):
-        for x in range(1, SIZE - 1):
-            if grid.get(x, y) is None:
-                problems.append("%s leaves %d,%d transparent inside its frame" % (name, x, y))
+    # The interior is transparent wherever the box shows through: this file used to refuse a transparent pixel
+    # inside the frame, and knowledge/PALETTE-RULINGS-2026-11-12.md section 3.1 ruled the opposite, so the rule is
+    # gone and the ink ring above plus the shoulder line below are what keep the figure from reading as a hole.
 
     # The tile budget: a sprite tile carries 3 opaque colours plus transparency.
     for ty in range(SIZE // TILE):
@@ -447,7 +508,7 @@ def audit(name, grid, pal, hexes):
 def render(grid, pal, hexes):
     image = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 0))
     pixels = image.load()
-    codes = {PANEL: PANEL_CODE, ACCENT: pal["accent"], SKIN: pal["skin"], INK: INK_CODE}
+    codes = {ACCENT: pal["accent"], SKIN: pal["skin"], INK: INK_CODE}
     for y in range(SIZE):
         for x in range(SIZE):
             cell = grid.get(x, y)
@@ -480,7 +541,7 @@ def main():
     args = parser.parse_args()
 
     hexes = palette_hex()
-    legend = {PANEL: "n", ACCENT: "+", SKIN: "s", INK: "#"}
+    legend = {ACCENT: "+", SKIN: "s", INK: "#"}
     os.makedirs(OUT_DIR, exist_ok=True)
 
     problems = []
@@ -490,11 +551,12 @@ def main():
         problems.extend(found)
         image = render(grid, pal, hexes)
         png, meta = write(name, image)
-        colours = sorted({hexes[c] for c in (PANEL_CODE, pal["accent"], pal["skin"], INK_CODE)})
+        colours = sorted({hexes[c] for c in (pal["accent"], pal["skin"], INK_CODE)})
         print("%-11s %dx%d  %d colours  %s" % (name, image.width, image.height, len(colours),
                                               "ok" if not found else "%d problem(s)" % len(found)))
         print("            %s" % os.path.relpath(png, ROOT).replace(os.sep, "/"))
-        print("            panel %s accent %s skin %s ink %s" % (PANEL_CODE, pal["accent"], pal["skin"], INK_CODE))
+        print("            accent %s skin %s ink %s; no %s: the box paints that behind the bust"
+              % (pal["accent"], pal["skin"], INK_CODE, PANEL_CODE))
         if args.dump:
             for line in grid.dump(legend):
                 print("            " + line)
@@ -517,7 +579,7 @@ def main():
             print("FAIL %s" % problem)
         return 1
     print("")
-    print("every bust: 48x48, 4 entries, 1 pixel frame, at most 3 colours in any 8x8 tile")
+    print("every bust: 48x48, 3 entries, 1 pixel frame, at most 3 colours in any 8x8 tile, no $02")
     return 0
 
 
