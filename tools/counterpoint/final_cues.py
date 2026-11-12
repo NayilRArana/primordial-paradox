@@ -1094,5 +1094,142 @@ def kill_v2():
     return c
 
 
-CUES = {"storm": storm, "storm2": storm_v2, "percy": percy, "percy2": percy_v2,
+# ======================================================================================
+# CUE 1c: PP-03 Harbor Storm, take C (pp_03_quay_storm_v3, card t_f8e30643, 2026-11-12).
+#
+# Why: PP-03 is the lowest scoring shipped cue on tools/hook_score.py at 51 / 100 and take B
+# (pp_03_quay_storm_v2) only reaches 68. Both lose the same three criteria outright: the loop
+# is 48 bars and the hook grammar's loop lengths are 8, 16 and 32; the motif covers 16 and 19
+# percent of the notes; and no return reads as an arch. The key, the meter, the tempo and the
+# character are the cue sheet's own (A minor, 4/4, 160 bpm) and are not changed. The one sheet
+# number that moves is the loop length, 48 bars to 32, which is what makes it loopable.
+#
+# One two bar cell, the harbor tide stated in steps:
+#
+#   bar 1 (rise):  A4 B4 C5 D5 E5 E5        stepwise rise to a held peak, peak repeated
+#   bar 2 (fall):  E5 D5 C5 B4 A4 E4        stepwise fall, one leap (A4 to E4, 7 semitones)
+#
+# 12 notes, 8 steps of 9 intervals, exactly one leap, a repeated pitch and one turn, so every
+# return is an arch. The third unit of each four raises the peak to A5 and answers down G5 E5
+# D5 C5 A4, which is the tide's own crest and fall, so the third return is not a copy. Every
+# bar of the 32 is a statement of the cell, which is what carries motif coverage.
+#
+# Chromatic budget: four melody notes of about 190 (2 percent, inside the 3 to 6 percent band
+# of knowledge/MUSIC-DISSONANCE.md): the G#4 D#4 appoggiatura pair in M2D, a semitone under E4,
+# resolving up into it over the E chord, prepared by the A4 before it.
+# ======================================================================================
+
+S_A = "A4:2 B4:2 C5:2 D5:2 E5:4 E5:4"      # over Am: quarters A4 C5 E5 E5
+S_AF = "A4:2 B4:2 C5:2 D5:2 C5:4 C5:4"     # over F or Am: quarters A4 C5 C5 C5
+S_AD = "D5:2 E5:2 F5:2 G5:2 A5:4 A5:4"     # over Dm or F: quarters D5 F5 A5 A5
+S_A3 = "A4:2 B4:2 C5:2 D5:2 A5:4 A5:4"     # third return: the peak goes to A5
+S_B = "E5:2 D5:2 B4:2 A4:2 E4:4 E4:4"      # over E or Am: quarters E5 B4 E4 E4, the fall
+S_BC = "E5:2 D5:2 C5:2 B4:2 C5:4 C5:4"     # over C or Am: quarters E5 C5 C5 C5
+S_BA = "E5:2 D5:2 C5:2 B4:2 A4:4 A4:4"     # over Am, F or Dm: quarters E5 A4 A4 A4
+S_B4 = "A5:2 G5:2 E5:2 D5:2 C5:4 A4:4"     # crest and fall, over Am only
+# the device bar: A4 splits into G#4 and D#4, a semitone under E4, and resolves up into it
+S_D = "E5:2 D5:2 C5:2 B4:2 A4:2 G#4:1 D#4:1 E4:4"
+# the cadence: the cell's head held as the tonic, then one more attack near the loop point
+S_E1 = "E5:2 D5:2 C5:2 B4:2 A4:8"
+S_E2 = "A4:12 A4:4"
+
+S_PLAN = [
+    ("Am", "E", S_A, S_B),      # 1-2   squall, statement 1
+    ("Am", "E", S_A, S_B),      # 3-4
+    ("Am", "Am", S_A3, S_B4),   # 5-6   third return, peak raised, crest and fall
+    ("F", "Am", S_AF, S_D),     # 7-8   the device
+    ("Am", "E", S_A, S_B),      # 9-10  gale
+    ("Am", "E", S_A, S_B),      # 11-12
+    ("Dm", "Am", S_AD, S_B4),   # 13-14 third return, crest and fall
+    ("F", "Am", S_AF, S_D),     # 15-16 the device
+    ("Am", "E", S_A, S_B),      # 17-18 the eye opens
+    ("Am", "Am", S_A, S_B),     # 19-20 the eye, bar two settles on the tonic
+    ("Am", "Am", S_A3, S_B4),   # 21-22 third return
+    ("F", "Am", S_AF, S_D),     # 23-24 the device
+    ("Am", "E", S_A, S_B),      # 25-26 rolling
+    ("Am", "E", S_A, S_B),      # 27-28
+    ("Dm", "Am", S_AD, S_B4),   # 29-30 third return, crest and fall
+    ("Am", "Am", S_E1, S_E2),   # 31-32 cadence on the tonic
+]
+
+
+def storm_v3():
+    c = Cue("pp_03_quay_storm_v3", "Harbor Storm (take C)", 160, 4, 32, "A minor")
+    c.sections = ["squall", "gale", "eye", "rolling"]
+    base_lv = {"vrc6 pulse a": 11, "vrc6 pulse b": 4, "vrc6 saw": 5, "pulse 1": 5,
+               "pulse 2": 4, "triangle": 8, "noise": 6, "dpcm": 8}
+    for t, v in base_lv.items():
+        c.cc(t, 0, 0, 11, v)
+    c.cc("vrc6 pulse a", 0, 0, 12, 3)
+    c.cc("vrc6 pulse b", 0, 0, 12, 3)
+    c.cc("pulse 1", 0, 0, 12, 0)
+    c.cc("pulse 2", 0, 0, 12, 1)
+    eye_lv = {"vrc6 pulse a": 10, "pulse 1": 3, "triangle": 7, "noise": 4, "dpcm": 6, "vrc6 saw": 6}
+    for unit, (c1, c2, ma, mb) in enumerate(S_PLAN):
+        for half in range(2):
+            b = unit * 2 + half
+            s = b // 8
+            calm = s == 2
+            ch = Chord(c1 if half == 0 else c2)
+            spec = ma if half == 0 else mb
+            if b % 8 == 0:
+                for t, v in base_lv.items():
+                    c.level(t, b, eye_lv.get(t, v) if calm
+                            else v + (1 if s == 3 and t in ("noise", "dpcm") else 0))
+            c.melody("vrc6 pulse a", b, spec, 100, vib=(30, 1, 6))
+            if b == 31:
+                # a whole bar tonic pedal on the one voice with no decay envelope: it is what
+                # keeps the level up at the loop point, the seam lesson from take B
+                c.put("triangle", 31, 0, 16, 33, 92)
+            elif calm:
+                c.bass("triangle", b, ch, "R - - - R - - -", 33, 100, 2)
+            else:
+                c.bass("triangle", b, ch, "R R R R^ R R R R^", 33, 105, 2)
+            if calm:
+                c.arp("pulse 1", b, ch, "R 5 R 5 R 5 R 5", 48, 85, 2)
+            else:
+                c.arp("pulse 1", b, ch, "R 5 R 5 R 5 R 5 R 5 R 5 R 5", 48, 90, 1)
+            if calm:
+                c.put("vrc6 saw", b, 0, 16, ch.pitch("5", 52), 80)
+            else:
+                c.put("vrc6 saw", b, 0, 8, ch.pitch("R", 48), 85)
+                c.put("vrc6 saw", b, 8, 8, ch.pitch("5", 48), 80)
+            if s == 1:
+                # harmony a third under the lead. No echo voice: the echo's delayed A4 landed
+                # over the pad's B3 at beat 3 of every E bar, which the gate counts as CP-01.
+                for off, tok in _spans(spec):
+                    n, p = tok
+                    h = _below(ch, p, 3)
+                    if h is not None and 45 <= h <= 84:
+                        c.put("vrc6 pulse b", b, off, n, h, 70)
+            # drums: a different figure in each four bar block, a different one again in each
+            # eight bar block, and the eighth bar of the block takes the fill
+            q = (b % 8) // 4
+            if calm:
+                hats = "3030303030303030" if q == 0 else "3030303030203040"
+                c.drum_bar(b, kick="x.......x.......", snare="", hats=hats, idx=4, kvel=78, hscale=0.8)
+            elif b % 8 == 7:
+                c.drum_bar(b, kick="x.......x...x...", snare="....x.....x.xxxx",
+                           hats="9393939393939393", idx=4, kvel=105, svel=105, hscale=1.0)
+            elif q == 0:
+                c.drum_bar(b, kick="x.....x.x.....x.", snare="....x.......x...",
+                           hats="9353535393535353", idx=4, kvel=105, svel=105,
+                           hscale=0.9 if s == 0 else 1.0)
+            elif q == 1:
+                c.drum_bar(b, kick="x..x..x.x.....x.", snare="....x.......x..x",
+                           hats="9393535393935393", idx=4, kvel=105, svel=105,
+                           hscale=0.9 if s == 0 else 1.0)
+            elif q == 2:
+                c.drum_bar(b, kick="x.....x.x..x..x.", snare="....x.......x...",
+                           hats="9353539393535393", idx=4, kvel=105, svel=105,
+                           hscale=0.9 if s == 0 else 1.0)
+            else:
+                c.drum_bar(b, kick="x.....x...x.x...", snare="....x.......xx.x",
+                           hats="9393535393539353", idx=4, kvel=105, svel=105,
+                           hscale=0.9 if s == 0 else 1.0)
+    return c
+
+
+CUES = {"storm": storm, "storm2": storm_v2, "storm3": storm_v3,
+        "percy": percy, "percy2": percy_v2,
         "kill": kill, "kill2": kill_v2, "spare": spare, "spare2": spare_v2}

@@ -1,0 +1,14 @@
+{
+  "kind": "cue",
+  "asset": "pp_03_quay_storm_v3",
+  "sample_rate": 44100,
+  "channels": 1,
+  "bpm": 160,
+  "beats_per_bar": 4,
+  "loop_bars": 32,
+  "loop_start_sample": 0,
+  "loop_end_sample": 2116800,
+  "loop_seconds": 48.0,
+  "seam_sample_difference_first_second": 0.0,
+  "method": "three pass render, middle pass cut"
+}

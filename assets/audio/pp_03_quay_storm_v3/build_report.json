@@ -1,0 +1,133 @@
+{
+ "audio_key_top3": [
+  [
+   0.606,
+   "E major"
+  ],
+  [
+   0.598,
+   "A major"
+  ],
+  [
+   0.595,
+   "A minor"
+  ]
+ ],
+ "audio_tempo": {
+  "full_band": {
+   "bar_seconds": 1.4997,
+   "bpm": 160.03,
+   "peak_autocorr": 0.79
+  },
+  "kick_band": {
+   "bar_seconds": 1.4996,
+   "bpm": 160.04,
+   "peak_autocorr": 0.53
+  }
+ },
+ "bars": 32,
+ "beats_per_bar": 4,
+ "bpm": 160,
+ "cue_gate": {
+  "exit": 0,
+  "stdout": "assets/audio/pp_03_quay_storm_v3/pp_03_quay_storm_v3.mid: PASS"
+ },
+ "cue_gate_summary": [
+  "G1 CP-01 raw clashes on a strong beat: 0   G2 CP-09 parallel perfect intervals: 0",
+  "state: PASS   0 raw clashes on a strong beat and 0 parallel perfect fifths or octaves between the outer voices"
+ ],
+ "declared_key": "A minor",
+ "delivered": {
+  "loudness": {
+   "integrated_lufs": -14.07,
+   "lra_lu": 3.8,
+   "offset": 0.34,
+   "threshold": -24.07,
+   "true_peak_dbtp": -1.34
+  },
+  "mean_volume_db": -12.1,
+  "samples": 2116800,
+  "seconds": 48.0
+ },
+ "loop_samples": 2116800,
+ "master_attempts": [
+  {
+   "dbtp": -1.15,
+   "gain_db": 0.0,
+   "limit_db": -1.9,
+   "lufs": -17.19
+  },
+  {
+   "dbtp": -0.59,
+   "gain_db": 3.19,
+   "limit_db": -1.9,
+   "lufs": -14.39
+  },
+  {
+   "dbtp": -0.99,
+   "gain_db": 3.58,
+   "limit_db": -2.46,
+   "lufs": -14.29
+  },
+  {
+   "dbtp": -0.91,
+   "gain_db": 3.87,
+   "limit_db": -2.62,
+   "lufs": -14.15
+  },
+  {
+   "dbtp": -1.14,
+   "gain_db": 4.02,
+   "limit_db": -2.86,
+   "lufs": -14.17
+  },
+  {
+   "dbtp": -1.34,
+   "gain_db": 4.19,
+   "limit_db": -2.86,
+   "lufs": -14.07
+  }
+ ],
+ "midi_key_top3": [
+  [
+   0.792,
+   "A minor"
+  ],
+  [
+   0.787,
+   "A major"
+  ],
+  [
+   0.632,
+   "E major"
+  ]
+ ],
+ "notes": {
+  "dpcm": 184,
+  "noise": 448,
+  "pulse 1": 400,
+  "pulse 2": 0,
+  "triangle": 201,
+  "vrc6 pulse a": 193,
+  "vrc6 pulse b": 50,
+  "vrc6 saw": 56
+ },
+ "periodicity_max_abs_diff_first_second": 0.0,
+ "periodicity_max_abs_diff_whole": 0.0,
+ "periodicity_rms_diff_db": -180.0,
+ "periodicity_share_samples_differing": 0.0,
+ "seam": {
+  "body_rms_dbfs": -12.13,
+  "head_rms_dbfs": -9.95,
+  "loop_end_sample": 2116800,
+  "loop_seconds": 48.0,
+  "loop_start_sample": 0,
+  "seam_level_delta_db": -0.83,
+  "step_reference_dbfs": -8.42,
+  "tail_rms_dbfs": -12.95,
+  "verdict": "clean",
+  "wrap_jump_dbfs": -52.32
+ },
+ "slug": "pp_03_quay_storm_v3",
+ "title": "Harbor Storm (take C)"
+}
