@@ -179,6 +179,25 @@ def build_ground() -> Image.Image:
     # 11 x 8 it fills, while the pillars and the roof are the car body, which is drawn OVER the bust
     # and is therefore not ground. Measured, so the next reader can see the box that was read.
     ground = car.crop((x0, top, x1 + 1, bottom + 1)).convert("RGBA")
+    # Card t_8df7aab4 (gamedev, 2026-11-12): the car body is NOT ground, and the mask below is what
+    # makes that true in the file rather than in this docstring. `tools/art/title_car_v2.py` paints the
+    # pillars, the roof edge and the one diagonal moonlight glint in BODY ($20), the car's largest fill,
+    # and the car is drawn after the bust, so no bust pixel ever sits on a $20 pixel: those pixels are
+    # covered, not stood on. The docstring above said as much; the crop did not, and the stale $20 made the
+    # pane read as TWO grounds ($0C 103 px, $20 14 px in the rear window; $0C 132 px, $20 4 px in the
+    # front one) where no entry of the title's four sprite rows clears 3:1 on both ends of the pair.
+    # Masking every non-glass pixel is not a rule relaxation: `palette_synergy.ground_pixels()` skips
+    # alpha 0 by design, so the ground set becomes the glass and the question becomes the real one.
+    glass_rgb = (glass[0], glass[1], glass[2])
+    pixels = ground.load()
+    masked = 0
+    for y in range(ground.height):
+        for x in range(ground.width):
+            r, g, b, a = pixels[x, y]
+            if a and (r, g, b) != glass_rgb:
+                pixels[x, y] = CLEAR
+                masked += 1
+    print("  ground: %d car-body pixel(s) masked to transparent, the glass is the ground" % masked)
     entries = sorted({"#%02x%02x%02x" % pixel[:3] for pixel in ground.getdata() if pixel[3]})
     print("  ground: car at (%d, %d), glass pane x %d..%d rows %d..%d, %dx%d, entries %s"
           % (car_x, car_y, x0, x1, top, bottom, ground.width, ground.height, entries))

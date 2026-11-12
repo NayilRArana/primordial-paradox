@@ -334,6 +334,14 @@ Concept art, backgrounds and sprites are designed INSIDE the NES palette system,
    so the wheel, the driver busts and every walking sheet stay under the two instruments above; the declaration is
    granted per sheet with the sweep done, never claimed, and it is never a way around a figure that cannot be
    drawn. The title set, the numbers and what was left open are in `knowledge\PALETTE-RULINGS-2026-10-25.md`.
+   Amendment, gamedev ruling on card t_8df7aab4 (2026-11-12): a measurement must not count a layer the game
+   draws OVER the sheet as that sheet's ground, or as its body. A ground is the pixels the sheet is drawn on,
+   and a body is a colour the sheet itself paints as the figure. The title car's body, its pillars and its roof
+   edge, and a dialogue bust's own window-fill panel, are neither. Measured on the two title busts and the three
+   dialogue busts, both walls were exactly that defect and neither needed an entry, a reclassification or a rule
+   change: with the car body masked out of the glass pane the Konrad bust reads 0 failing pairs, and with the
+   panel out of the sprite layer the three portraits fit two spare ui rows and clear R1b on its existing two
+   instruments. The numbers, the mask that landed and the cost are in `knowledge/PALETTE-RULINGS-2026-11-12.md`.
 3. A sprite's 3 colours: 1 dark outline, 1 mid body, 1 accent or light. The hero palettes are reserved and reused
    (Percy blue and gold, Hadrian near black and purple, Zander light blue, Konrad grey and amber).
 4. Backgrounds spend their 4 palettes by area (attribute 16x16 rule): sky, ground, buildings, accents. No palette
