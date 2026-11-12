@@ -850,3 +850,123 @@ def test_the_ship_deck_gives_a_held_walk_eight_tiles_east_before_the_sailor_stop
     assert (crossed, stopped_by) == (8, "the actor 'navy_sailor' at 11,7"), (crossed, stopped_by)
     frames = int(round(crossed * TILE / WALK_STEP))
     assert frames == 64, "the hold that crosses the open run is %d frames, not 64" % frames
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# 5. The S5 walk as a judge measures it (card t_ec7072b5)
+
+JUDGE_FRAMES = 6
+# The recorded file is the plan plus a tail: the 2026-10-26 take's verify file holds 73.483 s for a 71.0 s plan, so the
+# band below is the plan to the plan plus five seconds. The panel's sampling grid moves with the duration, so a route
+# that puts the walk inside two of its stills for a 71 s file and not for a 76 s one has not been fixed.
+TAKE_SECONDS_BAND = (71.0, 76.0)
+
+
+def ship_small():
+    """The shipped deck: its spawn, the actor tiles, and the walkable test the GML runs (str(collision) == '0')."""
+    with io.open(MAPS_JSON, "r", encoding="utf-8-sig") as handle:
+        maps = json.load(handle)["maps"]
+    ship = [row for row in maps if row.get("id") == "ship_small"][0]
+    actors = {(actor["x"], actor["y"]) for actor in ship.get("actors") or []}
+    return ship, actors
+
+
+def walk_the_deck(hold_step, hold_steps, end_step, grid, actors, start):
+    """One east hold on the deck, modelled: the feet, the footstep cue and the pixel he stands on at every step.
+
+    This is `pp_world_free_step` with one direction held and no nudge to take: the corridor is one open row, so the
+    only thing that can stop him is the sailor's own tile, which is the same `pp_world_blocked` test at the feet.
+    """
+    px, py = start[0] * TILE, start[1] * TILE
+    step_px = 0.0
+    cues = 0
+    positions = {}
+    for step in range(1, end_step + 1):
+        distance = 0.0
+        if hold_step <= step < hold_step + hold_steps:
+            if not blocked(grid, actors, px + WALK_STEP, py):
+                px += WALK_STEP
+                distance = WALK_STEP
+        step_px += distance
+        if step_px >= FOOTSTEP_PX:
+            step_px -= FOOTSTEP_PX
+            cues += 1
+        positions[step] = px
+    return positions, cues
+
+
+def judge_sample_steps(duration_s, count=JUDGE_FRAMES):
+    """The steps the panel takes its stills at: the middle of `count` equal slices, as sample_frames does."""
+    return [int(round(duration_s * (index + 0.5) / float(count) * PP_STEPS)) for index in range(count)]
+
+
+def test_the_s5_walk_is_inside_two_of_the_judge_panels_stills():
+    """The panel sees six stills twelve seconds apart, so a walk placed in dead air is a walk nobody sees.
+
+    Measured on the take that prompted the card (output/demo/demo-walk-2026-10-26.mp4, which DID play its 8 footsteps):
+    its still at 42.9 s and its still at 55.1 s differ by 0.0002 of their pixels, because the deck sat still from the
+    moment it loaded until the walk began at 57.0 s, and the panel's fifth still was taken at 55.1 s. The walk itself
+    was sound. So what this test measures is placement: the walk has to start after one still and be over by the next,
+    and the route's own step numbers are the thing that decides it.
+    """
+    ship, actors = ship_small()
+    grid = lambda x, y: 0 <= x < ship["width"] and 0 <= y < ship["height"] and str(ship["collision"][y][x]) == "0"
+
+    with io.open(os.path.join(ROOT, "data", "demo", "run_001.json"), "r", encoding="utf-8-sig") as handle:
+        route = json.load(handle)
+    events = route["events"]
+    checks = route.get("checks") or {}
+    holds = [e for e in events if e.get("kind") == "hold" and e.get("key") == "right"]
+    assert len(holds) == 1, "the S5 beat is not one held walk: %s" % holds
+    hold = holds[0]
+    end_step = int(checks["end_step"])
+    start = (ship["spawns"]["start"]["x"], ship["spawns"]["start"]["y"])
+    positions, cues = walk_the_deck(hold["step"], hold["steps"], end_step, grid, actors, start)
+
+    # 1. The walk itself: the cues the game log will carry, against the number the route asks the check for.
+    assert checks.get("required_footsteps") == cues == 8, (
+        "the deck walk plays %d footstep cues and the route asks for %r; the 2026-10-26 take that worked logged 8"
+        % (cues, checks.get("required_footsteps")))
+
+    # 2. Its placement, over the whole band of take lengths the recorder can produce.
+    for duration in TAKE_SECONDS_BAND:
+        samples = judge_sample_steps(duration)
+        moving = [(a, b) for a, b in zip(samples, samples[1:]) if positions[a] != positions[b]]
+        assert moving, (
+            "at a %.1f s take the deck walker stands on the same pixel in every one of the six stills: he is at %d px"
+            % (duration, positions[samples[0]]))
+        # The two stills the panel complained about are the last two before the ending: 42.9 s and 55.1 s of a 73.5 s
+        # file. The walk has to be between a still and the next one, and the sprite has to be at two different pixels.
+        assert positions[samples[3]] != positions[samples[4]], (
+            "at a %.1f s take the walker is on pixel %d at the 4th still and pixel %d at the 5th, so the sprite does "
+            "not advance between them" % (duration, positions[samples[3]], positions[samples[4]]))
+        # The walker stands still from then on, so the last pair of stills has to be told apart by the box: there must
+        # be a press between them that turns a page, or the take ends on two identical frames again.
+        ended_at = max([hold["step"] + hold["steps"]] + [e["step"] for e in events if e.get("kind") == "key"])
+        assert samples[4] < ended_at <= samples[5], (
+            "at a %.1f s take the last press of the route is at step %d, which is not between the 5th still (%d) and "
+            "the 6th (%d), so those two stills are the same picture" % (duration, ended_at, samples[4], samples[5]))
+
+    # 3. No dead air before it either: the walk starts within two seconds of the room's own line in the log.
+    marker = [e for e in events if e.get("marker") == "starting the run in"]
+    assert len(marker) == 1, marker
+    assert hold["step"] - marker[0]["step"] <= 2 * PP_STEPS, (
+        "the walk starts %d steps (%.1f s) after the room loads, so the deck sits still through the panel's stills"
+        % (hold["step"] - marker[0]["step"], (hold["step"] - marker[0]["step"]) / float(PP_STEPS)))
+
+
+def test_the_model_reproduces_the_still_pair_the_panel_measured():
+    """The model above has to be worth trusting, so this is it failing the way the shipped bug failed.
+
+    It drives the walk at the steps the route used before the card (e08 at 3300, the hold at 3420) and shows the same
+    stillness the panel measured: two stills, twelve seconds apart, one pixel.
+    """
+    ship, actors = ship_small()
+    grid = lambda x, y: 0 <= x < ship["width"] and 0 <= y < ship["height"] and str(ship["collision"][y][x]) == "0"
+    start = (ship["spawns"]["start"]["x"], ship["spawns"]["start"]["y"])
+    positions, cues = walk_the_deck(3420, 72, 4260, grid, actors, start)
+    assert cues == 8, "the old placement still played its cues, which is why the capture's audio was not the defect"
+    samples = judge_sample_steps(73.483)
+    assert positions[samples[3]] == positions[samples[4]], (
+        "this model no longer reproduces the panel's still pair, so it cannot measure the fix: %d and %d px"
+        % (positions[samples[3]], positions[samples[4]]))

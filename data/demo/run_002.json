@@ -42,6 +42,8 @@
   },
   "checks": {
     "end_step": 15210,
+    "required_footsteps": 1,
+    "footstep_note": "the floor, not the target: this is the take the nightly records (tools/play_demo.py with no arguments plays this script), and card t_ec7072b5's judged capture log carried 0 footstep cues, which is what 'Right reached a dialogue box and never the walk' looks like in the game's own log. One cue is the least this route cannot manage if its walk works at all: r044 holds Right for 14 steps onto the Deck Watch's tile at 4,7, which is 28 pixels of feet, and pp_overworld plays a footstep every PP_FOOTSTEP_PX (16) pixels walked. A larger number is not asked for here on purpose: the corridor walk at r078 claims fifteen tiles east from 3,7, and the navy_sailor stands at 11,7 of ship_small, so how far that hold actually gets is not something this worker could measure without a take",
     "min_lit_frames": 4,
     "palette_share_min": 0.55,
     "palette_tolerance": 12,

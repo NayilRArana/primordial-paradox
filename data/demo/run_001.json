@@ -91,54 +91,72 @@
     },
     {
       "id": "e08",
-      "step": 3300,
+      "step": 2620,
       "marker": "starting the run in",
-      "marker_delay_steps": 60,
+      "marker_delay_steps": 20,
       "kind": "note",
       "beat": 7,
-      "note": "the game's own line when the crawl ends and the run room loads (pp_title: 'PP title: intro finished, starting the run in rm_pp_ship'). Between the two lines the title plays its 240 step night drive and the fade, which is the whole of beats 7 to 25 in this build"
+      "note": "the game's own line when the crawl ends and the run room loads (pp_title: 'PP title: intro finished, starting the run in rm_pp_ship'). Between the two lines the title plays its 240 step night drive and the fade, which is the whole of beats 7 to 25 in this build. This was a fallback of step 3300 until card t_ec7072b5, and that fallback was the real cause of the dead air at the end of the take: the validator will not let an event be declared before the previous one, so the walk could not be written earlier than 3300 (55.0 s) even though the line lands at 2591 to 2595 on this PC (2591 on demo-walk-2026-10-26.mp4, 2595 on nightly-2026-10-26.mp4, both in their verify files' traces). The line has been seen in every take so far, the fallback is only the block buffered log's answer, and 2620 is late enough for the fade's 12 steps behind a room that loaded at 2595"
     },
     {
       "id": "e09",
-      "step": 3360,
+      "step": 2660,
       "kind": "note",
       "beat": 26,
-      "note": "one second into rm_pp_ship, standing still so the room is visible before the walk"
+      "note": "the deck is up and the walker stands on the spawn tile 2,7. This beat used to be step 3360, which left rm_pp_ship sitting still for fourteen seconds. The judge panel takes six stills twelve seconds apart, so its 42.9 s still and its 55.1 s still were the same picture: nothing on screen had moved yet, and the walk itself did not start until 57.0 s, after five of the six stills had been taken"
     },
     {
       "id": "e10",
-      "step": 3420,
+      "step": 2700,
       "kind": "hold",
       "key": "right",
       "steps": 72,
       "beat": 26,
-      "note": "the walk east: one HOLD of the direction, because the walker walks while the key is down (card PP-FREE-MOVE). The corridor is open from the spawn at 2,7 to the tile before the navy_sailor at 11,7, which is 8 tiles or 128 pixels, and 128 pixels is 64 steps at PP_WALK_SPEED's 2 pixels a step; 72 steps gives the walker a little to spare so he is standing against the sailor when the confirm is pressed, since he cannot walk through him. This beat used to be eight taps of Right, one a second, which was eight tiles under the tile walk and is about 16 pixels now."
+      "note": "the walk east, and it starts as soon as the deck is up instead of at 57.0 s. One HOLD of the direction, because the walker walks while the key is down (card PP-FREE-MOVE). The corridor is open from the spawn at 2,7 to the tile before the navy_sailor at 11,7, which is 8 tiles or 128 pixels, and 128 pixels is 64 steps at PP_WALK_SPEED's 2 pixels a step; 72 steps gives the walker a little to spare so he is standing against the sailor when the confirm is pressed, since he cannot walk through him. His feet travel 132 pixels before the sailor's own tile stops them, which is 8 footstep cues at PP_FOOTSTEP_PX's 16, and 8 is the number checks.required_footsteps asks this take for. This beat used to be eight taps of Right, one a second: under the tile walk that was eight tiles, under the free walk it is a couple of pixels a press, and a press shorter than one 60 a second step is never read as held at all, so a take could log no footstep cue (nightly-2026-10-26.mp4 did exactly that)"
     },
     {
       "id": "e11",
-      "step": 3560,
+      "step": 2800,
       "kind": "note",
       "beat": 26,
-      "note": "he has arrived: the hold released at step 3492 against the sailor, and this is the room held still for a second so the last step of the walk is visible"
+      "note": "he has arrived: the hold released at step 2772 against the sailor, and this is the room held still for a moment so the last step of the walk is visible"
     },
     {
       "id": "e18",
-      "step": 3900,
+      "step": 2840,
       "kind": "key",
       "key": "confirm",
       "beat": 26,
       "note": "confirm facing the sailor's tile, the same press tools/capture_title.py --room ship makes. Card t_11f6a125: data/maps/all.json now places the navy_sailor actor at 11,7 of ship_small, one tile ahead of the tile this walk stops on, so the press opens his box (dialogue talk_navy_sailor) instead of nothing. Measured on the 2026-10-26 take (output/demo/demo-talk-2026-10-26.mp4): the game log carries 'PP dialogue: talk_navy_sailor with navy_sailor on ship_small 11,7' and seven 'PP audio: text_blip_b played' lines after the eight footstep lines, and the take's verify file holds failures []"
     },
     {
+      "id": "e20",
+      "step": 3100,
+      "kind": "key",
+      "key": "confirm",
+      "beat": 26,
+      "note": "the sailor's second line. The first line is fully revealed by now: 29 characters at PP_TEXT_STEPS_SLOW's 2 steps a character is about 60 steps, and the box opened 300 steps ago, so this press turns the box to line 2 and line 2 types out behind the panel's 55.1 s still"
+    },
+    {
+      "id": "e21",
+      "step": 3800,
+      "kind": "key",
+      "key": "confirm",
+      "beat": 26,
+      "note": "the sailor's third line, turned 700 steps after the second. The press sits between the panel's 55.1 s still and its 67.4 s still for every take length from 71.0 s to 76.0 s, which is the band tests/test_move_hold.py measures, so line 3 is on screen at the last still instead of the same line 2 the fifth still already showed. No press follows this one, because the fifth press on a three line box is the press that closes it and would leave the take ending on a still room again"
+    },
+    {
       "id": "e19",
       "step": 4200,
       "kind": "note",
       "beat": 26,
-      "note": "the room is held still for five seconds after the walk, so the recording ends on the whole room rather than on the last step. The box the confirm opened at e18 stays up for those five seconds: measured on the 2026-10-26 take, the first of the sailor's three lines is typing on screen from 65.1 s (the confirm's own step) to the last frame, which is what lets the video end on a held room with a line of dialogue in it"
+      "note": "the deck is held to the end step with the sailor's box up on its third line, so the recording ends on a live box rather than on a still room. Only confirm advances the box and no press follows e21, so the third line is what is on screen to the last frame"
     }
   ],
   "checks": {
     "end_step": 4260,
+    "required_footsteps": 8,
+    "footstep_note": "the walk at e10 is the only walking this take does, and it is what the judge panel's Demo mark is about. The deck is open from the spawn at 2,7 to the navy_sailor's tile at 11,7, so the feet travel 132 pixels before his own tile stops them, and 132 pixels at PP_FOOTSTEP_PX's 16 is 8 footstep cues. Measured on the 2026-10-26 take that worked (demo-walk-2026-10-26.mp4): its verify file holds footsteps 8 and failures []. Measured on the take that did not (nightly-2026-10-26.mp4): footsteps 0 and 'the game played no footstep cue, so the Right presses did not reach the walk', and it still passed its own verify because the route asked for no footsteps. play_demo --check now fails a take that carries fewer than this number",
     "min_lit_frames": 4,
     "palette_share_min": 0.9,
     "palette_tolerance": 12,

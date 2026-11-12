@@ -122,7 +122,7 @@
             "S5 boarding"
           ],
           "on_screen": "the office, Nye's page and its bake row, the clerk asking the player's name and answering the typed line in his plate, the slip changing hands, the quay south, the gangway, the deck",
-          "inputs": "confirm on the door, a press for every page, the typed name in the TALK box (letters then enter), a press to close the answer, walking keys, then the boarding scene",
+          "inputs": "confirm on the door, a press for every page, the typed name in the TALK box (letters then enter), a press to close the answer, then the two gangway presses and the boarding scene. There is no walking key inside S5: the step onto the deck at 3,7 and the held Right that carries him one tile east to the Deck Watch's tile at 4,7 are the opening of S6.1 (r043 and r044 in data/demo/run_002.json), and this row said 'walking keys' until card t_ec7072b5 read the route and found none in this shot's steps",
           "sub_shots": [
             {
               "id": "S5.1",
