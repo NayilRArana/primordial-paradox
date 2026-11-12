@@ -41,6 +41,13 @@ encoded mp4 and measures them. All fifteen rows pass:
   the plate's own edge and is reported rather than rounded to zero
 - the game's frame is the recording's: mean channel difference 1.42, 7 of 552,960 pixels over 48 levels
 
+The fight resolving is measured too, not assumed. The recording's own verify file puts its `spare_result_in_sample`
+frame at `t_0059.png` (second 59.0 of the recording, which is second 40.4 of the shot). A one-off probe compared
+frames decoded out of the shot at 39.9 s to 40.9 s against that frame: from 40.6 s on the mean channel difference is
+1.85 with 0 of 552,960 pixels over 48 levels, so the SPARE outcome is on screen from 40.6 s and the plate stays up to
+43.4 s. That probe is not in `tools/stage_s6_offline.py` yet; it is recorded here so the next lane can measure it
+again rather than take it on trust.
+
 ## The project's own frame test, on a lossless render of the same plate
 
 `python tools\demo_overlay.py --check --shot S6 --source output\first_fight_talk_frames\t_0047.png --frame
