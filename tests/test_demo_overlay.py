@@ -24,6 +24,12 @@ What these tests hold down, and why each one earns its place:
      data/receipts/meta_receipts.jsonl, so a row whose verdict receipt was never logged refuses rather
      than printing a made up id. A fallback row is drawn only labelled, and the box never covers S5's
      dialogue box, which the frame test compares byte for byte like the plate's own rules do.
+  8. THE FIGHT SHOT SHOWS THE LINE BEING JUDGED (card t_b9173f05). S6 draws the same box, holding the
+     first TALK turn's own `player_line`, its reply, its verdict and its receipt, plus the two build
+     numbers the judge panel asked for: bake.calls_attempted with rcpt-a505930564032c7c and
+     bake.system_chars with its own id. Every one of those is read from the bake file or the ledger, a
+     header and a row that disagree about the system prompt length stop the drawing, and the box is
+     stacked under the frame so the battle's own stage and text boxes are untouched.
 
 Run: python -m pytest tests/test_demo_overlay.py -q
 """
@@ -403,12 +409,124 @@ def test_the_talk_box_labels_a_fallback_row_and_refuses_it_unlabelled(overlay):
     assert texts[-1].endswith("FALLBACK")
 
 
-def test_the_talk_box_is_refused_on_a_shot_whose_claim_is_not_the_box(overlay):
+def test_the_talk_box_is_refused_on_a_shot_whose_claim_is_not_the_box(overlay, monkeypatch):
+    """S6 draws the box too (card t_b9173f05), so the guard is asked with the old list of shots.
+
+    The rule the test held down is still the rule: a shot only draws the box if it is one of the shots
+    whose claim the box is. What changed is which shots those are, so the test sets the list back to
+    S5 alone and asks S6, which must still refuse and say which shots it will draw.
+    """
     verdicts = overlay.load_verdicts()
     row = {"id": "x/y/1", "text": ["ONE LINE."], "effect": "none", "source": "live", "network": True}
+    monkeypatch.setattr(overlay, "TALK_BOX_SHOTS", ("S5",))
     with pytest.raises(overlay.OverlayError) as error:
         overlay.talk_box_lines("S6", row, verdicts, "rcpt-0000000000000000")
     assert "S5" in str(error.value)
+    monkeypatch.undo()
+    assert "S6" in overlay.TALK_BOX_SHOTS
+
+
+def test_the_s6_talk_box_shows_the_player_line_judged_and_the_verdict(overlay):
+    """The panel's fix 2, measured: the line the player typed, the verdict it earned, and the receipts."""
+    bake, index = overlay.load_bake(BAKE)
+    layout = overlay.plan("S6", bake, index, below=True, talk_box=True)
+    talk = layout["talk_box"]
+    row = [item for item in bake["rows"] if item["id"] == "fight/navy_sailor/1"][0]
+    assert row["source"] == "live" and row["network"] is True, "the first TALK row is a live answer"
+    texts = [line["source_text"] for line in talk["lines"]]
+    assert talk["row"] == "fight/navy_sailor/1"
+    assert texts[1] == row["player_line"], "the box prints the line the player typed, as recorded"
+    assert texts[2:2 + len(row["text"])] == row["text"], "and then the row's own reply lines"
+    entry = overlay.load_verdicts()[row["effect"]]
+    assert texts[2 + len(row["text"])] == "VERDICT %s, WILL %s%s" % (
+        entry["verdict"].upper(), "+" if entry["will_delta"] > 0 else "", entry["will_delta"])
+    assert talk["verdict"] == entry["verdict"]
+    ledger = overlay.load_ledger()
+    assert talk["receipt"] in ledger
+    # The two build numbers the panel named, each with the receipt that backs it, both read from the file.
+    block = bake["bake"]
+    calls = [row for row in ledger.values() if row.get("name") == "meta.model_calls"][0]
+    chars = [row for row in ledger.values() if row.get("name") == "meta.system_chars"][0]
+    assert calls["id"] == "rcpt-a505930564032c7c", "the call count keeps the receipt the panel named"
+    assert calls["value"] == block["calls_attempted"]
+    assert chars["value"] == block["system_chars"] == 2408
+    assert any("BAKE CALLS %s RECEIPT %s" % (block["calls_attempted"], calls["id"]) == piece for piece in texts)
+    assert any(piece.startswith("SYSTEM PROMPT 2408 CHARS RECEIPT %s" % chars["id"]) for piece in texts)
+
+
+def test_every_s6_box_line_fits_the_window_and_the_band(overlay):
+    bake, index = overlay.load_bake(BAKE)
+    layout = overlay.plan("S6", bake, index, below=True, talk_box=True)
+    talk = layout["talk_box"]
+    row = [item for item in bake["rows"] if item["id"] == "fight/navy_sailor/1"][0]
+    # The 28 column rule is the NES box's rule and it is held to the words the player and the sailor say:
+    # the reply lines and the player's own line. The receipt lines are the small print under them, and the
+    # tool holds every one of those to the width of the window in pixels instead.
+    columns = [line["source_text"] for line in talk["lines"]
+               if line["source_text"] == row["player_line"] or line["source_text"] in row["text"]]
+    assert columns, "the player's line and the reply are in the box"
+    for piece in columns:
+        assert len(piece) <= overlay.TALK_COLS, piece
+    usable = overlay.TALK_BOX_W * overlay.SCALE - 2 * overlay.PLATE_PAD
+    for line in talk["lines"]:
+        assert len(line["source_text"]) * line["size"] <= usable, line["source_text"]
+    rect = talk["rect"]
+    assert rect[0] >= 0 and rect[2] <= overlay.FRAME_W
+    assert not overlay.intersects(rect, layout["plate"]), "the box is stacked, never on the plate"
+
+
+def test_the_s6_box_is_refused_unless_the_plate_is_below_the_frame(overlay):
+    """The box is drawn under the frame, so a shot drawn inside the frame has nowhere honest to put it."""
+    bake, index = overlay.load_bake(BAKE)
+    with pytest.raises(overlay.OverlayError) as error:
+        overlay.plan("S6", bake, index, talk_box=True)
+    assert "--below" in str(error.value)
+
+
+def test_a_system_prompt_that_two_sources_disagree_on_is_refused(overlay, live_bake_file, tmp_path):
+    data = real_bake()
+    for row in data["rows"]:
+        if row["id"] == "fight/navy_sailor/1":
+            row["request"]["system_chars"] = 2407
+    path = write_bake(tmp_path / "mismatch.json", data)
+    bake, index = overlay.load_bake(path)
+    with pytest.raises(overlay.OverlayError) as error:
+        overlay.plan("S6", bake, index, below=True, talk_box=True)
+    assert "do not describe one prompt" in str(error.value)
+
+
+def test_a_ledger_receipt_for_another_number_is_refused(overlay):
+    with pytest.raises(overlay.OverlayError) as error:
+        overlay.ledger_number("meta.model_calls", 22)
+    assert "do not back the same number" in str(error.value)
+    with pytest.raises(overlay.OverlayError) as missing:
+        overlay.ledger_number("meta.no_such_number", 1)
+    assert "holds no" in str(missing.value)
+
+
+def test_s6_talk_box_frame_test_passes_and_the_frame_is_untouched(overlay, frame_file, tmp_path):
+    out = str(tmp_path / "s6_talk.png")
+    render_shot(overlay, "S6", BAKE, frame_file, out, below=True, talk_box=True)
+    bake, index = overlay.load_bake(BAKE)
+    report = overlay.check_frame(frame_file, out, "S6", bake, index, below=True, talk_box=True)
+    assert report["ok"], [item for item in report["checks"] if not item["ok"]]
+    source = Image.open(frame_file).convert("RGB")
+    rendered = Image.open(out).convert("RGB")
+    assert rendered.size[0] == source.size[0] and rendered.size[1] > source.size[1]
+    top = rendered.crop((0, 0, source.size[0], source.size[1]))
+    assert ImageChops.difference(source, top).getbbox() is None, "the game's own frame is untouched"
+    assert report["talk_box"] is not None
+    assert not overlay.intersects(report["talk_box"]["rect"], report["plate"])
+
+
+def test_the_s6_talk_box_cli_prints_the_box_and_exits_zero(overlay, capsys):
+    assert overlay.main(["--shot", "S6", "--rows", "--talk-box", "--below"]) == 0
+    payload = json.loads(capsys.readouterr().out)
+    talk = payload["talk_box"]
+    assert talk["row"] == "fight/navy_sailor/1"
+    assert any("rcpt-a505930564032c7c" in line["text"] for line in talk["lines"])
+    assert any("2408" in line["text"] for line in talk["lines"])
+
 
 
 def test_s5_talk_box_frame_test_passes_and_the_dialogue_box_is_untouched(overlay, frame_file, tmp_path):

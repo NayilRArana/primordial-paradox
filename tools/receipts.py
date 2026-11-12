@@ -105,7 +105,18 @@ def sha256_tree(directory):
 
 
 def _rel(path):
-    return os.path.relpath(path, ROOT).replace("\\", "/")
+    """A path relative to the repository, or the path itself when it lives on another drive.
+
+    Card t_b9173f05: this host keeps the tree on D: and pytest's temporary directories on C:, and
+    os.path.relpath raises ValueError across drives instead of returning something odd. That made three
+    tests/test_receipts.py rows fail in the commit gate, where the suite is measured in a copy of the tree
+    under D:\\Temp and the temp files are on C:. The value is only ever printed or written into a receipt's
+    `source`, so the absolute path is the honest answer on another drive and not a failure.
+    """
+    try:
+        return os.path.relpath(path, ROOT).replace("\\", "/")
+    except ValueError:
+        return str(path).replace("\\", "/")
 
 
 def _read_json(path):
@@ -289,11 +300,21 @@ def read_ledger(ledger_path=LEDGER_PATH):
 
 
 def _log(numbers, ledger_path=LEDGER_PATH):
-    """Append one line per number that is not already in the ledger. Returns the ids appended."""
+    """Append one line per number whose receipt is new, or whose source has moved since it was logged.
+
+    Card t_b9173f05, found while a still was being verified against the 2026-11-03 rebake. The id is a
+    hash of (name, label, value, source, locator), so a rebake that keeps every value but rewrites the
+    file keeps every id: the first version of this function skipped such a row, the ledger went on naming
+    the sha256 of the file it no longer hash-matches, and tools\\check_receipts.py failed every verify file
+    that quoted one. The docstring's own promise ("tools\\receipts.py re-issues on the next run by
+    itself") is now what the code does: same id and same sha256 is skipped, same id with a new sha256 is
+    appended, and read_ledger keeps the newest line for an id.
+    """
     existing = read_ledger(ledger_path)
     fresh = []
     for row in numbers:
-        if row["receipt"] in existing:
+        seen = existing.get(row["receipt"])
+        if seen is not None and seen.get("sha256") == row["sha256"]:
             continue
         fresh.append({"id": row["receipt"], "logged_at": _utc_now(), "name": row["name"],
                       "label": row["label"], "value": row["value"], "source": row["source"],
