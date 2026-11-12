@@ -340,6 +340,11 @@ hardware's, and there is no defect to fix.
   count a layer drawn over the sheet as its ground or its body.
 - Two cards for the work this ruling does not draw: the three bust sheets' panel plus the two ui rows,
   and the `ts_exterior` sidecar's stale rule text.
+- The ruling, the ART-BIBLE amendment and the ground crop are committed. The queue edit itself is
+  NOT: `data/` is a consequential class in `manager/guard/suite_config.json`, and the only review
+  artifact root is `projects/arananet/manager/reviews`, so a lane cannot commit its own data change
+  and this card has no second lane to sign it. The queue carries the same numbers as sections 2 to 5
+  of this file and waits on disk for a lane that is not gamedev to commit it.
 
 ## 7. Checks run on this tree, 2026-11-12, and what they returned
 
