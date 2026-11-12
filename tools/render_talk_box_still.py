@@ -9,8 +9,10 @@ Why this exists (card t_b9173f05, the judge panel's fix 2)
     question asked of the pixels that the video would be asked.
 
 What it does, in order, and it stops on the first refusal
-    1. draws the shot with demo_overlay.render (S6 needs --below: its plate and box are stacked under the
-       frame, so the battle's own stage and text boxes stay the game's pixels);
+    1. draws the shot with demo_overlay.render. Card t_892cc851 leaves one shot that draws the box, S5,
+       and its plate sits inside the frame; a row that is not a live answer, or a live row with no
+       verdict receipt in the ledger, is refused here with the fix named (the three Morgan rows are
+       fallback today, so the shipped still is a refusal until Q1's re-bake lands);
     2. measures the result with demo_overlay.check_frame, and writes the still only if every check passes;
     3. writes a verify file beside the still carrying the frame's sha256, every drawn line, the receipt ids
        the box printed, and the frame test's own rows, then labels and logs the Meta numbers the box shows
@@ -52,12 +54,13 @@ def sha256_file(path):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description="draw the TALK box still and measure it")
-    parser.add_argument("--shot", default="S6", help="the shot to draw (default S6, the TALK fight)")
+    parser.add_argument("--shot", default="S5", help="the shot to draw (default S5, the one shot that draws the box)")
     parser.add_argument("--frame", required=True, help="the 768x720 frame to draw on")
     parser.add_argument("--out", help="where the still goes (default output/demo/overlay/<shot>_talk_box.png)")
     parser.add_argument("--verify", help="where the verify file goes (default beside the still)")
-    parser.add_argument("--seconds", type=float, default=135.03,
-                        help="the clock the shot's bake row is drawn at (DEMO-SCRIPT section 4, default 2:15.03)")
+    parser.add_argument("--seconds", type=float, default=84.0,
+                        help="the clock the shot's bake row is drawn at (DEMO-SCRIPT section 4, default 1:24.00)")
+
     args = parser.parse_args(argv)
 
     out = args.out or os.path.join(ROOT, "output", "demo", "overlay", "%s_talk_box.png" % args.shot)

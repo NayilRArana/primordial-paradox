@@ -205,7 +205,9 @@ def test_the_2026_10_26_capture_is_a_fail_with_the_two_blank_times():
     assert report["ok"] is False
     text = " ".join(report["failures"])
     assert "18.4 s" in text and "30.6 s" in text
-    assert "S5" in text and "S6" in text
+    assert "S5" in text, "the failure names the shot whose window the capture never reached"
+    assert "S6" not in text, "S6 draws no bake row any more, so the check must not claim one"
+
 
 
 # --------------------------------------------------------------------------- the nightly row

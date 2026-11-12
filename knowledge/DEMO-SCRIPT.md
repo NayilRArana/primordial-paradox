@@ -1,21 +1,30 @@
 # Demo script: three minutes, six shots, one claim per shot
 
 Card t_c0f33e5d (GAME-ROADMAP-2 child R39), research-assistant, written 2026-10-22 for Primordial Paradox.
+Rewritten 2026-11-12 by research-assistant under card t_ec47a1dd, to the quay only build.
 Scope: this file only. It does not write route data, the recorder or the edit. `knowledge/VIDEO-PLAN.md` (R44) is
-built from this file, and `data/demo/run_001.json` is the input script R44 extends.
+built from this file, and the builder's card t_892cc851 recuts the picture from it.
 
 What it is for: a person opens this file in the recording booth, presses the keys in the order they appear, and
 makes no decision. Every shot names what is on screen, what the player inputs, what the music does, what the caption
 says, and which claim of the write-up that shot is evidence for.
 
 Authority, in the order it was read:
-1. `ROADMAP-2026-10-23.md` section 0 is the route this demo must show; section 3 names this file R39's.
-2. `..\arananet\meta-hackathon\PLAN-WIN-2026-10-22.md` section 1 and `..\arananet\meta-hackathon\kit\ONE-PAGER.md`
+1. `knowledge/DEMO-AUTHORITY-RULING-2026-11-12.md` (commit 005360a8) rules that the build governs what the demo
+   shows and this file governs only its shape: the total length, six shots, one caption and one claim per shot, and
+   the receipts read out of `data/meta_bake.json` at edit time.
+2. `data/slice.json`, and its shipped copy `game/datafiles/slice.json`, is the route: title, crawl, quay, morgan,
+   percy, five steps in that order.
+3. `..\arananet\meta-hackathon\PLAN-WIN-2026-10-22.md` section 1 and `..\arananet\meta-hackathon\kit\ONE-PAGER.md`
    are the claims the shots are evidence for. Quoted phrases below are verbatim from those two files.
-3. `knowledge/mechanics/PACING-AND-CUTSCENES.md` section 9 (the beat sheet, 900 seconds) is the order and the budget
-   of the beats.
-4. `knowledge/DRIVE-SHOT-LIST.md` is the drive: this script takes its shot 3 and no other.
-5. `knowledge/ARRIVAL-CONTENT.md` is the gate, the office, the boarding pass and the map's provenance.
+4. The quay's own data: `data/maps/all.json` (the map `southampton_town_quay`, its triggers, its two actors, its
+   cue), `data/scenes/all.json` (the quay scenes), `data/encounters/all.json` (`morgan_gate`, `percy`),
+   `data/enemies/all.json` (`morgan`, `percy`), `data/dialogue/all.json` (the quay pages and the door pages),
+   `data/meta_bake.json` (the recorded answers), `data/talk_cards.json` (the cards), `data/credits.json` (the roll).
+5. The engine's own numbers: `game/scripts/pp_storm/pp_storm.gml` (the hurricane's clock),
+   `pp_battle_director/pp_battle_director.gml` (the spare gate), `pp_battle_text/pp_battle_text.gml` (the TALK panel,
+   the WILL bar, the effect table), `pp_credits/pp_credits.gml` (the roll's clock), `pp_save/pp_save.gml` (the save
+   panel and the entry autosave).
 6. `specs/19-llm-talk.md` is the bake and the receipt fields; `specs/05`, `07`, `11`, `14` are the inputs and the
    screens this script presses keys into.
 
@@ -23,14 +32,14 @@ Authority, in the order it was read:
 
 ## 1. The six shots at a glance
 
-| Shot | Clock | Seconds | Steps | Route step (ROADMAP section 0) | The claim it proves | What is drawn over the frame |
+| Shot | Clock | Seconds | Steps | Route step (`data/slice.json`) | The claim it proves | What is drawn over the frame |
 | --- | --- | --- | --- | --- | --- | --- |
-| S1 | 0:00.00 to 0:16.00 | 16.00 | 960 | title attract, PRESS START, NEW GAME | "whether it works", and "AI that obeys hardware limits" | one caption |
-| S2 | 0:16.00 to 0:29.00 | 13.00 | 780 | the crawl | "Kronos and Zeus reincarnated on the M3" | one caption |
-| S3 | 0:29.00 to 0:39.03 | 10.03 | 602 | the drive, one shot, with a gantry sign | "an NES-faithful night drive" | one caption |
-| S4 | 0:39.03 to 1:19.03 | 40.00 | 2,400 | arrival at Town Quay, the gate checkpoint and its three option choice | the block is a real street; the gate cannot be failed | one caption |
-| S5 | 1:19.03 to 1:53.03 | 34.00 | 2,040 | the walk to the dock office, the boarding pass, the boarding | "the person judging your line is a Meta model answering inside a NES text box" (Meta shot 1) | caption plus the bake row |
-| S6 | 1:53.03 to 3:00.00 | 66.97 | 4,018 | the first fight, the TALK fight, the ship's log save, the game over | "One is won with a single command. The other is won by talking", and the bake on a dead network (Meta shot 2, the offline shot) | caption plus three bake rows plus the network line |
+| S1 | 0:00.00 to 0:16.00 | 16.00 | 960 | `title` | "whether it works", and "AI that obeys hardware limits" | one caption |
+| S2 | 0:16.00 to 0:29.00 | 13.00 | 780 | `crawl` | "Kronos and Zeus reincarnated on the M3" | one caption |
+| S3 | 0:29.00 to 0:39.00 | 10.00 | 600 | `quay` | the hurricane, and the block it lands on | one caption |
+| S4 | 0:39.00 to 1:18.00 | 39.00 | 2,340 | `quay`, then `morgan` | the wind is the only gate, and Morgan offers three answers | one caption |
+| S5 | 1:18.00 to 1:50.00 | 32.00 | 1,920 | `morgan` | "the person judging your line is a Meta model answering inside a NES text box", and the quay's own saves | one caption, three bake receipts, the network line |
+| S6 | 1:50.00 to 3:00.00 | 70.00 | 4,200 | `percy` | "the other is won by talking", and the one ending the game now has | one caption |
 
 Total: 180.00 s, 10,800 steps.
 
@@ -40,19 +49,23 @@ Total: 180.00 s, 10,800 steps.
 
 - The unit is the step, 60 to a second, the game's own step event (spec 05, spec 07). 180.00 s is 10,800 steps, and
   every row below carries its absolute step so the booth sheet in section 7 can be typed without arithmetic.
-- 180 is the middle of the card's 170 to 190 band, so both fallbacks in the last paragraph stay inside it.
-- Five of the six shots are round numbers of seconds. S3 is 602 steps (10.03 s) because that is the drive list's own
-  number for its shot 3 (7 bars of 86, `knowledge/DRIVE-SHOT-LIST.md` section 2). Nothing else inherits an odd
-  length, so S6 absorbs the 0.03 and ends at 66.97 s, not 67.
-- The demo's own cuts are on seconds, not on the waltz's bar. The bar is the drive's rule (DRIVE-SHOT-LIST section 1)
-  and it stays the drive's rule; this script does not add a second place where a bar length is decided, because
-  `data/title_timing.json` and the drive list currently disagree about that length (Q4).
-- Fallbacks, all designed, all inside the band:
-  1. If R21 (the drive scene) has not landed, S3 is the intro's own night drive, which is 240 steps (4.00 s) today
-     (`data/demo/run_001.json`, event e08). The total becomes 173.97 s.
-  2. If R27 GAME-OVER has landed no forced defeat trigger, cut S6.4 (9.00 s). The total becomes 171.00 s.
-  3. If both are missing at once, hold the crawl (beat sheet beats 4 to 6, 25 s) and the yard walk (beat 21, 28 s) at
-     their sheet lengths instead of the trimmed ones below. The total returns to about 174 s with no new shot.
+- 180 is the middle of the card's 170 to 190 band, and the six lengths are 16, 13, 10, 39, 32 and 70.
+- S3 is 600 steps and not the 602 an old cut carried. 602 was the drive's arithmetic on a retired 86 step snap;
+  `knowledge/DRIVE-SHOT-LIST.md` section 1 puts every count on the exact 85.714 grid, where seven bars is 600.0. The
+  drive is not in the build anyway, so the shot earns its length from the storm: `pp_storm.gml` draws one flash every
+  210 to 540 steps (`PP_STORM_WAIT_MIN`, `PP_STORM_WAIT_MAX`) and a flash is 8 steps (`PP_STORM_FLASH_STEPS`), so the
+  longest a single flash can be away is 548 steps, and 600 always contains one. The 0.03 s the old snap left behind
+  is gone: no shot carries an odd length any more.
+- S5's three receipts sit at the clock the old cut measured against, 83.40 s for the first one, because that is the
+  second the first reply is whole and held. The two receipts after it are at the seconds their own replies land,
+  listed in section 4.
+- Fallbacks, all designed, all inside the band, and none of them changes the total:
+  1. If the re-bake in Q1 has not landed, S5 draws its caption and its box and no plate. The shot still times to
+     32.00 s and the total is still 180.00.
+  2. If the credits roll grows past the 2,520 steps the spare cut allows, S6's last frame lands inside the roll
+     rather than on its closing card. The total is still 180.00; the ending is what moves.
+  3. If Percy's spare is refused, the fight ends on the kill path: `quay_percy_kill` and the `kill` credits, which
+     are 24 steps shorter than the spare ones (2,551 against 2,575), so S6 still fits 70.00 s.
 
 ---
 
@@ -62,9 +75,11 @@ Total: 180.00 s, 10,800 steps.
 
 Screen: the attract loop of `rm_pp_title`, seven night layers, the car, the storm cloud, the logo.
 Input: none until 0:11.80, then Enter twice.
-Music: `title_theme`, the A minor waltz at 126 bpm in 3/4, one pass is 52 bars. It starts on step 0 and runs under
-the whole shot. The menu press adds the two interface sounds (`menu_move`, then `menu_select`).
-Caption, verbatim: `Cold boot to menu in 14 seconds. CONTINUE is dim because there is no save yet.`
+Music: `title_theme` (PP-01, Title Theme), the A minor waltz at 126 bpm in 3/4, one pass is 52 bars. It starts on
+step 0 and runs under the whole shot. The menu press adds the two interface sounds (`menu_move`, then
+`menu_select`).
+Caption, verbatim: `Cold boot to menu takes 14 seconds. CONTINUE is dim, because nothing is saved yet.`
+Caption runs 0:01.00 to 0:14.20.
 Claim: "Whether it works is the floor" (PLAN-WIN section 1), proved by roadmap checks 1 and 2, a cold start with no
 console window and a menu that opens; and "AI that obeys hardware limits", proved by the frame itself, one 256 by
 240 screen, at most 16 colours from `data/palette.json`, a 2 frame palette swap instead of a filter (spec 13,
@@ -75,18 +90,19 @@ console window and a menu that opens; and "AI that obeys hardware limits", prove
 | 0:00.00 | 0 | attract: sky, moon, the two star layers, the storm cloud over the car, the logo; road dashes one per beat, car bob 1 pixel per beat | none | `title_theme` starts |
 | 0:05.80 | 348 | the logo's gold shimmer pass (every 4 bars, 24 step pass) | none | `title_theme` |
 | 0:11.60 | 696 | the lightning: the whole screen swaps to the flash palette for 2 frames, then back | none | `title_theme` |
-| 0:11.80 | 708 | the logo, its line PRESS Z OR ENTER blinking one blink every 29 steps | Enter (the title's own confirm, `data/demo/run_001.json` event e02 uses the same key) | `menu_select` |
-| 0:12.10 | 726 | the menu: NEW GAME, CONTINUE, SETTINGS, QUIT; the cursor sits on NEW GAME; CONTINUE is drawn in the second ink because `pp_save_01.json` does not exist | none | `menu_move` |
+| 0:11.80 | 708 | the logo, its line PRESS Z OR ENTER blinking one blink every 29 steps | Enter (the title's own confirm) | `menu_select` |
+| 0:12.10 | 726 | the menu: NEW GAME, CONTINUE, SETTINGS, QUIT; the cursor sits on NEW GAME; CONTINUE is drawn in the second ink because `pp_save_01.json` does not exist yet | none | `menu_move` |
 | 0:14.20 | 852 | NEW GAME chosen | Enter | `menu_select` |
 | 0:14.40 | 864 | 12 step fade, then the star field of the crawl machine, 24 stars from `data/intro_stars.json`, twinkling on the bar | none | `title_theme` continues |
 
 ### S2, the crawl, 0:16.00 to 0:29.00 (780 steps)
 
-Screen: the crawl, 6 beats and 14 rows, from `data/intro_text.json`, drawn over the star field.
+Screen: the crawl, 6 beats and 16 rows, from `data/intro_text.json`, drawn over the star field.
 Input: confirm held from 0:22.00 to 0:27.00, then released; no other key.
 Music: the same cue, `title_theme`, ducked under the words (spec 14 addendum), with the text blip every 3 characters
 (`data/title_timing.json` `text.blip_every_chars`).
-Caption, verbatim: `The crawl is 1,238 steps on the engine. A held confirm reads it faster and never skips a page.`
+Caption, verbatim: `The crawl runs 1,238 steps. Hold confirm to read it faster; no page is skipped.`
+Caption runs 0:16.60 to 0:27.00.
 Claim: "Kronos and Zeus reincarnated on the M3" (PLAN-WIN section 1), which is beats 2 and 3 of the crawl in the
 game's own words; and the skip rule, that a held confirm speeds the reveal and a double tap cannot skip the story
 (spec 14 addendum, recipe PAC-05).
@@ -100,209 +116,268 @@ game's own words; and the skip rule, that a held confirm speeds the reveal and a
 | 0:28.00 | 1,680 | the last beat whole, then its 60 step hold | none | as above |
 | 0:28.80 | 1,728 | 12 step fade out | none | `title_theme` carries the fade |
 
-### S3, the drive, one shot, 0:29.00 to 0:39.03 (602 steps)
+### S3, the hurricane on Town Quay, 0:29.00 to 0:39.00 (600 steps)
 
-Screen: shot 3 of the twelve in `knowledge/DRIVE-SHOT-LIST.md`, the verge, the gantry sign frame 1 reading
-SOUTHAMPTON 55, the cone, the 512 pixel layers at their fixed scroll speeds.
-Input: confirm once at 0:35.00, which closes the one caption.
-Music: `title_theme` plus `car_engine_loop` from the fade in, plus text blips while the caption types, which is the
-cue column of shot 3 in the drive list.
-Caption, verbatim: `One of the twelve drive shots: the sign counts down, and the cut lands on a bar of the waltz.`
-Claim: "an NES-faithful night drive" (PLAN-WIN section 1), proved by one of the twelve shots at its own length, a
-road sign as the film's only counting device, seven parallax layers at the speeds the title contract fixes
-(`TITLE-COORD.md`), and a hard cut on the music's bar line.
-
-| t | step | On screen | Input | Music and sound |
-| --- | --- | --- | --- | --- |
-| 0:29.00 | 1,740 | 12 step fade in; camera moves 24 steps; the gantry and the sign frame 1 come up | none | `title_theme`, `car_engine_loop` |
-| 0:29.40 | 1,764 | the caption `drive_sign_55` opens and types at 2 steps a character; the sign's own face reads SOUTHAMPTON 55 | none | blips, engine |
-| 0:35.00 | 2,100 | the caption closes; the verge holds, the camera drifts, the engine keeps time | confirm | engine, theme |
-| 0:39.03 | 2,342 | hard cut on the bar, out of the drive and into the quay | none | cut |
-
-The caption's wording belongs to whoever authors `drive_sign_55`; the drive list names the id and says in section 10
-that it does not exist yet. This script needs only that the caption exists and names the sign's own number.
-
-### S4, arrival, the gate checkpoint and the three option choice, 0:39.03 to 1:19.03 (2,400 steps)
-
-Screen: the Town Quay block, the barrier arm on Town Quay at row 9, the hut with one lit window, Morgan at (8,9),
-then the yard walk past Canute's Palace and the Watergate Ruin.
-Input: confirm repeatedly, one Down press at 0:54.23 to move the choice cursor from `No pass.` to `Crew list.`, one
-confirm to take it, then walking keys.
-Music: the quay map's own cue from `data/maps/all.json` `music`, which this script expects to be PP-03 Harbor and
-does not decide; it does not change inside the shot, because a cue changes only on a cut or a fade (pacing 4.4).
-Caption, verbatim: `The gate cannot be failed. Three replies, three flags, and every one of them lifts the barrier.`
-Claim: the block is a real street, 8 door names and 4 people read out of the project's own OpenStreetMap extract
-(ARRIVAL-CONTENT sections 3 and 4), and the checkpoint is a choice with no failure state, three labels, three flags,
-one barrier (ARRIVAL-CONTENT section 6).
+Screen: `southampton_town_quay`, the map the route names, entered at its `start` spawn (24,1), in the map's own
+`quay_night` palette. The route's scene is `quay_arrival`, whose whole command list is one `end`: the arrival is the
+map itself, and `pp_storm.gml` draws the hurricane over it because this is the map `PP_STORM_ROOM` names. The storm
+owns one private seeded stream (seed 20261103), so the same steps always draw the same lightning: a flash is 3 steps
+of near white, 2 of the white dither, 3 of the ink dither (`PP_STORM_FLASH_STEPS` 8), and the thunder follows 14
+steps later (`PP_STORM_THUNDER_LAG`).
+Input: held walk south, one confirm at the Red Funnel door row.
+Music: the map's own `music` field, PP-03, Harbor Storm (`data/maps/all.json`, `data/audio.json`). It does not
+change inside the shot.
+Caption, verbatim: `Town Quay in the hurricane. The storm runs on its own seeded clock, 8 step flashes over a real Southampton block.`
+Caption runs 0:29.40 to 0:35.00.
+Claim: the block is a real street. The tile plan is built from the project's own OpenStreetMap extract
+(`data/maps/southampton_sample.json`, ARRIVAL-CONTENT sections 3 and 4), and the shopfronts on it carry the town's
+own names in their own pages: the Red Funnel door says its ferries are not your ship (`say_door_red_funnel`,
+`data/dialogue/all.json`). And the weather is the game's, not the film's: one flash of 8 steps on a private seeded
+stream, and the thunder 14 steps behind it, with no particle system and no alpha blend.
 
 | t | step | On screen | Input | Music and sound |
 | --- | --- | --- | --- | --- |
-| 0:39.03 | 2,342 | the quay: road tiles, the barrier, the hut, the lamp, one grey hull past the yard | none | the map's cue |
-| 0:42.03 | 2,522 | `quay_gate_checkpoint` page 1: rain on the barrier arm, a hut, one lit window, the man stands up | confirm held 60 steps, 3x | blips |
-| 0:44.03 | 2,642 | page 2, Morgan: That is far enough. Name and business. He holds a clipboard | confirm to close | blips |
-| 0:48.03 | 2,882 | page 3: past him the yard is dark, past that a grey hull, one lamp on the water | confirm held 60 steps, then close | blips |
-| 0:50.03 | 3,002 | page 4, Morgan: No pass, no gate. So. What is it? He waits, pen ready | confirm to close | blips |
-| 0:54.03 | 3,242 | the choice panel, 96 pixels wide, three labels: No pass. Crew list. Ask him. | Down once at 0:54.23, cursor on Crew list. | `menu_move` |
-| 0:57.03 | 3,422 | Crew list. taken | confirm | `menu_select` |
-| 0:57.20 | 3,432 | `quay_gate_bluff` page 1: The list is full. Office, then. Sign. He does not look down | confirm to close | blips |
-| 1:02.23 | 3,734 | page 2, narrator: He does not look down | confirm to close | blips |
-| 1:04.23 | 3,854 | the barrier lifts itself; `gate_passed` and `gate_bluff` are set; the yard is walkable | none | the map's cue continues |
-| 1:08.23 | 4,094 | the yard walk: Canute's Palace, the Watergate Ruin, St Julians Chapel to the east, the office frontage south west | walking keys, held | footsteps |
-| 1:19.03 | 4,742 | hard cut at the office door | none | cut |
+| 0:29.00 | 1,740 | 12 step fade in from the crawl's fade out; the quay at (24,1); the storm clock at 0 | none | PP-03 starts on the cut |
+| 0:29.40 | 1,764 | the walk south begins, two pixels a step, so a tile is 8 steps | hold the walk key | PP-03 |
+| 0:32.00 | 1,920 | the player stops at the Red Funnel door row (y 16, x 22 to 24) and faces it | confirm | PP-03 |
+| 0:32.20 | 1,932 | `say_door_red_funnel`, one page: Ferries. Not your ship. / Yours has worse snacks. | none | text blips |
+| 0:33.20 | 1,992 | the page closes | confirm | PP-03 |
+| 0:33.40 | 2,004 | the walk south again, down the middle of the street | hold the walk key | PP-03 |
+| 0:35.00 | 2,100 | a flash: 3 steps near white, 2 of the white dither, 3 of the ink dither, and `thunder_soft` 14 steps after it. The first flash lands somewhere in steps 210 to 540 of the entry, and 600 holds at least one whatever the seed draws | none | `thunder_soft` |
+| 0:37.00 | 2,220 | the walk continues; the bridge mouth and the water at row 32 come into frame | hold the walk key | PP-03 |
+| 0:39.00 | 2,340 | cut: the hero is at y 30, two tiles short of the bridge | none | cut |
 
-The three labels and the branch pages are already in `data/dialogue/all.json` as `quay_gate_truth`,
-`quay_gate_bluff` and `quay_gate_authority`; the four page scene `quay_gate_checkpoint` with its `choices` block is
-not in that file yet and is R22 DIALOGUE-V2's to land (data route table, section 6).
+### S4, the wind, and Morgan's three answers, 0:39.00 to 1:18.00 (2,340 steps)
 
-### S5, the office, the boarding pass and the boarding, 1:19.03 to 1:53.03 (2,040 steps)
-
-Screen: `quay_dock_office`, a counter, a lamp, a ledger, Nye and the Navy sailor; then the quay south, the gangway,
-and the deck of `ship_small`.
-Input: confirm on the door, six page presses or holds, confirm on the log note, then walking keys.
-Music: the office map's cue, then on the boarding fade the cue changes to `PP-05` Small Ship, which is the `music`
-line of the `ship_boarding` scene in `data/scenes/all.json`, with `ship_ambient` under it (`data/audio.json`).
-A cue change on a fade is legal (pacing 4.4); a change inside the office would not be.
-Caption, verbatim: `The pass is one page and one flag. The clerk's line is a bake row, and here is the row.`
-Claim: "the person judging your line is a Meta model answering inside a NES text box" (ONE-PAGER), proved on this
-shot by Nye's page and its `data/meta_bake.json` row on screen, in a box whose four lines are 28 columns plus the
-2 character narration marker, exactly spec 05's 30 (spec 19 section 5); and the boarding pass, which is one flag and
-one page, not an inventory item (ARRIVAL-CONTENT section 4.2).
-
-| t | step | On screen | Input | Music and sound |
-| --- | --- | --- | --- | --- |
-| 1:19.03 | 4,742 | the office door at (18,25); `map` trigger opens `quay_dock_office`, spawn `from_quay` | confirm on the door | door, then the office cue |
-| 1:21.03 | 4,862 | page 1: a counter, a lamp, a ledger, two men, one is Navy | confirm held 60 steps, then close | blips |
-| 1:23.03 | 4,982 | page 2, Nye: You are the last one. Name, then. Slowly. The pen is already wet | confirm to close at 1:27.53 | blips; the bake row overlay runs 1:23.4 to 1:27.4 |
-| 1:27.53 | 5,252 | page 3: one line left in the ledger, the ink on it is dry, it is not the clerk's hand | confirm held 60 steps, then close | blips |
-| 1:29.53 | 5,372 | page 4, Nye: Berth nine. Deck two. Do not leave the cabin | confirm held, then close | blips |
-| 1:31.53 | 5,492 | page 5, the sailor: Sign it and come on. I have a ladder to hold | confirm held, then close | blips |
-| 1:33.53 | 5,612 | page 6: the slip changes hands, it is warm from a pocket, behind them the gate shut; `has_boarding_pass` set | confirm to close at 1:36.53 | blips |
-| 1:36.53 | 5,792 | back on the quay, south past the Red Jet ticket office toward the pier | walking keys | the office cue, footsteps |
-| 1:42.53 | 6,152 | the gangway; the `ship_boarding` scene opens on `ship_small` | none | cue changes to PP-05 on the fade |
-| 1:47.03 | 6,422 | `ship_gangway`: the horn shakes the deck, salt, rope and wet paint, a wardroom hatch shut; then the hero walks three tiles up, `ship_deck_seen` is set | confirm to close, then walking keys | PP-05, `ship_ambient` |
-| 1:53.03 | 6,782 | the deck, the hatch, the door east | none | PP-05 |
-
-### S6, the two fights, the save and the game over, 1:53.03 to 3:00.00 (4,018 steps)
-
-Sub-shots, because the fallbacks in section 2 name them: S6.1 the hound, 1:53.03 to 2:10.03 (1,020 steps); S6.2 the
-TALK fight, 2:10.03 to 2:40.03 (1,800 steps); S6.3 the ship's log save, 2:40.03 to 2:51.00 (658 steps); S6.4 the game
-over and CONTINUE, 2:51.00 to 3:00.00 (540 steps).
-
-Screen: the deck, the encounter flash, the battle frame, the five entry menu, the box, the HUD, then the cabin, the
-ship's log, the Saving panel, the defeat, the game over screen, the title menu with CONTINUE lit, the loaded room.
-Input: FIGHT once, TALK three times through three context options, SPARE once, confirm through the save, then the
-defeat trigger R27 owns, then CONTINUE.
-Music: `PP-04` Navy Sailors for both encounters (the `music` field of both encounter rows in
-`data/encounters/all.json`), `PP-05` back on the deck and in the cabin, the save chime once (spec 11 acceptance 5),
-and `game_over` once at the defeat (`assets/audio/sfx/game_over.ogg`, 1.4 s, ear gate row 7), after which the music
-stops until the load restores the save's own `music` key (spec 11 keys).
-Caption, verbatim: `FIGHT once ends the hound. Three TALK options reach MERCY 60 and SPARE. Then a save, and a defeat.`
-Claim: "One is won with a single command. The other is won by talking" (ONE-PAGER), proved by two fights in one
-take, the hound's 2 hp against a FIGHT that cannot roll under 2 (spec 07 damage 2 to 12, `data/enemies/all.json`),
-and the sailor's `mercy_per_option` 20 against `mercy_to_spare` 60, which three context options reach exactly
-`specs/19-llm-talk.md` section 11; and the save, proved by CONTINUE changing from the second ink in S1 to the first
-ink here, and by the loaded room.
+Screen: the bridge at row 32 of the quay, shut by the wind; then the street north west, the tower at (5,30), and
+Captain Morgan at (6,9) with his clipboard. Then `quay_morgan_encounter`: a face, `thunder_soft`, a 2 step flash,
+three pages of `quay_morgan_pre`, `quay_morgan_intro`, and the battle `morgan_gate` on its own `quay_town`
+background. The TALK panel opens with three authored answers and, under them, SAY IT YOURSELF.
+Input: held walk; confirm at the tower save; confirm on Morgan; confirm through four pages; Down to TALK and confirm;
+four cursor moves; the shot ends with the cursor on the first answer.
+Music: PP-03 on the map, which stops on the encounter's own `music` field, PP-04, Navy Sailors. A cue change on a
+scene start is legal (pacing 4.4).
+Caption, verbatim: `Morgan asks three things and two answers are enough. No reply can lose the talk, and the wind drops when he does.`
+Caption runs 0:39.60 to 0:45.00.
+Claim: the wind is the only gate the quay has, and Morgan is its key. Three tiles of `quay_bridge_wind` at (22 to
+24, 32) fire on touch under the condition `!morgan_resolved`, the page says why (The wind shoves you back. / The
+bridge is not for you. / Not while Morgan rages.), and the scene moves the hero back up two tiles; the bridge opens
+for both outcomes, because `morgan_resolved` is in the encounter's `flags_on_kill` and its `flags_on_spare`
+alike (`data/encounters/all.json`). `tests/test_quay_flow.py` pins that the hero cannot reach Percy without it. And
+the choice cannot be failed: `morgan_gate` draws three answers plus SAY IT YOURSELF (`talk_morgan`,
+`data/dialogue/all.json`), and each answer earns WILL on the encounter's own `talk_mercy` table, soften 50, nudge
+35, setback 20, so even the worst of the three is +20 and none of them ends the fight. Two TALK turns are enough to
+open SPARE: `trust_per_talk` is 2 and `trust_to_spare` is 3, and the spare gate is `pp_battle_spare_allowed`
+(`pp_battle_director.gml`).
 
 | t | step | On screen | Input | Music and sound |
 | --- | --- | --- | --- | --- |
-| 1:53.03 | 6,782 | the hound by the rope: Something moves by the rope, a hound on the deck, it is thin, FIGHT ends this in one blow | confirm to close the intro | PP-04 |
-| 1:57.03 | 7,022 | the battle frame, the menu, cursor on FIGHT | confirm, the timed bar sweeps 0 to 100 in 60 steps | `hit` |
-| 1:57.53 | 7,052 | the bar stops at about 66; damage is at least 2 against 2 hp, so this turn ends the fight | confirm at step 40 of the sweep | `hit`, then the victory beat |
-| 1:58.03 | 7,082 | `hound_win_kill`: One blow. The hound is still. You step over the rope | confirm to close | PP-04 |
-| 2:01.03 | 7,262 | 30 step victory beat, back to the deck, `PP-05`, then the walk to the deck watch trigger at (4,7) | walking keys | PP-05 |
-| 2:10.03 | 7,802 | the deck watch trigger at (4,7); `battle_intro_sailors`: a Navy Sailor squares up, TALK can calm this, FIGHT can end it faster | confirm to close | PP-04 |
-| 2:13.03 | 7,982 | the menu, cursor on FIGHT; move to TALK and open it | Down, then confirm | `menu_move`, `menu_select` |
-| 2:14.03 | 8,042 | the TALK panel: three context options, in the encounter's own order | confirm on option 1 | blips |
-| 2:15.03 | 8,102 | turn 1 reply (a bake row); MERCY 0 to 20 | confirm to close | blips |
-| 2:17.03 | 8,222 | enemy turn 1, then the menu | none | `hit` or the pattern's own cue |
-| 2:18.53 | 8,312 | option 2; turn 2 reply (a second bake row); MERCY 20 to 40 | confirm twice | blips |
-| 2:22.03 | 8,522 | enemy turn 2, then the menu | none | as above |
-| 2:23.53 | 8,612 | option 3; turn 3 reply (a third bake row); MERCY 40 to 60, so SPARE turns to the first ink and the ready beat plays once | confirm twice | the ready spark, then blips |
-| 2:28.03 | 8,882 | SPARE taken, the peaceful end; `navy_win_spare` opens | confirm | PP-04, then PP-05 |
-| 2:31.53 | 9,092 | `navy_win_spare` text: He steps aside. His eyes stay on the sea. Bridge is that way. | confirm to close | PP-04, then PP-05 |
-| 2:34.40 | 9,264 | the win text still typing; the dead network overlay runs 2:34.40 to 2:38.40 (section 5) | none | PP-05 |
-| 2:38.43 | 9,506 | back on the deck; `ship_door_open` set, which is what opens the cabin door at (18,7) | walking keys | PP-05 |
-| 2:40.03 | 9,602 | S6.3 begins: the hatch and the cabin door | walking keys, then confirm | door |
-| 2:42.53 | 9,752 | `ship_cabin`; the ship's log | confirm | PP-05 |
-| 2:44.53 | 9,872 | the log's page, then the Saving panel: the chime once, `pp_save_01.json` written, the panel stays at least 20 steps (spec 11 numbers) | confirm, then confirm | chime |
-| 2:48.03 | 10,082 | the cabin, the log, the save line | none | PP-05 |
-| 2:51.00 | 10,260 | S6.4 begins: the forced defeat, the trigger R27 GAME-OVER exposes, 30 step defeat band (spec 07 turn flow) | the defeat key or the defeat hook R27 lands | `game_over` |
-| 2:51.50 | 10,290 | `battle_lose`: The deck rises to meet you. Your last save still stands | confirm to close | silence |
-| 2:53.50 | 10,410 | the game over screen | none | `game_over` plays once, 1.4 s, then silence |
-| 2:55.50 | 10,530 | the title menu: CONTINUE is now in the first ink, with the plain line that says where the player is (spec 11 goal) | confirm on CONTINUE | `menu_select` |
-| 2:57.00 | 10,620 | the load: the fade, then the cabin at the save point, which is where spec 11 rule 5 always lands | none | the save's own `music` key resumes |
-| 3:00.00 | 10,800 | last frame: the cabin, the log, PP-05 | none | end |
+| 0:39.00 | 2,340 | the wind page is closed; the hero at y 30, the bridge behind him | confirm closes it | PP-03 |
+| 0:39.40 | 2,364 | the feet enter (23,32): `quay_bridge_wind` fires on touch, `!morgan_resolved` is true | none | the page's blips |
+| 0:39.60 | 2,376 | the page: The wind shoves you back. / The bridge is not for you. / Not while Morgan rages. | none | PP-03 under the box |
+| 0:41.40 | 2,484 | the page closes; the scene moves the hero up two tiles | confirm | PP-03 |
+| 0:42.00 | 2,520 | the walk west and north; the quay's building rows, the shopfront doors | hold the walk key | PP-03 |
+| 0:45.00 | 2,700 | the tower at (5,30), the quay's second save point, on the way | none | PP-03 |
+| 0:46.00 | 2,760 | confirm at the tower save: the Saving panel, the chime once, `pp_save_01.json` written; the panel holds while the write lands | confirm, then confirm | `chime` |
+| 0:48.00 | 2,880 | the walk north to Morgan's corner; he stands at (6,9) facing right | hold the walk key | PP-03 |
+| 0:51.00 | 3,060 | confirm on Morgan: he faces left, `thunder_soft`, the 2 step flash | confirm | `thunder_soft` |
+| 0:51.30 | 3,078 | `quay_morgan_pre` page 1: Rain walks sideways here. / Captain Morgan waits, / clipboard bone dry. | none | blips |
+| 0:53.50 | 3,210 | page 2, Morgan: Name. Business. STORM. / His eyes are all cloud. / The pen crackles. | confirm to close page 1 | blips |
+| 0:56.50 | 3,390 | page 3: The storm is wearing him. / Free him, somehow. | confirm to close page 2 | blips |
+| 0:59.00 | 3,540 | `quay_morgan_intro`: Captain Morgan salutes. / Thunder salutes back. / Talk him round, or fight. Then the battle frame, the HUD, the menu | confirm to close page 3, then confirm the intro | PP-04 from the encounter's `music` |
+| 1:02.00 | 3,720 | the battle menu: the cursor on FIGHT; Down to TALK and confirm | Down, confirm | `menu_move`, `menu_select` |
+| 1:03.00 | 3,780 | the TALK panel: three authored answers, `May I see the form?`, `Lovely handwriting.`, `The captain is coming!`, and SAY IT YOURSELF under them; WILL 0/100; the hint HEAR HIM OUT: 3 MORE TALKS | none | blips |
+| 1:06.00 | 3,960 | the cursor reads the three answers once, and comes back to the first | Down, Down, Down, Up, Up, Up | `menu_move` per move |
+| 1:10.00 | 4,200 | the panel is held: four entries, WILL 0/100, the hint under the box | none | PP-04 |
+| 1:18.00 | 4,680 | cut, with the cursor on `May I see the form?` | none | cut |
+
+The three answers and the pages are in the tree today: `talk_morgan`, `quay_morgan_pre` and `quay_morgan_intro` in
+`data/dialogue/all.json`, the panel's arithmetic in `data/encounters/all.json` under `morgan_gate`, and the fight's
+own rows in `data/meta_bake.json` at `fight/morgan/1` to `fight/morgan/3`.
+
+### S5, the three replies, the spare, and the quay's own save, 1:18.00 to 1:50.00 (1,920 steps)
+
+Screen: the same battle. Three TALK turns: the box types a reply from `data/meta_bake.json`, the WILL bar climbs,
+the enemy takes its turn, and the panel comes back. Then SPARE in the first ink, `quay_morgan_win_spare`, the map,
+and the two pages of `quay_morgan_after_spare` (Where did my cap go? / Go. Percy is worse. then The wind sulks
+south. / The bridge is calling.). Then the walk south past the open bridge and the pier save at (23,35).
+Input: confirm on each answer, confirm to close each reply, one SPARE, two page presses, held walk, confirm at the
+pier save.
+Music: PP-04 under the fight; PP-05 is not used on this route; the map's PP-03 returns when the scene ends, which is
+the cue change a scene end allows (pacing 4.4); `save_jingle` and `chime` at the save (spec 11 acceptance 5).
+Caption, verbatim: `Three replies, each a row of data/meta_bake.json, and a WILL bar that only goes up.`
+Caption runs 1:19.60 to 1:23.30.
+Claim: "the person judging your line is a Meta model answering inside a NES text box" (ONE-PAGER), carried by the
+three rows and the plate, not by the picture alone. The box is spec 05's 240 by 64 window, the reply is the row's
+`text` drawn two lines at a time behind the `* ` narration marker, so 28 columns plus 2 is spec 05's 30 (spec 19
+section 5). The plate prints the row's own fields: the model on the first reply, then the request hash on replies
+two and three (section 4). The arithmetic is the encounter's: WILL 0 to 50 to 85 to 100 on `soften` 50, `nudge` 35
+and `setback` 20, clamped to 0 and 100 by `pp_talk_apply`, and three turns is one more than the spare gate needs.
+The save is the quay's own: `quay_rest_pier` at (23,35), a `save` trigger in `data/maps/all.json`, written by the
+same `pp_save.gml` the title reads at boot.
+
+| t | step | On screen | Input | Music and sound |
+| --- | --- | --- | --- | --- |
+| 1:18.00 | 4,680 | confirm on `May I see the form?`; the box clears; reply 1 types | confirm | `menu_select`, blips |
+| 1:20.00 | 4,800 | reply 1 is whole and held: FORM FIRST. THEN WE TALK. WILL 0 to 50 | none | PP-04 |
+| 1:23.40 to 1:27.40 | 5,004 to 5,244 | the bake plate for row `fight/morgan/1`: BAKE MODEL muse-spark-1.3, MODE replay, the row's ROW and SOURCE line, and HASH | none | PP-04 |
+| 1:27.40 | 5,244 | confirm closes the reply; the enemy turn, `officer_stamp` or `officer_clipboard` | confirm | `hit` or the pattern's own cue |
+| 1:29.00 | 5,340 | the menu; TALK; the panel; confirm on `Lovely handwriting.` | Down, confirm, Down, confirm | `menu_move`, `menu_select` |
+| 1:29.40 | 5,364 | reply 2 types: STATE YOUR BUSINESS. WILL 50 to 85 | none | blips |
+| 1:31.00 to 1:35.00 | 5,460 to 5,700 | the plate for row `fight/morgan/2`: HASH alone, which is a different hash from the first | none | PP-04 |
+| 1:35.00 | 5,700 | confirm; the enemy turn | confirm | the pattern's cue |
+| 1:36.40 | 5,784 | TALK; the panel; confirm on `The captain is coming.` | Down, confirm, Down, confirm | `menu_move`, `menu_select` |
+| 1:37.00 | 5,820 | reply 3 types: YOU WILL NOT SKIP THIS. WILL 85 to 100 | none | blips |
+| 1:38.00 to 1:41.00 | 5,880 to 6,060 | the plate for row 3, `fight/morgan/3`: HASH alone, a third value | none | PP-04 |
+| 1:41.00 | 6,060 | confirm; the enemy turn; the SPARE entry turns to the first ink, because trust 4 is at or past `trust_to_spare` 3, and the hint reads HE HAS HAD HIS SAY. SPARE. | confirm | the ready spark |
+| 1:42.40 | 6,144 | SPARE taken: `quay_morgan_win_spare`, The cloud leaves his eyes. / Was I shouting? Sorry. / He puts the pen away. | confirm | PP-04, then PP-03 |
+| 1:44.00 | 6,240 | back on the quay: `quay_morgan_after_spare` page 1, then page 2 | confirm twice | PP-03 |
+| 1:46.00 | 6,360 | the walk south; the bridge tiles do not fire, because `morgan_resolved` is set | hold the walk key | PP-03 |
+| 1:47.00 | 6,420 | the pier at (23,35), `quay_rest_pier`: the Saving panel, the chime once, `pp_save_01.json` written | confirm, then confirm | `chime` |
+| 1:41.00 to 1:44.00 | 6,060 to 6,240 | a window over the table above, not a step: the network line runs there, over the three receipts just shown (section 5) | none | PP-04 |
+| 1:50.00 | 6,600 | cut to Percy, two tiles south east | none | cut |
+
+### S6, Percy, and the one ending the game has, 1:50.00 to 3:00.00 (4,200 steps)
+
+Sub-shots, because the fallbacks in section 2 name them: S6.1 the pages and the encounter, 1:50.00 to 1:59.00 (540
+steps); S6.2 the fight, 1:59.00 to 2:14.30 (918 steps); S6.3 the spare and the pages, 2:14.30 to 2:18.00 (222
+steps); S6.4 the credits, 2:18.00 to 3:00.00 (2,520 steps). 540, 918, 222 and 2,520 make the shot's 4,200.
+
+Screen: the pier. Percy at (23,37), `quay_percy_encounter`: a face, `thunder_soft`, the flash, three pages of
+`quay_percy_pre`, `quay_percy_intro`, and the battle `percy` on its own background, 40 hp, two phases. Then the
+spare, `quay_percy_win_spare`, `quay_percy_spare` (the party joins, `save_jingle`), and the credits roll from
+`data/credits.json`, variant `spare`, which ends on THE STORM IS OVER and THANK YOU FOR PLAYING.
+Input: confirm through four pages before the fight and three after it, FIGHT twice, TALK twice, SPARE once; then no
+input until the cut.
+Music: PP-06, Percy, Possessed, the encounter's own `music` field; `save_jingle` when the flag is set; PP-15b, Mercy,
+the spare variant's own cue (`data/credits.json` `roll.variants.spare.music_cue`), not PP-15a, Entropy, which is the
+kill variant's.
+Caption, verbatim: `Percy is talked down, the storm ends, the credits name the Meta models; play the build offline from the repo.`
+Caption runs 1:53.03 to 1:57.00.
+Claim: "the other is won by talking" (ONE-PAGER), and the ending the game now has. Percy can be spared without a
+killing blow: `trust_per_talk` 2 against `trust_to_spare` 3 means two TALK turns open SPARE, and the route is not
+`genocide`, which is the only thing that would refuse it (`spare_refuses_on_route` in `data/encounters/all.json`).
+The fight is worth showing for its shape: 40 hp, a wall at 70 per cent and a fan at 40 per cent, each with its own
+pattern and its own talk set. The ending is `quay_percy_spare`'s own `credits` command with `variant: spare`, and the
+roll is data: 54 rows, the model names in a section of their own (MUSE SPARK 1.3, MUSE IMAGE 1.0, SAM 3.1) and the
+OpenStreetMap ODbL line among the licences, which is the attribution ARRIVAL-CONTENT section 1 requires on any frame
+built from that block. The roll's clock is the engine's: 90 steps of lead in, a scroll at 0.5 pixels a step, 300
+steps of hold on the last card and 45 of leave, which is 2,575 steps from the first frame of S6.4 to the last.
+
+| t | step | On screen | Input | Music and sound |
+| --- | --- | --- | --- | --- |
+| 1:50.00 | 6,600 | the pier; Percy at (23,37) faces up as the hero arrives; `thunder_soft`, the flash | confirm | `thunder_soft` |
+| 1:50.30 | 6,618 | `quay_percy_pre` page 1: The bridge groans. / Percy stands at its end, / trident up, hair wild. | none | blips |
+| 1:52.00 | 6,720 | page 2, Percy: I CALLED THE STORM. / No. It called ME. / STAND BACK. I CANNOT. | confirm | blips |
+| 1:55.00 | 6,900 | page 3: This hurricane is his. / Stop him. Bring him back. | confirm | blips |
+| 1:57.00 | 7,020 | `quay_percy_intro`: Percy raises the trident. / The sea stands behind him. / Talk him down, or fight. Then the battle frame and the menu | confirm twice | PP-06 from the encounter's `music` |
+| 1:59.00 | 7,140 | FIGHT, the timed bar, the hit: 40 hp down to about 30 | confirm, then confirm at the bar | `hit` |
+| 2:02.00 | 7,320 | FIGHT again: the bar at 70 per cent fires the wall, `percy_wall`, and the telegraph line PERCY LEVELS THE TRIDENT | confirm twice | `hit`, the phase beat |
+| 2:05.00 | 7,500 | TALK: the panel draws `talk_percy`'s three answers, STILL TALKING. NOTED. / THE VEIL. YOUR QUESTION. / PLAINLY. | Down, confirm | `menu_move`, `menu_select` |
+| 2:07.00 | 7,620 | the first talk reply; it comes from the card pool, not the bake, and no receipt is drawn here (section 4) | confirm on an answer | blips |
+| 2:09.00 | 7,740 | the enemy turn; the menu | none | the pattern's cue |
+| 2:11.00 | 7,860 | TALK again; the panel draws the phase's own talk set, THE TIDE TURNS. LOG IT.; trust reaches 4, so SPARE turns to the first ink and the hint reads THE LOG IS CLOSED. SPARE. | Down, confirm, Down, confirm | `menu_move`, `menu_select` |
+| 2:13.00 | 7,980 | the second reply; the enemy turn | confirm, none | blips, the pattern's cue |
+| 2:14.30 | 8,058 | SPARE: `quay_percy_win_spare`, The sea... is quiet? / Did I do all this? | confirm | PP-06 |
+| 2:15.30 | 8,118 | `quay_percy_spare`: `percy_recruited` set, `save_jingle`, and the three pages of `quay_percy_after_spare`, I remember. All of it. / The clouds tear open. / PERCY JOINS THE PARTY! | confirm per page | `save_jingle`, then PP-06 |
+| 2:18.00 | 8,280 | the credits: PP-15b, Mercy; 90 steps of lead in, then the roll | none | PP-15b |
+| 2:19.50 | 8,370 | the scroll starts, 0.5 pixels a step | none | PP-15b |
+| 2:23.77 | 8,626 | PRIMORDIAL PARADOX, A GAME BY NAYILINIST at mid screen | none | PP-15b |
+| 2:27.57 | 8,854 | MADE FOR THE META GLOBAL AI DEVELOPER HACKATHON 2026, then CAST | none | PP-15b |
+| 2:31.37 | 9,082 | THE META MODELS: MUSE SPARK 1.3 the talk judge, then MUSE IMAGE 1.0 and SAM 3.1 | none | PP-15b |
+| 2:36.37 | 9,382 | THE BOTS: one human and a crew of AI agents who drew, wrote, composed, tested and checked | none | PP-15b |
+| 2:43.97 | 9,838 | THE NODES, then ALSO THANKS TO: GAMEMAKER LTS2026 and PRESS START 2P | none | PP-15b |
+| 2:48.17 | 10,090 | MAP DATA, (c) OPENSTREETMAP CONTRIBUTORS, OPEN DATABASE LICENCE 1.0, openstreetmap.org/copyright | none | PP-15b |
+| 2:52.17 | 10,330 | the closing block: THE STORM IS OVER, Percy is himself again, He joins the party | none | PP-15b |
+| 2:55.17 | 10,510 | THANK YOU FOR PLAYING at mid screen; the scroll ends after 2,140 steps and the 300 step hold begins | none | PP-15b |
+| 3:00.00 | 10,800 | last frame: the closing card, 290 steps into its 300 step hold | none | end |
 
 ---
 
-## 4. The two Meta shots, and the field the frame prints
+## 4. The Meta shot, and the fields the frame prints
 
 The bake is the architecture, not a nicety: the shipped build holds no key and makes no call (D5,
-`specs/19-llm-talk.md` section 2). So the evidence that a model was in the loop is the row, and the two shots below
-are the two places the recording shows it.
+`specs/19-llm-talk.md` section 2). So the evidence that a model was in the loop is the row, and the row is printed
+where the row answers.
+
+The quay build has one such place, not two. S5's three TALK replies are rows of `data/meta_bake.json` at
+`fight/morgan/1`, `fight/morgan/2` and `fight/morgan/3`: the encounter `morgan_gate` carries a `talk` block whose
+`card` is `morgan`, and `pp_talk_bake_key` builds the row key from the card and the enemy phase, so the fight reads
+the bake. The old cut's second receipt shot sat on the deck watch, whose `fight/navy_sailor/1` to `3` rows are still
+live in the file; that scene is not on the route, so its rows are not printed here. Percy's fight reads no bake at
+all: the file holds `fight/percy/1` to `3` and `fight/percy_phase2/1` to `3`, all six `fallback`, but a fight row is
+only read when `pp_talk_bake_key` can name a card, and `percy`'s encounter carries no `talk` block, so those six rows
+are never reached and the card pool answers. That is why his two talk replies are on screen with no plate over them
+and no claim made about them.
 
 | Shot | The line on screen | The row behind it | The field the overlay prints | Why that field |
 | --- | --- | --- | --- | --- |
-| S5, Meta shot 1, 1:23.4 to 1:27.4 | Nye, page 2: You are the last one. Name, then. Slowly. | the `npc` chat row for Nye at `southampton_dock`, turn 1 (spec 19 section 2, Q10: Morgan first, Nye after) | `model` and `request_hash`, read out of `data/meta_bake.json` | `model` names the model that answered, `request_hash` names the exact assembled request, so the printed pair cannot be a hand typed line |
-| S6, Meta shot 2, 2:15.03, 2:18.53, 2:23.53 | the three TALK replies, one per turn | the three `fight` rows for the deck watch at turn 1, 2 and 3 | `model` on the first reply, then `request_hash` alone on replies 2 and 3 | three different `request_hash` values prove three calls at three different scene states, not one line reused three times |
+| S5, reply 1, 1:23.4 to 1:27.4 | the box, turn 1, over `May I see the form?` | `fight/morgan/1` | `model` and `request_hash`, read out of `data/meta_bake.json` at draw time | `model` names the model that answered, `request_hash` names the exact assembled request, so the printed pair cannot be a hand typed line |
+| S5, reply 2, 1:31.0 to 1:35.0 | the box, turn 2, over `Lovely handwriting.` | `fight/morgan/2` | `request_hash` alone | a second, different hash proves a second call at a different scene state, not one line reused |
+| S5, reply 3, 1:38.0 to 1:41.0 | the box, turn 3, over `The captain is coming.` | `fight/morgan/3` | `request_hash` alone | the third value completes the proof that three turns were three requests |
 
-Rules for the two overlays, so R44 can build them without asking:
+Rules for the plates, so the builder can draw them without asking:
 1. The text is read from the file at edit time, never typed. A row that is missing means the shot is not recordable
    and the booth stops, which is better than a receipt that lies.
-2. The overlay is drawn as a caption under the frame or beside it, never inside the 256 by 240 area. The frame stays
-   the game's own pixels (R44 carries the same rule for the ffmpeg chain).
-3. `created_at` and the shadowed fallback are in the row by D5, and neither is printed on screen: the card asks for
-   the field that proves a model answered, and two fields carry that. If a third line is wanted later, `created_at`
-   is the one to add.
+2. The plate is drawn as a caption under the frame or beside it, never inside the 256 by 240 area. The frame stays
+   the game's own pixels.
+3. `created_at` and the shadowed fallback are in the row by D5, and neither is printed on screen. If a third line is
+   wanted later, `created_at` is the one to add.
+4. The three rows are `source: "fallback"` in `data/meta_bake.json` today, in both the working copy and the shipped
+   copy, while 11 of the file's 21 rows are live. `tools/demo_overlay.py` refuses to print a fallback row as a
+   receipt, which is the right refusal: the line in the box would be the bake's hand written fallback and the plate
+   would be claiming a model wrote it. Q1 carries what that needs.
 
 ---
 
-## 5. The one shot with a dead network
+## 5. The one shot with the network line
 
-S6 is recorded with the machine's network dead: the adapter is disabled before the first frame at 00:00.00, and the
-overlay from 2:34.4 to 2:38.4 says so while the win text is still typing.
+The network is dead for the whole recording, not for one shot: the adapter is disabled before the first frame at
+0:00.00 and stays down for all 180.00 s, so nothing anywhere in the cut could have been a call. The line that says so
+runs on S5, from 1:41.00 to 1:44.00, in the four seconds after the third receipt and before the spare: the replies it
+speaks about are the three that were just on screen.
+
+The two lines are `tools/demo_overlay.py`'s own, chosen from the bake's flags and not typed by hand: NETWORK DEAD
+SINCE THE FIRST FRAME. / THESE REPLIES CAME FROM data/meta_bake.json. If the bake ever records a live run, the same
+drawing prints the live pair instead, because a line that always says dead is not evidence either.
 
 | What the frame shows | What backs it |
 | --- | --- |
-| the reply `He steps aside. His eyes stay on the sea. Bridge is that way.` playing on a machine with no network | the text is a dialogue line in `data/dialogue/all.json`, not a call (spec 19 section 8 rung 1) |
-| a line saying the adapter has been off since the first frame, and that the reply above came from `data/meta_bake.json` | the bake file's own row, printed by the same read as the section 4 overlays |
-| the run continuing through the save and the game over with the network still dead | `tests/test_no_network_in_build.py` (R34), which asserts that nothing under `game/` carries a URL, an `http` or a key name |
+| three TALK replies played on a machine with no network | each is a row of `data/meta_bake.json` (section 4); the replay is a file read, not a call (spec 19 section 2) |
+| the badge and the line, drawn from the file's own flags | `data/meta_bake.json` `bake.network` is `false` and `bake.offline` is `true`, and `network_lines` picks the words from those two fields |
+| the run continuing through the spare, the walk, the pier save, Percy and the credits with the network still dead | `tests/test_no_network_in_build.py` (R34), which asserts that nothing under `game/` carries a URL, an `http` or a key name |
 
 What this shot does not claim: it does not claim the card pool rung (spec 19 section 8 rung 2), which answers a line
-the bake does not cover. That rung is exercised by `tests/test_first_fight.py` and no demo line reaches it. Saying so
-is part of the claim being honest.
+the bake does not cover. S6's two talk replies are that rung, and no plate is drawn over them. Saying so is part of
+the claim being honest.
 
 ---
 
 ## 6. The route, step by step, and where each step lives
 
-Every step of `ROADMAP-2026-10-23.md` section 0 appears exactly once, in this order.
+Every step of `data/slice.json` `route.steps` appears exactly once, in this order. A step that spans two shots says
+so in its own row.
 
-| Route step (section 0) | Shot | In data today | The card that lands it |
+| Route step (`data/slice.json`) | Shot | In data today | The card that lands it |
 | --- | --- | --- | --- |
-| title attract, PRESS START, NEW GAME | S1 | `rm_pp_title`, `data/title.json`, `data/title_flash.json`, `data/title_timing.json` | R25 TITLE-PATH (t_136b5d08) for the NEW GAME and CONTINUE path |
-| the crawl | S2 | `data/intro_text.json`, 6 beats and 14 rows; the reveal machine measured at 1,238 steps (spec 14 addendum) | R25 |
-| the drive | S3 | the drive block of `data/scenes/all.json`, not written yet; `knowledge/DRIVE-SHOT-LIST.md` shot 3 | R21, which roadmap section 3 creates after the two map cards release `data/scenes/all.json` |
-| arrival at Town Quay | S4 | no quay map yet; `data/maps/osm/southampton_town_quay.json` is the terrain draft | ARRIVAL-MAP-2 (t_db2995d7), R28 EXTERIOR-TILESET (t_7d1380f9) |
-| the gate checkpoint and the three option choice | S4 | `quay_gate_truth`, `quay_gate_bluff`, `quay_gate_authority` are in `data/dialogue/all.json`; `quay_gate_checkpoint` with its `choices` block is not | R22 DIALOGUE-V2 (t_5b27880e) for the scene, ARRIVAL-MAP-2 for the trigger at (8,9) |
-| the walk to the dock office and the boarding pass | S5 | `quay_dock_office` is in ARRIVAL-CONTENT section 5, not in `data/dialogue/all.json`; `has_boarding_pass` is in no `data/flags.json` today | R22 for the pages, ARRIVAL-MAP-2 for the door trigger and the flags |
-| boarding the ship | S5 | scene `ship_boarding` and map `ship_small` are in the data now, with `music PP-05` | nothing; it exists |
-| the first fight, won with one FIGHT | S6.1 | encounter `deck_hound`, seed 20261022, beat 23, 2 hp; `battle_intro_hound`, `hound_win_kill` | nothing for the fight; R30 TALK-BAKED (t_8cd9c10a) for its talk side |
-| the TALK fight through three options | S6.2 | encounter `tutorial_sailors`, seed 20261019, beat 28, `option_count` 3, `mercy_per_option` 20, `mercy_to_spare` 60; dialogue `talk_navy_sailor`; `ship_door_open` on kill or spare | R30 |
-| the ship's log save | S6.3 | `data/maps/all.json` carries a `save` trigger `deck_save` on the deck at (2,5); the cabin log is beat 27 | R26 SAVE-SLICE (t_7099c5fe) |
-| a game over that continues from a save | S6.4 | `battle_lose` is in `data/dialogue/all.json`; spec 07 acceptance 4 sends a defeat back to the title with the save intact | R27 GAME-OVER (t_24eab5ff) |
+| `title`, the title screen | S1 | `rm_pp_title`, `data/title.json`, `data/title_flash.json`, `data/title_timing.json` | nothing; it is in the build |
+| `crawl`, the intro crawl | S2 | `data/intro_text.json`, 6 beats and 16 rows; the reveal machine measured at 1,238 steps (spec 14 addendum) | nothing; it is in the build |
+| `quay`, the Town Quay in the hurricane | S3, and S4's first beat | map `southampton_town_quay`, scene `quay_arrival`, `pp_storm.gml`, and the map's 17 `say` triggers, which draw on seven `say_door_*` pages | nothing; it is in the build |
+| `morgan`, talk or fight | S4 (the pages and the panel) and S5 (the three replies, the spare, the pages, the save) | scene `quay_morgan_encounter`, encounter `morgan_gate`, `quay_morgan_pre`, `quay_morgan_intro`, `quay_morgan_win_spare`, `quay_morgan_after_spare`, `talk_morgan`, the bake rows `fight/morgan/1` to `3` | nothing for the scene; a live re-bake for the receipts (Q1) |
+| `percy`, talk or fight, then the credits | S6 | scene `quay_percy_encounter`, encounter `percy`, `quay_percy_pre`, `quay_percy_intro`, `quay_percy_win_spare`, `quay_percy_after_spare`, `talk_percy`, `data/credits.json` | nothing; it is in the build |
 
-No step outside that list appears in this script. Percy, the Prometheus interruption, the cabin scenes, London, the
-dungeon and the NES ROM are all outside the route and outside the demo (roadmap section 0, "Not in it"), so no shot
-names one.
+No step outside that list appears in this script. The drive, the gate checkpoint, the dock office, the boarding
+pass, the ship, the deck hound and the deck watch are not on the route and are not in the demo; section 11 lists
+what was in the 2026-10-22 draft and what replaced it.
 
 ---
 
 ## 7. The booth sheet
 
 Keys in the order they are pressed, in the vocabulary `data/demo/run_001.json` already uses (`enter`, `confirm`,
-`right`, `up`, `down`), with the absolute step each one lands on. A held key is written as `confirm hold` with the
-step it is released at. This is the list R44 turns into the recorder's events; nothing here is decided at the desk.
+`up`, `down`, `left`, `right`), with the absolute step each one lands on. A held key is written as `confirm hold`
+with the step it is released at. This is the list the builder turns into the recorder's events; nothing here is
+decided at the desk.
 
 | Step | Key | Where the run is | Why |
 | --- | --- | --- | --- |
@@ -311,106 +386,111 @@ step it is released at. This is the list R44 turns into the recorder's events; n
 | 852 | enter | menu, cursor on NEW GAME | NEW GAME |
 | 1,320 | confirm hold to 1,620 | crawl, beat 2 ends | 3x reveal through beats 3 and 4 |
 | 1,620 | release | crawl, beat 5 typing | the last beat reads at 1x |
-| 2,100 | confirm | drive, caption open | closes `drive_sign_55` |
-| 2,522 | confirm hold to 2,582, then confirm at 2,642 | gate, page 1 | fast read, then advance |
-| 2,882 | confirm hold to 2,942, then confirm at 3,002 | gate, page 3 | fast read, then advance |
-| 3,242 | confirm | gate, page 4 closed | the choice panel opens |
-| 3,254 | down | choice panel | the cursor moves from No pass. to Crew list. |
-| 3,422 | confirm | choice panel | takes Crew list. |
-| 3,734 | confirm | `quay_gate_bluff` page 1 | advance |
-| 3,854 | confirm | `quay_gate_bluff` page 2 | advance, the barrier lifts |
-| 4,100 to 4,660 | up and right, held in turns | the yard | walks the block to the office frontage |
-| 4,742 | confirm | the office door | enters `quay_dock_office` |
-| 4,862 | confirm hold to 4,922, then confirm at 4,982 | office, page 1 | fast read, then advance |
-| 5,252 | confirm hold to 5,312, then confirm at 5,372 | office, page 3 | fast read, then advance |
-| 5,492 | confirm | office, page 4 | advance |
-| 5,612 | confirm | office, page 5 | advance |
-| 5,792 | confirm | office, page 6 | advance, `has_boarding_pass` set |
-| 5,800 to 6,140 | right and down, held in turns | the quay south, the gangway | reaches the boarding trigger |
-| 6,422 | confirm | `ship_gangway` | advance |
-| 6,440 | up three presses | the deck | the scene's three tile move |
-| 7,022 | confirm | hound fight, menu | FIGHT, the bar starts |
-| 7,052 | confirm | the bar at about 66 | stops the bar, the blow lands |
-| 7,262 | confirm | `hound_win_kill` | advance |
-| 7,802 | confirm | `battle_intro_sailors` | advance |
-| 7,970 | down | the battle menu | cursor moves to TALK |
-| 7,982 | confirm | TALK | the option panel opens |
-| 8,042 | confirm | option 1 | turn 1 |
-| 8,102 | confirm | reply 1 | advance |
-| 8,312 | confirm, then confirm | option 2 and its reply | turn 2 |
-| 8,612 | confirm, then confirm | option 3 and its reply | turn 3, MERCY reaches 60 |
-| 8,882 | confirm | SPARE | the peaceful end |
-| 9,092 | confirm | `navy_win_spare` | advance |
-| 9,506 | up and right | the deck to the hatch and the cabin door | `ship_door_open` is set by the fight |
-| 9,602 | confirm | the cabin door | enters `ship_cabin` |
-| 9,752 | confirm | the ship's log | the page opens |
-| 9,872 | confirm | the Saving panel | the save writes, the chime once |
-| 10,260 | the defeat input R27 lands | the cabin | the forced defeat |
-| 10,290 | confirm | `battle_lose` | advance |
-| 10,530 | confirm | the game over screen, then the title menu | CONTINUE, which is now lit |
-| 10,620 | none | the load | the last frame |
+| 1,764 to 1,920 | down, held | the quay, from (24,1) south | the arrival walk |
+| 1,920 | confirm | the Red Funnel door row | opens `say_door_red_funnel` |
+| 1,992 | confirm | the door page | closes it |
+| 2,004 to 2,340 | down, held | the quay, south | the walk to the bridge mouth |
+| 2,364 | none | (23,32) | the wind fires on touch, no key |
+| 2,484 | confirm | the wind page | closes it |
+| 2,520 to 2,700 | left, then up, held in turns | the quay, west and north | the walk to the tower |
+| 2,700 | confirm | `quay_rest_tower` save | the panel opens |
+| 2,760 | confirm | the Saving panel | the save writes, the chime once |
+| 2,800 to 3,060 | up, then right, held in turns | the quay, north east | the walk to Morgan's corner |
+| 3,060 | confirm | Morgan at (6,9) | enters `quay_morgan_encounter` |
+| 3,210 | confirm | page 1 | advance |
+| 3,390 | confirm | page 2 | advance |
+| 3,540 | confirm | page 3 | advance |
+| 3,600 | confirm | `quay_morgan_intro` | the battle opens |
+| 3,720 | down, then confirm | the battle menu | TALK; the panel opens at 3,780 |
+| 3,780 to 3,960 | down, down, down, up, up, up | the TALK panel | the cursor reads the three answers |
+| 4,680 | confirm | `May I see the form?` | reply 1, WILL 50 |
+| 5,244 | confirm | reply 1 | closes it |
+| 5,280 | down, then confirm | the menu, then TALK | the panel |
+| 5,340 | down, confirm | `Lovely handwriting.` | reply 2, WILL 85 |
+| 5,700 | confirm | reply 2 | closes it |
+| 5,760 | down, then confirm, then down, confirm | the menu, TALK, the panel | `The captain is coming.` |
+| 6,060 | confirm | reply 3 | closes it, WILL 100 |
+| 6,090 | down, then confirm | the menu | SPARE, which is now in the first ink |
+| 6,144 | confirm | `quay_morgan_win_spare` | advance |
+| 6,240 | confirm, then confirm | `quay_morgan_after_spare` pages 1 and 2 | advance |
+| 6,300 to 6,360 | down, held | the quay, south | the bridge is open |
+| 6,420 | confirm | `quay_rest_pier` save | the panel opens |
+| 6,480 | confirm | the Saving panel | the save writes, the chime once |
+| 6,660 | confirm | Percy at (23,37) | enters `quay_percy_encounter` |
+| 6,720 | confirm | page 1 | advance |
+| 6,900 | confirm | page 2 | advance |
+| 7,020 | confirm, then confirm | page 3, then `quay_percy_intro` | the battle opens |
+| 7,140 | confirm, then confirm at the bar | the menu, FIGHT | the blow lands |
+| 7,320 | confirm, then confirm at the bar | the menu, FIGHT | the wall phase fires |
+| 7,500 | down, then confirm, then down, confirm | the menu, TALK, the panel, an answer | the first talk |
+| 7,740 | none | the reply and the enemy turn | no key |
+| 7,860 | down, then confirm, then down, confirm | the menu, TALK, the panel, an answer | the second talk, trust 4 |
+| 8,010 | down, then confirm | the menu | SPARE |
+| 8,058 | confirm | `quay_percy_win_spare` | advance |
+| 8,118 | confirm, then confirm, then confirm | `quay_percy_after_spare` pages 1 to 3 | the party joins |
+| 8,280 | none | the credits | no key until the cut |
 
 ---
 
 ## 8. What this script leaves out, on purpose
 
-- Eleven of the twelve drive shots. Three minutes cannot hold 178 seconds of film and eight other route steps; the
-  drive list keeps its own full length and this demo takes one shot that carries the sign.
-- Percy, the Prometheus interruption, the cabin scenes, London, the dungeon, the NES ROM (roadmap section 0).
-- The free typed TALK line. The demo takes the three context options because they are deterministic, cost nothing and
-  reach the spare threshold exactly (spec 19 section 11). The typed line is the feature a player meets on their own
-  laptop, and the recording says so in the caption rather than in a shot.
-- The card pool and the encounter fallback. They are real (spec 19 section 8 rungs 2 and 3) and no demo line reaches
-  them, so no shot claims them.
-- Any number the build cannot print. The two receipts are read from the file at edit time; the game over carries no
+- The drive, the gate checkpoint, the dock office, the boarding pass, the ship and its two fights. None of them is
+  on the route any more; the ruling's section 4 forbids rebuilding them to make an old shot table filmable.
+- Percy's kill path. The demo spares him, because the story's through line is the talk, and because the spare
+  ending is the one that names the party. The kill ending exists, is 24 steps shorter, and is Q3.
+- Percy's second phase and his fan. The demo lands him in the wall and stops fighting there; the cut would need
+  another twenty seconds of battle to reach 40 per cent, and twenty seconds is the credits.
+- The free typed line. SAY IT YOURSELF is drawn on the panel and the demo never takes it: `data/talk_live_tape.json`
+  holds recordings for the navy sailor only, so a typed line to Morgan or Percy would be answered by the card pool
+  or the fallback, and the demo would be showing a rung it then has to explain.
+- The card pool and the encounter fallback. They are real (spec 19 section 8 rungs 2 and 3) and no receipt is
+  claimed for them here.
+- Any number the build cannot print. The receipts are read from the file at edit time; the game over carries no
   statistic; the save shows no counter.
 
 ---
 
 ## 9. Q: for gamedev, four items, and three notes
 
-Per the gamedev specs rule, none of these is decided here. Q2 is the only one that would move a shot, and it says how;
-the other three change no second of the 180.00 total.
-
-1. **Q1, the route file.** The card's check says "a re-read against `data/slice.json` names no step the route does
-   not carry". Today that file carries four keys (`map` ship_small, `spawn` start, `scene` ship_boarding,
-   `encounter` tutorial_sailors) and two of this script's eleven route steps. R24 SLICE-ROUTE (t_e063f248) owns the
-   file and has not run. Question: is the re-read done against R24's file, and does R24 have to carry one row per
-   route step, in the vocabulary of section 6? If yes, section 6 is the list to check it against. If the check has to
-   pass before R24, it cannot, and the honest place to move it is TEST-SLICE-ROUTE (R32, t_030a89e5).
-2. **Q2, the save and the TALK fight.** Three files disagree about which comes first. The beat sheet puts the ship's
-   log save at beat 27 and the hold encounter at beat 28. Roadmap section 0 lists the fights and then the save. The
-   deck data opens the cabin door only on `ship_door_open`, which only the sailor fight sets, so in the data the
-   order has to be fight then save. This script follows roadmap section 0 and the data: S6.2 then S6.3. If gamedev
-   rules for the beat sheet's order, S6.3 and S6.2 swap places and no second of either changes, but the cabin door
-   needs its condition taken off `ship_door_open` or the save shot cannot open it.
-3. **Q3, three names, two characters.** `specs/19-llm-talk.md` section 2 calls the beat 28 talk fight "the talk fight
-   with Morgan the gate sentry, 15 hp, attack 2"; `data/encounters/all.json` names that encounter's enemy
-   `navy_sailor`; `knowledge/ARRIVAL-CONTENT.md` calls Morgan the gate sentry and the sailor Dylan. This script never
-   types a name: it names the encounter by its data id (`tutorial_sailors`, enemy `navy_sailor`) and lets
-   `data/enemies/all.json` put the name on screen. Gamedev to say which character the beat 28 fight is, because the
-   caption in S6 says "the sailor" and the row in section 4 says "the deck watch".
-4. **Q4, the bar length.** `knowledge/DRIVE-SHOT-LIST.md` section 1 snaps its cuts to `bar_steps` 86 from
-   `data/title_timing.json`, but that file now carries 87, three beats of 29, and its own note says why 86 was
-   rejected. The drive list's shot 3 is 602 steps, which is 7 bars of 86 and 609 steps at 87. This script keeps 602
-   because it is the drive file's own number and the drive scene card owns the decision. The demo's own cuts are on
-   seconds, so the demo is unaffected either way; the drive scene is not, and a 7 step drift every bar is the kind of
-   thing the frame timing test catches late.
+1. **Q1, the receipts have no live row.** `fight/morgan/1`, `/2` and `/3` are `source: "fallback"` in
+   `data/meta_bake.json`, in the working copy and in `game/datafiles/meta_bake.json` alike, while 11 of the file's
+   21 rows are live. So `tools/demo_overlay.py` refuses the plate for the three replies, correctly: the line in the
+   box is the bake's hand written fallback, not an answer. The shot is therefore not recordable with a receipt
+   until the bake holds a live answer for Morgan's three rows, which is a re-bake (`tools/bake_meta.py` against the
+   loopback bridge) and a data card, not a script change. Until then S5 keeps its caption and its box and draws no
+   plate, and the demo's claim rests on the box and on the file's own counts, which is weaker than the write-up
+   says. Gamedev to say whether the re-bake is carded before the judged take.
+2. **Q2, the plate, the network window and the clock pin are the old cut's.** `tools/demo_overlay.py` `SHOT_ROWS`
+   still names `npc/nye/turn_1` for S5 and the three `fight/navy_sailor` rows for S6; `SHOT_WINDOWS` gives S5 one
+   bake window (83.40 to 87.40), S6 three (135.03, 138.53, 143.53) and S6 the network line (154.40 to 158.40);
+   `tools/demo_cut_180.py` `PLATE_WINDOWS` still places a plate on S6. This script has one plate shot, S5, with three
+   rows at 83.40 to 87.40, 91.00 to 95.00 and 98.00 to 101.00, and the network line on S5 at 101.00 to 104.00. Those
+   tables and `tests/test_demo_overlay.py`'s clock test, which pins the old S6 receipt clocks and the S6 network
+   window, follow this file and are the builder's card t_892cc851's to move. That test is the one check this file
+   cannot make green from here, and it goes red for the right reason: the script moved and the tool has not.
+3. **Q3, the credits ending.** S6 ends on the `spare` variant of `quay_percy_spare`'s `credits` command, because
+   the demo has just spared both men and the spare closing block is the one that names the party. The `kill`
+   variant is real, is 24 steps shorter, and is not shown. If the panel wants both endings in one cut, that is a
+   second cut, not a longer S6.
+4. **Q4, the WILL numbers.** The three answers earn 50, 35 and 20 through the encounter's `talk_mercy` table, not
+   20 each from `mercy_per_option`, and the spare gate is trust 3 (two TALK turns at 2 each), not the 60 that
+   `mercy_to_spare` names: no GML file reads that field. This script prints what the game draws. If the 60 was meant
+   to be the gate, that is a data or a director question, and it moves no second here.
 
 Notes, not questions:
 
-- **N1, the defeat input.** Neither fight in the slice can be lost, so S6.4 needs a forced defeat. Roadmap check 9
-  already requires one ("A forced defeat shows the game over screen and CONTINUE restores the save"), so the
-  capability is in R27's scope; this script does not invent a key for it. If R27 lands no trigger, S6.4 is cut and
-  the total is 171.00 s, still inside the band.
-- **N2, the attribution line.** The frames from S4 are built from the OpenStreetMap extract, and ARRIVAL-CONTENT
-  section 1 requires the ODbL line on any screenshot or credit built from that block. The recording therefore ends on
-  a card carrying it verbatim: `(c) OpenStreetMap contributors, Open Database Licence (ODbL) 1.0,
-  https://www.openstreetmap.org/copyright`. R44 owns where that card sits; this file names that it has to exist.
-- **N3, the recorder.** `tools/play_demo.py` and `data/demo/run_001.json` already record the title, the menu, the
-  crawl and one room at 60 fps and cut the frame to a true 3x of 256 by 240. This script adds no recorder; section 7
-  is the event list that file grows into, and the run is short of today's recorder by four route steps that are not in
-  the build yet (S3, S4, S5, and half of S6).
+- **N1, the attribution line.** The frames from S3 to S6 are built from the OpenStreetMap extract, and
+  ARRIVAL-CONTENT section 1 requires the ODbL line on any screenshot or credit built from that block. The credits
+  roll already carries it, MAP DATA, `(c) OPENSTREETMAP CONTRIBUTORS`, `OPEN DATABASE LICENCE 1.0`,
+  `openstreetmap.org/copyright`, so the demo's last second satisfies the requirement without a separate card.
+- **N2, the recorder.** `tools/play_demo.py` reads a table by name from `data/demo/shot_table.json`, and its `full`
+  table is still the retired ten step take: 253.5 s, with S3 the drive, S4 the gate and its three options, S5 the
+  office and the boarding, and S6 the deck watch, the log and Percy's office fight. The recorder is the furthest
+  behind of the three instruments this file touches, and the builder's card is where all three are brought back into
+  line with the six lengths above.
+- **N3, the entry autosave.** `pp_save.gml` writes a silent save once per map entry, after the fade in. The demo
+  enters the quay once, at S3, so a `pp_save_01.json` exists by S4 and CONTINUE is lit from the first fight on.
+  The two visible saves in S4 and S5 are the panel the player confirms, and they are what the demo shows.
 
 ---
 
@@ -418,12 +498,27 @@ Notes, not questions:
 
 | The card's check | How this file meets it |
 | --- | --- |
-| the total runs 170 to 190 seconds | 180.00 s exactly, 10,800 steps, printed per shot in section 1 and recomputed in section 2; both designed fallbacks (173.97 s and 171.00 s) are inside the band |
-| every step of the slice route appears | the eleven rows of section 6 are roadmap section 0's own list, each mapped to one shot, in order |
+| the total runs 170 to 190 seconds | 180.00 s exactly, 10,800 steps: 16, 13, 10, 39, 32 and 70, printed per shot in section 1 and recomputed in section 2 |
+| every step of the slice route appears | the five rows of section 6 are `data/slice.json`'s own steps, in order, each mapped to the shot or shots that carry it |
 | each shot names its input and its claim | every shot heading carries a `Screen`, `Input`, `Music`, `Caption` and `Claim` line, and every beat row carries the input that lands on it |
-| the two Meta shots name the bake receipt field the frame shows | section 4 names `model` and `request_hash` per shot and says which of the two each overlay prints; both are fields D5 and spec 19 section 2 put in the row |
-| no dash characters | the file was scanned for U+2013, U+2014 and U+2015 after writing: zero |
-| a re-read against `data/slice.json` names no step the route does not carry | the script names nine route steps that today's four key route file does not carry, so this check cannot pass until R24 lands; Q1 states that plainly rather than implying a pass, and section 6 is the list R24's file is checked against |
+| the Meta shot names the bake receipt field the frame shows | section 4 names `model` on the first reply and `request_hash` on replies two and three, all read from `data/meta_bake.json` at draw time |
+| no dash characters | scanned for U+2012, U+2013, U+2014 and U+2015 after writing: zero |
+| a re-read against `data/slice.json` names no step the route does not carry | passes: five steps, and every map, scene, encounter, dialogue id and bake row in sections 3 to 7 belongs to one of them |
 
-Written by research-assistant, 2026-10-22. Nothing here was run in the engine: this file plans the recording, and
-the recording is where each row is proved or corrected.
+Written by research-assistant, 2026-10-22, rewritten 2026-11-12. Nothing here was run in the engine: this file plans
+the recording, and the recording is where each row is proved or corrected.
+
+---
+
+## 11. What the rewrite changed, and what it could not
+
+The 2026-10-22 draft was written against a ten step route that the author's scope cut on 2026-11-03
+(`28d407a2`). The ruling's section 2 is the evidence, and this is the table of what it cost.
+
+| The draft's shot | What it named | Why it could not stay | What replaced it |
+| --- | --- | --- | --- |
+| S3, the drive | `drive_to_southampton`, the drive list's shot 3, a gantry sign counting down | no route step names the drive, no map trigger leads into `drive_m4_corridor`, and no capture of a drive exists in the repository | the hurricane arrival on `southampton_town_quay`, scene `quay_arrival`, the storm's own seeded clock, and the street's door pages |
+| S4, the gate checkpoint | `quay_gate_checkpoint`, a barrier arm, three labels and a flag each | the scene has zero hits in the source data and in the GML; every hit is under `output/`, `build/` or a retired copy | the wind at the bridge, which is the gate the build has, and Morgan's three answers, which is the choice it has |
+| S5, the office and the boarding | `quay_dock_office_play`, a boarding pass, the gangway and `ship_boarding` | the office and the ship exist as data and nothing reaches them: the office's only map trigger leads out, and no trigger on the quay leads in | the three TALK replies, their bake rows, the spare, and the quay's own pier save |
+| S6, the ship's fights and the log | the deck hound, the deck watch, the ship's log save, a forced defeat | the ship is off the route, and a demo that ends on a save shows neither ending the game has | Percy, the spare, and the credits, whose last card is THANK YOU FOR PLAYING |
+| the two Meta shots | an `npc` row at the dock office and three fight rows on the deck | both scenes are off the route | one shot, S5, with three rows from the fight that is on it (Q1, Q2) |

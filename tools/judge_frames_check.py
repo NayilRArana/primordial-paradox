@@ -17,7 +17,7 @@ WHAT IT ASSERTS, and where each number comes from
    percent (18.4 s, 30.6 s)"), so this check and the panel's sentence can never disagree about
    what "blank" means. 90 percent is that card's own threshold and is not tuned here.
 
-2. The S5 and S6 frames carry the bake row. Three measurements, in order of how hard they are to
+2. The S5 frame carries the bake row. Three measurements, in order of how hard they are to
    fake: the plate's `paper` colour covers at least 55 percent of the plate rect the overlay tool
    computed (a plate that was never drawn leaves game art there, measured 0.5 percent on a clean
    frame against 77 percent on a rendered one); every line box the plan placed holds ink; and the
@@ -126,13 +126,14 @@ LINE_INK_SHARE = 0.002      # a line box with less ink than this drew nothing
 ATLAS_IOU_MIN = 0.50        # measured on a rendered line: well above the noise, see --self-test
 ATLAS_PAD = 3               # the atlas match may sit this many pixels off the planned box
 
-# The two shots whose frames must carry the receipt, and which clock in SHOT_WINDOWS is used. The
-# first window of each key is the one sampled.
-RECEIPT_SHOTS = (("S5", "bake"), ("S6", "bake"))
-# The S6 bake windows are instants (135.03, 135.03), so a single -ss can land on either side of a
-# cut. These offsets are probed in order and the one that matched is reported; the first probe that
-# finds a plate wins, and a shot with no plate at any offset fails.
+# The shot whose frames must carry the receipt, and which clock in SHOT_WINDOWS is used. Card
+# t_892cc851 retires S6 from the overlay (Percy's fight reads no bake), so S5 is the one shot.
+RECEIPT_SHOTS = (("S5", "bake"),)
+# A bake window can start on a frame boundary, so a single -ss can land on either side of a cut.
+# These offsets are probed in order and the one that matched is reported; the first probe that finds
+# a plate wins, and a shot with no plate at any offset fails.
 PROBE_OFFSETS = (0.0, 0.5, -0.5, 1.0, -1.0, 1.5, -1.5)
+
 
 MODEL_LINE_PREFIX = "BAKE MODEL "
 
@@ -597,7 +598,7 @@ def append_nightly_row(report, path=None):
 # Self test: two synthetic captures, one that must pass and one that must fail
 
 
-def synthetic_source():
+def synthetic_source(prefer_real=True):
     """A 768x720 base picture to hang the overlay on, with no dependency on a capture.
 
     Preferred is a real lit frame from `output/judge_frames` when one is there, because the encoder
@@ -606,8 +607,14 @@ def synthetic_source():
     blank nor flat and uses nothing this repository does not carry. The plate's `paper` colour is
     left out of those blocks, so a base frame cannot pass for a drawn plate and the self test's
     broken capture really has no bake row on it.
+
+    `prefer_real=False` is what the self test asks for, and it asks for a reason: a frame left in
+    `output/judge_frames` by anything earlier in the same session changes the base the self test was
+    measured against, and the self test then reads differently depending on what ran before it inside
+    one tree. A self test that depends on leftovers is not a self test.
     """
-    candidates = sorted(glob.glob(os.path.join(FRAME_DIR, "*_f0*.png")))
+    candidates = sorted(glob.glob(os.path.join(FRAME_DIR, "*_f0*.png"))) if prefer_real else []
+
     for path in candidates:
         with Image.open(path) as handle:
             image = handle.convert("RGB")
@@ -676,23 +683,24 @@ def build_capture(folder, seconds, blank_at=(), receipt_at=None, base=None, sour
 def self_test(folder=None, log=False, log_path=None):
     """Prove both directions: a capture that holds every condition is a PASS, a broken one names it.
 
-    The good capture carries the S5 plate over its window and the S6 plate over its first bake time,
-    a moving marker so the tail frames differ, and no blank frame. The broken one is the same
-    capture with two frames blacked out at the 18.4 s and 30.6 s sample times and cut short of the
-    S5 window, which is the shape of the 2026-10-26 failure this card was written from.
+    The good capture carries the S5 plate over its window, a moving marker so the tail frames differ,
+    and no blank frame. The broken one is the same capture with two frames blacked out at the 18.4 s
+    and 30.6 s sample times and cut short of the S5 window, which is the shape of the 2026-10-26
+    failure this card was written from.
     """
     root = folder or os.path.join(ROOT, "output", "_judge_frames_selftest")
     if os.path.isdir(root):
         shutil.rmtree(root)
     os.makedirs(root)
-    base, note = synthetic_source()
+    base, note = synthetic_source(prefer_real=False)
+
     s5 = demo_overlay.SHOT_WINDOWS["S5"]["bake"][0]
-    s6 = demo_overlay.SHOT_WINDOWS["S6"]["bake"][0][0]
-    good_seconds = int(s6) + 4
+    good_seconds = int(s5[1]) + 4
     good_video, _ = build_capture(
         os.path.join(root, "good"), good_seconds,
-        receipt_at={"S5": (int(s5[0]) - 1, int(s5[1]) + 1), "S6": (int(s6) - 1, int(s6) + 2)},
+        receipt_at={"S5": (int(s5[0]) - 1, int(s5[1]) + 1)},
         base=base, source_note=note)
+
     good = check(good_video, folder=os.path.join(root, "good_frames"), log=False)
     print(render_report(good))
     if not good["ok"]:

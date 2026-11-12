@@ -1,37 +1,35 @@
 #!/usr/bin/env python3
-"""demo_overlay.py: the S5 and S6 caption overlay, with the Meta bake row and the network line.
+"""demo_overlay.py: the S5 caption overlay, with the Meta bake row and the network line.
 
 Why this file exists
     The submission's strongest claim is that a Meta model answers the player inside a NES text box
     (knowledge/DEMO-SCRIPT.md section 4). A picture of a text box does not carry that claim on its own:
     what carries it is the bake row printed beside the shot, read out of `data/meta_bake.json`, which is
     the only record the game itself trusts (spec 19 section 2 and decision D5). This tool is that row,
-    drawn in the same font as the rest of the video, for the two shots that prove it: S5 (the dock office,
-    Nye's page) and S6 (the TALK fight and the offline shot).
+    drawn in the same font as the rest of the video, for the one shot that proves it: S5, the three TALK
+    replies to Captain Morgan on the quay (the card t_892cc851 rewrite, knowledge/DEMO-SCRIPT.md section
+    4, after the ruling in knowledge/DEMO-AUTHORITY-RULING-2026-11-12.md retired the dock office and the
+    deck watch that the two older shots were drawn from).
 
 What it draws, and where the words come from
-    S5, Meta shot 1, 1:23.4 to 1:27.4 (section 4): the shot's caption, then `model`, `mode`, `backend`,
-    `created_at`, the row id and its `request_hash`, all read from the `npc` row for Nye.
-    S6, Meta shot 2, 2:15.03, 2:18.53 and 2:23.53: the shot's caption, one bake header, then one line per
-    TALK turn (`model` on the header, a different `request_hash` on each of the three rows, which is what
-    proves three calls at three scene states and not one line reused), then the network line.
-    S6, 2:34.40 to 2:38.40 (section 5): the network line says the adapter has been dead since the first
+    S5, 1:23.4, 1:31.0 and 1:38.0 (sections 4 and 5): the shot's caption, then one bake header, then the
+    row that answers at that clock. Reply 1's window prints `model` on the header and the row's own
+    `request_hash`; replies 2 and 3 print their own, different hashes, which is what proves three calls
+    at three scene states and not one line reused. A window that draws one row takes `rows=` with that
+    one row id, so each of the three clocks carries its own receipt and no window prints the other two.
+    S5, 1:41.00 to 1:44.00 (section 5): the network line says the adapter has been dead since the first
     frame and that the replies shown came from `data/meta_bake.json`. When the bake in the file records a
-    live network the same drawing has a live network line instead, because a line that always says "dead"
-    would be a claim the file does not make.
+    live network the same drawing has a live network line instead, because a line that always says
+    "dead" would be a claim the file does not make. The network window is drawn with `rows=()`, because
+    the line is chosen from the file's own flags and needs no bake row under it.
     S5, with `--talk-box` (card t_2ef3aa6f): the NES window itself, 240x48 in game space, holding the row's
     own reply lines, the verdict its effect earns and the WILL that moved, and the id of the ledger receipt
     for that verdict printed small at the bottom. The box hangs in the band between the caption plate and
     the dialogue box, so the game's own window stays the game's pixels and the frame test proves it.
-    S6, with `--talk-box` (card t_b9173f05, the judge panel's fix 2): the same window on the battle shot,
-    holding the first TALK turn's own `player_line` (the line the player typed, which is what gets judged),
-    the row's reply lines, its verdict and the WILL it moved, that verdict's ledger receipt, and the two
-    build receipts the panel asked to see beside it: `bake.calls_attempted` with rcpt-a505930564032c7c and
-    `bake.system_chars` with its own id. On this shot both the plate and the box are drawn under the frame
-    (`--below`), because the band between the battle's message window and its command menu is the battle
-    stage itself, and section 4 rule 2 keeps the overlay out of the 256 by 240 area. The box is taller
-    than the 48 row game box on purpose: it is the caption that carries the record, not a claim that the
-    game's own window is that size. Every line in it is read out of the bake row or the ledger.
+    S6 draws nothing here, and that is a decision the script made: Percy's encounter carries no `talk`
+    block, so no bake row answers in his fight, the six `fight/percy` rows are `fallback` and are never
+    read, and a receipt plate over his shot would be a claim about a call the game does not make
+    (knowledge/DEMO-SCRIPT.md section 4, last paragraph).
 
 The three rules from section 4, as code
     1. EVERY BAKE VALUE IS PRINTED EXACTLY AS THE FILE HOLDS IT. No reformatting, no re-casing, no
@@ -61,11 +59,9 @@ Usage
     python tools\\demo_overlay.py --shot S5 --rows --talk-box
     python tools\\demo_overlay.py --shot S5 --frame output\\judge_frames\\x_f05.png --out output\\demo\\overlay\\S5.png --talk-box
     python tools\\demo_overlay.py --check --shot S5 --source IN.png --frame OUT.png --talk-box
-    python tools\\demo_overlay.py --shot S6 --frame IN.png --out OUT.png --below
-    python tools\\demo_overlay.py --shot S6 --frame IN.png --out OUT.png --below --talk-box
-    python tools\\demo_overlay.py --check --shot S6 --source IN.png --frame OUT.png
-    python tools\\demo_overlay.py --check --shot S6 --source IN.png --frame OUT.png --below --talk-box
-    python tools\\demo_overlay.py --times --shot S6 --at 138.0
+    python tools\\demo_overlay.py --shot S5 --frame IN.png --out OUT.png --below
+    python tools\\demo_overlay.py --check --shot S5 --source IN.png --frame OUT.png --below
+    python tools\\demo_overlay.py --times --shot S5 --at 84.0
 
 Exit codes
     0  the render was written, or --rows printed, or --check passed
@@ -115,20 +111,24 @@ FORBIDDEN = {
 }
 
 # Where a shot's plate hangs, and which rows of data/meta_bake.json each shot prints. The ids are the
-# rows section 4 names: the `npc` chat row for Nye at her first turn, and the three `fight` rows for the
-# deck watch at turns 1, 2 and 3. A list that names a row the bake does not hold is an OverlayError.
+# rows section 4 names: the three `fight` rows for Captain Morgan's TALK turns on the quay, which is the
+# fight that is on the route. Card t_892cc851 moved them here: the old ids were `npc/nye/turn_1` for S5
+# and the three `fight/navy_sailor` rows for S6, and both of those scenes (the dock office, the deck
+# watch) are off the route the build walks, so a plate drawn from them would be a receipt for a scene
+# the demo does not show. S6 is gone entirely: `percy` carries no `talk` block, so no bake row answers
+# in his fight (knowledge/DEMO-SCRIPT.md section 4). A list that names a row the bake does not hold is
+# an OverlayError.
 SHOT_ROWS = {
-    "S5": ("npc/nye/turn_1",),
-    "S6": ("fight/navy_sailor/1", "fight/navy_sailor/2", "fight/navy_sailor/3"),
+    "S5": ("fight/morgan/1", "fight/morgan/2", "fight/morgan/3"),
 }
-SHOT_ANCHOR = {"S5": "top", "S6": "bottom"}
+SHOT_ANCHOR = {"S5": "top"}
 
 # The clocks section 4 and section 5 put each overlay at, in seconds, so a caller can ask whether a
-# given frame falls inside a window instead of eyeballing the edit.
+# given frame falls inside a window instead of eyeballing the edit, and so a plate can be drawn with
+# `rows=` holding the one row that answers at that clock.
 SHOT_WINDOWS = {
-    "S5": {"bake": ((83.40, 87.40),)},                        # 1:23.4 to 1:27.4
-    "S6": {"bake": ((135.03, 135.03), (138.53, 138.53), (143.53, 143.53)),   # 2:15.03, 2:18.53, 2:23.53
-           "network": ((154.40, 158.40),)},                   # 2:34.40 to 2:38.40
+    "S5": {"bake": ((83.40, 87.40), (91.00, 95.00), (98.00, 101.00)),   # 1:23.4, 1:31.0, 1:38.0
+           "network": ((101.00, 104.00),)},                             # 1:41.00 to 1:44.00
 }
 
 # The NES TALK box (card t_2ef3aa6f). S5's own claim in knowledge/DEMO-SCRIPT.md section 4 is "the person
@@ -148,16 +148,14 @@ SHOT_WINDOWS = {
 #      source, so the game's own pixels stay the game's.
 JUDGE_PATH = os.path.join(ROOT, "data", "talk", "sailor_judge.json")
 LEDGER_PATH = os.path.join(ROOT, "data", "receipts", "meta_receipts.jsonl")
-# Card t_b9173f05: the box is drawn on S6 as well, because the panel's fix 2 is that a player's line is
-# judged on the fight shot and the verdict read without anyone being told what to look at. S5 keeps the
-# box it had; S6 adds one rather than replacing the three TALK rows the plate already carries.
-TALK_BOX_SHOTS = ("S5", "S6")
-# Where the box hangs from. S5 hangs it under its caption plate, in the band above the dialogue box. S6
-# draws it under the frame beside its plate instead: the band between the battle's message window and its
-# command menu is the battle stage itself (the sailor and his label are in it), so drawing the box there
-# would cover the fight the shot is about. Section 4 rule 2 says the overlay goes under the frame or
-# beside it and never inside the 256 by 240 area, and this is that rule kept on the fight shot.
-TALK_BOX_ANCHOR = {"S5": "plate", "S6": "below"}
+# Card t_b9173f05 drew the box on S6 as well, because the panel's fix 2 was that a player's line is
+# judged on the fight shot. Card t_892cc851 retires that: the fight shot is Percy's now, his encounter
+# carries no `talk` block, and the six `fight/percy` rows are `fallback`, so there is no row a box could
+# honestly print. The box stays on S5, where the three Morgan rows answer.
+TALK_BOX_SHOTS = ("S5",)
+# Where the box hangs from. S5 hangs it under its caption plate, in the band above the dialogue box.
+TALK_BOX_ANCHOR = {"S5": "plate"}
+
 # The two build numbers the panel asked to keep on screen beside the verdict, by the name each one carries
 # in data/receipts/meta_receipts.jsonl. The ids are never typed here: they are looked up in the ledger.
 BAKE_RECEIPT_NAMES = ("meta.model_calls", "meta.system_chars")
@@ -370,36 +368,36 @@ def wrap(text, size, width):
     return out
 
 
-def overlay_lines(shot, bake, index, receipt=None, caption=None, allow_fallback=False):
+def overlay_lines(shot, bake, index, receipt=None, caption=None, allow_fallback=False, rows=None):
     """Every line the plate draws, as (tier, text) pairs, built only from the record.
 
     `tier` decides the font size and, in the frame test, which lines are bake pixels and which are the
-    shot's caption. A value carrying a long dash is refused here rather than drawn.
+    shot's caption. A value carrying a long dash is refused here rather than drawn. `rows` names the bake
+    rows this drawing carries: None means every row the shot declares, an empty tuple draws none (which is
+    what the network window needs), and a one element tuple gives the window that one reply's receipt.
     """
     if shot not in SHOT_ROWS:
-        raise OverlayError("%r is not an overlay shot; the two are S5 and S6" % shot)
+        raise OverlayError("%r is not an overlay shot; the one is %s" % (shot, " and ".join(sorted(SHOT_ROWS))))
     block = bake["bake"]
     caption = caption if caption is not None else shot_caption(shot)
     usable = PLATE_W - 2 * PLATE_PAD
 
-    rows = [bake_row(index, row_id, allow_fallback=allow_fallback) for row_id in SHOT_ROWS[shot]]
+    wanted = SHOT_ROWS[shot] if rows is None else tuple(rows)
+    chosen = [bake_row(index, row_id, allow_fallback=allow_fallback) for row_id in wanted]
 
     lines = [("caption", piece) for piece in wrap(caption, CAPTION_SIZE, usable)]
     lines.append(("detail", "BAKE MODEL %s  MODE %s  BACKEND %s" % (block["model"], block["mode"], block["backend"])))
     lines.append(("detail", "BAKE TIME %s  ROWS %s live %s" % (block["created_at"], block.get("rows", 0), block.get("live", 0))))
 
-    if shot == "S5":
-        row = rows[0]
+    for row in chosen:
         lines.append(("detail", "ROW %s  SOURCE %s" % (row["id"], row["source"])))
         lines.append(("hash", "HASH %s" % row["request_hash"]))
-    else:
-        for turn, row in enumerate(rows, start=1):
-            lines.append(("hash", "T%d %s" % (turn, row["request_hash"])))
-        for turn, row in enumerate(rows, start=1):
-            if row["source"] != "live" or row["network"] is not True:
-                # Only reachable with allow_fallback: the line says a fallback was drawn, so the frame
-                # never reads as a receipt for an answer the model refused.
-                lines.append(("detail", "T%d SOURCE %s, NOT A LIVE ANSWER" % (turn, row["source"])))
+        if row["source"] != "live" or row["network"] is not True:
+            # Only reachable with allow_fallback: the line says a fallback was drawn, so the frame never
+            # reads as a receipt for an answer the model refused.
+            lines.append(("detail", "ROW %s IS SOURCE %s, NOT A LIVE ANSWER" % (row["id"], row["source"])))
+
+    if (SHOT_WINDOWS.get(shot) or {}).get("network"):
         lines.append(("badge", network_badge_text(block)))
         for piece in network_lines(block):
             lines.append(("detail", piece))
@@ -411,6 +409,7 @@ def overlay_lines(shot, bake, index, receipt=None, caption=None, allow_fallback=
         if tier == "hash" and len(text) * HASH_SIZE > usable:
             raise OverlayError("the hash line %r is %d px wide and the plate holds %d" % (text, len(text) * HASH_SIZE, usable))
     return lines
+
 
 
 def network_badge_text(block):
@@ -731,13 +730,15 @@ def intersects(a, b):
 
 
 def plan(shot, bake, index, receipt=None, below=False, caption=None, blank=False, allow_fallback=False,
-         talk_box=False):
+         talk_box=False, rows=None):
     """The layout of one render: the plate, every line with its box, the badge, and the NES talk box.
 
     Returned as a dict so the frame test measures the same geometry the drawing used instead of
     recomputing it and hoping the two agree.
     """
-    lines = overlay_lines(shot, bake, index, receipt=receipt, caption=caption, allow_fallback=allow_fallback)
+    lines = overlay_lines(shot, bake, index, receipt=receipt, caption=caption, allow_fallback=allow_fallback,
+                          rows=rows)
+
     heights = [line_height(tier) for tier, _ in lines]
     plate = plate_rect(shot, heights, below)
     y = plate[1] + PLATE_PAD
@@ -795,7 +796,7 @@ def load_font(size):
 
 
 def render(source, shot, bake, index, receipt=None, below=False, caption=None, blank=False, allow_fallback=False,
-           talk_box=False):
+           talk_box=False, rows=None):
     """Draw one shot's overlay onto one frame. Returns (image, plan).
 
     `source` is an absolute path or an opened PIL image in RGB. A frame that is not the 3x screen is
@@ -811,7 +812,7 @@ def render(source, shot, bake, index, receipt=None, below=False, caption=None, b
             % (base.size[0], base.size[1], FRAME_W, FRAME_H)
         )
     layout = plan(shot, bake, index, receipt=receipt, below=below, caption=caption, blank=blank,
-                  allow_fallback=allow_fallback, talk_box=talk_box)
+                  allow_fallback=allow_fallback, talk_box=talk_box, rows=rows)
     bottom = layout["plate"][3]
     if layout.get("talk_box"):
         # S6's box is stacked under the plate, so the canvas has to reach past both of them.
@@ -889,7 +890,8 @@ def changed_outside(source, rendered, plates):
 
 
 def check_frame(source_path, rendered_path, shot, bake, index, receipt=None, below=False, caption=None,
-                allow_fallback=False, talk_box=False):
+                allow_fallback=False, talk_box=False, rows=None):
+
     """Measure a rendered frame, and return a report a reader can act on. `ok` is the verdict."""
     source = Image.open(source_path).convert("RGB")
     rendered = Image.open(rendered_path).convert("RGB")
@@ -900,9 +902,10 @@ def check_frame(source_path, rendered_path, shot, bake, index, receipt=None, bel
     # canvas. Before this the difference against a taller render raised instead of measuring.
     frame_view = rendered.crop((0, 0, source.size[0], source.size[1]))
     _, layout = render(source, shot, bake, index, receipt=receipt, below=below, caption=caption,
-                       allow_fallback=allow_fallback, talk_box=talk_box)
+                       allow_fallback=allow_fallback, talk_box=talk_box, rows=rows)
     control, _ = render(source, shot, bake, index, receipt=receipt, below=below, caption=caption, blank=True,
-                        allow_fallback=allow_fallback, talk_box=talk_box)
+                        allow_fallback=allow_fallback, talk_box=talk_box, rows=rows)
+
     plate = layout["plate"]
     box = layout.get("talk_box")
     checks = []
@@ -1001,12 +1004,15 @@ def check_frame(source_path, rendered_path, shot, bake, index, receipt=None, bel
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(description="the S5 and S6 caption overlay with the Meta bake row")
-    parser.add_argument("--shot", choices=sorted(SHOT_ROWS), help="S5 (dock office) or S6 (TALK fight and offline shot)")
+    parser = argparse.ArgumentParser(description="the S5 caption overlay with the Meta bake row")
+    parser.add_argument("--shot", choices=sorted(SHOT_ROWS), help="S5 (Morgan's three TALK replies on the quay)")
     parser.add_argument("--frame", help="the frame to draw on, or the rendered frame to check")
     parser.add_argument("--source", help="--check: the clean frame the render started from")
     parser.add_argument("--out", help="where the rendered frame is written")
     parser.add_argument("--below", action="store_true", help="draw the plate under the frame instead of inside it")
+    parser.add_argument("--only", default=None,
+                        help="comma separated bake row ids this drawing carries, or an empty string for none "
+                             "(the network window draws no row); default: every row the shot declares")
     parser.add_argument("--rows", action="store_true", help="print the lines this shot draws, as JSON, and draw nothing")
     parser.add_argument("--layout", action="store_true",
                         help="print the plate and line boxes as JSON, so another tool can look for the row")
@@ -1023,20 +1029,21 @@ def main(argv=None):
     if not args.shot:
         print(__doc__)
         return 1
+    only = None if args.only is None else tuple(piece.strip() for piece in args.only.split(",") if piece.strip())
     try:
         bake, index = load_bake(args.bake)
         if args.rows:
-            lines = overlay_lines(args.shot, bake, index, allow_fallback=args.allow_fallback)
+            lines = overlay_lines(args.shot, bake, index, allow_fallback=args.allow_fallback, rows=only)
             payload = {
                 "shot": args.shot,
                 "bake_file": args.bake,
                 "plate_anchor": SHOT_ANCHOR[args.shot],
-                "rows": list(SHOT_ROWS[args.shot]),
+                "rows": list(SHOT_ROWS[args.shot] if only is None else only),
                 "lines": [{"tier": tier, "text": text} for tier, text in lines],
             }
             if args.talk_box:
                 layout = plan(args.shot, bake, index, below=args.below, allow_fallback=args.allow_fallback,
-                              talk_box=True)
+                              talk_box=True, rows=only)
                 payload["talk_box"] = {
                     "rect": layout["talk_box"]["rect"],
                     "receipt": layout["talk_box"]["receipt"],
@@ -1049,7 +1056,7 @@ def main(argv=None):
             return 0
         if args.layout:
             layout = plan(args.shot, bake, index, below=args.below, allow_fallback=args.allow_fallback,
-                          talk_box=args.talk_box)
+                          talk_box=args.talk_box, rows=only)
             print(json.dumps(
                 {
                     "shot": args.shot,
@@ -1078,7 +1085,8 @@ def main(argv=None):
             if not (args.source and args.frame):
                 raise OverlayError("--check needs --source and --frame")
             report = check_frame(args.source, args.frame, args.shot, bake, index,
-                                 below=args.below, allow_fallback=args.allow_fallback, talk_box=args.talk_box)
+                                 below=args.below, allow_fallback=args.allow_fallback, talk_box=args.talk_box,
+                                 rows=only)
             for item in report["checks"]:
                 print("%s  %s  %s" % ("PASS" if item["ok"] else "FAIL", item["name"], item["detail"]))
             print("%s  %s frame at %s" % ("PASS" if report["ok"] else "FAIL", args.shot, args.frame))
