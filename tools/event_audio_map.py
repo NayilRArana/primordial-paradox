@@ -157,6 +157,21 @@ def leaf_of(declared):
     return os.path.basename(str(declared).replace("\\", "/"))
 
 
+def registered_stream_leaves(data):
+    """The stream leaf each landed cue row names today, read from the map's own cue table.
+
+    A music start line names the file the build handed the bus at the time the log was written. When
+    that leaf is no longer the leaf any landed cue row names, the line predates a re-point in
+    data/audio.json and the file it names is a retired render, not a file a renderer should place.
+    """
+    leaves = {}
+    for cue_id, row in (data.get("cues") or {}).items():
+        if row.get("landed") and row.get("delivered_file"):
+            leaves[leaf_of(row["delivered_file"])] = cue_id
+    return leaves
+
+
+
 # ---------------------------------------------------------------------------------------------------------------------
 # The event grammar. One entry per show_debug_message("PP audio: ...") in pp_audio.gml, in an order where the
 # specific forms come before the general ones. `sound` is what a renderer does with the line:
@@ -744,7 +759,14 @@ def resolve_music(named, folders=None):
 
 
 def plan_log(path, data):
-    """Every audio line in the log, in order, as the events a renderer places. No timing is invented."""
+    """Every audio line in the log, in order, as the events a renderer places. No timing is invented.
+
+    A line names a path on the machine that wrote the log, so only its leaf is ever read, and the leaf
+    is looked for in this checkout: no entry in the plan carries a host path. A sound line either
+    resolves to a file that is here, or says in `missing` why it does not (`retired_stream` for a
+    stream no landed cue row names any more, `not_in_checkout` for a file this tree does not carry),
+    with the reason in `why`. It never holds a bare None, and it never falls back to another file.
+    """
     macros = gml_macros()
     effects = data.get("effects") or {}
     plan = []
@@ -761,14 +783,51 @@ def plan_log(path, data):
             groups = match.groups() if match else ()
             if row["type"] == "theme_stream":
                 file = resolve_music(groups[0])
-                entry.update({"file": repo_relative(file) if file else None, "gain": float(groups[1]),
+                entry.update({"stream": "streams/" + leaf_of(groups[0]),
+                              "file": repo_relative(file) if file else None, "gain": float(groups[1]),
                               "loop": True, "why": "the theme's own start line, at its printed gain"})
+                if not file:
+                    # The log names a path on the machine that made it; only the leaf is read, and the
+                    # leaf is looked for in this checkout. Naming the miss is the point: a renderer must
+                    # not invent a substitute for a stream this tree does not carry.
+                    entry.update({"missing": "not_in_checkout",
+                                  "why": ("the line names streams/%s and no such file is in this "
+                                          "checkout" % leaf_of(groups[0]))})
             elif row["type"] == "music_stream":
-                file = resolve_music(groups[1])
-                entry.update({"cue": groups[0], "file": repo_relative(file) if file else None,
+                cue_id = groups[0]
+                leaf = leaf_of(groups[1])
+                entry.update({"cue": cue_id, "stream": "streams/" + leaf,
                               "gain": macros["PP_AUDIO_GAIN_MUSIC"], "loop": True,
-                              "priority": int(groups[2]), "fade_steps": int(groups[3]),
-                              "why": "a cue's own start line, at the bus music level"})
+                              "priority": int(groups[2]), "fade_steps": int(groups[3])})
+                if leaf not in registered_stream_leaves(data):
+                    # No landed cue row streams this leaf any more, so this line predates a re-point in
+                    # data/audio.json. The retired render may still sit on the machine that wrote the log:
+                    # the disk is deliberately NOT asked, because resolving it there would play an old
+                    # theme under a cue id that now names a different file, pass on that one machine and
+                    # fail on every clean checkout. The miss is recorded with its reason instead.
+                    cue_row = (data.get("cues") or {}).get(cue_id) or {}
+                    today = leaf_of(cue_row["delivered_file"]) if cue_row.get("delivered_file") else None
+                    note = str(cue_row.get("note") or "").strip()
+                    stem = leaf[:-4] if leaf.endswith(".ogg") else leaf
+                    why = ("the log names streams/%s, which no landed cue row in data/audio.json "
+                           "streams any more" % leaf)
+                    if today:
+                        why += "; %s streams %s today" % (cue_id, today)
+                    if note and stem in note:
+                        why += (". The ledger's own note for %s: %s"
+                                % (cue_id, note))
+                    entry.update({"file": None, "missing": "retired_stream",
+                                  "registered_stream": "streams/" + today if today else None,
+                                  "why": why})
+                else:
+                    file = resolve_music(groups[1])
+                    if file:
+                        entry.update({"file": repo_relative(file),
+                                      "why": "a cue's own start line, at the bus music level"})
+                    else:
+                        entry.update({"file": None, "missing": "not_in_checkout",
+                                      "why": ("streams/%s is the stream %s names in data/audio.json "
+                                              "and it is not in this checkout" % (leaf, cue_id))})
             elif row["type"] == "theme_ducked":
                 entry.update({"gain": float(groups[1]), "db": float(groups[0]),
                               "why": "the printed gain, which is what the game applied"})
@@ -929,10 +988,15 @@ def main(argv=None):
         for entry in plan:
             kinds[entry["sound"]] = kinds.get(entry["sound"], 0) + 1
         for entry in plan:
+            where = entry.get("file") or entry.get("cue") or ""
+            if entry.get("missing"):
+                # A line with no file is printed with its reason, so a reader of --plan never reads a blank
+                # column as silence the game chose.
+                where = "(%s) %s" % (entry["missing"], where)
             print("%3d %-22s %-14s %-8s %s"
                   % (entry["order"], entry["type"], entry["sound"],
                      "" if entry.get("gain") is None else entry["gain"],
-                     entry.get("file") or entry.get("cue") or ""))
+                     where))
         print("lines %d, by sound: %s" % (len(plan), kinds))
         unresolved = [entry for entry in plan if entry["type"] is None]
         if unresolved:

@@ -9,8 +9,9 @@ What these tests hold down, and why each one earns its place:
   3. the file table is the game's own data: the effect ids are sfx.json's cues, the cue ids are
      data/audio.json's rows, and every landed cue's delivered OGG and every effect's OGG are on disk;
   4. the title theme's beat adds up: 126 bpm over a 3/4 bar, 52 bars, and the ledger's own loop length;
-  5. planning the sample log resolves every sound line to a file that exists, so a fresh implementer can
-     render from it without inventing a name.
+  5. planning the sample log either resolves every sound line to a file that exists, or names the reason it
+     cannot (a stream no landed cue row streams any more, or a file this checkout does not carry), so a
+     fresh implementer can render from it without inventing a name.
 
 No ffprobe and no game/datafiles here: the suite runs in a clean export, where game/datafiles is not
 committed (the same reason tests/test_play_demo_audio.py builds its own copies). The measured durations live
@@ -38,6 +39,11 @@ SAMPLE_LOG = os.path.join(ROOT, "knowledge", "EVENT-LOG-SAMPLE-2026-11-01.txt")
 AUDIO_JSON = os.path.join(ROOT, "data", "audio.json")
 SFX_JSON = os.path.join(ROOT, "game", "datafiles", "sfx", "sfx.json")
 AUDIO_GML = os.path.join(ROOT, "game", "scripts", "pp_audio", "pp_audio.gml")
+
+# The two reasons a sound line in the sample log may resolve to no file: the stream is a retired name no
+# landed cue row in data/audio.json streams any more, or the file is simply not in this checkout. Both are
+# stated in the plan beside the line, so a renderer reads a reason and never guesses at a file.
+MISSING_KINDS = ("retired_stream", "not_in_checkout")
 
 
 def load_tool(name: str):
@@ -197,9 +203,48 @@ class TestThePlan:
         sounds = [entry for entry in plan if entry["sound"] in ("music_start", "sfx")]
         assert sounds, "the plan holds no sound at all"
         for entry in sounds:
-            assert entry["file"], "%s resolved to no file: %s" % (entry["cue"], entry["line"])
+            if not entry.get("file"):
+                # A line this checkout cannot answer must say so and say why. A renderer reading the plan
+                # has to know the line is not placeable, not that the game chose silence there.
+                assert entry.get("missing") in MISSING_KINDS, \
+                    "%s resolved to no file and no reason: %s" % (entry["cue"], entry["line"])
+                assert entry.get("why"), "%s is missing for no stated reason" % entry["cue"]
+                continue
             assert os.path.isfile(os.path.join(ROOT, entry["file"])), \
                 "%s resolved to %s, which is not on disk" % (entry["cue"], entry["file"])
+
+    def test_a_stream_no_ledger_row_names_is_recorded_as_retired(self, tool, the_map):
+        # The sample log is copied from a build dated before 2026-11-03, when PP-06 still streamed the old
+        # percy_theme.ogg. That file exists on the machine that wrote the log, so resolving it from disk
+        # was green there and red on every checkout: the plan must name the retirement instead.
+        registered = tool.registered_stream_leaves(the_map)
+        plan = tool.plan_log(SAMPLE_LOG, the_map)
+        retired = [entry for entry in plan if entry.get("missing") == "retired_stream"]
+        assert retired, "the sample log carries the PP-06 line that predates the cue's current file"
+        for entry in retired:
+            assert entry["stream"].startswith("streams/"), "%s is not repo-relative" % entry["stream"]
+            assert entry["stream"].split("/")[-1] not in registered, \
+                "a line was called retired although a landed cue still streams %s" % entry["stream"]
+            assert entry["registered_stream"], "%s must name what the cue streams today" % entry["cue"]
+            assert entry["registered_stream"] != entry["stream"], \
+                "%s retired a stream that is still the cue's own" % entry["cue"]
+        assert sorted(entry["cue"] for entry in retired) == ["PP-06"], \
+            "the fixture's only pre-ledger stream is PP-06's percy_theme line"
+
+    def test_the_plan_carries_no_host_path(self, tool, the_map):
+        # The log lines hold D:\ paths from the machine that wrote them, and `line` keeps them verbatim
+        # because it quotes the log. Every path the plan RESOLVES must be repo-relative: no other machine
+        # has those paths, and the row that read one was red for exactly that.
+        plan = tool.plan_log(SAMPLE_LOG, the_map)
+        resolved = [{key: value for key, value in entry.items() if key != "line"} for entry in plan]
+        text = json.dumps(resolved)
+        assert not re.search(r"[A-Za-z]:[\\/]", text), "the plan resolves a host path: %s" % text[:400]
+        for entry in plan:
+            for key in ("file", "stream", "registered_stream"):
+                value = entry.get(key)
+                if value:
+                    assert not os.path.isabs(str(value).replace("\\", "/")) and not re.match(r"[A-Za-z]:", str(value)), \
+                        "%s resolves to the host path %r" % (key, value)
 
     def test_a_music_line_takes_the_bus_music_level(self, tool, the_map):
         plan = tool.plan_log(SAMPLE_LOG, the_map)

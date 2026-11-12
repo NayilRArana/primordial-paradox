@@ -218,7 +218,7 @@
       "meaning": "a music cue starts from the named file at the bus music level, looped, fading in",
       "source": "game/scripts/pp_audio/pp_audio.gml:338",
       "observed_in_logs": true,
-      "sample_lines": 12,
+      "sample_lines": 10,
       "why_unobserved": ""
     },
     {
@@ -288,7 +288,7 @@
       "meaning": "the effect file was read into a buffer: no sound yet, the play line is the sound",
       "source": "game/scripts/pp_audio/pp_audio.gml:617",
       "observed_in_logs": true,
-      "sample_lines": 16,
+      "sample_lines": 14,
       "why_unobserved": ""
     },
     {
@@ -338,7 +338,7 @@
       "meaning": "one effect plays once, at the level of the bus path that asked for it",
       "source": "game/scripts/pp_audio/pp_audio.gml:397, game/scripts/pp_audio/pp_audio.gml:690",
       "observed_in_logs": true,
-      "sample_lines": 371,
+      "sample_lines": 272,
       "why_unobserved": ""
     },
     {
@@ -378,7 +378,7 @@
       "meaning": "the room asked for a cue; the start line above or below is the sound, this line is the verdict",
       "source": "game/scripts/pp_audio/pp_audio.gml:533",
       "observed_in_logs": true,
-      "sample_lines": 14,
+      "sample_lines": 12,
       "why_unobserved": ""
     },
     {
@@ -388,7 +388,7 @@
       "meaning": "the fight asked for a cue; the start line is the sound, this line is the verdict",
       "source": "game/scripts/pp_audio/pp_audio.gml:554",
       "observed_in_logs": true,
-      "sample_lines": 5,
+      "sample_lines": 4,
       "why_unobserved": ""
     },
     {
@@ -441,14 +441,14 @@
     },
     "PP-03": {
       "id": "PP-03",
-      "title": "Harbor",
+      "title": "Harbor Storm",
       "landed": true,
-      "delivered_file": "assets/audio/pp_03_harbor_master1/pp_03_harbor_master1.ogg",
-      "file": "assets/audio/pp_03_harbor_master1/pp_03_harbor_master1.ogg",
+      "delivered_file": "assets/audio/pp_03_quay_storm/pp_03_quay_storm.ogg",
+      "file": "assets/audio/pp_03_quay_storm/pp_03_quay_storm.ogg",
       "file_exists": true,
-      "stream_file": "game/datafiles/streams/pp_03_harbor_master1.ogg",
+      "stream_file": "game/datafiles/streams/pp_03_quay_storm.ogg",
       "stream_exists": true,
-      "seconds": 225.882358,
+      "seconds": 72.0,
       "rate": 44100,
       "channels": 1,
       "gain": 0.7,
@@ -495,14 +495,14 @@
     },
     "PP-06": {
       "id": "PP-06",
-      "title": "Percy, Tyrant of the Harbor",
+      "title": "Percy, Possessed",
       "landed": true,
-      "delivered_file": "assets/audio/percy_theme/percy_theme.ogg",
-      "file": "assets/audio/percy_theme/percy_theme.ogg",
+      "delivered_file": "assets/audio/pp_06_percy_possessed/pp_06_percy_possessed.ogg",
+      "file": "assets/audio/pp_06_percy_possessed/pp_06_percy_possessed.ogg",
       "file_exists": true,
-      "stream_file": "game/datafiles/streams/percy_theme.ogg",
+      "stream_file": "game/datafiles/streams/pp_06_percy_possessed.ogg",
       "stream_exists": true,
-      "seconds": 43.636327,
+      "seconds": 57.6,
       "rate": 44100,
       "channels": 1,
       "gain": 0.7,
@@ -544,7 +544,7 @@
       "gain": 0.7,
       "priority": 10,
       "loop": true,
-      "fallback": "PP-03",
+      "fallback": "PP-18",
       "trim": "the bus loops the whole file from 0 and fades in over 30 steps (0.5 s); a renderer does the same"
     },
     "PP-09": {
@@ -562,7 +562,7 @@
       "gain": 0.7,
       "priority": 10,
       "loop": true,
-      "fallback": "PP-03",
+      "fallback": "PP-18",
       "trim": "the bus loops the whole file from 0 and fades in over 30 steps (0.5 s); a renderer does the same"
     },
     "PP-10": {
@@ -616,7 +616,7 @@
       "gain": 0.7,
       "priority": 10,
       "loop": true,
-      "fallback": "PP-03",
+      "fallback": "PP-18",
       "trim": "the bus loops the whole file from 0 and fades in over 30 steps (0.5 s); a renderer does the same"
     },
     "PP-13": {
@@ -634,7 +634,7 @@
       "gain": 0.7,
       "priority": 10,
       "loop": true,
-      "fallback": "PP-03",
+      "fallback": "PP-18",
       "trim": "the bus loops the whole file from 0 and fades in over 30 steps (0.5 s); a renderer does the same"
     },
     "PP-14": {
@@ -658,37 +658,37 @@
     "PP-15a": {
       "id": "PP-15a",
       "title": "Entropy",
-      "landed": false,
-      "delivered_file": null,
-      "file": null,
-      "file_exists": false,
-      "stream_file": "game/datafiles/streams/pp_15a_entropy.ogg",
-      "stream_exists": false,
-      "seconds": null,
-      "rate": null,
-      "channels": null,
+      "landed": true,
+      "delivered_file": "assets/audio/pp_15a_credits_kill/pp_15a_credits_kill.ogg",
+      "file": "assets/audio/pp_15a_credits_kill/pp_15a_credits_kill.ogg",
+      "file_exists": true,
+      "stream_file": "game/datafiles/streams/pp_15a_credits_kill.ogg",
+      "stream_exists": true,
+      "seconds": 80.0,
+      "rate": 44100,
+      "channels": 1,
       "gain": 0.7,
       "priority": 10,
       "loop": true,
-      "fallback": "PP-01",
+      "fallback": null,
       "trim": "the bus loops the whole file from 0 and fades in over 30 steps (0.5 s); a renderer does the same"
     },
     "PP-15b": {
       "id": "PP-15b",
       "title": "Mercy",
-      "landed": false,
-      "delivered_file": null,
-      "file": null,
-      "file_exists": false,
-      "stream_file": "game/datafiles/streams/pp_15b_mercy.ogg",
-      "stream_exists": false,
-      "seconds": null,
-      "rate": null,
-      "channels": null,
+      "landed": true,
+      "delivered_file": "assets/audio/pp_15b_credits_spare/pp_15b_credits_spare.ogg",
+      "file": "assets/audio/pp_15b_credits_spare/pp_15b_credits_spare.ogg",
+      "file_exists": true,
+      "stream_file": "game/datafiles/streams/pp_15b_credits_spare.ogg",
+      "stream_exists": true,
+      "seconds": 53.333333,
+      "rate": 44100,
+      "channels": 1,
       "gain": 0.7,
       "priority": 10,
       "loop": true,
-      "fallback": "PP-01",
+      "fallback": null,
       "trim": "the bus loops the whole file from 0 and fades in over 30 steps (0.5 s); a renderer does the same"
     },
     "PP-16": {
@@ -725,6 +725,24 @@
       "priority": 10,
       "loop": false,
       "fallback": "PP-05",
+      "trim": "the bus loops the whole file from 0 and fades in over 30 steps (0.5 s); a renderer does the same"
+    },
+    "PP-18": {
+      "id": "PP-18",
+      "title": "Harbor, Calm",
+      "landed": true,
+      "delivered_file": "assets/audio/pp_03_harbor_master1/pp_03_harbor_master1.ogg",
+      "file": "assets/audio/pp_03_harbor_master1/pp_03_harbor_master1.ogg",
+      "file_exists": true,
+      "stream_file": "game/datafiles/streams/pp_03_harbor_master1.ogg",
+      "stream_exists": true,
+      "seconds": 225.882358,
+      "rate": 44100,
+      "channels": 1,
+      "gain": 0.7,
+      "priority": 10,
+      "loop": true,
+      "fallback": null,
       "trim": "the bus loops the whole file from 0 and fades in over 30 steps (0.5 s); a renderer does the same"
     }
   },
@@ -1229,16 +1247,16 @@
   "unmatched_lines": [],
   "event_line_counts": {
     "theme_stream": 4,
-    "sfx_loaded": 16,
-    "sfx_played": 371,
+    "sfx_loaded": 14,
+    "sfx_played": 272,
     "theme_ducked": 3,
     "theme_unducked": 2,
     "theme_handed": 3,
-    "music_stream": 12,
-    "room_asked": 14,
-    "fight_asked": 5,
+    "music_stream": 10,
+    "room_asked": 12,
     "focus_lost": 3,
     "focus_back": 2,
+    "fight_asked": 4,
     "music_missing": 3,
     "cue_unknown_name": 1,
     "sfx_silent_manifest": 1
