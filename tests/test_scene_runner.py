@@ -48,7 +48,9 @@ COMMAND_ARGS = {
     "destroy": ({"actor"}, {"actor"}),
     "battle": ({"id"}, {"id"}),
     # Card t_1163ca72: the scene chat. It names the npc it speaks to; the plate is the name the box draws.
-    "talk": ({"npc"}, {"npc", "plate"}),
+    # Card t_21951674: `line` is the player's words for a beat that already has them, so the box asks the bridge
+    # without a keyboard in front of it.
+    "talk": ({"npc"}, {"npc", "plate", "line"}),
     "setflag": ({"name"}, {"name", "value"}),
     "branch": ({"flag", "scene"}, {"flag", "scene"}),
     "credits": ({"variant"}, {"variant"}),

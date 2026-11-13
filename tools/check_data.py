@@ -1664,6 +1664,19 @@ class Checker:
                     # on nobody. The plate is the name the box draws and it is optional.
                     npc = self.require(command, "npc", "str", filename, command_path)
                     self.want(command, "plate", "str", filename, command_path)
+                    # Card t_21951674: an authored line opens the box with the player's words already in it, so a
+                    # cutscene can ask the bridge with no keyboard in front of the machine. It is the box's own cap
+                    # (spec 21 section 1), printable, and never a wall of text where a sentence belongs.
+                    line_text = self.want(command, "line", "str", filename, command_path)
+                    if line_text is not None:
+                        if not isinstance(line_text, str) or line_text.strip() == "":
+                            self.error(filename, command_path + ".line", "must be a non empty string")
+                        elif len(line_text) > 120:
+                            self.error(filename, command_path + ".line",
+                                       "is %d characters, over the box's own 120 character cap" % len(line_text))
+                        elif any(ord(ch) < 32 or ord(ch) > 126 for ch in line_text):
+                            self.error(filename, command_path + ".line",
+                                       "holds a character the box cannot draw; printable ASCII only")
                     map_row = ids["map"].get(map_name) if isinstance(map_name, str) else None
                     actors = map_row.get("actors") if isinstance(map_row, dict) else None
                     actor_ids = set()

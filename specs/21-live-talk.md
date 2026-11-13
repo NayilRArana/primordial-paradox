@@ -236,3 +236,11 @@ Out of scope here, and owed to the card that wires the scenes: a GML trigger tha
 S3, a second persona in one scene, voice input for a persona, and moving `data/talk_personas.json` out of
 `NOT_RUNTIME` into the bundle. Until that card lands, the personas are proved through the bridge and the tests,
 not through a GameMaker run.
+
+Amendments, and they are the count, not the protocol. `nye`, the dock clerk of S5, was the fourth card (card
+t_330b12ce): he answers inside a cutscene, so he carries `effects` of his own and `bake: false`, because his
+recorded turns are the `npc/nye` rows `tools/bake_meta.py` baked. `morgan`, the gate sentry of S4, is the fifth
+(card t_21951674): S4 added to the scene enum, the same widened `effects` list, `bake: false` off the `npc/morgan`
+rows. Item 1's "three cards" therefore reads five, the schema's cap is five, and nothing else in this section
+moved: still two sentences, still the 6 second deadline, still the guards on this side, still the same cache key
+extended by the persona's own block.

@@ -47,6 +47,12 @@
           "id": "quay_morgan_pre"
         },
         {
+          "cmd": "talk",
+          "npc": "morgan",
+          "plate": "MORGAN",
+          "line": "The wind is the only gate. Not you."
+        },
+        {
           "cmd": "wait",
           "steps": 20
         },

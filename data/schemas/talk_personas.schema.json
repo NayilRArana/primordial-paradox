@@ -44,9 +44,9 @@
     "personas": {
       "type": "array",
       "minItems": 3,
-      "maxItems": 4,
+      "maxItems": 5,
       "items": { "$ref": "#/$defs/persona" },
-      "description": "One card per character the live talk stands in: the three scene chats of S1 to S3, plus the dock clerk of S5 who answers inside a cutscene (card t_330b12ce). Four, because those are the four exchanges the demo puts a box on."
+      "description": "One card per character the live talk stands in: the three scene chats of S1 to S3, the dock clerk of S5 who answers inside a cutscene (card t_330b12ce) and Morgan at the quay gate (card t_21951674). Five, because those are the five exchanges the demo puts a box on."
     }
   },
   "$defs": {
@@ -111,8 +111,8 @@
         },
         "scene": {
           "type": "string",
-          "enum": ["S1", "S2", "S3", "S5"],
-          "description": "The story beat from knowledge/SCENES-S1-S3.md, not a demo segment letter. S5 is the dock office, which lives in the demo's shot table section instead (card t_330b12ce) and is named here so the clerk's card can carry the beat it answers in."
+          "enum": ["S1", "S2", "S3", "S4", "S5"],
+          "description": "The story beat from knowledge/SCENES-S1-S3.md, not a demo segment letter. S4 is Morgan at the quay gate and S5 is the dock office, which live in the demo's shot table section instead (cards t_21951674 and t_330b12ce), and both are named here so a card can carry the beat it answers in."
         },
         "place": {
           "type": "string",

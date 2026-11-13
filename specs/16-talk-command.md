@@ -436,3 +436,52 @@ Voice input, speech to text, typed input during the dodge phase, a model that ch
 4. New data files, all spec'd here and none written yet: data/talk_cards.json, data/schemas/talk_cards.schema.json, data/schemas/talk_response.schema.json, data/talk_profanity.json, data/talk-injection.json, data/talk_cache.json.
 5. The 12 call per battle cap and the 150 step budget are the numbers most likely to need tuning after the first playtest; both live in one constants block.
 6. An honest limit for the hackathon entry: a readable demo needs the two demo enemies' cards written and tuned (about 30 pool lines each), and the model's numbers only become good with a couple of hours of playing against them. The pipeline is the part that is certain; the writing is the part that decides whether it feels good.
+
+## 18. Amendment, 2026-11-01 (card t_1163ca72): the same box outside a battle
+
+Section 16 lists "any use of the model to generate story dialogue outside battle" as out of scope, calling it a
+separate card and a separate review. That card is this one, and this is the decision it recorded.
+
+1. What it is. A scene can name a character and the player says one line to them: `{ "cmd": "talk", "npc": "nye",
+   "plate": "NYE" }` in `data\scenes\all.json` (spec 06, rule 12). The entry box, its keys, its two row window and its
+   `* ` marker are pp_talk_live's, the same box the battle uses, so a conversation and a fight's TALK look identical.
+   The reply, the hint and the verdict are drawn in the dialogue window (spec 05's numbers), with the character's plate
+   on its top border.
+2. Where the words come from. Not a socket. The scene chat answers with the character's recorded turn out of
+   `data\meta_bake.json` (`npc\nye\turn_1` to `turn_3`, written by `tools\bake_meta.py` from a real call, read through
+   pp_talk_npc_rows). A cutscene cannot wait on a network, so the scene path is a replay of a model's recorded answer and
+   the log says so: `PP: talk scene answer, npc nye, turn 1, verdict unmoved, source bake`. The battle path is
+   unchanged and still calls the bridge when the backend is on.
+3. The verdict is shown. The reply's effect (`soften`, `nudge`, `setback`, `none`) is turned into a word by
+   pp_talk_live_effect_verdict and drawn as `* NYE IS UNMOVED.` on the row under the reply, in the window's one ink.
+   No meter, no mercy, no tries: a conversation costs nothing and cannot end a life.
+4. The line the player says is kept on the scene's own state (`scene_said`) and is never written to a request, a file or
+   the log. The log carries its length only, exactly as the battle path already does, and closes the section 6 hole in
+   the one place a line could otherwise have reached a save.
+5. Cancel is bounded. Esc in the typing stage puts the box down and the scene walks on to its next command, so an
+   exchange nobody wants to have cannot strand a scene (spec 06, rule 12).
+6. Where it is used. The quay dock office beat, S5 of the demo: the clerk asks the player's name, the player types it,
+   and the box answers in his plate before the pass line and the boarding fade.
+7. Superseded in part, 2026-11-01 (card t_330b12ce): item 2's "not a socket" holds for replay mode only. In live mode
+   the scene send goes to the same loopback bridge the battle's TALK asks, on the same non blocking request and the same
+   ladder, with its own shorter answer clock (420 steps). Every mode that is not live, which is the shipped demo and
+   every test, still answers from the recorded turn and opens nothing.
+
+## 19. Amendment, 2026-11-13 (card t_21951674): the gate beat, the persona card and an authored line
+
+The judge panel's Impact fix asks for one thing: a player line judged on screen, at the gate, by the model, in the NES
+text box. Three additions make that reachable, and each of them is data plus the code that already existed.
+
+1. A persona card for Morgan. `tools/ai_bridge.py` refuses a request that names a persona it has no card for, and it
+   said so out loud: `POST /talk {"persona": "morgan"}` answered HTTP 500, "no talk persona 'morgan' (known: konrad,
+   nye, quay_townsperson, urien)". `data/talk_personas.json` now carries a `morgan` card (S4, place
+   `southampton_town_quay`, the widened `effects` list so a live answer can read persuaded, unmoved or angered, and
+   `bake: false` because his recorded turns are the `npc/morgan` rows `tools/bake_meta.py` already baked).
+2. A line on the command. `{ "cmd": "talk", "npc": "morgan", "plate": "MORGAN", "line": "The wind is the only gate. Not
+   you." }` opens the same box, asks the line at once through `pp_talk_scene_ask` and closes on one confirm. No typing
+   stage, so a recorded take needs no keyboard; the answer is the same answer a typed line gets, because the one call
+   underneath is `pp_talk_scene_submit`. `tools/check_data.py` and `data/schemas/cutscenes.schema.json` accept and bound
+   the field (120 characters, printable ASCII).
+3. The judged line is on screen. While the box waits for the answer it draws the line it is waiting on, over the
+   thinking dots, so the frame carries both halves of the exchange: the words, then the model's reply and its verdict.
+

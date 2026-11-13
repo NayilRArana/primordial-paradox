@@ -62,7 +62,10 @@ PERSONA_IDS = ("konrad", "urien", "quay_townsperson")
 # The dock clerk answers inside the S5 cutscene (card t_330b12ce) so he carries a card like the three scene chats but
 # no bake report block: the bake list is the three live chats, and adding him there would move a recorded report.
 NYE_ID = "nye"
-ALL_IDS = PERSONA_IDS + (NYE_ID,)
+# Morgan at the quay gate answers inside the S4 cutscene (card t_21951674), the same way the clerk answers inside S5:
+# his recorded turns are the npc/morgan rows of data/meta_bake.json, so he carries a card and no bake report block.
+MORGAN_ID = "morgan"
+ALL_IDS = PERSONA_IDS + (NYE_ID, MORGAN_ID)
 # What the card asks for, in one place: three personas, fifteen answers each, two sentences, six seconds.
 PER_PERSONA = 15
 ANSWER_SENTENCES = 2
@@ -133,6 +136,13 @@ def test_three_personas_one_per_scene(doc, rows):
     assert rows[NYE_ID]["scene"] == "S5" and rows[NYE_ID]["place"] == "quay_dock_office"
     assert rows[NYE_ID]["effects"] == ["none", "nudge", "soften", "setback"], (
         "a scene verdict has to be able to read persuaded, unmoved and angered, and the persona default is none/end")
+    # Card t_21951674: Morgan is the fifth card, stands at the quay gate the demo's S4 shoots, and carries the same
+    # widened effect list for the same reason: the box draws his verdict on the line, so all three words must be
+    # reachable from a live answer. He is bake:false because bake_meta.py already baked his three npc turns.
+    assert rows[MORGAN_ID]["scene"] == "S4" and rows[MORGAN_ID]["place"] == "southampton_town_quay"
+    assert rows[MORGAN_ID]["bake"] is False, "Morgan's recorded turns are the npc/morgan rows, not a persona bake"
+    assert rows[MORGAN_ID]["effects"] == ["none", "nudge", "soften", "setback"]
+    assert "!" in rows[MORGAN_ID]["banned_marks"], "Morgan never raises his voice, which is a mark before a tone"
 
 
 def test_every_persona_carries_the_answers_the_card_asks_for(rows):

@@ -144,7 +144,8 @@
       "properties": {
         "cmd": { "const": "talk" },
         "npc": { "type": "string", "minLength": 1, "description": "Actor id on the scene's own map. The player's typed line is answered with this character's recorded turns from data/meta_bake.json's npc rows (card t_1163ca72)." },
-        "plate": { "type": "string", "minLength": 1, "description": "The name the box draws, uppercased. Defaults to the npc id." }
+        "plate": { "type": "string", "minLength": 1, "description": "The name the box draws, uppercased. Defaults to the npc id." },
+        "line": { "type": "string", "minLength": 1, "maxLength": 120, "pattern": "^[ -~]+$", "description": "Optional. The player's words for this exchange, when the beat has them already (a cutscene, not a prompt). The box opens, sends the line to the local bridge, draws the answer and the verdict, and one confirm ends it, so no keyboard is needed in front of the machine (card t_21951674)." }
       }
     },
     "setflag": {

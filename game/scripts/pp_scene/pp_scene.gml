@@ -393,6 +393,16 @@ function pp_scene_command_start(_sc, _world) {
                 pp_scene_advance(_sc, _world);
                 return;
             }
+            // Card t_21951674: a beat whose words are already written (the gate, the checkpoint) carries the player's
+            // line on the command, and the box asks it at once. It is the same send a typed line makes: live mode puts
+            // it to the local bridge and the answer comes back through pp_talk_scene_async, so the verdict drawn in the
+            // box is the model's judgement of this line and not a line the scene chose. Without a `line` the box opens
+            // for the keyboard exactly as it did for the dock office (card t_1163ca72).
+            if (variable_struct_exists(_cmd, "line") && is_string(_cmd.line) && _cmd.line != "") {
+                show_debug_message("PP scene: talk " + _npc + " asks the authored line, "
+                    + string(string_length(_cmd.line)) + " chars, at " + string(_sc.id) + "[" + string(_sc.index) + "]");
+                pp_talk_scene_ask(_talk, _cmd.line);
+            }
             _sc.talk = _talk;
             _sc.state = "talk";
             return;

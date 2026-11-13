@@ -252,6 +252,7 @@ function pp_talk_persona_answer(_state, _doc, _via) {
     pp_input_text_end();
     show_debug_message("PP: talk persona answer via " + string(_via) + ", lines "
         + string(array_length(_state.live_reply)));
+    pp_talk_turn_shown(_state, "persona", _state.persona);
     pp_audio_play("menu_select");
     return true;
 }
@@ -671,6 +672,7 @@ function pp_talk_scene_answer(_state, _doc, _via) {
     show_debug_message("PP: talk scene answer, npc " + _state.scene_npc + ", verdict " + _state.live_verdict
         + ", source " + _state.live_source + " via " + string(_via)
         + ", rows " + string(array_length(_state.live_reply)));
+    pp_talk_turn_shown(_state, "scene", _state.scene_npc);
     pp_audio_play("menu_select");
     return true;
 }
@@ -758,7 +760,16 @@ function pp_talk_scene_draw_entry(_state) {
         return;
     }
     if (_state.live_stage == "wait") {
-        pp_font_draw(pp_talk_live_dots(_state.live_steps), PP_TEXT_X, PP_TEXT_Y, 1);
+        // Card t_21951674: the line being judged stays on the screen while the character weighs it. A typed exchange
+        // shows it in the entry stage and then loses it, so a take could show the reply and the verdict with no record
+        // of what the player actually said. The said line owns the top two rows, the thinking dots the row under it.
+        var _said = pp_talk_live_rows(string_upper(_state.live_text));
+        var _said_n = min(2, array_length(_said));
+        for (var w = 0; w < _said_n; w++) {
+            pp_font_draw(_said[w], PP_TEXT_X, PP_TEXT_Y + w * PP_TEXT_LINE_H, 1);
+        }
+        pp_font_draw(pp_talk_live_dots(_state.live_steps), PP_TEXT_X,
+            PP_TEXT_Y + _said_n * PP_TEXT_LINE_H, 1);
         pp_font_draw(_d.hint_wait, PP_TEXT_X, PP_BOX_Y + PP_BOX_H - 22, 1);
         return;
     }
