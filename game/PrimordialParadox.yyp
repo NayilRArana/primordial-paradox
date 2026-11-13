@@ -2778,6 +2778,15 @@
     },
     {
       "$GMIncludedFile": "",
+      "%Name": "pp_04_fight_baroque_v8.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "pp_04_fight_baroque_v8.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
       "%Name": "pp_04_navy_sailors.ogg",
       "CopyToMask": -1,
       "filePath": "datafiles/streams",
@@ -3061,6 +3070,15 @@
       "CopyToMask": -1,
       "filePath": "datafiles/streams",
       "name": "pp_drive_v4.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "pp_drive_v5.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "pp_drive_v5.ogg",
       "resourceType": "GMIncludedFile",
       "resourceVersion": "2.0"
     },
