@@ -2868,6 +2868,15 @@
     },
     {
       "$GMIncludedFile": "",
+      "%Name": "pp_05_small_ship_v7.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "pp_05_small_ship_v7.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
       "%Name": "pp_06_percy_possessed.ogg",
       "CopyToMask": -1,
       "filePath": "datafiles/streams",
@@ -2890,6 +2899,15 @@
       "CopyToMask": -1,
       "filePath": "datafiles/streams",
       "name": "pp_06_percy_possessed_v3.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "pp_06_percy_possessed_v4.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "pp_06_percy_possessed_v4.ogg",
       "resourceType": "GMIncludedFile",
       "resourceVersion": "2.0"
     },
@@ -2926,6 +2944,15 @@
       "CopyToMask": -1,
       "filePath": "datafiles/streams",
       "name": "pp_15b_credits_spare_v2.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "pp_15b_credits_spare_v3.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "pp_15b_credits_spare_v3.ogg",
       "resourceType": "GMIncludedFile",
       "resourceVersion": "2.0"
     },

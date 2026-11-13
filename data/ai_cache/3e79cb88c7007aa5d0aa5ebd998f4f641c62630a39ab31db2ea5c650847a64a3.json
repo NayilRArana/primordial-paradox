@@ -1,0 +1,73 @@
+{
+  "backend": "meta",
+  "key": "3e79cb88c7007aa5d0aa5ebd998f4f641c62630a39ab31db2ea5c650847a64a3",
+  "kind": "vision",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "recorded_at": "2026-11-13T05:09:48Z",
+  "request": {
+    "messages": [
+      {
+        "content": [
+          {
+            "text": "<sha256:08877b7d45026e8a:7568 chars>",
+            "type": "text"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:b55b2cf14a9f79c6:301638 chars>"
+            },
+            "type": "image_url"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:3edcecfeee835bf0:9750 chars>"
+            },
+            "type": "image_url"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:3d276bb22c28dd19:68006 chars>"
+            },
+            "type": "image_url"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:647d5e063ad30bd6:488346 chars>"
+            },
+            "type": "image_url"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:af953c531bf74721:130470 chars>"
+            },
+            "type": "image_url"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:11afffaa3d5b74eb:130562 chars>"
+            },
+            "type": "image_url"
+          }
+        ],
+        "role": "user"
+      }
+    ],
+    "model": "muse-spark-1.3"
+  },
+  "response": {
+    "text": "### What the video shows\nFrom the six stills in order, a judge sees the PRIMORDIAL PARADOX title screen with a car and sky at 6.1 s, then a near black fade at 18.4 s, then white crawl text on black about the veil wearing thin at 30.6 s, then the same static top down field and road with a small blue sprite frozen in the corner at 42.9 s, 55.1 s and 67.4 s. I cannot see the README, the repo, or full motion, only these stills plus the measured run facts. Missing for a 3 minute demo is everything the script promises after the crawl: a person talking to the game, a Meta model verdict inside a NES text box, bake receipts and the network line, captions, a before and after, and a title card that says what this is.\n\n### The four scores\nImpact: 3/10 for no visible AI conversation or verdict with the last three frames identical and measured talk_turns_onscreen only inferred.\nUse of Meta AI tooling: 3/10 for no receipts, network line, or judged dialogue visible in frames though 21 model calls are logged with receipts in the repo.\nTechnical depth: 4/10 for a 768 x 720 3x NES frame with title, crawl and quay rendering but measured no footstep cue and no walk motion across three frames.\nDemo: 2/10 for measured 73.5 s versus planned 180 s with 2 of 6 frames over 90 percent one colour and no captions or shareable story.\n\n### Five fixes, ranked\n1. Rebuild full 180s captioned demo video to planned shot table \u2014 criterion: Demo \u2014 lane: builder \u2014 body: Edit data/slice.json to restore six shots S1 to S6 totaling 180 seconds with one caption per shot as in the script. Re run the builder capture to output/demo/nightly-2026-11-12.mp4 and confirm duration with ffprobe. A judge will see a 3 minute video that runs title to Percy ending with readable captions instead of a 73 second cut.\n2. Show Morgan live verdict inside NES dialogue box on camera \u2014 criterion: Impact \u2014 lane: gamedev \u2014 body: Edit the morgan scene dialogue code to request a live verdict from the local AI bridge and render the returned text inside the NES text box. Keep the prompt under the 2408 system chars budget logged in meta_receipts.jsonl. A judge will see the player line judged on screen in S4 to S5 and hear the verdict without narration explaining it.\n3. Fix quay walk right movement and restore footstep audio cue \u2014 criterion: Technical depth \u2014 lane: gamedev \u2014 body: Fix the quay player controller so Right input leaves the idle gate and triggers the walk animation and footstep sample. Verify in the verify file that footstep cues occur during the quay and morgan route steps. A judge will see the sprite cross Town Quay in S3 to S4 and hear steps instead of three identical still frames.\n4. Overlay bake receipts and network line during S5 judgement \u2014 criterion: Use of Meta AI tooling \u2014 lane: assistant \u2014 body: Update the morgan overlay code to draw three bake receipts and the network status line during S5 from data/receipts/meta_receipts.jsonl. Show model_calls 21 and live_share 52.4 percent as small plates above the dialogue box. A judge will see measured proof in the video that a Meta model answered inside hardware limits.\n5. Record voice question to Percy with on screen answer and ending \u2014 criterion: Impact \u2014 lane: assistant \u2014 body: Add a player microphone turn in the percy scene that sends one spoken question to the bridge and shows the answer and ending on screen. Log the turn so talk_turns_onscreen grows beyond 3 in the next capture. A judge will see talking win the encounter in S6 with before and after text instead of a static field.\n\n### Machine readable block\n```json\n{\"impact\": 3, \"impact_reason\": \"No visible AI conversation or verdict with last three frames identical and talk turns only inferred.\", \"meta_tooling\": 3, \"meta_tooling_reason\": \"No receipts, network line, or judged dialogue visible in frames though 21 calls logged with receipts.\", \"technical_depth\": 4, \"technical_depth_reason\": \"768x720 3x NES frame renders title crawl and quay but no walk motion and no footstep cue.\", \"demo\": 2, \"demo_reason\": \"Measured 73.5s versus planned 180s with 2 of 6 frames over 90 percent one colour and no captions.\", \"fixes\": [{\"title\": \"Rebuild full 180s captioned demo video to planned shot table\", \"criterion\": \"Demo\", \"lane\": \"builder\", \"body\": \"Edit data/slice.json to restore six shots S1 to S6 totaling 180 seconds with one caption per shot as in the script. Re run the builder capture to output/demo/nightly-2026-11-12.mp4 and confirm duration with ffprobe. A judge will see a 3 minute video that runs title to Percy ending with readable captions instead of a 73 second cut.\"}, {\"title\": \"Show Morgan live verdict inside NES dialogue box on camera\", \"criterion\": \"Impact\", \"lane\": \"gamedev\", \"body\": \"Edit the morgan scene dialogue code to request a live verdict from the local AI bridge and render the returned text inside the NES text box. Keep the prompt under the 2408 system chars budget logged in meta_receipts.jsonl. A judge will see the player line judged on screen in S4 to S5 and hear the verdict without narration explaining it.\"}, {\"title\": \"Fix quay walk right movement and restore footstep audio cue\", \"criterion\": \"Technical depth\", \"lane\": \"gamedev\", \"body\": \"Fix the quay player controller so Right input leaves the idle gate and triggers the walk animation and footstep sample. Verify in the verify file that footstep cues occur during the quay and morgan route steps. A judge will see the sprite cross Town Quay in S3 to S4 and hear steps instead of three identical still frames.\"}, {\"title\": \"Overlay bake receipts and network line during S5 judgement\", \"criterion\": \"Use of Meta AI tooling\", \"lane\": \"assistant\", \"body\": \"Update the morgan overlay code to draw three bake receipts and the network status line during S5 from data/receipts/meta_receipts.jsonl. Show model_calls 21 and live_share 52.4 percent as small plates above the dialogue box. A judge will see measured proof in the video that a Meta model answered inside hardware limits.\"}, {\"title\": \"Record voice question to Percy with on screen answer and ending\", \"criterion\": \"Impact\", \"lane\": \"assistant\", \"body\": \"Add a player microphone turn in the percy scene that sends one spoken question to the bridge and shows the answer and ending on screen. Log the turn so talk_turns_onscreen grows beyond 3 in the next capture. A judge will see talking win the encounter in S6 with before and after text instead of a static field.\"}]}\n```",
+    "usage": {
+      "completion_tokens": 6162,
+      "completion_tokens_details": {
+        "reasoning_tokens": 4634
+      },
+      "prompt_tokens": 6477,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 12639
+    }
+  }
+}
