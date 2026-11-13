@@ -393,3 +393,206 @@ Provenance: studied this repository's own files only (`data/sprite_redraw_queue.
 `tools/check_ts_exterior.py`, the title sheets, the three portrait sheets, the ui sheets,
 `game/sprites_src/env/ts_exterior.json` and the R18 candidate cells under `output/art_candidates_r18/`).
 No decompiled material, and no expression from another game, is in this card. Copied expression: none.
+
+
+## 9. The sprite redraw queue reopens: seven rows, four of them with a measured failing pair
+
+Card `t_80024831` (AUTO-SPRITE-NEXT) closed the queue at 52 entries, 41 done and 11 retired, and asked two
+questions instead of opening a row, because a row's priority and `palette_roles` are this lane's. Both are answered
+here. Every number in this section was measured on this tree on 2026-11-12 by the command named beside it.
+
+### 9.1 What reproduces, and the four counts in the card that do not
+
+Reproduced exactly: `data/sprite_redraw_queue.json` held 52 entries, 41 `done`, 11 `retired`, 0 queued.
+
+Re-measured, and different:
+
+| reading | the card says | measured today | how |
+| --- | --- | --- | --- |
+| sprite sheets under `game/sprites_src`, with the card's exclusions | 97 | 95 | 155 PNGs in the tree, minus `title_L*`, `title_BG_*`, `ts_*`, `*_tiles` and `bg_*` |
+| sprite sheets with no queue row | 69 | 67 | the 95 minus the 28 a row already names |
+| of those, named somewhere in the project | 31 | 61 | 47 in the `.yyp` resource list only, 8 as a literal `.gml` string, 6 as a data JSON string |
+| named nowhere at all | 38 | 6 | the six `spr_pp_icon_*` sheets, with the caveat below |
+| title fade and flash twins | 21 over six bases | 22 over five bases | car 4, cloud 4, cone 4 plus `_flash`, exhaust 4, sign 4 plus `_flash` |
+
+Caveat on the last row of the table: "appears nowhere in the tree" is not "no reader asks for it", because a name
+can be built as well as written. `pp_battle_director.gml:1469` builds a hero's battle sheet as
+`string(_id) + "_battle"`. The six are the set whose stem appears in no file at all; treat that as an upper bound on
+dead art and not as a list of it.
+
+And one reading in the card that is true but narrower than it looks. Its "0 true failures" is a
+`python tools/nes_check.py --type sprite` number, and that rule asks the palette, the 8x8 grid and the per-tile
+colour ceiling. It does not ask whether a sheet can be told apart from the ground the game draws it over. Four of the
+seven sheets below cannot.
+
+### 9.2 Q1: seven rows open, and the standard for the ones that do not
+
+**The standard.** A row opens for a sheet the game resolves by name (a literal string, a data value, or a name the
+GML builds) and that either fails a rule on a ground the game draws it over, or carries an open art question a later
+lane can act on. A sheet that is named and clean is recorded by measurement, not by a row: the queue is a work list,
+not an inventory. That narrows the file's own `rule` string, and the narrowing is written into the file so the next
+reader does not have to re-derive it from here.
+
+All seven sheets the card asked about are resolved by name by a reader, and each is carried by exactly one sprite row
+of the scene that draws it, measured per 8x8 tile against the rows
+`tools/scene_palette_set.py:199 allowed_sprite_rows` returns:
+
+| sheet | px, frames | entries | the row that carries every tile | reader | status |
+| --- | --- | --- | --- | --- | --- |
+| `spr_pp_knife` | 64x16, 4 of 16x16 | `$0F $21 $31` | zander, 16 of 16 tiles | `pp_battle_draw_slash`; `data/items.json:16` names it as the item's sprite | done, P2 |
+| `spr_pp_master_bolt` | 128x32, 4 of 32x32 | `$0F $21 $31` | zander, 64 of 64 | the same, and `pp_battle_draw_power_fx` (`:2195`) | done, P2 |
+| `spr_pp_trident` | 128x32, 4 of 32x32 | `$0F $12 $28` | percy, 64 of 64 | `pp_battle_draw_slash` | queued, P1 |
+| `spr_pp_bident` | 128x32, 4 of 32x32 | `$0F $03 $23` | hadrian, 64 of 64 | the same | queued, P1 |
+| `spr_pp_adamantine_scythe` | 128x32, 4 of 32x32 | `$0F $00 $27` | konrad, 64 of 64 | the same | queued, P1 |
+| `spr_pp_portrait_guard` | 48x48, 1 | `$0F $30 $36` | ui sp3, 36 of 36 | `pp_dialogue.gml:410`, `"spr_pp_portrait_" + _bust`, `data/dialogue/all.json` | done, P2 |
+| `spr_title_star` | 24x8, 3 of 8x8 | `$0C $10 $20` | title sp2, 3 of 3 | `pp_title.gml:1033` | queued, P1 |
+
+`nes_check --type sprite` PASSes all seven on this tree. That is why the card could see nothing wrong. What that rule
+cannot see is section 9.3.
+
+The guard's `ui sp3` is the row section 3.1 of this file re-solved this morning and card `t_299de3bc` landed
+(`$0F $30 $36`): the guard bust is the sheet that arithmetic was for, it ships with no `$02` pixel, and its 36 tiles
+are the reason sp3 stops being spare. On the dialogue ground crop the sprite side measures 0 of 12 pairs failing; the
+2 pairs the tool still reports are the capture's own `$00` and `$20`, the pair section 3.2 names.
+
+Not opened, and why: the 61 named sheets with no row (nothing measured wrong on any of them, and a row each would be
+an inventory), and the six `spr_pp_icon_*` sheets (named in no `.yyp` entry, no `.gml` string and no data JSON, so no
+reader is known; that is a dead-art question for the tree-cleanup lane, not a redraw).
+
+### 9.3 The four rows that carry a failing pair, and the fix that costs no entry
+
+`pp_battle_draw_slash(_battle, _enemy_slot)` (`pp_battle_director.gml:1702`) centres the sheet on the ENEMY's slot,
+so a weapon's ground is the enemy's own cells and not the party's. On the deck strip, the strip the tutorial fight
+runs on, those cells are `bg2 $00 $30 $02` plus the shared backdrop `$0F`
+(`data/palettes/scene_battle_deck_night.json`; ruling 15 of `knowledge/PALETTE-RULINGS-2026-10-25.md` for why the
+enemy is background art there). A strip whose enemy cells carry `$02` (wardroom's bg2 is `$02 $01 $30`) shows the
+same pairs, which is why each row names the ground it was measured on.
+
+| sheet | verdict | the failing pair, as the tool prints it |
+| --- | --- | --- |
+| knife | PASS, 0 | none |
+| master_bolt | PASS, 0 | none |
+| trident | FAIL, 2 | `body $12 reads 2.17:1 and its ink $0F reads 1.73:1 on ground $02`, on the frames at 0,0 and 32,0 |
+| bident | FAIL, 2 | `body $03 reads 1.32:1 and its ink $0F reads 1.73:1 on ground $02`, then `2.28:1` and `1.00:1` on `$0F`, on the frame at 64,0 |
+| scythe | FAIL, 4 | `body $00 reads 2.91:1 and its ink $0F reads 1.73:1 on ground $02`, once per frame |
+
+and the star, against the live sky `$11` it twinkles over before the sky fades: `body $10 (row 1) and ground $11
+(row 1) are 0 luminance row(s) apart at 2.19:1` on the frames at 8,0 and 16,0. Frame 0 passes because its body is
+`$20`.
+
+**The fix is the car's fix (card `t_1738de73`, section 11 Q2 of the 2026-10-25 file) and it costs no palette entry:
+the largest fill of every frame moves onto the light entry the row already carries.** Measured with the tool's own
+luminance table:
+
+| row | largest fill today | target | on `$02` | on `$0F` | on `$00` | on `$30` |
+| --- | --- | --- | --- | --- | --- | --- |
+| percy `$0F $12 $28`, trident | `$12`, 2.17:1 | `$28` | 6.86:1 | 11.85:1 | ink 5.03:1 | ink 20.47:1 |
+| hadrian `$0F $03 $23`, bident | `$03`, 1.32:1 | `$23` | 3.69:1 | 6.38:1 | ink 5.03:1 | ink 20.47:1 |
+| konrad `$0F $00 $27`, scythe | `$00`, 2.91:1 | `$27` | 5.94:1 | 10.25:1 | ink 5.03:1 | ink 20.47:1 |
+| title sp2 `$0C $10 $20`, star | `$10`, 2.19:1 on the sky | `$20` | 11.46:1 | 19.77:1 | 3.93:1 | ink 19.77:1 |
+
+R1b asks the ink OR the body to clear 3.0:1 on every ground shown, so the ink column is what carries `$00` and
+`$30`. Every target is already on its sheet and inside its own row, so no scene palette moves, no sheet leaves its
+row and no rule changes. `master_bolt` is the proof the target works: its largest fill is already the pale `$31` and
+it measures 0 failing pairs.
+
+For the star there is a second reading worth naming rather than hiding: a star is a light source and not a figure
+standing on ground, and an exemption on those lines would weigh the same as the layer clause. This ruling does not
+grant it, because the free fix exists and the live sky is the ground for the opening frames of the shot. The row
+records both readings.
+
+### 9.4 Q2: the twins stay derived, and each base row carries its own
+
+22 sheets over 5 bases, all 22 named in `PrimordialParadox.yyp` and in the generated art index
+`game/datafiles/art/title_manifest.json`, and all drawn by name: `pp_title_fade_name(name, level)` builds
+`<name>_fade<level>`, `pp_title_flash_name` (`pp_title.gml:563`) builds `<name>_flash`, and the intro draws the whole
+world through the first of those (`pp_title_draw_intro_scene`, `pp_title.gml:974`).
+
+Three things in the tree already treat them as derived, and each would go red if that stopped being true:
+
+- `tools/pp_intro_art.py write_fades` writes `<name>_fade1` to `<name>_fade4` from the base beside it, for the five
+  sprite animations and the seven parallax strips, and `python tools/pp_intro_art.py --check` exits 0 on this tree
+  today, which is the measurement that every committed twin is the twin of the base that ships.
+- The order is enforced, not hoped for: `tools/art/scene_palette.py apply_title` ends by calling `write_fades()` and
+  `rebuild_flash()` (`:836`, `:844`), so the pass that repaints a base is the pass that rewrites its twins.
+- `tests/test_intro.py:159` pins every committed fade strip to the fade of the base committed beside it, by name.
+
+**Ruling: no row per twin.** Each of the five base rows names its own twins in a `twins` field with the generator and
+the pin, the way `spr_title_exhaust` carried its four after card `t_474cde50`. A twin is redrawn by redrawing its base
+and re-running the generator; it can never be redrawn on its own, because the next `apply_title` overwrites it. If a
+twin ever fails a rule that is the base row's failing pair, and the measurement that says so is `--check`.
+
+### 9.5 AUTO-SPRITE-NEXT does not retire, and here is the job it has
+
+The card's third option was to retire itself while the set is clean. The set is not clean; it was unmeasured on the
+one question that decides whether an overlay is visible. 95 of 95 sheets are palette and grid legal, and that is a
+real guarantee, but four of the seven sheets this card opened fail the ground question on the ground the game draws
+them over, and none of them had ever had a row. So the card keeps its name, its next run takes the four P1 rows, and
+the measurement that closes each row is the same command that opened it.
+
+What would let it rest is the check it has never had: a sweep that measures every drawn sheet against the ground the
+GML draws it on, at the placement the GML draws it at. The 95 of 95 number is a `nes_check` number and there is no
+equivalent R1b number for the whole set. That is a follow-up card, not this one.
+
+### 9.6 What landed on this card
+
+- This section.
+- `data/sprite_redraw_queue.json`: 7 entries, 4 `queued P1` and 3 `done P2`, each with its path, frames, entries, the
+  scene row that carries it, its reader, its failing pair and its fix; a `twins` field on `spr_title_car`,
+  `spr_title_cloud`, `spr_title_cone`, `spr_title_exhaust` and `spr_title_sign`; a `queue_reopened_2026_11_12` block
+  carrying 9.1 and 9.2; `count` from 52 to 59; the `rule` string narrowed; one sentence added to `count_note`. No
+  pre-existing entry's status, priority, path or measured number moved.
+
+No drawing. The four redraws are rows, not files.
+
+### 9.7 Checks run on this tree, 2026-11-12, and what they returned
+
+- `python tools/nes_check.py <sheet> --type sprite` on all seven: PASS each (64x16 16 tiles; 128x32 64 tiles four
+  times; 48x48 36 tiles; 24x8 3 tiles; three colours each; worst 8x8 tile 3 opaque, the guard's 2).
+- `python tools/palette_synergy.py --scene battle_deck_night --background output/bg_battle_deck_night_frame.png
+  --sprite <weapon> --at 24,64` on the five weapons: PASS on knife and master_bolt, FAIL 2 on trident, FAIL 2 on
+  bident, FAIL 4 on scythe.
+- `python tools/palette_synergy.py --scene title --background output/cloud_sky_ground.png --sprite
+  game/sprites_src/title/spr_title_star.png --frame-w 8 --frame-h 8 --at 0,0`: FAIL, 2 failing pairs, 3 inked 8x8
+  tiles, 0 uncovered.
+- `python tools/palette_synergy.py --scene ui --background output/spr_pp_portrait_ground_map.png --sprite
+  game/sprites_src/chars/spr_pp_portrait_guard.png --frame-w 48 --frame-h 48 --at 0,0`: 0 of 12 sprite pairs failing,
+  the 2 reported pairs belonging to the capture.
+- `python tools/pp_intro_art.py --check`: exit 0, so every fade and flash twin is the twin of its base as committed.
+- `python tools/palette_synergy.py --gate`: 10 entry(ies), 0 gated failure(s), 3 advisory failure(s), 0 not
+  measured, exit 0.
+- `python tools/check_ts_exterior.py`: 58 checks passed, 0 failed, exit 0.
+
+The per-sheet, per-tile and per-pair numbers come from scripts that call `palette_synergy.Grid`,
+`scene_palette_set.allowed_sprite_rows` and PIL directly instead of restating arithmetic, and the queue rows carry the
+numbers they measured.
+
+### 9.8 What this does not decide
+
+- **The 61 named sheets with no row.** Nothing measured wrong on them. They get rows when a ground measurement or an
+  art question says so, and section 9.1 is the inventory so the next card does not redo it.
+- **The six `spr_pp_icon_*` sheets.** No known reader, so no row and no verdict. Dead art or art from a cut plan, and
+  either way a cleanup question.
+- **The star's band plan.** `data/palettes/scene_title.json band_sprites` excludes it on purpose ("the intro is a
+  different shot with its own fade art, and giving it a band plan of its own is a separate card"). The row carries
+  the `$20` fix and the band question together.
+- **Aeson's knife in Zander's triple.** `data/characters/party.json` gives the hero `spr_pp_hero` and
+  `dads_good_knife`, and the sheet spends `$0F $21 $31`, which is Zander's triple. It is legal (a party_cast
+  strip's four sprite rows ARE the four hero triples) and it is recorded as an art reading, not changed. The item
+  icon reading of the same sheet (frame 0 on the icons ground) is not judged here: no built scene draws an item icon
+  yet, card `t_f5253687` already drew a separate 16x16 cell for it, and that row holds the open question of which of
+  the two kept icons the inventory uses.
+- **The guard's dialogue ground.** The 2 pairs that fail on the crop are the capture's own `$00` and `$20`, section
+  3.2's question; nothing about the sprite is open.
+- **The twins' R1b.** Section 6 of `knowledge/PALETTE-RULINGS-2026-10-25.md` already says a fade twin is drawn while
+  the ground fades under it, so the unfaded ground is not its ground. Nothing here changes that.
+
+Provenance: built by reading this repository's own files (`data/sprite_redraw_queue.json`,
+`knowledge/PALETTE-RULINGS-2026-11-12.md`, `knowledge/PALETTE-RULINGS-2026-10-25.md`, `data/scene_palettes.json`,
+`data/palettes/scene_battle_deck_night.json`, `data/palettes/scene_title.json`, `data/items.json`,
+`data/characters/party.json`, `game/scripts/pp_battle_director/pp_battle_director.gml`,
+`game/scripts/pp_title/pp_title.gml`, `game/scripts/pp_dialogue/pp_dialogue.gml`, `game/PrimordialParadox.yyp`,
+`game/datafiles/art/title_manifest.json`, `tools/palette_synergy.py`, `tools/nes_check.py`,
+`tools/scene_palette_set.py`, `tools/pp_intro_art.py`, `tools/art/scene_palette.py`, `tools/art/make_god_weapons.py`,
+`tools/art/make_dialogue_busts.py`, `tests/test_intro.py`, and the seven PNGs with their sidecars). No decompiled
+material and no expression from another game is in this card. Copied expression: none.
