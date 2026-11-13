@@ -1895,7 +1895,16 @@ BEAT_CUES = (
     ("S1 title", "PP title: room rm_pp_title live"),
     ("S2 crawl", "PP title: intro started"),
     ("S3 drive", "PP: music PP-02 requested"),
-    ("S4 gate", "PP scene: quay_gate_authority end at tile"),
+    # Card t_a92c1007: this row used to name "PP scene: quay_gate_authority end at tile". The quay only story (commit
+    # 28d407a2) deleted that scene: quay_gate_authority has zero hits in data/scenes, data/dialogue and game/scripts, so
+    # the needle could never be satisfied and the S4 beat was unmeetable by construction. The rewritten S4 (knowledge/
+    # DEMO-SCRIPT.md, 2026-11-12) opens on the wind gate, scene quay_bridge_wind on southampton_town_quay, so the beat
+    # names the line that scene writes when it ends (pp_scene.gml:632).
+    ("S4 gate", "PP scene: quay_bridge_wind end at tile"),
+    # Card t_a92c1007: the line the walk's confirm writes when it reaches Morgan (pp_overworld.gml:1612). It is the one
+    # assertion that says Right presses crossed the quay and the press that followed started the route's morgan step,
+    # which is the panel's "the sprite crosses Town Quay" claim.
+    ("S4 morgan talk", "PP dialogue: scene quay_morgan_encounter"),
     ("S4 morgan fight", "PP: command talk, turn 1, enemy morgan"),
     ("S5 office", "PP route: step gate handed to step office"),
     # Card t_1163ca72: the clerk's question, the player's typed line and the character's recorded answer. The line is

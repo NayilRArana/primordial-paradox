@@ -560,3 +560,182 @@ def test_a_take_that_never_reached_the_percy_fight_is_failed_by_its_own_name():
     # And a take outside the card's band fails on the duration, whatever its log named.
     ok, line = demo.shot_table_check(table, 120.0, {name: {"found": True} for name in table["required_beats"]})
     assert not ok and "band" in line, line
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# 7. card t_a92c1007: the arrival leg walks up to Morgan, its footsteps are counted, and the press starts his scene
+#
+# The judge panel's S4 symptom was "three identical still frames": the walk ran, but the confirm fired a trigger the
+# quay only story (commit 28d407a2) had already deleted, so the take stood still on an empty tile. These pins hold the
+# two halves of the fix: the leg ends where the route's morgan step can be started by a press, and the walk that gets
+# there spends real distance, which is what the game turns into footstep cues.
+
+ARRIVAL_HOLDS = ("r011", "r011b", "r012")
+
+
+def arrival_hold_rows():
+    script = load(SCRIPT)
+    by_id = {event["id"]: event for event in script["events"]}
+    return [(by_id[event_id]["key"], by_id[event_id]["steps"]) for event_id in ARRIVAL_HOLDS]
+
+
+def test_the_arrival_leg_ends_beside_morgan_and_the_press_that_follows_starts_his_scene():
+    """The held directions land the feet on (7,9), one tile east of Morgan, facing him.
+
+    The map is read, not trusted: Morgan's tile comes out of data/maps/all.json, and the scene named on him has to be
+    the route's own morgan step, or the press would open a scene the route does not carry.
+    """
+    holds = arrival_hold_rows()
+    assert holds == [("down", 69), ("up", 5), ("left", 136)], (
+        "the arrival leg is %r; the pinned recipe is down 69, up 5, left 136 onto (7,9)" % (holds,))
+
+    quay_map = rows(MAPS, "maps")[QUAY]
+    morgan_row = [actor for actor in quay_map["actors"] if actor.get("id") == "morgan"]
+    assert morgan_row, "the quay carries no morgan actor, so S4 has nobody to walk up to"
+    morgan = morgan_row[0]
+    assert (morgan["x"], morgan["y"]) == (6, 9), "morgan moved to %r, so the walk's end tile moved with him" % (
+        (morgan["x"], morgan["y"]),)
+    assert morgan.get("scene") == "quay_morgan_encounter", (
+        "morgan's scene is %r, not the route's morgan step" % (morgan.get("scene"),))
+
+    script = load(SCRIPT)
+    by_id = {event["id"]: event for event in script["events"]}
+    press = by_id["r013b"]
+    assert press["kind"] == "key" and press["key"] == "confirm", (
+        "the event that follows the leg is %r, so nothing presses to start the scene" % (press.get("kind"),))
+
+
+def test_the_arrival_leg_moves_every_step_and_earns_its_footstep_cues():
+    """The walk is simulated with the shipped constants against the shipped map, actors included.
+
+    Every held step has to move: a leg that is blocked for a tenth of its steps still ends on the right tile with
+    fewer pixels walked, and fewer pixels walked is fewer footstep cues. The cue count is the distance divided by
+    PP_FOOTSTEP_PX, read from pp_config.gml, so this file cannot wish the floor it asks for.
+    """
+    bot = load_tool("walker_bot")
+    tile = engine_macro("PP_TILE")
+    footstep_px = engine_macro("PP_FOOTSTEP_PX")
+    reach_px = engine_macro("PP_REACH")
+
+    quay_map = rows(MAPS, "maps")[QUAY]
+    collision = quay_map["collision"]
+    actors = {(actor["x"], actor["y"]) for actor in quay_map["actors"]}
+    spawn = quay_map["spawns"]["start"]
+
+    px, py = float(spawn["x"] * tile), float(spawn["y"] * tile)
+    held = moved = 0
+    walked = 0.0
+    for key, steps in arrival_hold_rows():
+        wx, wy = {"down": (0, 1), "up": (0, -1), "left": (-1, 0), "right": (1, 0)}[key]
+        for _ in range(steps):
+            px, py, distance, _hit_x, _hit_y = bot.free_step(collision, px, py, wx, wy, actors)
+            held += 1
+            if distance > 0:
+                moved += 1
+                walked += distance
+
+    assert moved == held, "%d of the leg's %d held steps did not move the feet" % (held - moved, held)
+    assert (px, py) == (112.0, 144.0), "the leg ends at px %r, not (112.0, 144.0)" % ((px, py),)
+    assert bot.tile_at(px, py) == (7, 9), "the leg ends on tile %r, not (7,9)" % (bot.tile_at(px, py),)
+
+    cues = int(walked // footstep_px)
+    assert cues == 26, "the leg walks %r px, which is %d footstep cues and not the 26 the receipt measured" % (
+        walked, cues)
+    assert cues >= 24, "a walk this long that plays %d footstep cues is a silent walk" % cues
+
+    # The press has to reach Morgan. pp_world_reach_box extends PP_REACH px off the feet box, and
+    # pp_overworld_actor_ahead asks whether that rectangle overlaps the actor's own feet box.
+    feet = bot.feet_box(px, py)
+    reach = (feet[0] - reach_px, feet[1], feet[0] - 1, feet[3])
+    morgan_feet = bot.feet_box(6 * tile, 9 * tile)
+    overlap = reach[0] <= morgan_feet[2] and reach[2] >= morgan_feet[0] and reach[1] <= morgan_feet[3] \
+        and reach[3] >= morgan_feet[1]
+    assert overlap, "the reach box %r misses Morgan's feet box %r, so the confirm finds nobody" % (reach, morgan_feet)
+
+
+def test_the_recorder_names_the_line_the_walk_writes_when_it_reaches_morgan():
+    """play_demo.BEAT_CUES: the S4 rows point at lines this build actually writes.
+
+    The S4 gate row named quay_gate_authority, a scene the quay only story deleted; a needle with no emitter can
+    never be satisfied, so the beat was unmeetable by construction. Both rows are checked against the GML that writes
+    them, and the morgan row against the scene the map's actor carries.
+    """
+    demo = load_tool("play_demo")
+    cues = dict(demo.BEAT_CUES)
+    assert cues["S4 gate"] == "PP scene: quay_bridge_wind end at tile", cues["S4 gate"]
+    assert cues["S4 morgan talk"] == "PP dialogue: scene quay_morgan_encounter", cues["S4 morgan talk"]
+
+    sources = {}
+    for module in ("pp_scene", "pp_overworld"):
+        with open(os.path.join(ROOT, "game", "scripts", module, module + ".gml"), "r", encoding="utf-8-sig") as fh:
+            sources[module] = fh.read()
+    assert '"PP scene: " + string(_sc.id) + " end at tile "' in sources["pp_scene"], (
+        "pp_scene no longer writes the line the S4 gate row asks for")
+    assert '"PP dialogue: scene " + string(_actor.scene)' in sources["pp_overworld"], (
+        "pp_overworld no longer writes the line the S4 morgan row asks for")
+
+    scenes = {row["id"] for row in load(SCENES)["scenes"]}
+    assert "quay_bridge_wind" in scenes, "the S4 gate scene is not in data/scenes/all.json"
+    assert "quay_morgan_encounter" in scenes, "the S4 morgan scene is not in data/scenes/all.json"
+    assert "quay_gate_authority" not in scenes, (
+        "quay_gate_authority is back in the scenes file; check whether the S4 row should name it again")
+
+
+def test_the_gate_leg_presses_the_talk_box_and_no_deleted_choice():
+    """The presses after Morgan's say pages, read against the scene the build actually starts.
+
+    quay_morgan_encounter is face, face, sfx, flash, say quay_morgan_pre, talk, wait 20, battle morgan_gate
+    (data/scenes/all.json), so the leg needs two presses for each say page and then exactly ONE press to close the
+    talk box answer. It used to carry seven more: a No pass. / Crew list. choice and a four press bluff reply, all of
+    them pages of quay_gate_checkpoint, which the quay only story deleted. This pin holds the count to the scene's own
+    pages and holds the closing press to the answer's own log line, so a take cannot aim at a box the build cannot
+    open and cannot fire into the battle before the answer lands.
+    """
+    script = load(SCRIPT)
+    events = script["events"]
+    by_id = {event["id"]: event for event in events}
+
+    scenes = {row["id"]: row for row in load(SCENES)["scenes"]}
+    commands = scenes["quay_morgan_encounter"]["commands"]
+    talk = [command for command in commands if command["cmd"] == "talk"]
+    assert len(talk) == 1 and talk[0]["npc"] == "morgan", (
+        "quay_morgan_encounter no longer carries the one talk command this leg presses into: %r" % (commands,))
+    order = [command["cmd"] for command in commands]
+    assert order.index("wait") < order.index("battle"), (
+        "the talk box is no longer followed by the wait before the battle: %r" % (order,))
+
+    dialogue = {row["id"]: row for row in load(os.path.join(ROOT, "data", "dialogue", "all.json"))["dialogue"]}
+    pages = len(dialogue["quay_morgan_pre"]["pages"])
+
+    start_step = by_id["r013b"]["step"]
+    battle_step = by_id["m01"]["step"]
+    inside = [event for event in events if start_step < event["step"] < battle_step]
+
+    page_presses = [event for event in inside if event["kind"] == "key" and event["step"] < by_id["r020"]["step"]]
+    assert len(page_presses) == 2 * pages, (
+        "the leg presses %d times for a %d page say, and two presses a page is %d"
+        % (len(page_presses), pages, 2 * pages))
+
+    close = [event for event in inside if event["step"] >= by_id["r020"]["step"]]
+    assert len(close) == 1, "the leg still presses %d times after the say pages: %r" % (
+        len(close), [event["id"] for event in close])
+    press = close[0]
+    assert press["kind"] == "key" and press["key"] == "confirm", press
+    assert press["marker"] == "PP: talk scene answer, npc " + talk[0]["npc"], (
+        "the closing press waits on %r, not on the answer's own line" % (press.get("marker"),))
+    assert press["marker_delay_steps"] > 0, "the press fires on the answer's own step with no settle delay"
+    assert press["marker_wait_s"] >= script["talk"]["timeout_s"], (
+        "marker_wait_s %r is shorter than the script's own talk timeout %r, so a live answer would be pressed past"
+        % (press["marker_wait_s"], script["talk"]["timeout_s"]))
+
+    with open(os.path.join(ROOT, "game", "scripts", "pp_talk_persona", "pp_talk_persona.gml"),
+              "r", encoding="utf-8-sig") as handle:
+        persona = handle.read()
+    assert '"PP: talk scene answer, npc " + _state.scene_npc' in persona, (
+        "pp_talk_persona no longer writes the line the closing press waits on")
+
+    retired = [event["id"] for event in events
+               if event["id"] != press["id"]
+               and ("Crew list" in event["note"] or "bluff reply" in event["note"] or "the choice page" in event["note"])]
+    assert not retired, (
+        "the leg still presses the deleted gate pages in %r; quay_gate_checkpoint is not in the build" % (retired,))

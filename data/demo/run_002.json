@@ -177,32 +177,30 @@
       "step": 2530,
       "kind": "hold",
       "beat": 20,
-      "note": "left held 128 steps: sixteen tiles west along row 9 from the spawn column 24 (px 384, py 144) to px 128, passing one tile above morgan on (9,10) because his tile is not in the feet box's row, and touching no trigger on the way (row 9 carries none). quay_gate_checkpoint is a scene trigger and a scene trigger fires on confirm, never on the walk over it: 24 steps stopped on 21,10 after the map moved the start spawn west to 24,1, and the confirm there found no trigger underfoot and the route stalled on the field. The leg is 104 steps longer than the 2026-10-27 take, so the firing confirm lands at 44.73 s and not at 43.00 s, still inside S4's beat window (knowledge/DEMO-SCRIPT.md line 125, 0:39.03 to 1:19.03)",
+      "note": "left held 136 steps: seventeen tiles west along row 9 from the spawn column 24 (px 384, py 144) to px 112, which is tile (7,9), the tile one east of Morgan. 136 steps of 2 px is the 272 px between those columns and the shipped walk spends all of them: measured with tools/walker_bot.py against data/maps/all.json, 210 of 210 held steps moved, 0 blocked, 26 footstep cues at PP_FOOTSTEP_PX 16 (8 down, 1 up, 17 left), end px (112.0, 144.0) tile (7,9). Morgan stands on (6,9) (data/maps/all.json, actor morgan) and the route's morgan step is his own scene quay_morgan_encounter, started by the player's confirm, so the leg ends beside him and not on a trigger. The leg used to be 128 steps onto (8,10), the retired quay_gate_checkpoint tile: the quay only story (commit 28d407a2) took that trigger out of the map, so the confirm there fired nothing and the take stood still, which is the freeze the judge panel reported",
       "key": "left",
-      "steps": 128
+      "steps": 136
     },
     {
       "id": "r012b",
       "step": 2670,
-      "kind": "hold",
+      "kind": "note",
       "beat": 20,
-      "note": "down held 8 steps: 16 px from py 144 to py 160, which puts the feet box in row 10 with its columns on 8, so the hero stands ON the checkpoint tile 8,10 and faces south: measured end px (128,160), tile (8,10), 26 footstep cues for the whole leg. The down is what makes the press a gate press: the reach box then covers 8,11 (empty) and the tile underfoot carries quay_gate_checkpoint",
-      "key": "down",
-      "steps": 8
+      "note": "Card t_a92c1007: this row used to hold down for 8 steps, walking off row 9 onto the retired checkpoint tile and facing south, away from Morgan. It holds nothing now. The hold above leaves the hero facing LEFT, because pp_world_face_input sets the facing from the held axis, and pp_world_reach_box extends PP_REACH 14 px west of the feet box: at px 112 the feet box is 115..124, so the reach box is 101..114, and Morgan's feet box on (6,9) is 99..108, which it overlaps. That overlap is what pp_overworld_actor_ahead finds, and finding him is what starts quay_morgan_encounter"
     },
     {
       "id": "r013",
       "step": 2684,
       "kind": "note",
       "beat": 20,
-      "note": "the feet are on the checkpoint tile and the hero faces south out of the gate, so the reach box covers 8,11 (no trigger) and the tile underfoot carries quay_gate_checkpoint; no actor's feet box touches the reach box, which matters because pp_overworld_step asks pp_overworld_actor_ahead before it asks any trigger. No marker is named here: a map step never hands on (pp_route_take_next is called only by a scene or a fight ending), so 'step arrival handed to step gate' was a line this build can never print, and naming it made every later marker report a failure"
+      "note": "Card t_a92c1007: the feet are on (7,9) and the hero faces west, so pp_overworld_actor_ahead reads Morgan on (6,9) before any trigger is asked and the press below starts his scene. No marker is named here: a map step never hands on (pp_route_take_next is called only by a scene or a fight ending), so 'step arrival handed to step gate' was a line this build can never print, and naming it made every later marker report a failure"
     },
     {
       "id": "r013b",
       "step": 2684,
       "kind": "key",
       "beat": 20,
-      "note": "Confirm standing on the checkpoint: this is the press that fires quay_gate_checkpoint, so the gate scene and its box start here and the six page presses below turn what it opened (13 confirms at this beat, one more than the 12 the 07:46 take sent, which left the bluff reply's last page unturned and the scene never ended)",
+      "note": "Card t_a92c1007: confirm standing beside Morgan on (7,9) facing him. This is the press that starts quay_morgan_encounter, the route's morgan step, which is the only actor scene the quay carries (data/scenes/all.json:20; the route names it at data/slice.json route step id morgan, player true). The page presses below turn the say pages that scene opens. The press used to fire quay_gate_checkpoint on (8,10), a trigger the quay only story deleted, so nothing opened and the take froze",
       "key": "confirm"
     },
     {
@@ -258,56 +256,11 @@
       "step": 2999,
       "kind": "key",
       "beat": 20,
-      "note": "the choice page: complete the typing",
-      "key": "confirm"
-    },
-    {
-      "id": "r021",
-      "step": 3044,
-      "kind": "key",
-      "beat": 20,
-      "note": "Down: the cursor moves from No pass. to Crew list.",
-      "key": "down"
-    },
-    {
-      "id": "r022",
-      "step": 3089,
-      "kind": "key",
-      "beat": 20,
-      "note": "Confirm: Crew list. is taken, gate_passed and gate_bluff are set, the branch opens",
-      "key": "confirm"
-    },
-    {
-      "id": "r023",
-      "step": 3134,
-      "kind": "key",
-      "beat": 20,
-      "note": "the bluff reply, two pages (two presses a page): press 1 of 4",
-      "key": "confirm"
-    },
-    {
-      "id": "r024",
-      "step": 3179,
-      "kind": "key",
-      "beat": 20,
-      "note": "the bluff reply, two pages (two presses a page): press 2 of 4",
-      "key": "confirm"
-    },
-    {
-      "id": "r025",
-      "step": 3224,
-      "kind": "key",
-      "beat": 20,
-      "note": "the bluff reply, two pages (two presses a page): press 3 of 4",
-      "key": "confirm"
-    },
-    {
-      "id": "r026",
-      "step": 3269,
-      "kind": "key",
-      "beat": 20,
-      "note": "the bluff reply, two pages (two presses a page): press 4 of 4",
-      "key": "confirm"
+      "note": "Card t_785b61f0: the ONE press that closes Morgan's talk box answer, and the only press this leg needs after the three say pages. quay_morgan_encounter's command list is face, face, sfx, flash, say quay_morgan_pre, talk, wait 20, battle morgan_gate (data/scenes/all.json:20), so the build opens no choice page and no bluff reply page here. The seven rows this replaces pressed a No pass. / Crew list. choice and a four press bluff reply, both of which belonged to quay_gate_checkpoint, a scene the quay only story deleted, so those presses were aimed at boxes the build cannot open. pp_talk_persona.gml:633 says the answer is drawn until the player confirms, so this row waits on the answer's own log line rather than on a guessed second: `PP: talk scene answer, npc morgan` lands in about 0.05 s on the replay leg and inside the 12 s PP_TALK_TIMEOUT on a live bridge, and marker_wait_s 15 holds the tape for a slow one instead of firing into the battle.",
+      "key": "confirm",
+      "marker": "PP: talk scene answer, npc morgan",
+      "marker_delay_steps": 30,
+      "marker_wait_s": 15
     },
     {
       "id": "m01",
