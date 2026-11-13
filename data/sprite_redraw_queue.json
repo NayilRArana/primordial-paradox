@@ -11605,29 +11605,37 @@
       "queued_by_eye": 0
     },
     "counts_corrected": {
-      "sprite_sheets_under_sprites_src_excluding_tilesets_plates_and_parallax": 95,
-      "card_said": 97,
-      "sprite_sheets_with_no_row": 67,
-      "card_said_no_row": 69,
-      "of_those_named_in_the_project": 61,
-      "card_said_named": 31,
-      "named_nowhere_at_all": 6,
-      "card_said_named_nowhere": 38,
-      "the_six": [
-        "spr_pp_icon_cursor_16",
-        "spr_pp_icon_cursor_8",
-        "spr_pp_icon_items_16",
-        "spr_pp_icon_items_8",
-        "spr_pp_icon_status_16",
-        "spr_pp_icon_status_8"
+      "rule_this_section_uses": "every PNG under game/sprites_src, excluding title_L*, title_BG_*, *_tiles*, ts_* and bg_*",
+      "pngs_under_sprites_src": 155,
+      "sprite_sheets_under_the_rule": 95,
+      "nes_check_sprite_PASS": 93,
+      "nes_check_sprite_FAIL": 2,
+      "the_two_failures": [
+        "spr_pp_dither",
+        "spr_pp_dither25"
       ],
-      "why_the_last_one_is_an_upper_bound": "a name can be built instead of written: pp_battle_director.gml:1469 makes a hero's battle sheet as string(_id) + \"_battle\", so 'appears nowhere in the tree' is not the same as 'no reader asks for it'",
+      "sheets_a_row_already_names": 35,
+      "sheets_no_row_names": 60,
+      "of_the_60_twins": 22,
+      "of_the_60_neither": 38,
+      "named_in_the_yyp_only": 48,
+      "named_by_a_data_json": 12,
+      "named_as_a_literal_gml_string": 0,
+      "named_in_no_file_at_all": 0,
+      "card_said": {
+        "sheets": 97,
+        "pass_sprite": 95,
+        "no_row": 69,
+        "named_in_neither": 38,
+        "twins": 21,
+        "twin_bases": 6
+      },
+      "why_they_differ": "the card did not commit the list its 97 and 69 were counted from, so a one-sheet difference is unresolvable from the tree and changes no decision; its 38 is the right size for the set for the wrong reason, because the .yyp lists every shipped resource and a resource entry is a name, so nothing is named in neither and the 38 are the sheets no literal .gml string draws; its 21 twins over six bases measures 22 over five",
       "twins": 22,
-      "card_said_twins": 21,
       "twin_base_sheets": 5,
-      "card_said_bases": 6
+      "the_22_twins": "car 4 fades, cloud 4 fades, cone 4 fades plus a flash, exhaust 4 fades, sign 4 fades plus a flash"
     },
-    "standard": "a row opens for a sheet the game resolves by name (a literal string, a data value, or a name the GML builds) AND that either fails a rule on a ground the game draws it over, or carries an open art question a later lane can act on. A sheet that is named and clean is recorded by measurement, not by a row. This narrows the file's own rule string, which read 'one row per sprite the game asks for by name' and which, applied literally, would open 67 rows today for 61 sheets nobody has measured a defect on",
+    "standard": "a row opens for a sheet the game resolves by name (a literal string, a data value, or a name the GML builds) AND that either fails a rule on a ground the game draws it over, or carries an open art question a later lane can act on. A sheet that is named and clean is recorded by measurement, not by a row. This narrows the file's own rule string, which read 'one row per sprite the game asks for by name' and which, applied literally, would open 60 rows today, 22 of them twins that the twins block below already rules out of the queue",
     "twins": {
       "rule": "no row per twin",
       "count": 22,
@@ -11642,7 +11650,7 @@
       "precedent": "spr_title_exhaust carried its four after card t_474cde50 (knowledge/PALETTE-RULINGS-2026-10-25.md section 5)"
     },
     "auto_sprite_next": "does not retire. The set was not clean, it was unasked: tools/nes_check.py asks the palette, the grid and the tile ceiling and not the ground, and 4 of the 7 sheets here fail the ground question while passing nes_check. The card's next run takes the four P1 rows",
-    "auto_sprite_next_missing_check": "there is no sweep that measures every drawn sheet against the ground the GML draws it on, at the placement the GML draws it at. The 95-of-95 number is a nes_check number. That test is a follow-up card, named in ruling section 9.5",
+    "auto_sprite_next_missing_check": "there is no sweep that measures every drawn sheet against the ground the GML draws it on, at the placement the GML draws it at. The 93-of-95 number in counts_corrected is a nes_check number. That test is a follow-up card, named in ruling section 9.5",
     "no_row_of_the_52_touched": "no pre-existing entry's status, priority, path or measured number moved. The change is the 7 entries above, a `twins` field on the 5 title base rows, count 52 to 59, and this block"
   }
 }

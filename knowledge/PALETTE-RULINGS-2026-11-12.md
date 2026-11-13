@@ -401,29 +401,43 @@ Card `t_80024831` (AUTO-SPRITE-NEXT) closed the queue at 52 entries, 41 done and
 questions instead of opening a row, because a row's priority and `palette_roles` are this lane's. Both are answered
 here. Every number in this section was measured on this tree on 2026-11-12 by the command named beside it.
 
-### 9.1 What reproduces, and the four counts in the card that do not
+### 9.1 What reproduces, and the counts re-measured under one stated rule
 
 Reproduced exactly: `data/sprite_redraw_queue.json` held 52 entries, 41 `done`, 11 `retired`, 0 queued.
 
-Re-measured, and different:
+The card's inventory was taken with a rule it does not write down, so this section states one and reports under it:
+**every PNG under `game/sprites_src`, excluding `title_L*`, `title_BG_*`, `*_tiles*`, `ts_*` and `bg_*`.**
 
-| reading | the card says | measured today | how |
-| --- | --- | --- | --- |
-| sprite sheets under `game/sprites_src`, with the card's exclusions | 97 | 95 | 155 PNGs in the tree, minus `title_L*`, `title_BG_*`, `ts_*`, `*_tiles` and `bg_*` |
-| sprite sheets with no queue row | 69 | 67 | the 95 minus the 28 a row already names |
-| of those, named somewhere in the project | 31 | 61 | 47 in the `.yyp` resource list only, 8 as a literal `.gml` string, 6 as a data JSON string |
-| named nowhere at all | 38 | 6 | the six `spr_pp_icon_*` sheets, with the caveat below |
-| title fade and flash twins | 21 over six bases | 22 over five bases | car 4, cloud 4, cone 4 plus `_flash`, exhaust 4, sign 4 plus `_flash` |
+| reading | measured today |
+| --- | --- |
+| PNGs under `game/sprites_src` | 155 |
+| sprite sheets under the rule | 95 |
+| `python tools/nes_check.py <sheet> --type sprite` | 93 PASS, 2 FAIL |
+| the 2 that fail | `spr_pp_dither` and `spr_pp_dither25`, the mask sheets the card calls tint sources under card `t_06ef8607` |
+| sheets a queue row already names by `path` | 35 |
+| sheets no row names | 60 |
+| of the 60: fade or flash twins of a title sprite base | 22 (section 9.4) |
+| of the 60: neither a twin nor judged here | 38, and the seven rows in 9.2 are among those 38 |
+| of the 60: named in the `.yyp` resource list only | 48 |
+| of the 60: named by a data JSON | 12 |
+| of the 60: named as a literal `.gml` string | 0 |
+| of the 60: named in no file at all | 0 |
 
-Caveat on the last row of the table: "appears nowhere in the tree" is not "no reader asks for it", because a name
-can be built as well as written. `pp_battle_director.gml:1469` builds a hero's battle sheet as
-`string(_id) + "_battle"`. The six are the set whose stem appears in no file at all; treat that as an upper bound on
-dead art and not as a list of it.
+Four readings in the card do not reproduce, and each one matters for a different reason:
 
-And one reading in the card that is true but narrower than it looks. Its "0 true failures" is a
-`python tools/nes_check.py --type sprite` number, and that rule asks the palette, the 8x8 grid and the per-tile
-colour ceiling. It does not ask whether a sheet can be told apart from the ground the game draws it over. Four of the
-seven sheets below cannot.
+- **"97 sheets, 95 PASS the sprite rule"**: 95 sheets under the stated rule, 93 PASS, and the 2 mask sheets are
+  inside the 95 rather than beside it. A one-sheet difference is unresolvable from the tree because the card did not
+  commit its list, and it changes no decision below.
+- **"69 have no row"**: 60 by this rule.
+- **"38 are named in neither"**: 38 is the right size for the set, but the reason is wrong. None of the 60 is named
+  in neither, because the `.yyp` lists every shipped resource and a resource entry is a name. What the 38 really are
+  is sheets with no row whose only mention is the `.yyp` or a data file, and which no literal `.gml` string draws.
+  That is still the set to be careful about, and it is why the standard in 9.2 refuses to open a row for a name
+  alone.
+- **"21 fade twins over six bases"**: 22 over five bases, measured in 9.4.
+
+The whole `game/sprites_src/title` folder carries 58 fade and flash sheets, not 22: the other 36 are the fades and
+flashes of the seven parallax strips and `title_BG_bigben`, which are strips and were never sprite sheets.
 
 ### 9.2 Q1: seven rows open, and the standard for the ones that do not
 
@@ -455,9 +469,10 @@ The guard's `ui sp3` is the row section 3.1 of this file re-solved this morning 
 are the reason sp3 stops being spare. On the dialogue ground crop the sprite side measures 0 of 12 pairs failing; the
 2 pairs the tool still reports are the capture's own `$00` and `$20`, the pair section 3.2 names.
 
-Not opened, and why: the 61 named sheets with no row (nothing measured wrong on any of them, and a row each would be
-an inventory), and the six `spr_pp_icon_*` sheets (named in no `.yyp` entry, no `.gml` string and no data JSON, so no
-reader is known; that is a dead-art question for the tree-cleanup lane, not a redraw).
+Not opened, and why: the 60 sheets with no row, 38 of which are neither a twin nor judged here (nothing measured wrong
+on any of them, and a row each would be
+an inventory), and the six `spr_pp_icon_*` sheets: a `.yyp` resource that no `.gml` string, no data file and no built
+scene draws, so no reader is known, and that is a dead-art question for the tree-cleanup lane rather than a redraw.
 
 ### 9.3 The four rows that carry a failing pair, and the fix that costs no entry
 
@@ -525,13 +540,13 @@ twin ever fails a rule that is the base row's failing pair, and the measurement 
 ### 9.5 AUTO-SPRITE-NEXT does not retire, and here is the job it has
 
 The card's third option was to retire itself while the set is clean. The set is not clean; it was unmeasured on the
-one question that decides whether an overlay is visible. 95 of 95 sheets are palette and grid legal, and that is a
-real guarantee, but four of the seven sheets this card opened fail the ground question on the ground the game draws
+one question that decides whether an overlay is visible. 93 of the 95 sheets under the rule of section 9.1 pass the
+sprite check, and the 2 that do not are the mask sheets that check was never meant to judge, but four of the seven sheets this card opened fail the ground question on the ground the game draws
 them over, and none of them had ever had a row. So the card keeps its name, its next run takes the four P1 rows, and
 the measurement that closes each row is the same command that opened it.
 
 What would let it rest is the check it has never had: a sweep that measures every drawn sheet against the ground the
-GML draws it on, at the placement the GML draws it at. The 95 of 95 number is a `nes_check` number and there is no
+GML draws it on, at the placement the GML draws it at. The 93-of-95 number is a `nes_check` number and there is no
 equivalent R1b number for the whole set. That is a follow-up card, not this one.
 
 ### 9.6 What landed on this card
@@ -569,7 +584,7 @@ numbers they measured.
 
 ### 9.8 What this does not decide
 
-- **The 61 named sheets with no row.** Nothing measured wrong on them. They get rows when a ground measurement or an
+- **The 60 sheets with no row.** Nothing measured wrong on them. They get rows when a ground measurement or an
   art question says so, and section 9.1 is the inventory so the next card does not redo it.
 - **The six `spr_pp_icon_*` sheets.** No known reader, so no row and no verdict. Dead art or art from a cut plan, and
   either way a cleanup question.
