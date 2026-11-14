@@ -57,6 +57,9 @@ DEFAULTS = {
     "empty_note": "Say something first.",
     "will_max": 100,
     "will_label": "MERCY",
+    "judge_up": "UP",
+    "judge_down": "DOWN",
+    "judge_held": "HELD",
     "host": "127.0.0.1",
     "port": 8791,
     "talk_path": "/talk",
@@ -115,7 +118,8 @@ def load_data(root=ROOT):
     out["grid_rows"] = grid.get("rows", out["grid_rows"])
     out["grid"] = list(grid.get("cells") or [])
 
-    for key in ("prompt", "hint_keys", "hint_grid", "hint_voice", "hint_wait", "tries_note", "empty_note"):
+    for key in ("prompt", "hint_keys", "hint_grid", "hint_voice", "hint_wait", "tries_note", "empty_note",
+                "judge_up", "judge_down", "judge_held"):
         out[key] = strings.get(key, out[key])
 
     out["will_max"] = will.get("max", out["will_max"])

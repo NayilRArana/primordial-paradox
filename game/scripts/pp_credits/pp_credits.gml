@@ -73,6 +73,10 @@ function pp_credits_defaults() {
         leave_steps: 45,
         hint_steps: 360,
         music_fade_steps: 30,
+        // Card t_bdb645a5: the roll's model table, empty until data\\credits.json names one. The credits draw their
+        // names from the sections, so nothing here changes what the roll prints; the TALK box reads the same table
+        // to put a model's display name on a judged line, so the two can never spell one model two ways.
+        models: [],
         sections: [
             { id: "title", rows: [
                 { style: "title", text: "PRIMORDIAL PARADOX" },
@@ -140,6 +144,9 @@ function pp_credits_roll_data() {
     if (variable_struct_exists(_r, "sections") && is_array(_r.sections) && array_length(_r.sections) > 0) {
         _d.sections = _r.sections;
     }
+    // Card t_bdb645a5: the model table travels with the roll, not out of it. A file without one keeps the empty list,
+    // and the TALK box's judge line simply does not draw, which is the honest shape of a roll that names no model.
+    if (variable_struct_exists(_r, "models") && is_array(_r.models)) _d.models = _r.models;
     if (variable_struct_exists(_r, "variants") && is_struct(_r.variants)) {
         if (variable_struct_exists(_r.variants, "spare") && is_struct(_r.variants.spare)) _d.variants.spare = _r.variants.spare;
         if (variable_struct_exists(_r.variants, "kill") && is_struct(_r.variants.kill)) _d.variants.kill = _r.variants.kill;

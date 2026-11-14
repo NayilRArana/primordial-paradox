@@ -81,6 +81,10 @@
     "scene_fallback_2": "CARRY. SAY IT AGAIN.",
     "scene_fallback_note": "NO ANSWER. SAY IT AGAIN.",
     "voice_note": "NO VOICE CAME BACK.",
+    "judge_up": "UP",
+    "judge_down": "DOWN",
+    "judge_held": "HELD",
+    "judge_note": "Card t_bdb645a5: the three words a judged turn puts between the meter's name and its number, as MUSE SPARK 1.3 MERCY UP 20. The label itself is not here on purpose: it is the display name data/credits.json roll.models gives the model id in data/meta_bake.json bake.model, so the box and the S6 roll spell one model one way. 'version' stays 2 because no existing value above changed and this block is additive; the three words are the only new drawn strings.",
     "note": "Every string the box draws. 28 columns at most, checked by the test: the sheet is 8 pixels a glyph and the window is 224 interior pixels. The strings are capitals because the sheet's capitals are the shape the first fight's authored options already use."
   },
 

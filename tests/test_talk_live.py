@@ -683,3 +683,87 @@ def test_the_capture_shows_the_three_input_paths_and_the_bar_moving():
     # The source is on the debug line, which is what the card's check asks a judge-facing run to print.
     reply_debug = frames["reply"][1]["debug"]
     assert "source replay" in reply_debug and "mercy 0 -> 20" in reply_debug
+
+
+# ------------------------------------------------------------------- 12. the judged turn (card t_bdb645a5)
+
+CREDITS_GML = os.path.join(ROOT, "game", "scripts", "pp_credits", "pp_credits.gml")
+CREDITS_JSON = os.path.join(ROOT, "data", "credits.json")
+BAKE_JSON = os.path.join(ROOT, "data", "meta_bake.json")
+
+
+def judge_line(data, label, delta):
+    """The line pp_talk_judge_line builds, in Python: '<label> MERCY UP 20' and its two other shapes."""
+    word, number = data["judge_held"], 0
+    if delta > 0:
+        word, number = data["judge_up"], delta
+    elif delta < 0:
+        word, number = data["judge_down"], -delta
+    return "%s %s %s %d" % (label, data["will_label"], word, number)
+
+
+def test_the_judge_words_are_data_and_the_judged_line_fits_the_box(data, glyphs):
+    """The three words are the file's, the label is the record's, and the whole line is 28 columns or fewer."""
+    for key in ("judge_up", "judge_down", "judge_held"):
+        text = data[key]
+        assert text, "the box would draw an empty %s" % key
+        assert text == text.upper(), "%s is not the sheet's capitals" % key
+        for ch in text:
+            assert ch in glyphs, "%s carries %r, which spr_pp_font8 cannot draw" % (key, ch)
+    label = "MUSE SPARK 1.3"
+    for delta in (20, 5, -10, 0):
+        line = judge_line(data, label, delta)
+        assert len(line) <= data["cols"], "the judged line is %d columns and the box holds %d" % (
+            len(line), data["cols"])
+        for ch in line:
+            assert ch in glyphs, "the judged line carries %r, which the sheet cannot draw" % ch
+    assert judge_line(data, label, 20) == "MUSE SPARK 1.3 MERCY UP 20"
+    assert judge_line(data, label, -10) == "MUSE SPARK 1.3 MERCY DOWN 10"
+    assert judge_line(data, label, 0) == "MUSE SPARK 1.3 MERCY HELD 0"
+
+
+def test_the_label_is_the_bakes_model_and_the_rolls_own_display_name(data, glyphs):
+    """Two files are joined at runtime, by id: the label is not typed in GML and is not typed in a second data file."""
+    with open(BAKE_JSON, "r", encoding="utf-8") as handle:
+        bake = json.load(handle)
+    with open(CREDITS_JSON, "r", encoding="utf-8") as handle:
+        credits = json.load(handle)
+    model_id = bake["bake"]["model"]
+    displays = {row["model_id"]: row["display"] for row in credits["roll"]["models"]}
+    assert model_id in displays, "the bake names %r and the roll holds no display name for it" % model_id
+    display = displays[model_id]
+    for ch in display:
+        assert ch in glyphs, "the display name carries %r, which the sheet cannot draw" % ch
+
+    label_body = gml_function(read(TEXT_GML), "pp_talk_judge_label")
+    assert '"model"' in label_body, "the label is joined to the bake's own model field"
+    assert "pp_credits_roll_data()" in label_body, "and to the roll the credits are drawn from"
+    assert "model_id" in label_body and '"display"' in label_body
+    assert "MUSE" not in label_body and "SPARK" not in label_body, "the model's name is not typed in GML"
+    roll_body = gml_function(read(CREDITS_GML), "pp_credits_roll_data")
+    assert "models" in roll_body, "the roll data carries its model table, so the box reads the same table"
+
+
+def test_only_a_baked_row_or_a_meta_answer_puts_the_label_on_the_box(data):
+    """A card pool reply and a fallback answer carry no model, so neither may print one."""
+    step = gml_function(read(TEXT_GML), "pp_talk_step")
+    assert "if (_record.baked)" in step, "the authored pick adds the line only for a bake row"
+    assert "pp_talk_judge_line(_battle.talk_delta)" in step
+    live = gml_function(read(GML), "pp_talk_live_answer")
+    assert 'if (_answer.source == "meta")' in live, "the live door adds it only for a Meta answer"
+    assert "pp_talk_judge_line(_battle.live_delta)" in live
+    judge = gml_function(read(TEXT_GML), "pp_talk_judge_line")
+    assert "string_length(_line) > _d.cols" in judge, "a line that does not fit is not drawn"
+    assert "pp_talk_line_drawable(_line)" in judge, "and a line the sheet cannot draw is not drawn"
+
+
+def test_the_bridge_request_log_names_the_door_and_never_the_line(data):
+    """The log says which local door was called; it never carries the player's words (spec 19 section 3)."""
+    body = gml_function(read(GML), "pp_talk_live_send_talk")
+    assert "request to " in body, "the request line is logged"
+    assert "_d.host" in body and "_d.port" in body and "_d.talk_path" in body, \
+        "the log names the endpoint, assembled from data, not a typed address"
+    assert "pp_talk_live_whom(_battle)" in body, "and who it was addressed to"
+    assert "string_length(_battle.live_text)" in body, "the length of the line, because the log carries no copy of it"
+    assert body.count("live_text") == 1, "the player's words appear only as a length"
+    assert "http://" not in body and "127.0.0.1" not in body, "no address literal is written in GML"

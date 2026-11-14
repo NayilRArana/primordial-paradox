@@ -92,6 +92,11 @@ function pp_talk_live_data() {
         hint_grid: "D PAD MOVE  A TYPE  START SEND",
         hint_voice: "HOLD F5 TO SPEAK",
         hint_wait: "THE SAILOR CONSIDERS IT",
+        // Card t_bdb645a5: the three words the judge line puts between the meter's name and its number. They are
+        // defaults for a missing data file, the same way will_label is: the shipped file carries them.
+        judge_up: "UP",
+        judge_down: "DOWN",
+        judge_held: "HELD",
         tries_note: "That is enough talking.",
         empty_note: "Say something first.",
         will_max: 100,
@@ -163,6 +168,9 @@ function pp_talk_live_data() {
             _d.fallback_line_2 = pp_talk_live_str(_s, "scene_fallback_2", _d.fallback_line_2);
             _d.fallback_note = pp_talk_live_str(_s, "scene_fallback_note", _d.fallback_note);
             _d.voice_note = pp_talk_live_str(_s, "voice_note", _d.voice_note);
+            _d.judge_up = pp_talk_live_str(_s, "judge_up", _d.judge_up);
+            _d.judge_down = pp_talk_live_str(_s, "judge_down", _d.judge_down);
+            _d.judge_held = pp_talk_live_str(_s, "judge_held", _d.judge_held);
         }
         if (variable_struct_exists(_doc, "will") && is_struct(_doc.will)) {
             _d.will_max = pp_talk_live_int(_doc.will, "max", _d.will_max);
@@ -760,6 +768,14 @@ function pp_talk_live_url(_path) {
     return _d.scheme + "://" + _d.host + ":" + string(_d.port) + _path;
 }
 
+/// Who a request is addressed to, for the log: the scene's character, the persona's id, or the fight's enemy. The
+/// player's own words are never part of it (spec 19 section 3, and tests/test_scene_talk.py holds the log to that).
+function pp_talk_live_whom(_state) {
+    if (pp_talk_live_is_scene(_state) && variable_struct_exists(_state, "scene_npc")) return string(_state.scene_npc);
+    if (pp_talk_live_is_persona(_state) && variable_struct_exists(_state, "persona")) return string(_state.persona);
+    return pp_talk_enemy_id(_state);
+}
+
 /// One request in flight, always (spec 16 section 12). Sending a second while one is out would put two answers on
 /// one turn, so a second send is refused and the box says it is still listening.
 function pp_talk_live_send_talk(_battle) {
@@ -783,6 +799,12 @@ function pp_talk_live_send_talk(_battle) {
     }
     show_debug_message("PP: talk live request " + string(_battle.live_handle) + " sent, "
         + string(string_length(_body)) + " bytes of body");
+    // Card t_bdb645a5: the log names the bridge the request went to, so a capture's own lines say a local door was
+    // called and which one, instead of leaving a judge to trust the shape of a JSON body. The address is assembled
+    // from the data file's four fields at call time, never written whole, and the player's words are not in it: only
+    // their length is, because the log is the demo's recording and a recording of the line is a second copy of it.
+    show_debug_message("PP: talk live request to " + _d.host + ":" + string(_d.port) + _d.talk_path
+        + " for " + pp_talk_live_whom(_battle) + ", " + string(string_length(_battle.live_text)) + " chars");
     return true;
 }
 
@@ -1093,6 +1115,13 @@ function pp_talk_live_answer(_battle, _doc, _via) {
     _battle.talk_reply = true;
     _battle.talk_hint = "";
     pp_input_text_end();
+    // Card t_bdb645a5: an answer the Meta model gave says so on the row under the reply, the same line a baked row
+    // adds, so the live door and the recorded door read alike on screen. The source word is the bridge's own, so a
+    // local model's answer or a hand written fallback never borrows the Meta model's name.
+    if (_answer.source == "meta") {
+        var _judge = pp_talk_judge_line(_battle.live_delta);
+        if (_judge != "") array_push(_lines, _judge);
+    }
 
     // The evidence line. Every card in this lane has to be able to say WHERE the words came from, and "the WILL bar
     // moved" is not that claim until this line names it.
@@ -1103,6 +1132,7 @@ function pp_talk_live_answer(_battle, _doc, _via) {
         + ", lines " + string(array_length(_answer.reply)));
 
     pp_audio_play("menu_select");
+    pp_talk_turn_shown(_battle, "live", pp_talk_enemy_id(_battle));
     pp_battle_say(_battle, _lines, "enemy_turn");
     return true;
 }
@@ -1258,6 +1288,20 @@ function pp_talk_live_hear_replay(_battle, _buffer) {
     if (array_length(_tape.hear) == 0) return "";
     var _index = 0;
     if (is_struct(_battle) && variable_struct_exists(_battle, "live_tries")) _index = max(0, _battle.live_tries);
+    // Card t_770c838e: a row may name the encounter it was recorded in. The tape's first rows are the sailor takes, so
+    // without this a voice turn in any other fight would fill the box with a sailor's line and the exchange lookup
+    // would then miss. A row that names nobody is the older shape and still answers by turn index.
+    var _enemy = pp_talk_enemy_id(_battle);
+    if (_enemy != "") {
+        for (var i = 0; i < array_length(_tape.hear); i++) {
+            var _named = _tape.hear[i];
+            if (!is_struct(_named) || !variable_struct_exists(_named, "enemy")) continue;
+            if (string(_named.enemy) == _enemy) {
+                _index = i;
+                break;
+            }
+        }
+    }
     if (_index >= array_length(_tape.hear)) _index = array_length(_tape.hear) - 1;
     var _row = _tape.hear[_index];
     if (!is_struct(_row) || !variable_struct_exists(_row, "transcript")) return "";

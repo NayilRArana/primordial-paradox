@@ -214,8 +214,15 @@ function pp_talk_bake() {
     // from every function in the project, which is the only thing that makes this cache a cache.
     if (variable_global_exists("pp_talk_bake_table") && is_struct(global.pp_talk_bake_table)) return global.pp_talk_bake_table;
 
-    var _bake = { loaded: false, rows: 0, refused: 0, fight: {}, npc: {} };
+    var _bake = { loaded: false, rows: 0, refused: 0, model: "", fight: {}, npc: {} };
     var _doc = pp_data_json("meta_bake.json");
+    // Card t_bdb645a5: the header's model id is what the box's judge line is joined to. It is read here, at the one
+    // place the file is parsed, and never typed in GML: a rebake that names another model changes the line or
+    // stops it, instead of leaving the old name over a new answer.
+    if (is_struct(_doc) && variable_struct_exists(_doc, "bake") && is_struct(_doc.bake)
+        && variable_struct_exists(_doc.bake, "model")) {
+        _bake.model = string(_doc.bake.model);
+    }
     if (is_struct(_doc) && is_array(_doc.rows)) {
         _bake.loaded = true;
         for (var i = 0; i < array_length(_doc.rows); i++) {
@@ -610,6 +617,70 @@ function pp_talk_begin(_battle) {
     return _battle;
 }
 
+/// The one line a captured take is counted by (card t_770c838e). A turn reaches the screen when its reply board is
+/// handed over: the authored pick calls this, the live box calls it, and the persona box calls it. Counting the pick
+/// lines alone missed the live turn, whose answer arrives by a different door, so a capture that showed four turns
+/// could read as three. One counter per state, one line per turn, and no second place that decides what a turn is.
+function pp_talk_turn_shown(_state, _via, _npc) {
+    if (!is_struct(_state)) return 0;
+    if (!variable_struct_exists(_state, "talk_shown")) _state.talk_shown = 0;
+    _state.talk_shown += 1;
+    show_debug_message("PP: talk shown, turn " + string(_state.talk_shown) + ", via " + string(_via)
+        + ", npc " + string(_npc));
+    return _state.talk_shown;
+}
+
+/// The enemy id a fight state is talking to, or "" when the state carries none. Used for the shown line's npc field.
+function pp_talk_enemy_id(_battle) {
+    if (is_struct(_battle) && is_struct(_battle.enemy) && variable_struct_exists(_battle.enemy, "id")) {
+        return string(_battle.enemy.id);
+    }
+    return "";
+}
+
+/// The display name of the model that answered this fight's bake rows, or "" when the record names none.
+/// Card t_bdb645a5. Two data files are joined here and neither name is typed: data/meta_bake.json's bake.model is the
+/// id the rows were recorded with, and data/credits.json's roll.models is the one table in this project that already
+/// prints a model to a player (the S6 roll, drawn since FINAL-SCOPE 2026-11-03). A display name copied into GML would
+/// survive a rename the credits did not, which is exactly the drift the panel is being asked to disbelieve.
+function pp_talk_judge_label() {
+    var _bake = pp_talk_bake();
+    if (!is_struct(_bake) || !variable_struct_exists(_bake, "model")) return "";
+    var _id = string(_bake.model);
+    if (_id == "") return "";
+    var _roll = pp_credits_roll_data();
+    if (!is_struct(_roll) || !variable_struct_exists(_roll, "models") || !is_array(_roll.models)) return "";
+    for (var i = 0; i < array_length(_roll.models); i++) {
+        var _row = _roll.models[i];
+        if (!is_struct(_row) || !variable_struct_exists(_row, "model_id")) continue;
+        if (string(_row.model_id) != _id) continue;
+        if (!variable_struct_exists(_row, "display")) return "";
+        return string(_row.display);
+    }
+    return "";
+}
+
+/// The one line a judged turn adds under its reply (card t_bdb645a5): who weighed the words, and what the meter did.
+/// It is a row of the same reply board, so it types where the reply types and lives in the window the reply lives in,
+/// which is what "inside the NES text box" means for this screen. It carries no narration marker: the `* ` run is the
+/// reply's own shape and this line is the record's, and at 28 columns the marker is what would push "MERCY DOWN 10"
+/// over the box's width. Nothing here decides a number: the delta is the one pp_talk_apply already landed, the meter's
+/// name is data/talk_live.json's will.label, and the verdict word the record carries is already on the reply. "" means
+/// the line does not fit or the sheet cannot draw it, and a box with no room says nothing rather than a cut model name.
+function pp_talk_judge_line(_delta) {
+    var _label = pp_talk_judge_label();
+    if (_label == "") return "";
+    var _d = pp_talk_live_data();
+    var _word = _d.judge_held;
+    var _n = 0;
+    if (_delta > 0) { _word = _d.judge_up; _n = _delta; }
+    else if (_delta < 0) { _word = _d.judge_down; _n = -_delta; }
+    var _line = _label + " " + string(_d.will_label) + " " + string(_word) + " " + string(floor(_n));
+    if (string_length(_line) > _d.cols) return "";
+    if (!pp_talk_line_drawable(_line)) return "";
+    return _line;
+}
+
 /// One step of the panel. A pick applies its row and hands the reply to the board, with the same after message every
 /// other action uses, so the enemy's turn follows the words exactly as it follows a FIGHT.
 function pp_talk_step(_battle) {
@@ -663,6 +734,7 @@ function pp_talk_step(_battle) {
     // reads to prove the mercy the three talks earned, instead of inferring it from the spare happening at all.
     show_debug_message("PP: talk pick, option " + string(_battle.talk_cursor) + ", effect " + string(_record.effect)
         + ", mercy " + string(_battle.talk_mercy) + ", trust " + string(_battle.trust));
+    pp_talk_turn_shown(_battle, "pick", pp_talk_enemy_id(_battle));
     _battle.talk_stage = "";
     _battle.talk_hint = _record.hint;
     // Card THREE-BATTLES: the stated spare condition is the hint line under every reply, from the enemy row.
@@ -674,6 +746,13 @@ function pp_talk_step(_battle) {
     // Card BATTLE-FULL: the enemy row may say what this option does to its next turn (pp_battle_act_apply).
     var _act_line = pp_battle_act_apply(_battle, _battle.talk_cursor);
     if (_act_line != "") array_push(_record.lines, _act_line);
+    // Card t_bdb645a5: a turn whose words came out of data/meta_bake.json says who weighed them and what the meter
+    // did, on the row under the reply. A card pool reply adds nothing, because no model answered it and a label over
+    // the pool would be a claim about a call this fight never made.
+    if (_record.baked) {
+        var _judge = pp_talk_judge_line(_battle.talk_delta);
+        if (_judge != "") array_push(_record.lines, _judge);
+    }
     pp_battle_say(_battle, _record.lines, "enemy_turn");
 }
 
