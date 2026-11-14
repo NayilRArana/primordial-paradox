@@ -1649,7 +1649,15 @@ function pp_flow_battle_result(_world, _encounter_id, _outcome) {
         && string(global.pp.last_battle.enemy) == _enemy) {
         _result = string(global.pp.last_battle.outcome);
     }
+    // Card t_4d11b46d: keep the mercy pp_battle_publish_outcome carried. This line used to rebuild the struct from
+    // the two words it names, which would drop the wind meter's number the moment the player walked out of the fight.
+    var _mercy = -1;
+    if (is_struct(global.pp) && variable_struct_exists(global.pp, "last_battle") && is_struct(global.pp.last_battle)
+        && string(global.pp.last_battle.enemy) == _enemy && variable_struct_exists(global.pp.last_battle, "mercy")) {
+        _mercy = global.pp.last_battle.mercy;
+    }
     global.pp.last_battle = { enemy: _enemy, outcome: _result };
+    if (_mercy >= 0) global.pp.last_battle.mercy = _mercy;
     if (_result != "kill" && _result != "spare") return false;
     show_debug_message("PP: encounter result " + _enemy + " " + _result);
     if (_result == "kill") {

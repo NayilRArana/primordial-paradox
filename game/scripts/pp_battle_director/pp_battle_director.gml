@@ -956,6 +956,12 @@ function pp_battle_publish_outcome(_battle) {
     var _outcome = pp_battle_outcome(_battle);
     if (variable_global_exists("pp") && is_struct(global.pp)) {
         global.pp.last_battle = { enemy: _enemy, outcome: _outcome };
+        // Card t_4d11b46d: the mercy the fight reached travels with its outcome, because the Town Quay's wind gate
+        // reads it back as the wind meter (pp_storm.gml). One value, written where the WILL bar's own number lives,
+        // so the bar on the map and the bar in the battle cannot drift.
+        if (variable_struct_exists(_battle, "talk_mercy") && !is_undefined(_battle.talk_mercy)) {
+            global.pp.last_battle.mercy = clamp(floor(_battle.talk_mercy), 0, 100);
+        }
     }
     show_debug_message("PP: battle outcome " + _enemy + " " + _outcome);
     return _outcome;
