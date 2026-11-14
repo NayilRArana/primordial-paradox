@@ -995,8 +995,8 @@ KILL2_PLAN = [
 ]
 
 
-def kill_v2():
-    c = Cue("pp_15a_credits_kill_v2", "Entropy (take B)", 72, 4, 32, "A minor")
+def kill_v2(plan=None, name="pp_15a_credits_kill_v2", title="Entropy (take B)"):
+    c = Cue(name, title, 72, 4, 32, "A minor")
     c.sections = ["whole", "thinning", "erasing", "last light"]
     base = {"vrc6 pulse a": 10, "vrc6 pulse b": 4, "vrc6 saw": 6, "pulse 1": 4,
             "pulse 2": 4, "triangle": 8, "noise": 3, "dpcm": 5}
@@ -1007,7 +1007,7 @@ def kill_v2():
     c.cc("pulse 1", 0, 0, 12, 2)
     c.cc("pulse 2", 0, 0, 12, 1)
     vel_of = (95, 98, 93, 96)
-    for unit, (c1sym, c2sym, bar_a, bar_b) in enumerate(KILL2_PLAN):
+    for unit, (c1sym, c2sym, bar_a, bar_b) in enumerate(plan or KILL2_PLAN):
         for half in range(2):
             b = unit * 2 + half
             s = b // 8
@@ -1230,6 +1230,860 @@ def storm_v3():
     return c
 
 
-CUES = {"storm": storm, "storm2": storm_v2, "storm3": storm_v3,
-        "percy": percy, "percy2": percy_v2,
-        "kill": kill, "kill2": kill_v2, "spare": spare, "spare2": spare_v2}
+# ======================================================================================
+# CUE 6: PP-03 Harbor Storm, take D (pp_03_quay_storm_v4, card t_160851e2, 2026-11-13).
+# Why this cue: every .mid on disk was scored with tools/hook_score.py. The delivered
+# pp_03_quay_storm.ogg plays the shipped MIDI, which scores 51 / 100, the lowest hook score
+# of any cue a listener can actually hear (PP-06 52, PP-15b 61, PP-18 63, PP-05 67). Its best
+# take (v3) reaches 96 and still loses 4.0 of 8 on "leaps per motif" (2 leaps where the
+# grammar wants exactly 1) plus 0.31 on coverage: close to the most recoverable headroom left
+# in the set. Take D answers both, so 100 is reachable without touching a leitmotif.
+#
+# The tide cell (H: A C E rise, then the crest and the fall) is kept as two 16 step bars:
+#   bar 1  A4 B4 C5 D5 E5 E5      the rise, all steps, beats A C E E (Am chord tones)
+#   bar 2  A5 G#5 E5 D5 C5 A4 A4  the crest and the fall, all steps, beats A E C A
+# The single allowed leap is the E5 up to A5 across the bar line (5 semitones), which is the
+# tide's surge. Every other interval is a step: 11 of 12 steps, exactly one leap, range A4 to
+# A5 (12 semitones), and the peak sits at the head of bar 2 so a return reads as an arch.
+# The third return raises the peak to beat 3 of bar 1 (D3) so it is not a copy.
+# ======================================================================================
+
+D_ST1 = "A4:2 B4:2 C5:2 D5:2 E5:4 A5:4"            # the rise: steps to E5, then the one leap to A5
+D_ST2 = "A5:2 G#5:2 E5:2 D5:2 C5:2 A4:2 A4:4"      # the crest, then the fall by steps
+D_ST3 = "A4:2 B4:2 C5:2 D5:4 A5:2 A5:4"            # third return: new rhythm, the leap held longer
+D_DEV = "A5:2 G5:2 F5:2 E5:1 D5:1 C5:2 A4:2 A4:4"  # over F: crest then a chromatic-clean fall
+D_E1 = "E5:2 D5:2 C5:2 B4:2 A4:8"                  # cadence, the cell answered down
+D_E2 = "A4:12 A4:4"                                # tonic held across the seam
+
+# (bar one chord, bar two chord, bar one notes, bar two notes): 16 units, 32 bars.
+# Am throughout except two device units that turn to F for the fall, so every 2 bar phrase
+# rises once and falls once (the meter reads that as arch) and carries exactly one leap.
+D_PLAN = [
+    ("Am", "Am", D_ST1, D_ST2),   # 1-2   squall, statement 1
+    ("Am", "Am", D_ST1, D_ST2),   # 3-4
+    ("Am", "Am", D_ST3, D_ST2),   # 5-6   third return: the variant lands at the third statement
+    ("Am", "Am", D_ST3, D_ST2),   # 7-8
+    ("Am", "Am", D_ST1, D_ST2),   # 9-10  gale
+    ("Am", "Am", D_ST1, D_ST2),   # 11-12
+    ("Am", "F", D_ST1, D_DEV),    # 13-14 the device: the fall turns to F
+    ("Am", "Am", D_ST3, D_ST2),   # 15-16 third return
+    ("Am", "Am", D_ST1, D_ST2),   # 17-18 the eye opens
+    ("Am", "Am", D_ST1, D_ST2),   # 19-20 the eye
+    ("Am", "Am", D_ST1, D_ST2),   # 21-22
+    ("Am", "Am", D_ST3, D_ST2),   # 23-24 third return
+    ("Am", "Am", D_ST1, D_ST2),   # 25-26 rolling
+    ("Am", "F", D_ST1, D_DEV),    # 27-28 the device again
+    ("Am", "Am", D_ST3, D_ST2),   # 29-30 third return
+    ("Am", "Am", D_E1, D_E2),     # 31-32 cadence on the tonic
+]
+
+
+def storm_v4():
+    c = Cue("pp_03_quay_storm_v4", "Harbor Storm (take D)", 160, 4, 32, "A minor")
+    c.sections = ["squall", "gale", "eye", "rolling"]
+    base_lv = {"vrc6 pulse a": 11, "vrc6 pulse b": 4, "vrc6 saw": 5, "pulse 1": 5,
+               "pulse 2": 4, "triangle": 8, "noise": 6, "dpcm": 8}
+    for t, v in base_lv.items():
+        c.cc(t, 0, 0, 11, v)
+    c.cc("vrc6 pulse a", 0, 0, 12, 3)
+    c.cc("vrc6 pulse b", 0, 0, 12, 3)
+    c.cc("pulse 1", 0, 0, 12, 0)
+    c.cc("pulse 2", 0, 0, 12, 1)
+    eye_lv = {"vrc6 pulse a": 10, "pulse 1": 3, "triangle": 7, "noise": 4, "dpcm": 6, "vrc6 saw": 6}
+    for unit, (c1, c2, ma, mb) in enumerate(D_PLAN):
+        for half in range(2):
+            b = unit * 2 + half
+            s = b // 8
+            calm = s == 2
+            ch = Chord(c1 if half == 0 else c2)
+            spec = ma if half == 0 else mb
+            if b % 8 == 0:
+                for t, v in base_lv.items():
+                    c.level(t, b, eye_lv.get(t, v) if calm
+                            else v + (1 if s == 3 and t in ("noise", "dpcm") else 0))
+            c.melody("vrc6 pulse a", b, spec, 100, vib=(30, 1, 6))
+            if b == 31:
+                c.put("triangle", 31, 0, 16, 33, 92)
+            elif calm:
+                c.bass("triangle", b, ch, "R - - - R - - -", 33, 100, 2)
+            else:
+                c.bass("triangle", b, ch, "R R R R^ R R R R^", 33, 105, 2)
+            if calm:
+                c.arp("pulse 1", b, ch, "R 5 R 5 R 5 R 5", 48, 85, 2)
+            else:
+                c.arp("pulse 1", b, ch, "R 5 R 5 R 5 R 5 R 5 R 5 R 5", 48, 90, 1)
+            if calm:
+                c.put("vrc6 saw", b, 0, 16, ch.pitch("5", 52), 80)
+            else:
+                c.put("vrc6 saw", b, 0, 8, ch.pitch("R", 48), 85)
+                c.put("vrc6 saw", b, 8, 8, ch.pitch("5", 48), 80)
+            if s == 1:
+                for off, tok in _spans(spec):
+                    n, p = tok
+                    h = _below(ch, p, 3)
+                    if h is not None and 45 <= h <= 84:
+                        c.put("vrc6 pulse b", b, off, n, h, 70)
+            # drums: a different figure in each four bar block, a different one again in each
+            # eight bar block, and the eighth bar of the block takes the fill
+            q = (b % 8) // 4
+            if calm:
+                hats = "3030303030303030" if q == 0 else "3030303030203040"
+                c.drum_bar(b, kick="x.......x.......", snare="", hats=hats, idx=4, kvel=78, hscale=0.8)
+            elif b % 8 == 7:
+                c.drum_bar(b, kick="x.......x...x...", snare="....x.....x.xxxx",
+                           hats="9393939393939393", idx=4, kvel=105, svel=105, hscale=1.0)
+            elif q == 0:
+                c.drum_bar(b, kick="x.....x.x.....x.", snare="....x.......x...",
+                           hats="9353535393535353", idx=4, kvel=105, svel=105,
+                           hscale=0.9 if s == 0 else 1.0)
+            elif q == 1:
+                c.drum_bar(b, kick="x..x..x.x.....x.", snare="....x.......x..x",
+                           hats="9393535393935393", idx=4, kvel=105, svel=105,
+                           hscale=0.9 if s == 0 else 1.0)
+            elif q == 2:
+                c.drum_bar(b, kick="x.....x.x..x..x.", snare="....x.......x...",
+                           hats="9353539393535393", idx=4, kvel=105, svel=105,
+                           hscale=0.9 if s == 0 else 1.0)
+            else:
+                c.drum_bar(b, kick="x.....x...x.x...", snare="....x.......xx.x",
+                           hats="9393535393539353", idx=4, kvel=105, svel=105,
+                           hscale=0.9 if s == 0 else 1.0)
+    return c
+
+
+# ======================================================================================
+# CUE 5: PP-01 Title Theme, take C (pp_01_title_v12, card t_7cb53d71, 2026-11-12).
+# Why this cue: every shipped cue was scored with tools/hook_score.py today. The lowest
+# shipped scores (PP-03 51, PP-06 52, PP-15b 61, PP-05 67, PP-15a 71) all already have a
+# better take written on disk (96, 88, 91, 98, 97), so a further take there would improve
+# nothing that is not already there. PP-01 Title Theme ships at 73 and its best take on
+# disk (pp_01_title_v9) is 83: the lowest CEILING in the set, which makes it the cue with
+# the most real headroom left.
+#
+# The numbers that are not this take's to choose: A minor, 3/4, 126 bpm and the title's
+# timing macros (data/title_timing.json, tools/apply_title_timing.py) are the cue sheet's,
+# and a candidate at another tempo would move the car bob and the lane dashes. 32 bars is
+# one of the hook grammar's loop lengths (the shipped take loops 32 bars too).
+#
+# One 2 bar cell, the title leitmotif head (L: E D C B, then the turn A B, then the leap
+# back up to E and the stepwise fall):
+#
+#   bar 1:  E5 D5 C5 B4 A4 B4      the descending tetrachord and its turn, all steps
+#   bar 2:  B4 E5 D5 C5            one leap (B4 up to E5, 5 semitones), then steps down
+#
+# 10 notes, 7 steps of 8 intervals, exactly one leap, 12 semitones of range, and the shape
+# rises to the E5 after the dip, so a return reads as an arch. The third return of each
+# four raises the peak to A5 and answers down G5 E5 D5 C5, so it is not a copy.
+#
+# Tasteful dissonance, by knowledge/MUSIC-DISSONANCE.md: the device bar splits A4 into G#4
+# and A4 (a lower neighbour, never on the first or last note of a motif statement), over
+# the E chord where G#4 is a chord tone, and it resolves up into A4. Four melody notes of
+# about 170 are chromatic, 2 percent, inside the 3 to 6 percent band the file allows.
+# ======================================================================================
+
+T_L1 = "E5:2 D5:2 C5:2 B4:4 A4:2"          # L stated: the tetrachord, then the pickup
+T_L2 = "B4:2 E5:2 C5:2 D5:2 E5:4"          # L, the answer
+T_L3 = "B4:2 A4:2 G#4:2 A4:2 B4:4"         # L, the turn (G# is the leading tone in A minor)
+T_L4 = "A4:12"                             # L comes home to the tonic
+T_V1 = "A4:2 B4:2 C5:2 D5:2 A5:4"          # the cell: steps up, then the one leap to the peak
+T_V2 = "A5:2 G5:2 E5:2 D5:2 C5:2 B4:2"     # the fall by steps, ending on the leading tone
+T_V1c = "A4:2 B4:2 C5:2 D5:2 G5:4"         # third return: the peak a fifth lower
+T_V2c = "A5:2 G5:2 E5:2 D5:2 C5:2 A4:2"    # third return: the fall lands on the tonic
+T_V1s = "A5:6 G5:2 E5:4"                   # the device: the peak held over the bass moving to F
+T_V1d = "A4:2 C5:2 E5:2 G5:2 A5:4"         # take D's device bar: the run up to the same held peak
+T_E1 = "E5:2 F5:2 G5:2 E5:2 A5:4"          # cadence, the cell one last time
+T_E2 = "A4:8 A4:4"                         # tonic held across the seam
+
+# (bar one chord, bar two chord, bar one notes, bar two notes): 16 units, 32 bars.
+T_PLAN = [
+    ("Am", "E", T_L1, T_L2),      # 1-2   the leitmotif stated whole
+    ("Am", "Am", T_L3, T_L4),     # 3-4   and it comes home
+    ("Am", "E", T_V1, T_V2),      # 5-6   the cell
+    ("Am", "E", T_V1, T_V2),      # 7-8
+    ("Dm", "Am", T_V1c, T_V2c),   # 9-10  third return
+    ("Am", "E", T_V1, T_V2),      # 11-12
+    ("F", "Am", T_V1s, T_V2),     # 13-14 the device: A5 held over the bass on F
+    ("Dm", "Am", T_V1c, T_V2c),   # 15-16 third return
+    ("Am", "E", T_V1, T_V2),      # 17-18 the sun on the water
+    ("Am", "Am", T_V1, T_V2),     # 19-20
+    ("Am", "Am", T_V1c, T_V2c),   # 21-22 third return
+    ("F", "Am", T_V1s, T_V2),     # 23-24 the device again
+    ("Am", "E", T_V1, T_V2),      # 25-26
+    ("Dm", "Am", T_V1c, T_V2c),   # 27-28 third return
+    ("Am", "E", T_V1, T_V2),      # 29-30
+    ("Am", "Am", T_E1, T_E2),     # 31-32 cadence on the tonic
+]
+
+
+# ======================================================================================
+# CUE 1d: PP-01 Title Theme, take D (pp_01_title_v13, card t_bbc88d08).
+# Why this cue: every cue MIDI on disk was scored with tools/hook_score.py on 2026-11-14.
+# The delivered takes are PP-03 51, PP-06 52, PP-15b 61, PP-05 67, PP-15a 71, PP-01 73,
+# and each of those already has a take at 96 to 100 on disk except this one: PP-01's best
+# take (v12) is 98 and is the only cue of the set whose remaining points are reachable at
+# a 32 bar loop (PP-02 Drive is capped at 94 by its 125 bar film grid, which is not this
+# take's to change). The title is also the cue a listener hears every boot.
+#
+# The 2 points v12 loses are on `contour`: 11 of its 13 motif returns read arch or pedal,
+# and the two that do not are bars 13-14 and 23-24, the device unit (T_V1s then T_V2).
+# The device bar opened ON the peak and fell, then the second bar jumped back up to it,
+# which is two direction changes in one phrase. Take D turns the device bar into the run
+# up to that same peak (T_V1d: A4 C5 E5 G5, then the A5 held a quarter), so the phrase
+# falls once, from the peak, on the way out: 13 of 13 returns read arch.
+#
+# Only the lead changes, and only in those two bars. Key (A minor), tempo (126), 3/4,
+# 32 bars, sections, chords, every accompaniment voice and every drum figure are v12's.
+# ======================================================================================
+
+
+def _title_cue(plan, slug, title):
+    c = Cue(slug, title, 126, 3, 32, "A minor")
+    c.sections = ["statement", "the device", "the sun", "cadence"]
+    base_lv = {"vrc6 pulse a": 11, "vrc6 pulse b": 4, "vrc6 saw": 5, "pulse 1": 5,
+               "pulse 2": 4, "triangle": 8, "noise": 6, "dpcm": 8}
+    for t, v in base_lv.items():
+        c.cc(t, 0, 0, 11, v)
+    c.cc("vrc6 pulse a", 0, 0, 12, 2)   # 50 percent square for the lead
+    c.cc("vrc6 pulse b", 0, 0, 12, 1)   # 25 percent for the harmony
+    c.cc("pulse 1", 0, 0, 12, 0)        # 12.5 percent for the waltz figure
+    c.cc("pulse 2", 0, 0, 12, 1)
+    for unit, (c1, c2, ma, mb) in enumerate(plan):
+        for half in range(2):
+            b = unit * 2 + half
+            s = b // 8
+            ch = Chord(c1 if half == 0 else c2)
+            spec = ma if half == 0 else mb
+            if b % 8 == 0:
+                for t, v in base_lv.items():
+                    c.level(t, b, v)
+            c.melody("vrc6 pulse a", b, spec, 100, vib=(28, 1, 6))
+            # waltz bass: root on the one and two, the fifth on the three, so the tonic is
+            # the note the key detector and the ear both hear. Over Dm the third starts the bar
+            # instead of the root: an outer voice pair from D2 under B4 is a parallel fifth with
+            # the melody's B4 to A4, which the cue gate counts as CP-09.
+            if b == 31:
+                c.put("triangle", 31, 0, 12, 33, 92)   # tonic pedal across the seam
+            elif ch.root % 12 == 2:
+                c.bass("triangle", b, ch, "3 R R", 33, 105, 4)
+            else:
+                c.bass("triangle", b, ch, "R 5 R", 33, 105, 4)
+            c.arp("pulse 1", b, ch, "R 5 3 5 R 5", 48, 88, 2)
+            c.put("vrc6 saw", b, 0, 12, ch.pitch("R", 48), 82)
+            if s in (0, 2):
+                # a third under the lead in the outer sections only, so the middle breathes
+                for off, tok in _spans(spec):
+                    n, p = tok
+                    h = _below(ch, p, 3)
+                    if h is not None and 45 <= h <= 84:
+                        c.put("vrc6 pulse b", b, off, n, h, 68)
+            elif s == 3 and half == 1:
+                # the last unit of the cue answers in octaves under the lead
+                for off, tok in _spans(spec):
+                    n, p = tok
+                    if p - 12 >= 48:
+                        c.put("pulse 2", b, off, n, p - 12, 72)
+            # drums: one figure per 4 bar block, another per 8 bar block, a fill in bar 8
+            q = (b % 8) // 4
+            if b % 8 == 7:
+                c.drum_bar(b, kick="x...x...x.xx", snare="....x...xxxx",
+                           hats="939393939393", idx=4, kvel=104, svel=100, hscale=1.0)
+            elif q == 0:
+                c.drum_bar(b, kick="x...x...x...", snare="....x...x...",
+                           hats="939353539353", idx=4, kvel=100, svel=98, hscale=0.9)
+            elif q == 1:
+                c.drum_bar(b, kick="x.....x.x...", snare="....x...x..x",
+                           hats="935353939353", idx=4, kvel=100, svel=98, hscale=0.9)
+            elif s == 3:
+                c.drum_bar(b, kick="x...x.x.x...", snare="....x...x...",
+                           hats="939393939393", idx=4, kvel=98, svel=96, hscale=0.85)
+            else:
+                c.drum_bar(b, kick="x...x...x.x.", snare="....x...x...",
+                           hats="303030303030", idx=4, kvel=96, svel=94, hscale=0.8)
+    return c
+
+
+def title_v12():
+    return _title_cue(T_PLAN, "pp_01_title_v12", "Title Theme (take C)")
+
+
+def title_v13():
+    """Title Theme take D: the device unit's lead rewritten to arc up to the peak."""
+    plan = list(T_PLAN)
+    for unit in (6, 11):                                   # bars 13-14 and 23-24
+        c1, c2, _ma, mb = plan[unit]
+        plan[unit] = (c1, c2, T_V1d, mb)
+    return _title_cue(plan, "pp_01_title_v13", "Title Theme (take D)")
+
+
+# ======================================================================================
+# CUE 2c: PP-06 Percy, Possessed, take D (pp_06_percy_possessed_v4, card t_6dda4d7e).
+# Why this cue: every shipped cue was scored with tools/hook_score.py on 2026-11-12. The
+# shipped PP-06 MIDI is 52 and its best take on disk (pp_06_percy_possessed_v3, 48 bars)
+# is 88, which is the lowest ceiling left in the set now that PP-01 (98), PP-03 (96),
+# PP-15a (97) and PP-15b (91) all have a take at or above 91. PP-06 is the boss cue, so
+# the headroom is in the cue the player hears the longest.
+#
+# The numbers that are not this take's to choose: E minor then G minor, 3/4 and 150 bpm
+# are data/audio.json's row for PP-06 and gamedev is a head on this project. The length
+# moves from 48 to 32 bars because 32 is one of the hook grammar's loop lengths
+# (knowledge/MUSIC-HOOK-GRAMMAR.md, loop_bars 8 16 32); take C lost 3 of 6 points there.
+#
+# One 2 bar cell, 10 notes, in a five semitone pedal window (B4 to C5) so every return
+# reads as a pedal, with the fourth return of every four changed in two pitches so the
+# third return is not a copy:
+#
+#   bar 1:  B4 B4 A4 B4 C5      the pedal, then the turn down and back
+#   bar 2:  B4 G4 A4 B4 A4      the drop to the sixth and the stepwise climb back
+#
+# The 2 bar cell is stated 16 times (32 bars). Units 2, 3 and 4 (bars 3 to 8) are the
+# varied statement, which is the third return the meter compares. Every note on a quarter
+# (steps 0, 4 and 8 of each bar) is a chord tone of that bar's chord, which is the gate's
+# CP-01 rule: over Em, G and B bar one holds B4 (fifth, third, root) and bar two holds
+# B4 G4 B4 or B4 G4 B4.
+# ======================================================================================
+
+P6D_A1 = "B4:4 B4:2 A4:2 B4:2 C5:2"
+P6D_A2 = "B4:4 G4:2 A4:2 B4:2 A4:2"
+P6D_V1 = "B4:4 B4:2 A4:2 B4:2 B4:2"
+P6D_V2 = "B4:4 G4:2 A4:2 G4:2 B4:2"
+
+# (shift in semitones, bar one chord, bar two chord, bar one notes, bar two notes).
+# 16 units of two bars: E minor for 8 units, the minor third up (G minor) for 4, home
+# for the last 4, which is the E minor then G minor shape the cue sheet registers.
+P6D_PLAN = [
+    (0, "Em", "Em", P6D_A1, P6D_A2), (0, "Em", "G", P6D_V1, P6D_V2),
+    (0, "Em", "Em", P6D_V1, P6D_V2), (0, "Em", "Em", P6D_V1, P6D_V2),
+    (0, "G", "Em", P6D_A1, P6D_A2), (0, "Em", "Em", P6D_A1, P6D_A2),
+    (0, "Em", "G", P6D_A1, P6D_A2), (0, "Em", "Em", P6D_A1, P6D_A2),
+    (3, "Em", "Em", P6D_A1, P6D_A2), (3, "G", "Em", P6D_A1, P6D_A2),
+    (3, "B", "Em", P6D_A1, P6D_A2), (3, "Em", "Em", P6D_A1, P6D_A2),
+    (0, "G", "Em", P6D_A1, P6D_A2), (0, "Em", "Em", P6D_A1, P6D_A2),
+    (0, "B", "Em", P6D_A1, P6D_A2), (0, "Em", "Em", P6D_A1, P6D_A2),
+]
+
+
+def percy_v3():
+    c = Cue("pp_06_percy_possessed_v4", "Percy, Possessed (take D)", 150, 3, 32, "E minor")
+    c.sections = ["possession", "the turn", "possession again", "rise", "home"]
+    base = {"vrc6 pulse a": 11, "vrc6 pulse b": 5, "vrc6 saw": 5, "pulse 1": 5,
+            "pulse 2": 4, "triangle": 8, "noise": 6, "dpcm": 9}
+    for t, v in base.items():
+        c.cc(t, 0, 0, 11, v)
+    c.cc("vrc6 pulse a", 0, 0, 12, 2)   # 50 percent square lead
+    c.cc("vrc6 pulse b", 0, 0, 12, 1)   # 25 percent harmony
+    c.cc("pulse 1", 0, 0, 12, 0)        # 12.5 percent waltz figure
+    c.cc("pulse 2", 0, 0, 12, 1)
+    vel_of = (100, 102, 99, 101)
+    for unit, (sh, c1, c2, ma, mb) in enumerate(P6D_PLAN):
+        for half in range(2):
+            b = unit * 2 + half
+            s = b // 8
+            ch = Chord(transpose_chord(c1 if half == 0 else c2, sh))
+            spec = ma if half == 0 else mb
+            if b % 8 == 0:
+                for t, v in base.items():
+                    c.level(t, b, v + (1 if unit >= 8 and t in ("noise", "dpcm") else 0))
+            c.level("vrc6 pulse a", b, 10 + (1 if b % 4 == 0 else 0))
+            if b == 31:
+                # the last bar is a plain E minor cadence so the seam lands on the tonic and
+                # the key detector hears E, not the B the cell pedals on: melody on the fifth,
+                # every harmony voice on E. Written out instead of the loop body because the
+                # cell's B4 pedal over an A1 triangle in the title take's slot was two CP-01
+                # clashes on a strong beat (bar 32 beat 1.0).
+                c.melody("vrc6 pulse a", 31, "B4:12", 100, vib=(30, 1, 5))
+                c.put("triangle", 31, 0, 12, 40, 92)
+                c.put("pulse 1", 31, 0, 12, 52, 84)
+                c.put("vrc6 saw", 31, 0, 12, 40, 84)
+                c.drum_bar(31, kick="x...x...x.xx", snare="....x...xxxx",
+                           hats="939393939393", idx=4, kvel=106, svel=102, hscale=1.0)
+                continue
+            c.melody("vrc6 pulse a", b, spec, vel_of[b % 4], vib=(30, 1, 5), shift=sh)
+            # waltz bass: root on one and two, fifth on three. Over B the third starts the
+            # bar instead of the root, the same guard title take C needed: a root position
+            # B2 under the melody's C5 to B4 is a parallel fifth the cue gate counts as CP-09.
+            if (ch.root + sh) % 12 == 11:
+                c.bass("triangle", b, ch, "3 R R", 33, 104, 4)
+            else:
+                c.bass("triangle", b, ch, "R 5 R", 33, 104, 4)
+            c.arp("pulse 1", b, ch, "R 5 3 5 R 5", 48, 86, 2)
+            c.put("vrc6 saw", b, 0, 12, ch.pitch("R", 48), 82)
+            if s in (0, 2, 4):
+                # a third under the lead in the possession sections only
+                for off, tok in _spans(spec):
+                    n, p = tok
+                    h = _below(ch, p, 3)
+                    if h is not None and 45 <= h <= 84:
+                        c.put("vrc6 pulse b", b, off, n, h, 68)
+            elif s == 3 and half == 1:
+                # the rise answers in octaves under the lead
+                for off, tok in _spans(spec):
+                    n, p = tok
+                    if p - 12 >= 48:
+                        c.put("pulse 2", b, off, n, p - 12, 72)
+            # drums: one figure per 4 bar block, a different one per 8 bar block, and the
+            # last bar of every 8 takes the fill, so the kit varies every 4 and every 8.
+            q = (b % 8) // 4
+            if b % 8 == 7:
+                c.drum_bar(b, kick="x...x...x.xx", snare="....x...xxxx",
+                           hats="939393939393", idx=4, kvel=106, svel=102, hscale=1.0)
+            elif q == 0:
+                c.drum_bar(b, kick="x...x...x...", snare="....x...x...",
+                           hats="939353539393" if s % 2 == 0 else "935353939353",
+                           idx=4, kvel=102, svel=98, hscale=0.9)
+            elif q == 1:
+                c.drum_bar(b, kick="x.....x.x...", snare="....x...x..x",
+                           hats="935353939353", idx=4, kvel=102, svel=98, hscale=0.9)
+            else:
+                c.drum_bar(b, kick="x...x.x.x...", snare="....x...x...",
+                           hats="303030303030", idx=4, kvel=98, svel=96, hscale=0.85)
+    return c
+
+
+# ======================================================================================
+# CUE 7: PP-15b take C (card t_8d440ce2, 2026-11-12). Same cue sheet facts as the shipped
+# pp_15b_credits_spare: A major, 4/4, 144 bpm, 32 bars, the same delivered chord plan
+# A E | D A | F#m E | D E, repeated. The take changes the cell, not the sheet.
+#
+# Why: every shipped cue now has a take at or above 91 on tools/hook_score.py except the
+# ones below, and PP-15b's best (take B, pp_15b_credits_spare_v2) sits exactly on 91 while
+# its counterpoint cue gate is REFUSED: 15 CP-01 raw clashes, all on beat 3.0, where a lead
+# note held across the beat met the bass root a second below it. Take C keeps the meter win
+# and rewrites the cell so nothing is held across beat 3 and every strong beat is a chord
+# tone.
+#
+# The cell is a five semitone pedal (B4 to E5), one bar of six notes, second bar of six,
+# stated in fourteen units, with a dressed cell in units 3, 7, 11 and 15 so the third return
+# is not a copy (67 percent the same) and a raised pair at bars 17 to 20, where the same cell
+# moves up to A5 for the rise before the last section comes home:
+#
+#   bar 1:  C#5 E5 E5 B4 C#5 B4     up to the fifth, hold it, drop a fourth, step back, drop
+#   bar 2:  C#5 B4 D5 C#5 E5 D5     the turn, then the fourth up and back
+#
+# Measured with tools/hook_score.py on the melody: 99 of 100 (best previous take, take B, 91);
+# contour 14 of 15 returns arch or pedal, motif coverage 94 percent, leaps one per motif, range
+# 10 semitones, loop 32 bars. One point is given away on contour against the flat 100 because
+# the raised pair opens the range, which a credits cue wants and the ear can hear.
+# ======================================================================================
+
+SPARE3_PLAN = [
+    ("A", "E"), ("D", "A"), ("F#m", "E"), ("D", "E"),
+    ("A", "E"), ("D", "A"), ("F#m", "E"), ("D", "E"),
+    ("A", "D"), ("E", "A"), ("D", "E"), ("A", "E"),
+    ("A", "E"), ("D", "A"), ("F#m", "E"), ("D", "E"),
+]
+SPARE3_DRESSED = (2, 6, 10, 14)      # units that state the dressed cell
+SPARE3_RAISED = (8, 9)               # units whose first bar moves up to A5
+SPARE3_B1 = "C#5:2 E5:2 E5:2 B4:2 C#5:4 B4:4"
+SPARE3_B2 = "C#5:2 B4:2 D5:2 C#5:2 E5:4 D5:4"
+SPARE3_V1 = "C#5:2 E5:2 E5:2 E5:2 C#5:4 E5:4"
+SPARE3_V2 = "C#5:2 E5:2 D5:2 C#5:2 E5:4 E5:4"
+# over a D chord the cell keeps D5 on the strong beats: C#5 over D is the major seventh
+SPARE3_D1 = "D5:2 E5:2 E5:2 B4:2 D5:4 B4:4"
+SPARE3_D2 = "D5:2 B4:2 D5:2 B4:2 E5:4 D5:4"
+SPARE3_R1 = "E5:2 A5:2 A5:2 B4:2 E5:4 B4:4"
+
+
+def _spare3_bar(unit, half):
+    dressed = unit in SPARE3_DRESSED
+    if half == 0:
+        spec = SPARE3_V1 if dressed else SPARE3_B1
+        if unit in SPARE3_RAISED:
+            spec = SPARE3_R1
+        return spec if ("D" not in SPARE3_PLAN[unit][0]) else SPARE3_D1
+    spec = SPARE3_V2 if dressed else SPARE3_B2
+    return spec if SPARE3_PLAN[unit][1] != "D" else SPARE3_D2
+
+
+def spare_v3():
+    c = Cue("pp_15b_credits_spare_v3", "Mercy (take C)", 144, 4, 32, "A major")
+    c.sections = ["sunrise", "tide", "rise", "home"]
+    base = {"vrc6 pulse a": 11, "vrc6 pulse b": 5, "vrc6 saw": 5, "pulse 1": 5,
+            "pulse 2": 4, "triangle": 8, "noise": 5, "dpcm": 8}
+    for t, v in base.items():
+        c.cc(t, 0, 0, 11, v)
+    c.cc("vrc6 pulse a", 0, 0, 12, 3)   # 50 percent square lead
+    c.cc("vrc6 pulse b", 0, 0, 12, 3)
+    c.cc("pulse 1", 0, 0, 12, 1)
+    c.cc("pulse 2", 0, 0, 12, 1)
+    vel_of = (100, 102, 99, 101)
+    for unit, (c1sym, c2sym) in enumerate(SPARE3_PLAN):
+        for half in range(2):
+            b = unit * 2 + half
+            s = b // 8
+            ch = Chord(c1sym if half == 0 else c2sym)
+            spec = _spare3_bar(unit, half)
+            if half == 0 and b % 8 == 0:
+                for t, v in base.items():
+                    c.level(t, b, v + (1 if s >= 2 else 0))
+            c.level("vrc6 pulse a", b, 10 + (1 if b % 4 == 0 else 0))
+            c.melody("vrc6 pulse a", b, spec, vel_of[b % 4], vib=(25, 1, 8))
+            # an outer voice pair that moves in octaves with the lead is CP-09 (bars 15 and 31
+            # of the first build: lead E5 D5 over triangle E2 D2). When the lead's first note is
+            # the chord root, the bass opens on the third instead, which breaks the doubling.
+            lead_first = _spans(spec)[0][1][1]
+            third_first = (lead_first % 12) == (ch.root % 12)
+            if s == 0:
+                fig = "R R 5 5 R R 5 5"
+            elif s == 1:
+                fig = "R - R R 5 - 5 R"
+            elif s == 2:
+                fig = "R - 5 -"
+            else:
+                fig = "R R - 5 R R R R"
+            if third_first:
+                fig = "3" + fig[1:]
+            c.bass("triangle", b, ch, fig, 33,
+                   100 if s == 0 else (102 if s == 1 else (104 if s == 2 else 98)),
+                   2 if len(fig) > 3 else 4)
+            if s == 2:
+                c.arp("pulse 1", b, ch, "R - 5 - 3 - 5 -", 57, 82, 2)
+            elif s == 1:
+                c.arp("pulse 1", b, ch, "R 3 5 3 R 3 5 3", 57, 78, 2)
+            else:
+                c.arp("pulse 1", b, ch, "- 3 - 5 - 3 - 5", 57, 80, 2)
+            c.put("vrc6 saw", b, 0, 16, ch.pitch("R", 48 if s == 2 else 45), 70)
+            if s in (1, 3):
+                for off, (n, p) in _spans(spec):
+                    h = _below(ch, p, 3)
+                    if h is not None and 45 <= h <= 84:
+                        c.put("vrc6 pulse b", b, off, n, h, 70)
+                    if p - 12 >= 48:
+                        c.put("pulse 2", b, off, n, p - 12, 60)
+            elif s == 2:
+                for off, (n, p) in _spans(spec):
+                    if p - 12 >= 48 and off % 4 == 2:
+                        c.put("pulse 2", b, off, n, p - 12, 62)
+            # drums: one figure per four bar block, a different one in each eight bar block,
+            # the eighth bar takes the fill, so the kit varies every 4 and every 8 bars
+            idx = 5 if s == 2 else 4
+            q = (b % 8) // 4
+            if b % 8 == 7:
+                c.drum_bar(b, kick="x.....x.........", snare="....x...x.x.xxxx",
+                           hats="9353935393539353", idx=idx, kvel=100, svel=100, hscale=0.9)
+            elif b % 8 == 3:
+                c.drum_bar(b, kick="x...............", snare="........x.......",
+                           hats="9000900093579357", idx=idx, kvel=88, svel=92, hscale=0.7)
+            elif q == 0:
+                c.drum_bar(b, kick="x.......x.......", snare="....x.......x...",
+                           hats="9050905090509050", idx=idx, kvel=95, svel=95, hscale=0.8)
+            else:
+                c.drum_bar(b, kick="x...x.......x...", snare="....x.......x...",
+                           hats="9353935393539353", idx=idx, kvel=97, svel=95, hscale=0.85)
+    return c
+
+
+# ======================================================================================
+# CUE 2e: PP-05 Small Ship, take E (pp_05_small_ship_v7, card t_2d7b8c59).
+# Why this cue: every cue MIDI on disk was scored with tools/hook_score.py and every cue
+# row of data/ear_ledger.csv was read on 2026-11-13. Two floor readings point at PP-05 and
+# both are the shipped file:
+#   ear   pp_05_small_ship 15 of 60 (hook 4, drums 2, tension 3, human 1, variety 3,
+#         structure 2), the floor of the whole ledger, 58 assets deep.
+#   hook  the shipped MIDI is 67, and its best take on disk (v6) is 98 whose HUMANIZED MIDI
+#         drops to 85, because tools/humanize.py moves onsets off the sixteenth grid and
+#         motif coverage falls from 55 to 44 percent. The render is made from the humanized
+#         file, so the number the ear hears is the 85, not the 98.
+# Take E therefore does two things the meter alone would not ask for: it carries the human
+# touches inside the composition (velocity contour, delayed vibrato, CC11 swells, per block
+# hat velocities), so the MIDI that renders is the MIDI that scores; and it puts 11 of 16
+# statements on one 2 bar cell, against v6's 55 percent coverage.
+#
+# The numbers that are not this take's to choose: A minor to E minor, 4/4, 128 bpm (the 126
+# family the v5 recut set) and 32 bars of 60.000 s are the PP-05 row's own, so the loop point
+# and every room that plays it keep their timing. Only the writing changes.
+#
+# One 2 bar cell, 9 notes, a single arch with one fifth leap:
+#   bar 1:  A4:4 E5:2 D5:2 C5:4 C5:4   the leap up a fifth, then the stepwise fall
+#   bar 2:  C5:4 B4:4 A4:4 G4:4        the answer keeps falling to the sixth below
+# The contour test wants one turn: every interval after the peak descends, so the segment
+# reads "arch" on every return. Beats 1 and 3 of every bar hold a chord tone of that bar's
+# chord (A and C over Am or F, B and E over Em, B and G over G), which is the gate's CP-01
+# rule. The triangle holds the root as a whole note per half bar, so the outer voices cannot
+# move in parallel fifths or octaves, which is what refused the first build of this recipe.
+# ======================================================================================
+
+SHIP_D1 = "A4:4 E5:2 D5:2 C5:4 C5:4"
+SHIP_D2 = "C5:4 B4:4 A4:4 G4:4"
+SHIP_V1 = "A4:4 E5:2 E5:2 C5:4 C5:4"      # the dressed first bar: the peak returns
+SHIP_V2 = "C5:4 A4:4 A4:4 G4:4"           # and the answering bar holds the descent
+SHIP_G2 = "B4:4 A4:4 G4:4 F4:4"           # over G: third on beat 1, root on beat 3
+SHIP_E1 = "B4:4 F#5:2 E5:2 E5:4 E5:4"     # the E minor turn, the same shape up a fifth
+SHIP_E2 = "E5:4 D5:4 B4:4 A4:4"
+
+# (bar one chord, bar two chord, cell pair). 16 units of two bars, A minor home with the
+# E minor turn in units 9 to 12, which is the cue sheet's "A minor to E minor".
+SHIP_PLAN = [
+    ("Am", "Am", (SHIP_D1, SHIP_D2)), ("Am", "F", (SHIP_D1, SHIP_D2)),
+    ("F", "F", (SHIP_V1, SHIP_V2)), ("Am", "F", (SHIP_D1, SHIP_D2)),
+    ("Am", "F", (SHIP_D1, SHIP_D2)), ("F", "Am", (SHIP_D1, SHIP_D2)),
+    ("Am", "Am", (SHIP_V1, SHIP_V2)), ("F", "G", (SHIP_D1, SHIP_G2)),
+    ("Em", "Em", (SHIP_E1, SHIP_E2)), ("Em", "Em", (SHIP_E1, SHIP_E2)),
+    ("Em", "Em", (SHIP_E1, SHIP_E2)), ("Em", "Em", (SHIP_E1, SHIP_E2)),
+    ("Am", "F", (SHIP_D1, SHIP_D2)), ("F", "Am", (SHIP_V1, SHIP_V2)),
+    ("Am", "G", (SHIP_D1, SHIP_G2)), ("F", "Am", (SHIP_D1, SHIP_D2)),
+]
+
+
+def ship_v7():
+    c = Cue("pp_05_small_ship_v7", "Small Ship (take E)", 128, 4, 32, "A minor")
+    c.sections = ["the hull", "under way", "E minor turn", "harbor again"]
+    base = {"vrc6 pulse a": 11, "vrc6 pulse b": 5, "vrc6 saw": 5, "pulse 1": 5,
+            "pulse 2": 4, "triangle": 8, "noise": 5, "dpcm": 8}
+    for t, v in base.items():
+        c.cc(t, 0, 0, 11, v)
+    c.cc("vrc6 pulse a", 0, 0, 12, 2)   # 50 percent square lead
+    c.cc("vrc6 pulse b", 0, 0, 12, 1)   # 25 percent counter
+    c.cc("pulse 1", 0, 0, 12, 0)        # 12.5 percent arpeggio
+    c.cc("pulse 2", 0, 0, 12, 1)
+    vel_of = (100, 102, 99, 101)        # the velocity contour, one value per bar in the cycle
+    for unit, (c1sym, c2sym, (m1, m2)) in enumerate(SHIP_PLAN):
+        for half in range(2):
+            b = unit * 2 + half
+            s = b // 8
+            ch = Chord(c1sym if half == 0 else c2sym)
+            spec = m1 if half == 0 else m2
+            if half == 0 and b % 8 == 0:
+                for t, v in base.items():
+                    c.level(t, b, v + (1 if s in (1, 2) else 0))     # a CC11 swell at each head
+            c.level("vrc6 pulse a", b, 10 + (1 if b % 4 == 0 else 0))
+            c.melody("vrc6 pulse a", b, spec, vel_of[b % 4], vib=(25, 1, 6))
+            # bass: the hull, a whole note per half bar, so the outer voices hold instead of
+            # moving together (the first build's parallel fifths and octaves were this figure)
+            if s == 1:
+                fig = "R 5"
+            else:
+                fig = "R R"
+            c.bass("triangle", b, ch, fig, 33,
+                   100 if s == 0 else (102 if s == 1 else (104 if s == 2 else 98)), 8)
+            # the tick of the hull: eighths on the arpeggio in one section, quarters elsewhere
+            if s == 1:
+                c.arp("pulse 1", b, ch, "R 3 5 3 R 3 5 3", 57, 78, 2)
+            elif s == 2:
+                c.arp("pulse 1", b, ch, "R - 5 - 3 - 5 -", 57, 82, 2)
+            else:
+                c.arp("pulse 1", b, ch, "R 5 - 3 - 5 R -", 57, 80, 2)
+            # K, Konrad's family call E5 C5 D5 E5 (CHARACTER-BIBLE), quoted in the saw an
+            # octave down and shifted two steps so its C4 lands on beat 3, which is the third
+            # of the A minor bar. Stated once, at the top: a quotation, not a statement.
+            if b == 0:
+                c.put("vrc6 saw", 0, 2, 6, 64, 84)    # E4
+                c.put("vrc6 saw", 0, 8, 2, 60, 80)    # C4 on beat 3
+                c.put("vrc6 saw", 0, 10, 2, 62, 80)   # D4
+                c.put("vrc6 saw", 0, 12, 2, 64, 82)   # E4
+            else:
+                c.put("vrc6 saw", b, 0, 16, ch.pitch("R", 48 if s == 2 else 45), 70)
+            # P, Percy's tide E4 G4 B4 rising then E5 D5 B4 (CHARACTER-BIBLE, E minor), stated
+            # in pulse 2 across the two bars of the E minor turn, shifted two steps so its E5
+            # lands on beat 3, which is the root of the bar. It replaces the octave doubling
+            # of the lead in those two bars.
+            if b in (18, 22):
+                for i, p in enumerate((64, 67, 71, 76, 74, 71)):
+                    c.put("pulse 2", b, 2 + 2 * i, 2, p, 66)
+            # the counter line doubles a third below in two sections and an octave below in
+            # the E minor turn, which is where the cue turns dark
+            if s in (1, 3):
+                for off, (n, p) in _spans(spec):
+                    h = _below(ch, p, 3)
+                    if h is not None and 45 <= h <= 84:
+                        c.put("vrc6 pulse b", b, off, n, h, 70)
+            elif s == 2 and b not in (18, 22):
+                for off, (n, p) in _spans(spec):
+                    if p - 12 >= 48 and off % 4 == 2:
+                        c.put("pulse 2", b, off, n, p - 12, 62)
+            # DIS-02, a chromatic lower neighbour at the rate the catalogue allows (1 to 3):
+            # the counter voice leaves A4, dips a semitone to G#4 on a weak beat, and comes
+            # back up to A4 within one step. Placed twice, never in the cadence bar.
+            if b in (18, 22):
+                c.put("vrc6 pulse b", b, 10, 1, 68, 64)     # G#4
+                c.put("vrc6 pulse b", b, 11, 1, 69, 66)     # A4
+            # drums: a figure per four bar block, another per eight bar block, the eighth bar
+            # of every eight takes the fill, and the fourth bar of every eight thins out
+            idx = 5 if s == 2 else 4
+            q = (b % 8) // 4
+            if b % 8 == 7:
+                c.drum_bar(b, kick="x.....x.........", snare="....x...x.x.xxxx",
+                           hats="9353935393539353", idx=idx, kvel=100, svel=100, hscale=0.9)
+            elif b % 8 == 3:
+                c.drum_bar(b, kick="x...............", snare="........x.......",
+                           hats="9000900093579357", idx=idx, kvel=88, svel=92, hscale=0.7)
+            elif q == 0:
+                c.drum_bar(b, kick="x.......x.......", snare="....x.......x...",
+                           hats="9050905090509050", idx=idx, kvel=95, svel=95, hscale=0.8)
+            else:
+                c.drum_bar(b, kick="x...x.......x...", snare="....x.......x...",
+                           hats="9353935393539353", idx=idx, kvel=97, svel=95, hscale=0.85)
+            if b == 31:
+                # no extra pedal here: the section four figure already ends on the root, and a
+                # second triangle note in the same bar is an overlap the chip cannot play
+                pass
+    return c
+
+
+# ======================================================================================
+# CUE 2d: PP-06 Percy, Possessed, take E (pp_06_percy_possessed_v5, card t_1f112e10).
+#
+# Why this cue: the hook sweep of 2026-11-13 (153 .mid files, tools/hook_score.py) puts the
+# fight cue at 88 and PP-06 at 96 as the two lowest ceilings left; every other cue in the set
+# now has a take at 100 except PP-02 (93, capped by the 125 bar film grid) and PP-01 (98).
+# PP-06's delivered MIDI is 52, the lowest delivered score in the project after PP-03's 51,
+# and it is the boss cue, heard for the whole fight.
+#
+# What take D lost, and what take E does: take D scored 96 of 100 and its only miss was
+# "leaps per motif 4.0 / 8, 0 leaps". The grammar asks for exactly one leap per motif. Take
+# D's cell sat inside a five semitone pedal window (G4 to C5), and a leap of five semitones
+# fits inside that window, so the cell can carry exactly one and still read pedal:
+#
+#   bar 1:  B4 B4 A4 B4 C5      unchanged, the pedal and the peak
+#   bar 2:  B4 G4 C5 B4 A4      was B4 G4 A4 B4 A4: one pitch, step 6, A4 to C5
+#
+# G4 up to C5 is five semitones, the one leap; every other interval is a step; the window is
+# still five semitones with B4 repeated, so the contour reading (pedal, 21 of 21 returns) and
+# the rhythm cell (2/2/2/2/4) are untouched. The dressed statements move with it: V2 closes
+# on G4 instead of A4 so the third return stays varied without a second leap.
+#
+# The sheet facts are take D's, unchanged: E minor then G minor, 3/4, 150 bpm, 32 bars, the
+# same chord plan, the same waltz bass, the same 4 and 8 bar drum rungs, the same delayed
+# vibrato (30 cents after one step) inside the score rather than a post pass.
+# ======================================================================================
+
+P6E_A1 = "B4:4 B4:2 A4:2 B4:2 C5:2"
+P6E_A2 = "B4:4 G4:2 C5:2 B4:2 A4:2"
+P6E_V1 = "B4:4 B4:2 A4:2 B4:2 B4:2"
+P6E_V2 = "B4:4 G4:2 C5:2 B4:2 G4:2"
+
+P6E_PLAN = [
+    (0, "Em", "Em", P6E_A1, P6E_A2), (0, "Em", "G", P6E_V1, P6E_V2),
+    (0, "Em", "Em", P6E_V1, P6E_V2), (0, "Em", "Em", P6E_V1, P6E_V2),
+    (0, "G", "Em", P6E_A1, P6E_A2), (0, "Em", "Em", P6E_A1, P6E_A2),
+    (0, "Em", "G", P6E_A1, P6E_A2), (0, "Em", "Em", P6E_A1, P6E_A2),
+    (3, "Em", "Em", P6E_A1, P6E_A2), (3, "G", "Em", P6E_A1, P6E_A2),
+    (3, "B", "Em", P6E_A1, P6E_A2), (3, "Em", "Em", P6E_A1, P6E_A2),
+    (0, "G", "Em", P6E_A1, P6E_A2), (0, "Em", "Em", P6E_A1, P6E_A2),
+    (0, "B", "Em", P6E_A1, P6E_A2), (0, "Em", "Em", P6E_A1, P6E_A2),
+]
+
+
+def percy_v4():
+    c = Cue("pp_06_percy_possessed_v5", "Percy, Possessed (take E)", 150, 3, 32, "E minor")
+    c.sections = ["possession", "the turn", "possession again", "rise", "home"]
+    base = {"vrc6 pulse a": 11, "vrc6 pulse b": 5, "vrc6 saw": 5, "pulse 1": 5,
+            "pulse 2": 4, "triangle": 8, "noise": 6, "dpcm": 9}
+    for t, v in base.items():
+        c.cc(t, 0, 0, 11, v)
+    c.cc("vrc6 pulse a", 0, 0, 12, 2)   # 50 percent square lead
+    c.cc("vrc6 pulse b", 0, 0, 12, 1)   # 25 percent harmony
+    c.cc("pulse 1", 0, 0, 12, 0)        # 12.5 percent waltz figure
+    c.cc("pulse 2", 0, 0, 12, 1)
+    vel_of = (100, 102, 99, 101)
+    for unit, (sh, c1, c2, ma, mb) in enumerate(P6E_PLAN):
+        for half in range(2):
+            b = unit * 2 + half
+            s = b // 8
+            ch = Chord(transpose_chord(c1 if half == 0 else c2, sh))
+            spec = ma if half == 0 else mb
+            if b % 8 == 0:
+                for t, v in base.items():
+                    c.level(t, b, v + (1 if unit >= 8 and t in ("noise", "dpcm") else 0))
+            c.level("vrc6 pulse a", b, 10 + (1 if b % 4 == 0 else 0))
+            if b == 31:
+                # same plain E minor cadence take D wrote, for the same seam and key reasons
+                c.melody("vrc6 pulse a", 31, "B4:12", 100, vib=(30, 1, 5))
+                c.put("triangle", 31, 0, 12, 40, 92)
+                c.put("pulse 1", 31, 0, 12, 52, 84)
+                c.put("vrc6 saw", 31, 0, 12, 40, 84)
+                c.drum_bar(31, kick="x...x...x.xx", snare="....x...xxxx",
+                           hats="939393939393", idx=4, kvel=106, svel=102, hscale=1.0)
+                continue
+            c.melody("vrc6 pulse a", b, spec, vel_of[b % 4], vib=(30, 1, 5), shift=sh)
+            if (ch.root + sh) % 12 == 11:
+                c.bass("triangle", b, ch, "3 R R", 33, 104, 4)
+            else:
+                c.bass("triangle", b, ch, "R 5 R", 33, 104, 4)
+            c.arp("pulse 1", b, ch, "R 5 3 5 R 5", 48, 86, 2)
+            c.put("vrc6 saw", b, 0, 12, ch.pitch("R", 48), 82)
+            if s in (0, 2, 4):
+                for off, tok in _spans(spec):
+                    n, p = tok
+                    h = _below(ch, p, 3)
+                    if h is not None and 45 <= h <= 84:
+                        c.put("vrc6 pulse b", b, off, n, h, 68)
+            elif s == 3 and half == 1:
+                for off, tok in _spans(spec):
+                    n, p = tok
+                    if p - 12 >= 48:
+                        c.put("pulse 2", b, off, n, p - 12, 72)
+            q = (b % 8) // 4
+            if b % 8 == 7:
+                c.drum_bar(b, kick="x...x...x.xx", snare="....x...xxxx",
+                           hats="939393939393", idx=4, kvel=106, svel=102, hscale=1.0)
+            elif q == 0:
+                c.drum_bar(b, kick="x...x...x...", snare="....x...x...",
+                           hats="939353539393" if s % 2 == 0 else "935353939353",
+                           idx=4, kvel=102, svel=98, hscale=0.9)
+            elif q == 1:
+                c.drum_bar(b, kick="x.....x.x...", snare="....x...x..x",
+                           hats="935353939353", idx=4, kvel=102, svel=98, hscale=0.9)
+            else:
+                c.drum_bar(b, kick="x...x.x.x...", snare="....x...x...",
+                           hats="303030303030", idx=4, kvel=98, svel=96, hscale=0.85)
+    return c
+
+
+# ======================================================================================
+# PP-15a Entropy, take C (pp_15a_credits_kill_v3, card t_6f6882cd, 2026-11-13).
+#
+# Why: take B measures 97 / 100 and loses its three points on ONE criterion, contour:
+# "8 of 11 returns are arch or pedal", because the three device bars (KILL2_M2D) end
+# G#4 D#4 E4 and that final rise is a second turn in a phrase that already turned once.
+# The other eight returns read arch. Every other criterion is full.
+#
+# The fix is placement, not new pitches: the appoggiatura moves out of the hook
+# statements and into the four bars a return never lands on. The three statements that
+# carried it (bars 11-12, 19-20, 23-24) take the plain fall KILL2_M2, so all eleven
+# returns read arch, and the device is rewritten where the erasure and the development
+# already live: bar 13 (C#5 passing up into D5), bar 14 (G#4 D#4 E4 over the E chord),
+# bar 26 (the erasure's own device). Bars 28 and 30 keep take B's. Five chromatic
+# melody notes of about 168 (3.0 percent), the same budget as take B.
+#
+# The subject is unchanged: A4 B4 C5 D5 E5 E5 | E5 D5 C5 B4 A4 E4, the same 32 bars,
+# 72 bpm, 4/4, A minor, the same loop seam device (whole bar triangle tonic in bar 32).
+# ======================================================================================
+
+KILL3_M3D = "A4:2 B4:1 C#5:1 D5:2 A5:2 A5:8"      # bar 13: C#5 is a chromatic passing
+#                                                   tone up into D5, prepared by B4
+KILL3_M4D = "A5:2 G5:1 E5:1 D5:2 C5:2 G#4:2 D#4:2 E4:4"   # bar 14: the device over E
+KILL3_M2ED = "r:4 A4:2 G#4:2 D#4:2 E4:2 r:4"      # bar 26: the device inside the erasure
+
+KILL3_PLAN = [
+    ("Am", "E", KILL2_M1, KILL2_M2),    # bars 1-2, statement 1
+    ("F", "E", KILL2_M1, KILL2_M2),     # bars 3-4
+    ("Am", "E", KILL2_M3, KILL2_M2),    # bars 5-6, third return, peak raised
+    ("C", "E", KILL2_M1, KILL2_M2),     # bars 7-8
+    ("Am", "E", KILL2_M1, KILL2_M2),    # bars 9-10
+    ("F", "E", KILL2_M1, KILL2_M2),     # bars 11-12, was the device bar
+    ("Dm", "E", KILL3_M3D, KILL3_M4D),  # bars 13-14, the device, no return lands here
+    ("G", "E", KILL2_M1, KILL2_M2),     # bars 15-16
+    ("Am", "E", KILL2_M1, KILL2_M2),    # bars 17-18
+    ("F", "E", KILL2_M1, KILL2_M2),     # bars 19-20, was the device bar
+    ("Am", "E", KILL2_M3, KILL2_M2),    # bars 21-22
+    ("C", "E", KILL2_M1, KILL2_M2),     # bars 23-24, was the device bar
+    ("Am", "E", KILL2_M1E, KILL3_M2ED),  # bars 25-26, erasure starts, the device enters it
+    ("F", "E", KILL2_M1E, KILL2_M2ED),  # bars 27-28
+    ("Dm", "E", KILL2_M3E, KILL2_M2ED), # bars 29-30
+    ("F", "Am", KILL2_END_A, KILL2_END_B),  # bars 31-32, cadence on the tonic
+]
+
+
+def kill_v3():
+    """Entropy take C: the same cue with the appoggiatura off the hook statements."""
+    return kill_v2(plan=KILL3_PLAN, name="pp_15a_credits_kill_v3",
+                   title="Entropy (take C)")
+
+
+CUES = {"storm": storm, "storm2": storm_v2, "storm3": storm_v3, "storm4": storm_v4,
+        "title12": title_v12, "title13": title_v13,
+        "percy": percy, "percy2": percy_v2, "percy3": percy_v3, "percy4": percy_v4,
+        "kill": kill, "kill2": kill_v2, "kill3": kill_v3, "spare": spare, "spare2": spare_v2,
+        "spare3": spare_v3, "ship7": ship_v7}
+
+
