@@ -150,6 +150,12 @@ function pp_storm_draw(_world) {
     pp_storm_hud_draw(_s);
 }
 
+/// Where a gate tag sits: just east of the mouth, over the quay wall, so the hero never walks under his own label and
+/// the same tag position marks the same exit in both states.
+function pp_storm_gate_tag_x(_gx, _gw, _text) {
+    return _gx + _gw + 4 + floor(pp_font_width(_text) / 2);
+}
+
 /// The block exit. Two posts stand in both drawings, so the shut and the open frame are the same mouth. While the gate
 /// is shut an 8 pixel wind cell fills it on the storm's own flash cycle (eight steps on, eight steps off), which is
 /// what makes the hurricane look like the thing stopping the walk; once the flag is set the cells and the label are
@@ -170,7 +176,7 @@ function pp_storm_gate_draw(_world, _s) {
     if (_s.gate_open) {
         draw_set_colour(pp_role_colour("stone_4"));
         draw_rectangle(_gx + 2, _gy + PP_TILE - 2, _gx + _gw - 3, _gy + PP_TILE - 2, false);
-        pp_font_draw_plated_centre("OPEN", _gx + floor(_gw / 2), _gy + 4, 1);
+        pp_font_draw_plated_centre("OPEN", pp_storm_gate_tag_x(_gx, _gw, "OPEN"), _gy + 4, 1);
         return;
     }
 
@@ -201,7 +207,7 @@ function pp_storm_gate_draw(_world, _s) {
         draw_rectangle(_sx, _gy + 3 + _i * 4, _sx + 7, _gy + 3 + _i * 4, false);
         _i += 1;
     }
-    pp_font_draw_plated_centre("WIND", _gx + floor(_gw / 2), _gy + 4, 1);
+    pp_font_draw_plated_centre("WIND", pp_storm_gate_tag_x(_gx, _gw, "WIND"), _gy + 4, 1);
 }
 
 /// The seeded clock and the wind meter. The clock is the storm's own step count read at 60 steps a second, so it

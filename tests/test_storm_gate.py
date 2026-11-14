@@ -68,14 +68,17 @@ def test_the_gate_is_drawn_shut_then_drawn_open_on_the_same_tiles():
     assert "_gx = PP_STORM_GATE_X1 * PP_TILE - floor(_world.cam_x)" in draw
     assert "PP_STORM_GATE_Y * PP_TILE - floor(_world.cam_y)" in draw
     assert "_gw = (PP_STORM_GATE_X2 - PP_STORM_GATE_X1 + 1) * PP_TILE" in draw
-    # shut: a dither cell over every 8x8 of the 48x16 mouth and the word on the barrier
+    # shut: a dither cell over every 8x8 of the 48x16 mouth and the word on a tag beside it
     assert "while (_cy < 2)" in draw and "(_gw div 8)" in draw
-    assert 'pp_font_draw_plated_centre("WIND", _gx + floor(_gw / 2), _gy + 4, 1)' in draw
-    # open: the same posts and coping, a different word, no cells
+    assert 'pp_font_draw_plated_centre("WIND", pp_storm_gate_tag_x(_gx, _gw, "WIND"), _gy + 4, 1)' in draw
+    # open: the same posts, coping and tag position, a different word, no cells
     assert "if (_s.gate_open)" in draw
     opening = draw[draw.index("if (_s.gate_open)"):draw.index("var _on")]
-    assert 'pp_font_draw_plated_centre("OPEN"' in opening
+    assert 'pp_font_draw_plated_centre("OPEN", pp_storm_gate_tag_x(_gx, _gw, "OPEN"), _gy + 4, 1)' in opening
     assert "spr_pp_dither" not in opening
+    # the tag is placed by one function, east of the mouth, over the wall and off the walk
+    tag = body(read(STORM), "pp_storm_gate_tag_x")
+    assert "_gx + _gw + 4 + floor(pp_font_width(_text) / 2)" in tag
 
 
 def test_the_storm_draws_the_gate_and_the_meter_after_the_flash():
