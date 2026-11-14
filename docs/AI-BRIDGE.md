@@ -10,6 +10,29 @@ model answered in 1.8 to 1.9 seconds. With the rest of the fleet using every cor
 seconds, which is past the budget, and the recorded answer then came back in 2 to 94 milliseconds instead. Both
 of those are the design working, and the second one is why the demo runs on the recorded path.
 
+## The files, and how to start them
+
+| file | what it is |
+| --- | --- |
+| `tools/ai_bridge.py` | the whole server: Python standard library only, bound to `127.0.0.1` port 8791, the ladder and the one deadline |
+| `tools/meta_client.py` | the Meta rung: structured output against the schema built from the judge file |
+| `data/talk/sailor_judge.json` | the system text, the line limits, the verdict map and the local model id |
+| `data/ai_cache/bridge` | the recorded answers the replay rung serves |
+| `tools/talk_scene_probe.py` | the manual probe: two real calls, and the rows the dialogue box would draw |
+| `tools/run.ps1` | the one command: starts the bridge, checks the data, builds, launches, stops the bridge |
+| `docs/REVIEW-CHECKLIST.md` | the picture review gate the talk box's frames are held to |
+
+Build and start, from the repository root:
+
+    python tools\ai_bridge.py --selftest
+    python tools\talk_scene_probe.py --offline
+    python tools\ai_bridge.py --serve --warm
+    powershell -NoProfile -ExecutionPolicy Bypass -File tools\run.ps1
+
+The README carries the same inventory, written out of the module by `tools/readme_badges.py`, so a file
+that moves is printed there as MISSING instead of quietly becoming a dead instruction. This page keeps the
+measurements; the README keeps the list a judge reads first.
+
 ## What it is
 
 `tools/ai_bridge.py` is one small HTTP server, Python standard library only, bound to `127.0.0.1`. It is started
@@ -147,8 +170,55 @@ The selftest wants a speech wav for `/hear`; this PC can make one with its own v
 
 Then `python tools\ai_bridge.py --selftest --wav output\ai_bridge\selftest_speech_two.wav`.
 
+## The S5 scene exchange, and how to prove it by hand
+
+The dock office exchange (card t_1163ca72) answers through the same bridge as the fight, which card t_330b12ce
+wired and gave its own clocks. Scene code has one call in `game\scripts\pp_talk_persona\pp_talk_persona.gml`:
+
+    var _talk = pp_talk_scene_new("nye", "NYE");     build the exchange (baked turns for replay)
+    pp_talk_scene_open(_talk);                        open the same entry box the fight uses
+    pp_talk_scene_ask(_talk, "MY NAME IS NAYIL");     line in
+    pp_talk_scene_step(_talk) every step             the answer lands through pp_talk_scene_async
+    pp_talk_scene_rows(_talk)                         verdict text out: reply rows, then "* NYE IS PERSUADED."
+    pp_talk_scene_draw(_talk)                         draw it in the NES box
+
+The send is gated on `pp_talk_live_is_live()`. Replay answers from `data\meta_bake.json` and opens no socket; live
+POSTs the same body the fight talk sends, to the same loopback bridge. Failures land on a visible fallback: two rows
+(`THE LINE DID NOT` / `CARRY. SAY IT AGAIN.`), the verdict row `* NYE IS UNMOVED.`, and the note `NO ANSWER. SAY IT
+AGAIN.` A cutscene waits `scene_timeout_steps` (420 steps, 7.0 s) for an answer, a transcription gets
+`hear_timeout_steps` (180), and the engine's recording buffer gets `voice_wait_steps` (60).
+
+The manual test. It starts a bridge, makes the two real calls, prints the rows the box would draw, and stops the
+bridge again. It refuses any host that is not loopback before it sends a byte:
+
+    python tools\talk_scene_probe.py
+    python tools\talk_scene_probe.py --line "percy sent me" --hear output\ai_bridge\selftest_speech.wav
+    python tools\talk_scene_probe.py --verbose      the whole answer: rungs tried, repairs, verdict
+    python tools\talk_scene_probe.py --offline      no socket at all: the rows a dead bridge draws
+
+Exit codes: 0 pass, 2 no bridge, 3 the answer would be refused, 4 a row is not drawable on the 8x8 sheet. Measured on
+this PC 2026-11-01: `--offline` printed the three fallback rows and exit 0. A live run with `--hear` started the
+bridge, answered in 1.09 s from `data/ai_cache/bridge` (the same line had been answered by the open weights rung
+earlier in 2.06 s as `WRITE 'NAYIL' IN THE LEDGER.` / `THE SHIP SAILS AT DAWN.`), and the probe printed
+
+    * WRITE 'NAYIL' IN THE LEDGER.
+    * THE SHIP SAILS AT DAWN.
+    * NYE IS UNMOVED.
+
+with `/hear` returning the wav's transcript, then `PROBE PASS`. A different line fell back for real: the local model
+answered with unterminated JSON, the bridge labelled the open weights rung `refused`, and the box drew the fallback
+rows, which is the behaviour the card asks for, observed rather than assumed.
+
 ## What is not proven
 
+- **No GameMaker frame has been seen for the scene box or the microphone.** Card t_330b12ce's draw (the listening
+  line, the thinking dots, the two reply rows, the verdict row, the fallback note) is checked from the source and the
+  data, and the rows it would print are checked against `pp_font_glyphs` by `tools/talk_scene_live.py`, but nothing on
+  this host ran the engine. The real recording device is likewise unexercised: `pp_talk_live_voice_start` and the
+  Audio Recording event are read, not heard. A judge who needs the picture needs a take.
+- **The demo take still answers the S5 exchange from the bake.** Live mode is F6's switch and the shipped default is
+  replay, so the 180 s take opens no socket and the clerk's answer is `data/meta_bake.json`'s recorded turn. The live
+  path is what this card wires; it is not what the recording plays.
 - **No call has been made through this bridge's Meta rung.** No key was in a worker's environment on this PC, so
   the first rung is unexercised against the real API from here. The manager reported billing live and a
   `muse-spark-1.3` probe answered at 17:00; the key still had not reached a worker's environment when this lane

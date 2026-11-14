@@ -139,7 +139,10 @@ def test_check_badges_finds_a_picture_that_disagrees(tmp_path):
 
 def test_verify_accepts_a_readme_that_matches_the_run(tmp_path, capsys):
     results = [result()]
-    (tmp_path / "README.md").write_text(readme_with_block(rb.build_block(results)), encoding="utf-8")
+    # Built with the root it is verified against: since card t_cd5212b6 the block names the engine
+    # modules the limits section is about, so a block built against one tree is not a block about
+    # another (a fixture that mixed the two used to pass only because the block never read the tree).
+    (tmp_path / "README.md").write_text(readme_with_block(rb.build_block(results, str(tmp_path))), encoding="utf-8")
     rb.write_badges(results, str(tmp_path))
     assert rb.verify(str(tmp_path), results=results) == 0
     assert "match this run" in capsys.readouterr().out
@@ -148,7 +151,7 @@ def test_verify_accepts_a_readme_that_matches_the_run(tmp_path, capsys):
 def test_verify_refuses_a_block_that_says_pass_when_the_gate_says_fail(tmp_path, capsys):
     """The negative control for the whole tool: last night's green against this morning's red."""
     claimed = [result()]
-    (tmp_path / "README.md").write_text(readme_with_block(rb.build_block(claimed)), encoding="utf-8")
+    (tmp_path / "README.md").write_text(readme_with_block(rb.build_block(claimed, str(tmp_path))), encoding="utf-8")
     rb.write_badges(claimed, str(tmp_path))
     assert rb.verify(str(tmp_path), results=[result(exit_code=1)]) == 1
     out = capsys.readouterr().out
@@ -212,3 +215,67 @@ def test_every_shipped_badge_is_the_picture_the_block_claims():
         with open(path, encoding="utf-8") as fh:
             svg = fh.read()
         assert row["status"] in svg
+
+
+# --------------------------------------------------------------------------- the NES limits section
+# Card t_cd5212b6, judge-panel fix 5: the page has to show where the hardware limits are enforced in
+# code, with the module paths, and how to check the two gates. The section is written by this tool
+# because the prose beside it is stamped by tools/readme_meta.py and may not be hand edited, so the
+# tests hold it to the same rule as the badges: the page says what the code says, not what it said once.
+
+
+def test_the_limits_section_names_every_module_that_enforces_a_limit():
+    block = rb.build_block([result()])
+    assert "## NES limits, enforced in code" in block
+    for rel in (rb.ENGINE_LIMITS, rb.ENGINE_ROLE, rb.ENGINE_COLOUR, rb.PALETTE_PPU, rb.PALETTE_MASTER,
+                rb.CHECKER_ASSET, rb.CHECKER_FRAME, rb.CHECKER_ALL, rb.CHECKER_RUNTIME,
+                rb.CLEANROOM_REVIEW, rb.GEOGRAPHY_CARD):
+        assert "`%s`" % rel in block, rel
+    for command in ("python tools/check_data.py", "python tools/check_cleanroom.py"):
+        assert command in block, command
+
+
+def test_the_limits_section_carries_the_values_the_code_holds():
+    """The frame size and the sprite budget are read, so a change in the module changes the page."""
+    block = rb.build_block([result()])
+    frame_w = rb.read_macro(ROOT, rb.ENGINE_LIMITS, "PP_FRAME_W")
+    frame_h = rb.read_macro(ROOT, rb.ENGINE_LIMITS, "PP_FRAME_H")
+    per_line = rb.read_constant(ROOT, rb.CHECKER_FRAME, "MAX_SPRITES_PER_LINE")
+    oam = rb.read_constant(ROOT, rb.CHECKER_FRAME, "MAX_SPRITES")
+    assert (frame_w, frame_h, per_line, oam) == (256, 240, 8, 64), "the NES frame constants moved"
+    assert "PP_FRAME_W %d by PP_FRAME_H %d" % (frame_w, frame_h) in block
+    assert "%d sprites on any scanline, %d in OAM" % (per_line, oam) in block
+
+
+def test_a_missing_module_is_visible_on_the_page_rather_than_silent(tmp_path):
+    """The negative control: a tree with no engine and no checkers must not read as a proof."""
+    block = rb.build_block([result()], str(tmp_path))
+    assert "(MISSING on this tree)" in block
+    assert "unread" in block
+    assert rb.read_macro(str(tmp_path), rb.ENGINE_LIMITS, "PP_FRAME_W") is None
+
+
+def test_read_macro_and_read_constant_read_a_file_and_say_none_when_it_is_absent(tmp_path):
+    (tmp_path / "m.gml").write_text(
+        "// comment\n#macro PP_FRAME_W 256\n#macro PP_FRAME_H 240\n#macro PP_UNTINTED c_white\n",
+        encoding="utf-8")
+    assert rb.read_macro(str(tmp_path), "m.gml", "PP_FRAME_W") == 256
+    assert rb.read_macro(str(tmp_path), "m.gml", "PP_FRAME_H") == 240
+    assert rb.read_macro(str(tmp_path), "m.gml", "PP_UNTINTED") is None
+    assert rb.read_macro(str(tmp_path), "m.gml", "PP_NOPE") is None
+    assert rb.read_macro(str(tmp_path), "gone.gml", "PP_FRAME_W") is None
+
+    (tmp_path / "t.py").write_text("TILE = 8\nAREA = 16\nMAX_COLOURS_ON_SCREEN = 25\n", encoding="utf-8")
+    assert rb.read_constant(str(tmp_path), "t.py", "AREA") == 16
+    assert rb.read_constant(str(tmp_path), "t.py", "NOPE") is None
+    assert rb.read_constant(str(tmp_path), "gone.py", "AREA") is None
+
+
+def test_the_shipped_readme_carries_the_limits_section():
+    with open(os.path.join(ROOT, "README.md"), encoding="utf-8") as fh:
+        text = fh.read()
+    block = rb.find_block(text)
+    assert block is not None
+    assert "## NES limits, enforced in code" in block
+    assert "`%s`" % rb.ENGINE_LIMITS in block
+    assert "`%s`" % rb.CHECKER_ASSET in block
