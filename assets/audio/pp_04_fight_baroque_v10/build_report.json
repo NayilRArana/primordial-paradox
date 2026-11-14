@@ -1,0 +1,185 @@
+{
+ "delivered_ogg": {
+  "integrated_lufs": -14.1,
+  "true_peak_dbtp": -0.6
+ },
+ "files": [
+  "pp_04_fight_baroque_v10.mid",
+  "pp_04_fight_baroque_v10.wav",
+  "pp_04_fight_baroque_v10_master.wav",
+  "pp_04_fight_baroque_v10.ogg",
+  "pp_04_fight_baroque_v10.mp3"
+ ],
+ "hook_score": 100,
+ "hook_score_humanized": 88,
+ "humanize": false,
+ "humanize_note": "the delivered stream is the plain score; take F's humanize pass is beside it as pp_04_fight_baroque_v10_humanized.mid, scoring 88 of 100 against 100, because its ornaments move the motif off bars 1 to 2",
+ "humanize_render_ok": true,
+ "humanize_report": {
+  "bpm": 168.0,
+  "breaths": 4,
+  "bytes_in": 3851,
+  "bytes_out": 5994,
+  "changed_fraction": 0.965,
+  "division": 480,
+  "envelope_points": 383,
+  "fills": 3,
+  "floor_misses": 77,
+  "grace_notes": 1,
+  "loop_period_bars": 8,
+  "mordents": 1,
+  "motif": {
+   "bars": 2,
+   "returns": 4,
+   "start_bar": 1,
+   "third_return_bar": 9
+  },
+  "notes": 400,
+  "notes_by_track": {
+   "dpcm": {
+    "changed": 49,
+    "floor_misses": 0,
+    "notes": 54,
+    "role": "kick"
+   },
+   "noise": {
+    "changed": 127,
+    "floor_misses": 76,
+    "notes": 131,
+    "role": "drums"
+   },
+   "pulse 1": {
+    "changed": 77,
+    "floor_misses": 1,
+    "notes": 81,
+    "role": "arpeggio"
+   },
+   "pulse 2": {
+    "changed": 71,
+    "floor_misses": 0,
+    "notes": 71,
+    "role": "echo"
+   },
+   "triangle": {
+    "changed": 62,
+    "floor_misses": 0,
+    "notes": 66,
+    "role": "bass"
+   }
+  },
+  "notes_changed": 386,
+  "notes_in": 400,
+  "notes_out": 406,
+  "onset_frames": 0.0,
+  "onset_shifts": 0,
+  "ornament_notes": [
+   [
+    15300,
+    74
+   ],
+   [
+    15360,
+    76
+   ],
+   [
+    15420,
+    77
+   ],
+   [
+    15480,
+    76
+   ]
+  ],
+  "section_bars": [
+   8,
+   16
+  ],
+  "seed": 20261021,
+  "sha256_in": "301158ed2ff98c9f921d97b811954839189e8f41316bf4a5b32c0b98d90a7cac",
+  "sha256_out": "f03ec69efb2799366c1f76234ac8eeac1b59f659c0df4e9ba03cbb87ac13559e",
+  "tempo_us": 357143,
+  "ticks_per_frame": 22.4,
+  "vibrato_notes": 8
+ },
+ "loudness_before": {
+  "integrated_lufs": -15.6,
+  "true_peak_dbtp": -0.6
+ },
+ "patched": [
+  [
+   2160,
+   72,
+   76
+  ],
+  [
+   2640,
+   76,
+   72
+  ],
+  [
+   3360,
+   68,
+   71
+  ],
+  [
+   3600,
+   69,
+   71
+  ],
+  [
+   9840,
+   72,
+   76
+  ],
+  [
+   10320,
+   76,
+   72
+  ],
+  [
+   11040,
+   68,
+   71
+  ],
+  [
+   11280,
+   69,
+   71
+  ],
+  [
+   25200,
+   72,
+   76
+  ],
+  [
+   25680,
+   76,
+   72
+  ],
+  [
+   26400,
+   68,
+   71
+  ],
+  [
+   26640,
+   69,
+   71
+  ]
+ ],
+ "patched_notes": 12,
+ "render_stdout": [
+  "  duration 22.857 s | peak 29203 (-1.00 dBFS) | rms 6685.7 (-13.81 dBFS)",
+  "  loop 16 bars | 1008000 samples | seam sample difference 0 | edge peak head 2283 tail 894",
+  "  voices: dpcm=dpcm, noise=noise, pulse1=pulse 1, pulse2=pulse 2, triangle=triangle",
+  "  renderer: v2 | limiter: soft (knee 0.80) | peak target -1.0 dBFS",
+  "  mp3: <repo>\\assets\\audio\\pp_04_fight_baroque_v10\\pp_04_fight_baroque_v10.mp3",
+  "  loop json: <repo>\\assets\\audio\\pp_04_fight_baroque_v10\\pp_04_fight_baroque_v10_loop.json"
+ ],
+ "rendered_from": "pp_04_fight_baroque_v10.mid",
+ "source_score": "assets\\audio\\pp_04_fight_baroque_v8\\pp_04_fight_baroque_v8.mid",
+ "target": {
+  "ceiling_dbtp": -1.0,
+  "integrated_lufs": -14.0
+ }
+}

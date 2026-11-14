@@ -2751,6 +2751,15 @@
     },
     {
       "$GMIncludedFile": "",
+      "%Name": "pp_04_fight_baroque_v10.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "pp_04_fight_baroque_v10.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
       "%Name": "pp_04_fight_baroque_v2.ogg",
       "CopyToMask": -1,
       "filePath": "datafiles/streams",
