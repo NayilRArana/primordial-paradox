@@ -1,0 +1,115 @@
+{
+  "version": 1,
+  "name": "run_s1_cold",
+  "written": "2026-11-13",
+  "why": "The S1 take judge panel fix 4 (card t_c0bd0757) asks for. The cut's S1 was the 2026-10-26 take's first 16 s, and that take was no cold boot: the seen marker pp_title_seen.txt existed, so the Big Ben opening shot never played, the save slot held pp_save_01.json, so the menu drew CONTINUE in the plain ink (measured 2026-11-13: 0 pixels of the PP_TITLE_DIM rule in every menu frame of demo-talk-2026-10-26.mp4 and demo_2026-11-04/raw_title.mkv), and the operator pressed NEW GAME 1.7 s after the menu opened, so from 12.0 s the picture was the intro's star field and the judge panel's first still (15.0 s of a 180 s file) landed on it. This script is one launch that gives S1 and S2 from one session: the cold boot, the menu held from 11.8 s to 17.0 s, then NEW GAME and the crawl.",
+  "beat_source": "knowledge/DEMO-SCRIPT.md section 3, the S1 table (the menu press at 0:11.80 = step 708) and the S2 rows (the crawl's 13.00 s). The first press is the script's own number, not this file's: tests/test_run_s1_cold.py reads both and fails if they drift.",
+  "cold_boot": {
+    "what": "a first boot, so pp_title_enter takes the opening phase and the Big Ben shot plays, and no save, so pp_save_title_start ends in PPSaveState.absent and pp_title_draw_disabled strikes CONTINUE",
+    "before": "move $LOCALAPPDATA\\PrimordialParadox\\pp_title_seen.txt, $LOCALAPPDATA\\PrimordialParadox\\default\\pp_save_01.json and $LOCALAPPDATA\\PrimordialParadox\\default\\pp_save_01.json.bak aside, printing the sha256 of each file before and after the move",
+    "after": "put all three back and print their sha256 again: the restore is the evidence, not the intent (lane note, card t_0e9ddc12: a tour run rewrites his slot)",
+    "measured_2026-11-13": [
+      "$LOCALAPPDATA\\PrimordialParadox\\pp_title_seen.txt, 1 byte, written 2026-10-21 23:39",
+      "$LOCALAPPDATA\\PrimordialParadox\\default\\pp_save_01.json, sha256 3e62d3649812085..., written 2026-11-13 08:37",
+      "$LOCALAPPDATA\\PrimordialParadox\\default\\pp_save_01.json.bak, sha256 86a30fc35282843..., written 2026-11-13 08:37"
+    ]
+  },
+  "game": {
+    "exe": "PrimordialParadox.exe",
+    "window_title": "Primordial Paradox",
+    "launch_args": ["-game", "{win}"],
+    "env": {},
+    "note": "no environment beyond what play_demo sets itself: the cold boot is made by the three files being absent, not by a demo flag, so what the take shows is what a first launch on a fresh machine shows (pp_save.gml pp_save_read -> pp_save_read_backup -> pp_save_absent, and pp_title.gml pp_title_seen_read)"
+  },
+  "clock": {
+    "fps": 60,
+    "settle_steps": 180,
+    "max_steps": 2400,
+    "note": "40.0 s: S1's 16.0 s, then the NEW GAME press, then the intro's 540 step pan and fades (PP_TITLE_INTRO_TEXT, 9.0 s), then S2's 13.0 s of crawl. 1560 + 780 = 2340, so 2400 leaves 1.0 s of tail."
+  },
+  "seeds": {
+    "title_flash": 20261021,
+    "rng_mod": 2147483647,
+    "note": "PP_TITLE_FLASH_SEED is the only random stream this take reaches: the attract's lightning flashes are drawn from it, so the same launch flashes at the same steps (the flash waits are 696 steps, PP_TITLE_FLASH_MIN_STEPS and MAX both)"
+  },
+  "record": {
+    "fps": 60,
+    "scale": 3,
+    "width": 768,
+    "height": 720,
+    "min_seconds": 30.0,
+    "out": "output/demo/run_s1_cold.mp4",
+    "audio": "auto",
+    "note": "768x720 is exactly 3x the 256x240 screen (the viewport measured at [8, 31] inside the 784x759 window). audio auto means the loopback when ffmpeg reports one and the game's own log rebuilt track when it does not; the verify file names which, and both carry a stream, which is what the S1 caption's shot needs"
+  },
+  "events": [
+    {
+      "id": "e01",
+      "step": 0,
+      "kind": "note",
+      "beat": 1,
+      "note": "the cold boot: no seen marker, so pp_title_enter takes the open phase and title_BG_bigben pans up out of the drive for PP_TITLE_OPEN_STEPS (180 steps, 3.0 s), then PRESS START blinks. The game's own log carries 'PP title: first boot, playing the opening shot, any key skips it', which tools/check_title_cold_boot.py --log reads"
+    },
+    {
+      "id": "e02",
+      "step": 708,
+      "kind": "key",
+      "key": "enter",
+      "beat": 1,
+      "note": "0:11.80, knowledge/DEMO-SCRIPT.md's own S1 row for this press. The menu opens on NEW GAME and CONTINUE is struck through, because pp_save_ready() is false with the slot empty. No marker on this event: the line the press writes ('PP audio: menu_select played') cannot arrive before the press, so a marker here would only pretend to accelerate it. The tape's step 0 is the recorder's start, a second or two after the game's own boot, so the press is timed on the tape and the menu opens at this second of the picture either way"
+    },
+    {
+      "id": "e03",
+      "step": 900,
+      "kind": "note",
+      "beat": 1,
+      "note": "0:15.00, the second the judge panel's first still lands on in a 180 s file. The menu is still up and CONTINUE is still struck: nothing is pressed between 708 and 1020, so S1's whole last four seconds are the menu with the disabled row in it"
+    },
+    {
+      "id": "e04",
+      "step": 1020,
+      "kind": "key",
+      "key": "enter",
+      "beat": 2,
+      "note": "0:17.00, one second after S1's window closes: NEW GAME starts the intro (pan, world fade, sky fade, then the crawl). It is after 16.0 s on purpose, so S1 ends on the menu instead of on the star field, and the press is late enough that the menu's own cursor blink and the storm's flash are both in S1"
+    },
+    {
+      "id": "e05",
+      "step": 1140,
+      "kind": "note",
+      "marker": "PP title: intro started",
+      "marker_delay_steps": 0,
+      "beat": 2,
+      "note": "the game's own line that NEW GAME took ('PP title: intro started, pan 180 steps, ...'), written by pp_title_select. The marker pulls this note back to the second the press really landed, so the trace carries the game's clock and not the fallback, and 1140 is the block buffered log's answer"
+    },
+    {
+      "id": "e06",
+      "step": 1560,
+      "kind": "note",
+      "beat": 2,
+      "note": "0:26.00: the intro's PP_TITLE_INTRO_TEXT is 540 steps, so the crawl's first beat starts typing 9.0 s after the press. S2's 13.00 s is the take's 26.00 to 39.00 s, and it is one continuous stretch of the crawl rather than two windows"
+    },
+    {
+      "id": "e07",
+      "step": 2340,
+      "kind": "note",
+      "beat": 3,
+      "note": "0:39.00: the last of the 780 steps S2 needs. No key is pressed after e04, because a confirm on the intro finishes the crawl and would delete the typing this take exists to show"
+    },
+    {
+      "id": "e08",
+      "step": 2400,
+      "kind": "note",
+      "beat": 3,
+      "note": "0:40.00, the recording's last step: one second of tail past S2, so a cut that rounds on a frame boundary still has frames to take"
+    }
+  ],
+  "checks": {
+    "end_step": 2400,
+    "min_luma": 6.0,
+    "min_distinct_colours": 6,
+    "frame_diff_min": 0.001,
+    "min_lit_frames": 8,
+    "note": "the menu's own evidence is not a luma or palette check: tools/check_title_cold_boot.py measures the window border and the CONTINUE rule on the finished take at 15.0 s, and reads the log's first boot line. The two checks answer different questions and both are required"
+  }
+}

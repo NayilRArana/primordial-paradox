@@ -1707,6 +1707,15 @@
     },
     {
       "$GMIncludedFile": "",
+      "%Name": "narration.json",
+      "CopyToMask": -1,
+      "filePath": "datafiles/demo",
+      "name": "narration.json",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
       "%Name": "run_001.json",
       "CopyToMask": -1,
       "filePath": "datafiles/demo",
@@ -1729,6 +1738,15 @@
       "CopyToMask": -1,
       "filePath": "datafiles/demo",
       "name": "run_command_win.json",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "run_s1_cold.json",
+      "CopyToMask": -1,
+      "filePath": "datafiles/demo",
+      "name": "run_s1_cold.json",
       "resourceType": "GMIncludedFile",
       "resourceVersion": "2.0"
     },
@@ -2715,6 +2733,15 @@
     },
     {
       "$GMIncludedFile": "",
+      "%Name": "pp_03_quay_storm_v4.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "pp_03_quay_storm_v4.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
       "%Name": "pp_04_fight_baroque_v1.ogg",
       "CopyToMask": -1,
       "filePath": "datafiles/streams",
@@ -2922,6 +2949,15 @@
     },
     {
       "$GMIncludedFile": "",
+      "%Name": "pp_06_percy_possessed_v5.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "pp_06_percy_possessed_v5.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
       "%Name": "pp_15a_credits_kill.ogg",
       "CopyToMask": -1,
       "filePath": "datafiles/streams",
@@ -2935,6 +2971,15 @@
       "CopyToMask": -1,
       "filePath": "datafiles/streams",
       "name": "pp_15a_credits_kill_v2.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "pp_15a_credits_kill_v3.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "pp_15a_credits_kill_v3.ogg",
       "resourceType": "GMIncludedFile",
       "resourceVersion": "2.0"
     },

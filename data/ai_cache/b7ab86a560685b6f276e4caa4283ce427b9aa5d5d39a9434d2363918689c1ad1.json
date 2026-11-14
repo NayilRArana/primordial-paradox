@@ -1,0 +1,73 @@
+{
+  "backend": "meta",
+  "key": "b7ab86a560685b6f276e4caa4283ce427b9aa5d5d39a9434d2363918689c1ad1",
+  "kind": "vision",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "recorded_at": "2026-11-14T05:16:18Z",
+  "request": {
+    "messages": [
+      {
+        "content": [
+          {
+            "text": "<sha256:25013aa0a67eba6a:6503 chars>",
+            "type": "text"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:3e6dd3bac41f12f7:135662 chars>"
+            },
+            "type": "image_url"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:eca643679f7c655d:445502 chars>"
+            },
+            "type": "image_url"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:bb8cab8b9f4e35a3:252194 chars>"
+            },
+            "type": "image_url"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:108057d09701e096:268862 chars>"
+            },
+            "type": "image_url"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:14667126a9528717:300434 chars>"
+            },
+            "type": "image_url"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:93bd9f975e921d71:87530 chars>"
+            },
+            "type": "image_url"
+          }
+        ],
+        "role": "user"
+      }
+    ],
+    "model": "muse-spark-1.3"
+  },
+  "response": {
+    "text": "### What the video shows\nIn order the six stills show a blue banded starfield, then a top down stone town with a blue sprite and a box reading A pub. Warm plus a bottom line about Morgan asking three things, then a Captain Morgan battle with HP 28/28 and MERCY and talk choices, then the same Morgan battle on Hadrian's turn with the cursor on SPARE, then a Percy battle with HP 40/40 on Hadrian's turn with the cursor on TALK, then a black credits card naming Muse Spark 1.3 as talk judge and art critic plus Muse Image 1.0 and Sam 3.1. I cannot see the README or the repo, I cannot hear audio, and what is missing for a 3 minute demo is a title card that says what this is, a person talking to the game, a live verdict on screen, a before and after for the hurricane and wind gate, and the planned bake receipts and network line.\n\n### The four scores\nImpact: 4. The battle frames show a MERCY bar and TALK to SPARE loop with Zander Konrad Hadrian, but no on screen AI verdict proves model only play a player would care about.\nUse of Meta AI tooling: 3. Only the end card names Muse Spark 1.3 and Muse Image 1.0, while the verify file labels no Meta number and none of the 6 frames shows receipts or a network line.\nTechnical depth: 4. The frames show a consistent tile town plus turn battles across quay, morgan and percy states, but the stream is 768 x 784 h264 so not PPU proof and the nightly log reports tree dirty with 1017 paths and NO VIDEO recorded.\nDemo: 3. Duration is 180.000 s with picture in all 6 samples, but audio is absent and no cold boot menu, narrator, or S5 receipts are visible so a judge must be told what to see.\n\n### Five fixes, ranked\n1. Burn title card captions and narration into 180s cut. Criterion: Demo. Lane: builder. Body: Edit data/slice.json S1 to S6 to hold a 4 second title card that names the game and the Meta talk judge. Burn the planned captions into output/demo/nightly-2026-11-13.mp4 and add recorded voiceover explaining each claim. A judge will see the title in the first seconds and hear what to watch without reading the script.\n2. Draw live Meta verdict and network line in Morgan talk box. Criterion: Use of Meta AI tooling. Lane: gamedev. Body: Change the morgan battle scene to print the live verdict line inside the NES text box with the label MUSE SPARK 1.3 and the mercy delta. Log the request to the local bridge and draw the three bake receipts plus the network line during S5 from 1:18 to 1:50. A judge will see the talk judged on screen and the receipts prove the model did the work in the video.\n3. Show hurricane wind gate opening after Morgan spare. Criterion: Impact. Lane: gamedev. Body: Change the quay scene to show the hurricane as 8 step flashes blocking the Southampton block exit and then show the same exit open after Morgan is spared. Keep the seeded storm clock visible with a wind meter tied to the mercy value. A judge will see a clear before and after where talking changes the world in the 39 second S4 shot.\n4. Rebuild cold boot menu with dim CONTINUE in first 16s. Criterion: Demo. Lane: gamedev. Body: Rebuild the title scene to cold boot to menu in 14 seconds with CONTINUE dim because nothing is saved yet as the script requires. Capture the 768 by 784 60 fps h264 with audio present so the verify file passes picture and sound. A judge will see whether it works in S1 instead of starting on a starfield.\n5. Publish local bridge and limits proof in README and repo. Criterion: Technical depth. Lane: code-review. Body: Add a README section and repo docs that list hardware limits enforced in code and the local AI bridge files with paths and build steps. Add a code review checklist in the repo that rejects full color frames and requires palette and sprite limits. A judge will see the limits and bridge in the README and repo without trusting the h264 stills.\n\n```json\n{\"impact\": 4, \"impact_reason\": \"Battle frames show MERCY and TALK to SPARE loop but no on screen AI verdict proves model only play.\", \"meta_tooling\": 3, \"meta_tooling_reason\": \"Only end card names Muse models while verify labels no Meta number and no receipts appear in frames.\", \"technical_depth\": 4, \"technical_depth_reason\": \"Frames show tile town and turn battles but stream is upscaled h264 and log reports dirty tree and NO VIDEO.\", \"demo\": 3, \"demo_reason\": \"180s has picture in all samples but audio is absent and no title menu or narrator explains the claims.\", \"fixes\": [{\"title\": \"Burn title card captions and narration into 180s cut\", \"criterion\": \"Demo\", \"lane\": \"builder\", \"body\": \"Edit data/slice.json S1 to S6 to hold a 4 second title card that names the game and the Meta talk judge. Burn the planned captions into output/demo/nightly-2026-11-13.mp4 and add recorded voiceover explaining each claim. A judge will see the title in the first seconds and hear what to watch without reading the script.\"}, {\"title\": \"Draw live Meta verdict and network line in Morgan talk box\", \"criterion\": \"Use of Meta AI tooling\", \"lane\": \"gamedev\", \"body\": \"Change the morgan battle scene to print the live verdict line inside the NES text box with the label MUSE SPARK 1.3 and the mercy delta. Log the request to the local bridge and draw the three bake receipts plus the network line during S5 from 1:18 to 1:50. A judge will see the talk judged on screen and the receipts prove the model did the work in the video.\"}, {\"title\": \"Show hurricane wind gate opening after Morgan spare\", \"criterion\": \"Impact\", \"lane\": \"gamedev\", \"body\": \"Change the quay scene to show the hurricane as 8 step flashes blocking the Southampton block exit and then show the same exit open after Morgan is spared. Keep the seeded storm clock visible with a wind meter tied to the mercy value. A judge will see a clear before and after where talking changes the world in the 39 second S4 shot.\"}, {\"title\": \"Rebuild cold boot menu with dim CONTINUE in first 16s\", \"criterion\": \"Demo\", \"lane\": \"gamedev\", \"body\": \"Rebuild the title scene to cold boot to menu in 14 seconds with CONTINUE dim because nothing is saved yet as the script requires. Capture the 768 by 784 60 fps h264 with audio present so the verify file passes picture and sound. A judge will see whether it works in S1 instead of starting on a starfield.\"}, {\"title\": \"Publish local bridge and limits proof in README and repo\", \"criterion\": \"Technical depth\", \"lane\": \"code-review\", \"body\": \"Add a README section and repo docs that list hardware limits enforced in code and the local AI bridge files with paths and build steps. Add a code review checklist in the repo that rejects full color frames and requires palette and sprite limits. A judge will see the limits and bridge in the README and repo without trusting the h264 stills.\"}]}\n```",
+    "usage": {
+      "completion_tokens": 7270,
+      "completion_tokens_details": {
+        "reasoning_tokens": 5661
+      },
+      "prompt_tokens": 6311,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 13581
+    }
+  }
+}

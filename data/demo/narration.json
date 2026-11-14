@@ -1,0 +1,55 @@
+{
+ "format": 1,
+ "kind": "demo_narration",
+ "why": "Judge panel fix 1 (card t_5876de50, knowledge/JUDGE-PANEL-2026-11-14.md): the panel saw six stills and could not hear the video, and its demo note said 'no title menu or narrator explains the claims'. This file is the narrator. One paragraph per shot, in the shot's own window, saying what is on screen and which claim of the write-up the picture is evidence for. The words are knowledge/DEMO-SCRIPT.md section 12, read back against this file by tests/test_demo_narration.py, so the script and the track cannot drift. The clips are synthesized offline on this machine with the Windows SAPI5 voice named below: they are a voice over, not a human recording, and the verify file says so.",
+ "source": "knowledge/DEMO-SCRIPT.md section 12",
+ "voice": "Microsoft Zira Desktop - English (United States)",
+ "rate": 0,
+ "total_seconds": 180.0,
+ "clip_dir": "output/demo/narration",
+ "duck_gain": 0.32,
+ "rows": [
+  {
+   "shot": "S1",
+   "window": [4.2, 15.9],
+   "claim": "\"whether it works\", and \"AI that obeys hardware limits\" (the title card names the limits)",
+   "words": "Primordial Paradox, a homebrew NES game. Cold boot: attract loop, then a menu in fourteen seconds, CONTINUE dim, nothing saved yet.",
+   "file": "output/demo/narration/S1.wav"
+  },
+  {
+   "shot": "S2",
+   "window": [16.5, 28.4],
+   "claim": "\"Kronos and Zeus reincarnated on the M3\"",
+   "words": "The crawl runs 1,238 steps. Holding confirm reveals it faster and skips no page. This is where Kronos and Zeus land on the M3.",
+   "file": "output/demo/narration/S2.wav"
+  },
+  {
+   "shot": "S3",
+   "window": [29.3, 38.9],
+   "claim": "the hurricane, and the real Southampton block it lands on",
+   "words": "Town Quay, a real OpenStreetMap extract. The storm flashes eight steps on a seeded clock, thunder fourteen behind.",
+   "file": "output/demo/narration/S3.wav"
+  },
+  {
+   "shot": "S4",
+   "window": [39.6, 77.2],
+   "claim": "the wind is the only gate, and Morgan offers three answers",
+   "words": "Watch the wind. It is the only gate on this street, and Morgan is the only thing standing under it. Press confirm at the door row to read the shopfront page, then walk down the middle of the street to the bridge. Morgan asks three things, and any two good answers are enough, so no reply you can give loses the talk. When he stands down, the wind drops with him and the quay opens.",
+   "file": "output/demo/narration/S4.wav"
+  },
+  {
+   "shot": "S5",
+   "window": [78.6, 109.2],
+   "claim": "\"the person judging your line is a Meta model answering inside a NES text box\", and the quay's own save",
+   "words": "This is the claim the hackathon is about. Each reply is sent to a Meta model, {judge}, and the verdict comes back and is drawn inside the game's own NES text box. The WILL bar only goes up. Three separate calls, three rows of the bake file, and the quay saves on its own entry.",
+   "file": "output/demo/narration/S5.wav"
+  },
+  {
+   "shot": "S6",
+   "window": [110.6, 178.6],
+   "claim": "\"the other is won by talking\", and the one ending the game now has",
+   "words": "Percy is the last gate, and the second fight the talk rule can win. Watch it happen: two TALK turns, then SPARE, and he joins the party instead of dying. The storm ends with him. The credits name the Meta models that judged every line, and the build runs offline from the repository: no network call, no key, one 256 by 240 screen, and sixteen colours.",
+   "file": "output/demo/narration/S6.wav"
+  }
+ ]
+}
