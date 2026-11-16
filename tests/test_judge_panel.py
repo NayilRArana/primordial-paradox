@@ -458,7 +458,9 @@ def test_the_card_comes_from_the_worker_environment_when_it_is_not_passed(monkey
 
 
 def test_with_no_card_the_commit_is_not_attempted_at_all(monkeypatch):
-    monkeypatch.delenv(judge_panel.COMMIT_CARD_ENV, raising=False)
+    for name in (judge_panel.COMMIT_CARD_ENV, judge_panel.COMMIT_CARD_WORKSPACE_ENV,
+                 judge_panel.COMMIT_CARD_OVERRIDE_ENV):
+        monkeypatch.delenv(name, raising=False)
     seen = []
     entries = "?? projects/primordial-paradox/data/ai_cache/4f67.json\n"
     paths, code, text = judge_panel.commit_outputs("2026-11-16", runner=_runner(entries, record=seen))
@@ -466,6 +468,27 @@ def test_with_no_card_the_commit_is_not_attempted_at_all(monkeypatch):
     assert len(seen) == 1, "only git status ran: a refused commit would spend a gate run for nothing"
     assert "--commit-card" in text
     assert judge_panel.commit_line(paths, code, text).startswith("NOT COMMITTED:")
+
+
+def test_the_worker_workspace_names_the_card_when_the_task_variable_is_absent(monkeypatch, tmp_path):
+    """Measured 2026-11-16: HERMES_KANBAN_TASK was absent from the shell, the workspace was not."""
+    for name in (judge_panel.COMMIT_CARD_ENV, judge_panel.COMMIT_CARD_OVERRIDE_ENV):
+        monkeypatch.delenv(name, raising=False)
+    monkeypatch.setenv(judge_panel.COMMIT_CARD_WORKSPACE_ENV, str(tmp_path / "t_da8f8c8e"))
+    assert judge_panel.commit_card() == "t_da8f8c8e"
+    seen = []
+    entries = "?? projects/primordial-paradox/data/ai_cache/4f67.json\n"
+    paths, code, _text = judge_panel.commit_outputs("2026-11-16", runner=_runner(entries, record=seen))
+    assert code == 0 and paths
+    subject = seen[1][0][seen[1][0].index("-m") + 1]
+    assert subject.startswith("t_da8f8c8e "), subject
+
+
+def test_a_named_argument_beats_every_variable(monkeypatch, tmp_path):
+    monkeypatch.setenv(judge_panel.COMMIT_CARD_ENV, "t_11111111")
+    monkeypatch.setenv(judge_panel.COMMIT_CARD_WORKSPACE_ENV, str(tmp_path / "t_22222222"))
+    assert judge_panel.commit_card("t_33333333") == "t_33333333"
+    assert judge_panel.commit_card("") == "t_11111111"
 
 
 def test_a_clean_tree_opens_no_commit_and_calls_no_guard():

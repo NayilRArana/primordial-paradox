@@ -1403,9 +1403,29 @@ COMMIT_LANE_ENV = "PP_COMMIT_LANE"
 COMMIT_LANE_DEFAULT = "testing"  # the judge panel is W4, a testing lane card, and it signs its own data
 # The commit gate (guard/card_require.py) refuses a subject that names no card, and rightly: every
 # commit here has to answer "which card asked for this". A nightly run has one: the card the balancer
-# created for it, which the dispatcher exports as HERMES_KANBAN_TASK to the worker running the tool.
+# created for it. The dispatcher exports HERMES_KANBAN_TASK to a worker's own process, but it is not
+# always in the shell a tool starts from (measured 2026-11-16: the task id was in the worker's prompt
+# and the variable was absent from the environment, while HERMES_KANBAN_WORKSPACE named the same id),
+# so the workspace basename is a fallback rather than the only source.
 COMMIT_CARD_ENV = "HERMES_KANBAN_TASK"
+COMMIT_CARD_WORKSPACE_ENV = "HERMES_KANBAN_WORKSPACE"
+COMMIT_CARD_OVERRIDE_ENV = "PP_COMMIT_CARD"
+CARD_RE = re.compile(r"^t_[0-9a-f]{8}$")
+HUMAN_RE = re.compile(r"^(manager|nayil):", re.I)
 COMMIT_TIMEOUT = 1800  # lane_commit budgets the pre-commit gate itself; this only stops a hang
+
+
+def commit_card(card=None):
+    """The card the commit subject names, from the argument or the environment. Empty if none."""
+    for candidate in (card,
+                      os.environ.get(COMMIT_CARD_OVERRIDE_ENV),
+                      os.environ.get(COMMIT_CARD_ENV)):
+        value = (candidate or "").strip()
+        if CARD_RE.match(value) or HUMAN_RE.match(value):
+            return value
+    workspace = (os.environ.get(COMMIT_CARD_WORKSPACE_ENV) or "").strip().rstrip("\\/")
+    name = os.path.basename(workspace) if workspace else ""
+    return name if CARD_RE.match(name) else ""
 
 
 def _repo_path(path):
@@ -1469,14 +1489,15 @@ def commit_outputs(date, lane=None, card=None, message=None, repo=None, dry_run=
     """
     repo = repo or REPO
     lane = lane or os.environ.get(COMMIT_LANE_ENV, "").strip() or COMMIT_LANE_DEFAULT
-    card = (card or os.environ.get(COMMIT_CARD_ENV, "")).strip()
+    card = commit_card(card)
     paths = uncommitted_outputs(date, repo=repo, note=note, runner=runner)
     if not paths:
         return paths, 0, "nothing to commit: every recorded answer and the panel note are at HEAD"
-    if not re.match(r"^t_[0-9a-f]{8}$", card) and not re.match(r"^(manager|nayil):", card):
-        return paths, 1, ("no card named for the commit subject (%s is unset or empty and "
-                          "--commit-card was not given): the %d path(s) are uncommitted, pass "
-                          "--commit-card t_xxxxxxxx" % (COMMIT_CARD_ENV, len(paths)))
+    if not card:
+        return paths, 1, ("no card named for the commit subject: pass --commit-card t_xxxxxxxx, set "
+                          "%s, or run under the worker whose workspace names the card (%s). The %d "
+                          "path(s) are uncommitted until one of those happens."
+                          % (COMMIT_CARD_OVERRIDE_ENV, COMMIT_CARD_WORKSPACE_ENV, len(paths)))
     message = message or (
         "%s tools/judge_panel.py %s: commit the %d path(s) the panel run left untracked, so "
         "test_the_ai_cache_is_kept_out_of_the_bundle answers from the commit"
