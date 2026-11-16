@@ -2,17 +2,16 @@
 
 You play a retro role playing game in the style of the 8-bit NES, an old Nintendo console.
 
-You meet Greek gods reincarnated in modern England.
-
-You win fights by talking as well as by hitting.
+* You meet Greek gods reincarnated in modern England.
+* You win fights by talking as well as by hitting.
 
 ## The game
 
-A hurricane is battering Southampton's Town Quay. Percy, the reincarnation of Poseidon, is possessed and is causing it. Captain Morgan is possessed and is causing it too.
+A hurricane batters Southampton's Town Quay. Percy, the reincarnation of Poseidon, is possessed and causes it. Captain Morgan is possessed and causes it too.
 
-Zander (Zeus), Konrad (Kronos) and Hadrian (Hades) have to stop them so they return to their usual selves.
+Zander (Zeus), Konrad (Kronos) and Hadrian (Hades) must stop them so they return to their usual selves.
 
-You can stop an enemy in two ways.
+You can stop an enemy in two ways:
 
 * Talk to an enemy and answer well to fill its MERCY meter, which measures forgiveness, then choose SPARE, which lets it live.
 * Take its HP to zero. Then it disintegr
@@ -35,14 +34,14 @@ Controls:
 
 The game is a GameMaker project at 256 by 240 pixels.
 
-Python is used only for tooling:
+Python handles tooling only:
 - the NES picture chip gate (`tools/nes_check.py`), which checks image limits
 - the data checks
 - the tests (about 2,700)
 - the art and music pipelines, which prepare assets
 - the build scripts, which assemble the release
 
-The music is original chiptune, simple retro game music. It was composed with the counterpoint toolchain in `tools/counterpoint/`.
+The music is original chiptune, simple retro game music. We composed it with the counterpoint toolchain in `tools/counterpoint/`.
 
 Meta's `muse-spark-1.3` answers the TALK box and judges dialogue. Its answers are recorded in `data/ai_cache` so the game plays offline.
 
@@ -138,10 +137,13 @@ The prose on this page is written by `muse-spark-1.3` through `tools/readme_meta
 
 ## The tagged tree and tonight's finished cut
 
-This section sits outside the block the badge tool owns. `python tools/readme_badges.py --write` rewrites its own region and leaves this one alone. You do not have to take the two PASS rows above on trust, and the 180 second video beside them is measured, not claimed.
+This section sits outside the block the badge tool owns. `python tools/readme_badges.py --write` rewrites its own region. It leaves this section alone.
 
-* The tag `nightly-clean-2026-11-15` is an annotated tag on a commit whose parent is `461cb9a5`, and the tag's tree is that commit plus this page. The checkout behind it carries 1114 uncommitted paths from other lanes and none of them is in the tag. `git archive nightly-clean-2026-11-15` extracts 2,515 files, the same count `git ls-tree -r --name-only nightly-clean-2026-11-15` prints, so the tag's tree is exactly the commit and nothing from the dirty working tree.
-* Both data gates were run inside that export, not in the dirty checkout, and both exit 0. check_cleanroom scans 811 files there against the 905 it scans in the checkout, which is the uncommitted paths it is not looking at:
+You do not have to take the two PASS rows above on trust. The 180 second video beside them is measured, not claimed.
+
+* The tag `nightly-clean-2026-11-15` is an annotated tag on a commit whose parent is `461cb9a5`. Its tree is that commit plus this page. The checkout behind it carries 1114 uncommitted paths from other lanes, and none of them is in the tag.
+* `git archive nightly-clean-2026-11-15` extracts 2,515 files. That matches the count `git ls-tree -r --name-only nightly-clean-2026-11-15` prints. So the tag's tree holds exactly the commit, with nothing from the dirty working tree.
+* Both data gates ran inside that export, not in the dirty checkout, and both exit 0. check_cleanroom scans 811 files there, against the 905 it scans in the checkout. The gap is the uncommitted paths it is not looking at:
 
 ```text
 check_data: all files pass
@@ -149,9 +151,9 @@ check_cleanroom: 811 files scanned for 26 names and 12 phrases, 48 GML modules, 
 check_cleanroom: no study reference, no foreign name, no foreign phrase, every module reviewed
 ```
 
-* `output/demo/nightly-2026-11-15d.mp4` is the finished cut, built 2026-11-15 21:21 local: 180.000 s, 10,800 frames, 768 by 784 at 60 fps, h264 with an aac track, 17,217,704 bytes. `python tools/demo_cut_180.py --verify --video output/demo/nightly-2026-11-15d.mp4 --workdir <scratch>` exits 0 with 49 rows PASS and 0 FAIL, and writes `output/demo/nightly-2026-11-15d_verify.json`. The rows include the six captions, the four S5 plates, thirteen title card lines up at 1.0 s and 15.8 s, CONTINUE dim on the boot menu, 0 blue band pixels at 15.0 s, and the narrator above the ducked game track in all six windows.
+* The finished cut is output/demo/nightly-2026-11-15d.mp4, built 2026-11-15 21:21 local: 180.000 s, 10,800 frames, 768 by 784 at 60 fps, h264 with an aac track, 17,217,704 bytes. It is named here as prose and not as a path, because `output/` is gitignored and no checkout carries the cut, so a code span for it would point a reader at a file a clone cannot hold. `python tools/demo_cut_180.py --verify --video output/demo/nightly-2026-11-15d.mp4 --workdir <scratch>` exits 0 with 49 rows PASS and 0 FAIL, and writes its verify file, output/demo/nightly-2026-11-15d_verify.json, beside it. The rows include the six captions, the four S5 plates, thirteen title card lines up at 1.0 s and 15.8 s, CONTINUE dim on the boot menu, 0 blue band pixels at 15.0 s, and the narrator above the ducked game track in all six windows.
 * `tools/demo_cut_180.py --build` is the tool that assembles the six shots to the 180.00 s total; `tools/play_demo.py` is the recorder that produces source footage, and `knowledge/DEMO-AUTHORITY-RULING-2026-11-12.md` section 2 is why the cut, and not a recorder take, is the shipping video. The build and the verify above are one pass each on the same inputs, in the same minute.
-* The gap the tag does not close, and the commit that does close it. The cut above needs seven paths the tag does not carry, and `HEAD` now carries every one of them: `tools/video_builder.py` and `data/slice.json`, which draw and hold the opaque 16.00 s card, landed in `ee1e9adb`; `tools/demo_cut_180.py`, `tools/demo_overlay.py` with its S5 verdict window, and the two tests that read them landed in `f31a8226`; `tools/demo_voiceover.py`, `data/demo/narration.json`, `knowledge/DEMO-SCRIPT.md` section 12 and `tests/test_demo_narration.py` landed in `ce8e2def`. `git archive HEAD` extracts 2,519 files, and a build from that export reads nothing in the working tree: `python tools/demo_cut_180.py --build --video output/demo/nightly-2026-11-15e.mp4` and `--verify` on the result both exit 0, 24 rows ok and 0 failed, at 180.000 s, 10,800 frames, 768 by 784 at 60 fps and 16,937,739 bytes, with `output/demo/nightly-2026-11-15e_verify.json` written beside it. The take the 2026-11-16 judge panel scored, `output/demo/nightly-2026-11-15.mp4`, is not overwritten.
+* The gap the tag does not close, and the commit that does close it. The cut above needs seven paths the tag does not carry, and `HEAD` now carries every one of them: `tools/video_builder.py` and `data/slice.json`, which draw and hold the opaque 16.00 s card, landed in `ee1e9adb`; `tools/demo_cut_180.py`, `tools/demo_overlay.py` with its S5 verdict window, and the two tests that read them landed in `f31a8226`; `tools/demo_voiceover.py`, `data/demo/narration.json`, `knowledge/DEMO-SCRIPT.md` section 12 and `tests/test_demo_narration.py` landed in `ce8e2def`. `git archive HEAD` extracts 2,519 files, and a build from that export reads nothing in the working tree: `python tools/demo_cut_180.py --build --video output/demo/nightly-2026-11-15e.mp4` and `--verify` on the result both exit 0, 24 rows ok and 0 failed, at 180.000 s, 10,800 frames, 768 by 784 at 60 fps and 16,937,739 bytes, with its verify file, output/demo/nightly-2026-11-15e_verify.json, written beside it. The take the 2026-11-16 judge panel scored, output/demo/nightly-2026-11-15.mp4, is not overwritten. Both of those names are prose for the same reason as the cut above: they sit under the gitignored `output/`.
 
 
 
@@ -159,16 +161,18 @@ check_cleanroom: no study reference, no foreign name, no foreign phrase, every m
 
 TALK turns in the Morgan fight come from `data/meta_bake.json`. That file records `muse-spark-1.3` as the model.
 
-The demo's fifth shot shows this on the screen itself, not in a caption.
+You see it in the demo's fifth shot on the screen itself, not in a caption.
 
 From 1:18.00 to 1:50.00 one NES window sits in the strip of battle frame between the enemy plate and the party panel. The enemy's HP and MERCY bars and the party line stay visible behind it. Every word in it is read out of the record at draw time:
 
-* the model, by the display name `data/credits.json` prints for the bake's own model id, so the name on the frame and the name in the credits are one string read from one place;
-* the decision, as the effects the three Morgan rows record, checked against the verdict map in `data/talk/sailor_judge.json`, and said in words to be fallback rows, because that is what the bake holds for them and a label that said otherwise would be a claim about a call never made;
-* the three bake receipts, `meta.model_calls` 21, `meta.live_rows` 11 and `meta.live_share_pct` 52.4, each under the id of the ledger receipt in `data/receipts/meta_receipts.jsonl` that backs that number;
-* the network line, from the file's own `offline` and `network` flags.
+* It names the model by the display name `data/credits.json` prints for the bake's own model id. The name on the frame and the name in the credits are one string read from one place.
+* It states the decision as the effects the three Morgan rows record, checked against the verdict map in `data/talk/sailor_judge.json`. It says in words they are fallback rows, because that is what the bake holds for them and a label that said otherwise would be a claim about a call never made.
+* It lists the three bake receipts, `meta.model_calls` 21, `meta.live_rows` 11 and `meta.live_share_pct` 52.4. Each sits under the id of the ledger receipt in `data/receipts/meta_receipts.jsonl` that backs that number.
+* It states the network line from the file's own `offline` and `network` flags.
 
-The picture below is frame 6,300 of the 180 second take built on 2026-11-16 and verified with `tools/demo_cut_180.py --verify`, which is 1:45.0, the clock the judge panel samples its stills at. The take itself is named output/demo/nightly-2026-11-16-verdict.mp4 and not linked, because git ignores `output/`:
+The picture below is frame 6,300 of the 180 second take. It was built on 2026-11-16 and verified with `tools/demo_cut_180.py --verify`. It shows 1:45.0, the clock the judge panel samples its stills at.
+
+The take itself is named output/demo/nightly-2026-11-16-verdict.mp4 and not linked, because git ignores `output/`:
 
 ![the S5 AI verdict window](docs/s5_verdict_box.png)
 
@@ -177,13 +181,13 @@ The picture below is frame 6,300 of the 180 second take built on 2026-11-16 and 
 `--check --verdict-box` measures it:
 
 - The window is a real filled rectangle.
-- Every line carries ink the blanked control does not.
-- The three ids are the receipts the ledger holds.
+- Every line has ink the blanked control lacks.
+- The ledger holds the three ids as receipts.
 - Both battle HUD bands are compared with the same frame drawn without the window and read unchanged.
 
 ## Where the code lives
 
-This folder is the working files. It is the development tree.
+This folder holds the working files. It is the development tree.
 
 The submission splits into two public repositories:
 
@@ -192,8 +196,11 @@ The submission splits into two public repositories:
 
 ## Licence and credits
 
-See `LICENCE` and `CREDITS.md`.
+* See `LICENCE`.
+* See `CREDITS.md`.
 
-A Meta model, an automated text tool, wrote this README through `tools/readme_meta.py`. `tests/test_readme_meta.py` fails if it is edited by hand.
+A Meta model, an automated text tool, wrote this README through `tools/readme_meta.py`.
 
-<!-- readme-author: muse-spark-1.3 body-sha256: 95c918e47c57bffe372d76f93e1d114a7fea487d578fc8c7a67a249fc6b88244 -->
+`tests/test_readme_meta.py` fails if it is edited by hand.
+
+<!-- readme-author: muse-spark-1.3 body-sha256: f6bc5d70936439e001fbb7e395046ea69d340e84ff9f54db470b07c567162bf8 -->
