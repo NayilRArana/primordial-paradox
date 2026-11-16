@@ -125,9 +125,9 @@ Beat codes are section 2. Flags: `sets:` names what the dialogue row hands the s
 | M7 | `YOU TOLD ME THE TRUTH.` | B20-T2, the second talk on the truth branch | reads: `gate_truth` |
 | M8 | `I CHECKED THE LIST AGAIN.` | B20-T2, the second talk on the bluff branch, the line where the plot leaks | reads: `gate_bluff` |
 | M9 | `HE WAS NOT ASLEEP.` | B20-T2, the second talk on the authority branch | reads: `gate_authority` |
-| M10 | `NOTHING IN THE BOOK TONIGHT.` | MC1, chat turn 1, what he wants said out loud | none, `none` effect |
-| M11 | `DO NOT READ THE CLIPBOARD.` | MC3, chat turn 3, a player line that pushed on the clipboard | none, `setback` is refused in chat and becomes `none` |
-| M12 | `GO ON. BEFORE I WRITE YOU.` | MC4, chat turn 4, the `end` line | none, the box closes |
+| M10 | `NO INCIDENTS. JUST RAIN.` | MC1, chat turn 1, what he wants said out loud | none, `none` effect |
+| M11 | `THE CLIPBOARD IS SHY.` | MC3, chat turn 3, a player line that pushed on the clipboard | none, `setback` is refused in chat and becomes `none` |
+| M12 | `GO ON. MY PEN IS WAKING.` | MC4, chat turn 4, the `end` line | none, the box closes |
 
 M1 and M2 are the same beat by design: the reply is one line, and which of the two a bake picks is the choice. M4, M5
 and M6 are the first line of each shipped branch pair; the second line of each pair is in the alternates table, so a
@@ -210,10 +210,10 @@ Same note as Morgan's block: no keywords, no examples, because spec 19 section 3
 | N4 | `DO NOT LEAVE THE CABIN.` | B22-P4, reply 2, line 2, the one warning he gives | none |
 | N5 | `SIGN HERE. THE BOOK SHUTS.` | B22-P6, the pass changes hands | sets: `has_boarding_pass` |
 | N6 | `LEDGER BALANCES. GOODNIGHT.` | B22-P6, his last line, the want granted | sets: `has_boarding_pass` |
-| N7 | `I COUNT WHAT I AM GIVEN.` | NC1, chat turn 1, the weak topic a player can find | none |
+| N7 | `I COUNT IT TWICE. HABIT.` | NC1, chat turn 1, the weak topic a player can find | none |
 | N8 | `THE LAST LINE IS NOT MINE.` | NC3, chat turn 3, a player line that pushed on the manifest | none, `setback` is refused in chat and becomes `none` |
 | N9 | `I WANT TO GO HOME TOO.` | NC3, the soft spot: the man behind the counter | none, `soften` is refused in chat and becomes `none` |
-| N10 | `GOODNIGHT. SHUT THE DOOR.` | NC4, chat turn 4, the `end` line | none, the box closes |
+| N10 | `GOODNIGHT. SHUT THE LEDGER.` | NC4, chat turn 4, the `end` line | none, the box closes |
 
 N6 is the same beat as N5 and the two are not interchangeable: N5 is the transaction, N6 is the man after it. A bake
 that uses both spends two of its four lines on one beat, which is legal and is the warmest the office gets.
