@@ -350,7 +350,8 @@ def contact(path, window_strip, bubble_strip, font_strip, font_line, logo_strip,
             cursor_strip=None, cursor_ground=None, cone_strip=None, cone_ground=None,
             exhaust_strip=None, exhaust_ground=None, ui_strip=None, ui_ground=None,
             sign_strip=None, sign_ground=None, wheel_strip=None, wheel_ground=None,
-            party_strip=None, party_ground=None, tall_strip=None, tall_ground=None, scale=4):
+            party_strip=None, party_ground=None, tall_strip=None, tall_ground=None,
+            portrait_strip=None, extra_bands=(), scale=4):
     """Every redrawn row at 4x, under the cast bands, on the black backdrop the game uses.
 
     A band may carry its own scale: the font strip is 616 px wide and at 4x it would be 2464 px, wider
@@ -374,7 +375,7 @@ def contact(path, window_strip, bubble_strip, font_strip, font_line, logo_strip,
     if cursor_ground is not None:
         bands.append(("THE MENU CURSOR AT 4x ON THE SKY BAND IT IS DRAWN ON", cursor_ground, 4))
     if cone_strip is not None:
-        bands.append(("HEADLIGHT CONE  SPR_TITLE_CONE  96x40  1 FRAME  $28 / $10 / $00  4x", cone_strip, 4))
+        bands.append(("HEADLIGHT CONE  SPR_TITLE_CONE  96x40  1 FRAME  $20 / $0B / $0C  4x", cone_strip, 4))
     if cone_ground is not None:
         bands.append(("HEADLIGHT CONE AT 4x ON THE ROAD IT FALLS ON, CAMERA 0, 140,200", cone_ground, 4))
     if exhaust_strip is not None:
@@ -391,9 +392,9 @@ def contact(path, window_strip, bubble_strip, font_strip, font_line, logo_strip,
     if party_ground is not None:
         bands.append(("PARTY MEMBER FRAME AS SHIPPED, FOR COMPARISON: $30 WHITE RING / $00 BODY / $28 MARKER  4x", party_ground, 4))
     if tall_strip is not None:
-        bands.append(("STYLE B 16x24 FIGURES  ZEUS 8 DIRECTIONS 256x24 16 FRAMES  +  KRONOS 16x24 1 FRAME  +  OURANOS 16x24 1 FRAME  3x", tall_strip, 3))
+        bands.append(("STYLE B FIGURES  ZEUS 256x16 16 FRAMES  +  KRONOS 16x24 1 FRAME  +  OURANOS 16x24 1 FRAME  3x", tall_strip, 3))
     if tall_ground is not None:
-        bands.append(("STYLE B FIGURES AT 3x ON THE SHIP DECK PLATE GROUND, output/ship_deck_plate_ground.png", tall_ground, 3))
+        bands.append(("STYLE B FIGURES AT 3x ON THE SOUTHAMPTON JUDGED STREET output/southampton_sample_frame.png, FEET ON ROW 127", tall_ground, 3))
     if sign_strip is not None:
         bands.append(("DISTANCE SIGN  SPR_TITLE_SIGN  384x24  4 FRAMES  $00 INK EDGE / $20 KEYLINE AND LETTERS / $09 FACE  2x",
                       sign_strip, 2))
@@ -404,6 +405,14 @@ def contact(path, window_strip, bubble_strip, font_strip, font_line, logo_strip,
                       wheel_strip, 4))
     if wheel_ground is not None:
         bands.append(("ROAD WHEEL AT 4x ON THE ROAD BAND IT STANDS ON, 82,212", wheel_ground, 4))
+    if portrait_strip is not None:
+        # The three 48x48 dialogue busts, read from the SHIPPED sheets by the generator that owns each name
+        # (tools/art/make_dialogue_busts.py), so this band cannot disagree with the rows it proves.
+        bands.append(("DIALOGUE BUSTS  SPR_PP_PORTRAIT_GUARD / PERCY / PROMETHEUS  48x48  3 ENTRIES EACH, THE $02 PANEL OUT  2x",
+                      portrait_strip, 2))
+    # Bands a caller hands in already measured, in the order it gives them, each with its own label and scale.
+    for label, image, band_scale in extra_bands:
+        bands.append((label, image, band_scale))
     bands.append(("THE FONT  SPR_PP_FONT8  616x8  77 FRAMES  ONE INK $30", font_strip, 1))
     bands.append(("THE FONT AT 3x  \"%s\"" % FONT_SAMPLE, font_line, 3))
     bands.append(("WORDMARK  SPR_PP_TITLE_LOGO  448x64  2 FRAMES  1x", logo_strip, 1))
@@ -489,16 +498,18 @@ def main() -> int:
         cursor_strip = image.convert("RGBA").copy()
     print("  cursor band read from %s" % os.path.relpath(cursor_path, ROOT).replace(os.sep, "/"))
     cursor_ground = cursor_over_ground(cursor_strip, 8, 8)
-    # The cone row is read from the file its own tool writes, output/redraws/spr_title_cone.png
-    # (tools/art/make_title_cone_v2.py), because the shipped sheet is still the flat one entry wedge
-    # and moving it is a gamedev call. The ground is the same tool's 96 x 40 of road at the cone's own
-    # placement, and the second band draws the beam on that ground so the sheet shows the reading.
-    cone_path = os.path.join(ROOT, "output", "redraws", "spr_title_cone.png")
+    # The cone row is read from the SHIPPED sheet, because the shipped sheet is now the row: card
+    # t_b8328e34 landed a three step falloff drawn inside the cone's own band palette (bg3 / sp3,
+    # $20 $0B $0C) and proved by tools/art/title_bands.py that the band pass moves 0 pixels on it.
+    # Read from the shipped file so this band cannot disagree with the row it proves. The ground is the
+    # 96 x 40 of road at the cone's own placement (output/spr_title_cone_band_ground.png, written by
+    # tools/art/make_title_cone_band_v3.py), and the second band draws the beam on that ground.
+    cone_path = os.path.join(ROOT, "game", "sprites_src", "title", "spr_title_cone.png")
     if not os.path.isfile(cone_path):
-        raise SystemExit("the cone row is missing, run tools/art/make_title_cone_v2.py first: %s" % cone_path)
+        raise SystemExit("the cone sheet is missing: %s" % cone_path)
     with Image.open(cone_path) as image:
         cone_strip = image.convert("RGBA").copy()
-    with Image.open(os.path.join(ROOT, "output", "spr_title_cone_ground.png")) as image:
+    with Image.open(os.path.join(ROOT, "output", "spr_title_cone_band_ground.png")) as image:
         cone_base = image.convert("RGBA").copy()
     cone_over = Image.new("RGBA", (cone_strip.width, cone_strip.height), (0, 0, 0, 255))
     cone_over.alpha_composite(cone_base.crop((0, 0, cone_strip.width, cone_strip.height)), (0, 0))
@@ -559,14 +570,15 @@ def main() -> int:
                                   (index * sign_base.width, 0))
     print("  distance sign band read from %s, %dx%d" % (os.path.relpath(sign_path, ROOT).replace(os.sep, "/"),
                                                         sign_strip.width, sign_strip.height))
-    # The road wheel is read from the file its own tool writes, output/redraws/spr_title_wheel.png
-    # (tools/art/make_title_wheel_v2.py, card t_f9a18f00), for the same reason the sign is: the sheet the
-    # game would draw belongs to the generator that owns the name, and this lane redraws it in scratch.
-    # The ground is the tool's 16 x 16 of shipped road at the wheel's own placement, repeated under each
-    # of the four frames so the band shows the rim reading against the tarmac it rolls on.
-    wheel_path = os.path.join(ROOT, "output", "redraws", "spr_title_wheel.png")
+    # The road wheel is read from the SHIPPED sheet, game/sprites_src/title/spr_title_wheel.png, because
+    # that is now the hand authored drawing: card t_2186fd41 moved the pixels into
+    # tools/art/make_title_wheel_v2.py and make_title_car.py build_wheel asks that module for them, so the
+    # tree carries the four grids and the redraw folder would be a second copy that can fall behind. The
+    # ground is the tool's 16 x 16 of shipped road at the wheel's own placement, repeated under each of the
+    # four frames so the band shows the rim reading against the tarmac it rolls on.
+    wheel_path = os.path.join(ROOT, "game", "sprites_src", "title", "spr_title_wheel.png")
     if not os.path.isfile(wheel_path):
-        raise SystemExit("the road wheel row is missing, run tools/art/make_title_wheel_v2.py first: %s"
+        raise SystemExit("the road wheel row is missing: %s (run tools/art/make_title_car.py, which writes it)"
                          % wheel_path)
     with Image.open(wheel_path) as image:
         wheel_strip = image.convert("RGBA").copy()
@@ -616,21 +628,144 @@ def main() -> int:
                            (0, 0, 0, 0))
     x = 0
     for part in tall_parts:
-        tall_strip.alpha_composite(part, (x, 0))
+        tall_strip.alpha_composite(part, (x, 24 - part.height))
         x += part.width + 8
-    tall_ground_path = os.path.join(ROOT, "output", "ship_deck_plate_ground.png")
+    # The ground band is the ground the queue rows are measured on: the southampton judged frame in
+    # data/palettes/scene_southampton.json, whose party box puts a 16 px figure's feet on row 127. Each part gets the
+    # window under its own first frame (16 x its own height, top = 128 - height, so the feet stay on row 127),
+    # tiled across the strip; that is the pairing tools/palette_synergy.py reads at --at 128,<top>.
+    tall_ground_path = os.path.join(ROOT, "output", "southampton_sample_frame.png")
     with Image.open(tall_ground_path) as image:
-        plate = image.convert("RGBA").copy()
+        street = image.convert("RGBA").copy()
     tall_ground = Image.new("RGBA", (tall_strip.width, 24), (0, 0, 0, 255))
-    for gy in range(0, 24, plate.height):
-        for gx in range(0, tall_strip.width, plate.width):
-            tall_ground.alpha_composite(plate, (gx, gy))
     x = 0
     for part in tall_parts:
-        tall_ground.alpha_composite(part, (x, 0))
+        top = 128 - part.height
+        window = street.crop((128, top, 128 + 16, top + part.height))
+        for gx in range(x, x + part.width, 16):
+            tall_ground.alpha_composite(window, (gx, 24 - part.height))
+        tall_ground.alpha_composite(part, (x, 24 - part.height))
         x += part.width + 8
-    print("  style B figures read from game/sprites_src/chars/{zeus_ow_walk8,kronos_ow24,ouranos_ow24}.png, %dx24 on %s"
+    print("  style B figures read from game/sprites_src/chars/{zeus_ow_walk8,kronos_ow24,ouranos_ow24}.png, "
+          "%dx24 on %s at 128,104 (zeus 16 px, feet on row 127)"
           % (tall_strip.width, os.path.relpath(tall_ground_path, ROOT).replace(os.sep, "/")))
+    # The three 48x48 dialogue busts, read from the shipped sheets rather than drawn again here: one generator
+    # owns one asset name (tools/art/make_dialogue_busts.py owns spr_pp_portrait_*), and the band exists so the
+    # portrait rows are on the contact sheet at all. Card t_a61c01b7.
+    portrait_parts = []
+    for name in ("guard", "percy", "prometheus"):
+        portrait_path = os.path.join(ROOT, "game", "sprites_src", "chars", "spr_pp_portrait_%s.png" % name)
+        with Image.open(portrait_path) as image:
+            portrait_parts.append(image.convert("RGBA").copy())
+    portrait_strip = strip(portrait_parts)
+    print("  dialogue busts read from game/sprites_src/chars/spr_pp_portrait_{guard,percy,prometheus}.png, %dx%d"
+          % (portrait_strip.width, portrait_strip.height))
+    # Card t_6e9200bd (AUTO-SPRITE-NEXT): Percy's trident and Hadrian's bident, the two god weapon rows the
+    # 2026-11-13 redraw moved the largest fill onto the accent in ($28 gold and $23 light violet). Card
+    # t_738f9205 added Konrad's adamantine scythe to the same band for the same reason ($27 amber blade,
+    # $00 grey inner edge). Each is read
+    # from the SHIPPED sheet, because tools/art/make_god_weapons.py owns the name and this band cannot disagree
+    # with the row it proves, and each is drawn a second time over the enemy cell the battle director overlays
+    # it on (data/palettes/scene_battle_deck_night.json tile 3,8 at 24,64), which is the ground
+    # tools/palette_synergy.py reads the row against.
+    weapon_bands = []
+    deck_path = os.path.join(ROOT, "output", "bg_battle_deck_night_frame.png")
+    with Image.open(deck_path) as image:
+        deck = image.convert("RGBA")
+    for weapon, label, triples in (
+            ("spr_pp_adamantine_scythe", "KONRAD ADAMANTINE SCYTHE  SPR_PP_ADAMANTINE_SCYTHE  128x32  4 FRAMES  $27 AMBER BLADE / $00 GREY EDGE",
+             "KONRAD ADAMANTINE SCYTHE AT 4x ON THE ENEMY CELL IT IS DRAWN OVER, 24,64, RULE 0 POINT 2 CLEARED ON EVERY GROUND"),
+            ("spr_pp_trident", "PERCY TRIDENT  SPR_PP_TRIDENT  128x32  4 FRAMES  $28 GOLD METAL / $12 BLUE HAFT",
+             "PERCY TRIDENT AT 4x ON THE ENEMY CELL IT IS DRAWN OVER, 24,64, RULE 0 POINT 2 CLEARED ON EVERY GROUND"),
+            ("spr_pp_bident", "HADRIAN BIDENT  SPR_PP_BIDENT  128x32  4 FRAMES  $23 LIGHT VIOLET METAL / $03 DARK HAFT",
+             "HADRIAN BIDENT AT 4x ON THE ENEMY CELL IT IS DRAWN OVER, 24,64, RULE 0 POINT 2 CLEARED ON EVERY GROUND")):
+        with Image.open(os.path.join(ROOT, "game", "sprites_src", "weapons", weapon + ".png")) as image:
+            weapon_strip = image.convert("RGBA").copy()
+        over = deck.crop((24, 64, 24 + weapon_strip.width, 64 + weapon_strip.height)).copy()
+        over.alpha_composite(weapon_strip, (0, 0))
+        weapon_bands.append((label + "  4x", weapon_strip, 4))
+        weapon_bands.append((triples, over, 4))
+        print("  weapon band read from game/sprites_src/weapons/%s.png, %dx%d on %s at 24,64"
+              % (weapon, weapon_strip.width, weapon_strip.height,
+                 os.path.relpath(deck_path, ROOT).replace(os.sep, "/")))
+    # Card t_f513cc5d (AUTO-SPRITE-NEXT): the intro's twinkle star, read from the SHIPPED sheet for the same
+    # reason the cloud and the weapons are (tools/pp_intro_art.py owns the name, so a band drawn here could
+    # disagree with the row it proves). The second band lays the three frames on output/cloud_sky_ground.png,
+    # the 48 x 16 crop of title_L1_sky and title_L2_clouds whose top left 8 x 8 is $11: that is the ground the
+    # stars twinkle over before the sky fades and the ground tools/palette_synergy.py measures the row against
+    # (knowledge/PALETTE-RULINGS-2026-11-12.md section 9), so the sheet shows the reading and not just the strip.
+    star_path = os.path.join(ROOT, "game", "sprites_src", "title", "spr_title_star.png")
+    with Image.open(star_path) as image:
+        star_strip = image.convert("RGBA").copy()
+    sky_path = os.path.join(ROOT, "output", "cloud_sky_ground.png")
+    with Image.open(sky_path) as image:
+        sky_tile = image.convert("RGBA").crop((0, 0, 8, 8))
+    star_over = Image.new("RGBA", (star_strip.width, star_strip.height), (0, 0, 0, 255))
+    for index in range(star_strip.width // 8):
+        star_over.alpha_composite(sky_tile, (index * 8, 0))
+        star_over.alpha_composite(star_strip.crop((index * 8, 0, index * 8 + 8, 8)), (index * 8, 0))
+    star_bands = [("INTRO STAR  SPR_TITLE_STAR  24x8  3 FRAMES  $20 LIT CORE AND ARMS / $10 AWAY ARMS / $0C SHADED TIPS  8x",
+                   star_strip, 8),
+                  ("THE SAME THREE FRAMES ON THE LIVE SKY $11 THEY TWINKLE OVER, output/cloud_sky_ground.png AT 0,0, $20 READS 3.92:1  8x",
+                   star_over, 8)]
+    print("  intro star band read from %s, %dx%d on %s at 0,0"
+          % (os.path.relpath(star_path, ROOT).replace(os.sep, "/"), star_strip.width, star_strip.height,
+             os.path.relpath(sky_path, ROOT).replace(os.sep, "/")))
+    # Card t_e632adfd (AUTO-SPRITE-NEXT): the two over world walk sheets whose queue rows named the battle deck
+    # as their ground, which the deck's 2026-10-24 re-solve for the FIGHT cast no longer carries. Both are read
+    # from the SHIPPED sheet, because tools/art/make_characters_v2.py owns the name and a band drawn here could
+    # disagree with the row it proves. The ground is the one data/palettes/scene_ship.json's judged row names
+    # (card t_1dc346b9, kept by card t_a6a7a436 section 17): game/sprites_src/env/ts_ship.png at 64,64, the
+    # tileset the walking room is built from, which is the pairing tools/palette_synergy.py reads the rows
+    # against. Each frame takes the same 16 x 16 window of that tileset, so the band shows the reading and not
+    # just the strip.
+    ship_ground_path = os.path.join(ROOT, "game", "sprites_src", "env", "ts_ship.png")
+    with Image.open(ship_ground_path) as image:
+        ship_tiles = image.convert("RGBA")
+    walk_bands = []
+    for walk, label, ground_label in (
+            ("konrad_ow_v2",
+             "KONRAD OVER WORLD WALK  KONRAD_OW_V2  128x16  8 FRAMES  $07 OUTLINE AND HAIR / $28 BODY / $17 SHADE  4x",
+             "THE SAME EIGHT FRAMES ON ts_ship.png AT 64,64, THE GROUND scene_ship JUDGES THEM ON (sp3), 0 FAILING PAIRS  4x"),
+            ("zander_ow_v2",
+             "ZANDER OVER WORLD WALK  ZANDER_OW_V2  128x16  8 FRAMES  $01 OUTLINE AND HAIR / $31 BOMBER AND FACE / $11 COLLAR  4x",
+             "THE SAME EIGHT FRAMES ON ts_ship.png AT 64,64, THE GROUND scene_ship JUDGES THEM ON (sp2), 0 FAILING PAIRS  4x")):
+        walk_path = os.path.join(ROOT, "game", "sprites_src", "chars", walk + ".png")
+        with Image.open(walk_path) as image:
+            walk_strip = image.convert("RGBA").copy()
+        window = ship_tiles.crop((64, 64, 64 + 16, 64 + 16)).copy()
+        walk_over = Image.new("RGBA", (walk_strip.width, walk_strip.height), (0, 0, 0, 255))
+        for index in range(walk_strip.width // 16):
+            walk_over.alpha_composite(window, (index * 16, 0))
+            walk_over.alpha_composite(walk_strip.crop((index * 16, 0, index * 16 + 16, 16)), (index * 16, 0))
+        walk_bands.append((label, walk_strip, 4))
+        walk_bands.append((ground_label, walk_over, 4))
+        print("  walk band read from game/sprites_src/chars/%s.png, %dx%d on %s at 64,64"
+              % (walk, walk_strip.width, walk_strip.height,
+                 os.path.relpath(ship_ground_path, ROOT).replace(os.sep, "/")))
+    # Card t_92c61390 (AUTO-SPRITE-NEXT): the hatchback, the largest moving sprite on the title, and the row whose
+    # tyre was redrawn this card. Read from the SHIPPED sheet, because tools/art/title_car_v2.py owns the name and
+    # a band drawn here could disagree with the row it proves. The second band lays the frame on
+    # output/car_road_ground.png, the 64 x 32 crop of the title at the rows the car is drawn over, which is the
+    # ground tools/palette_synergy.py measures the row against at --at 0,0: the sheet shows the reading and not
+    # only the strip, and it shows the closed DARK ring and the tyre's bottom edge on row 31 against the road.
+    car_path = os.path.join(ROOT, "game", "sprites_src", "title", "spr_title_car.png")
+    with Image.open(car_path) as image:
+        car_strip = image.convert("RGBA").copy()
+    road_path = os.path.join(ROOT, "output", "car_road_ground.png")
+    with Image.open(road_path) as image:
+        road = image.convert("RGBA").copy()
+    car_over = road.copy()
+    car_over.alpha_composite(car_strip.crop((0, 0, 64, 32)), (0, 0))
+    car_bands = [
+        ("HATCHBACK  SPR_TITLE_CAR  192x32  3 FRAMES  $20 BODY / $0B SHADOW AND TYRE / $0C INK, GLASS AND THE TYRE RING  4x",
+         car_strip, 4),
+        ("FRAME 0 ON THE ROAD BAND IT IS DRAWN OVER, output/car_road_ground.png AT 0,0, THE TYRE RING CLOSED AND ITS BOTTOM EDGE ON ROW 31  4x",
+         car_over, 4),
+    ]
+    print("  car band read from %s, %dx%d, frame 0 on %s at 0,0"
+          % (os.path.relpath(car_path, ROOT).replace(os.sep, "/"), car_strip.width, car_strip.height,
+             os.path.relpath(road_path, ROOT).replace(os.sep, "/")))
     canvas = contact(sheet, window_strip, bubble_strip, font_sheet, font_line, logo_strip,
                      cloud_strip=cloud_sheet, cloud_ground=cloud_ground,
                      enemy_strips=enemy_strips, enemy_ground=enemy_ground,
@@ -640,7 +775,9 @@ def main() -> int:
                      ui_strip=ui_strip, sign_strip=sign_strip, sign_ground=None,
                      wheel_strip=wheel_strip, wheel_ground=wheel_over,
                      party_strip=party_strip, party_ground=party_shipped,
-                     tall_strip=tall_strip, tall_ground=tall_ground)
+                     tall_strip=tall_strip, tall_ground=tall_ground,
+                     portrait_strip=portrait_strip,
+                     extra_bands=weapon_bands + star_bands + walk_bands + car_bands)
     print("  output/sprites_v2_sheet.png %dx%d" % (canvas.width, canvas.height))
     return 0
 

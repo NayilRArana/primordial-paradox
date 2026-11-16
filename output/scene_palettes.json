@@ -526,11 +526,11 @@
         40
       ],
       "frames": 1,
-      "groups": 29,
+      "groups": 26,
       "groups_outside_a_palette": 0,
       "groups_over_three": 0,
       "oam_sprites_per_frame": 24,
-      "worst_colours": 1
+      "worst_colours": 2
     },
     "spr_title_exhaust": {
       "busiest_scanline": 2,
@@ -647,7 +647,7 @@
       "groups_outside_a_palette": 0,
       "groups_over_three": 0,
       "oam_sprites_per_frame": 2,
-      "worst_colours": 3
+      "worst_colours": 2
     },
     "spr_title_zander": {
       "busiest_scanline": 2,

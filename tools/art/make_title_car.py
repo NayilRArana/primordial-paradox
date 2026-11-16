@@ -380,33 +380,31 @@ def build_car_body(bob: int) -> Image.Image:
 
 # ---------------------------------------------------------------------------------------------------
 # The wheel
+#
+# Card t_2186fd41 (AUTO-SPRITE-NEXT, 2026-11-14). The wheel used to be drawn here from PIL trig: a 10x10
+# ellipse disc in the design table's INK and DIM, with four angled spokes and a hub. Measured on the
+# shipped sheet it came out as $0B #005800 135 px (44.4 percent) TYRE on a road band that is $0F and $0C,
+# so the tyre and the road under it were the same brightness row and palette_synergy printed FAIL, 8
+# failing pairs (body $0B 2.40:1 on $0F, 0 rows apart; 1.28:1 on $0C). SP-021 asks for a 1 px ink
+# outline and the disc had none: its outer boundary was the tyre.
+#
+# The drawing now comes from tools/art/make_title_wheel_v2.py, one file per asset drawing, the same route
+# spr_title_exhaust and spr_title_zander already take (knowledge/PALETTE-RULINGS-2026-10-23.md ruling 2:
+# one generator owns one asset name, so the name stays written here and the pixels come from the module).
+# That drawing is four hand authored 10x10 grids in the two entries bg3 carries, $0C tyre and outline and
+# $20 rim, spokes and hub, with four different spoke shapes so SP-049's rotation reads. gamedev ruled on
+# 2026-10-25 (knowledge/PALETTE-RULINGS-2026-10-25.md section 2) that the wheel row stays a figure drawn by
+# this generator, so the sheet is judged by R1 body_ground and its body $20 sits 2 luminance rows from both
+# ground entries.
 # ---------------------------------------------------------------------------------------------------
 
 WHEEL_W, WHEEL_H = 10, 10
 
 
 def build_wheel(frame: int) -> Image.Image:
-    """A wheel seen from the side, with the spokes turning."""
-    image = new_image(WHEEL_W, WHEEL_H)
-    draw = ImageDraw.Draw(image)
-
-    draw.ellipse((0, 0, 9, 9), fill=rgba(INK))
-    draw.ellipse((1, 1, 8, 8), fill=rgba(DIM))
-    draw.ellipse((2, 2, 7, 7), fill=rgba(INK))
-
-    for spoke in range(4):
-        angle = spoke * math.pi / 2 + frame * math.pi / 8
-        dx = -math.cos(angle)
-        dy = math.sin(angle)
-        for step in range(1, 5):
-            px = int(round(4.5 + dx * step))
-            py = int(round(4.5 + dy * step))
-            if 0 <= px < WHEEL_W and 0 <= py < WHEEL_H:
-                image.putpixel((px, py), rgba(BRIGHT))
-
-    draw.ellipse((3, 3, 6, 6), fill=rgba(BRIGHT))
-    image.putpixel((4, 4), rgba(DIM))
-    return image
+    """One 16x16 shipping frame of the road wheel, drawn by the module that owns its pixels."""
+    import make_title_wheel_v2 as wheel
+    return wheel.build_frame(frame)
 
 
 # ---------------------------------------------------------------------------------------------------
@@ -454,7 +452,9 @@ BUST_TOP = 4
 # art sits at row 4, the face in the window band rows 8 to 15), the cloud keeps its top edge, and the parts that
 # are drawn centred in their box (wheel, exhaust, bubble) stay centred.
 FRAMES = {
-    "spr_title_wheel": (16, 16, 3, 3),
+    # spr_title_wheel is NOT here any more: its four frames are hand drawn 16x16 cells in
+    # tools/art/make_title_wheel_v2.py, art at (3, 3), already the shipping size and position
+    # (card t_2186fd41). A FRAMES entry would composite them a second time at (3, 3).
     # spr_title_exhaust is NOT here: its four frames are hand drawn 16x16 cells in
     # tools/art/make_title_exhaust_v2.py and are already the shipping size and position (card t_474cde50).
     "spr_title_konrad": (16, 16, 2, BUST_TOP),
@@ -696,7 +696,7 @@ LAYER_SHEETS = ("spr_title_cloud", "spr_title_exhaust")
 # title sp1's three entries by tools/art/make_title_zander_v2.py because a 16x16 frame is read whole by
 # palette_synergy R6. The scene pass is a no-op on these entries: every one of them is already in the row
 # the sheet is held to, so nothing the band plan owns moves.
-CHIP_DRAWN_SHEETS = ("spr_title_exhaust", "spr_title_zander")
+CHIP_DRAWN_SHEETS = ("spr_title_exhaust", "spr_title_zander", "spr_title_wheel")
 
 
 def save_strip(name: str, frames: list[Image.Image], fps: float, sprite_dir: str) -> str:

@@ -209,23 +209,38 @@ def write_star_sprite(palette) -> int:
     # the arms are the mid entry, and the tips facing away from the light carry the dark entry, so the
     # twinkle has a lit side and a shaded side instead of being one flat colour. Three entries is what a
     # sprite palette holds, so this is the whole budget the star has and it now spends all of it.
-    arms = ((1, 0), (-1, 0), (0, 1), (0, -1))
-    wide = ((2, 0), (-2, 0), (0, 2), (0, -2), (1, 1), (-1, -1), (1, -1), (-1, 1))
-    # Frame 0: the star at rest, one lit pixel with its shadow on the side away from the light.
+    #
+    # Card t_f513cc5d (AUTO-SPRITE-NEXT): the mid entry is no longer the largest fill of any frame. Frames 1
+    # and 2 used to hang their whole cross in $10, which reads 2.19:1 on the live sky $11 and sits 0
+    # luminance rows from it, so RULE 0 point 2 failed on the two lit frames (measured by
+    # tools/palette_synergy.py on output/cloud_sky_ground.png, knowledge/PALETTE-RULINGS-2026-11-12.md
+    # section 9). The lit side of the figure now takes $20, which reads 3.92:1 on $11, the away side keeps
+    # $10 as its second tone and the shaded tips keep $0C, so the body of every frame clears the sky.
+    # Frame 0: the star at rest, a lit glint with its shadow on the side away from the light.
     put(0, 0, 0, bright)
+    put(0, 0, -1, bright)
     put(0, 1, 1, dark)
-    # Frame 1: a 3x3 plus, core lit, arms mid, the underside dark.
+    # Frame 1: a 3x3 plus, core and lit arms bright, the away arms mid, the underside dark.
     put(1, 0, 0, bright)
-    for dx, dy in arms:
-        put(1, dx, dy, dim)
+    put(1, 0, -1, bright)
+    put(1, -1, 0, bright)
+    put(1, 0, 1, dim)
+    put(1, 1, 0, dim)
     put(1, 1, 1, dark)
     put(1, 2, 1, dark)
-    # Frame 2: the wide four point star, the widest the frame holds.
+    # Frame 2: the wide four point star, the widest the frame holds, lit side bright, away side mid.
     put(2, 0, 0, bright)
-    for dx, dy in arms + wide:
-        put(2, dx, dy, dim)
-    put(2, 0, 1, bright)
-    put(2, 1, 0, bright)
+    put(2, 0, -1, bright)
+    put(2, 0, -2, bright)
+    put(2, -1, 0, bright)
+    put(2, -2, 0, bright)
+    put(2, -1, -1, bright)
+    put(2, 1, -1, bright)
+    put(2, 0, 1, dim)
+    put(2, 0, 2, dim)
+    put(2, 1, 0, dim)
+    put(2, 2, 0, dim)
+    put(2, -1, 1, dim)
     for dx, dy in ((1, 1), (2, 1), (1, 2)):
         put(2, dx, dy, dark)
     strip = enforce_star_palette(strip)

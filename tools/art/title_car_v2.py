@@ -139,9 +139,48 @@ ARCH_CENTRE_Y = 27
 
 # The wheels, 8x8, sitting in the arches with the tyre bottom on row 31. The wheel lives entirely in
 # the bottom tile row band, so the spokes never reach the band that carries the lights.
+#
+# Card t_92c61390, 2026-11-14: this constant pair used to be a comment that the code did not keep. build_wheel
+# made a 10x10 disc at WHEEL_PLACE and the sheet is 32 rows tall, so a wheel placed at y 24 ran to row 33 and
+# rows 32 and 33 were cut off by the file edge: the tyre had no bottom edge at all, and it was 2 px wider than
+# the 8 px arch it sits in, so tyre and arch were one SHADOW mass with no boundary and no bottom outline. Both
+# EYE round 12 reviewers read that as the weakest part of the car ("orphan pixels at the tire wells", "missing
+# bottom outlines", "broken little crosses floating beneath it"). The wheel is now hand authored on the 8x8
+# grid the constants describe, one character per pixel, and the tyre bottom lands on row 31 inside the file.
 WHEEL_W = 8
 WHEEL_H = 8
 WHEEL_PLACE = [(10, 24), (42, 24)]
+
+# One grid per phase, the tyre bottom on row 31. Rows 0 and 1 are transparent because the sill and the arch
+# already cover them; drawing there put wheel pixels on the body's bottom edge.
+#   .  transparent    g  SHADOW, the tyre    T  DARK, the rim and the tread    W  BODY, the hub
+# The DARK ring is what makes the tyre read. The arch behind it is SHADOW, so a SHADOW tyre on a SHADOW arch
+# had no boundary; SP-025 asks for the outline on the side the ground is, and the road is under the tyre, so
+# the ring closes all the way round and the tyre separates from the arch by a palette step (SP-030).
+# The hub is the only light mass on the wheel: one connected 2x2. The old art drew four three pixel spokes,
+# and at this size they landed as 9 to 10 scattered light pixels, which is the noise both reviewers named.
+# The tyre stays on SHADOW and not on DARK, which is the budget decision above: the ring is 16 px per wheel
+# against the body's 386 px, so the largest fill is still the body and palette_synergy still reads $20.
+WHEEL_SHAPE = (
+    "........",
+    "........",
+    "..TTTT..",
+    ".TggggT.",
+    "TggWWggT",
+    "TggWWggT",
+    ".TggggT.",
+    "..TTTT..",
+)
+
+# The roll: two DARK tread marks stepping round the tyre, one step per phase, so the wheel turns instead of
+# flickering. Every mark is a tyre pixel, so a phase can never add a colour to a tile or leave the tyre.
+WHEEL_TREAD = (
+    ((2, 3), (5, 6)),
+    ((5, 3), (2, 6)),
+    ((2, 3), (5, 3)),
+)
+
+WHEEL_ENTRY = {".": None, "g": SHADOW, "T": DARK, "W": BODY}
 
 # The B pillar, in body colour, between the two side windows.
 B_PILLAR = (26, 28)
@@ -269,32 +308,27 @@ def build_body(colours) -> Image.Image:
 
 
 def build_wheel(colours, phase: int = 0) -> Image.Image:
-    """A wheel seen from the side: a green tyre with light spokes and a light hub.
+    """A wheel seen from the side, hand authored on the 8x8 grid, with the tyre bottom on row 31.
 
-    ``phase`` turns the spokes in steps of a sixth of a turn, so a sequence of phases reads as the wheel
-    rolling. The tyre and the hub never move, and every spoke pixel stays inside the wheel, which is the
-    bottom tile row band.
+    The old wheel was a 10x10 disc drawn from Python trig: a green circle, four three pixel spokes and a 2x2
+    hub. Placed at y 24 on a 32 row sheet, its bottom two rows fell off the file, so the tyre had no bottom
+    edge, and its right column sat 2 px inside the arch, which is the same SHADOW, so the whole wheel read as
+    one green mass under the sill with scattered light specks in it. Both EYE round 12 reviewers named exactly
+    that. The grid below is hand authored: a SHADOW tyre in a closed DARK ring, one connected 2x2 BODY hub, and
+    two DARK tread marks that step round the tyre so a sequence of phases still reads as the wheel rolling. The
+    tyre stays on SHADOW and the ring is the only DARK on it, which keeps the body the largest fill.
     """
-    image = Image.new("RGBA", (10, 10), (0, 0, 0, 0))
+    image = Image.new("RGBA", (WHEEL_W, WHEEL_H), (0, 0, 0, 0))
     px = image.load()
 
-    def put(x: int, y: int, index: int) -> None:
-        if 0 <= x < 10 and 0 <= y < 10:
-            px[x, y] = colours[index]
-
-    for y in range(10):
-        for x in range(10):
-            if math.hypot(x - 4.5, y - 4.5) <= 4.8:
-                put(x, y, SHADOW)
-    # The spokes, four of them, and the hub.
-    for spoke in range(4):
-        angle = spoke * math.pi / 2 + phase * math.pi / 6
-        dx = math.cos(angle)
-        dy = math.sin(angle)
-        for step in range(1, 4):
-            put(int(round(4.5 + dx * step)), int(round(4.5 + dy * step)), BODY)
-    for x, y in [(4, 4), (5, 4), (4, 5), (5, 5)]:
-        put(x, y, BODY)
+    for y, row in enumerate(WHEEL_SHAPE):
+        for x, symbol in enumerate(row):
+            entry = WHEEL_ENTRY[symbol]
+            if entry is None:
+                continue
+            px[x, y] = colours[entry]
+    for x, y in WHEEL_TREAD[phase % len(WHEEL_TREAD)]:
+        px[x, y] = colours[DARK]
     return image
 
 
