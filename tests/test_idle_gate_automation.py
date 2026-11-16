@@ -4,11 +4,15 @@ Measured on this host on 2026-10-26: codex.exe and codex-computer-use-swift.exe 
 took focus and input every 90 to 110 s, and since tools/idle_check.py measures input through GetLastInputInfo,
 four re-records were refused with "input 9 s ago" and no way to see that the input was the automation's own.
 These tests hold down the three answers that fix has to keep apart:
-  1. an automation is running: refuse, say which process, and say the input is not his (never allow on the
-     strength of the automation's own silence);
-  2. no automation is running: the tick decides, exactly as before;
+  1. an automation is running with fresh input: refuse, say which process, and say the input is not his (never allow
+     a launch on the strength of the automation's own typing);
+  2. no automation is running, or one is merely resident while the tick shows the quiet: the tick decides;
   3. the process list cannot be read: one line saying so, and the tick still decides (an unreadable list is
      not a pass and not a licence).
+
+Card t_2c64890e (2026-11-14) added row 4, because the name-only refusal cost five nights on a host where codex.exe is
+resident for days: a named automation whose own input clock has been still for the threshold is resident, not driving,
+and the gate allows the launch and prints the name.
 
 Run: python -m pytest tests/test_idle_gate_automation.py -q
 """
@@ -41,15 +45,43 @@ def load(name: str):
 def test_a_running_automation_is_refused_by_name_and_never_read_as_the_user():
     idle_check = load("idle_check")
     lines = []
-    allowed, idle = idle_check.check(idle_read=lambda: 900.0, min_idle=MIN_IDLE, say=lines.append,
+    allowed, idle = idle_check.check(idle_read=lambda: 9.0, min_idle=MIN_IDLE, say=lines.append,
                                      automation_read=lambda: ["codex.exe"])
     text = " ".join(lines)
-    assert allowed is False, "a desktop automation's own silence must never open a window"
-    assert idle == 900.0
+    assert allowed is False, "a desktop automation's own typing must never open a window"
+    assert idle == 9.0
     assert "REFUSED" in text
     assert "codex.exe" in text
     assert "not Nayil" in text, text
     assert "Stop it" in text, text
+
+
+def test_a_resident_automation_with_a_quiet_desktop_is_allowed_and_named():
+    """Card t_2c64890e: codex.exe resident for days must not make every night unrecordable.
+
+    The tick is what says whether the named process is driving: 900 s of no input at all means nothing typed, and the
+    launch goes ahead with the process named in the line so the log still shows who was on the desktop.
+    """
+    idle_check = load("idle_check")
+    lines = []
+    allowed, idle = idle_check.check(idle_read=lambda: 900.0, min_idle=MIN_IDLE, say=lines.append,
+                                     automation_read=lambda: ["codex.exe"])
+    text = " ".join(lines)
+    assert allowed is True, text
+    assert idle == 900.0
+    assert "allows the launch" in text, text
+    assert "resident" in text and "codex.exe" in text, text
+
+
+def test_a_resident_automation_with_unreadable_input_is_still_refused():
+    idle_check = load("idle_check")
+    lines = []
+    allowed, idle = idle_check.check(idle_read=lambda: None, min_idle=MIN_IDLE, say=lines.append,
+                                     automation_read=lambda: ["codex.exe"])
+    text = " ".join(lines)
+    assert allowed is False, text
+    assert idle is None
+    assert "codex.exe" in text and "REFUSED" in text, text
 
 
 def test_the_automation_reason_wins_over_the_recent_input_the_automation_produced():
@@ -88,7 +120,7 @@ def test_a_wait_does_not_outlive_a_running_automation():
     idle_check = load("idle_check")
     ticks = {"t": 0.0}
     lines = []
-    allowed, _idle = idle_check.check(idle_read=lambda: 900.0, min_idle=MIN_IDLE, wait_s=60.0, poll_s=20.0,
+    allowed, _idle = idle_check.check(idle_read=lambda: 9.0, min_idle=MIN_IDLE, wait_s=60.0, poll_s=20.0,
                                       clock=lambda: ticks["t"],
                                       sleep=lambda seconds: ticks.__setitem__("t", ticks["t"] + seconds),
                                       say=lines.append, automation_read=lambda: ["codex.exe"])
@@ -125,9 +157,10 @@ def test_the_selftest_table_carries_the_automation_rows():
     lines = []
     assert idle_check.selftest(say=lines.append) == 0
     text = "\n".join(lines)
-    assert "a desktop automation is driving" in text, text
+    assert "a desktop automation is driving with fresh input" in text, text
+    assert "a resident automation and a quiet desktop" in text, text
     assert "a process list that cannot be read still decides by the tick" in text, text
-    assert "10 of 10 decisions right" in text, text
+    assert "13 of 13 decisions right" in text, text
 
 
 def test_the_gate_does_not_widen_the_refusal_code():

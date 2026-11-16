@@ -17,7 +17,19 @@ codex-computer-use-swift.exe drive the desktop themselves, taking focus and inpu
 reporting the automation's own typing as "input 9 s ago" and no capture could open a window for hours. The gate now
 asks the process list (tasklist, /FO CSV because its table form cuts long image names) and, when one of the images in
 AUTOMATION_IMAGES or PP_AUTOMATION_IMAGES is running, refuses with that process named, because a window opened under a
-desktop automation is covered mid recording. It never allows a launch on the strength of the automation's silence.
+desktop automation is covered mid recording.
+
+Resident is not driving (card t_2c64890e, 2026-11-14). The veto above was written for an automation that holds the
+keyboard. On this host codex.exe is also merely RESIDENT for days: pid 21864 has been in every process list since
+2026-11-11, and the measured input clock on 2026-11-14 21:09 read 13,705 s, near four hours in which nothing typed or
+moved the mouse. The name-only veto refused anyway, five nights in a row, and each of those nights recorded nothing.
+So the process list is asked first and the tick decides the rest: while an automation is named AND the tick shows less
+than MIN_IDLE_S (or cannot be read at all), the gate refuses by name as before; when the tick shows MIN_IDLE_S or more,
+no process of any kind has touched the keyboard in that window, so the launch is allowed and the named process is
+printed in the line. A window that an automation opens later in a take is what play_demo's own pollution watch is for:
+it samples the rectangle's owner once a second and stops the take after two covering samples, so a woken automation
+costs a take and never a false pass. A wait is now real under a resident automation too: it takes the launch the moment
+the tick crosses the threshold instead of burning the full wait and refusing.
 
 Usage:
     python tools\\idle_check.py                    print the idle time and the verdict for 180 s
@@ -61,8 +73,11 @@ LOG_NAME = "idle_check.log"
 # 2026-10-26: codex.exe and codex-computer-use-swift.exe were running all session, took focus and input every 90 to
 # 110 s, and reset GetLastInputInfo, so the three quiet minutes never arrived and four re-records were refused with
 # a line that blamed nobody: "input 9 s ago". That input is not Nayil at the keyboard. The gate cannot tell who
-# typed from the tick alone, so it names the process instead of guessing, and refuses while one runs: a window opened
-# now would be covered by that automation mid recording, which is exactly card t_5d1a6ec4's two foreign frames.
+# typed from the tick alone, so it names the process instead of guessing: while one runs and the tick shows recent
+# input, it refuses, because a window opened now would be covered by that automation mid recording, which is exactly
+# card t_5d1a6ec4's two foreign frames. Card t_2c64890e (2026-11-14) split "running" from "driving": a name in this list
+# refuses only while the tick shows less than MIN_IDLE_S of quiet (or cannot be read), because an automation that is
+# merely resident for days used to make every night unrecordable with the desktop measured quiet for hours.
 # PP_AUTOMATION_IMAGES is a comma separated list, so the set is data and not a code change on the next host.
 AUTOMATION_IMAGES = ("codex.exe", "codex-computer-use-swift.exe")
 AUTOMATION_ENV = "PP_AUTOMATION_IMAGES"
@@ -185,6 +200,11 @@ def check(idle_read=None, min_idle: float = MIN_IDLE_S, wait_s: float = 0.0, pol
     report that as "input 9 s ago" for hours. When automation_read() names a running automation the gate refuses, says
     which process it is, and says that the input is not his; with a wait it keeps asking until the wait runs out. A
     process list that cannot be read is one line, and the tick still decides.
+
+    Card t_2c64890e (2026-11-14): the name is asked first, but the tick is what says whether the automation is DRIVING.
+    A process that is running and has left the input clock alone for min_idle seconds is resident, not driving, and the
+    launch is allowed with its name printed. Without that split a codex.exe left open for days refused every night
+    while the measured idle read 13,705 s, and no take was recorded for five nights.
     """
     reader = idle_read or idle_seconds
     reader_automation = automation_read if automation_read is not None else automation_running
@@ -198,7 +218,7 @@ def check(idle_read=None, min_idle: float = MIN_IDLE_S, wait_s: float = 0.0, pol
                 "driving the keyboard; the idle time below is what decides")
             log("process list unreadable")
             said_unreadable = True
-        if automation:
+        if automation and (idle is None or idle < min_idle):
             names = ", ".join(automation)
             waited = clock() - started
             if wait_s > 0 and waited < wait_s:
@@ -208,9 +228,9 @@ def check(idle_read=None, min_idle: float = MIN_IDLE_S, wait_s: float = 0.0, pol
                 continue
             say("P: idle gate REFUSED: a desktop automation is running (%s) and it presses keys and moves the mouse "
                 "itself, so the %.0f s of quiet cannot happen while it runs. That input is not Nayil at the keyboard; "
-                "it is why this gate kept answering 'input %s ago'. A window opened now would be covered by that "
+                "it is why this gate kept answering 'input %s'. A window opened now would be covered by that "
                 "automation mid recording. Stop it (%s), then run this again%s."
-                % (names, min_idle, "unreadable" if idle is None else "%.0f s" % idle, names,
+                % (names, min_idle, "unreadable" if idle is None else "%.0f s ago" % idle, names,
                    "" if wait_s <= 0 else ", or wait for it to exit"))
             log("refused: desktop automation %s is running (idle %s)" % (names, "unreadable" if idle is None
                                                                          else "%.0f s" % idle))
@@ -220,8 +240,11 @@ def check(idle_read=None, min_idle: float = MIN_IDLE_S, wait_s: float = 0.0, pol
             log("refused: idle time unreadable")
             return False, None
         if idle >= min_idle:
-            say("P: idle gate allows the launch: no input for %.0f s, %.0f s required" % (idle, min_idle))
-            log("allowed: idle %.0f s >= %.0f s" % (idle, min_idle))
+            resident = (" (a desktop automation is resident, %s, and it has left the input clock alone, so it is not "
+                        "driving)" % ", ".join(automation)) if automation else ""
+            say("P: idle gate allows the launch: no input for %.0f s, %.0f s required%s" % (idle, min_idle, resident))
+            log("allowed: idle %.0f s >= %.0f s%s" % (idle, min_idle,
+                                                      "" if not automation else ", resident " + ", ".join(automation)))
             return True, idle
         waited = clock() - started
         if waited >= wait_s:
@@ -286,11 +309,30 @@ def selftest(say=print) -> int:
     ok &= run("idle time unreadable", lambda: None, False, "REFUSED")
     ok &= run("override at the keyboard", quiet(3.0), True, "OVERRIDDEN", force=True)
     # Card t_5d1a6ec4: a desktop automation's own input reads exactly like Nayil at the keyboard, so the gate names it
-    # and refuses instead of reporting the automation's 90 s of typing as his.
-    ok &= run("a desktop automation is driving", quiet(600.0), False, "codex.exe",
+    # and refuses instead of reporting the automation's 90 s of typing as his. Card t_2c64890e: the name alone is not
+    # enough, because that refusal held every night while the tick measured hours of quiet; a resident automation with
+    # the tick past the threshold is allowed, and the tick unreadable is still a refusal.
+    ok &= run("a desktop automation is driving with fresh input", quiet(9.0), False, "codex.exe",
+              automation_read=lambda: ["codex.exe"])
+    ok &= run("a resident automation and a quiet desktop", quiet(600.0), True, "resident",
+              automation_read=lambda: ["codex.exe"])
+    ok &= run("a resident automation with unreadable input", lambda: None, False, "REFUSED",
               automation_read=lambda: ["codex.exe"])
     ok &= run("a process list that cannot be read still decides by the tick", quiet(600.0), True, "allows",
               automation_read=lambda: None)
+    # The resident automation's wait: the tick crosses the threshold on the second poll, and that is a launch, not a
+    # wait burned to its deadline.
+    ticks_resident = {"t": 0.0}
+    allowed, idle = check(idle_read=counting([10.0, 200.0]), wait_s=60.0, poll_s=20.0,
+                          clock=lambda: ticks_resident["t"],
+                          sleep=lambda seconds: ticks_resident.__setitem__("t", ticks_resident["t"] + seconds),
+                          say=lambda line: None, automation_read=lambda: ["codex.exe"])
+    resident_wait_ok = allowed is True and idle == 200.0
+    ok &= resident_wait_ok
+    rows.append(("a resident automation's wait takes the launch", resident_wait_ok,
+                 "allowed=%r idle=%r" % (allowed, idle)))
+    say("P: selftest %-6s %-44s" % ("PASS" if resident_wait_ok else "FAIL",
+                                    "a resident automation's wait takes the launch"))
     # The wait: the clock is fake and each poll advances it, so the loop gives up at the deadline instead of sleeping.
     ticks = {"t": 0.0}
 

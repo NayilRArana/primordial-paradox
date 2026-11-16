@@ -92,9 +92,11 @@ primary screen. --sound is for an audio proof, --show leaves the window where it
 
 The wait (card t_688422b1): the bare command asks the gate for up to IDLE_WAIT_S (900 s) instead of taking the first
 refusal, so a night that finds the desktop busy holds its one attempt rather than recording nothing. That is patience
-and not a way round the gate: while codex.exe or codex-computer-use-swift.exe is running the gate keeps refusing, wait
-or no wait, because a window opened under a desktop automation is covered mid take. `--idle-wait 0` restores the old
-skip at once, which is what a person who wants the attempt to fail fast should pass.
+and not a way round the gate: while codex.exe or codex-computer-use-swift.exe is DRIVING (input inside the three quiet
+minutes) the gate keeps refusing, wait or no wait, because a window opened under a desktop automation is covered mid
+take. A resident automation that has left the input clock alone no longer blocks the launch (card t_2c64890e), and the
+wait now takes the launch the moment the clock crosses the threshold instead of burning 900 s and refusing.
+`--idle-wait 0` restores the old skip at once, which is what a person who wants the attempt to fail fast should pass.
 
 Portable import (card PINE-HONEST, 2026-10-24): the two modules this tool draws and launches with,
 tools\\capture_title.py and tools\\pp_launch.py, import ctypes.wintypes at their own line 39 and line 41, which raises
@@ -217,9 +219,11 @@ NARRATION_KEYS = ("narrator", "narration", "narrator_text", "voiceover", "voice_
 # defeats it. So the bare command now holds the launch for this long, asking every tools\idle_check.py POLL_S, and a
 # quiet minute is taken the moment it arrives. 900 s is the longest a night can be held without spoiling the
 # submission date: the gate's own three quiet minutes plus room for an automation to finish what it is doing. The gate
-# still refuses while codex.exe or codex-computer-use-swift.exe runs, wait or no wait (tools\idle_check.py:201-217),
-# so this buys patience and never a covered take; --idle-wait 0 asks for the old skip at once, and --force is still
-# the human override.
+# still refuses while codex.exe or codex-computer-use-swift.exe is DRIVING, wait or no wait (tools\idle_check.py:203-236),
+# so this buys patience and never a covered take. Card t_2c64890e (2026-11-14): a resident automation that has left the
+# input clock alone is no longer a refusal, because that refusal recorded nothing for five nights while the tick read
+# hours of quiet; the wait therefore now takes the launch the moment the tick crosses the threshold.
+# --idle-wait 0 asks for the old skip at once, and --force is still the human override.
 IDLE_WAIT_S = 900.0
 
 # The frames the run is checked on, as a share of the recording: the start, then every sixth. Sampling on
