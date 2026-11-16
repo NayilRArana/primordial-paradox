@@ -61,23 +61,6 @@ check_data: all files pass
 check_cleanroom: no study reference, no foreign name, no foreign phrase, every module reviewed
 ```
 
-## The tagged tree and tonight's finished cut
-
-A reader does not have to take the two rows above on trust, and the 180 second video beside them is measured, not claimed.
-
-* The tag `nightly-clean-2026-11-15` is an annotated tag on a commit whose parent is `461cb9a5`, and the tag's tree is that commit plus this page. The checkout behind it carries 1114 uncommitted paths from other lanes and none of them is in the tag: `git archive nightly-clean-2026-11-15` extracts 2,515 files, the same count `git ls-tree -r --name-only nightly-clean-2026-11-15` prints, so the tag's tree is exactly the commit and nothing from the dirty working tree.
-* Both data gates were run inside that export, not in the dirty checkout, and both exit 0. check_cleanroom scans 811 files there against the 905 it scans in the checkout, which is the uncommitted paths it is not looking at:
-
-```text
-check_data: all files pass
-check_cleanroom: 811 files scanned for 26 names and 12 phrases, 48 GML modules, 0 awaiting review, 3 downloaded map file(s) skipped, 121 OSM place name(s) exempt in 1 generated geography card(s)
-check_cleanroom: no study reference, no foreign name, no foreign phrase, every module reviewed
-```
-
-* `output/demo/nightly-2026-11-15d.mp4` is the finished cut, built 2026-11-15 21:21 local: 180.000 s, 10,800 frames, 768 by 784 at 60 fps, h264 with an aac track, 17,217,704 bytes. `python tools/demo_cut_180.py --verify --video output/demo/nightly-2026-11-15d.mp4 --workdir <scratch>` exits 0 with 49 rows PASS and 0 FAIL, and writes `output/demo/nightly-2026-11-15d_verify.json`. The rows include the six captions, the four S5 plates, thirteen title card lines up at 1.0 s and 15.8 s, CONTINUE dim on the boot menu, 0 blue band pixels at 15.0 s, and the narrator above the ducked game track in all six windows.
-* `tools/demo_cut_180.py --build` is the tool that assembles the six shots to the 180.00 s total; `tools/play_demo.py` is the recorder that produces source footage, and `knowledge/DEMO-AUTHORITY-RULING-2026-11-12.md` section 2 is why the cut, and not a recorder take, is the shipping video. The build and the verify above are one pass each on the same inputs, in the same minute.
-* The gap the tag does not close, named rather than hidden: the cut above needs six paths the tag does not carry, `tools/video_builder.py`, `tools/demo_cut_180.py`, `tools/demo_voiceover.py` (untracked), `data/slice.json`, `data/demo/narration.json` and `knowledge/DEMO-SCRIPT.md`, all edited by other lanes on 2026-11-15. A rebuild from the tag alone therefore draws the older five second card and no voice over; the next commit that carries those six paths makes the cut reproducible from a tag.
-
 ## NES limits, enforced in code
 
 The 8 bit look is a hardware budget, not a filter. The chip draws 256 by 240 pixels out of 8 by 8 pixel tiles and 16 by 16 pixel attribute areas, and shows at most 25 colours at once. Every number below is read out of the file it names when this section is written, so the page cannot drift away from the code.
@@ -145,6 +128,23 @@ The reference Meta art run is the title backdrop. Its small files are tracked in
 
 The prose on this page is written by `muse-spark-1.3` through `tools/readme_meta.py`; the table above, the pass lines under it, the limits section, the bridge section, the receipts section, the receipts picture and the badges are written by `python tools/readme_badges.py --write`. Each tool keeps out of the other's region of the file.
 <!-- README-BADGES:END -->
+
+## The tagged tree and tonight's finished cut
+
+This section sits outside the block the badge tool owns, so `python tools/readme_badges.py --write` rewrites its own region and leaves this one alone. A reader does not have to take the two PASS rows above on trust, and the 180 second video beside them is measured, not claimed.
+
+* The tag `nightly-clean-2026-11-15` is an annotated tag on a commit whose parent is `461cb9a5`, and the tag's tree is that commit plus this page. The checkout behind it carries 1114 uncommitted paths from other lanes and none of them is in the tag: `git archive nightly-clean-2026-11-15` extracts 2,515 files, the same count `git ls-tree -r --name-only nightly-clean-2026-11-15` prints, so the tag's tree is exactly the commit and nothing from the dirty working tree.
+* Both data gates were run inside that export, not in the dirty checkout, and both exit 0. check_cleanroom scans 811 files there against the 905 it scans in the checkout, which is the uncommitted paths it is not looking at:
+
+```text
+check_data: all files pass
+check_cleanroom: 811 files scanned for 26 names and 12 phrases, 48 GML modules, 0 awaiting review, 3 downloaded map file(s) skipped, 121 OSM place name(s) exempt in 1 generated geography card(s)
+check_cleanroom: no study reference, no foreign name, no foreign phrase, every module reviewed
+```
+
+* `output/demo/nightly-2026-11-15d.mp4` is the finished cut, built 2026-11-15 21:21 local: 180.000 s, 10,800 frames, 768 by 784 at 60 fps, h264 with an aac track, 17,217,704 bytes. `python tools/demo_cut_180.py --verify --video output/demo/nightly-2026-11-15d.mp4 --workdir <scratch>` exits 0 with 49 rows PASS and 0 FAIL, and writes `output/demo/nightly-2026-11-15d_verify.json`. The rows include the six captions, the four S5 plates, thirteen title card lines up at 1.0 s and 15.8 s, CONTINUE dim on the boot menu, 0 blue band pixels at 15.0 s, and the narrator above the ducked game track in all six windows.
+* `tools/demo_cut_180.py --build` is the tool that assembles the six shots to the 180.00 s total; `tools/play_demo.py` is the recorder that produces source footage, and `knowledge/DEMO-AUTHORITY-RULING-2026-11-12.md` section 2 is why the cut, and not a recorder take, is the shipping video. The build and the verify above are one pass each on the same inputs, in the same minute.
+* The gap the tag does not close, named rather than hidden: the cut above needs six paths the tag does not carry, `tools/video_builder.py`, `tools/demo_cut_180.py`, `tools/demo_voiceover.py` (untracked), `data/slice.json`, `data/demo/narration.json` and `knowledge/DEMO-SCRIPT.md`, all edited by other lanes on 2026-11-15. A rebuild from the tag alone therefore draws the older five second card and no voice over; the next commit that carries those six paths makes the cut reproducible from a tag.
 
 ## Where the code lives
 
