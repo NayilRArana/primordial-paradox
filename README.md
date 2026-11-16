@@ -1,6 +1,8 @@
 # Primordial Paradox
 
-You play a retro role playing game in the style of the 8-bit NES, an old Nintendo console. You meet Greek gods reincarnated in modern England.
+You play a retro role playing game in the style of the 8-bit NES, an old Nintendo console.
+
+You meet Greek gods reincarnated in modern England.
 
 You win fights by talking as well as by hitting.
 
@@ -10,11 +12,16 @@ A hurricane is battering Southampton's Town Quay. Percy, the reincarnation of Po
 
 Zander (Zeus), Konrad (Kronos) and Hadrian (Hades) have to stop them so they return to their usual selves.
 
-Talk to an enemy and answer well to fill its MERCY meter, which measures forgiveness, then choose SPARE, which lets it live. Or take its HP, which means health, to zero. Then it disintegr
+You can stop an enemy in two ways.
+
+* Talk to an enemy and answer well to fill its MERCY meter, which measures forgiveness, then choose SPARE, which lets it live.
+* Take its HP to zero. Then it disintegr
 
 ## Play it
 
-Download the hackathon repository at https://github.com/NayilRArana/primordial-paradox-hackathon, which holds the project files. Open the `play` folder. Double-click `PrimordialParadox.exe` (Windows, nothing to install).
+Download the hackathon repository at https://github.com/NayilRArana/primordial-paradox-hackathon, which holds the project files.
+
+Open the `play` folder. Double-click `PrimordialParadox.exe` (Windows, nothing to install).
 
 Controls:
 
@@ -26,7 +33,7 @@ Controls:
 
 ## How it is built
 
-The game is a GameMaker project at 256 by 240 pixels. GameMaker is the game engine.
+The game is a GameMaker project at 256 by 240 pixels.
 
 Python is used only for tooling:
 - the NES picture chip gate (`tools/nes_check.py`), which checks image limits
@@ -35,7 +42,7 @@ Python is used only for tooling:
 - the art and music pipelines, which prepare assets
 - the build scripts, which assemble the release
 
-The music is original chiptune, simple retro game music, composed with the counterpoint toolchain in `tools/counterpoint/`.
+The music is original chiptune, simple retro game music. It was composed with the counterpoint toolchain in `tools/counterpoint/`.
 
 Meta's `muse-spark-1.3` answers the TALK box and judges dialogue. Its answers are recorded in `data/ai_cache` so the game plays offline.
 
@@ -117,7 +124,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools/run.ps1
 
 The credits say a Meta model wrote the scenes and judged the TALK box, and the sections above say which files call it. This is where the numbers behind those credits are receipted, so a reader re-reads a source instead of believing a sentence:
 
-* `data/receipts/meta_receipts.jsonl` is the ledger: 31 receipt(s), measured 14, computed 11, inferred 6. Every line names the source file, the locator inside it and that file's sha256.
+* `data/receipts/meta_receipts.jsonl` is the ledger: 32 receipt(s), measured 14, computed 11, inferred 7. Every line names the source file, the locator inside it and that file's sha256.
 * `tools/receipts.py` writes the receipts, and its three labels are the only ones allowed: measured is a value read out of a committed file and re-hashable from it, computed is arithmetic over numbers measured in the same ledger, and inferred means no file records the value and the receipt says so in words.
 * `tools/check_receipts.py` is the verifier. It exits 0 only when every receipt resolves, and a receipt whose source changed after it was written is a NOTE that asks for a re-issue rather than a pass. Run it with no argument and it re-reads the newest take verify file that carries a `meta_numbers` block, one number at a time.
 * The picture below is drawn from those ledger rows by `python tools/readme_badges.py --write`, so it shows the receipts the file holds and cannot show one it does not. `--verify` refuses the page when the picture is missing or was drawn for a ledger of another size, and refuses the sentence above when the label counts moved. An edit inside one line keeps that size, so the picture follows the next `--write` rather than the page.
@@ -131,9 +138,9 @@ The prose on this page is written by `muse-spark-1.3` through `tools/readme_meta
 
 ## The tagged tree and tonight's finished cut
 
-This section sits outside the block the badge tool owns, so `python tools/readme_badges.py --write` rewrites its own region and leaves this one alone. A reader does not have to take the two PASS rows above on trust, and the 180 second video beside them is measured, not claimed.
+This section sits outside the block the badge tool owns. `python tools/readme_badges.py --write` rewrites its own region and leaves this one alone. You do not have to take the two PASS rows above on trust, and the 180 second video beside them is measured, not claimed.
 
-* The tag `nightly-clean-2026-11-15` is an annotated tag on a commit whose parent is `461cb9a5`, and the tag's tree is that commit plus this page. The checkout behind it carries 1114 uncommitted paths from other lanes and none of them is in the tag: `git archive nightly-clean-2026-11-15` extracts 2,515 files, the same count `git ls-tree -r --name-only nightly-clean-2026-11-15` prints, so the tag's tree is exactly the commit and nothing from the dirty working tree.
+* The tag `nightly-clean-2026-11-15` is an annotated tag on a commit whose parent is `461cb9a5`, and the tag's tree is that commit plus this page. The checkout behind it carries 1114 uncommitted paths from other lanes and none of them is in the tag. `git archive nightly-clean-2026-11-15` extracts 2,515 files, the same count `git ls-tree -r --name-only nightly-clean-2026-11-15` prints, so the tag's tree is exactly the commit and nothing from the dirty working tree.
 * Both data gates were run inside that export, not in the dirty checkout, and both exit 0. check_cleanroom scans 811 files there against the 905 it scans in the checkout, which is the uncommitted paths it is not looking at:
 
 ```text
@@ -146,9 +153,15 @@ check_cleanroom: no study reference, no foreign name, no foreign phrase, every m
 * `tools/demo_cut_180.py --build` is the tool that assembles the six shots to the 180.00 s total; `tools/play_demo.py` is the recorder that produces source footage, and `knowledge/DEMO-AUTHORITY-RULING-2026-11-12.md` section 2 is why the cut, and not a recorder take, is the shipping video. The build and the verify above are one pass each on the same inputs, in the same minute.
 * The gap the tag does not close, and the commit that does close it. The cut above needs seven paths the tag does not carry, and `HEAD` now carries every one of them: `tools/video_builder.py` and `data/slice.json`, which draw and hold the opaque 16.00 s card, landed in `ee1e9adb`; `tools/demo_cut_180.py`, `tools/demo_overlay.py` with its S5 verdict window, and the two tests that read them landed in `f31a8226`; `tools/demo_voiceover.py`, `data/demo/narration.json`, `knowledge/DEMO-SCRIPT.md` section 12 and `tests/test_demo_narration.py` landed in `ce8e2def`. `git archive HEAD` extracts 2,519 files, and a build from that export reads nothing in the working tree: `python tools/demo_cut_180.py --build --video output/demo/nightly-2026-11-15e.mp4` and `--verify` on the result both exit 0, 24 rows ok and 0 failed, at 180.000 s, 10,800 frames, 768 by 784 at 60 fps and 16,937,739 bytes, with `output/demo/nightly-2026-11-15e_verify.json` written beside it. The take the 2026-11-16 judge panel scored, `output/demo/nightly-2026-11-15.mp4`, is not overwritten.
 
+
+
 ## The AI verdict on screen
 
-The TALK turns in the Morgan fight are answered out of `data/meta_bake.json`, which records `muse-spark-1.3` as the model, and the demo's fifth shot says so on the screen itself rather than in a caption. From 1:18.00 to 1:50.00 one NES window sits in the strip of battle frame between the enemy plate and the party panel, so the enemy's HP and MERCY bars and the party line stay visible behind it, and every word in it is read out of the record at draw time:
+TALK turns in the Morgan fight come from `data/meta_bake.json`. That file records `muse-spark-1.3` as the model.
+
+The demo's fifth shot shows this on the screen itself, not in a caption.
+
+From 1:18.00 to 1:50.00 one NES window sits in the strip of battle frame between the enemy plate and the party panel. The enemy's HP and MERCY bars and the party line stay visible behind it. Every word in it is read out of the record at draw time:
 
 * the model, by the display name `data/credits.json` prints for the bake's own model id, so the name on the frame and the name in the credits are one string read from one place;
 * the decision, as the effects the three Morgan rows record, checked against the verdict map in `data/talk/sailor_judge.json`, and said in words to be fallback rows, because that is what the bake holds for them and a label that said otherwise would be a claim about a call never made;
@@ -159,11 +172,18 @@ The picture below is frame 6,300 of the 180 second take built on 2026-11-16 and 
 
 ![the S5 AI verdict window](docs/s5_verdict_box.png)
 
-`python tools/demo_overlay.py --shot S5 --frame IN.png --out OUT.png --verdict-box --only ""` draws the window and `--check --verdict-box` measures it: the window is a real filled rectangle, every line carries ink the blanked control does not, the three ids are the receipts the ledger holds, and both battle HUD bands are compared with the same frame drawn without the window and read unchanged.
+`python tools/demo_overlay.py --shot S5 --frame IN.png --out OUT.png --verdict-box --only ""` draws the window.
+
+`--check --verdict-box` measures it:
+
+- The window is a real filled rectangle.
+- Every line carries ink the blanked control does not.
+- The three ids are the receipts the ledger holds.
+- Both battle HUD bands are compared with the same frame drawn without the window and read unchanged.
 
 ## Where the code lives
 
-This folder is the development tree, the working files.
+This folder is the working files. It is the development tree.
 
 The submission splits into two public repositories:
 
@@ -174,6 +194,6 @@ The submission splits into two public repositories:
 
 See `LICENCE` and `CREDITS.md`.
 
-This README is written by a Meta model, an automated text tool, through `tools/readme_meta.py`. `tests/test_readme_meta.py` fails if it is edited by hand.
+A Meta model, an automated text tool, wrote this README through `tools/readme_meta.py`. `tests/test_readme_meta.py` fails if it is edited by hand.
 
-<!-- readme-author: muse-spark-1.3 body-sha256: 6d4bfe4a5a1dbe77dac1cbc682831b6c2e4afa6f668d45f493fec33fa46cb57e -->
+<!-- readme-author: muse-spark-1.3 body-sha256: 95c918e47c57bffe372d76f93e1d114a7fea487d578fc8c7a67a249fc6b88244 -->
