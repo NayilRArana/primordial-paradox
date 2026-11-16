@@ -73,6 +73,27 @@ def sample_lines():
                 if "PP audio:" in line and not line.lstrip().startswith("#")]
 
 
+@pytest.fixture(scope="module")
+def levels():
+    """The gains the bus can actually play an effect at, parsed from pp_audio.gml rather than typed here.
+
+    Four paths and four numbers: pp_audio_blip multiplies the effect level by the blip level, pp_audio_sfx plays
+    at the effect level, pp_audio_play leaves the argument off (the manual says 1), and pp_audio_wind_step holds
+    its one looping instance at the ambience level. The wind is the newest of them (card t_321826d8) and is the
+    reason this list is parsed: a typed list is how a row gets bent to fit a number the game never plays.
+    """
+    text = open(AUDIO_GML, "r", encoding="utf-8").read()
+    macros = {}
+    for name in ("PP_AUDIO_GAIN_SFX", "PP_AUDIO_GAIN_BLIP", "PP_AUDIO_GAIN_WIND"):
+        match = re.search(r"^#macro\s+%s\s+([0-9.]+)\s*$" % name, text, re.M)
+        assert match is not None, "%s is not in pp_audio.gml" % name
+        macros[name] = float(match.group(1))
+    return (round(macros["PP_AUDIO_GAIN_SFX"] * macros["PP_AUDIO_GAIN_BLIP"], 6),
+            round(macros["PP_AUDIO_GAIN_SFX"], 6),
+            1.0,
+            round(macros["PP_AUDIO_GAIN_WIND"], 6))
+
+
 class TestTheGrammar:
     def test_every_message_site_in_the_bus_has_a_row(self, the_map):
         text = open(AUDIO_GML, "r", encoding="utf-8").read()
@@ -98,10 +119,29 @@ class TestTheGrammar:
         assert len(patterns) == len(set(patterns)), "two event rows share one pattern, so one can never win"
 
     def test_every_row_says_what_a_renderer_does(self, the_map):
-        allowed = {"music_start", "music_stop", "music_gain", "music_pause", "music_resume", "sfx", "none"}
+        allowed = {"music_start", "music_stop", "music_gain", "music_pause", "music_resume",
+                   "ambience_start", "ambience_gain", "ambience_stop", "sfx", "none"}
         for row in the_map["events"]:
             assert row["sound"] in allowed, "%s has sound %r" % (row["type"], row["sound"])
             assert row["meaning"], "%s has no meaning" % row["type"]
+
+    def test_the_map_cites_the_line_the_gml_writes_today(self, the_map, tool):
+        # The map's `source` is a gml line number, and it used to be TYPED into the event table: the wind added
+        # 90 lines above half of it and 26 rows pointed at source code that wrote no message at all. The line is
+        # resolved from the row's own wording now, so this pins the shipped map to what the gml says today
+        # without pinning it to where in the file the message sits.
+        sites = tool.message_sites()
+        assert len(sites) == len(re.findall(r'show_debug_message\("PP audio:',
+                                            open(AUDIO_GML, "r", encoding="utf-8").read()))
+        table = {row["type"]: row for row in tool.EVENTS}
+        assert set(table) == {row["type"] for row in the_map["events"]}, \
+            "the map and the event table name different events (re-run --build)"
+        for row in the_map["events"]:
+            lines, problems = tool.resolve_sites(table[row["type"]], sites)
+            assert not problems, problems
+            want = ", ".join("game/scripts/pp_audio/pp_audio.gml:%d" % line for line in lines)
+            assert row["source"] == want, \
+                "%s: the map says %s and the gml writes it at %s" % (row["type"], row["source"], want)
 
     def test_a_line_maps_to_one_row_and_the_sample_has_no_orphans(self, tool, sample_lines):
         assert sample_lines, "the sample log carries no PP audio line"
@@ -129,13 +169,31 @@ class TestTheFiles:
             manifest = {row["id"] for row in json.load(handle)["cues"]}
         assert set(the_map["effects"]) == manifest
 
-    def test_every_effect_ogg_is_on_disk_and_has_a_gain(self, the_map):
+    def test_every_effect_ogg_is_on_disk_and_has_a_gain(self, the_map, levels):
         for cue_id, row in the_map["effects"].items():
             path = os.path.join(ROOT, row["ogg"])
             assert os.path.isfile(path), "%s names %s, which is not in the tree" % (cue_id, row["ogg"])
             assert row["ogg"].startswith("assets/audio/sfx/"), "%s does not point at the delivered ogg" % cue_id
-            assert row["gain"] in (0.45, 0.9, 1.0), "%s has gain %r" % (cue_id, row["gain"])
+            assert row["gain"] in levels, \
+                "%s has gain %r, which is not one of the levels the bus plays at %s" % (cue_id, row["gain"], levels)
             assert row["gain_why"], "%s has a gain with no reason" % cue_id
+
+    def test_the_wind_row_carries_the_ambience_level(self, the_map):
+        # The level the wind starts at is written in three places (the gml macro, data/audio.json's sounds row,
+        # which tests/test_storm_wind.py pins to the macro) and now a fourth: this map's effects row. It is a
+        # GENERATED copy, so it must be the same number, and it must not be the one-shot effect level a
+        # regeneration would have guessed for an id that no scene command plays.
+        text = open(AUDIO_GML, "r", encoding="utf-8").read()
+        wind_match = re.search(r"^#macro\s+PP_AUDIO_GAIN_WIND\s+([0-9.]+)\s*$", text, re.M)
+        sfx_match = re.search(r"^#macro\s+PP_AUDIO_GAIN_SFX\s+([0-9.]+)\s*$", text, re.M)
+        assert wind_match is not None and sfx_match is not None
+        wind = float(wind_match.group(1))
+        sfx = float(sfx_match.group(1))
+        row = the_map["effects"]["wind_quay"]
+        assert row["gain"] == round(wind, 6), "the wind row says %r and the macro says %r" % (row["gain"], wind)
+        assert row["gain"] != sfx, "the wind row carries the one-shot effect level, which the game never plays it at"
+        assert row["loop_played"] is True, "the wind is the one effect the bus holds, and the map must say so"
+        assert "pp_audio_wind_step" in row["gain_why"], "the wind's gain must name the function it was read from"
 
     def test_the_blips_are_the_half_level_ones(self, the_map):
         for cue_id, row in the_map["effects"].items():

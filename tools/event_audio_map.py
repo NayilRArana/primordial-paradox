@@ -119,8 +119,8 @@ def ffprobe(path):
 def gml_macros():
     """The bus numbers, read from the gml so the map cannot hold a copy that drifts."""
     wanted = ("PP_AUDIO_FADE_STEPS", "PP_AUDIO_STEP_MS", "PP_AUDIO_GAIN_MUSIC", "PP_AUDIO_GAIN_SFX",
-              "PP_AUDIO_GAIN_BLIP", "PP_AUDIO_PRI_MUSIC", "PP_AUDIO_PRI_BOSS", "PP_AUDIO_PRI_SFX",
-              "PP_AUDIO_PRI_UI", "PP_AUDIO_CHANNELS")
+              "PP_AUDIO_GAIN_BLIP", "PP_AUDIO_GAIN_WIND", "PP_AUDIO_WIND_RAMP_MS", "PP_AUDIO_PRI_MUSIC",
+              "PP_AUDIO_PRI_BOSS", "PP_AUDIO_PRI_SFX", "PP_AUDIO_PRI_UI", "PP_AUDIO_CHANNELS")
     text = open(AUDIO_GML, "r", encoding="utf-8").read()
     macros = {}
     for name in wanted:
@@ -180,98 +180,138 @@ def registered_stream_leaves(data):
 #   music_gain   change the music gain from here (the theme's duck and unduck)
 #   music_pause  music is paused; silence from here until music_resume
 #   music_resume resume from the paused position, not from the file's start
+#   ambience_start  hold one looping ambience instance from here, at the printed gain
+#   ambience_gain   change the gain of the instance the bus is already holding
+#   ambience_stop   fade the held instance out over the printed ramp and stop it when the ramp ends
 #   sfx          place one effect at the bus gain for that id
 #   none         the game made no sound because of this line
+#
+# `say` is a fragment of the message exactly as pp_audio.gml writes it, and the gml line number the map cites is
+# RESOLVED from that fragment (resolve_sites), never typed. It was a typed line number until card t_321826d8: the
+# wind inserted 90 lines above half the table, every number below it went stale, and the check reported 26 of its
+# 29 problems as "gml line N is not a PP audio: message site". A fragment is wording, not the file's shape, so
+# inserting a line above a site is a non-event; --check proves each fragment lands on exactly one site and that
+# every site is claimed by exactly one row, which is a stronger statement than the count it replaces.
 EVENTS = (
-    dict(type="no_manifest", sound="none", gml=87,
+    dict(type="no_manifest", sound="none", say=('PP audio: no effect manifest at ',),
          regex=r"^PP audio: no effect manifest at .*sfx\.json, every effect stays silent$",
          meaning="the effect manifest is missing, so every effect in the run is silent"),
-    dict(type="no_cue_table", sound="none", gml=142,
+    dict(type="no_cue_table", sound="none", say=('PP audio: data/audio.json has no cues table',),
          regex=r"^PP audio: data/audio\.json has no cues table, every music cue stays silent$",
          meaning="the music table is missing, so every cue in the run is silent"),
-    dict(type="music_gain_repaired", sound="none", gml=462,
+    dict(type="music_gain_repaired", sound="none", say=('gain repaired to',),
          regex=r"^PP audio: music (\S+) gain repaired to \S+ \(it had drifted below half\)$",
          meaning="a live music instance had drifted below half the music level and was put back at the level (card MUSIC-REAL)"),
-    dict(type="focus_lost", sound="music_pause", gml=428,
+    dict(type="focus_lost", sound="music_pause", say=('focus lost, music paused',),
          regex=r"^PP audio: focus lost, music paused.*every effect stopped$",
          meaning="the window lost focus: the music is paused and every effect is stopped"),
-    dict(type="focus_back", sound="music_resume", gml=433,
+    dict(type="focus_back", sound="music_resume", say=('focus back, music resumed',),
          regex=r"^PP audio: focus back, music resumed where it stopped$",
          meaning="focus is back: the music resumes from the paused position"),
-    dict(type="theme_handed", sound="music_stop", gml=229,
+    dict(type="theme_handed", sound="music_stop", say=('title_theme handed to the fade',),
          regex=r"^PP audio: title_theme handed to the fade, the cue takes the one music source$",
          meaning="a cue is starting: the theme fades out over the bus fade and the cue takes the slot"),
-    dict(type="theme_stopping", sound="music_stop", gml=353,
+    dict(type="theme_stopping", sound="music_stop", say=('title_theme stopping over',),
          regex=r"^PP audio: title_theme stopping over (\d+) steps$",
          meaning="the theme fades out over the printed number of steps and stops"),
-    dict(type="music_stopping", sound="music_stop", gml=360,
+    dict(type="music_stopping", sound="music_stop", say=('music stopping over',),
          regex=r"^PP audio: music stopping over (\d+) steps$",
          meaning="the cue fades out over the printed number of steps and stops"),
-    dict(type="theme_stream", sound="music_start", gml=645,
+    dict(type="theme_stream", sound="music_start", say=('title_theme streaming',),
          regex=r"^PP audio: title_theme streaming (\S+), instance -?\d+, gain (-?[0-9.]+)$",
          meaning="the title theme starts from the named stream at the printed gain, looped"),
-    dict(type="theme_ducked_state", sound="none", gml=728,
+    dict(type="theme_ducked_state", sound="none", say=('dB in the state, no stream instance to turn down',),
          regex=r"^PP audio: title_theme ducked (-?[0-9.]+) dB in the state, no stream instance to turn down$",
          meaning="a duck level is recorded for the next theme start; nothing is playing to turn down"),
-    dict(type="theme_ducked", sound="music_gain", gml=736,
+    dict(type="theme_ducked", sound="music_gain", say=('dB, gain ',),
          regex=r"^PP audio: title_theme ducked (-?[0-9.]+) dB, gain (-?[0-9.]+)$",
          meaning="the theme's gain changes to the printed number right now"),
-    dict(type="theme_unducked", sound="music_gain", gml=749,
+    dict(type="theme_unducked", sound="music_gain", say=('title_theme back to full after',),
          regex=r"^PP audio: title_theme back to full after (-?[0-9.]+) dB$",
          meaning="the theme's gain goes back to the bus music level"),
-    dict(type="music_stream", sound="music_start", gml=338,
+    dict(type="music_stream", sound="music_start", say=('streaming " + _file + ", instance',),
          regex=r"^PP audio: music cue (\S+) streaming (.+), instance -?\d+, priority (-?\d+), fade (\d+) steps$",
          meaning="a music cue starts from the named file at the bus music level, looped, fading in"),
-    dict(type="music_fallback", sound="none", gml=279,
+    dict(type="music_fallback", sound="none", say=('has no OGG yet, falling back to',),
          regex=r"^PP audio: music cue (\S+) has no OGG yet, falling back to (\S+)$",
          meaning="the asked cue has no file, so the bus asked for the fallback; the next start line is the sound"),
-    dict(type="music_missing", sound="none", gml=298,
+    dict(type="music_missing", sound="none", say=('has no OGG yet, expected',),
          regex=r"^PP audio: music cue (\S+) has no OGG yet, expected (\S+), placeholder (\w+)$",
          meaning="the cue has no file where the game looks: silence, and the game plays no music here"),
-    dict(type="music_stream_failed", sound="none", gml=316,
+    dict(type="music_stream_failed", sound="none", say=('silent, audio_create_stream failed on',),
          regex=r"^PP audio: music cue (\S+) silent, audio_create_stream failed on (.+)$",
          meaning="the file is there and the stream would not open: silence"),
-    dict(type="music_no_channel", sound="none", gml=327,
+    dict(type="music_no_channel", sound="none", say=('music cue " + string(_cue) + " silent, no audio channel',),
          regex=r"^PP audio: music cue (\S+) silent, no audio channel for it$",
          meaning="no audio channel was free at the music priority: silence"),
-    dict(type="music_unknown", sound="none", gml=269,
+    dict(type="music_unknown", sound="none", say=('unknown music cue',),
          regex=r"^PP audio: unknown music cue (\S+), nothing played$",
          meaning="a cue id the table does not know: silence"),
-    dict(type="sfx_not_in_manifest", sound="none", gml=378,
+    dict(type="sfx_not_in_manifest", sound="none", say=('PP audio: sfx "',),
          regex=r"^PP audio: sfx (\S+) silent, not in sfx/sfx\.json$",
          meaning="the effect is not in the manifest: silence"),
-    dict(type="sfx_loaded", sound="none", gml=617,
+    # Card t_321826d8: the hurricane. Seven sites, one held instance, and the reason they sit above the broad
+    # "(\S+) silent, not in" row below is that a wind line is also a `<something> silent, not in sfx.json` line.
+    dict(type="wind_started", sound="ambience_start", say=('wind_quay loop started',),
+         regex=r"^PP audio: wind_quay loop started, instance (-?\d+), storm wind (\S+), gain (-?[0-9.]+)$",
+         meaning=("the hurricane starts as ONE looping instance at the printed gain (the ambience level times the "
+                  "storm wind over 100) and the bus holds it; a renderer holds it for the storm instead of playing "
+                  "the 3.7 s file once inside a 90 s one")),
+    dict(type="wind_gain", sound="ambience_gain", say=('wind_quay gain "',),
+         regex=r"^PP audio: wind_quay gain (-?[0-9.]+) at storm wind (\S+)$",
+         meaning=("the held wind's gain changes to the printed number; the line is written when the gain moves by "
+                  "a tenth, so it traces the storm rather than every step")),
+    dict(type="wind_back_up", sound="ambience_gain", say=('wind_quay back up to gain',),
+         regex=r"^PP audio: wind_quay back up to gain (-?[0-9.]+) at storm wind (\S+)$",
+         meaning=("the storm came back inside a stop ramp: the deadline is cancelled and the instance that is "
+                  "still held is ramped up, so a returning storm does not restart from its first gust")),
+    dict(type="wind_ramping_out", sound="ambience_stop", say=('wind_quay loop ramping out over',),
+         regex=r"^PP audio: wind_quay loop ramping out over (\d+) ms \((.*)\)$",
+         meaning=("the held wind fades to 0 over the printed ramp and is stopped when that ramp ends; a renderer "
+                  "fades over the same milliseconds and stops then, which is what keeps a noise loop from cutting")),
+    dict(type="wind_stopped", sound="none", say=('wind_quay loop stopped (the ramp reached 0)',),
+         regex=r"^PP audio: wind_quay loop stopped \(the ramp reached 0\)$",
+         meaning=("the ramp has reached 0 and the instance is released. The sound ended with the ramping out line, "
+                  "so placing a stop here as well would cut the fade short: this line is a verdict, not a sound")),
+    dict(type="wind_not_in_manifest", sound="none", say=('wind_quay silent, not in',),
+         regex=r"^PP audio: wind_quay silent, not in .*sfx\.json$",
+         meaning="the wind id is not in the effect manifest: no storm sound at all"),
+    dict(type="wind_no_channel", sound="none", say=('wind_quay silent, no audio channel for it',),
+         regex=r"^PP audio: wind_quay silent, no audio channel for it$",
+         meaning="no audio channel was free at the effect priority: silence where the storm should be"),
+    dict(type="sfx_loaded", sound="none", say=('loaded " + string(_entry.file)',),
          regex=r"^PP audio: (\S+) loaded (\S+) \(([0-9.]+) s, (\d+) Hz, buffer (.+)\)$",
          meaning="the effect file was read into a buffer: no sound yet, the play line is the sound"),
-    dict(type="sfx_no_file", sound="none", gml=579,
+    dict(type="sfx_no_file", sound="none", say=('silent, no file at',),
          regex=r"^PP audio: (\S+) silent, no file at (.+)$", meaning="the effect file is missing: silence"),
-    dict(type="sfx_buffer_failed", sound="none", gml=585,
+    dict(type="sfx_buffer_failed", sound="none", say=('silent, buffer_load failed on',),
          regex=r"^PP audio: (\S+) silent, buffer_load failed on (.+)$",
          meaning="the effect file would not load: silence"),
-    dict(type="sfx_length_bad", sound="none", gml=595,
+    dict(type="sfx_length_bad", sound="none", say=('silent, the measured length does not fit',),
          regex=r"^PP audio: (\S+) silent, the measured length does not fit (.+)$",
          meaning="the manifest's measured length does not fit the file: silence"),
-    dict(type="sfx_create_failed", sound="none", gml=609,
+    dict(type="sfx_create_failed", sound="none", say=('silent, audio_create_buffer_sound failed on',),
          regex=r"^PP audio: (\S+) silent, audio_create_buffer_sound failed on (.+)$",
          meaning="the buffer sound would not be created: silence"),
-    dict(type="sfx_played", sound="sfx", gml=(397, 690),
+    dict(type="sfx_played", sound="sfx", say=('PP audio: " + string(_id) + " played, instance',
+                                              'PP audio: " + string(_cue) + " played, instance'),
          regex=r"^PP audio: ([a-z0-9_]+) played, instance -?\d+$",
          meaning="one effect plays once, at the level of the bus path that asked for it"),
-    dict(type="sfx_silent_manifest", sound="none", gml=679,
+    dict(type="sfx_silent_manifest", sound="none", say=('PP audio: " + string(_cue) + " silent, not in',),
          regex=r"^PP audio: (\S+) silent, not in sfx/sfx\.json$",
          meaning="an effect the cue list knows but the manifest does not ship: silence"),
-    dict(type="cue_unknown_name", sound="none", gml=671,
+    dict(type="cue_unknown_name", sound="none", say=('PP audio: unknown cue',),
          regex=r"^PP audio: unknown cue (\S+)$", meaning="a name that is not an effect at all: silence"),
-    dict(type="room_no_cue", sound="none", gml=526,
+    dict(type="room_no_cue", sound="none", say=('names no music cue, the music in hand',),
          regex=r"^PP audio: room (\S+) names no music cue, the music in hand keeps playing$",
          meaning="the room names no cue: whatever music is playing keeps playing"),
-    dict(type="room_asked", sound="none", gml=533,
+    dict(type="room_asked", sound="none", say=('PP audio: room " + _id + " asked',),
          regex=r"^PP audio: room (\S+) asked (\S+), playing (\S+) \((started|kept)\), stream (yes|no)$",
          meaning="the room asked for a cue; the start line above or below is the sound, this line is the verdict"),
-    dict(type="fight_asked", sound="none", gml=554,
+    dict(type="fight_asked", sound="none", say=('PP audio: fight " + _id + " asked',),
          regex=r"^PP audio: fight (\S+) asked (\S+), playing (\S+) \((started|kept)\), stream (yes|no)$",
          meaning="the fight asked for a cue; the start line is the sound, this line is the verdict"),
-    dict(type="no_theme_stream", sound="none", gml=650,
+    dict(type="no_theme_stream", sound="none", say=('PP audio: no title theme stream in',),
          regex=r"^PP audio: no title theme stream in (.+)$",
          meaning="no theme stream file was found at boot: silence where the theme would be"),
 )
@@ -279,9 +319,53 @@ COMPILED = [(row, re.compile(row["regex"])) for row in EVENTS]
 
 
 def gml_lines(row):
-    """The gml line number(s) a message site lives on; sfx_played is written by two functions."""
-    value = row["gml"]
-    return tuple(value) if isinstance(value, (tuple, list)) else (value,)
+    """The gml line number(s) a row's own wording lands on, resolved from the file as it is right now."""
+    lines, _problems = resolve_sites(row)
+    return lines
+
+
+def message_sites():
+    """Every show_debug_message("PP audio: ...") site, with the statement's own text and its line number.
+
+    A message spans up to a few lines in the gml (a long concatenation is written over two or three), so a
+    site is the statement from the line that opens it through the line that closes it. The text is flattened
+    with its whitespace collapsed, because a row's fragment is wording and not layout.
+    """
+    lines = open(AUDIO_GML, "r", encoding="utf-8").read().splitlines()
+    sites = []
+    index = 0
+    while index < len(lines):
+        if 'show_debug_message("PP audio:' in lines[index]:
+            chunk = [lines[index]]
+            while ");" not in chunk[-1] and len(chunk) < 8 and index + len(chunk) < len(lines):
+                chunk.append(lines[index + len(chunk)])
+            sites.append({"line": index + 1,
+                          "text": re.sub(r"\s*\n\s*", " ", "\n".join(chunk))})
+        index += 1
+    return sites
+
+
+def resolve_sites(row, sites=None):
+    """The gml line for each fragment a row names, plus a problem for any fragment that is not exactly one site.
+
+    Exactly one, not "at least one": two sites with the same wording would make the row's line number a coin
+    toss, and a fragment that names no site is a row describing a message the game no longer writes.
+    """
+    sites = message_sites() if sites is None else sites
+    value = row["say"]
+    fragments = (value,) if isinstance(value, str) else tuple(value)
+    found = []
+    problems = []
+    for fragment in fragments:
+        hits = [site["line"] for site in sites if fragment in site["text"]]
+        if len(hits) == 1:
+            found.append(hits[0])
+        elif not hits:
+            problems.append("%s: no message site carries %r" % (row["type"], fragment))
+        else:
+            problems.append("%s: %r is in %d message sites (%s)"
+                            % (row["type"], fragment, len(hits), hits))
+    return tuple(sorted(set(found))), problems
 
 
 # The message sites no sampled run has reached, and the branch each one waits on. They are in the map
@@ -305,6 +389,16 @@ UNOBSERVED_WHY = {
     "sfx_create_failed": "fires only when audio_create_buffer_sound refuses the buffer",
     "room_no_cue": "fires only when a map names no music cue; every sampled room names one",
     "no_theme_stream": "fires only when no theme stream file is in the build at boot",
+    # The wind, card t_321826d8: the loop was added after every log in the tree was recorded, so no sample line
+    # exists for any of the seven sites yet. Each one names the branch it waits on, and a capture of the quay
+    # storm is what turns them observed.
+    "wind_started": "fires the first step the player stands on the Town Quay with storm wind above 0; no log in the tree is a run on the quay since the loop was added",
+    "wind_gain": "fires when the storm wind moves the held gain by a tenth, and only after a wind_started line",
+    "wind_back_up": "fires only when the storm returns inside the 180 ms stop ramp",
+    "wind_ramping_out": "fires the step the storm wind reaches 0 while the instance is held (the gate opening, or leaving the quay)",
+    "wind_stopped": "fires one ramp after wind_ramping_out and never stands alone",
+    "wind_not_in_manifest": "fires only on a build whose sfx/sfx.json lacks the wind row",
+    "wind_no_channel": "fires only when every audio channel is taken at the effect priority",
 }
 
 # Which call path plays each effect, and therefore at what gain, measured by grepping the call sites:
@@ -314,6 +408,16 @@ UNOBSERVED_WHY = {
 PLAY_CALL_SITE_IDS = ("car_engine_loop", "door_hatch", "encounter_swoosh", "footstep", "menu_cancel",
                       "menu_move", "menu_select", "thunder_soft")
 BLIP_PREFIX = "text_blip"
+# Card t_321826d8: the one effect the bus HOLDS rather than fires. pp_audio_wind_step plays it with loop true at
+# PP_AUDIO_GAIN_WIND times the storm wind over 100, so neither the one-shot effect level (0.9) nor the play path's
+# default (1.0) is its level. A regeneration that fell through to the sfx branch would record 0.9 for a sound the
+# game plays at 0.32, so the ambience has its own path, and the map records the level it STARTS at (full storm
+# wind) with the function it was read from.
+AMBIENCE_CALL_SITE_IDS = ("wind_quay",)
+HELD_TRIM = ("held and looped: pp_audio_wind_step starts this file with loop on and keeps ONE instance while the "
+             "player stands on the Town Quay with storm wind above 0, its gain following pp_storm_wind from 0 to "
+             "100 and ramping out over PP_AUDIO_WIND_RAMP_MS when the storm drops, so a renderer lays it looped "
+             "under the storm and ramps it rather than playing it once%s")
 
 
 def classify(line):
@@ -331,6 +435,11 @@ def effect_gain(cue_id, macros):
     sfx_gain = macros["PP_AUDIO_GAIN_SFX"]
     if cue_id.startswith(BLIP_PREFIX):
         return round(sfx_gain * macros["PP_AUDIO_GAIN_BLIP"], 6), "pp_audio_blip: the effect level times the blip level"
+    if cue_id in AMBIENCE_CALL_SITE_IDS:
+        return (round(macros["PP_AUDIO_GAIN_WIND"], 6),
+                "pp_audio_wind_step: the held ambience level (PP_AUDIO_GAIN_WIND) at full storm wind, the gain the "
+                "loop starts at. It is a looping instance the bus holds and follows, not a one-shot effect, so the "
+                "0.9 effect level and the 1.0 play default are both the wrong number for it")
     if cue_id in PLAY_CALL_SITE_IDS:
         return 1.0, "pp_audio_play: the gain argument is left off, and the manual says it defaults to 1"
     return sfx_gain, "pp_audio_sfx: the effect level, the only path a scene command reaches"
@@ -373,13 +482,15 @@ def build_map():
                                "been played at either level, and the difference is 0.9 dB"),
                  "vorbis_loop_tags": tags,
                  "loop_in_data": bool(sounds.get(cue_id, {}).get("loop")),
-                 "loop_played": False,
+                 "loop_played": cue_id in AMBIENCE_CALL_SITE_IDS,
                  "speakers": row.get("speaker", ""),
-                 "trim": ("play all of it once: the game reads the wav data chunk at offset %s for %s bytes and "
-                          "the bus plays every effect with loop off (pp_audio_sfx and pp_audio_play both pass "
-                          "loop false), so a loop flag in data/audio.json is not heard%s"
-                          % (row.get("offset"), row.get("data_bytes"),
-                             "; the ogg's own loop points are %s" % tags if tags else ""))}
+                 "trim": ((HELD_TRIM % ("; the ogg's own loop points are %s" % tags if tags else ""))
+                          if cue_id in AMBIENCE_CALL_SITE_IDS else
+                          ("play all of it once: the game reads the wav data chunk at offset %s for %s bytes and "
+                           "the bus plays every effect with loop off (pp_audio_sfx and pp_audio_play both pass "
+                           "loop false), so a loop flag in data/audio.json is not heard%s"
+                           % (row.get("offset"), row.get("data_bytes"),
+                              "; the ogg's own loop points are %s" % tags if tags else "")))}
         effect_map[cue_id] = entry
 
     cue_map = {}
@@ -469,8 +580,11 @@ def build_map():
                     counts[row["type"]] = counts.get(row["type"], 0) + 1
 
     events = []
+    sites = message_sites()
     for row in EVENTS:
-        lines = gml_lines(row)
+        lines, site_problems = resolve_sites(row, sites)
+        if site_problems:
+            raise SystemExit("the event table does not match pp_audio.gml: %s" % "; ".join(site_problems))
         seen = counts.get(row["type"], 0)
         events.append({"type": row["type"],
                        "sound": row["sound"],
@@ -495,6 +609,8 @@ def build_map():
                     "sfx_gain": macros["PP_AUDIO_GAIN_SFX"],
                     "blip_factor": macros["PP_AUDIO_GAIN_BLIP"],
                     "blip_gain": round(macros["PP_AUDIO_GAIN_SFX"] * macros["PP_AUDIO_GAIN_BLIP"], 6),
+                    "ambience_gain": macros["PP_AUDIO_GAIN_WIND"],
+                    "ambience_ramp_ms": macros["PP_AUDIO_WIND_RAMP_MS"],
                     "play_gain_default": 1.0,
                     "fade_steps": int(macros["PP_AUDIO_FADE_STEPS"]),
                     "step_ms": macros["PP_AUDIO_STEP_MS"],
@@ -588,7 +704,8 @@ def check_map(data=None, verbose=True):
 
     bus = data.get("bus") or {}
     for key, macro in (("music_gain", "PP_AUDIO_GAIN_MUSIC"), ("sfx_gain", "PP_AUDIO_GAIN_SFX"),
-                       ("blip_factor", "PP_AUDIO_GAIN_BLIP"), ("fade_steps", "PP_AUDIO_FADE_STEPS")):
+                       ("blip_factor", "PP_AUDIO_GAIN_BLIP"), ("fade_steps", "PP_AUDIO_FADE_STEPS"),
+                       ("ambience_gain", "PP_AUDIO_GAIN_WIND")):
         if abs(float(bus.get(key, -1)) - macros[macro]) > 1e-9:
             problems.append("bus.%s is %s and %s is %s" % (key, bus.get(key), macro, macros[macro]))
 
@@ -665,26 +782,39 @@ def check_map(data=None, verbose=True):
         if probe.get("seconds") and float(probe["seconds"]) + 0.05 < float(beat["loop_seconds"]):
             problems.append("the theme file is shorter than its own loop length")
 
-    # The grammar must still cover every message the gml can write: every site is either a line the table
-    # names or a duplicate of one it names, and each named line really is a "PP audio:" message site.
-    text = open(AUDIO_GML, "r", encoding="utf-8").read()
-    source_lines = text.splitlines()
-    sites = len(re.findall(r'show_debug_message\("PP audio:', text))
+    # The grammar must still cover every message the gml can write: each row's own wording lands on exactly one
+    # message site, every site is claimed by exactly one row, and the shipped map cites the line the gml writes
+    # it on today. This replaces a count of typed line numbers, which went stale on every insertion above them.
+    site_list = message_sites()
     types = data.get("events") or []
-    named = [line for row in EVENTS for line in gml_lines(row)]
-    if len(named) != sites:
-        problems.append("%d named gml lines for %d PP audio: message sites" % (len(named), sites))
+    claimed = {}
     for row in EVENTS:
-        for line in gml_lines(row):
-            window = "\n".join(source_lines[max(0, line - 2):line + 1])
-            if 'show_debug_message("PP audio:' not in window:
-                problems.append("%s: gml line %d is not a PP audio: message site" % (row["type"], line))
+        lines, site_problems = resolve_sites(row, site_list)
+        problems.extend(site_problems)
+        for line in lines:
+            claimed.setdefault(line, []).append(row["type"])
+        want = ", ".join("game/scripts/pp_audio/pp_audio.gml:%d" % line for line in lines)
+        shipped = next((event.get("source") for event in types if event.get("type") == row["type"]), None)
+        if shipped != want:
+            problems.append("%s: the map says %r and the gml writes it at %r (re-run --build)"
+                            % (row["type"], shipped, want))
+    for site in site_list:
+        owners = claimed.get(site["line"], [])
+        if not owners:
+            problems.append("gml line %d writes a PP audio: line with no row in the table" % site["line"])
+        elif len(owners) > 1:
+            problems.append("gml line %d is claimed by %d rows (%s)"
+                            % (site["line"], len(owners), owners))
+    if len(types) != len(EVENTS):
+        problems.append("the map holds %d event rows and the table holds %d (re-run --build)"
+                        % (len(types), len(EVENTS)))
     for row in types:
         if not row.get("source") or not re.match(r"^game/scripts/pp_audio/pp_audio\.gml:\d+(, game/scripts/pp_audio/pp_audio\.gml:\d+)*$",
                                                  row["source"]):
             problems.append("%s: no gml line reference" % row.get("type"))
         if row.get("sound") not in ("music_start", "music_stop", "music_gain", "music_pause",
-                                    "music_resume", "sfx", "none"):
+                                    "music_resume", "ambience_start", "ambience_gain", "ambience_stop",
+                                    "sfx", "none"):
             problems.append("%s: sound is %r" % (row.get("type"), row.get("sound")))
         try:
             re.compile(row["regex"])
@@ -726,7 +856,7 @@ def check_map(data=None, verbose=True):
                             % row["type"])
 
     if verbose:
-        print("event types: %d, message sites in gml: %d" % (len(types), sites))
+        print("event types: %d, message sites in gml: %d" % (len(types), len(site_list)))
         print("effects mapped: %d, cues mapped: %d, landed cues: %d"
               % (len(effects), len(cues), sum(1 for entry in cues.values() if entry.get("landed"))))
         print("event lines seen in the logs and fixture: %d over %d types"
@@ -843,6 +973,23 @@ def plan_log(path, data):
                 else:
                     entry.update({"cue": cue_id, "file": None, "gain": None,
                                   "why": "the log says it played, but no manifest row names a file for it"})
+            elif row["type"] == "wind_started":
+                # Card t_321826d8: the one line that starts a sound the bus holds rather than fires. The printed
+                # gain is what the game applied (the ambience level times the storm wind over 100), so a renderer
+                # uses it instead of recomputing a level that could have moved since the log was written.
+                known = effects.get(AMBIENCE_CALL_SITE_IDS[0])
+                entry.update({"cue": AMBIENCE_CALL_SITE_IDS[0],
+                              "file": known["ogg"] if known else None,
+                              "gain": float(groups[2]), "storm_wind": float(groups[1]), "loop": True,
+                              "why": ("the wind's own start line: ONE looping instance at the printed gain, held "
+                                      "until a gain line moves it or a ramping out line ends it")})
+            elif row["type"] in ("wind_gain", "wind_back_up"):
+                entry.update({"gain": float(groups[0]), "storm_wind": float(groups[1]),
+                              "why": "the held wind's gain from here, at the printed storm wind"})
+            elif row["type"] == "wind_ramping_out":
+                entry.update({"gain": 0.0, "ramp_ms": int(groups[0]),
+                              "why": ("fade the held wind to 0 over the printed %s ms and stop it then: %s"
+                                      % (groups[0], groups[1]))})
             plan.append(entry)
     return plan
 

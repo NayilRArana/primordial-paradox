@@ -17,7 +17,8 @@
     "noise_long"
   ],
   "looping_names": [
-    "car_engine_loop"
+    "car_engine_loop",
+    "wind_quay"
   ],
   "required_names": [
     "menu_move",
@@ -736,7 +737,32 @@
       "last_sample": 0.647411,
       "edge_max_step": 0.168475,
       "loop_start": 0,
-      "loop_length": 35280
+      "loop_length": 35280,
+      "loop_period": 4410
+    },
+    {
+      "name": "wind_quay",
+      "voices": [
+        "noise_long"
+      ],
+      "purpose": "The Town Quay's hurricane: one whole APU noise cycle at period 202, low passed, gusted in the file's own period.",
+      "groups": [],
+      "loop": true,
+      "files": {
+        "wav": "wind_quay.wav",
+        "ogg": "wind_quay.ogg"
+      },
+      "length_seconds": 3.698209,
+      "length_samples": 163091,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -13.221,
+      "dc_offset": -6e-06,
+      "first_sample": 0.429817,
+      "last_sample": 0.43102,
+      "edge_max_step": 0.414721,
+      "loop_start": 0,
+      "loop_length": 163091,
+      "loop_period": 163091
     }
   ]
 }

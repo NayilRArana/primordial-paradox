@@ -32,12 +32,12 @@ cosine fade at each end, so no file starts or ends on a step. A 20 Hz one pole
 high pass (the APU's output capacitor, in effect) removes the DC bias that a
 short burst of low noise otherwise carries.
 
-`car_engine_loop` is the one file that loops (the drive holds it from shot 2 to
-shot 12 of knowledge/DRIVE-SHOT-LIST.md), so it is built as a genuine loop
-instead: every voice in it is periodic in the file length, it carries no fade,
-and the high pass is primed with the file's own tail so the filter is already in
+`car_engine_loop` and `wind_quay` are the two files that loop (the drive holds the engine from shot 2 to
+shot 12 of knowledge/DRIVE-SHOT-LIST.md, and the Town Quay holds the hurricane for as long as the storm is
+up), so they are built as genuine loops instead: every voice in them is periodic in the file length, they
+carry no fade, and the high pass is primed with the file's own tail so the filter is already in
 steady state at sample 0. A fade at the seam would duck the loop once per lap,
-which is the click spec 12 rule 3 exists to avoid. Its OGG also carries
+which is the click spec 12 rule 3 exists to avoid. Their OGGs also carry
 LOOPSTART and LOOPLENGTH, because rule 3 says loop points come from the file.
 
 Usage:
@@ -86,7 +86,7 @@ DC_BLOCK_HZ = 20.0
 # fade is at both ends of the file and the file is played round and round: the seam
 # would duck every lap. So the high pass is primed with the loop's own tail instead,
 # which leaves the filter in the steady state a repeat would have given it.
-LOOPING = {"car_engine_loop"}
+LOOPING = {"car_engine_loop", "wind_quay"}
 LOOP_WARMUP_S = 0.10
 
 # APU noise periods, in CPU cycles, from the hardware table.
@@ -561,6 +561,65 @@ def build_car_engine_loop() -> tuple[np.ndarray, list[str], str]:
         "The drive's engine: a four cylinder at idle, 60 Hz firing, held under the whole film as a loop."
 
 
+# The quay's hurricane (card t_321826d8, JUDGE-PANEL 2026-11-16 fix 4). The panel asks the musician lane for
+# "a hurricane wind loop for quay"; the engine draws the storm over the Town Quay already (game\scripts\pp_storm)
+# and the only thing missing from the room was the sound of it.
+#
+# The 2A03 noise channel is the wind, and the loop is proved rather than faded the same way the engine's is:
+# the APU's 15 bit LFSR repeats exactly every 32767 clocks, so a file that walks exactly one whole cycle of it
+# is the same sound when it starts again. The cycle is spread over the file by reading clock floor(i * 32767 / n),
+# so the last sample sits on the state just before the first one and the wrap is one more LFSR step, which is
+# the same step every other pair of samples makes. At period 202 CPU cycles (the table's mid dark setting) one
+# cycle is 3.698 s, which is a gust long enough to read as weather and short enough to ship.
+WIND_PERIOD = 202.0
+WIND_CLOCKS = 32767
+WIND_SAMPLES = int(round(WIND_CLOCKS * SR * WIND_PERIOD / CPU_HZ))
+WIND_ROAR_HZ = 900.0
+WIND_ROAR_GAIN = 0.85
+WIND_SPRAY_GAIN = 0.20
+
+
+def _loop_lowpass(signal: np.ndarray, cutoff_hz: float) -> np.ndarray:
+    """A one pole low pass run over two copies of a periodic signal, keeping the second.
+
+    A plain filter would start from silence at sample 0 and settle over the first milliseconds, which
+    would make the loop's first samples quieter than its last and so break the period. Running it over
+    the file twice and keeping the second pass leaves it in exactly the state a repeat would have given
+    it, which is the same trick finish(loop=True) plays on the DC blocker.
+    """
+    a = math.exp(-2.0 * math.pi * cutoff_hz / SR)
+    doubled = np.concatenate((signal, signal))
+    out = np.empty_like(doubled)
+    state = 0.0
+    for index in range(doubled.size):
+        state = (1.0 - a) * doubled[index] + a * state
+        out[index] = state
+    return out[signal.size:]
+
+
+def build_wind_quay() -> tuple[np.ndarray, list[str], str]:
+    n = WIND_SAMPLES
+    clocks = (np.arange(n, dtype=np.int64) * WIND_CLOCKS) // n
+    bits = render_chip.lfsr_cycle(False)
+    hiss = bits[clocks % WIND_CLOCKS].astype(np.float64) * 2.0 - 1.0
+    # Two layers out of one stream, both linear so both stay exactly periodic: the roar is the noise low
+    # passed to 900 Hz (the body of the wind) and the spray is its first difference (the grit in it). The
+    # differencing is circular, so the seam carries the same pair of samples the file's own start does.
+    roar = _loop_lowpass(hiss, WIND_ROAR_HZ)
+    spray = np.diff(np.concatenate((hiss[-1:], hiss)))
+    # The gust: three sines whose periods divide the file exactly (1, 3 and 7 cycles a lap), so the swell
+    # is part of the loop instead of a shape that ends where it started. Normalised to a peak of 1 and a
+    # trough near 0.5, which is a wind that leans on the wall and eases off, not a siren.
+    t = np.arange(n, dtype=np.float64) / float(n)
+    gust = (1.0 + 0.34 * np.sin(2.0 * np.pi * t + 0.7)
+            + 0.16 * np.sin(2.0 * np.pi * 3.0 * t + 2.1)
+            + 0.10 * np.sin(2.0 * np.pi * 7.0 * t + 0.3))
+    gust = gust / gust.max()
+    audio = gust * (WIND_ROAR_GAIN * roar + WIND_SPRAY_GAIN * spray)
+    return audio, ["noise_long"], \
+        "The Town Quay's hurricane: one whole APU noise cycle at period 202, low passed, gusted in the file's own period."
+
+
 # The order is the order in the manifest and on the preview sheet. It follows
 # the game: menus, then text, then the world, then battle, then magic, then
 # jingles, then death. car_engine_loop is the last entry and the only loop.
@@ -595,7 +654,14 @@ EFFECTS: list[tuple[str, "Callable[[], tuple[np.ndarray, list[str], str]]", list
     ("save_jingle", build_save_jingle, []),
     ("game_over", build_game_over, []),
     ("car_engine_loop", build_car_engine_loop, []),
+    ("wind_quay", build_wind_quay, []),
 ]
+
+# The period each loop actually repeats at, in samples. car_engine_loop is one 4410 sample block
+# (three 0.1 s wobbles) tiled eight times; wind_quay is one whole APU noise cycle, so its period is
+# the whole file. A loop's period is measured here rather than guessed by a reader, and
+# tests/test_sfx.py checks each file against the number written here.
+LOOP_PERIODS = {"car_engine_loop": 4410, "wind_quay": WIND_SAMPLES}
 
 # The names a caller may ask for, including the grouped text_blip.
 NAME_GROUPS = {
@@ -745,6 +811,7 @@ def build(out_dir: str, make_ogg: bool = True, fade_ms: float | None = None) -> 
         if looping:
             entry["loop_start"] = 0
             entry["loop_length"] = int(audio.size)
+            entry["loop_period"] = int(LOOP_PERIODS.get(name, audio.size))
         if make_ogg:
             ogg_path = os.path.join(out_dir, "%s.ogg" % name)
             error = write_ogg(wav_path, ogg_path,

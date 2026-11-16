@@ -41,6 +41,9 @@ SFX_DIR = os.path.join(ROOT, "assets", "audio", "sfx")
 PREVIEW_PATH = os.path.join(ROOT, "output", sfx.PREVIEW_NAME)
 MIN_LENGTH = 0.05
 MAX_LENGTH = 1.5
+# A loop may be longer than a one shot: it has to carry a whole period, and the quay's wind period is
+# one complete APU noise cycle (3.699 s at period 202). The ceiling is here so a runaway loop still fails.
+MAX_LOOP_LENGTH = 10.0
 PEAK_TOLERANCE_DB = 0.05
 
 
@@ -83,7 +86,8 @@ def test_every_effect_is_written(fresh_build):
     # 22 + the 8 PP-BLIPS additions of card t_c9232c57: five per speaker voice blips
     # (text_blip_zeus, _kronos, _percy, _oldman, _narrator), two alternating footsteps
     # (footstep_a, footstep_b) and knife_slash. The pin moves with the table, never instead of it.
-    assert len(names) == 30
+    # The 31st is wind_quay (card t_321826d8), the quay's hurricane loop.
+    assert len(names) == 31
     for name in names:
         wav_path = os.path.join(out_dir, name + ".wav")
         assert os.path.exists(wav_path), "missing %s" % wav_path
@@ -106,8 +110,9 @@ def test_lengths_are_in_range(manifest_on_disk, fresh_build):
     for manifest in (manifest_on_disk, fresh):
         for entry in manifest["effects"]:
             length = entry["length_seconds"]
-            assert MIN_LENGTH <= length <= MAX_LENGTH, \
-                "%s is %.3fs, outside %.2f to %.2f" % (entry["name"], length, MIN_LENGTH, MAX_LENGTH)
+            limit = MAX_LOOP_LENGTH if entry.get("loop") else MAX_LENGTH
+            assert MIN_LENGTH <= length <= limit, \
+                "%s is %.3fs, outside %.2f to %.2f" % (entry["name"], length, MIN_LENGTH, limit)
 
 
 def test_format_is_mono_44100_16bit(manifest_on_disk):
@@ -151,8 +156,8 @@ def test_no_click_at_either_end(manifest_on_disk):
         assert entry["first_sample"] == 0.0 and entry["last_sample"] == 0.0
 
 
-def test_the_engine_loop_is_one_pattern_repeated(manifest_on_disk):
-    """The loop is proved periodic rather than faded, which is the only honest loop.
+def test_every_loop_repeats_at_its_own_period(manifest_on_disk):
+    """A loop is proved periodic rather than faded, which is the only honest loop.
 
     The engine file is one 4410 sample pattern (three 0.1 s load wobbles, six firings at
     60 Hz) repeated eight times, so playing the file round and round is playing it straight:
@@ -160,6 +165,12 @@ def test_the_engine_loop_is_one_pattern_repeated(manifest_on_disk):
     the 20 Hz high pass not being fully settled after the tail warm up, not a seam. On the
     16 bit file it is at most one step of the sample grid, which is rounding, so the threshold
     here is two steps and the measurement below the claim is one.
+
+    wind_quay's period is the whole file (one complete APU noise cycle), so there is nothing to
+    shift it against: its periodicity is the LFSR cycle itself, checked by
+    test_the_wind_loop_is_one_apu_noise_cycle, and the seam-step check below still applies to it.
+    The period is read from the manifest's own loop_period, written by the generator, so neither
+    loop is measured against a number a reader guessed.
     """
     one_step = 1.0 / 32768.0
     looping = [e for e in manifest_on_disk["effects"] if e.get("loop")]
@@ -168,15 +179,50 @@ def test_the_engine_loop_is_one_pattern_repeated(manifest_on_disk):
             [e["name"] for e in looping], sorted(sfx.LOOPING))
     for entry in looping:
         _info, samples = _read_wav(os.path.join(SFX_DIR, entry["files"]["wav"]))
-        period = entry["loop_length"] // 8
+        period = entry["loop_period"]
+        assert period == sfx.LOOP_PERIODS[entry["name"]], entry["name"]
         assert entry["loop_start"] == 0 and entry["loop_length"] == samples.size
-        assert samples.size % period == 0
-        residue = float(np.abs(samples[period:] - samples[:-period]).max())
-        assert residue <= 2.0 * one_step, "%s does not repeat: residue %.3e" % (entry["name"], residue)
+        assert samples.size % period == 0, entry["name"]
+        if period < samples.size:
+            residue = float(np.abs(samples[period:] - samples[:-period]).max())
+            assert residue <= 2.0 * one_step, "%s does not repeat: residue %.3e" % (entry["name"], residue)
         step = abs(float(samples[0]) - float(samples[-1]))
         internal = float(np.abs(np.diff(samples)).max())
         assert step < internal, \
             "%s jumps %.5f at the seam, its largest internal step is %.5f" % (entry["name"], step, internal)
+
+
+def test_the_wind_loop_is_one_apu_noise_cycle(manifest_on_disk):
+    """The quay's hurricane is a loop because the noise sequence itself repeats, not because it was faded.
+
+    Three measurements, each one something a fade cannot produce:
+      - the file is exactly one whole LFSR cycle at period 202 CPU cycles, to the sample rounding of
+        32767 * 44100 * 202 / 1789772.5 (3.699 s), so starting it again continues the same sequence;
+      - the file is noise, not a tone: its spectral flatness over an 8192 sample window is high and its
+        strongest bin carries a small share of the energy, which is what wind is and what a pulse is not;
+      - it is never near silent inside its own loop: the quietest 0.25 s window is within 20 dB of the
+        loudest, so the gust does not drop the storm out.
+    """
+    entry = next(e for e in manifest_on_disk["effects"] if e["name"] == "wind_quay")
+    wanted = int(round(sfx.WIND_CLOCKS * 44100 * sfx.WIND_PERIOD / sfx.CPU_HZ))
+    assert entry["loop_length"] == wanted, "the wind is %d samples, one LFSR cycle is %d" % (
+        entry["loop_length"], wanted)
+    _info, samples = _read_wav(os.path.join(SFX_DIR, entry["files"]["wav"]))
+
+    window = 8192
+    segment = samples[len(samples) // 2:len(samples) // 2 + window]
+    spectrum = np.abs(np.fft.rfft(segment * np.hanning(window))) ** 2
+    spectrum = spectrum[1:]
+    flatness = float(np.exp(np.mean(np.log(spectrum + 1e-30))) / np.mean(spectrum))
+    strongest = float(spectrum.max() / spectrum.sum())
+    assert flatness > 0.05, "the wind is a tone: spectral flatness %.4f" % flatness
+    assert strongest < 0.10, "one bin carries %.3f of the wind's energy" % strongest
+
+    step = int(round(0.25 * 44100))
+    levels = [float(np.sqrt(np.mean(samples[i:i + step] ** 2)))
+              for i in range(0, samples.size - step, step)]
+    assert min(levels) > 0 and 20.0 * np.log10(max(levels) / min(levels)) < 20.0, \
+        "the gust drops the wind by %.1f dB inside one loop" % (20.0 * np.log10(max(levels) / min(levels)))
 
 
 def test_the_loop_ogg_carries_its_loop_points(manifest_on_disk):

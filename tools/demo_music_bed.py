@@ -102,6 +102,22 @@ BED_UNDER_GAME = 0.55        # of the game's own 0.7, measured so the narrator s
 EDGE_FADE_S = 0.60           # a cue is not cut on a click at either end of its window
 LIMIT = 0.95                 # the sum of two beds must not clip
 
+# The hurricane (card t_321826d8, fix 4 of JUDGE-PANEL 2026-11-16). The panel asks for "a hurricane wind loop
+# for quay"; the game now holds one (assets/audio/sfx/wind_quay.ogg, played by pp_audio_wind_step for as long
+# as the storm is up), so the cut lays the same file under every second the cut spends on the Town Quay: S3
+# (the storm over the block), S4 (Morgan's pages and the wind gate) and S5 (his talk, still on that map, whose
+# music is PP-03 for exactly that reason), plus the quay the spare reopens at 140.833 in S6. The clocks are the
+# same segment clocks BED_TABLE uses, so a recut moves both together.
+WIND_CUE = "wind_quay"
+WIND_TABLE = (
+    ("S3", 29.000, 39.000),
+    ("S4", 39.000, 78.000),
+    ("S5", 78.000, 110.000),
+    ("S6", 140.833, 151.083),
+)
+WIND_UNDER_GAME = 0.90       # of the game's own 0.32 wind level (0.288), a touch under the 0.385 music bed
+WIND_ABSENT_CONTROL = ("S1", 4.0, 14.0)   # no storm on the title screen: the residual must not find the wind here
+
 
 class BedError(Exception):
     """The bed cannot be built honestly: a cue is missing, a window is uncovered, or a measurement failed."""
@@ -134,6 +150,24 @@ def cue_row(cue_id):
         return {"id": cue_id, "title": row.get("title"), "file": row["delivered_file"],
                 "path": path, "game_volume": volume, "gain": round(volume * BED_UNDER_GAME, 4)}
     raise BedError("%s is not a cue row in data/audio.json" % cue_id)
+
+
+def ambience_row(cue_id):
+    """The delivered ambience row for this id, refused if it is missing, silent or not a loop."""
+    for row in audio_json().get("sounds") or []:
+        if row.get("id") != cue_id:
+            continue
+        if not row.get("delivered_file"):
+            raise BedError("%s has no delivered_file in data/audio.json" % cue_id)
+        if row.get("loop") is not True:
+            raise BedError("%s is not a loop, so it cannot be held under a shot" % cue_id)
+        path = os.path.join(ROOT, row["delivered_file"])
+        if not os.path.exists(path):
+            raise BedError("%s says %s and that file is not on disk" % (cue_id, row["delivered_file"]))
+        volume = float(row.get("volume", 0.9))
+        return {"id": cue_id, "title": "Hurricane wind, Town Quay", "file": row["delivered_file"],
+                "path": path, "game_volume": volume, "gain": round(volume * WIND_UNDER_GAME, 4)}
+    raise BedError("%s is not a sound row in data/audio.json" % cue_id)
 
 
 def verify_path(cut):
@@ -172,6 +206,16 @@ def plan(cut=DEFAULT_CUT):
         out.append({"shot": shot, "window": [lo, hi], "seconds": round(hi - lo, 3),
                     "cue": cue["id"], "title": cue["title"], "file": cue["file"],
                     "game_volume": cue["game_volume"], "gain": cue["gain"]})
+    # The hurricane, laid over the quay's own seconds in the same pass. Its window must also start where a
+    # segment of that shot starts, so the wind follows the cut and cannot drift off the storm it belongs to.
+    wind = ambience_row(WIND_CUE)
+    for shot, lo, hi in WIND_TABLE:
+        starts = {round(float(row["clock"]), 3) for row in rows if row["shot"] == shot}
+        if not any(abs(start - lo) <= 0.06 for start in starts):
+            raise BedError("no %s segment starts at %.3f s, so the wind has nowhere to sit" % (shot, lo))
+        out.append({"shot": shot, "window": [lo, hi], "seconds": round(hi - lo, 3), "kind": "ambience",
+                    "cue": wind["id"], "title": wind["title"], "file": wind["file"],
+                    "game_volume": wind["game_volume"], "gain": wind["gain"]})
     last = max(item["window"][1] for item in out)
     if abs(last - TOTAL_S) > 0.01:
         raise BedError("the bed ends at %.3f s and the cut is 180.000" % last)
@@ -248,6 +292,16 @@ def mono(path, at, seconds, rate=16000):
     return np.frombuffer(result.stdout, dtype=np.float32)
 
 
+def mono_looped(path, offset, seconds, rate=16000):
+    """A looped file's samples starting at `offset` inside its loop: the wind layer repeats, so a window
+    longer than the loop must be read round it, not past its end."""
+    import numpy as np
+    result = subprocess.run(["ffmpeg", "-v", "error", "-stream_loop", "-1", "-ss", "%.3f" % offset,
+                             "-t", "%.3f" % seconds, "-i", path, "-vn", "-ac", "1", "-ar", str(rate),
+                             "-f", "f32le", "-"], capture_output=True)
+    return np.frombuffer(result.stdout, dtype=np.float32)
+
+
 def correlation(a, b):
     import numpy as np
     size = min(len(a), len(b))
@@ -260,7 +314,7 @@ def correlation(a, b):
     return float((a * b).mean() / (a.std() * b.std()))
 
 
-def null_correlation(mixed, before, bed, at, seconds, max_lag_ms=200):
+def null_correlation(mixed, before, bed, at, seconds, max_lag_ms=200, bed_at=None, bed_loop_s=None):
     """residual = mixed - before, against the bed, at the best lag. The one honest probe of a bed in a mix.
 
     A plain correlation of the delivered window against the bed cannot work here: the window holds the
@@ -273,7 +327,14 @@ def null_correlation(mixed, before, bed, at, seconds, max_lag_ms=200):
     import numpy as np
     mixed = mono(os.path.abspath(mixed), at, seconds)
     plain = mono(os.path.abspath(before), at, seconds)
-    cue = mono(os.path.abspath(bed), at, seconds)
+    # bed_at is where inside the reference the window sits: the wind layer starts at its file's sample 0 at the
+    # start of its own window, so its reference is read at (window time - window start), not at the film clock.
+    # bed_loop_s wraps that offset round a loop: the wind is 3.698 s long and a window here is up to 8 s, so
+    # reading it straight would run off the end of the file and measure nothing (which is what it did first).
+    if bed_loop_s:
+        cue = mono_looped(os.path.abspath(bed), (at if bed_at is None else bed_at) % bed_loop_s, seconds)
+    else:
+        cue = mono(os.path.abspath(bed), at if bed_at is None else bed_at, seconds)
     size = min(len(mixed), len(plain), len(cue))
     if size < 1600:
         return None, None
@@ -327,18 +388,34 @@ def verify(video, bed, items, before=None):
     if not os.path.exists(bed):
         raise BedError("%s is missing, so no window can be measured" % bed)
     lags = []
+    wind_lags = []
+    wind_loop_s = None
     for item in items:
         lo, hi = item["window"]
         span = min(8.0, hi - lo)
         at = lo + (hi - lo - span) / 2.0
         window_mean = mean_volume(video, lo, hi - lo)
         level = None if before is None else mean_volume(before, lo, hi - lo)
+        ambience = item.get("kind") == "ambience"
         if before:
-            r, lag_ms = null_correlation(video, before, bed, at, span)
-            if lag_ms is not None:
-                lags.append(lag_ms)
-            detail = ("%s %s at %s to %.3f s, residual against the bed r=%s at lag %s ms, window mean %s dB"
+            if ambience:
+                # The wind's own reference: the delivered loop, read round itself from the point the layer has
+                # reached at this window's start. The bed also carries the music, so this residual is diluted by
+                # it; the check that chance cannot pass is the absent control below.
+                reference = os.path.join(ROOT, item["file"])
+                if wind_loop_s is None:
+                    wind_loop_s = probe_duration(reference)
+                r, lag_ms = null_correlation(video, before, reference, at, span,
+                                             bed_at=at - lo, bed_loop_s=wind_loop_s)
+                if lag_ms is not None:
+                    wind_lags.append(lag_ms)
+            else:
+                r, lag_ms = null_correlation(video, before, bed, at, span)
+                if lag_ms is not None:
+                    lags.append(lag_ms)
+            detail = ("%s %s at %s to %.3f s, residual against the %s r=%s at lag %s ms, window mean %s dB"
                       % (item["cue"], item["title"], item["window"], hi,
+                         "wind" if ambience else "bed",
                          -1 if r is None else round(r, 2), None if lag_ms is None else round(lag_ms, 1),
                          None if window_mean is None else round(window_mean, 1)))
             # 0.20, not a higher bar: the residual also carries the AAC re-encode noise of the film's own
@@ -355,13 +432,32 @@ def verify(video, bed, items, before=None):
             ok = r is not None and r >= 0.20 and window_mean is not None and window_mean > -40.0
         if level is not None:
             detail += " against %s dB before the bed" % round(level, 1)
-        checks.append(("bed_%s_%s" % (item["shot"], item["cue"]), ok, detail))
+        checks.append(("bed_%s_%s" % (item["shot"], item["cue"]) if not ambience
+                       else "wind_%s_%s" % (item["shot"], item["cue"]), ok, detail))
+    # The control the wind's own presence has to pass: on a shot with no storm, the same probe must find nothing.
+    wind_row = next((item for item in items if item.get("kind") == "ambience"), None)
+    if before and wind_row is not None:
+        control_shot, control_lo, control_hi = WIND_ABSENT_CONTROL
+        span = min(6.0, control_hi - control_lo)
+        control_at = control_lo + (control_hi - control_lo - span) / 2.0
+        control, _lag = null_correlation(video, before, os.path.join(ROOT, wind_row["file"]),
+                                         control_at, span, bed_at=0.0, bed_loop_s=wind_loop_s)
+        checks.append(("wind_absent_%s" % control_shot, control is None or abs(control) < 0.20,
+                       "%s at %.1f to %.1f s, residual against the wind r=%s where no storm plays; a wind that"
+                       " leaked across the whole film would correlate here too"
+                       % (control_shot, control_lo, control_hi,
+                          "none" if control is None else round(control, 2))))
     if lags:
         spread = max(lags) - min(lags)
         checks.append(("bed_lag_consistent", spread <= 10.0,
-                       "every window finds the bed at %s to %s ms, a spread of %.1f ms; a residual that only"
+                       "every music window finds the bed at %s to %s ms, a spread of %.1f ms; a residual that only"
                        " met the bed by chance would not hold one lag across the whole film"
                        % (round(min(lags), 1), round(max(lags), 1), spread)))
+    if wind_lags:
+        spread = max(wind_lags) - min(wind_lags)
+        checks.append(("wind_lag_consistent", spread <= 10.0,
+                       "every storm window finds the wind at %s to %s ms, a spread of %.1f ms"
+                       % (round(min(wind_lags), 1), round(max(wind_lags), 1), spread)))
     return checks
 
 

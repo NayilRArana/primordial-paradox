@@ -2373,6 +2373,15 @@
     },
     {
       "$GMIncludedFile": "",
+      "%Name": "wind_quay.wav",
+      "CopyToMask": -1,
+      "filePath": "datafiles/sfx",
+      "name": "wind_quay.wav",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
       "%Name": "alarm.ogg",
       "CopyToMask": -1,
       "filePath": "datafiles/streams",
@@ -3403,6 +3412,15 @@
       "CopyToMask": -1,
       "filePath": "datafiles/streams",
       "name": "wave_wash.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "wind_quay.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "wind_quay.ogg",
       "resourceType": "GMIncludedFile",
       "resourceVersion": "2.0"
     }

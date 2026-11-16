@@ -54,6 +54,15 @@
 #macro PP_AUDIO_GAIN_MUSIC 0.7
 #macro PP_AUDIO_GAIN_SFX 0.9
 #macro PP_AUDIO_GAIN_BLIP 0.5
+// Card t_321826d8: the quay's hurricane is an ambience, not an effect, so it has its own level rather than
+// reusing the effect level: 0.32 keeps the wind under the storm music (0.7) and under thunder, and the
+// storm's own wind number scales it from there.
+#macro PP_AUDIO_AMBIENCE_WIND "wind_quay"
+#macro PP_AUDIO_GAIN_WIND 0.32
+// The ramp the held hurricane is taken down over when the storm stops wanting it (card t_321826d8, the
+// reviewer's no-click point). A noise loop at 0.32 cut with audio_stop_sound is a step from full to nothing
+// on the one sound with no pitch to hide it, which is the cut spec 12 rule 5 forbids for the music.
+#macro PP_AUDIO_WIND_RAMP_MS 180
 #macro PP_AUDIO_STEP_MS 16.6667
 #macro PP_AUDIO_SFX_SLOTS 8
 // Card MUSIC-REAL: the status door's environment name, split like the quiet switch so the macro is not itself a use of the name.
@@ -75,7 +84,10 @@ function pp_audio_cues() {
         "text_blip_a", "text_blip_b", "text_blip_c",
         "footstep", "door_hatch", "encounter_swoosh", "thunder_soft",
         "item_get", "heal", "hit_light", "hit_heavy", "miss", "crit", "level_up",
-        "alarm", "wave_wash", "save_jingle", "game_over"
+        "alarm", "wave_wash", "save_jingle", "game_over",
+        // Card t_321826d8: the quay's hurricane. It is asked for by name, but it is held rather than fired:
+        // pp_audio_wind_step starts it looping while the storm is up and follows the storm's own wind number.
+        "wind_quay"
     ];
 }
 
@@ -103,6 +115,9 @@ function pp_audio_state() {
             registry: undefined,
             music_cue: "", music_inst: -1, music_stream: -1,
             fade_inst: -1, fade_stream: -1, fade_end_ms: 0,
+            // Card t_321826d8: the quay's hurricane, one looping instance held for as long as the storm is up.
+            // wind_stop_ms is the deadline of a stop ramp, or -1 when no ramp is running.
+            wind_inst: -1, wind_gain: -1, wind_stop_ms: -1,
             sfx_insts: [],
             focus_paused: false,
             music_started_ms: 0, heal_next_ms: 0, heals: 0,
@@ -110,6 +125,9 @@ function pp_audio_state() {
         };
     }
     var _a = global.pp.audio;
+    // A struct written by an older build of this module has no wind_stop_ms; it is introduced with the stop
+    // ramp (card t_321826d8), so it is added here rather than assumed, the same way theme_inst is read.
+    if (!variable_struct_exists(_a, "wind_stop_ms")) _a.wind_stop_ms = -1;
     if (!_a.channels_set) {
         audio_channel_num(PP_AUDIO_CHANNELS);
         _a.channels_set = true;
@@ -421,6 +439,8 @@ function pp_audio_focus(_paused) {
     if (_now) {
         if (_a.music_inst > -1) audio_pause_sound(_a.music_inst);
         if (variable_struct_exists(_a, "theme_inst") && _a.theme_inst > -1) audio_pause_sound(_a.theme_inst);
+        // The quay's wind is a held loop, so it is paused with the music and resumed where it stopped.
+        if (_a.wind_inst > -1) audio_pause_sound(_a.wind_inst);
         for (var i = 0; i < array_length(_a.sfx_insts); i++) {
             if (audio_is_playing(_a.sfx_insts[i])) audio_stop_sound(_a.sfx_insts[i]);
         }
@@ -430,6 +450,7 @@ function pp_audio_focus(_paused) {
     }
     if (_a.music_inst > -1) audio_resume_sound(_a.music_inst);
     if (variable_struct_exists(_a, "theme_inst") && _a.theme_inst > -1) audio_resume_sound(_a.theme_inst);
+    if (_a.wind_inst > -1) audio_resume_sound(_a.wind_inst);
     show_debug_message("PP audio: focus back, music resumed where it stopped");
     return true;
 }
@@ -442,8 +463,108 @@ function pp_audio_step() {
     pp_audio_focus(!window_has_focus());
 
     if (_a.fade_inst > -1 && current_time >= _a.fade_end_ms) pp_audio_fade_flush(_a);
+    pp_audio_wind_step(_a);
     pp_audio_music_heal(_a);
     pp_audio_status_step(_a);
+}
+
+/// Card t_321826d8: how loud the hurricane wants to be this step, 0 to 100. The storm module owns both halves
+/// of that number (pp_storm_active says the player is on the Town Quay, pp_storm_wind is the wind the Morgan
+/// fight leaves behind: 100 before the talk, falling with the mercy, 0 once the gate is open), so the audio bus
+/// asks it instead of keeping a second copy that could drift. Anything but the quay, or no world at all, is 0.
+function pp_audio_wind_target() {
+    if (!is_struct(global.pp) || !variable_struct_exists(global.pp, "world")) return 0;
+    var _world = global.pp.world;
+    if (!is_struct(_world)) return 0;
+    if (!pp_storm_active(_world)) return 0;
+    return clamp(pp_storm_wind(), 0, 100);
+}
+
+/// Take the wind down to nothing over PP_AUDIO_WIND_RAMP_MS and say so once. The instance is NOT stopped here:
+/// the gain starts its ramp and pp_audio_wind_finish stops the instance at 0 when the ramp's time is up, which
+/// is the same shape pp_audio_fade_handoff uses for music and the reason a noise loop at 0.32 cannot click.
+/// A second call inside the ramp does nothing, so a storm that stays at 0 does not restart the ramp each step.
+function pp_audio_wind_stop(_a, _why) {
+    if (_a.wind_inst <= -1) return false;
+    if (_a.wind_stop_ms > 0) return false;
+    audio_sound_gain(_a.wind_inst, 0, PP_AUDIO_WIND_RAMP_MS);
+    _a.wind_gain = 0;
+    _a.wind_stop_ms = current_time + PP_AUDIO_WIND_RAMP_MS;
+    show_debug_message("PP audio: wind_quay loop ramping out over " + string(PP_AUDIO_WIND_RAMP_MS)
+        + " ms (" + _why + ")");
+    return true;
+}
+
+/// Stop the held wind now that its ramp has reached 0, and clear it so a stopped instance is never addressed.
+function pp_audio_wind_finish(_a) {
+    _a.wind_stop_ms = -1;
+    if (_a.wind_inst <= -1) return false;
+    audio_stop_sound(_a.wind_inst);
+    _a.wind_inst = -1;
+    _a.wind_gain = -1;
+    show_debug_message("PP audio: wind_quay loop stopped (the ramp reached 0)");
+    return true;
+}
+
+/// The wind bed, one step at a time. A looping instance is started when the quay's storm wants wind and ramped
+/// out when it does not, and its gain follows pp_storm_wind, so the weather the player hears is the same number
+/// the WIND meter draws (pp_storm_hud_draw) and the same one the Morgan talk pulls down. A focus pause is not the
+/// same as leaving the room: the instance is paused there and resumed, so the storm does not restart.
+/// One line is written on start, on the stop ramp, on the stop and whenever the gain changes by a tenth, so a
+/// headless run's log proves the wind played rather than only that the room has a storm in it.
+function pp_audio_wind_step(_a) {
+    // While the window is away the focus rule owns the instance: it is paused there and resumed, never stopped,
+    // so coming back to the game does not restart the storm from its first gust.
+    if (_a.focus_paused) return false;
+    // A stop ramp whose time has run out is finished first: its gain is already 0, so the stop cannot click.
+    if (_a.wind_stop_ms > 0 && current_time >= _a.wind_stop_ms) {
+        pp_audio_wind_finish(_a);
+        return false;
+    }
+    var _wind = pp_audio_wind_target();
+    if (_wind <= 0) {
+        pp_audio_wind_stop(_a, "no storm wind here");
+        return false;
+    }
+    var _gain = PP_AUDIO_GAIN_WIND * (_wind / 100);
+    if (_a.wind_inst <= -1) {
+        if (is_undefined(_a.entries) || !variable_struct_exists(_a.entries, PP_AUDIO_AMBIENCE_WIND)) {
+            show_debug_message("PP audio: wind_quay silent, not in " + PP_AUDIO_SFX_DIR + "sfx.json");
+            return false;
+        }
+        var _sound = pp_audio_sound(_a, PP_AUDIO_AMBIENCE_WIND, _a.entries[$ PP_AUDIO_AMBIENCE_WIND]);
+        if (_sound < 0) return false;
+        // Loop ON: this is the one effect the game holds, and its OGG carries its own LOOPSTART and LOOPLENGTH
+        // (spec 12 rule 3), so the file repeats itself without a seam rather than restarting on a click.
+        var _inst = audio_play_sound(_sound, PP_AUDIO_PRI_SFX, true, _gain);
+        if (_inst < 0) {
+            show_debug_message("PP audio: wind_quay silent, no audio channel for it");
+            return false;
+        }
+        _a.wind_inst = _inst;
+        _a.wind_gain = _gain;
+        _a.played += 1;
+        show_debug_message("PP audio: wind_quay loop started, instance " + string(_inst) + ", storm wind "
+            + string(_wind) + ", gain " + string(_gain));
+        return true;
+    }
+    // The storm wants wind again inside a stop ramp: cancel the deadline and ramp the instance that is still
+    // held back up, rather than letting a later step stop a sound the storm has asked for again.
+    if (_a.wind_stop_ms > 0) {
+        _a.wind_stop_ms = -1;
+        audio_sound_gain(_a.wind_inst, _gain, PP_AUDIO_WIND_RAMP_MS);
+        _a.wind_gain = _gain;
+        show_debug_message("PP audio: wind_quay back up to gain " + string(_gain)
+            + " at storm wind " + string(_wind));
+        return true;
+    }
+    // Ten steps of gain are enough: a ramp on every step would be a fade over the storm's whole life.
+    if (abs(_gain - _a.wind_gain) >= 0.03) {
+        audio_sound_gain(_a.wind_inst, _gain, 0);
+        _a.wind_gain = _gain;
+        show_debug_message("PP audio: wind_quay gain " + string(_gain) + " at storm wind " + string(_wind));
+    }
+    return true;
 }
 
 /// Card MUSIC-REAL: a live music instance that sits near silence, with the window focused and no pause asked for, is put
