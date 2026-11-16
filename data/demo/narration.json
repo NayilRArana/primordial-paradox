@@ -1,7 +1,7 @@
 {
  "format": 1,
  "kind": "demo_narration",
- "why": "Judge panel fix 1 (card t_5876de50, knowledge/JUDGE-PANEL-2026-11-14.md): the panel saw six stills and could not hear the video, and its demo note said 'no title menu or narrator explains the claims'. This file is the narrator. One paragraph per shot, in the shot's own window, saying what is on screen and which claim of the write-up the picture is evidence for. The words are knowledge/DEMO-SCRIPT.md section 12, read back against this file by tests/test_demo_narration.py, so the script and the track cannot drift. The clips are synthesized offline on this machine with the Windows SAPI5 voice named below: they are a voice over, not a human recording, and the verify file says so.",
+ "why": "Judge panel fix 1 (card t_5876de50, knowledge/JUDGE-PANEL-2026-11-14.md): the panel saw six stills and could not hear the video, and its demo note said 'no title menu or narrator explains the claims'. This file is the narrator. One paragraph per shot, in the shot's own window, saying what is on screen and which claim of the write-up the picture is evidence for. The 2026-11-16 panel (card t_2514df86, fix 1) then asked for the talk input and the verdict to be said out loud, so S5's paragraph now names the input (TALK, then one of three written replies) before it names the answer. The words are knowledge/DEMO-SCRIPT.md section 12, read back against this file by tests/test_demo_narration.py, so the script and the track cannot drift. The clips are synthesized offline on this machine with the Windows SAPI5 voice named below: they are a voice over, not a human recording, and the verify file says so.",
  "source": "knowledge/DEMO-SCRIPT.md section 12",
  "voice": "Microsoft Zira Desktop - English (United States)",
  "rate": 0,
@@ -41,7 +41,7 @@
    "shot": "S5",
    "window": [78.6, 109.2],
    "claim": "\"the person judging your line is a Meta model answering inside a NES text box\", and the quay's own save",
-   "words": "This is the claim the hackathon is about. Each reply is sent to a Meta model, {judge}, and the verdict comes back and is drawn inside the game's own NES text box. The WILL bar only goes up. Three separate calls, three rows of the bake file, and the quay saves on its own entry.",
+   "words": "You pick TALK, then one of three written replies. That line, with Morgan's card and the fight's state, goes to a Meta model, {judge}, and one verdict comes back, drawn in the game's own NES text box. Each verdict raises the meter under his name, and with it full the same cursor picks SPARE instead of FIGHT. Three replies, three rows of the bake file, and the quay saves on its own entry.",
    "file": "output/demo/narration/S5.wav"
   },
   {

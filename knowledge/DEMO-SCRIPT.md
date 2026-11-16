@@ -522,3 +522,49 @@ The 2026-10-22 draft was written against a ten step route that the author's scop
 | S5, the office and the boarding | `quay_dock_office_play`, a boarding pass, the gangway and `ship_boarding` | the office and the ship exist as data and nothing reaches them: the office's only map trigger leads out, and no trigger on the quay leads in | the three TALK replies, their bake rows, the spare, and the quay's own pier save |
 | S6, the ship's fights and the log | the deck hound, the deck watch, the ship's log save, a forced defeat | the ship is off the route, and a demo that ends on a save shows neither ending the game has | Percy, the spare, and the credits, whose last card is THANK YOU FOR PLAYING |
 | the two Meta shots | an `npc` row at the dock office and three fight rows on the deck | both scenes are off the route | one shot, S5, with three rows from the fight that is on it (Q1, Q2) |
+
+---
+
+## 12. The voice over, one paragraph per shot (card t_5876de50)
+
+Why this section exists: the judge panel of 2026-11-14 (`knowledge/JUDGE-PANEL-2026-11-14.md`, weighted 35.0 of
+100) could not hear the video and wrote, in its Demo row, "no title menu or narrator explains the claims". The
+words below are read out over the picture, one paragraph per shot, inside the shot's own clock, and each one says
+what is on screen and which claim of the write-up the picture is evidence for. They add no claim the captions do
+not already make: where a caption is a written line, this is the same line spoken, and where a shot proves two
+claims, the paragraph names both.
+
+The machine copy of this table is `data/demo/narration.json`, and `tests/test_demo_narration.py` reads this
+section back against it, so a word changed in one place fails the suite instead of shipping a track that says
+something the script does not.
+
+| Shot | Runs | The words, verbatim | The claim it makes out loud |
+| --- | --- | --- | --- |
+| S1 | 0:04.20 to 0:15.90 | Primordial Paradox, a homebrew NES game. Cold boot: attract loop, then a menu in fourteen seconds, CONTINUE dim, nothing saved yet. | "whether it works", and "AI that obeys hardware limits" (the title card names the limits) |
+| S2 | 0:16.50 to 0:28.40 | The crawl runs 1,238 steps. Holding confirm reveals it faster and skips no page. This is where Kronos and Zeus land on the M3. | "Kronos and Zeus reincarnated on the M3" |
+| S3 | 0:29.30 to 0:38.90 | Town Quay, a real OpenStreetMap extract. The storm flashes eight steps on a seeded clock, thunder fourteen behind. | the hurricane, and the real Southampton block it lands on |
+| S4 | 0:39.60 to 1:17.20 | Watch the wind. It is the only gate on this street, and Morgan is the only thing standing under it. Press confirm at the door row to read the shopfront page, then walk down the middle of the street to the bridge. Morgan asks three things, and any two good answers are enough, so no reply you can give loses the talk. When he stands down, the wind drops with him and the quay opens. | the wind is the only gate, and Morgan offers three answers |
+| S5 | 1:18.60 to 1:49.20 | You pick TALK, then one of three written replies. That line, with Morgan's card and the fight's state, goes to a Meta model, {judge}, and one verdict comes back, drawn in the game's own NES text box. Each verdict raises the meter under his name, and with it full the same cursor picks SPARE instead of FIGHT. Three replies, three rows of the bake file, and the quay saves on its own entry. | "the person judging your line is a Meta model answering inside a NES text box", and the quay's own save |
+| S6 | 1:50.60 to 2:58.60 | Percy is the last gate, and the second fight the talk rule can win. Watch it happen: two TALK turns, then SPARE, and he joins the party instead of dying. The storm ends with him. The credits name the Meta models that judged every line, and the build runs offline from the repository: no network call, no key, one 256 by 240 screen, and sixteen colours. | "the other is won by talking", and the one ending the game now has |
+
+Three rules hold the track to the picture:
+
+1. `{judge}` is not a typed model name. `tools/demo_voiceover.py` replaces it at synthesis time with the spoken
+   form of `tools/meta_client.py` `DEFAULT_MODELS["chat"]`, so a rename there changes what is said here and no id
+   is copied into this document.
+2. The voice is the machine's own offline SAPI5 voice, `Microsoft Zira Desktop - English (United States)`, at rate 0. The clips are a voice
+   over synthesized on the machine, not a human in a booth, and the cut's verify file records that in the same
+   words. `tools/demo_voiceover.py --check` refuses a clip that does not fit its window rather than speeding the
+   voice up or clipping the tail.
+3. The game's own audio is ducked to 0.32 under each window and comes back at the window's end, so the storm, the
+   blips and the menu sounds are still the game's own sound, and nothing here replaces them with a stand-in cue.
+
+How the track is made: `python tools\\demo_voiceover.py --synth` writes the six clips, `--check` measures them
+against their windows, and `--track output\\demo\\narration\\track.wav` lays them on a 180.00 s silent bed at the
+clocks above. `tools/demo_cut_180.py --build` calls all three before it composes, and its verify rows prove the
+voice is audible in every window of the delivered file.
+
+Card t_2514df86 (judge panel of 2026-11-16, fix 1) rewrote S5's paragraph so the input is said out loud before the
+answer is: the player picks TALK, then one of three written replies, and that line is what the model judges. The
+other five rows and every window are unchanged, and S5's clip measures 27.76 s inside its 30.60 s window.
+
