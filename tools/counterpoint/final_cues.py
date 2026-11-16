@@ -2080,10 +2080,131 @@ def kill_v3():
                    title="Entropy (take C)")
 
 
+# ======================================================================================
+# PP-15b Mercy, take D (pp_15b_credits_spare_v4, card t_16aa7dfa, 2026-11-16).
+#
+# Why this cue: every take on disk was scored with tools/hook_score.py against the same
+# grammar. The lowest score on the board is PP-02 (93), but its missing points are structural:
+# loop length 0.0 of 6 because the film grid fixes 125 bars, and the melody there has already
+# had three takes (v5, v6, v7). The lowest take whose open points the meter names as melody
+# shape is this one: take C sits on 99 and gives away two points, steps over leaps 11.8 of 12
+# (7 of 11 intervals are steps, 64 percent against the 65 percent floor) and contour 9.3 of 10
+# (14 of 15 returns arch or pedal, the raised pair at bars 17 to 20 is the one that wanders).
+#
+# Take D changes two things in the melody and nothing in the sheet (A major, 4/4, 144 bpm,
+# 32 bars, the delivered chord plan):
+#   the turn   bar 2 was C#5 B4 D5 C#5 E5 D5, whose B4 to D5 is a fourth and the reason 7 of 11
+#              intervals were steps. The turn note becomes the step above B4: C#5 B4 C#5 C#5 E5 D5,
+#              which is 8 of 11 intervals steps (72.7 percent), the fifth at the end of bar 1
+#              (E5 down to B4) kept as the single leap. The same move is applied to the dressed cell.
+#   the rise   bars 17 to 20 were E5 A5 A5 B4 E5 B4 (and D5 B4 D5 B4 E5 D5), whose intervals
+#              turn nine times, so the pair was neither arch nor pedal. It is now
+#              C#5 D5 E5 F#5 A5 A5 | A5 F#5 E5 D5 B4: one rise to A5, then a fall, one turn.
+# ======================================================================================
+SPARE4_PLAN = SPARE3_PLAN
+SPARE4_DRESSED = SPARE3_DRESSED
+SPARE4_RAISED = SPARE3_RAISED
+SPARE4_B1 = "C#5:2 E5:2 E5:2 B4:2 C#5:4 B4:4"
+SPARE4_B2 = "C#5:2 B4:2 C#5:2 C#5:2 E5:4 D5:4"
+SPARE4_V1 = "C#5:2 E5:2 E5:2 E5:2 C#5:4 E5:4"
+SPARE4_V2 = "C#5:2 E5:2 C#5:2 C#5:2 E5:4 E5:4"
+SPARE4_D1 = "D5:2 E5:2 E5:2 B4:2 D5:4 B4:4"
+SPARE4_D2 = "D5:2 B4:2 D5:2 B4:2 E5:4 D5:4"
+SPARE4_R_A = "C#5:2 D5:2 E5:2 F#5:2 A5:4 A5:4"   # over A: rise to the root, the peak held
+SPARE4_R_E = "B4:2 C#5:2 E5:2 F#5:2 G#5:4 G#5:4"  # over E: rise to the third, the peak held
+SPARE4_R2 = "A5:2 F#5:2 E5:4 C#5:4 A4:4"          # fall home over A, one turn across the pair
+
+
+def _spare4_bar(unit, half):
+    dressed = unit in SPARE4_DRESSED
+    if half == 0:
+        spec = SPARE4_V1 if dressed else SPARE4_B1
+        if unit in SPARE4_RAISED:
+            return SPARE4_R_E if "E" in SPARE4_PLAN[unit][0] else SPARE4_R_A
+        return spec if ("D" not in SPARE4_PLAN[unit][0]) else SPARE4_D1
+    spec = SPARE4_V2 if dressed else SPARE4_B2
+    if unit in SPARE4_RAISED:
+        spec = SPARE4_R2
+    return spec if SPARE4_PLAN[unit][1] != "D" else SPARE4_D2
+
+
+def spare_v4():
+    c = Cue("pp_15b_credits_spare_v4", "Mercy (take D)", 144, 4, 32, "A major")
+    c.sections = ["sunrise", "tide", "rise", "home"]
+    base = {"vrc6 pulse a": 11, "vrc6 pulse b": 5, "vrc6 saw": 5, "pulse 1": 5,
+            "pulse 2": 4, "triangle": 8, "noise": 5, "dpcm": 8}
+    for t, v in base.items():
+        c.cc(t, 0, 0, 11, v)
+    c.cc("vrc6 pulse a", 0, 0, 12, 3)
+    c.cc("vrc6 pulse b", 0, 0, 12, 3)
+    c.cc("pulse 1", 0, 0, 12, 1)
+    c.cc("pulse 2", 0, 0, 12, 1)
+    vel_of = (100, 102, 99, 101)
+    for unit, (c1sym, c2sym) in enumerate(SPARE4_PLAN):
+        for half in range(2):
+            b = unit * 2 + half
+            s = b // 8
+            ch = Chord(c1sym if half == 0 else c2sym)
+            spec = _spare4_bar(unit, half)
+            if half == 0 and b % 8 == 0:
+                for t, v in base.items():
+                    c.level(t, b, v + (1 if s >= 2 else 0))
+            c.level("vrc6 pulse a", b, 10 + (1 if b % 4 == 0 else 0))
+            c.melody("vrc6 pulse a", b, spec, vel_of[b % 4], vib=(25, 1, 8))
+            lead_first = _spans(spec)[0][1][1]
+            third_first = (lead_first % 12) == (ch.root % 12)
+            if s == 0:
+                fig = "R R 5 5 R R 5 5"
+            elif s == 1:
+                fig = "R - R R 5 - 5 R"
+            elif s == 2:
+                fig = "R - 5 -"
+            else:
+                fig = "R R - 5 R R R R"
+            if third_first:
+                fig = "3" + fig[1:]
+            c.bass("triangle", b, ch, fig, 33,
+                   100 if s == 0 else (102 if s == 1 else (104 if s == 2 else 98)),
+                   2 if len(fig) > 3 else 4)
+            if s == 2:
+                c.arp("pulse 1", b, ch, "R - 5 - 3 - 5 -", 57, 82, 2)
+            elif s == 1:
+                c.arp("pulse 1", b, ch, "R 3 5 3 R 3 5 3", 57, 78, 2)
+            else:
+                c.arp("pulse 1", b, ch, "- 3 - 5 - 3 - 5", 57, 80, 2)
+            c.put("vrc6 saw", b, 0, 16, ch.pitch("R", 48 if s == 2 else 45), 70)
+            if s in (1, 3):
+                for off, (n, p) in _spans(spec):
+                    h = _below(ch, p, 3)
+                    if h is not None and 45 <= h <= 84:
+                        c.put("vrc6 pulse b", b, off, n, h, 70)
+                    if p - 12 >= 48:
+                        c.put("pulse 2", b, off, n, p - 12, 60)
+            elif s == 2:
+                for off, (n, p) in _spans(spec):
+                    if p - 12 >= 48 and off % 4 == 2:
+                        c.put("pulse 2", b, off, n, p - 12, 62)
+            idx = 5 if s == 2 else 4
+            q = (b % 8) // 4
+            if b % 8 == 7:
+                c.drum_bar(b, kick="x.....x.........", snare="....x...x.x.xxxx",
+                           hats="9353935393539353", idx=idx, kvel=100, svel=100, hscale=0.9)
+            elif b % 8 == 3:
+                c.drum_bar(b, kick="x...............", snare="........x.......",
+                           hats="9000900093579357", idx=idx, kvel=88, svel=92, hscale=0.7)
+            elif q == 0:
+                c.drum_bar(b, kick="x.......x.......", snare="....x.......x...",
+                           hats="9050905090509050", idx=idx, kvel=95, svel=95, hscale=0.8)
+            else:
+                c.drum_bar(b, kick="x...x.......x...", snare="....x.......x...",
+                           hats="9353935393539353", idx=idx, kvel=97, svel=95, hscale=0.85)
+    return c
+
+
 CUES = {"storm": storm, "storm2": storm_v2, "storm3": storm_v3, "storm4": storm_v4,
         "title12": title_v12, "title13": title_v13,
         "percy": percy, "percy2": percy_v2, "percy3": percy_v3, "percy4": percy_v4,
         "kill": kill, "kill2": kill_v2, "kill3": kill_v3, "spare": spare, "spare2": spare_v2,
-        "spare3": spare_v3, "ship7": ship_v7}
+        "spare3": spare_v3, "spare4": spare_v4, "ship7": ship_v7}
 
 

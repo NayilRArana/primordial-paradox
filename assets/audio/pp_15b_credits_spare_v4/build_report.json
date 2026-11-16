@@ -1,0 +1,127 @@
+{
+ "audio_key_top3": [
+  [
+   0.684,
+   "A major"
+  ],
+  [
+   0.631,
+   "E major"
+  ],
+  [
+   0.444,
+   "E minor"
+  ]
+ ],
+ "audio_tempo": {
+  "full_band": {
+   "bar_seconds": 1.6665,
+   "bpm": 144.02,
+   "peak_autocorr": 0.889
+  },
+  "kick_band": {
+   "bar_seconds": 1.6664,
+   "bpm": 144.02,
+   "peak_autocorr": 0.543
+  }
+ },
+ "bars": 32,
+ "beats_per_bar": 4,
+ "bpm": 144,
+ "cue_gate": {
+  "exit": 0,
+  "stdout": "assets/audio/pp_15b_credits_spare_v4/pp_15b_credits_spare_v4.mid: PASS"
+ },
+ "cue_gate_summary": [
+  "G1 CP-01 raw clashes on a strong beat: 0   G2 CP-09 parallel perfect intervals: 0",
+  "state: PASS   0 raw clashes on a strong beat and 0 parallel perfect fifths or octaves between the outer voices"
+ ],
+ "declared_key": "A major",
+ "delivered": {
+  "loudness": {
+   "integrated_lufs": -14.13,
+   "lra_lu": 2.7,
+   "offset": 0.31,
+   "threshold": -24.13,
+   "true_peak_dbtp": -1.22
+  },
+  "mean_volume_db": -12.3,
+  "samples": 2352000,
+  "seconds": 53.3333
+ },
+ "loop_samples": 2352000,
+ "master_attempts": [
+  {
+   "dbtp": -1.66,
+   "gain_db": 0.0,
+   "limit_db": -1.9,
+   "lufs": -17.56
+  },
+  {
+   "dbtp": -0.58,
+   "gain_db": 3.56,
+   "limit_db": -1.9,
+   "lufs": -14.38
+  },
+  {
+   "dbtp": -0.65,
+   "gain_db": 3.94,
+   "limit_db": -2.47,
+   "lufs": -14.29
+  },
+  {
+   "dbtp": -1.22,
+   "gain_db": 4.23,
+   "limit_db": -2.97,
+   "lufs": -14.3
+  },
+  {
+   "dbtp": -1.22,
+   "gain_db": 4.53,
+   "limit_db": -2.97,
+   "lufs": -14.13
+  }
+ ],
+ "midi_key_top3": [
+  [
+   0.882,
+   "A major"
+  ],
+  [
+   0.776,
+   "E major"
+  ],
+  [
+   0.591,
+   "C# minor"
+  ]
+ ],
+ "notes": {
+  "dpcm": 128,
+  "noise": 392,
+  "pulse 1": 160,
+  "pulse 2": 111,
+  "triangle": 184,
+  "vrc6 pulse a": 191,
+  "vrc6 pulse b": 96,
+  "vrc6 saw": 32
+ },
+ "periodicity_max_abs_diff_first_second": 0.522858,
+ "periodicity_max_abs_diff_whole": 0.642975,
+ "periodicity_rms_diff_db": -26.43,
+ "periodicity_share_samples_differing": 0.39917,
+ "seam": {
+  "body_rms_dbfs": -12.31,
+  "head_rms_dbfs": -10.52,
+  "loop_end_sample": 2352000,
+  "loop_seconds": 53.333333,
+  "loop_start_sample": 0,
+  "seam_level_delta_db": 1.1,
+  "step_reference_dbfs": -8.37,
+  "tail_rms_dbfs": -11.21,
+  "verdict": "clean",
+  "wrap_jump_dbfs": -35.66
+ },
+ "slug": "pp_15b_credits_spare_v4",
+ "title": "Mercy (take D)"
+}
