@@ -1,0 +1,71 @@
+{
+  "bpm": 168.0,
+  "breaths": 4,
+  "bytes_in": 3851,
+  "bytes_out": 5921,
+  "changed_fraction": 0.97,
+  "division": 480,
+  "envelope_points": 374,
+  "fills": 3,
+  "floor_misses": 76,
+  "grace_notes": 0,
+  "loop_period_bars": 8,
+  "midi_in": "<repo>\\assets\\audio\\pp_04_fight_baroque_v11\\pp_04_fight_baroque_v11.mid",
+  "midi_out": "<repo>\\assets\\audio\\pp_04_fight_baroque_v11\\pp_04_fight_baroque_v11_humanized.mid",
+  "mordents": 0,
+  "motif": {
+    "bars": 2,
+    "returns": 4,
+    "start_bar": 1,
+    "third_return_bar": 9
+  },
+  "notes": 400,
+  "notes_by_track": {
+    "dpcm": {
+      "changed": 52,
+      "floor_misses": 0,
+      "notes": 54,
+      "role": "kick"
+    },
+    "noise": {
+      "changed": 127,
+      "floor_misses": 76,
+      "notes": 131,
+      "role": "drums"
+    },
+    "pulse 1": {
+      "changed": 74,
+      "floor_misses": 0,
+      "notes": 78,
+      "role": "arpeggio"
+    },
+    "pulse 2": {
+      "changed": 71,
+      "floor_misses": 0,
+      "notes": 71,
+      "role": "echo"
+    },
+    "triangle": {
+      "changed": 64,
+      "floor_misses": 0,
+      "notes": 66,
+      "role": "bass"
+    }
+  },
+  "notes_changed": 388,
+  "notes_in": 400,
+  "notes_out": 403,
+  "onset_frames": 0.0,
+  "onset_shifts": 0,
+  "ornament_notes": [],
+  "section_bars": [
+    8,
+    16
+  ],
+  "seed": 20261021,
+  "sha256_in": "301158ed2ff98c9f921d97b811954839189e8f41316bf4a5b32c0b98d90a7cac",
+  "sha256_out": "a411673e7a1064407606d7dd4c3bb843ee780013422cf4281f87b3ac09e1b0d0",
+  "tempo_us": 357143,
+  "ticks_per_frame": 22.4,
+  "vibrato_notes": 8
+}

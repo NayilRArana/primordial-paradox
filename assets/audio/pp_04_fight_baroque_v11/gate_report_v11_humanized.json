@@ -1,0 +1,78 @@
+{
+ "facts": {
+  "bars": 16,
+  "by_rule": {
+   "CP-01": 0,
+   "CP-02": 0,
+   "CP-04": 0,
+   "CP-05": 0,
+   "CP-06": 1,
+   "CP-07": 0,
+   "CP-08": 0,
+   "CP-09": 0,
+   "CP-10": 0,
+   "CP-11": 0,
+   "CP-12": 0,
+   "CP-13": 0,
+   "CP-14": 1,
+   "CP-15": 1,
+   "CP-16": 0,
+   "CP-17": 0,
+   "CP-18": 0
+  },
+  "by_severity": {
+   "hard": 0,
+   "soft": 2,
+   "style": 1
+  },
+  "clash": {
+   "by_class": {
+    "anticipation": 0,
+    "appoggiatura": 1,
+    "neighbour": 0,
+    "passing": 11,
+    "raw clash": 1,
+    "suspension": 0
+   },
+   "raw_total": 1,
+   "strong_raw": 0
+  },
+  "cp01": [],
+  "cp09": [],
+  "file": "<repo>\\assets\\audio\\pp_04_fight_baroque_v11\\pp_04_fight_baroque_v11_humanized.mid",
+  "key": "A minor (detected)",
+  "m1a_verdict": "PASS",
+  "notes": 217,
+  "outer_voices": [
+   "pulse 1",
+   "triangle"
+  ],
+  "path": "assets/audio/pp_04_fight_baroque_v11/pp_04_fight_baroque_v11_humanized.mid",
+  "voices": [
+   "pulse 1",
+   "pulse 2",
+   "triangle"
+  ]
+ },
+ "verdict": {
+  "approval": null,
+  "baseline": null,
+  "clean_rules": true,
+  "counts": {
+   "cp01": 0,
+   "cp09": 0,
+   "raw_clash": 1,
+   "strong_raw": 0
+  },
+  "open": {
+   "CP-01": [],
+   "CP-09": []
+  },
+  "path": "assets/audio/pp_04_fight_baroque_v11/pp_04_fight_baroque_v11_humanized.mid",
+  "stale_waivers": [],
+  "state": "PASS",
+  "waived": [],
+  "waiver_problems": [],
+  "why": "0 raw clashes on a strong beat and 0 parallel perfect fifths or octaves between the outer voices"
+ }
+}

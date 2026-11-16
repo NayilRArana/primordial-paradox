@@ -1,0 +1,32 @@
+{
+  "delivered_loudness": {
+    "integrated_lufs": "-14.59",
+    "true_peak_dbtp": "-0.65"
+  },
+  "humanize": {
+    "breaths": 4,
+    "envelope_points": 374,
+    "fills": 3,
+    "grace_notes": 0,
+    "mordents": 0,
+    "notes_changed": 388,
+    "notes_out": 403,
+    "ornament_pick": "none",
+    "vibrato_notes": 8
+  },
+  "humanized": "pp_04_fight_baroque_v11_humanized.mid",
+  "humanized_sha256": "a411673e7a1064407606d7dd4c3bb843ee780013422cf4281f87b3ac09e1b0d0",
+  "master_wav": {
+    "bytes": 2194364,
+    "integrated_lufs": "-14.59",
+    "true_peak_dbtp": "-0.65"
+  },
+  "mp3_bytes": 360980,
+  "ogg_bytes": 354073,
+  "rendered_from": "pp_04_fight_baroque_v11_humanized.mid",
+  "score": "pp_04_fight_baroque_v11.mid",
+  "score_sha256": "301158ed2ff98c9f921d97b811954839189e8f41316bf4a5b32c0b98d90a7cac",
+  "wav": {
+    "bytes": 2016044
+  }
+}
