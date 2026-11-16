@@ -52,6 +52,32 @@ These are the four commands the submission checklist tells a reader to run. No b
 | nes_audit_all | ![nes_audit_all](docs/badges/nes_audit_all.svg) | `python tools/nes_audit_all.py` | PASS |
 | play_demo --check | ![play_demo --check](docs/badges/play_demo_check.svg) | `python tools/play_demo.py --check` | FAIL |
 
+## The pass lines, as the gates print them
+
+The table above is the verdict; these are the last lines the two data gates printed when this section was written. Nothing here is typed in, so a gate that failed on this tree shows the line it failed with, and `python tools/readme_badges.py --verify` refuses a page whose lines a fresh run does not print.
+
+```text
+check_data: all files pass
+check_cleanroom: no study reference, no foreign name, no foreign phrase, every module reviewed
+```
+
+## The tagged tree and tonight's finished cut
+
+A reader does not have to take the two rows above on trust, and the 180 second video beside them is measured, not claimed.
+
+* The tag `nightly-clean-2026-11-15` is an annotated tag on a commit whose parent is `461cb9a5`, and the tag's tree is that commit plus this page. The checkout behind it carries 1114 uncommitted paths from other lanes and none of them is in the tag: `git archive nightly-clean-2026-11-15` extracts 2,514 files, the same count `git ls-tree -r --name-only nightly-clean-2026-11-15` prints, so the tag's tree is exactly the commit and nothing from the dirty working tree.
+* Both data gates were run inside that export, not in the dirty checkout, and both exit 0. check_cleanroom scans 811 files there against the 905 it scans in the checkout, which is the uncommitted paths it is not looking at:
+
+```text
+check_data: all files pass
+check_cleanroom: 811 files scanned for 26 names and 12 phrases, 48 GML modules, 0 awaiting review, 3 downloaded map file(s) skipped, 121 OSM place name(s) exempt in 1 generated geography card(s)
+check_cleanroom: no study reference, no foreign name, no foreign phrase, every module reviewed
+```
+
+* `output/demo/nightly-2026-11-15d.mp4` is the finished cut, built 2026-11-15 21:21 local: 180.000 s, 10,800 frames, 768 by 784 at 60 fps, h264 with an aac track, 17,217,704 bytes. `python tools/demo_cut_180.py --verify --video output/demo/nightly-2026-11-15d.mp4 --workdir <scratch>` exits 0 with 49 rows PASS and 0 FAIL, and writes `output/demo/nightly-2026-11-15d_verify.json`. The rows include the six captions, the four S5 plates, thirteen title card lines up at 1.0 s and 15.8 s, CONTINUE dim on the boot menu, 0 blue band pixels at 15.0 s, and the narrator above the ducked game track in all six windows.
+* `tools/demo_cut_180.py --build` is the tool that assembles the six shots to the 180.00 s total; `tools/play_demo.py` is the recorder that produces source footage, and `knowledge/DEMO-AUTHORITY-RULING-2026-11-12.md` section 2 is why the cut, and not a recorder take, is the shipping video. The build and the verify above are one pass each on the same inputs, in the same minute.
+* The gap the tag does not close, named rather than hidden: the cut above needs six paths the tag does not carry, `tools/video_builder.py`, `tools/demo_cut_180.py`, `tools/demo_voiceover.py` (untracked), `data/slice.json`, `data/demo/narration.json` and `knowledge/DEMO-SCRIPT.md`, all edited by other lanes on 2026-11-15. A rebuild from the tag alone therefore draws the older five second card and no voice over; the next commit that carries those six paths makes the cut reproducible from a tag.
+
 ## NES limits, enforced in code
 
 The 8 bit look is a hardware budget, not a filter. The chip draws 256 by 240 pixels out of 8 by 8 pixel tiles and 16 by 16 pixel attribute areas, and shows at most 25 colours at once. Every number below is read out of the file it names when this section is written, so the page cannot drift away from the code.
@@ -104,9 +130,20 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools/run.ps1
 
 `--selftest` prints one line per rung without spending a Meta call; `--offline` opens no socket at all; `--serve --warm` is the server the last line starts; and `tools/run.ps1` is the whole build, from the data checks through Igor to the running game. `PP_AI_MODE=replay` starts the ladder at the recorded rung, which is why the demo plays with no network and no model loaded.
 
+## The bake receipts
+
+The credits say a Meta model wrote the scenes and judged the TALK box, and the sections above say which files call it. This is where the numbers behind those credits are receipted, so a reader re-reads a source instead of believing a sentence:
+
+* `data/receipts/meta_receipts.jsonl` is the ledger: 31 receipt(s), measured 14, computed 11, inferred 6. Every line names the source file, the locator inside it and that file's sha256.
+* `tools/receipts.py` writes the receipts, and its three labels are the only ones allowed: measured is a value read out of a committed file and re-hashable from it, computed is arithmetic over numbers measured in the same ledger, and inferred means no file records the value and the receipt says so in words.
+* `tools/check_receipts.py` is the verifier. It exits 0 only when every receipt resolves, and a receipt whose source changed after it was written is a NOTE that asks for a re-issue rather than a pass. Run it with no argument and it re-reads the newest take verify file that carries a `meta_numbers` block, one number at a time.
+* The picture below is drawn from those ledger rows by `python tools/readme_badges.py --write`, so it shows the receipts the file holds and cannot show one it does not. `--verify` refuses the page when the picture is missing or was drawn for a ledger of another size, and refuses the sentence above when the label counts moved. An edit inside one line keeps that size, so the picture follows the next `--write` rather than the page.
+
+![bake receipts](docs/bake_receipts.png)
+
 The reference Meta art run is the title backdrop. Its small files are tracked in `knowledge/meta_art_reference/title_backdrop_c1`, so a fresh clone holds the same evidence without running anything, and the same run is written to `output/meta_art/title_backdrop/c1`, a local folder git ignores, which is why that one path is exempt from the on disk check. The tracked answer in it, `cached_response.json`, says network true and was recorded 2026-10-27T08:58:17Z.
 
-The prose on this page is written by `muse-spark-1.3` through `tools/readme_meta.py`; the table above, the limits section, the bridge section and the badges are written by `python tools/readme_badges.py --write`. Each tool keeps out of the other's region of the file.
+The prose on this page is written by `muse-spark-1.3` through `tools/readme_meta.py`; the table above, the pass lines under it, the limits section, the bridge section, the receipts section, the receipts picture and the badges are written by `python tools/readme_badges.py --write`. Each tool keeps out of the other's region of the file.
 <!-- README-BADGES:END -->
 
 ## Where the code lives
