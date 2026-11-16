@@ -37,3 +37,40 @@ def test_the_validator_rejects_a_rewrite_that_loses_a_fact_or_uses_a_dash():
     assert not ok and "dash" in bad
     ok, bad = readme_meta.valid(orig, "## H\n\nWe ran 2,694 tests: see `tools/x.py` and https://example.org/a.\n")
     assert ok, bad
+
+
+BLOCK = ("<!-- README-BADGES:START -->\n\n| gate | result |\n| --- | --- |\n| check_data | PASS |\n"
+         "<!-- README-BADGES:END -->\n")
+
+
+def test_a_page_carrying_the_measured_block_validates_against_the_prose_alone(tmp_path):
+    """Card t_f3399639: the stamp covers the sentences, and the badge block is masked out of it.
+
+    This is the property that let the block come back without asking a model to rewrite the page: a
+    stamp written over the prose still holds once tools/readme_badges.py has written its block in.
+    """
+    prose = "## A\n\nSome text with 3 numbers and `code`.\n"
+    f = tmp_path / "README.md"
+    f.write_text(prose + "\n" + BLOCK + "\n<!-- readme-author: muse-spark-1.3 body-sha256: %s -->\n"
+                 % readme_meta.body_hash(prose), encoding="utf-8")
+    assert readme_meta.check_file(str(f)) == ""
+
+
+def test_an_edit_outside_the_measured_block_still_breaks_the_stamp(tmp_path):
+    """The masking must not turn the stamp off: prose changed under it is still a hand edit."""
+    prose = "## A\n\nSome text with 3 numbers and `code`.\n"
+    f = tmp_path / "README.md"
+    f.write_text(prose + "\n" + BLOCK + "\n<!-- readme-author: muse-spark-1.3 body-sha256: %s -->\n"
+                 % readme_meta.body_hash(prose), encoding="utf-8")
+    assert readme_meta.check_file(str(f)) == ""
+    f.write_text(f.read_text(encoding="utf-8").replace("Some", "Other"), encoding="utf-8")
+    assert "changed after the Meta model wrote it" in readme_meta.check_file(str(f))
+
+
+def test_a_rewrite_puts_the_measured_block_back_untouched():
+    """rewrite() sends the prose to the model and hands back every generated region as it found it."""
+    body = "## A\n\nSome text.\n\n" + BLOCK + "\n## B\n\nMore text.\n"
+    masked, regions = readme_meta.pull_generated(body)
+    assert regions == [BLOCK.rstrip("\n")]
+    assert readme_meta.GENERATED[0] not in masked and readme_meta.MASK in masked
+    assert readme_meta.restore_generated(masked, regions) == body

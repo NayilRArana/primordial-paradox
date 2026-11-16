@@ -11,6 +11,14 @@ house style of the coding assistants that wrote the code. So a README may only c
 The stamp is the last line: <!-- readme-author: muse-spark-1.3 body-sha256: HEX -->. Any hand edit changes the body hash and fails the check.
 Rewrite keeps numbers, backticked names, URLs, code fences and table rows (validated per section; a section the model garbles keeps its text).
 The key is read from META_API_KEY at call time and never printed.
+
+Two tools write this page, so they own separate regions of it. This one owns the sentences. The
+block between <!-- README-BADGES:START --> and <!-- README-BADGES:END --> is a measurement written by
+tools/readme_badges.py from a run of the four gates, and it is masked out of the body hash and never
+sent to the model: a badge cannot be written by a writer, and a sentence cannot be written by a
+gate. Card t_f3399639: on 2026-11-03 this tool's first rewrite dropped that block, and the badge
+gate plus tests/test_check_readme.py went red on the same page, because one gate was told it owned
+the whole file.
 """
 import hashlib
 import json
@@ -24,6 +32,52 @@ import urllib.request
 BASE = os.environ.get("META_API_BASE", "https://api.meta.ai/v1").rstrip("/")
 MODEL = os.environ.get("README_META_MODEL", "muse-spark-1.3")
 STAMP_RX = re.compile(r"\n*<!-- readme-author: (\S+) body-sha256: ([0-9a-f]{64}) -->\s*$")
+
+# The generated region: markers from tools/readme_badges.py, and the one line that stands in for it
+# while the body is hashed or sent to the model. The line is short on purpose, so the chunker never
+# picks it up as a piece to rewrite.
+GENERATED = ("<!-- README-BADGES:START -->", "<!-- README-BADGES:END -->")
+MASK = "<!-- generated: a measured section written and hashed by tools/readme_badges.py -->"
+
+
+def mask_generated(text):
+    """Delete each generated region, markers included, so the stamp covers the prose only.
+
+    The region is removed rather than replaced by a line, and the blank lines it leaves behind are
+    collapsed, so a page that carries the measured block hashes to exactly the same value as the same
+    page without it. That is what lets tools/readme_badges.py rewrite that block, or add it to a page
+    that lost it, without touching the model's stamp: the prose is the thing being stamped.
+    """
+    start, end = GENERATED
+    while start in text:
+        i = text.index(start)
+        j = text.find(end, i)
+        if j < 0:
+            break
+        text = text[:i] + text[j + len(end):]
+    return re.sub(r"\n{3,}", "\n\n", text)
+
+
+def pull_generated(text):
+    """Masked text plus the regions themselves in order, for putting back after a rewrite."""
+    start, end = GENERATED
+    regions = []
+    while start in text:
+        i = text.index(start)
+        j = text.find(end, i)
+        if j < 0:
+            break
+        regions.append(text[i:j + len(end)])
+        text = text[:i] + MASK + text[j + len(end):]
+    return text, regions
+
+
+def restore_generated(text, regions):
+    for region in regions:
+        text = text.replace(MASK, region, 1)
+    return text
+
+
 SYSTEM = ("You are a clear technical writer preparing a hackathon project page for judges and curious readers. Rewrite the Markdown you are given so it is easy for a human to read: "
           "plain direct English, short paragraphs (three sentences at most), concrete verbs, short bullet lists where natural, explain only terms a game-jam judge could not know, and do not add glossary asides for well known words such as GameMaker, Python, NES, pixel or Meta, no hype words, keep the author's honest voice. "
           "HARD RULES: keep EVERY fact, number, date, file path, URL, command, code block and table row exactly as given (you may tighten the words around them). Keep any heading line unchanged. "
@@ -42,7 +96,7 @@ def split_stamp(text):
 
 
 def body_hash(body):
-    return hashlib.sha256(body.rstrip("\n").replace("\r\n", "\n").encode("utf-8")).hexdigest()
+    return hashlib.sha256(mask_generated(body).rstrip("\n").replace("\r\n", "\n").encode("utf-8")).hexdigest()
 
 
 def check_file(path):
@@ -123,6 +177,7 @@ def rewrite(path, workers=6):
     from concurrent.futures import ThreadPoolExecutor
     text = open(path, encoding="utf-8").read()
     body, _a, _d = split_stamp(text)
+    body, generated = pull_generated(body)
     parts = [p for p in re.split(r"(?m)(?=^## )", body) if p.strip()]
     pieces = []
     for part in parts:
@@ -141,6 +196,7 @@ def rewrite(path, workers=6):
     with ThreadPoolExecutor(max_workers=workers) as pool:
         list(pool.map(work, todo))
     final = "\n\n".join(results[i][0] for i in range(len(pieces))).rstrip("\n") + "\n"
+    final = restore_generated(final, generated)
     stamp = "\n<!-- readme-author: %s body-sha256: %s -->\n" % (MODEL, body_hash(final))
     open(path, "w", encoding="utf-8", newline="\n").write(final + stamp)
     changed = sum(1 for i in todo if results[i][1])
