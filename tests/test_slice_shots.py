@@ -199,23 +199,26 @@ def test_every_route_step_a_shot_names_is_in_the_route():
 
 
 # ---------------------------------------------------------------------------------------------------------
-# The 5.00 s title card (card t_5876de50 asked for four; card t_379273cc, judge panel 2026-11-15 fix 1,
-# raised the hold to five). A judge will see the title in the first seconds. The card is data, so these pins
-# read it as data and hold it to the drawing the cut burns.
+# The 16.00 s title card (card t_5876de50 asked for four; card t_379273cc, judge panel 2026-11-15 fix 1,
+# raised the hold to five; card t_b231fe46, judge panel 2026-11-16 fix 3, raised it to S1's whole 16.00 s
+# because the only S1 footage on disk measures as blue bands at 15.0 s). A judge will see a readable title in
+# the first 16 seconds. The card is data, so these pins read it as data and hold it to the drawing the cut burns.
 
 def title_card() -> dict:
     return shots().get("title_card") or {}
 
 
-def test_the_slice_carries_a_five_second_title_card():
+def test_the_slice_carries_a_sixteen_second_title_card():
     card = title_card()
     assert card, "data/slice.json shots.title_card is missing, so no card is held"
-    assert card.get("clock") == ["0:00.00", "0:05.00"], "the card clocks %r" % (card.get("clock"),)
-    assert card.get("seconds") == 5.0, "the card is %r s and the card asks for five" % (card.get("seconds"),)
+    assert card.get("clock") == ["0:00.00", "0:16.00"], "the card clocks %r" % (card.get("clock"),)
+    assert card.get("seconds") == 16.0, "the card is %r s and the card asks for S1's whole shot" % (card.get("seconds"),)
     rate = shots().get("steps_per_second")
     assert card.get("steps") == int(round(card["seconds"] * rate)), \
         "the card says %r steps at %r a second" % (card.get("steps"), rate)
     assert card.get("held_by") == "S1", "the card is held by %r" % (card.get("held_by"),)
+    assert card.get("picture_seconds") == 0.0, \
+        "the card covers its shot, so no picture seconds are left under it (%r)" % (card.get("picture_seconds"),)
 
 
 def test_the_card_is_held_inside_s1_and_s1_keeps_its_scripted_length():

@@ -75,6 +75,11 @@
 #macro PP_TITLE_LOGO_X 16
 #macro PP_TITLE_LOGO_Y 0
 #macro PP_TITLE_PROMPT_Y 72
+// The controls, two rows of the sheet's own 8 px glyphs under the prompt (card t_b231fe46, judge panel 2026-11-16
+// fix 3). Both sit above the menu window's top edge at 148, so neither can cross its border, and both name the
+// bindings pp_input actually reads: confirm Z, cancel X, and the pad's start on TAB.
+#macro PP_TITLE_CONTROLS_Y 96
+#macro PP_TITLE_CONTROLS_STEP 12
 #macro PP_TITLE_MENU_WIN_X 56
 #macro PP_TITLE_MENU_WIN_Y 148
 #macro PP_TITLE_MENU_WIN_TW 18
@@ -657,6 +662,16 @@ function pp_title_draw_logo(_s) {
     pp_art_draw("spr_pp_title_logo", _index, PP_TITLE_LOGO_X, PP_TITLE_LOGO_Y, PP_UNTINTED, _s.logo_alpha);
 }
 
+/// The controls, under the prompt and above the menu window (card t_b231fe46, judge panel 2026-11-16 fix 3): a
+/// judge who sees this screen for a few seconds has to learn what the keys do without being told elsewhere. Two rows
+/// of the sheet's one ink, 22 and 19 characters, so 176 and 152 px of the 256 px frame, and both clear of the window
+/// at 148. The words are pp_input's bindings, not a guess: confirm is Z (or space, or enter), cancel is X (or escape),
+/// and the menu action the prompt's PRESS START reads is TAB on the keyboard and START on the pad.
+function pp_title_draw_controls() {
+    pp_font_draw_centre("ARROWS MOVE  Z CONFIRM", PP_FRAME_W / 2, PP_TITLE_CONTROLS_Y, 1);
+    pp_font_draw_centre("X CANCEL  TAB START", PP_FRAME_W / 2, PP_TITLE_CONTROLS_Y + PP_TITLE_CONTROLS_STEP, 1);
+}
+
 /// The words: the prompt, the menu in its window, the settings placeholder, or the intro crawl.
 function pp_title_draw_words(_s, _d) {
     if (_s.phase == "settings") {
@@ -667,12 +682,14 @@ function pp_title_draw_words(_s, _d) {
         if (floor(_s.steps / PP_TITLE_BLINK_STEPS) mod 2 == 0) {
             pp_font_draw_centre("PRESS START", PP_FRAME_W / 2, PP_TITLE_PROMPT_Y, 1);
         }
+        pp_title_draw_controls();
         pp_title_draw_copy();
         return;
     }
     // The menu, inside the window. A row that cannot be chosen is marked by a rule through it in the ground band's
     // dark green, because the font sheet carries one ink and a tint would be a colour the PPU cannot output
     // (card t_a1170172, review round 1 item 3). The disabled row still answers a press with the move cue only.
+    pp_title_draw_controls();
     pp_title_draw_menu_window();
     var _has_save = pp_title_has_save();
     for (var i = 0; i < array_length(_d.menu); i += 1) {

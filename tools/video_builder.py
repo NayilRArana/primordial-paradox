@@ -95,13 +95,30 @@ SHOTS = ("S1", "S2", "S3", "S4", "S5", "S6")
 # The card's length is not a constant here: it is data/slice.json shots.title_card.seconds, read by
 # title_card_seconds(), so the slice is the one place a hold is written down.
 
-# The title card shows the title attract scene (S1, 0:00 to 0:16 on the demo clock) as its backdrop, so a
+# The card shows the title attract scene (S1, 0:00 to 0:16 on the demo clock) as its backdrop, so a
 # judge sees the game and not a black frame. The frame is sampled here: after the logo's 4 bar shimmer
 # (5.80 s) and before the lightning (11.60 s), so the logo is up and the menu is not open yet.
 TITLE_ATTRACT_T = 6.0
 TITLE_DIM = 0.5          # how far the attract frame is pulled toward black under the text
-TITLE_BLANK = 40         # vertical gap a blank title line occupies
-TITLE_LINE_AFTER = 22    # vertical advance after a drawn title line
+TITLE_BLANK = 32         # vertical gap a blank title line occupies
+TITLE_LINE_AFTER = 12    # vertical advance after a drawn title line
+TITLE_BLOCK_GAP = 20     # between the words, the boot menu box and the caption
+# The card on a LIVE picture is opaque (card t_b231fe46, judge panel 2026-11-16 fix 3): the only S1 footage on
+# disk is the 2026-10-26 attract, and the panel's 15.0 s still from it was blue bands with one caption and no
+# readable word. A card that dims stays a picture of blue bands, so this one covers every game pixel under it.
+TITLE_OVERLAY_ALPHA = 255
+# The boot menu the card draws under its words: the game's own four rows (data/title.json can reorder them in the
+# build, these are pp_title_defaults()'s), with CONTINUE marked off, because a cold boot has nothing saved.
+TITLE_MENU_ROWS = ("NEW GAME", "CONTINUE", "SETTINGS", "QUIT")
+TITLE_MENU_DIM_ROW = "CONTINUE"
+TITLE_MENU_ROW_H = 24
+TITLE_MENU_PAD = 12
+TITLE_MENU_BOX_W = 240
+TITLE_MENU_INK = (255, 255, 255)
+TITLE_MENU_DIM_INK = (96, 96, 96)
+TITLE_CAPTION_SIZE = 11  # the band's own size is 12; inside the frame one point smaller keeps the caption inside its margin
+TITLE_SIDE = 24          # the margin the caption is wrapped into inside the frame
+
 
 LONG_DASHES = ("\u2014", "\u2013", "\u2012", "\u2015")
 
@@ -123,12 +140,13 @@ def _load_meta_default_models():
 
 
 def title_card_lines(models=None):
-    """The opening title card's lines: the premise, the Meta model judge, then the NES hardware limits.
+    """The opening title card's lines: what the game is, the Meta model judge, the controls, the NES limits.
 
     The premise is the demo's own claim (knowledge/DEMO-SCRIPT.md S2: Kronos and Zeus reincarnated on the
-    M3, and S5: a Meta model judges the line inside a NES text box). The model ids are the values of
-    DEFAULT_MODELS, so a rename in meta_client.py changes the card and nothing is typed here. A missing
-    model id refuses the card rather than drawing a blank.
+    M3, and S5: a Meta model judges the line inside a NES text box), and the controls are pp_input's own
+    bindings, so a judge watching the opening alone learns what the build is and how it is played. The model
+    ids are the values of DEFAULT_MODELS, so a rename in meta_client.py changes the card and nothing is
+    typed here. A missing model id refuses the card rather than drawing a blank.
     """
     models = models or _load_meta_default_models()
     for role in ("chat", "image", "segment"):
@@ -137,12 +155,16 @@ def title_card_lines(models=None):
     lines = (
         "PRIMORDIAL PARADOX",
         "",
+        "A GREEK MYTH JRPG ON THE NES",
         "KRONOS AND ZEUS, REINCARNATED ON THE M3",
         "EVERY LINE IS JUDGED BY A META MODEL",
         "INSIDE AN NES TEXT BOX",
         "",
         "THE JUDGE: %s (TALK)" % models["chat"],
         "%s (ART)  %s (SEGMENT)" % (models["image"], models["segment"]),
+        "",
+        "CONTROLS  ARROWS MOVE  Z CONFIRM",
+        "X CANCEL  TAB START",
         "",
         "NES LIMITS: 256x240, AT MOST 16 COLOURS",
         "NO NETWORK CALL, NO KEY IN THE BUILD",
@@ -152,6 +174,17 @@ def title_card_lines(models=None):
             if dash in line:
                 raise BuilderError("the title card line %r carries a long dash" % line)
     return lines
+
+
+def title_menu_rows():
+    """The boot menu rows the card draws under its words, in the game's own order (pp_title_defaults)."""
+    return list(TITLE_MENU_ROWS)
+
+
+def title_menu_dim_row():
+    """The row the card marks off, because a cold boot has nothing saved: CONTINUE."""
+    return TITLE_MENU_DIM_ROW
+
 
 
 def title_card_shape(path=None):
@@ -185,14 +218,45 @@ def title_card_seconds(path=None):
     return float(title_card_shape(path)["seconds"])
 
 
-def _overlay_layout():
-    """The card's lines as rectangles in the overlay: text, pixel size, x, y, width, height, top to bottom."""
+def _card_geometry():
+    """Where every part of the card sits, measured once so the drawing and the frame tests agree.
+
+    Three parts, top to bottom: the words (title_card_lines), the boot menu box with its four rows, and the
+    S1 cold boot caption wrapped inside the frame (card t_b231fe46). Every line is measured against the frame
+    before a pixel is drawn, and a card that would not fit is refused instead of clipped: the block's own
+    height is returned so a caller can prove it fits too.
+    """
     lines = title_card_lines()
     title_font = _font(TITLE_SIZE)
     body_font = _font(BODY_SIZE)
-    block = _title_block_height(lines)
-    y = (FRAME_H - block) / 2
-    out = []
+    usable_w = FRAME_W - 2 * MARGIN
+    for index, line in enumerate(lines):
+        if not line:
+            continue
+        size = TITLE_SIZE if index == 0 else BODY_SIZE
+        font = title_font if index == 0 else body_font
+        width = font.getlength(line)
+        if width > usable_w:
+            raise BuilderError("the title card line %r is %d px wide and the game frame holds %d"
+                               % (line, width, usable_w))
+
+    text_h = _title_block_height(lines)
+    rows = title_menu_rows()
+    menu_h = TITLE_MENU_PAD * 2 + TITLE_MENU_ROW_H * len(rows)
+    caption_font = _font(TITLE_CAPTION_SIZE)
+    caption_w = FRAME_W - 2 * TITLE_SIDE
+    caption_lines = _wrap(cold_boot_caption(), TITLE_CAPTION_SIZE, caption_w)
+    for line in caption_lines:
+        if caption_font.getlength(line) > caption_w:
+            raise BuilderError("a caption line %r is wider than the card's margin" % line)
+    caption_h = len(caption_lines) * (TITLE_CAPTION_SIZE + LINE_GAP)
+    total = text_h + TITLE_BLOCK_GAP + menu_h + TITLE_BLOCK_GAP + caption_h
+    if total > FRAME_H - 2 * MARGIN:
+        raise BuilderError("the title card is %d px tall and the game frame holds %d"
+                           % (total, FRAME_H - 2 * MARGIN))
+
+    y = MARGIN + (FRAME_H - 2 * MARGIN - total) / 2
+    text = []
     for index, line in enumerate(lines):
         if not line:
             y += TITLE_BLANK
@@ -200,45 +264,102 @@ def _overlay_layout():
         size = TITLE_SIZE if index == 0 else BODY_SIZE
         font = title_font if index == 0 else body_font
         width = font.getlength(line)
-        out.append({"line": line, "size": size, "x": (FRAME_W - width) / 2, "y": y,
-                    "width": width, "height": size})
+        text.append({"line": line, "size": size, "x": (FRAME_W - width) / 2, "y": y,
+                     "width": width, "height": size})
         y += size + TITLE_LINE_AFTER
-    return out
+
+    y += TITLE_BLOCK_GAP
+    menu_x = (FRAME_W - TITLE_MENU_BOX_W) / 2
+    menu = {"box": [menu_x, y, menu_x + TITLE_MENU_BOX_W, y + menu_h], "rows": []}
+    row_y = y + TITLE_MENU_PAD
+    for label in rows:
+        width = body_font.getlength(label)
+        menu["rows"].append({"label": label, "dim": label == TITLE_MENU_DIM_ROW,
+                             "x": (FRAME_W - width) / 2, "y": row_y, "width": width, "height": BODY_SIZE})
+        row_y += TITLE_MENU_ROW_H
+
+    y += menu_h + TITLE_BLOCK_GAP
+    caption = []
+    for line in caption_lines:
+        width = caption_font.getlength(line)
+        caption.append({"line": line, "x": (FRAME_W - width) / 2, "y": y,
+                        "width": width, "height": TITLE_CAPTION_SIZE})
+        y += TITLE_CAPTION_SIZE + LINE_GAP
+    return {"lines": text, "menu": menu, "caption": caption, "height": total}
+
+
+def _overlay_layout():
+    """The card's words as rectangles: text, pixel size, x, y, width, height, top to bottom."""
+    return _card_geometry()["lines"]
+
+
+def _box_of(item):
+    """One drawn item's pixel rectangle, rounded outward, so a frame test can count ink inside it."""
+    x0 = int(item["x"]) - 2
+    y0 = int(item["y"]) - 2
+    x1 = int(item["x"] + item["width"]) + 3
+    y1 = int(item["y"] + item["height"]) + 3
+    return [max(0, x0), max(0, y0), min(FRAME_W, x1), min(FRAME_H, y1)]
 
 
 def title_line_boxes():
-    """Each drawn line's pixel rectangle, rounded outward, so a frame test can count ink inside it.
+    """Each drawn word and caption line's pixel rectangle, so a frame test can count ink inside it.
 
     The cut's verify rows measure white pixels in these rectangles on the delivered frames, at a second the
-    card is up and at a second after it: that is how "the title is in the first seconds" becomes a number
-    instead of a claim.
+    card is up and at a second after it: that is how "the title and the cold boot caption are on the frames"
+    becomes a number instead of a claim.
     """
+    geometry = _card_geometry()
     boxes = []
-    for item in _overlay_layout():
-        x0 = int(item["x"]) - 2
-        y0 = int(item["y"]) - 2
-        x1 = int(item["x"] + item["width"]) + 3
-        y1 = int(item["y"] + item["height"]) + 3
-        boxes.append({"line": item["line"], "box": [max(0, x0), max(0, y0),
-                                                   min(FRAME_W, x1), min(FRAME_H, y1)]})
+    for item in geometry["lines"] + geometry["caption"]:
+        boxes.append({"line": item["line"], "box": _box_of(item)})
     return boxes
 
 
-def render_title_overlay(path):
-    """A FRAME_W x FRAME_H RGBA overlay: the card's text over a half-black dim, for a live picture.
+def title_menu_boxes():
+    """The boot menu's four rows as pixel rectangles, each with the row's own name and whether it is marked off.
 
-    This is the card the cut burns over S1's own attract loop (card t_5876de50): the dim is a translucent
-    black layer, so the game keeps playing underneath and no second of picture is frozen, and the band
-    below stays the caption band video_builder renders separately. The words are title_card_lines(), so
-    the game's name and the Meta judge's model id come from the same reader the still card uses.
+    The cut's verify rows count bright ink in NEW GAME and in CONTINUE and refuse the card unless the second
+    is the dim one, which is the claim the S1 caption makes in words ("CONTINUE is dim").
     """
-    image = Image.new("RGBA", (FRAME_W, FRAME_H), (0, 0, 0, int(round(255 * TITLE_DIM))))
+    return [{"label": row["label"], "dim": row["dim"], "box": _box_of(row)}
+            for row in _card_geometry()["menu"]["rows"]]
+
+
+def _draw_card(draw, ink, dim_ink):
+    """Draw the words, the boot menu box and the caption in the given inks. No background: the caller owns it."""
+    geometry = _card_geometry()
+    for item in geometry["lines"]:
+        draw.text((item["x"], item["y"]), item["line"], font=_font(item["size"]), fill=ink)
+    box = geometry["menu"]["box"]
+    draw.rectangle([box[0], box[1], box[2], box[3]], outline=ink, width=2)
+    for row in geometry["menu"]["rows"]:
+        colour = dim_ink if row["dim"] else ink
+        draw.text((row["x"], row["y"]), row["label"], font=_font(row["height"]), fill=colour)
+        if row["dim"]:
+            # The rule through the row is how the game itself marks a row that cannot be chosen (pp_title_draw_disabled),
+            # so the card and the screen say "off" the same way.
+            mid = row["y"] + row["height"] // 2
+            draw.line([row["x"], mid, row["x"] + row["width"], mid], fill=colour, width=1)
+    for item in geometry["caption"]:
+        draw.text((item["x"], item["y"]), item["line"], font=_font(TITLE_CAPTION_SIZE), fill=ink)
+
+
+def render_title_overlay(path):
+    """A FRAME_W x FRAME_H RGBA overlay: an opaque title card, for a live picture.
+
+    Opaque is the point (card t_b231fe46): the cut burns this over S1, and S1's only footage on disk is the
+    2026-10-26 attract, which the 2026-11-16 panel saw at 15.0 s as blue bands with one caption and no
+    readable word. At alpha 255 nothing of that picture reaches the frame, so the opening is the title, the
+    controls, the boot menu with CONTINUE dim, and the cold boot caption, all drawn by title_card_lines() and
+    cold_boot_caption(): the judge's model id still comes from meta_client.py at draw time.
+    """
+    image = Image.new("RGBA", (FRAME_W, FRAME_H), (0, 0, 0, TITLE_OVERLAY_ALPHA))
     draw = ImageDraw.Draw(image)
-    for item in _overlay_layout():
-        font = _font(item["size"])
-        draw.text((item["x"], item["y"]), item["line"], font=font, fill=(255, 255, 255, 255))
+    _draw_card(draw, (255, 255, 255, 255), (96, 96, 96, 255))
     image.save(path)
     return path
+
 
 
 def shot_caption(shot):
@@ -310,36 +431,24 @@ def _draw_caption_in_band(draw, caption):
 
 
 def render_title_card(path, background=None):
-    """A FULL_W x FULL_H title card: the title attract scene (or black) with the premise, the judge and
-    the NES limits over it, and the S1 cold boot caption in the band below.
+    """A FULL_W x FULL_H title card: the game's name, the boot menu, the controls and the NES limits over
+    the title attract scene (or black), with the S1 cold boot caption inside the frame and in the band below.
 
     `background` is a 768x720 image of the title attract scene. When given, it is dimmed toward black so
     the white caption font stays readable over it; when absent the card falls back to a black frame and
     the same text, so --title-card and the tests render without a source take.
     """
-    lines = title_card_lines()
     image = Image.new("RGB", (FULL_W, FULL_H), (0, 0, 0))
     if background is not None:
         scene = Image.open(background).convert("RGB").resize((FRAME_W, FRAME_H))
         scene = Image.blend(scene, Image.new("RGB", scene.size, (0, 0, 0)), TITLE_DIM)
         image.paste(scene, (0, 0))
     draw = ImageDraw.Draw(image)
-    title_font = _font(TITLE_SIZE)
-    body_font = _font(BODY_SIZE)
-    # The lines sit centred in the scene area, title first and body lines after.
-    block = _title_block_height(lines)
-    y = (FRAME_H - block) / 2
-    for index, line in enumerate(lines):
-        if not line:
-            y += TITLE_BLANK
-            continue
-        font = title_font if index == 0 else body_font
-        width = font.getlength(line)
-        draw.text(((FULL_W - width) / 2, y), line, font=font, fill=(255, 255, 255))
-        y += (TITLE_SIZE if index == 0 else BODY_SIZE) + TITLE_LINE_AFTER
+    _draw_card(draw, (255, 255, 255), TITLE_MENU_DIM_INK)
     _draw_caption_in_band(draw, cold_boot_caption())
     image.save(path)
     return path
+
 
 
 def render_caption_band(shot, path):

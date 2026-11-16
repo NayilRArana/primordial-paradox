@@ -12,14 +12,14 @@
     "total_seconds": 180.0,
     "total_steps": 10800,
     "title_card": {
-      "why": "Judge panel fix 1. The 2026-11-14 panel (card t_5876de50) asked for a card in the first seconds; the 2026-11-15 panel (card t_379273cc) raises the hold to five seconds, so a judge knows what this is by 0:05.00 without being told elsewhere. The card is held over the first 5.00 s of S1, on top of S1's own attract picture, so the shot keeps its scripted 16.00 s and the cut keeps its 180.00 s. The words it draws are tools/video_builder.py's title_card_lines(): the game's name, the Meta talk judge's model id read from tools/meta_client.py DEFAULT_MODELS at draw time, and the NES limits; nothing here retypes an id.",
-      "clock": ["0:00.00", "0:05.00"],
-      "seconds": 5.0,
-      "steps": 300,
+      "why": "Judge panel fix 3 of 2026-11-16 (card t_b231fe46). The 2026-11-14 panel (card t_5876de50) asked for a card in the first seconds and the 2026-11-15 panel (card t_379273cc) raised the hold to five; the 2026-11-16 panel then judged a still at 15.0 s from what is now the only S1 footage on disk, the 2026-10-26 attract, and saw blue bands with one caption and no readable word. So the card now holds S1's whole scripted 16.00 s (0:00.00 to 0:16.00) and is drawn opaque, which replaces that picture instead of dimming it: the opening states the game's name, what it is, the Meta talk judge's model id read from tools/meta_client.py at draw time, the controls from pp_input's own bindings, the boot menu with CONTINUE marked off because a cold boot has nothing saved, the NES limits, and the S1 caption verbatim. The words and the menu are tools/video_builder.py's title_card_lines() and TITLE_MENU_ROWS; nothing here retypes an id. S1 keeps its 16.00 s, so the cut still sums to 180.00 s.",
+      "clock": ["0:00.00", "0:16.00"],
+      "seconds": 16.0,
+      "steps": 960,
       "route_steps": ["title"],
       "held_by": "S1",
-      "picture_seconds": 11.0,
-      "names": ["PRIMORDIAL PARADOX", "THE JUDGE: the Meta talk model", "NES LIMITS: 256x240, 16 COLOURS, NO NETWORK"],
+      "picture_seconds": 0.0,
+      "names": ["PRIMORDIAL PARADOX", "CONTROLS: ARROWS MOVE, Z CONFIRM, X CANCEL, TAB START", "BOOT MENU: NEW GAME, CONTINUE (dim), SETTINGS, QUIT", "NES LIMITS: 256x240, 16 COLOURS, NO NETWORK"],
       "judge_role": "chat",
       "drawn_by": "tools/video_builder.py"
     },
@@ -30,7 +30,7 @@
         "seconds": 16.0,
         "steps": 960,
         "route_steps": ["title"],
-        "title_card_seconds": 5.0,
+        "title_card_seconds": 16.0,
         "caption": "Cold boot to menu takes 14 seconds. CONTINUE is dim, because nothing is saved yet."
       },
       {

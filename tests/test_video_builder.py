@@ -119,6 +119,51 @@ def test_title_card_uses_the_cold_boot_caption(builder):
         assert dash not in caption, "the cold boot caption carries a long dash"
 
 
+def test_title_card_states_the_controls(builder):
+    """Card t_b231fe46: the opening has to say how the game is played, or it states what it is and not how."""
+    raw = " ".join(builder.title_card_lines()).upper()
+    assert "CONTROLS" in raw, "the title card does not name the controls"
+    for key in ("ARROWS MOVE", "Z CONFIRM", "X CANCEL", "TAB START"):
+        assert key in raw, "the title card does not state %r" % key
+
+
+def test_title_card_draws_the_boot_menu_with_continue_dim(builder):
+    """The card draws the game's four rows and marks CONTINUE off, which is what the caption's 'dim' claims."""
+    assert builder.title_menu_rows() == ["NEW GAME", "CONTINUE", "SETTINGS", "QUIT"], builder.title_menu_rows()
+    assert builder.title_menu_dim_row() == "CONTINUE", builder.title_menu_dim_row()
+    rows = builder.title_menu_boxes()
+    assert [row["label"] for row in rows] == builder.title_menu_rows()
+    dim = [row["label"] for row in rows if row["dim"]]
+    assert dim == ["CONTINUE"], "the marked off rows are %r" % (dim,)
+
+
+def test_the_whole_card_fits_inside_the_game_frame(builder):
+    """A card that does not fit is a clipped card, so the block is measured before a pixel is drawn."""
+    geometry = builder._card_geometry()
+    assert geometry["height"] <= builder.FRAME_H - 2 * builder.MARGIN, \
+        "the card is %d px tall and the frame holds %d" % (geometry["height"], builder.FRAME_H - 2 * builder.MARGIN)
+    for item in geometry["lines"] + geometry["caption"]:
+        assert item["x"] >= 0 and item["x"] + item["width"] <= builder.FRAME_W, \
+            "the card line %r runs outside the frame" % item["line"]
+        assert item["y"] >= 0 and item["y"] + item["height"] <= builder.FRAME_H, \
+            "the card line %r runs off the bottom of the frame" % item["line"]
+
+
+def test_the_overlay_is_opaque_and_carries_the_menu(builder, tmp_path):
+    """The cut burns this over S1's picture (card t_b231fe46): at alpha 255 none of that picture survives."""
+    png = str(tmp_path / "overlay.png")
+    builder.render_title_overlay(png)
+    image = Image.open(png).convert("RGBA")
+    assert image.size == (builder.FRAME_W, builder.FRAME_H)
+    assert {pixel[3] for pixel in image.getdata()} == {255}, "the overlay is not opaque, so the old picture shows"
+    law = image.convert("L")
+    bright = {row["label"]: sum(1 for pixel in law.crop(tuple(row["box"])).getdata() if pixel >= 200)
+              for row in builder.title_menu_boxes()}
+    assert bright["NEW GAME"] >= 30, "NEW GAME drew no ink: %r" % (bright,)
+    assert bright["CONTINUE"] <= max(5, int(0.1 * bright["NEW GAME"])), \
+        "CONTINUE is not the dim row: %r" % (bright,)
+
+
 def test_no_long_dash_anywhere(builder):
     for shot in builder.SHOTS:
         caption = builder.shot_caption(shot)
