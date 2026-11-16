@@ -1,0 +1,73 @@
+{
+  "backend": "meta",
+  "key": "ea57fc54df76899299920f207b29e631bb7bf142a832a7f4f7e718d0cf052099",
+  "kind": "vision",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "recorded_at": "2026-11-15T05:05:41Z",
+  "request": {
+    "messages": [
+      {
+        "content": [
+          {
+            "text": "<sha256:53a79c4d3aa48b47:6503 chars>",
+            "type": "text"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:f88f7b4aa5ac8ec2:145318 chars>"
+            },
+            "type": "image_url"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:eca643679f7c655d:445502 chars>"
+            },
+            "type": "image_url"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:bb8cab8b9f4e35a3:252194 chars>"
+            },
+            "type": "image_url"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:39fe59ea6fe65ce7:283682 chars>"
+            },
+            "type": "image_url"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:14667126a9528717:300434 chars>"
+            },
+            "type": "image_url"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:93bd9f975e921d71:87530 chars>"
+            },
+            "type": "image_url"
+          }
+        ],
+        "role": "user"
+      }
+    ],
+    "model": "muse-spark-1.3"
+  },
+  "response": {
+    "text": "### What the video shows\nFrom the six stills alone a judge sees in order an abstract blue banded starfield at 15.0 s with no title, then a top down town block with a blue sprite and a box reading * A pub. Warm plus a bottom caption about Morgan asking three things, then a Captain Morgan battle with WHAT DO YOU SAY and listed talk lines, then the same Morgan fight on HADRIAN'S TURN with FIGHT TALK ITEM and SPARE selected, then a Percy fight on HADRIAN'S TURN with TALK selected, then a black credits card naming MUSE SPARK 1.3 and MUSE IMAGE 1.0 and SAM 3.1. I cannot see the README or the repo, only the frames plus the log facts. What is missing for a 3 minute demo is a title card saying what this is, a person talking or typing to the game, a visible on screen Meta verdict with the promised bake receipts and network line for S5, and any audio, which is measured absent, plus a before and after proving AI that obeys hardware limits.\n\n### The four scores\nImpact: 3 - talk to spare Mercy bars for Morgan and Percy are visible but no live player voice or typed input becoming a verdict is seen in the frames.\nUse of Meta AI tooling: 3 - end credits list Muse Spark 1.3 as talk judge but the verify file labels no Meta number so no measured figure is shown working in game.\nTechnical depth: 4 - town and three character battle menus look like a real engine but colours are h264 encoder colours not PPU proof and I cannot see limit enforcement code.\nDemo: 3 - the 180.000 s capture has picture at all six samples but audio is absent and the first sample has no title or narrator so a cold judge would not understand or share it.\n\n### Five fixes, ranked\n1. Title under 80 chars: Add 5 second title card naming game and Meta talk judge. Criterion it raises: Demo. Lane that should own it: gamedev. Body of two to four sentences: Edit the title route step in data/slice.json and the S1 shot to hold five seconds on a card that names the game and Muse Spark talk judging inside NES limits. Keep the verbatim caption Cold boot to menu takes 14 seconds. CONTINUE is dim, because nothing is saved yet below it. A judge will see in the first sixteen seconds what this is without being told elsewhere.\n\n2. Title under 80 chars: Show live typed line plus on screen Meta verdict in Morgan fight. Criterion it raises: Use of Meta AI tooling. Lane that should own it: assistant. Body of two to four sentences: Change the morgan scene to capture real keyboard input in the WHAT DO YOU SAY box and then draw the returned verdict plus MERCY bar change in the same shot. Save the model name and latency to the three bake receipts and the network line required for S5. A judge will see typed words become SPARE and MERCY in the video instead of reading it only in credits.\n\n3. Title under 80 chars: Re record fresh nightly demo and delete stale 18697237 byte file. Criterion it raises: Demo. Lane that should own it: builder. Body of two to four sentences: Fix the builder idle gate that failed after 900 s because codex.exe holds keys and mouse so 120 s of quiet cannot happen, then record output/demo/nightly-2026-11-14.mp4 tonight. Remove or overwrite the older 18697237 byte take from 2026-11-13 21:44 that was left untouched. A judge will open a current dated file with picture and will not judge a stale capture.\n\n4. Title under 80 chars: Add audible narration and hurricane plus battle music to the cut. Criterion it raises: Demo. Lane that should own it: musician. Body of two to four sentences: Add a music and voice track to the demo timeline because the verify file reports audio is absent for the full 180 seconds. Mix narration for each of the six captions with hurricane wind under S3 and S4 quay and battle loops under S4 to S6 morgan and percy. A judge will hear the claim for each shot and will share a video that explains itself.\n\n5. Title under 80 chars: Add README proof that NES limits and local AI bridge are enforced. Criterion it raises: Technical depth. Lane that should own it: code-review. Body of two to four sentences: Create a README section that points to the engine files that enforce 256 by 240, sprite and palette limits and to the local bridge that calls the talk judge. Include the check_data and check_cleanroom pass lines and a screenshot of the bake receipts. A reader will verify technical depth without trusting the end credits alone.\n\n### Machine readable block\n```json {\"impact\": 3, \"impact_reason\": \"talk to spare Mercy bars visible but no live player input becoming verdict is seen\", \"meta_tooling\": 3, \"meta_tooling_reason\": \"credits list Muse Spark 1.3 but verify labels no Meta number so no live work shown\", \"technical_depth\": 4, \"technical_depth_reason\": \"town and battle UI look like engine but colours are h264 not PPU proof\", \"demo\": 3, \"demo_reason\": \"180 s has picture at all samples but audio absent and no title card or narrator\", \"fixes\": [{\"title\": \"Add 5 second title card naming game and Meta talk judge\", \"criterion\": \"Demo\", \"lane\": \"gamedev\", \"body\": \"Edit the title route step in data/slice.json and the S1 shot to hold five seconds on a card that names the game and Muse Spark talk judging inside NES limits. Keep the verbatim caption Cold boot to menu takes 14 seconds. CONTINUE is dim, because nothing is saved yet below it. A judge will see in the first sixteen seconds what this is without being told elsewhere.\"}, {\"title\": \"Show live typed line plus on screen Meta verdict in Morgan fight\", \"criterion\": \"Use of Meta AI tooling\", \"lane\": \"assistant\", \"body\": \"Change the morgan scene to capture real keyboard input in the WHAT DO YOU SAY box and then draw the returned verdict plus MERCY bar change in the same shot. Save the model name and latency to the three bake receipts and the network line required for S5. A judge will see typed words become SPARE and MERCY in the video instead of reading it only in credits.\"}, {\"title\": \"Re record fresh nightly demo and delete stale 18697237 byte file\", \"criterion\": \"Demo\", \"lane\": \"builder\", \"body\": \"Fix the builder idle gate that failed after 900 s because codex.exe holds keys and mouse so 120 s of quiet cannot happen, then record output/demo/nightly-2026-11-14.mp4 tonight. Remove or overwrite the older 18697237 byte take from 2026-11-13 21:44 that was left untouched. A judge will open a current dated file with picture and will not judge a stale capture.\"}, {\"title\": \"Add audible narration and hurricane plus battle music to the cut\", \"criterion\": \"Demo\", \"lane\": \"musician\", \"body\": \"Add a music and voice track to the demo timeline because the verify file reports audio is absent for the full 180 seconds. Mix narration for each of the six captions with hurricane wind under S3 and S4 quay and battle loops under S4 to S6 morgan and percy. A judge will hear the claim for each shot and will share a video that explains itself.\"}, {\"title\": \"Add README proof that NES limits and local AI bridge are enforced\", \"criterion\": \"Technical depth\", \"lane\": \"code-review\", \"body\": \"Create a README section that points to the engine files that enforce 256 by 240, sprite and palette limits and to the local bridge that calls the talk judge. Include the check_data and check_cleanroom pass lines and a screenshot of the bake receipts. A reader will verify technical depth without trusting the end credits alone.\"}]}\n```",
+    "usage": {
+      "completion_tokens": 6020,
+      "completion_tokens_details": {
+        "reasoning_tokens": 4314
+      },
+      "prompt_tokens": 6314,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 12334
+    }
+  }
+}
