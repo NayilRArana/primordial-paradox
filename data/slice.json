@@ -5,6 +5,76 @@
   "spawn": "start",
   "scene": "quay_arrival",
   "encounter": "morgan_gate",
+  "shots": {
+    "why": "knowledge/DEMO-SCRIPT.md section 1 is the demo's shape: six shots, one caption each, 180.00 s. This table carries that shape inside the route data, so the demo the build walks and the demo the cut shows cannot drift apart. The route below is what the game plays; a shot names the route steps its picture is taken from, and S4 and S5 share `quay` and `morgan` because one scene holds two shots.",
+    "source": "knowledge/DEMO-SCRIPT.md",
+    "steps_per_second": 60,
+    "total_seconds": 180.0,
+    "total_steps": 10800,
+    "title_card": {
+      "why": "Judge panel fix 1. The 2026-11-14 panel (card t_5876de50) asked for a card in the first seconds; the 2026-11-15 panel (card t_379273cc) raises the hold to five seconds, so a judge knows what this is by 0:05.00 without being told elsewhere. The card is held over the first 5.00 s of S1, on top of S1's own attract picture, so the shot keeps its scripted 16.00 s and the cut keeps its 180.00 s. The words it draws are tools/video_builder.py's title_card_lines(): the game's name, the Meta talk judge's model id read from tools/meta_client.py DEFAULT_MODELS at draw time, and the NES limits; nothing here retypes an id.",
+      "clock": ["0:00.00", "0:05.00"],
+      "seconds": 5.0,
+      "steps": 300,
+      "route_steps": ["title"],
+      "held_by": "S1",
+      "picture_seconds": 11.0,
+      "names": ["PRIMORDIAL PARADOX", "THE JUDGE: the Meta talk model", "NES LIMITS: 256x240, 16 COLOURS, NO NETWORK"],
+      "judge_role": "chat",
+      "drawn_by": "tools/video_builder.py"
+    },
+    "rows": [
+      {
+        "id": "S1",
+        "clock": ["0:00.00", "0:16.00"],
+        "seconds": 16.0,
+        "steps": 960,
+        "route_steps": ["title"],
+        "title_card_seconds": 5.0,
+        "caption": "Cold boot to menu takes 14 seconds. CONTINUE is dim, because nothing is saved yet."
+      },
+      {
+        "id": "S2",
+        "clock": ["0:16.00", "0:29.00"],
+        "seconds": 13.0,
+        "steps": 780,
+        "route_steps": ["crawl"],
+        "caption": "The crawl runs 1,238 steps. Hold confirm to read it faster; no page is skipped."
+      },
+      {
+        "id": "S3",
+        "clock": ["0:29.00", "0:39.00"],
+        "seconds": 10.0,
+        "steps": 600,
+        "route_steps": ["quay"],
+        "caption": "Town Quay in the hurricane. The storm runs on its own seeded clock, 8 step flashes over a real Southampton block."
+      },
+      {
+        "id": "S4",
+        "clock": ["0:39.00", "1:18.00"],
+        "seconds": 39.0,
+        "steps": 2340,
+        "route_steps": ["quay", "morgan"],
+        "caption": "Morgan asks three things and two answers are enough. No reply can lose the talk, and the wind drops when he does."
+      },
+      {
+        "id": "S5",
+        "clock": ["1:18.00", "1:50.00"],
+        "seconds": 32.0,
+        "steps": 1920,
+        "route_steps": ["morgan"],
+        "caption": "Three replies, each a row of data/meta_bake.json, and a WILL bar that only goes up."
+      },
+      {
+        "id": "S6",
+        "clock": ["1:50.00", "3:00.00"],
+        "seconds": 70.0,
+        "steps": 4200,
+        "route_steps": ["percy"],
+        "caption": "Percy is talked down, the storm ends, the credits name the Meta models; play the build offline from the repo."
+      }
+    ]
+  },
   "route": {
     "first": "title",
     "steps": [
