@@ -1386,6 +1386,137 @@ def write_inbox(date, cards, parsed, video, result, chain=None, folder=None, now
     return path
 
 
+# ------------------------------------------------- the run's own commit step (card t_da8f8c8e)
+
+# GATE-RED-2026-11-16C. tests/test_project.py::test_the_ai_cache_is_kept_out_of_the_bundle reads
+# data\ai_cache through `git ls-files` and requires every recorded answer to be in the commit, because
+# tools\meta_client.py's replay branch serves those files out of a fresh checkout with no key. The
+# panel is what writes a new entry there every night (21:05 local, one billed vision answer), and no
+# step in that chain committed it, so the same row went red five nights running (t_13923b3f,
+# t_b2326a50, t_b5449a7a, t_68f556a3, t_b82f8985) and each time a card was needed to carry the file
+# by hand. The producer now lands its own output, through the same guard wrapper every lane uses:
+# lane_commit.py builds a private index, refuses a stale one, sets the author to the lane and runs the
+# pre-commit gate. Nothing here weakens the test, which stays the spec.
+GUARD_COMMIT = os.path.join(os.path.dirname(ROOT), "arananet", "manager", "guard", "lane_commit.py")
+REPO = os.path.dirname(os.path.dirname(ROOT))  # the monorepo root: data\ai_cache is committed there
+COMMIT_LANE_ENV = "PP_COMMIT_LANE"
+COMMIT_LANE_DEFAULT = "testing"  # the judge panel is W4, a testing lane card, and it signs its own data
+# The commit gate (guard/card_require.py) refuses a subject that names no card, and rightly: every
+# commit here has to answer "which card asked for this". A nightly run has one: the card the balancer
+# created for it, which the dispatcher exports as HERMES_KANBAN_TASK to the worker running the tool.
+COMMIT_CARD_ENV = "HERMES_KANBAN_TASK"
+COMMIT_TIMEOUT = 1800  # lane_commit budgets the pre-commit gate itself; this only stops a hang
+
+
+def _repo_path(path):
+    """A repository relative forward slash path, the form lane_commit.py validates."""
+    return os.path.relpath(path, REPO).replace(os.sep, "/")
+
+
+def commit_pathspecs(date, note=None):
+    """The two places one panel run writes: the recorded answers, and that night's panel note.
+
+    A note written outside the repository (a test's temporary folder, an audit copy) is left out
+    rather than turned into a `../..` pathspec git cannot answer for.
+    """
+    note = note or panel_path(date)
+    specs = [_repo_path(os.path.join(ROOT, "data", "ai_cache"))]
+    try:
+        inside = os.path.commonpath([os.path.abspath(note), os.path.abspath(REPO)]) == os.path.abspath(REPO)
+    except ValueError:  # a note on another drive
+        inside = False
+    if inside:
+        specs.append(_repo_path(note))
+    return specs
+
+
+def uncommitted_outputs(date, repo=None, note=None, runner=subprocess.run):
+    """Paths of this run's own output that no commit carries yet, straight from git.
+
+    `git status --porcelain` is asked about exactly two pathspecs, so a lane's dirty tree elsewhere
+    cannot widen the list. Ignored paths (the output folder is gitignored) never appear, which is why
+    the card bodies and the ledger are not in it.
+    """
+    repo = repo or REPO
+    result = runner(["git", "-C", repo, "status", "--porcelain", "--untracked-files=all", "--"]
+                    + commit_pathspecs(date, note),
+                    capture_output=True, encoding="utf-8", errors="replace", timeout=180,
+                    stdin=subprocess.DEVNULL)
+    if result.returncode != 0:
+        raise PanelError("git status could not read %s: %s"
+                         % (repo, (result.stderr or "").strip()[:200]))
+    paths = []
+    for line in (result.stdout or "").splitlines():
+        if not line.strip():
+            continue
+        path = line[3:]
+        if " -> " in path:  # a rename reports "old -> new"; the new path is the one to commit
+            path = path.split(" -> ", 1)[1]
+        paths.append(path.strip().strip('"'))
+    return paths
+
+
+def commit_outputs(date, lane=None, card=None, message=None, repo=None, dry_run=False,
+                   runner=subprocess.run, python=None, note=None):
+    """Commit the recorded answers and the panel note this run left untracked.
+
+    Returns (paths, exit code, text). A clean tree is (paths, 0, "...") with nothing run: the step is
+    idempotent, so a second run of the same night says so instead of opening an empty commit. A
+    missing guard or a refusing gate is reported and never raises, because a billed judgement is not
+    made wrong by a commit that did not land; the panel's own exit code does not depend on it. A run
+    with no card to name does not attempt the commit either: the gate would refuse the subject, and a
+    refused commit still spends a gate run.
+    """
+    repo = repo or REPO
+    lane = lane or os.environ.get(COMMIT_LANE_ENV, "").strip() or COMMIT_LANE_DEFAULT
+    card = (card or os.environ.get(COMMIT_CARD_ENV, "")).strip()
+    paths = uncommitted_outputs(date, repo=repo, note=note, runner=runner)
+    if not paths:
+        return paths, 0, "nothing to commit: every recorded answer and the panel note are at HEAD"
+    if not re.match(r"^t_[0-9a-f]{8}$", card) and not re.match(r"^(manager|nayil):", card):
+        return paths, 1, ("no card named for the commit subject (%s is unset or empty and "
+                          "--commit-card was not given): the %d path(s) are uncommitted, pass "
+                          "--commit-card t_xxxxxxxx" % (COMMIT_CARD_ENV, len(paths)))
+    message = message or (
+        "%s tools/judge_panel.py %s: commit the %d path(s) the panel run left untracked, so "
+        "test_the_ai_cache_is_kept_out_of_the_bundle answers from the commit"
+        % (card, date, len(paths)))
+    if dry_run:
+        return paths, 0, "dry run: would commit %d path(s) as lane %s" % (len(paths), lane)
+    if not os.path.exists(GUARD_COMMIT):
+        return paths, 1, ("no lane commit at %s: %d path(s) left uncommitted, commit them by hand"
+                          % (GUARD_COMMIT, len(paths)))
+    command = [python or sys.executable, GUARD_COMMIT, "--repo", repo, "--lane", lane,
+               "-m", message, "--"] + paths
+    result = runner(command, capture_output=True, encoding="utf-8", errors="replace",
+                    timeout=COMMIT_TIMEOUT)
+    text = ((result.stdout or "") + (result.stderr or "")).strip()
+    return paths, result.returncode, text
+
+
+def commit_line(paths, code, text):
+    """One line for the run log, carrying the guard's own last word when it refused."""
+    lines = [line.strip() for line in (text or "").splitlines() if line.strip()]
+    tail = lines[-1] if lines else ""
+    if not paths:
+        return tail or "nothing to commit"
+    if code == 0:
+        return "%d path(s) committed, %s" % (len(paths), tail or "lane_commit.py exit 0")
+    if "no card named" in (text or ""):
+        return "NOT COMMITTED: %s" % " ".join(lines)[:600]
+    return ("%d path(s) LEFT UNCOMMITTED, lane_commit.py exit %d, %s. Repair without a second "
+            "billed call: judge_panel.py --commit-only --date <the night> --commit-card t_xxxxxxxx"
+            % (len(paths), code, tail[:400]))
+
+
+def emit_commit(paths, code, text):
+    """Print the one line, and the guard's whole output when it refused: the failing command is in it."""
+    print("commit: %s" % commit_line(paths, code, text))
+    if code not in (0,) and paths and "no card named" not in (text or ""):
+        for line in (text or "").splitlines():
+            print("  | %s" % line)
+
+
 # --------------------------------------------------------------------------- main
 
 def build_parser():
@@ -1410,6 +1541,16 @@ def build_parser():
                         help="append the five drafts here (default: ../arananet/manager/inbox/director.md)")
     parser.add_argument("--no-inbox", action="store_true",
                         help="do not append the five drafts to the manager's inbox")
+    parser.add_argument("--no-commit", action="store_true",
+                        help="do not commit the recorded answer and the panel note through lane_commit.py")
+    parser.add_argument("--commit-only", action="store_true",
+                        help="commit what a run already left untracked and exit: no video, no model, no write")
+    parser.add_argument("--commit-lane", default=None,
+                        help="lane name lane_commit.py records (default: %s or $%s)"
+                             % (COMMIT_LANE_DEFAULT, COMMIT_LANE_ENV))
+    parser.add_argument("--commit-card", default=None,
+                        help="card the commit subject names (default: $%s, the card the dispatcher "
+                             "exported to the worker running this tool)" % COMMIT_CARD_ENV)
     return parser
 
 
@@ -1423,6 +1564,16 @@ def main(argv=None):
             print("self test FAILED: %s" % eye_critic.redact(exc))
             return 1
         return 0
+
+    if args.commit_only:
+        date = args.date or eye_critic.utc_now().strftime("%Y-%m-%d")
+        try:
+            paths, code, text = commit_outputs(date, lane=args.commit_lane, card=args.commit_card)
+        except PanelError as exc:
+            print("commit: %s" % eye_critic.redact(str(exc)))
+            return 1
+        emit_commit(paths, code, text)
+        return 0 if code == 0 else 1
 
     backend = (args.backend or os.environ.get("PP_AI_BACKEND", "").strip().lower() or "meta")
     if backend not in ("meta", "gemini"):
@@ -1528,6 +1679,13 @@ def main(argv=None):
     if not args.measure_only and not args.no_inbox:
         path = write_inbox(date, cards, parsed, video, result, chain=chain, folder=inbox)
         print("inbox:  %s (appended %d draft(s), none created)" % (_rel(path), len(cards)))
+    if not args.no_commit:
+        try:
+            paths, code, text = commit_outputs(date, lane=args.commit_lane, card=args.commit_card,
+                                              note=out)
+        except PanelError as exc:
+            paths, code, text = [], 1, str(exc)
+        emit_commit(paths, code, text)
     print(WARNING)
     if not parsed["weighted"]["complete"]:
         return 1

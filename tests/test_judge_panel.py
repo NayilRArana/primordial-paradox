@@ -21,6 +21,7 @@ test, so the model rotation is measured without a key and without the network.
 from __future__ import annotations
 
 import os
+import subprocess
 import sys
 import urllib.error
 
@@ -389,3 +390,110 @@ def test_a_meta_client_error_is_an_error_attempt_and_not_a_traceback(tmp_path, m
         judge_panel.ask_panel(frames, INFO, SCRIPT, gate=gate, log=log)
     assert "muse-spark-1.3 error" in str(caught.value)
     assert any("error" in line for line in log)
+
+
+# ------------------------------------------------------------------ the run's own commit step
+# Card t_da8f8c8e (GATE-RED-2026-11-16C). The night's recorded answer has to be in the commit, and
+# the panel is what writes it, so the panel commits its own output. These rows pin the two halves
+# that could go wrong quietly: the pathspecs (which decide what is committed) and the command (which
+# has to be the guard wrapper with the lane named, so the author gate admits it).
+
+def _runner(stdout="", returncode=0, record=None):
+    def run(command, **kwargs):
+        if record is not None:
+            record.append((command, kwargs))
+        return subprocess.CompletedProcess(command, returncode, stdout=stdout, stderr="")
+    return run
+
+
+def test_the_commit_step_names_the_cache_and_the_panel_note():
+    specs = judge_panel.commit_pathspecs("2026-11-16")
+    assert specs[0].endswith("data/ai_cache"), specs
+    assert specs[1].endswith("knowledge/JUDGE-PANEL-2026-11-16.md"), specs
+    for spec in specs:
+        assert not spec.startswith("/") and "\\" not in spec, (
+            "lane_commit.py validates repository relative forward slash paths")
+
+
+def test_a_note_outside_the_repository_is_left_out_of_the_pathspec(tmp_path):
+    specs = judge_panel.commit_pathspecs("2026-11-16", note=str(tmp_path / "JUDGE-PANEL-2026-11-16.md"))
+    assert len(specs) == 1, "a note on another drive is not turned into a ../.. pathspec: %r" % (specs,)
+
+
+def test_the_commit_asks_git_about_those_two_specs_and_nothing_else():
+    seen = []
+    paths = judge_panel.uncommitted_outputs("2026-11-16", runner=_runner(
+        "?? projects/primordial-paradox/data/ai_cache/4f67.json\n", record=seen))
+    command = seen[0][0]
+    assert command[:3] == ["git", "-C", judge_panel.REPO], command
+    assert command[-2:] == judge_panel.commit_pathspecs("2026-11-16"), command
+    assert "--untracked-files=all" in command, "an untracked directory would otherwise hide its files"
+    assert paths == ["projects/primordial-paradox/data/ai_cache/4f67.json"]
+
+
+def test_the_commit_goes_through_lane_commit_with_the_named_lane_card_and_exact_paths():
+    seen = []
+    entries = "?? projects/primordial-paradox/data/ai_cache/4f67.json\n"
+    paths, code, _text = judge_panel.commit_outputs(
+        "2026-11-16", lane="testing", card="t_da8f8c8e", runner=_runner(entries, record=seen))
+    assert code == 0 and paths == ["projects/primordial-paradox/data/ai_cache/4f67.json"]
+    command = seen[1][0]
+    assert judge_panel.GUARD_COMMIT in command and "--lane" in command, command
+    assert command[command.index("--lane") + 1] == "testing"
+    assert command[command.index("--") + 1:] == paths, "lane_commit commits exactly the claimed paths"
+    subject = command[command.index("-m") + 1]
+    assert subject.startswith("t_da8f8c8e "), (
+        "the commit gate refuses a subject that names no card: %r" % subject)
+
+
+def test_the_card_comes_from_the_worker_environment_when_it_is_not_passed(monkeypatch):
+    monkeypatch.setenv(judge_panel.COMMIT_CARD_ENV, "t_1a2b3c4d")
+    seen = []
+    entries = "?? projects/primordial-paradox/data/ai_cache/4f67.json\n"
+    paths, code, _text = judge_panel.commit_outputs(
+        "2026-11-16", runner=_runner(entries, record=seen))
+    assert code == 0 and paths
+    subject = seen[1][0][seen[1][0].index("-m") + 1]
+    assert subject.startswith("t_1a2b3c4d "), subject
+
+
+def test_with_no_card_the_commit_is_not_attempted_at_all(monkeypatch):
+    monkeypatch.delenv(judge_panel.COMMIT_CARD_ENV, raising=False)
+    seen = []
+    entries = "?? projects/primordial-paradox/data/ai_cache/4f67.json\n"
+    paths, code, text = judge_panel.commit_outputs("2026-11-16", runner=_runner(entries, record=seen))
+    assert code == 1 and paths
+    assert len(seen) == 1, "only git status ran: a refused commit would spend a gate run for nothing"
+    assert "--commit-card" in text
+    assert judge_panel.commit_line(paths, code, text).startswith("NOT COMMITTED:")
+
+
+def test_a_clean_tree_opens_no_commit_and_calls_no_guard():
+    seen = []
+    paths, code, text = judge_panel.commit_outputs("2026-11-16", runner=_runner("", record=seen))
+    assert paths == [] and code == 0
+    assert "nothing to commit" in text
+    assert len(seen) == 1, "only the git status was asked; no commit was attempted"
+
+
+def test_a_refused_commit_is_reported_with_the_repair_and_never_raises():
+    entries = "?? projects/primordial-paradox/data/ai_cache/4f67.json\n"
+
+    def refusing(command, **_kwargs):
+        if command[0] == "git":
+            return subprocess.CompletedProcess(command, 0, stdout=entries, stderr="")
+        return subprocess.CompletedProcess(command, 8, stdout="gate refused this commit", stderr="")
+
+    paths, code, text = judge_panel.commit_outputs("2026-11-16", card="t_da8f8c8e", runner=refusing)
+    assert code == 8 and paths
+    line = judge_panel.commit_line(paths, code, text)
+    assert "LEFT UNCOMMITTED" in line and "--commit-only" in line, line
+
+
+def test_a_missing_guard_is_said_plainly(tmp_path, monkeypatch):
+    monkeypatch.setattr(judge_panel, "GUARD_COMMIT", str(tmp_path / "no_such_guard.py"))
+    entries = "?? projects/primordial-paradox/data/ai_cache/4f67.json\n"
+    paths, code, text = judge_panel.commit_outputs("2026-11-16", card="t_da8f8c8e",
+                                                   runner=_runner(entries))
+    assert code == 1 and paths
+    assert "commit them by hand" in text
