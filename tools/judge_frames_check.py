@@ -38,13 +38,12 @@ WHERE THE FRAME TIMES COME FROM
     sampled evenly by the panel at 15, 45, 75 s and so on, the report states what the panel's own
     six times would be for the capture it measured, so the two tools cannot drift apart silently.
 
-    The bake row does not live at any of those nine times: `tools/demo_overlay.py` draws it at
-    S5 83.40 to 87.40 s and S6 135.03, 138.53 and 143.53 s (its `SHOT_WINDOWS`, read from
-    `knowledge/DEMO-SCRIPT.md` sections 4 and 5). So the two receipt frames are sampled at the
-    shot's own clock, the middle of the S5 window and the first S6 bake time, with the small
-    probe offsets listed in PROBE_OFFSETS because the S6 windows are instants and a frame
-    boundary can fall on one. The offset that matched is printed; a capture that never reaches
-    the window fails with both times named, which is what happens to the 73.483 s capture today.
+    The bake row does not live at any of those nine times: `tools/demo_overlay.py` draws the S5 verdict
+    window from 1:18.00 to 1:50.00 (its `SHOT_WINDOWS["S5"]["verdict"]`, the same clock
+    `tools/demo_cut_180.py` composites at), so the receipt frame is sampled at the middle of that window,
+    94.000 s, with the small probe offsets listed in PROBE_OFFSETS because a frame boundary can fall on
+    one. The offset that matched is printed; a capture that never reaches the window fails with both
+    times named, which is what happens to the 73.483 s capture today.
 
 WHAT IT DOES NOT DO
     No model is called and nothing goes on the network: every number here is read from pixels the
@@ -68,12 +67,12 @@ Exit codes
 
 Sources
     the six judged frame times and the two blank ones  knowledge/JUDGE-PANEL-2026-10-26.md lines 11, 33
-    the 90 percent blank threshold                  card t_4512b33a body
-    the sample formula and the ffmpeg call           tools/judge_panel.py, sample_frames()
-    the plate geometry, the palette roles, the font  tools/demo_overlay.py, plan() and FONT_PATH
-    the overlay clocks                               tools/demo_overlay.py SHOT_WINDOWS (sections 4 and 5)
-    the three minute judged length                   knowledge/DEMO-SCRIPT.md section 2
-    the largest colour share measure                 tools/eye_critic.py, measure_image()
+    the 90 percent blank threshold                     card t_4512b33a body
+    the sample formula and the ffmpeg call             tools/judge_panel.py, sample_frames()
+    the receipt geometry, the palette roles, the font  tools/demo_overlay.py, plan() and FONT_PATH
+    the S5 window, 1:18.00 to 1:50.00                  tools/demo_overlay.py, plan(verdict_box=True)
+    the three minute judged length                     knowledge/DEMO-SCRIPT.md section 2
+    the largest colour share measure                   tools/eye_critic.py, measure_image()
 """
 
 from __future__ import annotations
@@ -127,15 +126,17 @@ ATLAS_IOU_MIN = 0.50        # measured on a rendered line: well above the noise,
 ATLAS_PAD = 3               # the atlas match may sit this many pixels off the planned box
 
 # The shot whose frames must carry the receipt, and which clock in SHOT_WINDOWS is used. Card
-# t_892cc851 retires S6 from the overlay (Percy's fight reads no bake), so S5 is the one shot.
-RECEIPT_SHOTS = (("S5", "bake"),)
+# t_892cc851 retires S6 from the overlay (Percy's fight reads no bake), so S5 is the one shot. Card
+# t_746512f4 moved the receipt from the plate's short windows to the verdict window, which is on for the
+# whole shot, so the sample now falls inside it wherever the capture is long enough to hold S5.
+RECEIPT_SHOTS = (("S5", "verdict"),)
 # A bake window can start on a frame boundary, so a single -ss can land on either side of a cut.
 # These offsets are probed in order and the one that matched is reported; the first probe that finds
 # a plate wins, and a shot with no plate at any offset fails.
 PROBE_OFFSETS = (0.0, 0.5, -0.5, 1.0, -1.0, 1.5, -1.5)
 
 
-MODEL_LINE_PREFIX = "BAKE MODEL "
+MODEL_LINE_PREFIX = "BAKE MODEL "   # the plate's own model line, kept for the windows that still draw one
 
 
 class FrameCheckError(RuntimeError):
@@ -192,6 +193,27 @@ def _ffmpeg():
     return found
 
 
+def run_ffmpeg(arguments, timeout):
+    """Run one ffmpeg command, retrying once when Windows refuses to start it at all.
+
+    Measured 2026-11-16 under the commit gate's CPython 3.14 on this Windows box: `subprocess.run`
+    can raise `OSError: [WinError 6] The handle is invalid` while it duplicates the child's std
+    handles, and the identical call then succeeds on a second attempt, with no process ever started
+    and no file half written. So the retry is free of side effects in the failure case, and the
+    second failure is raised as a FrameCheckError naming the command instead of a bare traceback.
+    """
+    for attempt in (1, 2):
+        try:
+            return subprocess.run(
+                arguments, stdin=subprocess.DEVNULL, capture_output=True, encoding="utf-8",
+                errors="replace", timeout=timeout)
+        except OSError as exc:
+            if attempt == 2:
+                raise FrameCheckError("ffmpeg could not be started twice in a row: %s (%s)"
+                                      % (exc, " ".join(arguments[:3]))) from exc
+    raise FrameCheckError("ffmpeg could not be started: %s" % " ".join(arguments[:3]))
+
+
 def take_frame(video, at, path):
     """One frame, decoded exactly at `at`, written to `path`.
 
@@ -199,10 +221,9 @@ def take_frame(video, at, path):
     frame is the one at that timestamp and not the nearest keyframe, and one frame only.
     """
     ffmpeg = _ffmpeg()
-    result = subprocess.run(
+    result = run_ffmpeg(
         [ffmpeg, "-nostdin", "-hide_banner", "-loglevel", "error", "-y",
-         "-i", video, "-ss", "%.3f" % at, "-frames:v", "1", path],
-        capture_output=True, encoding="utf-8", errors="replace", timeout=300)
+         "-i", video, "-ss", "%.3f" % at, "-frames:v", "1", path], 300)
     if result.returncode != 0 or not os.path.exists(path):
         raise FrameCheckError("ffmpeg could not take the frame at %.3f s from %s: %s"
                               % (at, os.path.basename(video), (result.stderr or "").strip()[:200]))
@@ -221,8 +242,16 @@ def load_rgb(path):
         image = handle.convert("RGB")
     resized = False
     if image.size != (demo_overlay.FRAME_W, demo_overlay.FRAME_H):
-        image = image.resize((demo_overlay.FRAME_W, demo_overlay.FRAME_H), Image.LANCZOS)
-        resized = True
+        width, height = image.size
+        if width == demo_overlay.FRAME_W and height > demo_overlay.FRAME_H:
+            # A cut with a band under the picture (tools/demo_cut_180.py puts its caption there). The
+            # overlay's rects describe the top FRAME_W by FRAME_H rows exactly, so they are cropped off,
+            # not scaled: a scaling here squashes the picture by 64 rows and lands every line box eight
+            # percent high, which reads as a receipt that is present but unreadable.
+            image = image.crop((0, 0, demo_overlay.FRAME_W, demo_overlay.FRAME_H))
+        else:
+            image = image.resize((demo_overlay.FRAME_W, demo_overlay.FRAME_H), Image.LANCZOS)
+            resized = True
     return np.asarray(image).astype(np.int16), resized
 
 
@@ -293,46 +322,57 @@ def best_iou(mask, frame, x0, y0, paper, pad=ATLAS_PAD):
 
 
 def plate_facts(frame, plan, model, palette):
-    """What the plate's own rect holds: the paper share, the ink per line, and the model name.
+    """What the drawn window's own rect holds: the paper share, the ink per line, and the model name.
 
     Every rect comes from `demo_overlay.plan()`, which is the geometry the drawing used, so the
-    measurement and the render cannot disagree about where a line sits.
+    measurement and the render cannot disagree about where a line sits. Card t_746512f4: when the plan
+    carries the S5 verdict window that window is the receipt, and the model is named on its caption sized
+    line by the record's own display name, not by a prefix typed here.
     """
     paper = np.array(palette["paper"], dtype=np.int16)
-    x0, y0, x1, y1 = plan["plate"]
+    window = plan.get("verdict_box")
+    if window:
+        drawn, lines, size_floor = window["rect"], window["lines"], demo_overlay.CAPTION_SIZE
+    else:
+        drawn, lines, size_floor = plan["plate"], plan["lines"], None
+    x0, y0, x1, y1 = drawn
     crop = frame[y0:y1, x0:x1]
     paper_share = float((np.abs(crop - paper).max(axis=2) <= PAPER_TOL).mean()) if crop.size else 0.0
 
-    lines = []
+    rows = []
     model_line = None
-    for line in plan["lines"]:
+    for line in lines:
         bx0, by0, bx1, by1 = line["box"]
         band = frame[by0:by1, bx0:bx1]
         ink = np.abs(band - paper).max(axis=2) > INK_MIN
         share = float(ink.mean()) if ink.size else 0.0
-        lines.append({"tier": line["tier"], "text": line["source_text"][:60],
-                      "ink_share": round(share, 4), "ink_pixels": int(ink.sum())})
-        if model_line is None and str(line["source_text"]).startswith(MODEL_LINE_PREFIX):
-            model_line = line
+        rows.append({"tier": line.get("tier", "hash"), "text": line["source_text"][:60],
+                     "ink_share": round(share, 4), "ink_pixels": int(ink.sum())})
+        if model_line is None:
+            if size_floor is not None and line.get("size", 0) >= size_floor:
+                model_line = line
+            elif size_floor is None and str(line["source_text"]).startswith(MODEL_LINE_PREFIX):
+                model_line = line
 
     atlas = {"text": None, "iou": None, "offset": None}
     if model_line is not None:
-        wanted = MODEL_LINE_PREFIX + str(model)
+        # The window prints the display name the record holds, so the atlas expects exactly that string.
+        wanted = str(model_line["source_text"])
         mask, (mask_x, mask_y) = atlas_mask(wanted, model_line["size"])
         iou, where = best_iou(mask, frame, model_line["box"][0] + mask_x,
                               model_line["box"][1] + mask_y, paper)
         atlas = {"text": wanted, "iou": iou, "offset": [int(where[0]), int(where[1])],
                  "mask_pixels": int(mask.sum())}
-    return {"paper_share": round(paper_share, 4), "lines": lines, "model_line": atlas,
-            "plate": list(plan["plate"])}
+    return {"paper_share": round(paper_share, 4), "lines": rows, "model_line": atlas,
+            "plate": list(drawn), "drawing": "verdict window" if window else "plate"}
 
 
 def shot_frames(video, duration, folder, palette, bake, index, ffmpeg_path=None):
-    """The S5 and S6 frames, sampled at their own clock, with the receipt measured on each.
+    """The S5 frame, sampled inside the shot, with the verdict window measured on it.
 
     Returns (rows, failures). A row is a frame the tool managed to take; a failure is a sentence
     naming the shot, its window and the time, and it is what a capture that never reaches the shot
-    produces: the 73.483 s capture ends 10 s before the S5 window opens.
+    produces: the 73.483 s capture ends 5 s before the S5 window opens.
     """
     rows, failures = [], []
     model = str((bake.get("bake") or {}).get("model") or "")
@@ -344,17 +384,18 @@ def shot_frames(video, duration, folder, palette, bake, index, ffmpeg_path=None)
             continue
         start, end = windows[0]
         base = (start + end) / 2.0 if end > start else start
-        label = "%s bake window %.3f to %.3f s, sampled at %.3f s" % (shot, start, end, base)
+        label = "%s %s window %.3f to %.3f s, sampled at %.3f s" % (shot, kind, start, end, base)
         if duration and base >= duration - 0.05:
             failures.append("%s: no frame exists at %.3f s because the capture ends at %.3f s, so the "
                             "bake row is not on screen anywhere in this video"
                             % (shot, base, duration))
             continue
         try:
-            plan = demo_overlay.plan(shot, bake, index, allow_fallback=True)
+            plan = demo_overlay.plan(shot, bake, index, allow_fallback=True, rows=(),
+                                     verdict_box=(kind == "verdict"))
         except demo_overlay.OverlayError as exc:
-            failures.append("%s: the plate layout cannot be computed, so the receipt cannot be "
-                            "measured: %s" % (shot, exc))
+            failures.append("%s: the %s layout cannot be computed, so the receipt cannot be "
+                            "measured: %s" % (shot, kind, exc))
             continue
         matched = None
         tried = []
@@ -376,9 +417,9 @@ def shot_frames(video, duration, folder, palette, bake, index, ffmpeg_path=None)
         if matched is None:
             best = max(tried, key=lambda row: row["paper_share"]) if tried else None
             failures.append(
-                "%s: no bake row plate at %s: the paper colour covers %s of the plate rect %s and it "
+                "%s: no bake row %s at %s: the paper colour covers %s of its rect %s and it "
                 "must cover %.0f percent. The %d time(s) probed were %s."
-                % (shot, label,
+                % (shot, "window" if kind == "verdict" else "plate", label,
                    ("%.4f" % best["paper_share"]) if best else "nothing",
                    best["plate"] if best else "none",
                    PLATE_PAPER_SHARE * 100, len(tried),
@@ -386,18 +427,19 @@ def shot_frames(video, duration, folder, palette, bake, index, ffmpeg_path=None)
             rows.extend(tried)
             continue
         rows.extend(tried)
-        # The plate is there: now the lines and the model name inside it.
+        # The window is there: now the lines and the model name inside it.
         thin = [row for row in matched["lines"] if row["ink_share"] < LINE_INK_SHARE]
         if thin:
-            failures.append("%s at %.3f s: the plate is drawn but %d of its %d line boxes are empty "
-                            "(%s), so the row is a plate with no receipt on it"
-                            % (shot, matched["at_s"], len(thin), len(matched["lines"]),
+            failures.append("%s at %.3f s: the %s is drawn but %d of its %d line boxes are empty "
+                            "(%s), so the row is a window with no receipt on it"
+                            % (shot, matched["at_s"], matched.get("drawing", "plate"),
+                               len(thin), len(matched["lines"]),
                                ", ".join("%r at ink %.4f" % (row["text"][:24], row["ink_share"])
                                          for row in thin[:4])))
         atlas = matched["model_line"]
         if atlas["iou"] is None:
-            failures.append("%s at %.3f s: the plate has no %r line, so the model name is not on "
-                            "screen" % (shot, matched["at_s"], MODEL_LINE_PREFIX.strip()))
+            failures.append("%s at %.3f s: the %s has no caption sized line, so the model name is not "
+                            "on screen" % (shot, matched["at_s"], matched.get("drawing", "plate")))
         elif atlas["iou"] < ATLAS_IOU_MIN:
             failures.append("%s at %.3f s: the model name %r does not match the frame in the caption "
                             "font at that line box (intersection over union %.4f, needs %.2f)"
@@ -501,7 +543,7 @@ def check(video, folder=None, log=False, log_path=None):
 def render_report(report):
     """The report as the lines a person reads, measured first and verdict last."""
     lines = ["judge frames: %s" % os.path.relpath(report["video"], ROOT).replace("\\", "/"),
-             "duration %.3f s, %s x %s at %s fps, model on the plate %r"
+             "duration %.3f s, %s x %s at %s fps, model named on the receipt %r"
              % (report["duration_s"], report["width"], report["height"], report["fps"], report["model"]),
              "sampled %d frame(s) at %s"
              % (len(report["frames"]), ", ".join("%.1f s" % row["at_s"] for row in report["frames"]))]
@@ -514,7 +556,7 @@ def render_report(report):
                      % (row["at_s"], row["largest_colour_share"], row["colours"],
                         "BLANK" if row["blank"] else "picture"))
     if report["receipt_shots"]:
-        lines.append("bake row check, paper share and model name match:")
+        lines.append("receipt check, paper share, ink per line and model name match:")
         for row in report["receipt_shots"]:
             atlas = row["model_line"]
             lines.append("  %-6s at %7.3f s (offset %+.1f)  paper %.4f  model %r iou %s at offset %s"
@@ -535,7 +577,7 @@ def render_report(report):
         lines.append("VERDICT FAIL, %d finding(s):" % len(report["failures"]))
         lines.extend("  - %s" % text for text in report["failures"])
     else:
-        lines.append("VERDICT PASS: every sampled frame has picture, both receipt frames carry the bake "
+        lines.append("VERDICT PASS: every sampled frame has picture, the S5 receipt carries the bake "
                      "row and the model name, and the last three differ.")
     return "\n".join(lines)
 
@@ -664,16 +706,15 @@ def build_capture(folder, seconds, blank_at=(), receipt_at=None, base=None, sour
             for shot, (first, last) in receipt_at.items():
                 if first <= second <= last:
                     image, _plan = demo_overlay.render(
-                        image, shot, bake, index, allow_fallback=True)
+                        image, shot, bake, index, allow_fallback=True, rows=(), verdict_box=True)
                     break
         image.save(os.path.join(frames, "%04d.png" % second))
     video = os.path.join(folder, "capture.mp4")
     ffmpeg = _ffmpeg()
-    result = subprocess.run(
+    result = run_ffmpeg(
         [ffmpeg, "-nostdin", "-hide_banner", "-loglevel", "error", "-y",
          "-framerate", "1", "-i", os.path.join(frames, "%04d.png"),
-         "-c:v", "libx264", "-pix_fmt", "yuv420p", "-r", "1", video],
-        capture_output=True, encoding="utf-8", errors="replace", timeout=600)
+         "-c:v", "libx264", "-pix_fmt", "yuv420p", "-r", "1", video], 600)
     if result.returncode != 0:
         raise FrameCheckError("ffmpeg could not build the self test capture: %s"
                               % (result.stderr or "").strip()[:300])
@@ -694,7 +735,7 @@ def self_test(folder=None, log=False, log_path=None):
     os.makedirs(root)
     base, note = synthetic_source(prefer_real=False)
 
-    s5 = demo_overlay.SHOT_WINDOWS["S5"]["bake"][0]
+    s5 = demo_overlay.SHOT_WINDOWS["S5"]["verdict"][0]
     good_seconds = int(s5[1]) + 4
     good_video, _ = build_capture(
         os.path.join(root, "good"), good_seconds,
@@ -724,7 +765,7 @@ def self_test(folder=None, log=False, log_path=None):
                               % (", ".join(wanted), broken["failures"]))
     print()
     print("self test PASS: the good capture on %s measured ok, the broken one failed naming 18.4 s, "
-          "30.6 s and the missing S5 and S6 windows" % note)
+          "30.6 s and the missing S5 window" % note)
     return {"good": good, "broken": broken}
 
 

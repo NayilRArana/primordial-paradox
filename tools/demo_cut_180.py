@@ -53,12 +53,22 @@ What it burns in
                runs 1:53.03 to 1:57.00, because both captions belong to shots whose new clocks contain
                the same seconds.
 
-    Network    tools/demo_overlay.py's badge and two lines, chosen from data/meta_bake.json's own
-               `offline` and `network` flags, at the script's own clock: S5, 1:41.00 to 1:44.00 s.
+    Verdict    card t_746512f4 (judge panel 2026-11-16, fix 2): one NES window on S5 for the whole shot, 1:18.00 to
+               1:50.00, holding four things read out of the record and nothing typed: the model, by the display
+               name data/credits.json prints for the bake header's own model id; the decision, as the three Morgan
+               rows' recorded effects, said to be fallback rows because that is what data/meta_bake.json holds for
+               them; the three bake receipts, meta.model_calls 21, meta.live_rows 11 and meta.live_share_pct 52.4,
+               each under the id of the ledger receipt that backs it; and the network line, from the file's own
+               `offline` and `network` flags. It sits in the strip of battle frame between the enemy plate and the
+               party panel, so the HP and MERCY bars and the party line stay visible behind it, and the overlay's
+               frame test compares both bands with the source frame byte for byte. It replaced two short windows
+               (receipts 1:23.4 to 1:44.0, network 1:41.0 to 1:44.0) that a judge sampling every thirty seconds
+               stepped over, which is exactly what the panel reported.
     Bake rows  NONE, and that is the script's decision, not an omission: S5's three rows
                (fight/morgan/1 to 3) are `source: fallback` in data/meta_bake.json, demo_overlay.py
                refuses to print a fallback row as a receipt, and section 4's fallback 1 says the shot
-               draws its caption and its box and no plate until the re-bake in Q1 lands.
+               draws its caption and its box and no per-row plate until the re-bake in Q1 lands. The
+               verdict window says so in its own words instead of hiding it.
     Audio      the source's own audio throughout: every segment of this cut comes from a capture that
                carries the game's own sound. Nothing here is a stand-in cue.
 
@@ -66,8 +76,9 @@ The cadence
     768x720 is the capture, which is exactly 3x the 256x240 frame (knowledge/VIDEO-PLAN.md section 1).
     The captions are drawn in a 64 pixel band added BELOW that picture, so the delivered frame is
     768x784 at 60 fps and the game's own pixels are never covered by a caption and never scaled by a
-    fraction. The one exception is the network badge, which demo_overlay.py draws inside the frame at
-    the top left for four seconds; the frame test in --verify proves it covers no text box.
+    fraction. Two drawings live inside the picture: the S5 verdict window, in the strip the battle HUD
+    leaves free, and the network badge it carries; the frame test in --verify proves neither covers the
+    dialogue box, the enemy plate's stat rows or the party panel.
 
 Usage
     python tools\\demo_cut_180.py --plan
@@ -93,7 +104,19 @@ TOOLS = os.path.join(ROOT, "tools")
 sys.path.insert(0, TOOLS)
 
 import demo_overlay  # noqa: E402
+# The narrator is the assistant lane's module (card t_2514df86) and it lands with its own card, so a checkout
+# that only builds the picture may not carry it. This tool is the cut's builder first: with the module absent it
+# imports, builds the cut and measures it, and the narrator rows simply do not exist. Card t_b231fe46.
+try:
+    import demo_voiceover  # noqa: E402
+except ImportError:
+    demo_voiceover = None
 import video_builder  # noqa: E402
+
+
+def voiceover_meta():
+    """The narrator's own settings, or an empty mapping when the narrator module is not in this checkout."""
+    return demo_voiceover.load() if demo_voiceover is not None else {}
 
 OUT_DIR = os.path.join(ROOT, "output", "demo")
 DEFAULT_OUT = os.path.join(OUT_DIR, "cut-180-2026-11-12.mp4")
@@ -110,9 +133,11 @@ TOTAL_S = 180.0
 # The lengths are the rewritten script's own seconds (knowledge/DEMO-SCRIPT.md section 1: 16, 13, 10, 39,
 # 32 and 70), and the segments that make up a shot add to its length.
 SEGMENTS = (
-    # S1 and S2 come from the 2026-10-26 title capture: the attract loop, then the crawl.
+    # S1 and S2 come from the 2026-10-26 title capture: the attract loop, then the crawl. S1's picture is not
+    # visible in the cut: the drawn title card covers its whole 16.00 s (card t_b231fe46), and the row stays so
+    # the shot table and the audio still come from that take.
     ("S1", "output/demo/demo-talk-2026-10-26.mp4", 0.000, 16.000, "source",
-     "the attract loop, the lightning swap and the menu"),
+     "the attract the drawn title card covers: no second of it reaches the delivered frame"),
     ("S2", "output/demo/demo-talk-2026-10-26.mp4", 29.000, 13.000, "source",
      "the crawl, six beats over the star field"),
     # S3 and S4 come from the quay and door masters plus Morgan's own capture.
@@ -139,14 +164,65 @@ SEGMENTS = (
 )
 # Where a shot's picture does and does not match its scripted scene. Printed by --plan and written
 # into the verify file, so a substitution can never be read as a recording of the scripted scene.
+#
+# S1 is the one shot whose row is chosen at build time (card t_c0bd0757). The 2026-10-26 take's first
+# 16 s is NOT the card's cold boot, and the row it produces says so: the machine that recorded it had
+# pp_title_seen.txt (so the opening shot never played) and the save slot (so CONTINUE was drawn in the
+# plain ink). data/demo/run_s1_cold.json is the take that is a cold boot, and the moment
+# output/demo/run_s1_cold.mp4 is on disk this table uses it for S1 instead. Nothing else about S1's
+# length changes: 960 frames either way, so the shot table still sums to 180.00 s.
 PROVENANCE = {
-    "S1": ("recorded", "the scripted shot: title attract, the menu with CONTINUE dim, NEW GAME"),
+    "S1": ("drawn", "not recorded footage: S1's frame is tools/video_builder.py's title card, drawn opaque over the whole 16.000 s of the shot (card t_b231fe46, judge panel 2026-11-16 fix 3). The row it covers is the 2026-10-26 take's first 16.000 s, and that picture is not the card's cold boot (t_c0bd0757): that machine carried pp_title_seen.txt, so the Big Ben opening shot never played, and pp_save_01.json, so CONTINUE was drawn enabled. Measured 2026-11-13 by tools/check_title_cold_boot.py: no menu at 15.0 s, and 0 pixels of the PP_TITLE_DIM rule in any menu frame; measured 2026-11-16 on the judged take: 332500 blue band pixels at 15.0 s and no readable word. output/demo/run_s1_cold.mp4 is not on disk, and data/demo/run_s1_cold.json is the take that replaces it; until that take exists the drawn card is what the shot shows, and the verify file's open_has_no_blue_band row is the measurement of it"),
     "S2": ("recorded", "the scripted shot: the crawl typing its pages"),
     "S3": ("recorded", "the scripted shot's map: the hurricane on southampton_town_quay, and a shopfront door page on it. The door page the capture holds is the Registry's, not the Red Funnel's the script names, and the caption names only the storm and the block"),
     "S4": ("recorded", "the door pages (doors master) and then Morgan's own pages, the encounter frame and the TALK panel from the session capture (raw_story_good.mkv, 8.850 s on). The wind page at the bridge is in no capture, so a shopfront page of the same shape stands at that place in the cut, and the caption names only the wind and the three answers"),
     "S5": ("recorded", "Morgan's TALK capture, 0.000 to 32.000 s of its 34.158 s: the replies, the SPARE and the quay after it. The three receipts drawn over it are rows of data/meta_bake.json and are not read off the picture"),
     "S6": ("recorded", "Percy's pages, his fight, the spare and the joining pages from the session's capture (raw_story_good.mkv, 70.450 s on), then the credits. The recorder's 3.34 s black gap at 114.30 to 117.63 s is cut out, and the roll's last card is past the end of the capture (the event log puts it at 151.55 s, the capture ends at 146.56 s), so the last frame lands inside the roll"),
 }
+
+# The cold boot take (card t_c0bd0757): the script is data/demo/run_s1_cold.json, and the recorder
+# writes output/demo/run_s1_cold.mp4 when the launch gate lets a window open. Its first 16.000 s is a
+# boot with no seen marker and no save slot: the opening shot plays, and the menu opened at 0:11.80
+# (DEMO-SCRIPT.md's own S1 row) is still up at 0:16.00 with CONTINUE struck through.
+COLD_BOOT_TAKE = "output/demo/run_s1_cold.mp4"
+COLD_BOOT_SCRIPT = "data/demo/run_s1_cold.json"
+COLD_BOOT_S1_ROW = ("S1", COLD_BOOT_TAKE, 0.000, 16.000, "source",
+                    "the cold boot: the Big Ben opening shot, the attract, then the menu with CONTINUE "
+                    "struck through, held to the shot's end")
+COLD_BOOT_S1_PROVENANCE = (
+    "recorded",
+    "the cold boot take (data/demo/run_s1_cold.json): 0.000 s is a boot with no seen marker and no save "
+    "slot, so the Big Ben opening shot plays and the menu's CONTINUE is struck through (pp_save_ready is "
+    "false); the press at 0:11.80 is the script's own S1 row and nothing is pressed again until 0:17.00, so "
+    "the shot's last four seconds are the menu. Measured by tools/check_title_cold_boot.py at 15.0 s")
+
+
+def cold_boot_present():
+    """True when the recorder's cold boot take is on disk."""
+    return os.path.isfile(os.path.join(ROOT, COLD_BOOT_TAKE))
+
+
+def segments(cold_boot=None):
+    """The segment rows, with S1 taken from the cold boot take when that take exists.
+
+    The boolean is a parameter so a test can hold both branches without writing a video: the row is the
+    whole of what changes, and its length is 960 frames either way (16.000 s at 60 fps).
+    """
+    if cold_boot is None:
+        cold_boot = cold_boot_present()
+    if not cold_boot:
+        return SEGMENTS
+    return (COLD_BOOT_S1_ROW,) + tuple(row for row in SEGMENTS if row[0] != "S1")
+
+
+def provenance(cold_boot=None):
+    """The provenance table the plan and the verify file carry, for the rows that are actually used."""
+    if cold_boot is None:
+        cold_boot = cold_boot_present()
+    table = dict(PROVENANCE)
+    if cold_boot:
+        table["S1"] = COLD_BOOT_S1_PROVENANCE
+    return table
 
 
 # The game's own audio for a capture that carries none. No segment of this cut uses one: every source
@@ -157,28 +233,44 @@ CUES = {
     "save": (os.path.join(ROOT, "assets", "audio", "sfx", "save_jingle.ogg"), 1.00),
 }
 
-# The overlays tools/demo_overlay.py draws, at the rewritten script's own clocks, each with the bake rows
-# it carries. The network window carries none: its two lines come from the file's own offline and network
-# flags, not from a row.
+# The overlays tools/demo_overlay.py draws, at the rewritten script's own clocks, each with the bake rows it
+# carries. Card t_746512f4 replaces the pair of short windows this list used to hold (receipts 1:23.4 to 1:44.0,
+# network 1:41.0 to 1:44.0) with ONE window that runs the whole of S5. The panel's complaint was that no receipt or
+# network line was visible in six stills, and the arithmetic of why is in tools/demo_overlay.py's header: those
+# windows were 20.6 s and 3.0 s long and a sampler every thirty seconds steps over both. One box holding the model,
+# the decision, the three receipts and the network line, on for the whole 32.00 s shot, cannot be stepped over.
+# It carries no bake row: its words are the bake header, the three rows' recorded effects, the ledger and the file's
+# own offline and network flags, so `rows` is empty and the plate above it prints no hash.
 OVERLAY_WINDOWS = (
-    ("S5", "network", 101.00, 104.00, ()),
+    ("S5", "verdict", 78.00, 110.00, ()),
 )
 
-# The three clocks the script's bake receipts sit at (section 4: 1:23.4, 1:31.0 and 1:38.0), declared
-# here so a reader can see them named, and drawn with NO plate. Why: fight/morgan/1 to 3 are
-# `source: fallback` in data/meta_bake.json, tools/demo_overlay.py refuses to print a fallback row as a
-# receipt, and section 4's fallback 1 says the shot draws its caption and its box and no plate until the
-# re-bake in Q1 lands. Drawing nothing is the honest state; a plate over a hand written line would not be.
+# The three clocks the script's bake receipts sit at (section 4: 1:23.4, 1:31.0 and 1:38.0), declared here so a
+# reader can see them named, and drawn with NO per-row plate. Why: fight/morgan/1 to 3 are `source: fallback` in
+# data/meta_bake.json, tools/demo_overlay.py refuses to print a fallback row as a receipt, and section 4's fallback 1
+# says the shot draws its caption and its box and no plate until the re-bake in Q1 lands. Drawing nothing is the
+# honest state; a plate over a hand written line would not be. What the verdict window draws instead is the bake
+# header's own numbers, each with the id of the ledger record behind it, which is a receipt for the bake and not a
+# claim about any single reply, and the sentence that says those rows are fallback rather than a live answer.
 RECEIPT_WINDOWS = (83.40, 91.00, 98.00)
 RECEIPT_ROWS = ("fight/morgan/1", "fight/morgan/2", "fight/morgan/3")
 RECEIPT_NOT_DRAWN = (
-    "the three receipt windows carry no plate: fight/morgan/1 to 3 are source 'fallback' in "
+    "the verdict window carries no per-row receipt: fight/morgan/1 to 3 are source 'fallback' in "
     "data/meta_bake.json and tools/demo_overlay.py refuses a fallback row as a receipt "
-    "(knowledge/DEMO-SCRIPT.md section 4, fallback 1 and Q1)"
+    "(knowledge/DEMO-SCRIPT.md section 4, fallback 1 and Q1). The three receipts that ARE drawn on S5 are the "
+    "bake header's own numbers, meta.model_calls, meta.live_rows and meta.live_share_pct, each under the id of the "
+    "ledger receipt that backs it (tools/receipts.py, data/receipts/meta_receipts.jsonl), and the window says in "
+    "words that the three Morgan rows are fallback rather than a live answer"
 )
 
 SRC_1080_W, SRC_1080_H = 1024, 960     # the 4x picture inside the 1920x1080 master
 SRC_1080_X, SRC_1080_Y = 448, 60       # knowledge/VIDEO-PLAN.md section 1
+
+# The voice over's own level over the ducked game audio. The clips peak at -5.1 dB and the game runs at
+# 0.32 under them, so 1.6 puts the narrator about 4 dB up without touching the sample ceiling (the loudest
+# sum lands near -1 dB, which is headroom, not clipping). Both numbers are measured, not chosen by ear:
+# `ffmpeg -af volumedetect` on output/demo/narration/track.wav and on the composed file.
+NARRATION_GAIN = 1.6
 
 LONG_DASHES = ("\u2014", "\u2013", "\u2012", "\u2015")
 
@@ -231,7 +323,7 @@ def source_frames(path):
     return None
 
 
-def check_sources():
+def check_sources(cold_boot=None):
     """Every source exists, is long enough for its segment, and carries what the row asks for.
 
     A row's length is turned into a whole number of frames here, and the cut is made to that many
@@ -242,7 +334,8 @@ def check_sources():
     600, 2340, 1920 and 4200 at 60 fps), so the sum is exact.
     """
     rows = []
-    for shot, source, start, seconds, audio, what in SEGMENTS:
+    source_rows = segments(cold_boot)
+    for shot, source, start, seconds, audio, what in source_rows:
         path = os.path.join(ROOT, source)
         if not os.path.exists(path):
             raise CutError("%s: the source %s is not on disk" % (shot, source))
@@ -279,7 +372,7 @@ def check_sources():
     # scripted length moves no cue, where one frame over the whole file breaks the 180.00 s claim.
     order = [shot for shot in video_builder.SHOTS if any(row["shot"] == shot for row in rows)]
     declared = {}
-    for shot, _source, _start, seconds, _audio, _what in SEGMENTS:
+    for shot, _source, _start, seconds, _audio, _what in source_rows:
         declared[shot] = declared.get(shot, 0.0) + seconds
     for shot in order:
         target = int(round(declared[shot] * FPS))
@@ -320,6 +413,66 @@ def caption_plan():
     return plan
 
 
+def title_card_plan():
+    """The 4.00 s card at the head of the cut: its clock, its words and the judge it names.
+
+    The shape is data/slice.json shots.title_card; the words are video_builder.title_card_lines(), which
+    reads the talk model's id from tools/meta_client.py. Nothing here types a model name or a second.
+    """
+    shape = video_builder.title_card_shape()
+    models = video_builder._load_meta_default_models()
+    return {
+        "clock": list(shape["clock"]),
+        "seconds": float(shape["seconds"]),
+        "steps": shape.get("steps"),
+        "held_by": shape.get("held_by"),
+        "route_steps": list(shape.get("route_steps") or []),
+        "lines": list(video_builder.title_card_lines(models)),
+        "judge": models["chat"],
+        "names_the_judge": any(models["chat"].upper() in line.upper()
+                               for line in video_builder.title_card_lines(models)),
+        "drawn_by": shape.get("drawn_by"),
+    }
+
+
+def voiceover_plan():
+    """The narrator's rows: shot, window, the claim it makes out loud and the words, read from the data file."""
+    if demo_voiceover is None:
+        return []
+    plan = []
+    for row in demo_voiceover.rows():
+        lo, hi = demo_voiceover.window(row)
+        plan.append({"shot": row["shot"], "window": [lo, hi], "claim": row.get("claim"),
+                     "words": demo_voiceover.spoken_words(row), "file": row["file"]})
+    return plan
+
+
+def title_overlay(work):
+    """The card as an RGBA overlay for the live picture, rendered by the builder's own drawing."""
+    path = os.path.join(work, "title_overlay.png")
+    video_builder.render_title_overlay(path)
+    return path
+
+
+def build_voiceover(work):
+    """Speak any missing clip, check every clip against its window, then lay the 180.00 s track.
+
+    A clip that does not fit its window stops the build here, before a frame is composed: a narrator that
+    runs into the next shot is a caption problem, and the fix is shorter words, not a faster voice.
+
+    Returns (None, []) when the narrator module is not in this checkout, so the cut still builds silent.
+    """
+    if demo_voiceover is None:
+        return None, []
+    missing = [row for row in demo_voiceover.rows() if not os.path.exists(demo_voiceover.clip_path(row))]
+    if missing:
+        demo_voiceover.synth()
+    measured = demo_voiceover.check()
+    track = os.path.join(work, "narration.wav")
+    demo_voiceover.build_track(track, measured)
+    return track, measured
+
+
 def render_captions(work):
     """The six band PNGs, 768x64 with a transparent background, from the builder's own renderer."""
     bands = os.path.join(work, "bands")
@@ -338,38 +491,83 @@ def frame_at(source, t, out):
     return out
 
 
-def render_plates(work, picture):
-    """One opaque PNG per overlay window, cropped to the rectangle demo_overlay draws into.
+def overlay_plan(bake=None, index=None):
+    """Every rectangle the cut composites, with its window: computed once, used by the render and by the check.
 
-    The overlay is rendered on a frame of the cut itself, then cropped to the rectangle the tool's own
-    layout names, so the burst that is composited over the video is the tool's drawing and not a second
-    drawing of the record made here. Each window names the bake rows it carries (`rows=()` for the
-    network window), so a receipt window can never print another reply's hash. The network window keeps
-    only the badge and the two network lines: their boxes come from the layout, not from a guess about
-    the plate's height.
+    Card t_bdb645a5 put the geometry in this function so a plate could not be drawn somewhere the overlay's own
+    frame test had not measured it. Card t_746512f4 leaves one window and one rectangle: the S5 verdict window,
+    which the overlay places and the frame test measures against the battle HUD's two bands.
     """
-    plates = os.path.join(work, "plates")
-    os.makedirs(plates, exist_ok=True)
-    bake, index = demo_overlay.load_bake()
-    built = []
+    if bake is None or index is None:
+        bake, index = demo_overlay.load_bake()
+    items = []
     for shot, kind, lo, hi, rows in OVERLAY_WINDOWS:
-        source_png = os.path.join(plates, "src_%s_%s.png" % (shot, kind))
-        frame_at(picture, lo + 0.5, source_png)
-        rendered = os.path.join(plates, "drawn_%s_%s.png" % (shot, kind))
-        image, layout = demo_overlay.render(source_png, shot, bake, index, caption="", rows=tuple(rows))
-        image.save(rendered)
+        layout = demo_overlay.plan(shot, bake, index, caption="", rows=tuple(rows),
+                                   verdict_box=(kind == "verdict"))
+        if kind == "verdict":
+            if not layout.get("verdict_box"):
+                raise CutError("the %s %s window asked for the verdict window and the overlay drew none"
+                               % (shot, kind))
+            part = layout["verdict_box"]
+            items.append({"shot": shot, "kind": kind, "name": kind, "value": "",
+                          "receipt": "", "rect": list(part["rect"]), "window": [lo, hi],
+                          "rows": list(rows),
+                          "lines": [line["source_text"] for line in part["lines"]]})
+            continue
+        if kind == "receipts":
+            strip = layout.get("receipt_plates") or []
+            if not strip:
+                raise CutError("the %s %s window asked for the receipt plates and the overlay drew none"
+                               % (shot, kind))
+            for part in strip:
+                items.append({"shot": shot, "kind": kind, "name": part["name"], "value": part["value"],
+                              "receipt": part["receipt"], "rect": list(part["rect"]), "window": [lo, hi],
+                              "rows": list(rows)})
+            continue
         if kind == "plate":
             rect = tuple(layout["plate"])
         else:
             badge = layout["badge"]["box"]
             lines = [line["box"] for line in layout["lines"] if line["tier"] == "detail"][-2:]
             rect = (badge[0], badge[1], badge[2], max(box[3] for box in lines))
-        out = os.path.join(plates, "%s_%s.png" % (shot, kind))
-        run(["ffmpeg", "-hide_banner", "-v", "error", "-y", "-i", rendered,
-             "-vf", "crop=%d:%d:%d:%d" % (rect[2] - rect[0], rect[3] - rect[1], rect[0], rect[1]),
-             out], "cropping the %s %s plate" % (shot, kind))
-        built.append({"shot": shot, "kind": kind, "png": out, "rect": list(rect), "window": [lo, hi],
+        items.append({"shot": shot, "kind": kind, "name": kind, "rect": list(rect), "window": [lo, hi],
                       "rows": list(rows)})
+    return items
+
+
+def render_plates(work, picture):
+    """One opaque PNG per composited rectangle, cropped to the rectangle the overlay's own layout names.
+
+    The overlay is rendered on a frame of the cut itself, then cropped to the rectangle the tool's own
+    layout names, so the burst that is composited over the video is the tool's drawing and not a second
+    drawing of the record made here. A window whose rows are empty (`rows=()`) carries no bake row, which is what
+    the S5 verdict window needs: its words come from the file's own flags, its own header and the rows' own effects,
+    never from a reply carried by the plate. Card t_746512f4 leaves one rectangle: the whole verdict window, cropped
+    once and laid down as one burst, so the game's picture is not carried inside the drawing.
+    """
+    plates = os.path.join(work, "plates")
+    os.makedirs(plates, exist_ok=True)
+    bake, index = demo_overlay.load_bake()
+    plan = overlay_plan(bake, index)
+    built = []
+    for window_number, (shot, kind, lo, hi, rows) in enumerate(OVERLAY_WINDOWS):
+        items = [item for item in plan
+                 if item["shot"] == shot and item["kind"] == kind and item["window"] == [lo, hi]]
+        tag = "%02d_%s_%s" % (window_number, shot, kind)
+        source_png = os.path.join(plates, "src_%s.png" % tag)
+        frame_at(picture, lo + 0.5, source_png)
+        rendered = os.path.join(plates, "drawn_%s.png" % tag)
+        image, _layout = demo_overlay.render(source_png, shot, bake, index, caption="", rows=tuple(rows),
+                                             receipt_plates=(kind == "receipts"),
+                                             verdict_box=(kind == "verdict"))
+        image.save(rendered)
+        for number, item in enumerate(items):
+            rect = tuple(item["rect"])
+            out = os.path.join(plates, "cut_%s_%d.png" % (tag, number))
+            run(["ffmpeg", "-hide_banner", "-v", "error", "-y", "-i", rendered,
+                 "-vf", "crop=%d:%d:%d:%d" % (rect[2] - rect[0], rect[3] - rect[1], rect[0], rect[1]),
+                 out], "cropping the %s %s plate" % (shot, item["name"]))
+            built.append(dict(item, png=out))
     return built
 
 
@@ -430,7 +628,9 @@ def build_picture(work, rows):
         if got != row["frames"]:
             raise CutError("%s's clip from %s came back %d frames and the row asks for %d"
                            % (row["shot"], row["source"], got, row["frames"]))
-        listing.append("file '%s'" % out.replace("\\", "/"))
+        # The concat demuxer resolves a relative entry against the list file's own directory, so a relative
+        # --workdir (or a relative clip path) would make every entry point at work/work/clips. Absolute, always.
+        listing.append("file '%s'" % os.path.abspath(out).replace("\\", "/"))
     concat_txt = os.path.join(work, "concat.txt")
     with open(concat_txt, "w", encoding="utf-8") as handle:
         handle.write("\n".join(listing) + "\n")
@@ -477,7 +677,9 @@ def build_audio(work, rows):
                     "[0:a][c]amix=inputs=2:duration=first:normalize=0[a]" % (gain, seconds),
                     "-map", "[a]", "-ac", "2", "-ar", "48000", "-t", seconds, out]
         run(args, "building the audio for %s" % row["shot"])
-        listing.append("file '%s'" % out.replace("\\", "/"))
+        # The concat demuxer resolves a relative entry against the list file's own directory, so a relative
+        # --workdir (or a relative clip path) would make every entry point at work/work/clips. Absolute, always.
+        listing.append("file '%s'" % os.path.abspath(out).replace("\\", "/"))
     concat_txt = os.path.join(work, "audio_concat.txt")
     with open(concat_txt, "w", encoding="utf-8") as handle:
         handle.write("\n".join(listing) + "\n")
@@ -490,17 +692,38 @@ def build_audio(work, rows):
     return track
 
 
-def compose(work, picture, track, captions, plates, out):
-    """Titles, captions and plates over the picture, the track under it, at 180.00 s exactly."""
+def compose(work, picture, track, captions, plates, out, title_png=None, narration=None, measured=None):
+    """Titles, captions, plates and the narrator over the picture, the game's track under them, at 180.00 s.
+
+    The card is an overlay on the live picture and it is opaque: it is burnt with `between(t,0,N)` where N is
+    data/slice.json shots.title_card.seconds, which since card t_b231fe46 is S1's whole 16.00 s, so the opening
+    shot is the drawn title card and not the 2026-10-26 attract under it. The narrator is mixed over the game's
+    audio, which is ducked to the data file's own gain inside each narration window and comes back at its end.
+    Both paths are skipped when a caller does not pass them, so the cut still builds for a caller that only
+    wants the six captions.
+    """
     inputs = ["-i", picture]
     for png in captions:
         inputs += ["-loop", "1", "-framerate", str(FPS), "-t", "%.3f" % TOTAL_S, "-i", png]
     for plate in plates:
         inputs += ["-loop", "1", "-framerate", str(FPS), "-t", "%.3f" % TOTAL_S, "-i", plate["png"]]
+    title_index = None
+    if title_png:
+        title_index = 1 + len(captions) + len(plates)
+        inputs += ["-loop", "1", "-framerate", str(FPS), "-t", "%.3f" % TOTAL_S, "-i", title_png]
+    audio_index = 1 + len(captions) + len(plates) + (1 if title_png else 0)
     inputs += ["-i", track]
+    narration_index = None
+    if narration:
+        narration_index = audio_index + 1
+        inputs += ["-i", narration]
 
     graph = ["[0:v]pad=%d:%d:0:0:color=black,setsar=1[base]" % (FULL_W, FULL_H)]
     previous = "base"
+    if title_png:
+        card_seconds = video_builder.title_card_seconds()
+        graph.append("[%s][%d:v]overlay=0:0:enable='between(t,0,%.3f)'[card]" % (previous, title_index, card_seconds))
+        previous = "card"
     for index, item in enumerate(captions):
         shot = video_builder.SHOTS[index]
         lo, hi = video_builder.CAPTION_WINDOWS[shot]
@@ -515,8 +738,22 @@ def compose(work, picture, track, captions, plates, out):
         graph.append("[%s][%d:v]overlay=%d:%d:enable='between(t,%.3f,%.3f)'[%s]"
                      % (previous, first_plate + index, plate["rect"][0], plate["rect"][1], lo, hi, label))
         previous = label
-    audio_index = first_plate + len(plates)
-    graph.append("[%d:a]aresample=48000,atrim=0:%.3f[aout]" % (audio_index, TOTAL_S))
+
+    if narration:
+        duck = float(voiceover_meta().get("duck_gain", 0.32))
+        graph.append("[%d:a]aresample=48000[game]" % audio_index)
+        game_out = "game"
+        for number, row in enumerate(measured or []):
+            lo, hi = row["window"]
+            label = "duck%d" % number
+            graph.append("[%s]volume=%.2f:enable='between(t,%.3f,%.3f)'[%s]" % (game_out, duck, lo, hi, label))
+            game_out = label
+        graph.append("[%d:a]aresample=48000,volume=%.2f,atrim=0:%.3f[narr]"
+                     % (narration_index, NARRATION_GAIN, TOTAL_S))
+        graph.append("[%s][narr]amix=inputs=2:duration=first:normalize=0,atrim=0:%.3f[aout]"
+                     % (game_out, TOTAL_S))
+    else:
+        graph.append("[%d:a]aresample=48000,atrim=0:%.3f[aout]" % (audio_index, TOTAL_S))
 
     command = ["ffmpeg", "-hide_banner", "-v", "error", "-y", *inputs,
                "-filter_complex", ";".join(graph),
@@ -649,6 +886,9 @@ def picture_profile(video, work, credits=None):
     # the segment table, one colour by design), or a single second of flash or fade at a hard cut. The
     # credits allowance takes a run starting within one second of the declared span's first clock, because
     # the profile reads one frame a second and the second the fade lands in is the one before the span.
+    # The title card needs no allowance of its own and gets none (card t_b231fe46): the delivered seconds
+    # measure 0.86 to 0.87 of one colour at luma 18.8, under both the 0.90 share and the luma < 12 floor, so
+    # a card that started to read as a blank stretch would still be caught here.
     unexplained = []
     for kind in ("black_runs", "one_colour_runs"):
         for start, end in profile[kind]:
@@ -687,26 +927,136 @@ def content_checks(video, work):
         results.append(({"check": "caption_%s" % shot, "ok": ink > 500,
                          "detail": "%d ink pixels in the caption band at %.1f s" % (ink, (lo + hi) / 2.0)}))
     paper = tuple(demo_overlay.load_palette()["paper"])
-    for shot, kind, lo, hi, rows in OVERLAY_WINDOWS:
-        layout = demo_overlay.plan(shot, bake, index, caption="", rows=tuple(rows))
-
-        if kind == "plate":
-            rect = tuple(layout["plate"])
-        else:
-            badge = layout["badge"]["box"]
-            lines = [line["box"] for line in layout["lines"] if line["tier"] == "detail"][-2:]
-            rect = (badge[0], badge[1], badge[2], max(box[3] for box in lines))
-        path = os.path.join(folder, "plate_%s_%s.png" % (shot, kind))
+    # Card t_bdb645a5: the rectangles come from overlay_plan(), the same list the render cropped, so a receipt plate
+    # is measured where it was drawn and a window that draws three plates is measured three times. A plate is a
+    # filled window, so "more than half the rectangle is the plate's own paper" is what says it is on the frame.
+    for item in overlay_plan(bake, index):
+        shot, kind = item["shot"], item["kind"]
+        lo, hi = item["window"][0], item["window"][1]
+        rect = tuple(item["rect"])
+        label = kind if item["name"] == kind else "%s_%s" % (kind, item["name"])
+        path = os.path.join(folder, "plate_%s_%s.png" % (shot, label.replace(".", "_")))
         frame_at(video, (lo + hi) / 2.0, path)
         image = Image.open(path).convert("RGB").crop(rect)
         pixels = list(image.getdata())
         paper_share = sum(1 for pixel in pixels
                           if abs(pixel[0] - paper[0]) < 6 and abs(pixel[1] - paper[1]) < 6
                           and abs(pixel[2] - paper[2]) < 6) / float(len(pixels))
-        results.append(({"check": "plate_%s_%s" % (shot, kind), "ok": paper_share > 0.5,
+        results.append(({"check": "plate_%s_%s" % (shot, label), "ok": paper_share > 0.5,
                          "detail": "%.2f of the %s %s rectangle is the plate's own paper at %.1f s"
-                                   % (paper_share, shot, kind, (lo + hi) / 2.0)}))
+                                   % (paper_share, shot, kind.replace("_", " "), (lo + hi) / 2.0)}))
     return [{"name": item["check"], "ok": item["ok"], "detail": item["detail"]} for item in results]
+
+
+def mean_volume(path, start, seconds, gain=None):
+    """The mean volume of one window of a file, in dB, read by ffmpeg's volumedetect.
+
+    `gain` applies a volume filter before the measurement, which is how the game's own track is read at the
+    level the mix actually ducks it to: the same seconds, the same attenuation, without the narrator.
+    """
+    chain = "volumedetect" if gain is None else "volume=%.4f,volumedetect" % gain
+    result = subprocess.run(["ffmpeg", "-hide_banner", "-nostats", "-ss", "%.3f" % start,
+                             "-t", "%.3f" % seconds, "-i", path, "-vn", "-af", chain,
+                             "-f", "null", "-"], capture_output=True, text=True)
+    for line in result.stderr.splitlines():
+        if "mean_volume:" in line:
+            return float(line.split("mean_volume:")[1].strip().split()[0])
+    return None
+
+
+def title_card_checks(video, work):
+    """The card's own words, its boot menu and the picture it replaced, measured on the delivered frames.
+
+    Five rows, all measurements. The words and the cold boot caption are counted as white ink in
+    video_builder.title_line_boxes() while the card is up (1.0 s and 0.2 s before its end) and must be gone
+    once the slice's own seconds have passed. The boot menu is counted row by row: NEW GAME must carry bright
+    ink and CONTINUE must not, which is the card's own claim that CONTINUE is dim. And the panel's 2026-11-16
+    complaint is measured directly: no pixel of the blue band the 2026-10-26 attract was made of may be left
+    on the opening frame.
+    """
+    from PIL import Image
+    seconds = video_builder.title_card_seconds()
+    boxes = video_builder.title_line_boxes()
+    menu = video_builder.title_menu_boxes()
+    folder = os.path.join(work, "content")
+    os.makedirs(folder, exist_ok=True)
+
+    def picture_at(t, name):
+        path = frame_at(video, t, os.path.join(folder, "card_%s.png" % name))
+        return Image.open(path).convert("RGB")
+
+    def ink_counts(t, name):
+        picture = picture_at(t, name).convert("L")
+        return [sum(1 for pixel in picture.crop(tuple(item["box"])).getdata() if pixel >= 200)
+                for item in boxes]
+
+    def menu_counts(t, name):
+        picture = picture_at(t, name).convert("L")
+        return {item["label"]: sum(1 for pixel in picture.crop(tuple(item["box"])).getdata() if pixel >= 200)
+                for item in menu}
+
+    up_early = ink_counts(1.0, "up_early")
+    up_late = ink_counts(seconds - 0.2, "up_late")
+    after = ink_counts(seconds + 0.6, "after")
+    rows_early = menu_counts(1.0, "menu_early")
+    results = []
+    for name, counts in (("title_card_up_early", up_early), ("title_card_up_late", up_late)):
+        least = min(counts) if counts else 0
+        results.append({"name": name, "ok": bool(counts) and least >= 30,
+                        "detail": "white ink in %d of %d card lines at %s, least %d pixels"
+                                  % (sum(1 for value in counts if value >= 30), len(boxes),
+                                     "1.0 s" if name.endswith("early") else "%.1f s" % (seconds - 0.2),
+                                     least)})
+    early_total = sum(up_early) or 0
+    after_total = sum(after) or 0
+    results.append({"name": "title_card_gone_after", "ok": after_total <= 0.25 * early_total,
+                    "detail": "%d white pixels in the card's line rectangles at %.1f s against %d at 1.0 s"
+                              % (after_total, seconds + 0.6, early_total)})
+
+    # The boot menu: NEW GAME reads, CONTINUE does not. A card that drew CONTINUE in the same ink as the rest
+    # would make the S1 caption's "CONTINUE is dim" a sentence about nothing.
+    new_game = rows_early.get("NEW GAME", 0)
+    continue_row = rows_early.get("CONTINUE", 0)
+    results.append({"name": "title_boot_menu_continue_dim",
+                    "ok": new_game >= 30 and continue_row <= max(5, int(0.1 * new_game)),
+                    "detail": "NEW GAME %d bright pixels, CONTINUE %d, at 1.0 s" % (new_game, continue_row)})
+
+    # The abstract blue band the panel saw at 15.0 s: $0F-ish sky tones are r 0, g 87 to 119, b 246 to 249, so a
+    # pixel counts as band when blue is high and dominates red. The 2026-11-15 take measured 332,500 of them at
+    # 15.0 s; a card that covers the picture measures none.
+    probe = min(15.0, max(0.0, seconds - 1.0))
+    band = sum(1 for r, g, b in picture_at(probe, "band").getdata() if b >= 150 and b - r >= 120)
+    results.append({"name": "open_has_no_blue_band", "ok": band == 0,
+                    "detail": "%d blue band pixels at %.1f s (the 2026-11-15 take measured 332500 at 15.0 s)"
+                              % (band, probe)})
+    return results
+
+
+
+def narration_checks(video, work, measured):
+    """The narrator, measured in the delivered audio against the game's own track at the level the mix ducks it to.
+
+    The comparison is the same seconds with and without the voice over: the game's own track (the build's
+    work/audio.wav) read through the same 0.32 volume the mix applies inside the window. The delivered window
+    must sit at least 3 dB above that, which a ducked game alone cannot do; if it does not, the narrator did
+    not land and the row is refused.
+    """
+    game_track = os.path.join(work, "audio.wav")
+    duck = float(voiceover_meta().get("duck_gain", 0.32))
+    results = []
+    for row in measured:
+        lo, hi = row["window"]
+        seconds = hi - lo
+        mean_in = mean_volume(video, lo, seconds)
+        baseline = mean_volume(game_track, lo, seconds, gain=duck) if os.path.exists(game_track) else None
+        ok = mean_in is not None and mean_in > -32.0 and (baseline is None or mean_in > baseline + 3.0)
+        detail = "mean %s dB inside %s to %.2f s" % (
+            "not measured" if mean_in is None else "%.1f" % mean_in, row["shot"], hi)
+        if baseline is not None:
+            detail += ", against %.1f dB for the game's own track ducked to %.2f over the same seconds" % (
+                baseline, duck)
+        results.append({"name": "narration_%s" % row["shot"], "ok": ok, "detail": detail})
+    return results
 
 
 def main(argv=None):
@@ -729,14 +1079,15 @@ def main(argv=None):
                 "fps": FPS,
                 "segments": rows,
                 "captions": captions,
-                "plates": [{"shot": shot, "kind": kind, "window": [lo, hi], "rows": list(rows)}
-                           for shot, kind, lo, hi, rows in OVERLAY_WINDOWS],
+                "plates": overlay_plan(),
                 "receipts_declared_not_drawn": {
                     "rows": list(RECEIPT_ROWS),
                     "windows": list(RECEIPT_WINDOWS),
                     "why": RECEIPT_NOT_DRAWN,
                 },
-                "provenance": {shot: {"kind": kind, "why": why} for shot, (kind, why) in PROVENANCE.items()},
+                "title_card": title_card_plan(),
+                "voiceover": voiceover_plan(),
+                "provenance": {shot: {"kind": kind, "why": why} for shot, (kind, why) in provenance().items()},
 
             }, indent=1))
             return 0
@@ -746,12 +1097,19 @@ def main(argv=None):
             track = build_audio(args.workdir, rows)
             bands = render_captions(args.workdir)
             plates = render_plates(args.workdir, picture)
-            compose(args.workdir, picture, track, bands, plates, args.video)
+            card = title_overlay(args.workdir)
+            narration, measured = build_voiceover(args.workdir)
+            compose(args.workdir, picture, track, bands, plates, args.video,
+                    title_png=card, narration=narration, measured=measured)
             checks, duration, streams, volume = measure(args.video)
             profile = picture_profile(args.video, args.workdir, credits_span(rows))
             checks.append(("picture", profile["ok"],
                            "black runs %s, one colour runs %s, unexplained %s"
                            % (profile["black_runs"], profile["one_colour_runs"], profile["unexplained"])))
+            checks.extend((item["name"], item["ok"], item["detail"])
+                          for item in title_card_checks(args.video, args.workdir))
+            checks.extend((item["name"], item["ok"], item["detail"])
+                          for item in narration_checks(args.video, args.workdir, measured))
             for name, ok, detail in checks:
                 print("%s  %s  %s" % ("PASS" if ok else "FAIL", name, detail))
             print("PASS  %s written" % args.video if all(ok for _, ok, _ in checks) else "FAIL  see the rows above")
@@ -760,11 +1118,16 @@ def main(argv=None):
             checks, duration, streams, volume = measure(args.video)
             profile = picture_profile(args.video, args.workdir, credits_span(rows))
             content = content_checks(args.video, args.workdir)
-            samples = frame_stats(args.video, [5.0, 20.0, 33.0, 60.0, 85.5, 120.0, 140.0, 156.0, 172.0])
+            samples = frame_stats(args.video, [1.0, 15.0, 20.0, 33.0, 60.0, 85.5, 120.0, 140.0, 156.0, 172.0])
             checks.append(("picture", profile["ok"],
                            "black runs %s, one colour runs %s, unexplained %s"
                            % (profile["black_runs"], profile["one_colour_runs"], profile["unexplained"])))
             checks.extend((item["name"], item["ok"], item["detail"]) for item in content)
+            card_rows = title_card_checks(args.video, args.workdir)
+            checks.extend((item["name"], item["ok"], item["detail"]) for item in card_rows)
+            measured = demo_voiceover.check() if demo_voiceover is not None else []
+            voice_rows = narration_checks(args.video, args.workdir, measured)
+            checks.extend((item["name"], item["ok"], item["detail"]) for item in voice_rows)
             for name, ok, detail in checks:
                 print("%s  %s  %s" % ("PASS" if ok else "FAIL", name, detail))
             for row in samples:
@@ -774,9 +1137,19 @@ def main(argv=None):
                       "volume_db": volume, "picture": profile, "content": content,
                       "checks": [{"name": n, "ok": ok, "detail": d} for n, ok, d in checks],
                       "samples": samples,
-                      "provenance": {shot: {"kind": kind, "why": why} for shot, (kind, why) in PROVENANCE.items()},
+                      "provenance": {shot: {"kind": kind, "why": why} for shot, (kind, why) in provenance().items()},
                       "receipts_declared_not_drawn": {
                           "rows": list(RECEIPT_ROWS), "windows": list(RECEIPT_WINDOWS), "why": RECEIPT_NOT_DRAWN},
+                      "title_card": dict(title_card_plan(), measured=card_rows),
+                      "voiceover": {
+                          "source": voiceover_meta().get("source"),
+                          "voice": voiceover_meta().get("voice"),
+                          "kind": "synthesized on this machine with the Windows SAPI5 voice above, not a human recording",
+                          "duck_gain": voiceover_meta().get("duck_gain"),
+                          "narration_gain": NARRATION_GAIN,
+                          "rows": measured,
+                          "measured": voice_rows,
+                      },
                       "segments": rows, "captions": captions}
             out = os.path.splitext(args.video)[0] + "_verify.json"
             with open(out, "w", encoding="utf-8") as handle:

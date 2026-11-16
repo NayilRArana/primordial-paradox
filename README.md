@@ -146,6 +146,21 @@ check_cleanroom: no study reference, no foreign name, no foreign phrase, every m
 * `tools/demo_cut_180.py --build` is the tool that assembles the six shots to the 180.00 s total; `tools/play_demo.py` is the recorder that produces source footage, and `knowledge/DEMO-AUTHORITY-RULING-2026-11-12.md` section 2 is why the cut, and not a recorder take, is the shipping video. The build and the verify above are one pass each on the same inputs, in the same minute.
 * The gap the tag does not close, named rather than hidden: the cut above needs six paths the tag does not carry, `tools/video_builder.py`, `tools/demo_cut_180.py`, `tools/demo_voiceover.py` (untracked), `data/slice.json`, `data/demo/narration.json` and `knowledge/DEMO-SCRIPT.md`, all edited by other lanes on 2026-11-15. A rebuild from the tag alone therefore draws the older five second card and no voice over; the next commit that carries those six paths makes the cut reproducible from a tag.
 
+## The AI verdict on screen
+
+The TALK turns in the Morgan fight are answered out of `data/meta_bake.json`, which records `muse-spark-1.3` as the model, and the demo's fifth shot says so on the screen itself rather than in a caption. From 1:18.00 to 1:50.00 one NES window sits in the strip of battle frame between the enemy plate and the party panel, so the enemy's HP and MERCY bars and the party line stay visible behind it, and every word in it is read out of the record at draw time:
+
+* the model, by the display name `data/credits.json` prints for the bake's own model id, so the name on the frame and the name in the credits are one string read from one place;
+* the decision, as the effects the three Morgan rows record, checked against the verdict map in `data/talk/sailor_judge.json`, and said in words to be fallback rows, because that is what the bake holds for them and a label that said otherwise would be a claim about a call never made;
+* the three bake receipts, `meta.model_calls` 21, `meta.live_rows` 11 and `meta.live_share_pct` 52.4, each under the id of the ledger receipt in `data/receipts/meta_receipts.jsonl` that backs that number;
+* the network line, from the file's own `offline` and `network` flags.
+
+The picture below is frame 6,300 of the 180 second take built on 2026-11-16 and verified with `tools/demo_cut_180.py --verify`, which is 1:45.0, the clock the judge panel samples its stills at. The take itself is named output/demo/nightly-2026-11-16-verdict.mp4 and not linked, because git ignores `output/`:
+
+![the S5 AI verdict window](docs/s5_verdict_box.png)
+
+`python tools/demo_overlay.py --shot S5 --frame IN.png --out OUT.png --verdict-box --only ""` draws the window and `--check --verdict-box` measures it: the window is a real filled rectangle, every line carries ink the blanked control does not, the three ids are the receipts the ledger holds, and both battle HUD bands are compared with the same frame drawn without the window and read unchanged.
+
 ## Where the code lives
 
 This folder is the development tree, the working files.

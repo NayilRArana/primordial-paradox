@@ -24,6 +24,15 @@ What these tests hold down, and why each one earns its place:
      than printing a made up id. On the rewritten S5 the box has nothing it can honestly draw: the three
      Morgan rows are fallback, and none of them has a logged verdict receipt. Tests 7a and 7b pin both
      refusals; the box's own line building is still measured on synthetic rows.
+  8. THE THREE RECEIPT PLATES ARE THE BUDGET, IN RECEIPTS. Card t_29a8e5e1 hangs three small plates above
+     the dialogue box: the bake's calls attempted, the rows answered from the recorded cache, and the live
+     share of those calls, each with the id of the ledger receipt that backs it. Every number is read from
+     the bake header, every id from data/receipts/meta_receipts.jsonl, and the two are refused when they
+     disagree, so a rebake that moved a number cannot leave a receipt for the old one on screen. The strip
+     is drawn beside the network status line the shot already carries, and the frame test measures each
+     plate: its own window, ink on both lines, an id the ledger holds, and clearance of the dialogue box.
+     This is the one S5 drawing that can be measured on the shipped file, because it reads the header and
+     the ledger rather than a bake row.
 
 What this module no longer covers, and why: S6 draws nothing. The rewrite moved the fight shot to
 Percy's encounter, which carries no `talk` block, so no bake row answers in it and the six `fight/percy`
@@ -270,8 +279,9 @@ def test_s5_frame_test_passes_and_the_dialogue_box_is_untouched(overlay, live_ba
     assert ImageChops.difference(source.crop(box), rendered.crop(box)).getbbox() is None
     assert not overlay.intersects(layout["plate"], box)
     inked = [item for item in report["checks"] if item["name"].startswith("ink on the bake line")]
-    assert len(inked) == 6, ("one reply's window draws six bake lines: model, time, row, source, hash, "
-                             "and the line that says where the replies came from")
+    assert len(inked) == 7, ("one reply's window draws seven bake lines: model, time, row, source, hash, "
+                             "the line that says where the replies came from, and the model and wire time "
+                             "line card t_9b689430 added for the judge panel's fix 2")
 
 
 
@@ -578,3 +588,243 @@ def test_the_talk_box_cli_prints_the_box_and_exits_zero(overlay, monkeypatch, li
     verdicts = overlay.load_verdicts()
     assert talk["verdict"] in [entry["verdict"] for entry in verdicts.values()]
     assert any(talk["receipt"] in line["text"] for line in talk["lines"])
+
+
+# 8. The three Meta receipt plates: the panel's numbers, each with the ledger id that backs it
+#
+# Card t_29a8e5e1 (judge panel 2026-11-13, fix 4). The strip is the one part of the S5 drawing that does not
+# come from a bake row, so it is also the one part that can be measured on the file as it stands: the three
+# numbers are the bake header's, the ids are the ledger's, and the two are checked against each other. The
+# frame test measures them on a real render with the three row receipts drawn as well, on the fixture bake
+# that carries the live rows, because the shipped rows are still fallback.
+
+# The two ids the panel's own measured facts name, and the two numbers on the same line of that file.
+PANEL_RECEIPTS = {"meta.model_calls": "rcpt-a505930564032c7c", "meta.live_share_pct": "rcpt-d5160e529fdadb8f"}
+
+
+def test_the_receipt_plates_print_the_bake_numbers_and_the_ledger_ids(overlay):
+    bake, index = overlay.load_bake(BAKE)
+    block = bake["bake"]
+    plates = overlay.meta_receipt_plates(block)
+    assert [part["name"] for part in plates] == list(overlay.RECEIPT_PLATE_NAMES)
+    assert [part["name"] for part in plates] == ["meta.model_calls", "meta.live_rows", "meta.live_share_pct"]
+    assert plates[0]["value"] == block["calls_attempted"]
+    assert plates[1]["value"] == block["live"]
+    assert plates[2]["value"] == round(100.0 * block["live"] / block["calls_attempted"], 1)
+    ledger = overlay.load_ledger()
+    for part in plates:
+        row = ledger[part["receipt"]]
+        assert row["name"] == part["name"], "the id on the plate is a receipt for that number"
+        assert row["value"] == part["value"], "and for the value the plate prints"
+    layout = overlay.plan("S5", bake, index, rows=(), receipt_plates=True)
+    drawn = {part["name"]: [line["source_text"] for line in part["lines"]]
+             for part in layout["receipt_plates"]}
+    for part in plates:
+        assert drawn[part["name"]][-1] == "RECEIPT %s" % part["receipt"], "the id is on the plate's second line"
+    assert plates[2]["text"] == "META.LIVE_SHARE_PCT 52.4%", "the share is printed as the ledger holds it"
+    # Card t_9b689430 (judge panel 2026-11-15, fix 2): the panel found no model named on any of the three
+    # receipts, so the first plate of the strip names it on its own line, where it costs no height.
+    assert plates[0]["text"] == "META.MODEL_CALLS 21 MUSE-SPARK-1.3", \
+        "the first receipt names the model the bake header holds"
+    assert plates[1]["text"] == "META.LIVE_ROWS 11", "the other two plates keep their own number and nothing else"
+    for name, receipt in PANEL_RECEIPTS.items():
+        part = [item for item in plates if item["name"] == name][0]
+        assert part["receipt"] == receipt, "the plate prints the receipt the panel's measured facts name"
+
+
+def test_the_plate_refuses_a_number_the_ledger_does_not_hold(overlay):
+    bake, _index = overlay.load_bake(BAKE)
+    with pytest.raises(overlay.OverlayError) as error:
+        overlay.meta_receipt_plates(bake["bake"], ledger={})
+    assert "holds no meta.model_calls receipt" in str(error.value)
+
+
+def test_the_plate_refuses_a_receipt_for_a_number_the_bake_moved(overlay):
+    data = real_bake()
+    data["bake"]["calls_attempted"] = 22
+    with pytest.raises(overlay.OverlayError) as error:
+        overlay.meta_receipt_plates(data["bake"])
+    assert "meta.model_calls" in str(error.value)
+    assert "do not back the same number" in str(error.value)
+
+
+def test_the_receipt_plates_hang_above_the_dialogue_box_and_beside_the_network_line(overlay):
+    bake, index = overlay.load_bake(BAKE)
+    layout = overlay.plan("S5", bake, index, rows=(), receipt_plates=True)
+    dialogue = overlay.scale_rect(overlay.DIALOGUE_BOX)
+    strip = layout["receipt_plates"]
+    assert len(strip) == 3
+    for part in strip:
+        rect = part["rect"]
+        assert rect[3] <= dialogue[1], "every plate ends above the top of the dialogue box"
+        assert rect[1] >= 0 and rect[0] >= 0 and rect[2] <= overlay.FRAME_W
+        assert not overlay.intersects(rect, layout["plate"]), "and none of them touches the caption plate"
+    assert [part["rect"][1] for part in strip] == sorted(part["rect"][1] for part in strip)
+    assert strip[-1]["rect"][3] == dialogue[1] - overlay.RECEIPT_GAP, "the stack hangs from the dialogue box"
+    bench = [line["source_text"] for line in layout["lines"]]
+    assert layout["badge"]["text"] == ("NETWORK OFF" if bake["bake"]["offline"] else "NETWORK LIVE")
+    assert any(piece.startswith(("NETWORK DEAD", "NETWORK UP AT BAKE TIME")) for piece in bench), \
+        "the network status line is drawn on the same frame as the plates"
+
+
+def test_the_receipt_strip_and_the_talk_box_refuse_each_other(overlay, monkeypatch, live_bake_file):
+    borrowed_box_row(overlay, monkeypatch)
+    bake, index = overlay.load_bake(live_bake_file)
+    with pytest.raises(overlay.OverlayError) as error:
+        overlay.plan("S5", bake, index, talk_box=True, receipt_plates=True)
+    assert "S5's band holds one of the two" in str(error.value)
+
+
+def test_the_strip_is_refused_on_a_shot_whose_claim_it_does_not_receipt(overlay, monkeypatch):
+    bake, index = overlay.load_bake(BAKE)
+    monkeypatch.setattr(overlay, "RECEIPT_PLATE_SHOTS", ("S6",))
+    with pytest.raises(overlay.OverlayError) as error:
+        overlay.plan("S5", bake, index, rows=(), receipt_plates=True)
+    assert "S6" in str(error.value)
+    monkeypatch.undo()
+    assert overlay.RECEIPT_PLATE_SHOTS == ("S5",), "the shot that draws the strip is the one whose claim it is"
+
+
+def test_the_receipt_plate_frame_test_passes_with_the_three_rows(overlay, live_bake_file, frame_file, tmp_path):
+    out = str(tmp_path / "plates.png")
+    render_shot(overlay, "S5", live_bake_file, frame_file, out, receipt_plates=True)
+    bake, index = overlay.load_bake(live_bake_file)
+    report = overlay.check_frame(frame_file, out, "S5", bake, index, receipt_plates=True)
+    assert report["ok"], [item for item in report["checks"] if not item["ok"]]
+    source = Image.open(frame_file).convert("RGB")
+    rendered = Image.open(out).convert("RGB")
+    dialogue = overlay.scale_rect(overlay.DIALOGUE_BOX)
+    assert ImageChops.difference(source.crop(dialogue), rendered.crop(dialogue)).getbbox() is None
+    assert report["receipt_plates"] and len(report["receipt_plates"]) == 3
+    names = [item["name"] for item in report["checks"]]
+    for part in report["receipt_plates"]:
+        assert "receipt plate %s drawn" % part["name"] in names
+        assert "the receipt id %s is printed on its own plate" % part["receipt"] in names
+        assert "the receipt plate %s clears the dialogue box and the caption plate" % part["name"] in names
+    assert "network badge" in names, "the network status line is measured on the same frame as the plates"
+
+
+def test_the_cli_prints_the_receipt_plates_and_exits_zero(overlay, capsys):
+    assert overlay.main(["--shot", "S5", "--rows", "--receipt-plates", "--only", ""]) == 0
+    payload = json.loads(capsys.readouterr().out)
+    plates = payload["receipt_plates"]
+    assert [part["name"] for part in plates] == list(overlay.RECEIPT_PLATE_NAMES)
+    ledger = overlay.load_ledger()
+    for part in plates:
+        assert ledger[part["receipt"]]["value"] == part["value"]
+        assert any(part["receipt"] in line["text"] for line in part["lines"])
+
+
+def test_the_cli_refuses_the_strip_where_the_ledger_has_no_receipt(overlay, monkeypatch, capsys):
+    monkeypatch.setattr(overlay, "load_ledger", lambda *args, **kwargs: {})
+    assert overlay.main(["--shot", "S5", "--rows", "--receipt-plates", "--only", ""]) == 1
+    printed = capsys.readouterr().out
+    assert "REFUSED" in printed and "holds no meta.model_calls receipt" in printed
+
+
+# 9. The S5 verdict window (card t_746512f4, judge panel 2026-11-16 fix 2)
+
+
+def test_the_verdict_window_names_the_model_the_credits_print(overlay):
+    """The name on the window comes from data/credits.json's roll.models, joined on the bake's own model id."""
+    bake, index = overlay.load_bake(BAKE)
+    window = overlay.plan("S5", bake, index, caption="", rows=(), verdict_box=True)["verdict_box"]
+    credits = json.load(open(os.path.join(ROOT, "data", "credits.json"), encoding="utf-8-sig"))
+    display = [row["display"] for row in credits["roll"]["models"] if row["model_id"] == bake["bake"]["model"]]
+    assert display, "the shipped bake's model is one the credits roll prints"
+    assert window["lines"][0]["source_text"] == display[0] == "MUSE SPARK 1.3"
+
+
+def test_the_verdict_window_prints_the_three_receipts_with_their_ledger_ids(overlay):
+    bake, index = overlay.load_bake(BAKE)
+    window = overlay.plan("S5", bake, index, caption="", rows=(), verdict_box=True)["verdict_box"]
+    numbers = overlay.bake_receipt_numbers(bake["bake"])
+    ledger = overlay.load_ledger()
+    for name in overlay.RECEIPT_PLATE_NAMES:
+        carrying = [line for line in window["lines"] if name.upper() in line["source_text"]]
+        assert len(carrying) == 1, "%s is printed once" % name
+        receipt = overlay.ledger_number(name, numbers[name], ledger=ledger)
+        assert receipt in carrying[0]["source_text"], "the line carries the id of the receipt behind the number"
+        assert str(numbers[name]).split(".")[0] in carrying[0]["source_text"], "and the number it backs"
+
+
+def test_the_verdict_window_says_a_fallback_row_is_one_and_prints_the_dead_network_line(overlay):
+    """The shipped bake holds three fallback rows and records no network, and the window says both."""
+    bake, index = overlay.load_bake(BAKE)
+    rows = [overlay.bake_row(index, row_id, allow_fallback=True) for row_id in TALK_ROWS]
+    assert all(row["source"] == "fallback" for row in rows), "the shipped S5 rows are the hand written fallback"
+    window = overlay.plan("S5", bake, index, caption="", rows=(), verdict_box=True)["verdict_box"]
+    texts = [line["source_text"] for line in window["lines"]]
+    assert texts[1].startswith("RECORDED EFFECTS ") and "FALLBACK, NOT LIVE." in texts[1]
+    assert all(effect.upper() in texts[1] for effect in (row["effect"] for row in rows))
+    assert texts[-1] == "NETWORK DEAD SINCE THE FIRST FRAME. REPLIES FROM data/meta_bake.json."
+
+
+def test_a_live_bake_makes_the_window_say_the_model_decided_and_the_network_was_up(overlay, live_bake_file):
+    bake, index = overlay.load_bake(live_bake_file)
+    window = overlay.plan("S5", bake, index, caption="", rows=(), verdict_box=True)["verdict_box"]
+    texts = [line["source_text"] for line in window["lines"]]
+    assert texts[1].startswith("MODEL DECIDED "), "a live row is the model's decision and is called that"
+    assert texts[-1].startswith("NETWORK UP AT BAKE TIME. REPLIES CAME FROM ")
+
+
+def test_the_verdict_window_sits_between_the_battle_hud_bands(overlay):
+    """It takes the strip the HUD leaves free, and it touches neither the plate's stat rows nor the party panel."""
+    bake, index = overlay.load_bake(BAKE)
+    layout = overlay.plan("S5", bake, index, caption="", rows=(), verdict_box=True)
+    rect = layout["verdict_box"]["rect"]
+    kept = dict((name, overlay.scale_rect(game_rect)) for name, game_rect in overlay.battle_hud_rects())
+    plate_stats = overlay.scale_rect(overlay.battle_hud_rects()[0][1])
+    panel = overlay.scale_rect(overlay.battle_hud_rects()[1][1])
+    assert rect[1] == plate_stats[3], "the window starts on the row after the plate's last stat row"
+    assert rect[3] == panel[1], "and stops on the row before the party panel"
+    for name, box in kept.items():
+        assert not overlay.intersects(rect, box), "%s is not covered" % name
+    assert rect[3] <= overlay.scale_rect(overlay.DIALOGUE_BOX)[1], "and it clears the dialogue box as well"
+
+
+def test_the_verdict_window_refuses_a_model_the_credits_do_not_print(overlay, tmp_path):
+    credits = json.load(open(os.path.join(ROOT, "data", "credits.json"), encoding="utf-8-sig"))
+    for row in credits["roll"]["models"]:
+        row["model_id"] = row["model_id"] + "-unlisted"
+    path = tmp_path / "credits.json"
+    path.write_text(json.dumps(credits), encoding="utf-8")
+    with pytest.raises(overlay.OverlayError) as found:
+        overlay.verdict_model_name({"model": "muse-spark-1.3"}, path=str(path))
+    assert "prints no display name for the bake's model" in str(found.value)
+
+
+def test_the_verdict_window_refuses_a_shot_whose_claim_it_does_not_receipt(overlay):
+    bake, index = overlay.load_bake(BAKE)
+    overlay.VERDICT_BOX_SHOTS = ("S6",)
+    try:
+        with pytest.raises(overlay.OverlayError) as found:
+            overlay.plan("S5", bake, index, caption="", rows=(), verdict_box=True)
+        assert "the verdict window is drawn on S6" in str(found.value)
+    finally:
+        overlay.VERDICT_BOX_SHOTS = ("S5",)
+
+
+def test_the_verdict_window_frame_test_passes_and_the_battle_hud_is_untouched(overlay, frame_file, tmp_path):
+    out = str(tmp_path / "verdict.png")
+    layout = render_shot(overlay, "S5", BAKE, frame_file, out, caption="", rows=(), verdict_box=True)
+    assert layout["verdict_box"], "the window was drawn"
+    bake, index = overlay.load_bake(BAKE)
+    report = overlay.check_frame(frame_file, out, "S5", bake, index, caption="", rows=(), verdict_box=True)
+    names = [item["name"] for item in report["checks"]]
+    assert report["ok"], [item for item in report["checks"] if not item["ok"]]
+    assert "verdict window drawn" in names
+    assert "the window names the bake's model as the credits print it" in names
+    for hud_name, _game_rect in overlay.battle_hud_rects():
+        assert "the verdict window clears %s" % hud_name in names
+        assert "battle HUD untouched: %s" % hud_name in names
+
+
+def test_the_cli_prints_the_verdict_window_and_exits_zero(overlay, capsys):
+    assert overlay.main(["--shot", "S5", "--rows", "--verdict-box", "--only", ""]) == 0
+    payload = json.loads(capsys.readouterr().out)
+    window = payload["verdict_box"]
+    texts = [line["text"] for line in window["lines"]]
+    assert texts[0] == "MUSE SPARK 1.3"
+    assert len(texts) == 6, "the model, the decision, three receipts and the network line"
+    assert not any(dash in text for text in texts for dash in LONG_DASHES)

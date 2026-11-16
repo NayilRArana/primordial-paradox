@@ -26,6 +26,14 @@ What it draws, and where the words come from
     own reply lines, the verdict its effect earns and the WILL that moved, and the id of the ledger receipt
     for that verdict printed small at the bottom. The box hangs in the band between the caption plate and
     the dialogue box, so the game's own window stays the game's pixels and the frame test proves it.
+    S5, with `--receipt-plates` (card t_29a8e5e1, the judge panel's fix 4): three small plates hang above
+    the dialogue box, one per Meta number the panel asked to see on screen, meta.model_calls (21),
+    meta.live_rows (11) and meta.live_share_pct (52.4), each carrying the id of the receipt in
+    data/receipts/meta_receipts.jsonl that backs it. The numbers are read out of the bake header and the
+    ids out of the ledger, and the two are checked against each other at draw time, so a plate prints the
+    number the record holds and the receipt for that number, never a number and a receipt that disagree.
+    The network line is not new: every S5 drawing already carries the badge and the two lines chosen from
+    the bake's own `offline` and `network` flags, so the strip is what fix 4 adds to that picture.
     S6 draws nothing here, and that is a decision the script made: Percy's encounter carries no `talk`
     block, so no bake row answers in his fight, the six `fight/percy` rows are `fallback` and are never
     read, and a receipt plate over his shot would be a claim about a call the game does not make
@@ -57,7 +65,10 @@ The frame test
 Usage
     python tools\\demo_overlay.py --shot S5 --rows
     python tools\\demo_overlay.py --shot S5 --rows --talk-box
+    python tools\\demo_overlay.py --shot S5 --rows --receipt-plates
     python tools\\demo_overlay.py --shot S5 --frame output\\judge_frames\\x_f05.png --out output\\demo\\overlay\\S5.png --talk-box
+    python tools\\demo_overlay.py --shot S5 --frame IN.png --out OUT.png --receipt-plates
+    python tools\\demo_overlay.py --check --shot S5 --source IN.png --frame OUT.png --receipt-plates
     python tools\\demo_overlay.py --check --shot S5 --source IN.png --frame OUT.png --talk-box
     python tools\\demo_overlay.py --shot S5 --frame IN.png --out OUT.png --below
     python tools\\demo_overlay.py --check --shot S5 --source IN.png --frame OUT.png --below
@@ -128,7 +139,11 @@ SHOT_ANCHOR = {"S5": "top"}
 # `rows=` holding the one row that answers at that clock.
 SHOT_WINDOWS = {
     "S5": {"bake": ((83.40, 87.40), (91.00, 95.00), (98.00, 101.00)),   # 1:23.4, 1:31.0, 1:38.0
-           "network": ((101.00, 104.00),)},                             # 1:41.00 to 1:44.00
+           "network": ((101.00, 104.00),),                             # 1:41.00 to 1:44.00
+           # Card t_746512f4: the verdict window, which is on for the whole shot. This is the clock
+           # tools/demo_cut_180.py composites at, and tools/judge_frames_check.py samples inside, so the
+           # two tools read one number instead of two that agree by hand.
+           "verdict": ((78.00, 110.00),)},                             # 1:18.00 to 1:50.00
 }
 
 # The NES TALK box (card t_2ef3aa6f). S5's own claim in knowledge/DEMO-SCRIPT.md section 4 is "the person
@@ -159,6 +174,20 @@ TALK_BOX_ANCHOR = {"S5": "plate"}
 # The two build numbers the panel asked to keep on screen beside the verdict, by the name each one carries
 # in data/receipts/meta_receipts.jsonl. The ids are never typed here: they are looked up in the ledger.
 BAKE_RECEIPT_NAMES = ("meta.model_calls", "meta.system_chars")
+
+# The three receipt plates of card t_29a8e5e1 (judge panel 2026-11-13, fix 4). The script's S5 row says the
+# shot draws "one caption, three bake receipts, the network line", and the panel's measured facts name two
+# of the three numbers by hand: model_calls 21 and live_share_pct 52.4. The third is the numerator those two
+# are made of, live_rows, so the three read as one arithmetic claim rather than three unrelated figures.
+# Each name is the ledger's own `name` field, each value is read from the bake header at draw time, and each
+# id is looked up in data/receipts/meta_receipts.jsonl, so a plate cannot print a number the file does not
+# hold or a receipt that backs a different number.
+RECEIPT_PLATE_NAMES = ("meta.model_calls", "meta.live_rows", "meta.live_share_pct")
+RECEIPT_PLATE_SHOTS = ("S5",)   # the one shot whose claim is a Meta model in a NES box, so the one strip
+RECEIPT_PLATE_X = 24      # the caption plate's own left edge, so the three small plates line up with it
+RECEIPT_PLATE_PAD = 8     # inside each small plate
+RECEIPT_PLATE_GAP = 6     # between the stacked plates
+RECEIPT_GAP = 8           # between the lowest plate and the top of the dialogue box
 TALK_BOX_X, TALK_BOX_W = 8, 240     # 256x240 game space, the same 240 wide window spec 05 draws
 TALK_BOX_GAP = 8                    # frame pixels between the caption plate and the box
 TALK_COLS = 28                      # spec 19 section 5: the box holds 28 columns per line
@@ -419,16 +448,28 @@ def network_badge_text(block):
 
 
 def network_lines(block):
-    """The network line of section 5, for the state the bake actually recorded."""
+    """The network line of section 5, for the state the bake actually recorded.
+
+    Card t_9b689430 (judge panel 2026-11-15, fix 2): the network line names the model and, when a run
+    measured one, the wire time, so the one shot whose whole claim is a Meta answer carries the two
+    facts a judge asks for at the point the claim is made. The time is the same `latency_ms` the
+    receipt plates print, read from the same header, so the two drawings cannot disagree, and a replay
+    bake prints LATENCY NOT MEASURED rather than a number it did not spend.
+    """
     dead = bool(block.get("offline")) or not bool(block.get("network"))
+    measured = block.get("latency_ms")
+    time_text = "LATENCY NOT MEASURED" if measured is None else "LATENCY %d MS" % int(measured)
+    model_text = "MODEL %s %s" % (str(block.get("model") or "").upper(), time_text)
     if dead:
         return (
             "NETWORK DEAD SINCE THE FIRST FRAME.",
             "THESE REPLIES CAME FROM data/meta_bake.json.",
+            model_text,
         )
     return (
         "NETWORK UP AT BAKE TIME.",
         "THESE REPLIES CAME FROM %s OVER THE NETWORK." % block.get("backend"),
+        model_text,
     )
 
 
@@ -524,6 +565,103 @@ def ledger_number(name, value, ledger=None):
             % (name, row.get("id"), row.get("value"), value)
         )
     return row["id"]
+
+
+def bake_receipt_numbers(block):
+    """The three Meta numbers the receipt plates print, read out of the bake header.
+
+    Card t_29a8e5e1. Each one is a number tools/receipts.py writes a receipt for, so the plate prints a
+    number that already has a receipt to point at: the calls the bake attempted, the rows that came back
+    from the recorded cache, and the share of the calls that did. The share is rounded to one decimal the
+    same way receipts.py rounds it (round(100.0 * live / calls, 1)), because two roundings of one quotient
+    would be two numbers, and the ledger receipts only one of them.
+    """
+    for field in ("calls_attempted", "live"):
+        if field not in block:
+            raise OverlayError(
+                "the bake block has no %r, and the receipt plates print it rather than a blank" % field
+            )
+    calls, live = int(block["calls_attempted"]), int(block["live"])
+    if calls <= 0:
+        raise OverlayError(
+            "the bake block says %d calls attempted, and a live share of no calls is not a number" % calls
+        )
+    return {
+        "meta.model_calls": calls,
+        "meta.live_rows": live,
+        "meta.live_share_pct": round(100.0 * float(live) / float(calls), 1),
+    }
+
+
+def receipt_number_text(name, value):
+    """The number as a plate prints it: the ledger's own value, with a percent sign on the share.
+
+    No thousands separator, no rounding of its own and no unit the ledger does not carry, so the words on
+    the plate and the `value` of the receipt that backs them are the same number written twice.
+    """
+    piece = ("%g" % value) if isinstance(value, float) else str(int(value))
+    return piece + "%" if name.endswith("_pct") else piece
+
+
+def meta_receipt_plates(block, ledger=None):
+    """The three small plates' words and ids, or a refusal naming the number that does not add up.
+
+    Two refusals, and both keep the strip a receipt rather than a caption: a name the ledger holds no line
+    for stops the drawing (nothing can be printed without an id to point at), and a ledger line whose own
+    `value` is not the number the bake header now holds stops it too, because a receipt for 21 calls is not
+    a receipt for 22. Both come out of ledger_number(), which is the one place that reads the ledger for a
+    named number, so this strip and the NES box cannot disagree about what a receipt says.
+    """
+    ledger = load_ledger() if ledger is None else ledger
+    numbers = bake_receipt_numbers(block)
+    plates = []
+    for index, name in enumerate(RECEIPT_PLATE_NAMES):
+        value = numbers[name]
+        receipt = ledger_number(name, value, ledger=ledger)
+        text = "%s %s" % (name.upper(), receipt_number_text(name, value))
+        # Card t_9b689430 (judge panel 2026-11-15, fix 2): the panel read the three receipts and found
+        # no model named on any of them. The strip has 22 px of band above it before it meets the caption
+        # plate, measured by the frame test, and a third line is 16 px plus padding, so a new line under
+        # the number is refused by receipt_strip. The model therefore rides on the first plate's own line,
+        # where it costs no height, and the wire time rides on the network line, which has room. There is
+        # no measured time in the shipped bake to print here: see receipt_model_line.
+        model = str(block.get("model") or "").upper()
+        if not model:
+            raise OverlayError("the bake block names no model, and the receipt plate prints the model name")
+        if index == 0:
+            text = "%s %s" % (text, model)
+        plates.append(dict(
+            name=name,
+            value=value,
+            text=text,
+            receipt=receipt,
+            model_line="",
+        ))
+    return plates
+
+
+def receipt_model_line(block):
+    """The model name on every receipt plate, and the wire time when the bake measured one.
+
+    The panel's fix 2 asks for the model name and the latency on the three bake receipts. The model is
+    in the bake header, so it is printed always. The latency is not: `tools/bake_meta.py` records a
+    `latency_ms` on a row only when that row's answer crossed the wire, and a median in the header only
+    when at least one did, so a replay bake (the shipped one) has no time to print and says so in words
+    rather than printing a number no file holds. That is this project's standing rule: a number that is
+    not measured, computed or inferred from a named file is not a number it may print.
+    """
+    model = str(block.get("model") or "")
+    if not model:
+        raise OverlayError("the bake block names no model, and the receipt plates print the model name")
+    measured = block.get("latency_ms")
+    if measured is None:
+        tail = "LATENCY NOT MEASURED"
+    else:
+        tail = "LATENCY %d MS" % int(measured)
+        if int(measured) <= 0:
+            raise OverlayError("the bake block says %r ms, and a wire time of no milliseconds is not a "
+                               "time" % measured)
+    return "MODEL %s %s" % (model.upper(), tail)
 
 
 def wrap_columns(text, cols):
@@ -729,8 +867,305 @@ def intersects(a, b):
     return not (a[2] <= b[0] or b[2] <= a[0] or a[3] <= b[1] or b[3] <= a[1])
 
 
+def sub_rects(rect, hole):
+    """The rectangles of `rect` that lie outside `hole`, at most four.
+
+    Used where one region has to be measured and another drawing already sits over part of it: the battle HUD
+    bands are compared with the source frame in exactly the pieces the caption plate does not cover, so the
+    measurement is about the verdict window and not about a plate that was there before it.
+    """
+    x0, y0, x1, y1 = rect
+    hx0, hy0, hx1, hy1 = hole
+    pieces = []
+    if hy0 > y0:
+        pieces.append((x0, y0, x1, min(hy0, y1)))
+    if hy1 < y1:
+        pieces.append((x0, max(hy1, y0), x1, y1))
+    top, bottom = max(y0, hy0), min(y1, hy1)
+    if bottom > top:
+        if hx0 > x0:
+            pieces.append((x0, top, min(hx0, x1), bottom))
+        if hx1 < x1:
+            pieces.append((max(hx1, x0), top, x1, bottom))
+    return [piece for piece in pieces if piece[2] > piece[0] and piece[3] > piece[1]]
+
+
+def receipt_strip(shot, plates, caption_plate, talk=None, blank=False):
+    """The three small plates, stacked and bottom aligned above the dialogue box, or a refusal.
+
+    Card t_29a8e5e1. Each plate is two lines: the ledger's own name for the number with the number on it,
+    then the id of the receipt that backs it, both at the hash tier and both inside the plate's own
+    padding. The stack is measured from the dialogue box upwards, so "above the dialogue box" is arithmetic
+    rather than a hope, and it is refused when it would touch the dialogue box, the caption plate, the NES
+    talk box, or the edge of the frame. Refusing is the right answer for the talk box collision: S5's band
+    between the plate and the dialogue box holds one of the two drawings, not both, and this tool will not
+    put a receipt over the record it is receipting.
+    """
+    if shot not in RECEIPT_PLATE_SHOTS:
+        raise OverlayError(
+            "the Meta receipt plates are drawn on %s, the shot whose claim they receipt; %r is not one of them"
+            % (" and ".join(RECEIPT_PLATE_SHOTS), shot)
+        )
+    built = []
+    for item in plates:
+        words = (("detail", item["text"]),
+                 ("hash", item.get("model_line") or ""),
+                 ("hash", "RECEIPT %s" % item["receipt"]))
+        words = tuple(pair for pair in words if pair[1])
+        for _tier, text in words:
+            for dash in LONG_DASHES:
+                if dash in text:
+                    raise OverlayError("the receipt plate line %r carries a long dash" % text)
+            if len(text) * TIER_SIZE[_tier] > FRAME_W - 2 * RECEIPT_PLATE_X - 2 * RECEIPT_PLATE_PAD:
+                raise OverlayError(
+                    "the receipt plate line %r is %d px wide and the frame holds %d"
+                    % (text, len(text) * TIER_SIZE[_tier], FRAME_W - 2 * RECEIPT_PLATE_X - 2 * RECEIPT_PLATE_PAD)
+                )
+        width = max(len(text) * TIER_SIZE[tier] for tier, text in words) + 2 * RECEIPT_PLATE_PAD
+        height = sum(line_height(tier) for tier, _ in words) + 2 * RECEIPT_PLATE_PAD
+        built.append(dict(item=item, words=words, width=width, height=height))
+
+    total = sum(part["height"] for part in built) + RECEIPT_PLATE_GAP * (len(built) - 1)
+    bottom = DIALOGUE_BOX[1] * SCALE - RECEIPT_GAP
+    top = bottom - total
+    if top < 0:
+        raise OverlayError(
+            "the %d receipt plates need %d px above the dialogue box, and only %d are between the top of the "
+            "frame and it" % (len(built), total, bottom)
+        )
+
+    drawn = []
+    y = top
+    for part in built:
+        rect = (RECEIPT_PLATE_X, y, RECEIPT_PLATE_X + part["width"], y + part["height"])
+        name = part["item"]["name"]
+        if intersects(rect, scale_rect(DIALOGUE_BOX)):
+            raise OverlayError("the receipt plate %s at %r would cover the dialogue box at %r"
+                               % (name, rect, scale_rect(DIALOGUE_BOX)))
+        if intersects(rect, caption_plate):
+            raise OverlayError("the receipt plate %s at %r would cover the caption plate at %r"
+                               % (name, rect, caption_plate))
+        if talk is not None and intersects(rect, talk):
+            raise OverlayError(
+                "the receipt plate %s at %r would cover the NES talk box at %r; S5's band holds one of the "
+                "two, so draw the box or the receipt strip and not both" % (name, rect, talk)
+            )
+        for _other_name, forbidden in FORBIDDEN[shot]:
+            if intersects(rect, scale_rect(forbidden)):
+                raise OverlayError("the receipt plate %s at %r would cover the %s" % (name, rect, _other_name))
+        lines = []
+        line_y = y + RECEIPT_PLATE_PAD
+        for tier, text in part["words"]:
+            height = line_height(tier)
+            lines.append(dict(tier=tier, text=("" if blank else text), source_text=text,
+                              box=(rect[0] + RECEIPT_PLATE_PAD, line_y, rect[2] - RECEIPT_PLATE_PAD,
+                                   line_y + height),
+                              size=TIER_SIZE[tier], blank=blank))
+            line_y += height
+        drawn.append(dict(name=name, value=part["item"]["value"], receipt=part["item"]["receipt"],
+                          text=part["item"]["text"], rect=rect, lines=lines))
+        y += part["height"] + RECEIPT_PLATE_GAP
+    return drawn
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# The S5 verdict window (card t_746512f4, the judge panel's fix 2 of 2026-11-16)
+#
+# The panel's sentence was exact: "no S5 bake receipts or network line is visible". Nothing was missing from the
+# drawing: the receipts strip ran 1:23.4 to 1:44.0 and the network badge 1:41.0 to 1:44.0, and a sampler that takes
+# one frame every thirty seconds lands outside every one of those windows, which is why six stills showed none of
+# it. This window is the same facts in one NES box that is on the screen for the whole shot, 1:18.00 to 1:50.00.
+#
+# What it holds, and where every word comes from:
+#   1. the model, by the display name data/credits.json already prints to a player, joined on the bake header's own
+#      model id. Nothing here types a model name, which is the same join pp_talk_judge_label makes in GML;
+#   2. the decision, as the three S5 bake rows record it (their `effect` fields, checked against data/talk/
+#      sailor_judge.json's verdict map). The sentence is chosen from the rows' own `source` and `network` fields, so
+#      a rebake that makes those rows live answers changes the sentence instead of leaving a fallback label over a
+#      live answer, and a row that is not a live answer is called what it is;
+#   3. the three bake receipts of card t_29a8e5e1, each the ledger's own name, the header's own value and the id of
+#      the receipt in data/receipts/meta_receipts.jsonl that backs that value;
+#   4. the network line, from the bake's own `offline` and `network` flags.
+#
+# Where it sits. S5 is Captain Morgan's fight, and the battle screen's own HUD owns three bands (read out of
+# data/ui_layouts.json's battle_b row, the same row pp_battle_director draws and tools/render_battle_visuals.py
+# renders): the enemy plate with the HP and MERCY bars from y 56 to 88, the party panel with the party line from
+# y 116 to 164, and the command band from y 168. The free strip between the plate and the panel is 28 rows, and the
+# window takes it plus the plate's own bottom 4 rows of border, where no number is drawn: the HP bar and the MERCY
+# bar both end at y 83. The frame test compares the plate's stat rows and the whole party panel byte for byte with
+# the source frame, so the window cannot creep over a number the card says has to stay visible behind it.
+CREDITS_PATH = os.path.join(ROOT, "data", "credits.json")
+UI_LAYOUTS_PATH = os.path.join(ROOT, "data", "ui_layouts.json")
+VERDICT_BOX_SHOTS = ("S5",)
+VERDICT_BOX_X, VERDICT_BOX_W = 8, 240    # game space: the same 240 wide window spec 05 draws
+VERDICT_BOX_PAD = 3                      # frame pixels inside the border, so no glyph touches it
+VERDICT_PLATE_KEEP = 4                   # game rows of the enemy window's bottom border the box may sit over
+# The pitch of each line in frame pixels: one caption sized line for the model, then hash sized lines. A 10 pt glyph
+# puts its top pixel one row above the y it is drawn at (measured 2026-11-01), so the box keeps that row for every
+# line it draws and the last line still stops inside the border.
+VERDICT_PITCH = {"caption": 18, "hash": 13}
+
+
+def battle_hud_rects(path=UI_LAYOUTS_PATH):
+    """The two battle HUD areas the verdict window must leave alone, in 256x240 game space.
+
+    Both come out of data/ui_layouts.json's battle_b row rather than being typed here, because that row is the one
+    geometry the director draws and the offline battle renderer draws, so a layout that moves the plate or the panel
+    moves this window with it instead of leaving it over the party line.
+    """
+    data = read_json(path)
+    row = data.get("battle_b") if isinstance(data, dict) else None
+    if not isinstance(row, dict):
+        raise OverlayError("%s has no battle_b row, so the verdict window has no HUD to keep clear of" % path)
+    for key in ("plate", "panel"):
+        part = row.get(key)
+        if not isinstance(part, dict):
+            raise OverlayError("%s's battle_b row has no %r window, and the verdict window is placed against it"
+                               % (path, key))
+        for field in ("x", "y", "w", "h"):
+            if field not in part:
+                raise OverlayError("%s's battle_b %s needs an x, y, w and h in 8 pixel tiles" % (path, key))
+    plate, panel = row["plate"], row["panel"]
+    plate_stats = (plate["x"], plate["y"], plate["w"] * 8, plate["h"] * 8 - VERDICT_PLATE_KEEP)
+    panel_rect = (panel["x"], panel["y"], panel["w"] * 8, panel["h"] * 8)
+    return (("the enemy plate's HP and MERCY bars", plate_stats),
+            ("the party panel and its party line", panel_rect))
+
+
+def verdict_box_band():
+    """The game space strip the verdict window occupies: from the plate's last stat row to the party panel's top."""
+    keep = battle_hud_rects()
+    _plate_name, plate = keep[0]
+    _panel_name, panel = keep[1]
+    top = plate[1] + plate[3]
+    bottom = panel[1]
+    if bottom - top < 8:
+        raise OverlayError(
+            "the battle HUD leaves %d rows between the enemy plate and the party panel, and the verdict window "
+            "cannot be drawn there" % (bottom - top))
+    return (VERDICT_BOX_X, top, VERDICT_BOX_W, bottom - top)
+
+
+def verdict_model_name(block, path=CREDITS_PATH):
+    """The display name data/credits.json prints to a player for the bake's own model id, or a refusal."""
+    model = block.get("model") if isinstance(block, dict) else None
+    if not isinstance(model, str) or not model:
+        raise OverlayError("the bake header names no model, so the verdict window has no name to print")
+    data = read_json(path)
+    roll = data.get("roll") if isinstance(data, dict) else None
+    models = roll.get("models") if isinstance(roll, dict) else None
+    if not isinstance(models, list) or not models:
+        raise OverlayError("%s has no roll.models table, and the window takes the model name from there" % path)
+    for row in models:
+        if isinstance(row, dict) and row.get("model_id") == model:
+            display = row.get("display")
+            if not isinstance(display, str) or not display:
+                raise OverlayError("%s's roll.models row for %r carries no display name" % (path, model))
+            return display
+    raise OverlayError("%s prints no display name for the bake's model %r, so the window cannot name it"
+                       % (path, model))
+
+
+def verdict_decision_line(rows, verdicts):
+    """The decision the record holds for S5's turns, worded for how those turns were actually answered.
+
+    Every effect is looked up in the judge map, so a row carrying an effect the map does not hold stops the window:
+    an effect the director would refuse is not a decision that can be printed. When every row is a live answer the
+    sentence says the model decided it; when any row is not, the sentence says what the file holds instead, because
+    the model did not answer that turn and a label that said it had would be a claim about a call never made.
+    """
+    effects = []
+    for row in rows:
+        effect = row.get("effect")
+        entry = verdicts.get(effect) if isinstance(effect, str) else None
+        if entry is None:
+            raise OverlayError("row %r carries effect %r and the verdict map has no entry for it"
+                               % (row.get("id"), effect))
+        effects.append(str(effect).upper())
+    decided = ", ".join(effects)
+    live = all(row.get("source") == "live" and row.get("network") is True for row in rows)
+    if live:
+        return "MODEL DECIDED " + decided
+    return "RECORDED EFFECTS " + decided + ". FALLBACK, NOT LIVE."
+
+
+def verdict_receipt_lines(block, ledger=None):
+    """The three bake receipts as one line each: the ledger's name, the header's value, the receipt's own id."""
+    ledger = load_ledger() if ledger is None else ledger
+    numbers = bake_receipt_numbers(block)
+    lines = []
+    for name in RECEIPT_PLATE_NAMES:
+        value = numbers[name]
+        receipt = ledger_number(name, value, ledger=ledger)
+        lines.append("%s %s RECEIPT %s" % (name.upper(), receipt_number_text(name, value), receipt))
+    return lines
+
+
+def verdict_network_line(block):
+    """The network line of section 5 in one row, for the state the bake actually recorded."""
+    dead = bool(block.get("offline")) or not bool(block.get("network"))
+    if dead:
+        return "NETWORK DEAD SINCE THE FIRST FRAME. REPLIES FROM data/meta_bake.json."
+    backend = block.get("backend")
+    if not isinstance(backend, str) or not backend:
+        raise OverlayError("the bake says its network was up and names no backend, so the line cannot say where "
+                           "the replies came from")
+    return "NETWORK UP AT BAKE TIME. REPLIES CAME FROM %s." % backend
+
+
+def verdict_window(bake, index, blank=False):
+    """The window's rect and its lines, or a refusal naming what does not fit or does not come out of the record."""
+    if not isinstance(bake, dict) or not isinstance(bake.get("bake"), dict):
+        raise OverlayError("the bake file has no bake header, so the verdict window has nothing to print")
+    block = bake["bake"]
+    # allow_fallback is read as the row's own `source` word, not as a licence to draw a receipt for a call the
+    # model never made: verdict_decision_line prints "MODEL DECIDED" only when every row is a live answer and
+    # says what the file holds otherwise. The plate above the window keeps the strict reading.
+    rows = [bake_row(index, row_id, allow_fallback=True) for row_id in SHOT_ROWS["S5"]]
+    verdicts = load_verdicts()
+    words = [(CAPTION_SIZE, verdict_model_name(block), ROLE_LIVE),
+             (HASH_SIZE, verdict_decision_line(rows, verdicts), ROLE_TEXT)]
+    for piece in verdict_receipt_lines(block):
+        words.append((HASH_SIZE, piece, ROLE_TEXT))
+    words.append((HASH_SIZE, verdict_network_line(block), ROLE_DEAD))
+
+    rect = scale_rect(verdict_box_band())
+    usable = (rect[2] - rect[0]) - 2 * PLATE_BORDER - 2 * VERDICT_BOX_PAD
+    content_top = rect[1] + PLATE_BORDER
+    content_bottom = rect[3] - PLATE_BORDER
+    placed = []
+    y = content_top
+    for size, text, role in words:
+        for dash in LONG_DASHES:
+            if dash in text:
+                raise OverlayError("the verdict window line %r carries a long dash" % text)
+        if len(text) * size > usable:
+            raise OverlayError("the verdict window line %r is %d px wide and the window holds %d"
+                               % (text, len(text) * size, usable))
+        # A 10 pt glyph's top pixel sits one row above the y it is drawn at; a caption sized glyph sits on it.
+        ink_top = y - (1 if size <= DETAIL_SIZE else 0)
+        ink_bottom = y + size
+        placed.append(dict(size=size, text=("" if blank else text), source_text=text, role=role,
+                           box=(rect[0] + PLATE_BORDER + VERDICT_BOX_PAD, ink_top,
+                                rect[2] - PLATE_BORDER - VERDICT_BOX_PAD, ink_bottom)))
+        y += VERDICT_PITCH["caption" if size >= CAPTION_SIZE else "hash"]
+    if placed[0]["box"][1] < content_top or placed[-1]["box"][3] > content_bottom:
+        raise OverlayError(
+            "the verdict window's %d lines end at y %d and the window's own border starts at y %d, so they do not "
+            "fit between the battle HUD's two bands" % (len(placed), placed[-1]["box"][3], content_bottom))
+    for name, forbidden in FORBIDDEN["S5"]:
+        if intersects(rect, scale_rect(forbidden)):
+            raise OverlayError("the verdict window at %r would cover the %s at %r"
+                               % (rect, name, scale_rect(forbidden)))
+    for name, game_rect in battle_hud_rects():
+        if intersects(rect, scale_rect(game_rect)):
+            raise OverlayError("the verdict window at %r would cover %s at %r"
+                               % (rect, name, scale_rect(game_rect)))
+    return dict(rect=rect, lines=placed)
+
+
 def plan(shot, bake, index, receipt=None, below=False, caption=None, blank=False, allow_fallback=False,
-         talk_box=False, rows=None):
+         talk_box=False, rows=None, receipt_plates=False, verdict_box=False) -> dict:
     """The layout of one render: the plate, every line with its box, the badge, and the NES talk box.
 
     Returned as a dict so the frame test measures the same geometry the drawing used instead of
@@ -782,7 +1217,19 @@ def plan(shot, bake, index, receipt=None, below=False, caption=None, blank=False
             box_y += height
         box = dict(rect=box_rect, lines=boxed, receipt=receipt_id, row=boxed_row["id"],
                    verdict=verdicts[boxed_row["effect"]]["verdict"])
-    return dict(shot=shot, plate=plate, lines=placed, badge=badge, below=below, talk_box=box)
+    strip = None
+    if receipt_plates:
+        strip = receipt_strip(shot, meta_receipt_plates(bake.get("bake") or {}), plate,
+                              talk=(box["rect"] if box else None), blank=blank)
+    verdict = None
+    if verdict_box:
+        if shot not in VERDICT_BOX_SHOTS:
+            raise OverlayError(
+                "the verdict window is drawn on %s, the shot whose claim it receipts; %r is not one of them"
+                % (" and ".join(VERDICT_BOX_SHOTS), shot))
+        verdict = verdict_window(bake, index, blank=blank)
+    return dict(shot=shot, plate=plate, lines=placed, badge=badge, below=below, talk_box=box,
+                receipt_plates=strip, verdict_box=verdict)
 
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -796,7 +1243,7 @@ def load_font(size):
 
 
 def render(source, shot, bake, index, receipt=None, below=False, caption=None, blank=False, allow_fallback=False,
-           talk_box=False, rows=None):
+           talk_box=False, rows=None, receipt_plates=False, verdict_box=False):
     """Draw one shot's overlay onto one frame. Returns (image, plan).
 
     `source` is an absolute path or an opened PIL image in RGB. A frame that is not the 3x screen is
@@ -812,11 +1259,16 @@ def render(source, shot, bake, index, receipt=None, below=False, caption=None, b
             % (base.size[0], base.size[1], FRAME_W, FRAME_H)
         )
     layout = plan(shot, bake, index, receipt=receipt, below=below, caption=caption, blank=blank,
-                  allow_fallback=allow_fallback, talk_box=talk_box, rows=rows)
+                  allow_fallback=allow_fallback, talk_box=talk_box, rows=rows,
+                  receipt_plates=receipt_plates, verdict_box=verdict_box)
     bottom = layout["plate"][3]
     if layout.get("talk_box"):
         # S6's box is stacked under the plate, so the canvas has to reach past both of them.
         bottom = max(bottom, layout["talk_box"]["rect"][3])
+    strip = layout.get("receipt_plates")
+    if isinstance(strip, list) and strip:
+        # The strip is bottom aligned above the dialogue box, so its last plate is the lowest one drawn.
+        bottom = max(bottom, strip[-1]["rect"][3])
     canvas_h = bottom + BOTTOM_MARGIN if below else FRAME_H
     canvas = Image.new("RGB", (FRAME_W, canvas_h), (0, 0, 0))
     canvas.paste(base, (0, 0))
@@ -838,6 +1290,30 @@ def render(source, shot, bake, index, receipt=None, below=False, caption=None, b
                 continue
             at = line.get("text_xy") or (line["box"][0], line["box"][1])
             draw.text((at[0], at[1]), line["text"], font=load_font(line["size"]),
+                      fill=colours[line["role"]])
+    # The three Meta receipt plates, drawn last so they are the last thing on the frame: each is its own
+    # small window in the same paper and ink roles, holding the number and the id of the receipt behind it.
+    for part in layout.get("receipt_plates") or []:
+        draw.rectangle(part["rect"], fill=colours[ROLE_PLATE], outline=colours[ROLE_BORDER], width=PLATE_BORDER)
+        for line in part["lines"]:
+            if not line["text"]:
+                continue
+            draw.text((line["box"][0], line["box"][1]), line["text"], font=load_font(line["size"]),
+                      fill=colours[ROLE_TEXT])
+    # The S5 verdict window (card t_746512f4): one NES window in the strip of battle frame the HUD leaves free,
+    # holding the model, the decision and the three receipts that back it, and the network line.
+    verdict = layout.get("verdict_box")
+    if verdict:
+        # PIL draws an inclusive rectangle, and every rectangle this tool plans is exclusive of its far edge, so
+        # the far corner is pulled in by one: without it the window's last row lands on the party panel's first
+        # row and the frame test reads the party line as covered.
+        vrect = verdict["rect"]
+        draw.rectangle((vrect[0], vrect[1], vrect[2] - 1, vrect[3] - 1), fill=colours[ROLE_PLATE],
+                       outline=colours[ROLE_BORDER], width=PLATE_BORDER)
+        for line in verdict["lines"]:
+            if not line["text"]:
+                continue
+            draw.text((line["box"][0], line["box"][1]), line["text"], font=load_font(line["size"]),
                       fill=colours[line["role"]])
     return canvas, layout
 
@@ -890,7 +1366,7 @@ def changed_outside(source, rendered, plates):
 
 
 def check_frame(source_path, rendered_path, shot, bake, index, receipt=None, below=False, caption=None,
-                allow_fallback=False, talk_box=False, rows=None):
+                allow_fallback=False, talk_box=False, rows=None, receipt_plates=False, verdict_box=False):
 
     """Measure a rendered frame, and return a report a reader can act on. `ok` is the verdict."""
     source = Image.open(source_path).convert("RGB")
@@ -902,9 +1378,11 @@ def check_frame(source_path, rendered_path, shot, bake, index, receipt=None, bel
     # canvas. Before this the difference against a taller render raised instead of measuring.
     frame_view = rendered.crop((0, 0, source.size[0], source.size[1]))
     _, layout = render(source, shot, bake, index, receipt=receipt, below=below, caption=caption,
-                       allow_fallback=allow_fallback, talk_box=talk_box, rows=rows)
+                       allow_fallback=allow_fallback, talk_box=talk_box, rows=rows,
+                       receipt_plates=receipt_plates, verdict_box=verdict_box)
     control, _ = render(source, shot, bake, index, receipt=receipt, below=below, caption=caption, blank=True,
-                        allow_fallback=allow_fallback, talk_box=talk_box, rows=rows)
+                        allow_fallback=allow_fallback, talk_box=talk_box, rows=rows,
+                        receipt_plates=receipt_plates, verdict_box=verdict_box)
 
     plate = layout["plate"]
     box = layout.get("talk_box")
@@ -917,7 +1395,12 @@ def check_frame(source_path, rendered_path, shot, bake, index, receipt=None, bel
     add("frame size", size_ok, "%dx%d%s" % (rendered.size[0], rendered.size[1], ", plate below the frame" if below else ""))
     add("plate drawn", count_colour(rendered, plate, colours[ROLE_PLATE]) > 0.5 * (plate[2] - plate[0]) * (plate[3] - plate[1]),
         "%d plate pixels" % count_colour(rendered, plate, colours[ROLE_PLATE]))
+    verdict = layout.get("verdict_box")
     drawn = [plate, box["rect"]] if box else [plate]
+    if verdict:
+        drawn = drawn + [verdict["rect"]]
+    strip = layout.get("receipt_plates") or []
+    drawn = drawn + [part["rect"] for part in strip]
     add("nothing outside the drawn rectangles changed", not changed_outside(source, frame_view, drawn),
         "diff outside %r" % (drawn,))
 
@@ -958,6 +1441,94 @@ def check_frame(source_path, rendered_path, shot, bake, index, receipt=None, bel
         found = count_colour(rendered, badge["rect"], colours[role])
         add("network badge", found >= 100, "%s in the %s role: %d pixels" % (badge["text"], role, found))
 
+    # Card t_29a8e5e1: the three small plates, measured one at a time. Each has to be a real window (its own
+    # paper over half its area), carry ink on both of its lines that the blanked control does not have, print
+    # an id the ledger holds, and sit clear of the dialogue box and the caption plate. The dialogue box is
+    # also compared byte for byte above, so a plate that reached into the game's window fails that check
+    # rather than passing quietly here.
+    ledger = load_ledger()
+    for part in strip:
+        arect = part["rect"]
+        add("receipt plate %s drawn" % part["name"],
+            count_colour(rendered, arect, colours[ROLE_PLATE]) > 0.5 * (arect[2] - arect[0]) * (arect[3] - arect[1]),
+            "%d plate pixels at %r" % (count_colour(rendered, arect, colours[ROLE_PLATE]), arect))
+        part_ink = 0
+        part_blank = 0
+        for line in part["lines"]:
+            ink = count_colour(rendered, line["box"], colours[ROLE_TEXT])
+            blank_ink = count_colour(control, line["box"], colours[ROLE_TEXT])
+            part_ink += ink
+            part_blank += blank_ink
+            add("ink on the receipt line %r" % line["source_text"][:28],
+                ink >= 20 * max(1, len(line["source_text"]) // 20),
+                "%d ink pixels, %d when the line is blanked" % (ink, blank_ink))
+        add("the receipt plate %s is what put ink there" % part["name"], part_ink > 3 * max(1, part_blank),
+            "%d ink pixels against %d blanked" % (part_ink, part_blank))
+        naming = [line for line in part["lines"] if part["receipt"] in line["source_text"]]
+        add("the receipt id %s is printed on its own plate" % part["receipt"],
+            bool(naming) and count_colour(rendered, naming[0]["box"], colours[ROLE_TEXT]) > 0
+            and part["receipt"] in ledger,
+            "%s on the %s plate, %s in data/receipts/meta_receipts.jsonl"
+            % (part["receipt"], part["name"], "logged" if part["receipt"] in ledger else "NOT logged"))
+        add("the receipt plate %s clears the dialogue box and the caption plate" % part["name"],
+            not intersects(arect, scale_rect(DIALOGUE_BOX)) and not intersects(arect, plate),
+            "plate %r, dialogue box %r" % (arect, scale_rect(DIALOGUE_BOX)))
+
+    # Card t_746512f4: the S5 verdict window, measured. It has to be a real window, carry ink on every line it
+    # claims, name the model the credits print, print the three ledger ids and the number each one backs, and
+    # leave the battle HUD's two bands byte for byte as the source frame drew them, which is the card's own
+    # "keep the HP and MERCY bars and party line visible" written as a measurement rather than a promise.
+    if verdict:
+        vrect = verdict["rect"]
+        add("verdict window drawn",
+            count_colour(rendered, vrect, colours[ROLE_PLATE]) > 0.5 * (vrect[2] - vrect[0]) * (vrect[3] - vrect[1]),
+            "%d window pixels at %r" % (count_colour(rendered, vrect, colours[ROLE_PLATE]), vrect))
+        naming = [line for line in verdict["lines"] if line["role"] == ROLE_LIVE]
+        model_text = naming[0]["source_text"] if naming else ""
+        add("the window names the bake's model as the credits print it",
+            bool(model_text) and model_text == verdict_model_name(bake["bake"])
+            and count_colour(rendered, naming[0]["box"], colours[ROLE_LIVE]) > 0,
+            "%r on the caption line, %d ink pixels"
+            % (model_text, count_colour(rendered, naming[0]["box"], colours[ROLE_LIVE])))
+        line_ink = 0
+        line_blank = 0
+        for line in verdict["lines"]:
+            ink = count_colour(rendered, line["box"], colours[line["role"]])
+            blank_ink = count_colour(control, line["box"], colours[line["role"]])
+            line_ink += ink
+            line_blank += blank_ink
+            add("ink on the verdict line %r" % line["source_text"][:28],
+                ink >= 20 * max(1, len(line["source_text"]) // 20),
+                "%d %s pixels, %d when the line is blanked" % (ink, line["role"], blank_ink))
+        add("the verdict lines are what put ink there", line_ink > 3 * max(1, line_blank),
+            "%d ink pixels against %d blanked" % (line_ink, line_blank))
+        ledger = load_ledger()
+        numbers = bake_receipt_numbers(bake["bake"])
+        for name in RECEIPT_PLATE_NAMES:
+            receipt = ledger_number(name, numbers[name], ledger=ledger)
+            carrying = [line for line in verdict["lines"] if receipt in line["source_text"]]
+            add("the receipt %s is printed with its number" % receipt,
+                bool(carrying) and count_colour(rendered, carrying[0]["box"], colours[ROLE_TEXT]) > 0
+                and receipt in ledger,
+                "%s on the line %r, %s in the ledger"
+                % (receipt, carrying[0]["source_text"] if carrying else "",
+                   "logged" if receipt in ledger else "NOT logged"))
+        add("the network line says what the bake's own flags say",
+            any(line["source_text"] == verdict_network_line(bake["bake"]) for line in verdict["lines"]),
+            verdict_network_line(bake["bake"]))
+        for hud_name, game_rect in battle_hud_rects():
+            hud = scale_rect(game_rect)
+            add("the verdict window clears %s" % hud_name, not intersects(verdict["rect"], hud),
+                "window %r, HUD %r" % (verdict["rect"], hud))
+            # The same frame without the window: any pixel of the HUD band that differs between the two is a
+            # pixel this window changed, which is the one thing the card says must not happen.
+            plain, _ = render(source, shot, bake, index, receipt=receipt, below=below, caption=caption,
+                              allow_fallback=allow_fallback, talk_box=talk_box, rows=rows,
+                              receipt_plates=receipt_plates, verdict_box=False)
+            same = ImageChops.difference(plain.crop(hud), frame_view.crop(hud)).getbbox() is None
+            add("battle HUD untouched: %s" % hud_name, same,
+                "%r, compared with the same frame drawn without the window" % (hud,))
+
     talk = layout.get("talk_box")
     receipt_ink = 0
     if talk:
@@ -996,7 +1567,7 @@ def check_frame(source_path, rendered_path, shot, bake, index, receipt=None, bel
             "%d ink pixels in the band %r, %d inside a line box" % (band_ink, span, inside))
 
     return dict(ok=all(item["ok"] for item in checks), checks=checks, plate=plate, shot=shot,
-                talk_box=talk)
+                talk_box=talk, receipt_plates=strip, verdict_box=verdict)
 
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -1023,6 +1594,13 @@ def main(argv=None):
                         help="draw a row the bake recorded as a fallback, labelled as one; a layout check only")
     parser.add_argument("--talk-box", action="store_true",
                         help="also draw the NES talk box: the row's reply lines, its verdict and its receipt id")
+    parser.add_argument("--receipt-plates", action="store_true",
+                        help="also draw the three small Meta receipt plates above the dialogue box: "
+                             "model_calls, live_rows and live_share_pct, each with its ledger receipt id")
+    parser.add_argument("--verdict-box", action="store_true",
+                        help="also draw the S5 verdict window: the credits' model name, the decision the bake "
+                             "records, the three bake receipts and the network line, in the strip of battle "
+                             "frame between the enemy plate and the party panel")
     parser.add_argument("--bake", default=BAKE_PATH, help="the bake file to read (never edited by this tool)")
     args = parser.parse_args(argv)
 
@@ -1052,11 +1630,30 @@ def main(argv=None):
                     "lines": [{"tier": line["tier"], "role": line["role"], "text": line["source_text"]}
                               for line in layout["talk_box"]["lines"]],
                 }
+            if args.receipt_plates:
+                layout = plan(args.shot, bake, index, below=args.below, allow_fallback=args.allow_fallback,
+                              talk_box=args.talk_box, rows=only, receipt_plates=True)
+                payload["receipt_plates"] = [
+                    {"name": part["name"], "value": part["value"], "receipt": part["receipt"],
+                     "rect": list(part["rect"]),
+                     "lines": [{"tier": line["tier"], "text": line["source_text"]} for line in part["lines"]]}
+                    for part in layout["receipt_plates"]
+                ]
+            if args.verdict_box:
+                layout = plan(args.shot, bake, index, below=args.below, allow_fallback=args.allow_fallback,
+                              talk_box=args.talk_box, rows=only, receipt_plates=args.receipt_plates,
+                              verdict_box=True)
+                payload["verdict_box"] = {
+                    "rect": layout["verdict_box"]["rect"],
+                    "lines": [{"size": line["size"], "role": line["role"], "text": line["source_text"]}
+                              for line in layout["verdict_box"]["lines"]],
+                }
             print(json.dumps(payload, indent=1))
             return 0
         if args.layout:
             layout = plan(args.shot, bake, index, below=args.below, allow_fallback=args.allow_fallback,
-                          talk_box=args.talk_box, rows=only)
+                          talk_box=args.talk_box, rows=only, receipt_plates=args.receipt_plates,
+                          verdict_box=args.verdict_box)
             print(json.dumps(
                 {
                     "shot": args.shot,
@@ -1068,6 +1665,9 @@ def main(argv=None):
                                "size": line["size"]} for line in layout["lines"]],
                     "badge": layout["badge"],
                     "talk_box": layout["talk_box"],
+                    "receipt_plates": layout["receipt_plates"],
+                    "verdict_box": layout["verdict_box"],
+                    "hud_kept": [{"what": name, "rect": scale_rect(rect)} for name, rect in battle_hud_rects()],
                     "forbidden": [{"what": name, "rect": scale_rect(rect)} for name, rect in FORBIDDEN[args.shot]],
                 },
                 indent=1,
@@ -1086,7 +1686,7 @@ def main(argv=None):
                 raise OverlayError("--check needs --source and --frame")
             report = check_frame(args.source, args.frame, args.shot, bake, index,
                                  below=args.below, allow_fallback=args.allow_fallback, talk_box=args.talk_box,
-                                 rows=only)
+                                 rows=only, receipt_plates=args.receipt_plates, verdict_box=args.verdict_box)
             for item in report["checks"]:
                 print("%s  %s  %s" % ("PASS" if item["ok"] else "FAIL", item["name"], item["detail"]))
             print("%s  %s frame at %s" % ("PASS" if report["ok"] else "FAIL", args.shot, args.frame))
@@ -1094,7 +1694,8 @@ def main(argv=None):
         if not (args.frame and args.out):
             raise OverlayError("a render needs --frame and --out")
         image, layout = render(args.frame, args.shot, bake, index, below=args.below,
-                               allow_fallback=args.allow_fallback, talk_box=args.talk_box)
+                               allow_fallback=args.allow_fallback, talk_box=args.talk_box, rows=only,
+                               receipt_plates=args.receipt_plates, verdict_box=args.verdict_box)
         out_dir = os.path.dirname(os.path.abspath(args.out))
         if out_dir and not os.path.isdir(out_dir):
             os.makedirs(out_dir)
