@@ -1,0 +1,13 @@
+{
+ "seconds": 31.813,
+ "join_step": 0,
+ "max_inner_step": 9853,
+ "ratio": 0.0,
+ "verdict": "clean",
+ "loop": {
+  "loop_start_samples": null,
+  "loop_end_samples": null,
+  "source_samples": 1402932,
+  "source_duration_seconds": 31.8125
+ }
+}

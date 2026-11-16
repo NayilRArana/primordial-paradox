@@ -1,0 +1,52 @@
+{
+ "card": "t_16784440",
+ "source": "<repo>\\assets\\audio\\pp_drive_v6\\pp_drive_v6.mid",
+ "out": "<repo>\\assets\\audio\\pp_drive_v7\\pp_drive_v7.mid",
+ "target": {
+  "bar": 81,
+  "beat": 1.0,
+  "tick": 115200
+ },
+ "before": {
+  "cp01": 1,
+  "cp09": 0,
+  "hard": 72,
+  "open": 1
+ },
+ "after": {
+  "cp01": 0,
+  "cp09": 0,
+  "hard": 71,
+  "open": 0
+ },
+ "edit": {
+  "voice": "pulse 2",
+  "mode": "split",
+  "from": "A5",
+  "to": "D5",
+  "delta": -7,
+  "note_before": [
+   114960,
+   115432,
+   81,
+   40
+  ],
+  "notes_after": [
+   [
+    114960,
+    115200,
+    81,
+    72
+   ],
+   [
+    115200,
+    115432,
+    74,
+    72
+   ]
+  ]
+ },
+ "hook_voice_identical": true,
+ "hook_notes": 448,
+ "seconds": 480
+}
