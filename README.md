@@ -65,7 +65,7 @@ check_cleanroom: no study reference, no foreign name, no foreign phrase, every m
 
 A reader does not have to take the two rows above on trust, and the 180 second video beside them is measured, not claimed.
 
-* The tag `nightly-clean-2026-11-15` is an annotated tag on a commit whose parent is `461cb9a5`, and the tag's tree is that commit plus this page. The checkout behind it carries 1114 uncommitted paths from other lanes and none of them is in the tag: `git archive nightly-clean-2026-11-15` extracts 2,514 files, the same count `git ls-tree -r --name-only nightly-clean-2026-11-15` prints, so the tag's tree is exactly the commit and nothing from the dirty working tree.
+* The tag `nightly-clean-2026-11-15` is an annotated tag on a commit whose parent is `461cb9a5`, and the tag's tree is that commit plus this page. The checkout behind it carries 1114 uncommitted paths from other lanes and none of them is in the tag: `git archive nightly-clean-2026-11-15` extracts 2,515 files, the same count `git ls-tree -r --name-only nightly-clean-2026-11-15` prints, so the tag's tree is exactly the commit and nothing from the dirty working tree.
 * Both data gates were run inside that export, not in the dirty checkout, and both exit 0. check_cleanroom scans 811 files there against the 905 it scans in the checkout, which is the uncommitted paths it is not looking at:
 
 ```text
