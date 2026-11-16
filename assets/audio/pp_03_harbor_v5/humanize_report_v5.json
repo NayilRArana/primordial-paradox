@@ -1,0 +1,97 @@
+{
+  "bpm": 68.0,
+  "breaths": 4,
+  "bytes_in": 8404,
+  "bytes_out": 13545,
+  "changed_fraction": 0.9868,
+  "division": 480,
+  "envelope_points": 1145,
+  "fills": 13,
+  "floor_misses": 0,
+  "grace_notes": 0,
+  "loop_period_bars": 8,
+  "midi_in": "<repo>\\assets\\audio\\pp_03_harbor_v5\\pp_03_harbor_v5.mid",
+  "midi_out": "<repo>\\assets\\audio\\pp_03_harbor_v5\\pp_03_harbor_v5_humanized.mid",
+  "mordents": 0,
+  "motif": {
+    "bars": 2,
+    "returns": 10,
+    "start_bar": 1,
+    "third_return_bar": 5
+  },
+  "notes": 755,
+  "notes_by_track": {
+    "conductor": {
+      "changed": 0,
+      "floor_misses": 0,
+      "notes": 0,
+      "role": "other"
+    },
+    "dpcm": {
+      "changed": 84,
+      "floor_misses": 0,
+      "notes": 88,
+      "role": "kick"
+    },
+    "noise": {
+      "changed": 93,
+      "floor_misses": 0,
+      "notes": 97,
+      "role": "drums"
+    },
+    "pulse 1": {
+      "changed": 208,
+      "floor_misses": 0,
+      "notes": 208,
+      "role": "arpeggio"
+    },
+    "pulse 2": {
+      "changed": 50,
+      "floor_misses": 0,
+      "notes": 50,
+      "role": "echo"
+    },
+    "triangle": {
+      "changed": 71,
+      "floor_misses": 0,
+      "notes": 72,
+      "role": "bass"
+    },
+    "vrc6 pulse a": {
+      "changed": 107,
+      "floor_misses": 0,
+      "notes": 107,
+      "role": "melody"
+    },
+    "vrc6 pulse b": {
+      "changed": 69,
+      "floor_misses": 0,
+      "notes": 69,
+      "role": "counter"
+    },
+    "vrc6 saw": {
+      "changed": 63,
+      "floor_misses": 0,
+      "notes": 64,
+      "role": "pad"
+    }
+  },
+  "notes_changed": 745,
+  "notes_in": 755,
+  "notes_out": 768,
+  "onset_frames": 0.0,
+  "onset_shifts": 0,
+  "ornament_notes": [],
+  "section_bars": [
+    8,
+    16,
+    24,
+    32
+  ],
+  "seed": 20261021,
+  "sha256_in": "0ff67d917059321fbaa73a8448f3cdad531b53c8a0f7d0d707241d174d342128",
+  "sha256_out": "8e3e89e55a2d9d2afb2ebae9f67b87d00910e171e2f2f58c09e9ecbc1fc98114",
+  "tempo_us": 882353,
+  "ticks_per_frame": 9.0667,
+  "vibrato_notes": 16
+}

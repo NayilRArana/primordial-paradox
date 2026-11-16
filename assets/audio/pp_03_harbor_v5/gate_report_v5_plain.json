@@ -1,0 +1,565 @@
+{
+ "facts": {
+  "bars": 32,
+  "by_rule": {
+   "CP-01": 8,
+   "CP-02": 6,
+   "CP-04": 7,
+   "CP-05": 0,
+   "CP-06": 31,
+   "CP-07": 16,
+   "CP-08": 0,
+   "CP-09": 2,
+   "CP-10": 0,
+   "CP-11": 1,
+   "CP-12": 1,
+   "CP-13": 3,
+   "CP-14": 3,
+   "CP-15": 2,
+   "CP-16": 2,
+   "CP-17": 130,
+   "CP-18": 4
+  },
+  "by_severity": {
+   "hard": 169,
+   "soft": 10,
+   "style": 37
+  },
+  "clash": {
+   "by_class": {
+    "anticipation": 0,
+    "appoggiatura": 17,
+    "neighbour": 2,
+    "passing": 21,
+    "raw clash": 114,
+    "suspension": 17
+   },
+   "raw_total": 114,
+   "strong_raw": 4
+  },
+  "cp01": [
+   {
+    "bar": 7,
+    "beat": 3.0,
+    "detail": "E5 is dissonant against pulse 1 on a medium beat and leaves to E5, not by step",
+    "evidence": {
+     "accent": "medium",
+     "high": "E5",
+     "interval": "M7",
+     "low": "F3",
+     "note": "E5",
+     "pair": "pulse 1 + vrc6 pulse a",
+     "prepared": null,
+     "resolves": "E5",
+     "step_in": 2,
+     "step_out": 0,
+     "voice": "vrc6 pulse a"
+    },
+    "rule": "CP-01",
+    "severity": "hard",
+    "tick": 12480,
+    "title": "dissonance on an accented beat, unprepared or unresolved",
+    "voices": [
+     "vrc6 pulse a"
+    ]
+   },
+   {
+    "bar": 11,
+    "beat": 3.0,
+    "detail": "E5 is dissonant against pulse 1 on a medium beat and leaves to E5, not by step",
+    "evidence": {
+     "accent": "medium",
+     "high": "E5",
+     "interval": "M7",
+     "low": "F3",
+     "note": "E5",
+     "pair": "pulse 1 + vrc6 pulse a",
+     "prepared": null,
+     "resolves": "E5",
+     "step_in": 2,
+     "step_out": 0,
+     "voice": "vrc6 pulse a"
+    },
+    "rule": "CP-01",
+    "severity": "hard",
+    "tick": 20160,
+    "title": "dissonance on an accented beat, unprepared or unresolved",
+    "voices": [
+     "vrc6 pulse a"
+    ]
+   },
+   {
+    "bar": 15,
+    "beat": 3.0,
+    "detail": "E5 is dissonant against pulse 1 on a medium beat and leaves to E5, not by step",
+    "evidence": {
+     "accent": "medium",
+     "high": "E5",
+     "interval": "M2",
+     "low": "D3",
+     "note": "E5",
+     "pair": "pulse 1 + vrc6 pulse a",
+     "prepared": null,
+     "resolves": "E5",
+     "step_in": 2,
+     "step_out": 0,
+     "voice": "vrc6 pulse a"
+    },
+    "rule": "CP-01",
+    "severity": "hard",
+    "tick": 27840,
+    "title": "dissonance on an accented beat, unprepared or unresolved",
+    "voices": [
+     "vrc6 pulse a"
+    ]
+   },
+   {
+    "bar": 18,
+    "beat": 1.0,
+    "detail": "C5 is dissonant against pulse 1, triangle, vrc6 pulse b, vrc6 saw on a strong beat and leaves to G4, not by step",
+    "evidence": {
+     "accent": "strong",
+     "high": "C5",
+     "interval": "m2",
+     "low": "B2",
+     "note": "C5",
+     "pair": "triangle + vrc6 pulse a",
+     "prepared": null,
+     "resolves": "G4",
+     "step_in": 0,
+     "step_out": -5,
+     "voice": "vrc6 pulse a"
+    },
+    "rule": "CP-01",
+    "severity": "hard",
+    "tick": 32640,
+    "title": "dissonance on an accented beat, unprepared or unresolved",
+    "voices": [
+     "vrc6 pulse a"
+    ]
+   },
+   {
+    "bar": 18,
+    "beat": 3.0,
+    "detail": "B3 is dissonant against pulse 2, vrc6 pulse a on a medium beat and leaves to D3, not by step",
+    "evidence": {
+     "accent": "medium",
+     "high": "C5",
+     "interval": "m2",
+     "low": "B3",
+     "note": "B3",
+     "pair": "pulse 1 + pulse 2",
+     "prepared": null,
+     "resolves": "D3",
+     "step_in": 9,
+     "step_out": -9,
+     "voice": "pulse 1"
+    },
+    "rule": "CP-01",
+    "severity": "hard",
+    "tick": 33600,
+    "title": "dissonance on an accented beat, unprepared or unresolved",
+    "voices": [
+     "pulse 1"
+    ]
+   },
+   {
+    "bar": 27,
+    "beat": 3.0,
+    "detail": "E5 is dissonant against pulse 1, pulse 2 on a medium beat and leaves to E5, not by step",
+    "evidence": {
+     "accent": "medium",
+     "high": "E5",
+     "interval": "M7",
+     "low": "F3",
+     "note": "E5",
+     "pair": "pulse 1 + vrc6 pulse a",
+     "prepared": null,
+     "resolves": "E5",
+     "step_in": 2,
+     "step_out": 0,
+     "voice": "vrc6 pulse a"
+    },
+    "rule": "CP-01",
+    "severity": "hard",
+    "tick": 50880,
+    "title": "dissonance on an accented beat, unprepared or unresolved",
+    "voices": [
+     "vrc6 pulse a"
+    ]
+   },
+   {
+    "bar": 31,
+    "beat": 3.0,
+    "detail": "D3 is dissonant against pulse 2, triangle, vrc6 pulse a on a medium beat and leaves to A3, not by step",
+    "evidence": {
+     "accent": "medium",
+     "high": "D3",
+     "interval": "P4",
+     "low": "A2",
+     "note": "D3",
+     "pair": "triangle + pulse 1",
+     "prepared": null,
+     "resolves": "A3",
+     "step_in": -7,
+     "step_out": 7,
+     "voice": "pulse 1"
+    },
+    "rule": "CP-01",
+    "severity": "hard",
+    "tick": 58560,
+    "title": "dissonance on an accented beat, unprepared or unresolved",
+    "voices": [
+     "pulse 1"
+    ]
+   },
+   {
+    "bar": 31,
+    "beat": 3.0,
+    "detail": "E5 is dissonant against pulse 1, pulse 2, triangle on a medium beat and leaves to E5, not by step",
+    "evidence": {
+     "accent": "medium",
+     "high": "E5",
+     "interval": "M2",
+     "low": "D3",
+     "note": "E5",
+     "pair": "pulse 1 + vrc6 pulse a",
+     "prepared": null,
+     "resolves": "E5",
+     "step_in": 2,
+     "step_out": 0,
+     "voice": "vrc6 pulse a"
+    },
+    "rule": "CP-01",
+    "severity": "hard",
+    "tick": 58560,
+    "title": "dissonance on an accented beat, unprepared or unresolved",
+    "voices": [
+     "vrc6 pulse a"
+    ]
+   }
+  ],
+  "cp09": [
+   {
+    "bar": 26,
+    "beat": 2.0,
+    "detail": "parallel fifths: pulse 2 moves -5 and triangle moves -5, between the outer voices",
+    "evidence": {
+     "from": "E5 + A2 (P5)",
+     "motion": "similar",
+     "outer": true,
+     "pair": "pulse 2 + triangle",
+     "to": "B4 + E2 (P5)"
+    },
+    "rule": "CP-09",
+    "severity": "hard",
+    "tick": 48480,
+    "title": "parallel perfect fifth or octave",
+    "voices": [
+     "pulse 2",
+     "triangle"
+    ]
+   },
+   {
+    "bar": 28,
+    "beat": 2.0,
+    "detail": "parallel fifths: pulse 2 moves -5 and triangle moves -5, between the outer voices",
+    "evidence": {
+     "from": "E5 + A2 (P5)",
+     "motion": "similar",
+     "outer": true,
+     "pair": "pulse 2 + triangle",
+     "to": "B4 + E2 (P5)"
+    },
+    "rule": "CP-09",
+    "severity": "hard",
+    "tick": 52320,
+    "title": "parallel perfect fifth or octave",
+    "voices": [
+     "pulse 2",
+     "triangle"
+    ]
+   }
+  ],
+  "file": "<repo>\\assets\\audio\\pp_03_harbor_v5\\pp_03_harbor_v5.mid",
+  "key": "A minor (detected)",
+  "m1a_verdict": "FAIL",
+  "notes": 570,
+  "outer_voices": [
+   "pulse 2",
+   "triangle"
+  ],
+  "path": "assets/audio/pp_03_harbor_v5/pp_03_harbor_v5.mid",
+  "voices": [
+   "pulse 2",
+   "vrc6 pulse a",
+   "vrc6 pulse b",
+   "vrc6 saw",
+   "pulse 1",
+   "triangle"
+  ]
+ },
+ "verdict": {
+  "approval": null,
+  "baseline": null,
+  "clean_rules": false,
+  "counts": {
+   "cp01": 8,
+   "cp09": 2,
+   "raw_clash": 114,
+   "strong_raw": 4
+  },
+  "open": {
+   "CP-01": [
+    {
+     "bar": 7,
+     "beat": 3.0,
+     "detail": "E5 is dissonant against pulse 1 on a medium beat and leaves to E5, not by step",
+     "evidence": {
+      "accent": "medium",
+      "high": "E5",
+      "interval": "M7",
+      "low": "F3",
+      "note": "E5",
+      "pair": "pulse 1 + vrc6 pulse a",
+      "prepared": null,
+      "resolves": "E5",
+      "step_in": 2,
+      "step_out": 0,
+      "voice": "vrc6 pulse a"
+     },
+     "rule": "CP-01",
+     "severity": "hard",
+     "tick": 12480,
+     "title": "dissonance on an accented beat, unprepared or unresolved",
+     "voices": [
+      "vrc6 pulse a"
+     ]
+    },
+    {
+     "bar": 11,
+     "beat": 3.0,
+     "detail": "E5 is dissonant against pulse 1 on a medium beat and leaves to E5, not by step",
+     "evidence": {
+      "accent": "medium",
+      "high": "E5",
+      "interval": "M7",
+      "low": "F3",
+      "note": "E5",
+      "pair": "pulse 1 + vrc6 pulse a",
+      "prepared": null,
+      "resolves": "E5",
+      "step_in": 2,
+      "step_out": 0,
+      "voice": "vrc6 pulse a"
+     },
+     "rule": "CP-01",
+     "severity": "hard",
+     "tick": 20160,
+     "title": "dissonance on an accented beat, unprepared or unresolved",
+     "voices": [
+      "vrc6 pulse a"
+     ]
+    },
+    {
+     "bar": 15,
+     "beat": 3.0,
+     "detail": "E5 is dissonant against pulse 1 on a medium beat and leaves to E5, not by step",
+     "evidence": {
+      "accent": "medium",
+      "high": "E5",
+      "interval": "M2",
+      "low": "D3",
+      "note": "E5",
+      "pair": "pulse 1 + vrc6 pulse a",
+      "prepared": null,
+      "resolves": "E5",
+      "step_in": 2,
+      "step_out": 0,
+      "voice": "vrc6 pulse a"
+     },
+     "rule": "CP-01",
+     "severity": "hard",
+     "tick": 27840,
+     "title": "dissonance on an accented beat, unprepared or unresolved",
+     "voices": [
+      "vrc6 pulse a"
+     ]
+    },
+    {
+     "bar": 18,
+     "beat": 1.0,
+     "detail": "C5 is dissonant against pulse 1, triangle, vrc6 pulse b, vrc6 saw on a strong beat and leaves to G4, not by step",
+     "evidence": {
+      "accent": "strong",
+      "high": "C5",
+      "interval": "m2",
+      "low": "B2",
+      "note": "C5",
+      "pair": "triangle + vrc6 pulse a",
+      "prepared": null,
+      "resolves": "G4",
+      "step_in": 0,
+      "step_out": -5,
+      "voice": "vrc6 pulse a"
+     },
+     "rule": "CP-01",
+     "severity": "hard",
+     "tick": 32640,
+     "title": "dissonance on an accented beat, unprepared or unresolved",
+     "voices": [
+      "vrc6 pulse a"
+     ]
+    },
+    {
+     "bar": 18,
+     "beat": 3.0,
+     "detail": "B3 is dissonant against pulse 2, vrc6 pulse a on a medium beat and leaves to D3, not by step",
+     "evidence": {
+      "accent": "medium",
+      "high": "C5",
+      "interval": "m2",
+      "low": "B3",
+      "note": "B3",
+      "pair": "pulse 1 + pulse 2",
+      "prepared": null,
+      "resolves": "D3",
+      "step_in": 9,
+      "step_out": -9,
+      "voice": "pulse 1"
+     },
+     "rule": "CP-01",
+     "severity": "hard",
+     "tick": 33600,
+     "title": "dissonance on an accented beat, unprepared or unresolved",
+     "voices": [
+      "pulse 1"
+     ]
+    },
+    {
+     "bar": 27,
+     "beat": 3.0,
+     "detail": "E5 is dissonant against pulse 1, pulse 2 on a medium beat and leaves to E5, not by step",
+     "evidence": {
+      "accent": "medium",
+      "high": "E5",
+      "interval": "M7",
+      "low": "F3",
+      "note": "E5",
+      "pair": "pulse 1 + vrc6 pulse a",
+      "prepared": null,
+      "resolves": "E5",
+      "step_in": 2,
+      "step_out": 0,
+      "voice": "vrc6 pulse a"
+     },
+     "rule": "CP-01",
+     "severity": "hard",
+     "tick": 50880,
+     "title": "dissonance on an accented beat, unprepared or unresolved",
+     "voices": [
+      "vrc6 pulse a"
+     ]
+    },
+    {
+     "bar": 31,
+     "beat": 3.0,
+     "detail": "D3 is dissonant against pulse 2, triangle, vrc6 pulse a on a medium beat and leaves to A3, not by step",
+     "evidence": {
+      "accent": "medium",
+      "high": "D3",
+      "interval": "P4",
+      "low": "A2",
+      "note": "D3",
+      "pair": "triangle + pulse 1",
+      "prepared": null,
+      "resolves": "A3",
+      "step_in": -7,
+      "step_out": 7,
+      "voice": "pulse 1"
+     },
+     "rule": "CP-01",
+     "severity": "hard",
+     "tick": 58560,
+     "title": "dissonance on an accented beat, unprepared or unresolved",
+     "voices": [
+      "pulse 1"
+     ]
+    },
+    {
+     "bar": 31,
+     "beat": 3.0,
+     "detail": "E5 is dissonant against pulse 1, pulse 2, triangle on a medium beat and leaves to E5, not by step",
+     "evidence": {
+      "accent": "medium",
+      "high": "E5",
+      "interval": "M2",
+      "low": "D3",
+      "note": "E5",
+      "pair": "pulse 1 + vrc6 pulse a",
+      "prepared": null,
+      "resolves": "E5",
+      "step_in": 2,
+      "step_out": 0,
+      "voice": "vrc6 pulse a"
+     },
+     "rule": "CP-01",
+     "severity": "hard",
+     "tick": 58560,
+     "title": "dissonance on an accented beat, unprepared or unresolved",
+     "voices": [
+      "vrc6 pulse a"
+     ]
+    }
+   ],
+   "CP-09": [
+    {
+     "bar": 26,
+     "beat": 2.0,
+     "detail": "parallel fifths: pulse 2 moves -5 and triangle moves -5, between the outer voices",
+     "evidence": {
+      "from": "E5 + A2 (P5)",
+      "motion": "similar",
+      "outer": true,
+      "pair": "pulse 2 + triangle",
+      "to": "B4 + E2 (P5)"
+     },
+     "rule": "CP-09",
+     "severity": "hard",
+     "tick": 48480,
+     "title": "parallel perfect fifth or octave",
+     "voices": [
+      "pulse 2",
+      "triangle"
+     ]
+    },
+    {
+     "bar": 28,
+     "beat": 2.0,
+     "detail": "parallel fifths: pulse 2 moves -5 and triangle moves -5, between the outer voices",
+     "evidence": {
+      "from": "E5 + A2 (P5)",
+      "motion": "similar",
+      "outer": true,
+      "pair": "pulse 2 + triangle",
+      "to": "B4 + E2 (P5)"
+     },
+     "rule": "CP-09",
+     "severity": "hard",
+     "tick": 52320,
+     "title": "parallel perfect fifth or octave",
+     "voices": [
+      "pulse 2",
+      "triangle"
+     ]
+    }
+   ]
+  },
+  "path": "assets/audio/pp_03_harbor_v5/pp_03_harbor_v5.mid",
+  "stale_waivers": [],
+  "state": "REFUSED",
+  "waived": [],
+  "waiver_problems": [],
+  "why": "a new cue must land with no raw clash on a strong beat and no parallel perfect interval between the outer voices"
+ }
+}

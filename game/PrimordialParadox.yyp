@@ -2724,6 +2724,15 @@
     },
     {
       "$GMIncludedFile": "",
+      "%Name": "pp_03_harbor_v5.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "pp_03_harbor_v5.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
       "%Name": "pp_03_quay_storm.ogg",
       "CopyToMask": -1,
       "filePath": "datafiles/streams",
