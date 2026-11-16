@@ -1,0 +1,73 @@
+{
+  "backend": "meta",
+  "key": "4f6778daac3b3b02bdbdd69c8bbca8d5565133a167fbcb1e5d194f39921cbc60",
+  "kind": "vision",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "recorded_at": "2026-11-16T05:05:59Z",
+  "request": {
+    "messages": [
+      {
+        "content": [
+          {
+            "text": "<sha256:1c1d64339a8c19eb:6503 chars>",
+            "type": "text"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:3e6dd3bac41f12f7:135662 chars>"
+            },
+            "type": "image_url"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:eca643679f7c655d:445502 chars>"
+            },
+            "type": "image_url"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:bb8cab8b9f4e35a3:252194 chars>"
+            },
+            "type": "image_url"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:16a6f761f9820de5:281290 chars>"
+            },
+            "type": "image_url"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:14667126a9528717:300434 chars>"
+            },
+            "type": "image_url"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:93bd9f975e921d71:87530 chars>"
+            },
+            "type": "image_url"
+          }
+        ],
+        "role": "user"
+      }
+    ],
+    "model": "muse-spark-1.3"
+  },
+  "response": {
+    "text": "### What the video shows\nAt 15.0 s abstract blue bands with speckles, not a readable title card. At 45.0 s a top-down quay with a blue sprite by houses and a box reading * A pub. Warm with a bottom caption about Morgan asking three things. At 75.0 s, 105.0 s and 135.0 s a battle UI versus CAPTAIN MORGAN HP 28/28 and then PERCY HP 40/40 with MERCY bars, party ZANDER KONRAD HADRIAN HP 20/20 WILL 3/3, and TALK versus SPARE choices. At 165.0 s black credits listing MUSE SPARK 1.3 the talk judge and art critic, MUSE IMAGE 1.0 concept art and SAM 3.1. Missing are a person talking to the game, audible audio, a visible AI verdict with before and after, the three bake receipts and network line promised for S5, and a title card saying what this is. I cannot see the README, the repo, or audio which the verify file says is absent, and I cannot measure legal PPU palette from h264 stills.\n\n### The four scores\nImpact, 4/10: Battle frames show a talk-or-spare win over Morgan and Percy but show no live verdict proving only Meta models make it possible.\nUse of Meta AI tooling, 3/10: The last frame names Muse Spark, Muse Image and SAM but no S5 bake receipts or network line is visible and the verify file labels no Meta number.\nTechnical depth, 4/10: Town grid and HP/MERCY/turn UI at 768x784 3x scale looks like a real engine but the log shows a dirty tree with 1112 paths and play_demo NOT COMPLETED.\nDemo, 3/10: The 180.000 s capture has picture in all 6 samples but audio is absent and the open is blue bars with only one bottom caption visible.\n\n### Five fixes, ranked\n1. Title: Add narrator voiceover proving live Meta talk judgement | Criterion: Demo | Lane: assistant | Body: Edit data/slice.json shot S5 morgan and the narration script to add a recorded human voice explaining the talk input and the model verdict. Rerecord output/demo/nightly video with the voice mixed over game audio so captions remain readable. A judge will hear the explanation and see the cursor choose TALK then SPARE during the Morgan and Percy fights in the 3 minute video.\n2. Title: Show AI verdict box with bake receipts and network line | Criterion: Use of Meta AI tooling | Lane: gamedev | Body: Edit the morgan battle scene to draw the S5 verdict box that names Muse Spark 1.3, shows the decision text, plus three bake receipts and the network line. Keep the HP 28/28 and MERCY bars and party line ZANDER KONRAD HADRIAN visible behind the box. A judge will see the model decision and receipts on screen from 1:18 to 1:50 in the video and in the README screenshot.\n3. Title: Replace starfield open with readable title and boot menu | Criterion: Demo | Lane: gamedev | Body: Edit the title route step to draw a title card with game name, controls, and the verbatim caption Cold boot to menu takes 14 seconds with dim CONTINUE. Replace the abstract blue band starfield used at 0:00 to 0:16. A judge will see a readable opening that states what the game is in the first 16 seconds of the video.\n4. Title: Mix hurricane and battle audio and ship video with sound | Criterion: Demo | Lane: musician | Body: Ask the musician lane to add a hurricane wind loop for quay and simple square wave blips for cursor and talk in the engine audio module. Render the nightly capture with audio enabled at 60 fps and confirm the verify file reports audio present. A judge will hear storm and menu sounds across the full 180 seconds instead of silence.\n5. Title: Tag clean repo and finish full 180 second nightly render | Criterion: Technical Depth | Lane: testing | Body: Create a clean tag from repo HEAD 461cb9a5 without the 1112 dirty paths and rerun play_demo to completion to produce output/demo/nightly-2026-11-15.mp4. Record the passing check_data and check_cleanroom lines in the README. A judge will see a complete reproducible build and a finished 180 second video in the repo.\n\n### Machine readable block\n```json\n{\"impact\": 4, \"impact_reason\": \"Battle frames show talk or spare win over Morgan and Percy but show no live verdict proving only Meta models make it possible.\", \"meta_tooling\": 3, \"meta_tooling_reason\": \"Last frame names Muse Spark Image and SAM but no S5 bake receipts or network line is visible and verify file labels no Meta number.\", \"technical_depth\": 4, \"technical_depth_reason\": \"Town grid and HP MERCY turn UI at 3x scale looks like real engine but log shows dirty tree with 1112 paths and play_demo NOT COMPLETED.\", \"demo\": 3, \"demo_reason\": \"180s capture has picture in all 6 samples but audio is absent and open is blue bars with only one bottom caption visible.\", \"fixes\": [{\"title\": \"Add narrator voiceover proving live Meta talk judgement\", \"criterion\": \"Demo\", \"lane\": \"assistant\", \"body\": \"Edit data/slice.json shot S5 morgan and the narration script to add a recorded human voice explaining the talk input and the model verdict. Rerecord output/demo/nightly video with the voice mixed over game audio so captions remain readable. A judge will hear the explanation and see the cursor choose TALK then SPARE during the Morgan and Percy fights in the 3 minute video.\"}, {\"title\": \"Show AI verdict box with bake receipts and network line\", \"criterion\": \"Use of Meta AI tooling\", \"lane\": \"gamedev\", \"body\": \"Edit the morgan battle scene to draw the S5 verdict box that names Muse Spark 1.3, shows the decision text, plus three bake receipts and the network line. Keep the HP 28/28 and MERCY bars and party line ZANDER KONRAD HADRIAN visible behind the box. A judge will see the model decision and receipts on screen from 1:18 to 1:50 in the video and in the README screenshot.\"}, {\"title\": \"Replace starfield open with readable title and boot menu\", \"criterion\": \"Demo\", \"lane\": \"gamedev\", \"body\": \"Edit the title route step to draw a title card with game name, controls, and the verbatim caption Cold boot to menu takes 14 seconds with dim CONTINUE. Replace the abstract blue band starfield used at 0:00 to 0:16. A judge will see a readable opening that states what the game is in the first 16 seconds of the video.\"}, {\"title\": \"Mix hurricane and battle audio and ship video with sound\", \"criterion\": \"Demo\", \"lane\": \"musician\", \"body\": \"Ask the musician lane to add a hurricane wind loop for quay and simple square wave blips for cursor and talk in the engine audio module. Render the nightly capture with audio enabled at 60 fps and confirm the verify file reports audio present. A judge will hear storm and menu sounds across the full 180 seconds instead of silence.\"}, {\"title\": \"Tag clean repo and finish full 180 second nightly render\", \"criterion\": \"Technical Depth\", \"lane\": \"testing\", \"body\": \"Create a clean tag from repo HEAD 461cb9a5 without the 1112 dirty paths and rerun play_demo to completion to produce output/demo/nightly-2026-11-15.mp4. Record the passing check_data and check_cleanroom lines in the README. A judge will see a complete reproducible build and a finished 180 second video in the repo.\"}]}\n```",
+    "usage": {
+      "completion_tokens": 6797,
+      "completion_tokens_details": {
+        "reasoning_tokens": 5104
+      },
+      "prompt_tokens": 6314,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 13111
+    }
+  }
+}
