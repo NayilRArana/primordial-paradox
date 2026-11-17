@@ -757,6 +757,59 @@ def test_only_a_baked_row_or_a_meta_answer_puts_the_label_on_the_box(data):
     assert "pp_talk_line_drawable(_line)" in judge, "and a line the sheet cannot draw is not drawn"
 
 
+def test_the_verdict_word_in_the_box_is_the_effect_the_answer_carried(data):
+    """Judge panel 2026-11-17 fix 2: the box prints the effect the judgement picked, and nothing re-derives it.
+
+    Three claims, each read off the source rather than restated: the word map is the effect enum's three movers, a
+    line is the word plus the meter's data label and the meter's data move, and both doors (a bake row and a live
+    answer) build that line from the effect they carry, not from a verdict word they could disagree with.
+    """
+    import json
+
+    text = read(TEXT_GML)
+    word = gml_function(text, "pp_talk_effect_word")
+    cases = dict(re.findall(r'case\s+"([a-z]+)":\s*return\s+"([A-Z]+)";', word))
+    assert cases == {"soften": "SOFTEN", "nudge": "NUDGE", "setback": "SETBACK"}, cases
+    assert 'return "NONE";' in word, "an effect that moves nothing says NONE rather than borrowing another word"
+
+    line = gml_function(text, "pp_talk_verdict_line")
+    assert '_word + ". "' in line, "the word comes first and opens the sentence"
+    for field in ("will_label", "judge_up", "judge_down", "judge_held", "cols"):
+        assert "_d.%s" % field in line, "the line's %s is the data file's, not a literal" % field
+    assert "string_length(_line) > _d.cols" in line and "pp_talk_line_drawable(_line)" in line, \
+        "a word that does not fit, or the sheet cannot draw, is not printed at all"
+
+    with open(os.path.join(ROOT, "data", "talk_live.json"), "r", encoding="utf-8-sig") as handle:
+        live = json.load(handle)
+    cols = live["limits"]["cols_per_row"]
+    for verdict, delta in (("soften", 20), ("nudge", 5), ("none", 0), ("setback", -10)):
+        move = live["strings"]["judge_up"] if delta > 0 else (
+            live["strings"]["judge_down"] if delta < 0 else live["strings"]["judge_held"])
+        composed = "%s. %s %s %d" % (cases.get(verdict, "NONE"), live["will"]["label"], move, abs(delta))
+        assert len(composed) <= cols, "%r is wider than the box's %d columns" % (composed, cols)
+
+    step = gml_function(text, "pp_talk_step")
+    assert "pp_talk_verdict_line(_record.effect, _battle.talk_delta)" in step, \
+        "a bake row's word is the effect the row records"
+    answer = gml_function(read(GML), "pp_talk_live_answer")
+    assert "pp_talk_verdict_line(_battle.talk_effect, _battle.live_delta)" in answer, \
+        "a live answer's word is the effect the bridge answered with"
+    assert answer.index('_battle.talk_effect = _answer.effect') < answer.index("pp_talk_verdict_line("), \
+        "the answer's own effect is set before the line is built from it"
+    gml_default = re.search(r'will_label:\s*"([A-Z]+)"', read(GML)).group(1)
+    assert gml_default == live["will"]["label"], "the GML's default label is the data file's, so the meter has one name"
+
+
+def test_the_bridge_carries_the_effect_the_judge_picked():
+    """The GML reads an effect off the answer, so the bridge has to return one (tools/ai_bridge.py, judge path)."""
+    bridge = read(os.path.join(ROOT, "tools", "ai_bridge.py"))
+    assert '"effect": answer["effect"]' in bridge, "the talk answer returns the effect the judge mapped"
+    assert "verdict, delta = self.judge.verdict_for(answer[\"effect\"])" in bridge, \
+        "and the same effect is what the verdict was derived from"
+    mirror = read(os.path.join(ROOT, "tools", "talk_live.py"))
+    assert '"effect": effect' in mirror, "the Python mirror returns the same field the GML reads"
+
+
 def test_the_bridge_request_log_names_the_door_and_never_the_line(data):
     """The log says which local door was called; it never carries the player's words (spec 19 section 3)."""
     body = gml_function(read(GML), "pp_talk_live_send_talk")

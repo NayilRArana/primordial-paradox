@@ -725,7 +725,18 @@ def test_the_cli_refuses_the_strip_where_the_ledger_has_no_receipt(overlay, monk
 # 9. The S5 verdict window (card t_746512f4, judge panel 2026-11-16 fix 2)
 
 
-def test_the_verdict_window_names_the_model_the_credits_print(overlay):
+@pytest.fixture()
+def bake_window(overlay, monkeypatch, tmp_path):
+    """Point the S5 verdict window at a record file that does not exist, which is the bake drawing.
+
+    Judge panel 2026-11-17 fix 2: when data/demo/talk_live_s5.json is on disk the window prints the bridge's
+    answers instead of the bake's effects, so every test that measures the bake drawing pins the path to a
+    file this fixture never writes. The live drawing is measured by its own tests below.
+    """
+    monkeypatch.setattr(overlay, "LIVE_RECORD_PATH", str(tmp_path / "no_live_record.json"))
+
+
+def test_the_verdict_window_names_the_model_the_credits_print(overlay, bake_window):
     """The name on the window comes from data/credits.json's roll.models, joined on the bake's own model id."""
     bake, index = overlay.load_bake(BAKE)
     window = overlay.plan("S5", bake, index, caption="", rows=(), verdict_box=True)["verdict_box"]
@@ -748,7 +759,7 @@ def test_the_verdict_window_prints_the_three_receipts_with_their_ledger_ids(over
         assert str(numbers[name]).split(".")[0] in carrying[0]["source_text"], "and the number it backs"
 
 
-def test_the_verdict_window_says_a_fallback_row_is_one_and_prints_the_dead_network_line(overlay):
+def test_the_verdict_window_says_a_fallback_row_is_one_and_prints_the_dead_network_line(overlay, bake_window):
     """The shipped bake holds three fallback rows and records no network, and the window says both."""
     bake, index = overlay.load_bake(BAKE)
     rows = [overlay.bake_row(index, row_id, allow_fallback=True) for row_id in TALK_ROWS]
@@ -760,7 +771,7 @@ def test_the_verdict_window_says_a_fallback_row_is_one_and_prints_the_dead_netwo
     assert texts[-1] == "NETWORK DEAD SINCE THE FIRST FRAME. REPLIES FROM data/meta_bake.json."
 
 
-def test_a_live_bake_makes_the_window_say_the_model_decided_and_the_network_was_up(overlay, live_bake_file):
+def test_a_live_bake_makes_the_window_say_the_model_decided_and_the_network_was_up(overlay, live_bake_file, bake_window):
     bake, index = overlay.load_bake(live_bake_file)
     window = overlay.plan("S5", bake, index, caption="", rows=(), verdict_box=True)["verdict_box"]
     texts = [line["source_text"] for line in window["lines"]]
@@ -805,7 +816,7 @@ def test_the_verdict_window_refuses_a_shot_whose_claim_it_does_not_receipt(overl
         overlay.VERDICT_BOX_SHOTS = ("S5",)
 
 
-def test_the_verdict_window_frame_test_passes_and_the_battle_hud_is_untouched(overlay, frame_file, tmp_path):
+def test_the_verdict_window_frame_test_passes_and_the_battle_hud_is_untouched(overlay, frame_file, tmp_path, bake_window):
     out = str(tmp_path / "verdict.png")
     layout = render_shot(overlay, "S5", BAKE, frame_file, out, caption="", rows=(), verdict_box=True)
     assert layout["verdict_box"], "the window was drawn"
@@ -820,7 +831,7 @@ def test_the_verdict_window_frame_test_passes_and_the_battle_hud_is_untouched(ov
         assert "battle HUD untouched: %s" % hud_name in names
 
 
-def test_the_cli_prints_the_verdict_window_and_exits_zero(overlay, capsys):
+def test_the_cli_prints_the_verdict_window_and_exits_zero(overlay, capsys, bake_window):
     assert overlay.main(["--shot", "S5", "--rows", "--verdict-box", "--only", ""]) == 0
     payload = json.loads(capsys.readouterr().out)
     window = payload["verdict_box"]
@@ -828,3 +839,93 @@ def test_the_cli_prints_the_verdict_window_and_exits_zero(overlay, capsys):
     assert texts[0] == "MUSE SPARK 1.3"
     assert len(texts) == 6, "the model, the decision, three receipts and the network line"
     assert not any(dash in text for text in texts for dash in LONG_DASHES)
+
+
+# Judge panel 2026-11-17, fix 2. data/demo/talk_live_s5.json is written by tools/talk_live_s5.py from the local
+# bridge's own answers, and these three tests are the drawing's half of that card: the window prints the record's
+# turns when it exists, a record that is not the S5 record is refused, and the bake drawing is still what a machine
+# with no record gets. The fixture builds a record shaped like the tool's, never the shipped one, so the tests state
+# what they measure instead of depending on what answered last.
+
+
+def live_record(turns):
+    return {
+        "format": 1,
+        "kind": "talk_live_s5",
+        "version": 1,
+        "when": "2026-11-17T05:00:00Z",
+        "live": all(row["answer"]["source"] in ("meta", "open-weights") for row in turns),
+        "turns": turns,
+    }
+
+
+def turn_row(number, line, recorded, effect, source, latency):
+    return {
+        "turn": number,
+        "row": "fight/morgan/%d" % number,
+        "player_text": line,
+        "recorded_effect": recorded,
+        "recorded_mercy": 50,
+        "will_before": 0,
+        "will_after": 50,
+        "answer": {"verdict": "persuaded", "effect": effect, "will_delta": 20,
+                   "reply": ["FORM FIRST."], "source": source, "origin": source,
+                   "mood": "warm", "model": "", "cached": False, "latency_ms": latency,
+                   "tried": []},
+    }
+
+
+def test_the_verdict_window_prints_the_live_records_own_turns(overlay, tmp_path, monkeypatch):
+    """With a record on disk the window is the bridge's three answers, one line per turn, and the receipts stay."""
+    turns = [turn_row(1, "May I see the form?", "soften", "soften", "open-weights", 1125),
+             turn_row(2, "Lovely handwriting.", "nudge", "soften", "open-weights", 813),
+             turn_row(3, "The captain is coming!", "setback", "setback", "meta", 2400)]
+    path = tmp_path / "talk_live_s5.json"
+    path.write_text(json.dumps(live_record(turns)), encoding="utf-8")
+    monkeypatch.setattr(overlay, "LIVE_RECORD_PATH", str(path))
+    bake, index = overlay.load_bake(BAKE)
+    window = overlay.plan("S5", bake, index, caption="", rows=(), verdict_box=True)["verdict_box"]
+    texts = [line["source_text"] for line in window["lines"]]
+
+    assert texts[:3] == [overlay.live_turn_line(row) for row in turns], "the window is the record's turns"
+    assert "OPEN-WEIGHTS 1125 MS" in texts[0] and "SOFTEN" in texts[0]
+    assert texts[1].endswith("TAKE NUDGE"), "a turn the bridge answered differently names both effects"
+    assert texts[2].startswith("T3 SETBACK")
+    assert "MUSE SPARK 1.3" not in texts, "the bake's model is not named over the bridge's answers"
+    numbers = overlay.bake_receipt_numbers(bake["bake"])
+    for name in overlay.RECEIPT_PLATE_NAMES:
+        assert any(str(numbers[name]).split(".")[0] in text for text in texts[3:]), (
+            "the three receipts are still printed below the turns")
+    assert len(texts) == 6, "three turns and three receipts, and nothing else"
+
+
+def test_a_fallback_turn_prints_its_rung_and_not_an_effect_word(overlay, tmp_path, monkeypatch):
+    """A fallback answer carries no effect of its own, so the line names the rung and never invents a verdict."""
+    turns = [turn_row(1, "May I see the form?", "soften", None, "fallback", 968),
+             turn_row(2, "Lovely handwriting.", "nudge", None, "fallback", 968),
+             turn_row(3, "The captain is coming!", "setback", None, "fallback", 968)]
+    path = tmp_path / "talk_live_s5.json"
+    path.write_text(json.dumps(live_record(turns)), encoding="utf-8")
+    monkeypatch.setattr(overlay, "LIVE_RECORD_PATH", str(path))
+    bake, index = overlay.load_bake(BAKE)
+    window = overlay.plan("S5", bake, index, caption="", rows=(), verdict_box=True)["verdict_box"]
+    texts = [line["source_text"] for line in window["lines"]]
+    assert texts[0] == "T1 MAY I SEE THE FORM? FALLBACK 968 MS TAKE SOFTEN"
+    assert "NONE" not in " ".join(texts), "no effect word is invented for a rung that answered nothing"
+    assert window["lines"][0]["role"] == overlay.ROLE_DEAD, "a fallback turn is drawn in the hazard role"
+
+
+def test_a_record_that_is_not_the_s5_record_is_refused(overlay, tmp_path, monkeypatch):
+    """A file that is not this kind of record, or holds the wrong number of turns, stops the drawing."""
+    path = tmp_path / "talk_live_s5.json"
+    path.write_text(json.dumps({"kind": "something_else", "turns": []}), encoding="utf-8")
+    monkeypatch.setattr(overlay, "LIVE_RECORD_PATH", str(path))
+    bake, index = overlay.load_bake(BAKE)
+    with pytest.raises(overlay.OverlayError):
+        overlay.plan("S5", bake, index, caption="", rows=(), verdict_box=True)
+
+    path.write_text(json.dumps({"kind": "talk_live_s5", "turns": [turn_row(1, "x", "soften",
+                                                                        "soften", "meta", 10)]}),
+                    encoding="utf-8")
+    with pytest.raises(overlay.OverlayError):
+        overlay.plan("S5", bake, index, caption="", rows=(), verdict_box=True)

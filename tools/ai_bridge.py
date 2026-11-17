@@ -26,6 +26,7 @@ The talk request
 The talk answer
     {"verdict": "persuaded" | "unmoved" | "angered",
      "will_delta": -10 | 0 | 5 | 20,
+     "effect": "soften" | "nudge" | "none" | "setback",
      "reply": ["GO ON THEN.", "BRIDGE IS THAT WAY."],
      "source": "meta" | "open-weights" | "replay" | "fallback",
      "mood": "guarded",
@@ -1114,6 +1115,10 @@ class TalkJudge:
             return {
                 "verdict": verdict,
                 "will_delta": delta,
+                # The effect word the model itself picked (soften, nudge, none, setback, end), unchanged: the
+                # verdict and the delta are this module's reading of it, and a caller that wants to print the
+                # choice rather than the reading (the battle box does) has the choice to print.
+                "effect": answer["effect"],
                 "reply": answer["text"],
                 "source": answer.get("source") or ("replay" if name == "cache" else name),
                 "origin": answer.get("origin") or name,

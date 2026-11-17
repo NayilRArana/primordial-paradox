@@ -240,6 +240,14 @@ def read_json(path):
         return json.load(handle)
 
 
+def _rel(path):
+    """A path relative to the repository, for a refusal that names the file rather than the drive."""
+    try:
+        return os.path.relpath(path, ROOT).replace("\\", "/")
+    except ValueError:
+        return path
+
+
 def load_palette(path=PALETTE_PATH):
     """The palette's colours by role name, as RGB tuples. A role the overlay needs and cannot find stops it."""
     data = read_json(path)
@@ -567,6 +575,23 @@ def ledger_number(name, value, ledger=None):
     return row["id"]
 
 
+def bake_count_entry(block, name):
+    """The bake file's own record for one of the three S5 counts, or None when the file predates it.
+
+    Card t_a4c5dd4f: `bake.counts` is written by tools/bake_meta.py from tools/receipts.py's one
+    definition, so this tool reads the number, the label and the receipt id here instead of retyping
+    any of them.
+    """
+    counts = block.get("counts") if isinstance(block, dict) else None
+    if not isinstance(counts, dict):
+        return None
+    for key in ("model_calls", "live_rows", "live_share_pct"):
+        entry = counts.get(key)
+        if isinstance(entry, dict) and entry.get("name") == name:
+            return entry
+    return None
+
+
 def bake_receipt_numbers(block):
     """The three Meta numbers the receipt plates print, read out of the bake header.
 
@@ -575,6 +600,11 @@ def bake_receipt_numbers(block):
     from the recorded cache, and the share of the calls that did. The share is rounded to one decimal the
     same way receipts.py rounds it (round(100.0 * live / calls, 1)), because two roundings of one quotient
     would be two numbers, and the ledger receipts only one of them.
+
+    Card t_a4c5dd4f (judge panel 2026-11-17, fix 4): when the bake carries its own `counts` block, the
+    three values and labels are read out of it and checked against the header, so the number on the plate
+    is the number data/meta_bake.json records and not a second derivation of it. A file whose two
+    records disagree stops the drawing.
     """
     for field in ("calls_attempted", "live"):
         if field not in block:
@@ -586,11 +616,46 @@ def bake_receipt_numbers(block):
         raise OverlayError(
             "the bake block says %d calls attempted, and a live share of no calls is not a number" % calls
         )
-    return {
+    numbers = {
         "meta.model_calls": calls,
         "meta.live_rows": live,
         "meta.live_share_pct": round(100.0 * float(live) / float(calls), 1),
     }
+    for name, value in numbers.items():
+        entry = bake_count_entry(block, name)
+        if entry is None:
+            continue
+        if entry.get("value") != value:
+            raise OverlayError(
+                "data/meta_bake.json's counts block holds %r for %s and its header makes %r, so the file "
+                "carries two numbers for one count and the two records do not back the same number: run "
+                "`python tools\\bake_meta.py` to rebake it" % (entry.get("value"), name, value)
+            )
+        if entry.get("label") not in ("measured", "computed"):
+            raise OverlayError(
+                "data/meta_bake.json labels %s %r, and the receipt plates print only a measured or a "
+                "computed number" % (name, entry.get("label"))
+            )
+    return numbers
+
+
+def counted_receipt(block, name, value, ledger=None):
+    """The receipt id the bake file holds for this number, checked against the ledger's newest line.
+
+    Card t_a4c5dd4f: the screen prints a number and an id, and data/meta_bake.json records the same pair,
+    so the two are read against each other here. A file that names one id and a ledger whose newest line
+    for that number names another are two records that do not back the same number, and the plate refuses
+    rather than printing one of them.
+    """
+    receipt = ledger_number(name, value, ledger=ledger)
+    entry = bake_count_entry(block, name)
+    if entry is not None and entry.get("receipt") != receipt:
+        raise OverlayError(
+            "data/meta_bake.json holds receipt %s for %s and the newest ledger line is %s, so the file and "
+            "the ledger back different records: run `python tools\\receipts.py` after the bake"
+            % (entry.get("receipt"), name, receipt)
+        )
+    return receipt
 
 
 def receipt_number_text(name, value):
@@ -617,7 +682,7 @@ def meta_receipt_plates(block, ledger=None):
     plates = []
     for index, name in enumerate(RECEIPT_PLATE_NAMES):
         value = numbers[name]
-        receipt = ledger_number(name, value, ledger=ledger)
+        receipt = counted_receipt(block, name, value, ledger=ledger)
         text = "%s %s" % (name.upper(), receipt_number_text(name, value))
         # Card t_9b689430 (judge panel 2026-11-15, fix 2): the panel read the three receipts and found
         # no model named on any of them. The strip has 22 px of band above it before it meets the caption
@@ -1096,7 +1161,7 @@ def verdict_receipt_lines(block, ledger=None):
     lines = []
     for name in RECEIPT_PLATE_NAMES:
         value = numbers[name]
-        receipt = ledger_number(name, value, ledger=ledger)
+        receipt = counted_receipt(block, name, value, ledger=ledger)
         lines.append("%s %s RECEIPT %s" % (name.upper(), receipt_number_text(name, value), receipt))
     return lines
 
@@ -1113,6 +1178,78 @@ def verdict_network_line(block):
     return "NETWORK UP AT BAKE TIME. REPLIES CAME FROM %s." % backend
 
 
+# The live record of judge panel 2026-11-17 fix 2. tools/talk_live_s5.py asks tools/ai_bridge.py for S5's three turns
+# and writes what the bridge answered to output/demo/talk_live_s5.json; this tool reads that file and prints one line per
+# turn. It is not a second record of the same fact: the answer, the rung that gave it, the wire time and the effect are
+# the bridge's own fields, and the effect the take moved is data/meta_bake.json's, which is the file this drawing falls
+# back to when no record exists. A turn whose live effect is not the take's effect prints both, because a window that
+# printed the live word alone would say the bar in the game's picture moved by a number it did not move by.
+# The record sits under output/ and not under data/ because every JSON under data/ is a build input and this one names
+# the endpoint it asked: tools/check_project.py refused it there and tests/test_no_network_in_build.py named it twice.
+LIVE_RECORD_PATH = os.path.join(ROOT, "output", "demo", "talk_live_s5.json")
+LIVE_SOURCES = ("meta", "open-weights")
+
+
+def load_live_record(path=None):
+    """The S5 live bridge record, or None when the file is absent, which is the bake drawing's fallback."""
+    path = LIVE_RECORD_PATH if path is None else path
+    if not os.path.isfile(path):
+        return None
+    data = read_json(path)
+    if not isinstance(data, dict) or data.get("kind") != "talk_live_s5":
+        raise OverlayError("%s is not a talk_live_s5 record, so it cannot answer the S5 window" % _rel(path))
+    turns = data.get("turns")
+    if not isinstance(turns, list) or len(turns) != len(SHOT_ROWS["S5"]):
+        raise OverlayError("%s holds %r turn rows and S5 has %d turns"
+                           % (_rel(path), len(turns) if isinstance(turns, list) else None, len(SHOT_ROWS["S5"])))
+    for row in turns:
+        if not isinstance(row, dict) or not isinstance(row.get("answer"), dict):
+            raise OverlayError("%s holds a turn row with no answer struct" % _rel(path))
+        answer = row["answer"]
+        if not isinstance(answer.get("source"), str) or not answer.get("source"):
+            raise OverlayError("%s's turn %r carries no source, so the window cannot say where it came from"
+                               % (_rel(path), row.get("turn")))
+        if answer.get("effect") is not None and not isinstance(answer.get("effect"), str):
+            raise OverlayError("%s's turn %r carries an effect that is not a word" % (_rel(path), row.get("turn")))
+    return data
+
+
+def live_turn_line(row):
+    """One turn as the window prints it: the effect the bridge answered, the line judged, the rung and the wire time.
+
+    The line is short enough for the 240 game pixel window at the hash tier, so nothing is clipped. A turn the bridge
+    answered with the take's own effect prints the source word alone; a turn it answered with another effect, or with
+    no live rung at all, also prints the effect the take moved, named as the take's.
+    """
+    answer = row["answer"]
+    effect = answer.get("effect") if isinstance(answer.get("effect"), str) else None
+    source = str(answer.get("source") or "?").upper()
+    live = str(answer.get("source") or "") in LIVE_SOURCES
+    latency = answer.get("latency_ms")
+    parts = ["T%d" % (row.get("turn") or 0)]
+    # An effect word is printed only when a live rung answered: a fallback answer carries no effect of its own, so
+    # the word on that line is the rung's name and not a verdict the encounter's own line never gave.
+    if live and effect:
+        parts.append(effect.upper())
+    parts.append(str(row.get("player_text") or "").upper().strip())
+    parts.append("%s %d MS" % (source, int(latency)) if isinstance(latency, (int, float)) else source)
+    recorded = row.get("recorded_effect")
+    if isinstance(recorded, str) and recorded and (recorded != effect or not live):
+        parts.append("TAKE %s" % recorded.upper())
+    return " ".join(part for part in parts if part)
+
+
+def verdict_live_lines(record):
+    """Every line the window prints from the live record, in turn order, refused if one cannot be drawn."""
+    lines = []
+    for row in record.get("turns") or []:
+        line = live_turn_line(row)
+        if not line.strip():
+            raise OverlayError("the live record's turn %r prints an empty line" % row.get("turn"))
+        lines.append(line)
+    return lines
+
+
 def verdict_window(bake, index, blank=False):
     """The window's rect and its lines, or a refusal naming what does not fit or does not come out of the record."""
     if not isinstance(bake, dict) or not isinstance(bake.get("bake"), dict):
@@ -1123,11 +1260,21 @@ def verdict_window(bake, index, blank=False):
     # says what the file holds otherwise. The plate above the window keeps the strict reading.
     rows = [bake_row(index, row_id, allow_fallback=True) for row_id in SHOT_ROWS["S5"]]
     verdicts = load_verdicts()
-    words = [(CAPTION_SIZE, verdict_model_name(block), ROLE_LIVE),
-             (HASH_SIZE, verdict_decision_line(rows, verdicts), ROLE_TEXT)]
+    record = load_live_record()
+    if record is not None:
+        # Judge panel 2026-11-17, fix 2: the verdicts on this window are the ones the local bridge answered when
+        # the shot was drawn (tools/talk_live_s5.py), one line per turn, and a turn whose answer is not the effect
+        # the take moved says both. data/meta_bake.json is still read below for the three receipts, which receipt
+        # the bake and not a turn.
+        words = [(HASH_SIZE, piece, ROLE_DEAD if "FALLBACK" in piece else ROLE_TEXT)
+                 for piece in verdict_live_lines(record)]
+    else:
+        words = [(CAPTION_SIZE, verdict_model_name(block), ROLE_LIVE),
+                 (HASH_SIZE, verdict_decision_line(rows, verdicts), ROLE_TEXT)]
     for piece in verdict_receipt_lines(block):
         words.append((HASH_SIZE, piece, ROLE_TEXT))
-    words.append((HASH_SIZE, verdict_network_line(block), ROLE_DEAD))
+    if record is None:
+        words.append((HASH_SIZE, verdict_network_line(block), ROLE_DEAD))
 
     rect = scale_rect(verdict_box_band())
     usable = (rect[2] - rect[0]) - 2 * PLATE_BORDER - 2 * VERDICT_BOX_PAD
@@ -1135,6 +1282,10 @@ def verdict_window(bake, index, blank=False):
     content_bottom = rect[3] - PLATE_BORDER
     placed = []
     y = content_top
+    if words and words[0][0] <= DETAIL_SIZE:
+        # A 10 pt glyph's top pixel sits one row above the y it is drawn at (measured 2026-11-01), so a window whose
+        # first line is a hash tier line starts one row lower and the first glyph still begins inside the border.
+        y += 1
     for size, text, role in words:
         for dash in LONG_DASHES:
             if dash in text:
@@ -1483,13 +1634,26 @@ def check_frame(source_path, rendered_path, shot, bake, index, receipt=None, bel
         add("verdict window drawn",
             count_colour(rendered, vrect, colours[ROLE_PLATE]) > 0.5 * (vrect[2] - vrect[0]) * (vrect[3] - vrect[1]),
             "%d window pixels at %r" % (count_colour(rendered, vrect, colours[ROLE_PLATE]), vrect))
-        naming = [line for line in verdict["lines"] if line["role"] == ROLE_LIVE]
-        model_text = naming[0]["source_text"] if naming else ""
-        add("the window names the bake's model as the credits print it",
-            bool(model_text) and model_text == verdict_model_name(bake["bake"])
-            and count_colour(rendered, naming[0]["box"], colours[ROLE_LIVE]) > 0,
-            "%r on the caption line, %d ink pixels"
-            % (model_text, count_colour(rendered, naming[0]["box"], colours[ROLE_LIVE])))
+        record = load_live_record()
+        if record is None:
+            naming = [line for line in verdict["lines"] if line["role"] == ROLE_LIVE]
+            model_text = naming[0]["source_text"] if naming else ""
+            add("the window names the bake's model as the credits print it",
+                bool(model_text) and model_text == verdict_model_name(bake["bake"])
+                and count_colour(rendered, naming[0]["box"], colours[ROLE_LIVE]) > 0,
+                "%r on the caption line, %d ink pixels"
+                % (model_text, count_colour(rendered, naming[0]["box"], colours[ROLE_LIVE])))
+        else:
+            # Judge panel 2026-11-17 fix 2: when the live record answers the window, the measurement is that the
+            # window's turn lines ARE the record's lines, one per turn, so a still cannot show a verdict the file
+            # does not hold.
+            turn_lines = [line for line in verdict["lines"] if line["source_text"].startswith("T")]
+            add("the window prints one line per turn the bridge answered",
+                len(turn_lines) == len(record["turns"]),
+                "%d turn lines for %d recorded turns" % (len(turn_lines), len(record["turns"])))
+            for row, line in zip(record["turns"], turn_lines):
+                add("turn %r's line is the bridge's own answer" % row.get("turn"),
+                    line["source_text"] == live_turn_line(row), "%r" % line["source_text"])
         line_ink = 0
         line_blank = 0
         for line in verdict["lines"]:
@@ -1513,9 +1677,10 @@ def check_frame(source_path, rendered_path, shot, bake, index, receipt=None, bel
                 "%s on the line %r, %s in the ledger"
                 % (receipt, carrying[0]["source_text"] if carrying else "",
                    "logged" if receipt in ledger else "NOT logged"))
-        add("the network line says what the bake's own flags say",
-            any(line["source_text"] == verdict_network_line(bake["bake"]) for line in verdict["lines"]),
-            verdict_network_line(bake["bake"]))
+        if record is None:
+            add("the network line says what the bake's own flags say",
+                any(line["source_text"] == verdict_network_line(bake["bake"]) for line in verdict["lines"]),
+                verdict_network_line(bake["bake"]))
         for hud_name, game_rect in battle_hud_rects():
             hud = scale_rect(game_rect)
             add("the verdict window clears %s" % hud_name, not intersects(verdict["rect"], hud),

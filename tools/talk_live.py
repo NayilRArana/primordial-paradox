@@ -74,6 +74,7 @@ STAGES = ("entry", "listen", "wait")
 # way pp_talk_live_answer_clean reads three fields and a label.
 ANSWER_FIELDS = ("verdict", "will_delta", "reply", "source", "mood", "latency_ms", "cached", "origin")
 VERDICTS = ("persuaded", "unmoved", "angered")
+EFFECTS = ("soften", "nudge", "none", "setback")
 
 
 def _path(rel, root=ROOT):
@@ -216,6 +217,12 @@ def answer_clean(doc, data, glyphs=None, miss=None):
     verdict = doc.get("verdict")
     if verdict not in VERDICTS:
         verdict = "unmoved"
+    # Judge panel 2026-11-17 fix 2: the bridge carries the effect it picked beside the verdict it maps to, because
+    # soften and nudge are one verdict. A legal effect is kept as it stands and anything else is derived from the
+    # verdict, which is what a recorded tape row looks like.
+    effect = doc.get("effect")
+    if effect not in EFFECTS:
+        effect = verdict_effect(verdict)
     reply = []
     for line in doc.get("reply") or []:
         if len(reply) >= 4:
@@ -238,6 +245,7 @@ def answer_clean(doc, data, glyphs=None, miss=None):
     return {
         "verdict": verdict,
         "will_delta": max(-20, min(20, int(doc["will_delta"]))),
+        "effect": effect,
         "mood": doc.get("mood") if doc.get("mood") in ("calm", "guarded", "rattled", "warm", "angry")
         else verdict_mood(verdict),
         "reply": reply,

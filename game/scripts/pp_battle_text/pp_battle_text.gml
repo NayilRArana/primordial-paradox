@@ -660,6 +660,35 @@ function pp_talk_judge_label() {
     return "";
 }
 
+/// The verdict word the box prints (judge panel 2026-11-17 fix 2): the effect the judgement picked, said plainly,
+/// and the meter it moved beside it. The word is the effect the fight already keeps in battle.talk_effect (soften,
+/// nudge, none, setback: spec 19 section 4's enum), so this line cannot name a verdict the turn did not take, and it
+/// is drawn on whichever door answered: a baked row's effect and the live bridge's effect are the same five words.
+/// The meter's name is data/talk_live.json's will.label and the three movement words are the same data rows
+/// pp_talk_judge_line reads, so nothing here types a label either. A word that does not fit the box's 28 columns, or
+/// that the font sheet cannot draw, returns "" and the box says nothing rather than a cut word.
+function pp_talk_effect_word(_effect) {
+    switch (_effect) {
+        case "soften":  return "SOFTEN";
+        case "nudge":   return "NUDGE";
+        case "setback": return "SETBACK";
+    }
+    return "NONE";
+}
+
+function pp_talk_verdict_line(_effect, _delta) {
+    var _word = pp_talk_effect_word(_effect);
+    var _d = pp_talk_live_data();
+    var _move = _d.judge_held;
+    var _n = 0;
+    if (_delta > 0) { _move = _d.judge_up; _n = _delta; }
+    else if (_delta < 0) { _move = _d.judge_down; _n = -_delta; }
+    var _line = _word + ". " + string(_d.will_label) + " " + string(_move) + " " + string(floor(_n));
+    if (string_length(_line) > _d.cols) return "";
+    if (!pp_talk_line_drawable(_line)) return "";
+    return _line;
+}
+
 /// The one line a judged turn adds under its reply (card t_bdb645a5): who weighed the words, and what the meter did.
 /// It is a row of the same reply board, so it types where the reply types and lives in the window the reply lives in,
 /// which is what "inside the NES text box" means for this screen. It carries no narration marker: the `* ` run is the
@@ -750,6 +779,11 @@ function pp_talk_step(_battle) {
     // did, on the row under the reply. A card pool reply adds nothing, because no model answered it and a label over
     // the pool would be a claim about a call this fight never made.
     if (_record.baked) {
+        // Judge panel 2026-11-17 fix 2: the effect the row records, said in the box, then the line that names who
+        // weighed the words. The verdict word goes first, so a 4 line board that has to drop one drops the label
+        // and never the verdict.
+        var _verdict_line = pp_talk_verdict_line(_record.effect, _battle.talk_delta);
+        if (_verdict_line != "") array_push(_record.lines, _verdict_line);
         var _judge = pp_talk_judge_line(_battle.talk_delta);
         if (_judge != "") array_push(_record.lines, _judge);
     }

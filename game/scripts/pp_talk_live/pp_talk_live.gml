@@ -21,7 +21,7 @@
 ///
 /// The protocol is tools/ai_bridge.py's, not ours to invent (knowledge\PROVENANCE.md, entry "the local AI bridge"):
 ///   POST /talk  {"encounter_id","npc","player_text","history":[{player_text,reply,verdict}],"will","mood"}
-///        answer {"verdict","will_delta","reply":[lines],"source","origin","mood","cached","latency_ms"}
+///        answer {"verdict","will_delta","effect","reply":["lines"],"source","origin","mood","cached","latency_ms"}
 ///   POST /hear  raw wav bytes -> {"transcript":"..."}
 /// source is printed on the debug line for every answer, because "the WILL bar moved" is not evidence until the run
 /// says WHERE the words came from (meta, open-weights, replay or fallback).
@@ -1088,6 +1088,9 @@ function pp_talk_live_answer(_battle, _doc, _via) {
     _battle.live_source = _answer.source;
     _battle.talk_mood = _answer.mood;
     _battle.talk_effect = pp_talk_live_verdict_effect(_answer.verdict);
+    if (variable_struct_exists(_answer, "effect") && pp_talk_live_effect_legal(_answer.effect)) {
+        _battle.talk_effect = _answer.effect;
+    }
     _battle.talk_delta = _battle.live_delta;
     _battle.talk_last_effect = _battle.talk_effect;
 
@@ -1114,6 +1117,11 @@ function pp_talk_live_answer(_battle, _doc, _via) {
     _battle.live_deferred_steps = 0;
     _battle.talk_reply = true;
     _battle.talk_hint = "";
+    // Judge panel 2026-11-17 fix 2: the answer's own effect word is a row of the same board, so the verdict the
+    // bridge returned is inside the NES text box and not only in the log. It goes before the label line, so a board
+    // that runs out of rows drops the label and keeps the verdict.
+    var _verdict_line = pp_talk_verdict_line(_battle.talk_effect, _battle.live_delta);
+    if (_verdict_line != "") array_push(_lines, _verdict_line);
     pp_input_text_end();
     // Card t_bdb645a5: an answer the Meta model gave says so on the row under the reply, the same line a baked row
     // adds, so the live door and the recorded door read alike on screen. The source word is the bridge's own, so a
@@ -1165,6 +1173,15 @@ function pp_talk_live_answer_clean(_doc) {
         _mood = _doc.mood;
     }
 
+    // Judge panel 2026-11-17 fix 2: the bridge answers with the effect it picked as well as the verdict it maps to,
+    // because two effects (soften and nudge) are one verdict (persuaded). The effect is read when the answer carries
+    // a legal one and derived from the verdict when it does not, which is what a recorded tape row and an older
+    // bridge answer look like, so a nudge is never reported as a soften.
+    var _effect = pp_talk_live_verdict_effect(_verdict);
+    if (variable_struct_exists(_doc, "effect") && is_string(_doc.effect) && pp_talk_live_effect_legal(_doc.effect)) {
+        _effect = _doc.effect;
+    }
+
     var _source = "unknown";
     if (variable_struct_exists(_doc, "source") && is_string(_doc.source)) _source = _doc.source;
 
@@ -1190,6 +1207,7 @@ function pp_talk_live_answer_clean(_doc) {
     return {
         will_delta: clamp(floor(_doc.will_delta), -20, 20),
         verdict: _verdict,
+        effect: _effect,
         mood: _mood,
         source: _source,
         reply: _reply
@@ -1197,6 +1215,18 @@ function pp_talk_live_answer_clean(_doc) {
 }
 
 function pp_talk_live_verdicts() { return ["persuaded", "unmoved", "angered"]; }
+
+/// The effect enum the bridge may answer with (spec 19 section 4), so an answer carrying a word outside it falls back
+/// to the verdict's own effect instead of printing something the talk director has no rule for.
+function pp_talk_live_effects() { return ["soften", "nudge", "none", "setback"]; }
+
+function pp_talk_live_effect_legal(_effect) {
+    var _set = pp_talk_live_effects();
+    for (var i = 0; i < array_length(_set); i++) {
+        if (_set[i] == _effect) return true;
+    }
+    return false;
+}
 
 function pp_talk_live_verdict_legal(_verdict) {
     var _set = pp_talk_live_verdicts();

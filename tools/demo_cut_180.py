@@ -251,7 +251,9 @@ OVERLAY_WINDOWS = (
 # says the shot draws its caption and its box and no plate until the re-bake in Q1 lands. Drawing nothing is the
 # honest state; a plate over a hand written line would not be. What the verdict window draws instead is the bake
 # header's own numbers, each with the id of the ledger record behind it, which is a receipt for the bake and not a
-# claim about any single reply, and the sentence that says those rows are fallback rather than a live answer.
+# claim about any single reply, and the sentence that says those rows are fallback rather than a live answer when no
+# live record exists (judge panel 2026-11-17 fix 2 added the record: output/demo/talk_live_s5.json, when present, gives
+# the window one line per turn instead of that sentence).
 RECEIPT_WINDOWS = (83.40, 91.00, 98.00)
 RECEIPT_ROWS = ("fight/morgan/1", "fight/morgan/2", "fight/morgan/3")
 RECEIPT_NOT_DRAWN = (
@@ -259,8 +261,12 @@ RECEIPT_NOT_DRAWN = (
     "data/meta_bake.json and tools/demo_overlay.py refuses a fallback row as a receipt "
     "(knowledge/DEMO-SCRIPT.md section 4, fallback 1 and Q1). The three receipts that ARE drawn on S5 are the "
     "bake header's own numbers, meta.model_calls, meta.live_rows and meta.live_share_pct, each under the id of the "
-    "ledger receipt that backs it (tools/receipts.py, data/receipts/meta_receipts.jsonl), and the window says in "
-    "words that the three Morgan rows are fallback rather than a live answer"
+    "ledger receipt that backs it (tools/receipts.py, data/receipts/meta_receipts.jsonl). When "
+    "output/demo/talk_live_s5.json is absent the window says in words that the three Morgan rows are fallback "
+    "rather than a live answer; when the record is present it prints, for each of the three turns, the effect "
+    "the bridge answered, the line the player said, and the rung and milliseconds it took, and beside any turn "
+    "the bridge answered differently it also names the effect the bake row moved (judge panel 2026-11-17 fix 2, "
+    "tools/talk_live_s5.py)"
 )
 
 SRC_1080_W, SRC_1080_H = 1024, 960     # the 4x picture inside the 1920x1080 master
@@ -766,6 +772,45 @@ def compose(work, picture, track, captions, plates, out, title_png=None, narrati
     return command
 
 
+def top_level_boxes(path, limit=12):
+    """The mp4 boxes at the head of a file, as (kind, offset, size), read from the box headers alone.
+
+    Card t_33648c51: the delivered cut has to open and play, not only measure. An mp4 whose index (moov) sits after
+    its picture (mdat) is a file a player reads to the end before it starts, and a file whose encoder was killed
+    before it finished has no index at all. Both are visible from the top level boxes, so this reads them.
+    """
+    boxes = []
+    total = os.path.getsize(path) if os.path.isfile(path) else 0
+    offset = 0
+    with open(path, "rb") as handle:
+        while offset + 8 <= total and len(boxes) < limit:
+            handle.seek(offset)
+            header = handle.read(16)
+            if len(header) < 8:
+                break
+            size = int.from_bytes(header[0:4], "big")
+            kind = header[4:8].decode("latin-1")
+            if size == 1:
+                if len(header) < 16:
+                    break
+                size = int.from_bytes(header[8:16], "big")
+            elif size == 0:
+                size = total - offset
+            if size < 8:
+                break
+            boxes.append((kind, offset, size))
+            offset += size
+    return boxes
+
+
+def index_at_head(path):
+    """True when the file's index comes before its first picture box, which is what compose() writes."""
+    kinds = [box[0] for box in top_level_boxes(path)]
+    if "moov" not in kinds or "mdat" not in kinds:
+        return False
+    return kinds.index("moov") < kinds.index("mdat")
+
+
 def measure(video):
     """Read the delivered file back and check every number the card asks for."""
     # ffprobe prints the requested fields in its own order, so the check reads the values, not the positions
@@ -781,7 +826,17 @@ def measure(video):
     checks.append(("stream", has_video and ("60/1" in streams),
                    "video described as %s" % streams))
     has_audio = "audio" in streams
-    checks.append(("audio", has_audio, "an audio stream is present" if has_audio else "no audio stream"))
+    audio = audio_stream(video)
+    checks.append(("audio", has_audio and audio.get("has_audio"),
+                   ("audio stream %s, %s Hz, %s channel(s) is present"
+                    % (audio.get("codec"), audio.get("sample_rate"), audio.get("channels")))
+                   if audio.get("has_audio") else "no audio stream in the delivered file"))
+    # Card t_33648c51: the index at the head is what makes the delivered file open and play from its first
+    # second instead of after a player has read all 17 MB of it.
+    at_head = index_at_head(video)
+    checks.append(("faststart", at_head,
+                   "the index is at the head of the file" if at_head
+                   else "the index is at the end of the file, so a player reads the whole file before it starts"))
     volume = loudness(video)
     checks.append(("not_silent", volume is not None and volume[0] > -50.0,
                    "mean volume %s dB" % (None if volume is None else volume[0])))
@@ -798,6 +853,27 @@ def loudness(video):
         if "max_volume:" in line:
             maximum = float(line.split("max_volume:")[1].strip().split()[0])
     return (mean, maximum)
+
+
+def audio_stream(video):
+    """The delivered file's audio stream, read back: present or not, with the codec, rate and channel count.
+
+    The judge panel reads `has_audio` off the verify file beside the video (tools/judge_panel.py, fix 3 of
+    JUDGE-PANEL 2026-11-17), so the file has to say it, and a film with no audio stream has to say false.
+    """
+    result = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "a:0",
+                             "-show_entries", "stream=codec_name,sample_rate,channels",
+                             "-of", "json", video], capture_output=True, text=True)
+    try:
+        streams = json.loads(result.stdout or "{}").get("streams") or []
+    except ValueError:
+        streams = []
+    if not streams:
+        return {"has_audio": False}
+    row = streams[0]
+    return {"has_audio": True, "codec": row.get("codec_name"),
+            "sample_rate": int(row["sample_rate"]) if row.get("sample_rate") else None,
+            "channels": row.get("channels")}
 
 
 def frame_stats(video, times):
@@ -1059,6 +1135,32 @@ def narration_checks(video, work, measured):
     return results
 
 
+def labelled_meta_numbers(ledger_path=None):
+    """Every Meta number a take prints, labelled and receipted by tools/receipts.py.
+
+    Card t_a4c5dd4f (judge panel 2026-11-17, fix 4): the panel read a take's verify file and found no
+    Meta number labelled, so the three story numbers, the bridge receipt count and the TALK turn counts
+    were all unlabelled. This is the one call the verify path makes to tools/receipts.py, and the rows it
+    returns are written into the verify file beside the video, so the file and the frame print the same
+    numbers under the same labels. `ledger_path` exists so a test can read the numbers without appending
+    to the committed ledger.
+    """
+    import receipts as receipts_tool
+    if ledger_path is None:
+        return receipts_tool.meta_numbers()
+    return receipts_tool.meta_numbers(ledger_path=ledger_path)
+
+
+def meta_numbers_check(rows):
+    """The verify row for the labelled numbers, and the three S5 counts named in its detail."""
+    detail = ("%d Meta numbers labelled, receipts logged; the three S5 counts: %s"
+              % (len(rows), ", ".join("%s %s (%s)" % (row["name"], row["value"], row["label"])
+                                      for row in rows
+                                      if row["name"] in ("meta.model_calls", "meta.live_rows",
+                                                         "meta.live_share_pct"))))
+    return ("meta_numbers", True, detail)
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description="the 180 second demo cut, assembled from the footage on disk")
     parser.add_argument("--plan", action="store_true", help="print the segment table, the captions and the provenance")
@@ -1128,12 +1230,25 @@ def main(argv=None):
             measured = demo_voiceover.check() if demo_voiceover is not None else []
             voice_rows = narration_checks(args.video, args.workdir, measured)
             checks.extend((item["name"], item["ok"], item["detail"]) for item in voice_rows)
+            # Card t_a4c5dd4f (judge panel 2026-11-17, fix 4): every Meta number this take prints is
+            # labelled measured, computed or inferred and carries its receipt id, and the block lands in
+            # the verify file beside the video the panel reads. tools/receipts.py is the one writer, so a
+            # take cannot be verified with an unlabelled number in it.
+            meta_rows = None
+            try:
+                meta_rows = labelled_meta_numbers()
+                checks.append(meta_numbers_check(meta_rows))
+            except Exception as error:  # receipts.ReceiptError, and any ledger fault it reports
+                checks.append(("meta_numbers", False, "no labelled Meta numbers: %s" % error))
             for name, ok, detail in checks:
                 print("%s  %s  %s" % ("PASS" if ok else "FAIL", name, detail))
             for row in samples:
                 print("INFO  t=%6.1f  one colour %5.2f of the picture  luma %5.1f  band ink %d"
                       % (row["t"], row["one_colour_share"], row["luma"], row["band_ink_pixels"]))
             report = {"video": args.video, "duration_s": duration, "streams": streams,
+                      "has_audio": bool(audio_stream(args.video).get("has_audio")),
+                      "audio": audio_stream(args.video),
+                      "ok": all(ok for _, ok, _ in checks),
                       "volume_db": volume, "picture": profile, "content": content,
                       "checks": [{"name": n, "ok": ok, "detail": d} for n, ok, d in checks],
                       "samples": samples,
@@ -1150,7 +1265,8 @@ def main(argv=None):
                           "rows": measured,
                           "measured": voice_rows,
                       },
-                      "segments": rows, "captions": captions}
+                      "segments": rows, "captions": captions,
+                      "meta_numbers": meta_rows or []}
             out = os.path.splitext(args.video)[0] + "_verify.json"
             with open(out, "w", encoding="utf-8") as handle:
                 json.dump(report, handle, indent=1)
