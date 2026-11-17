@@ -2051,12 +2051,30 @@ def main() -> int:
     args = parser.parse_args()
 
     errors = check(args.root)
+    # The 256x240 / 16 colour limit is measured by tools/check_nes_limits.py (judge panel 2026-11-17 fix 5,
+    # card t_1b404055) and reported in this gate's own output, because that output is the check log a judge
+    # reads. It is imported here and not at module level: this file's schema checker stays standard library
+    # only, so a tree with no Pillow still runs every schema, range and reference check above.
+    import check_nes_limits
+    try:
+        limits = check_nes_limits.measure(args.root)
+    except check_nes_limits.LimitError as error:
+        errors.append("nes limits: %s" % error)
+        limits = None
+    else:
+        errors.extend(limits["failures"])
+
     if errors:
         for line in errors:
             print("FAIL " + line)
         print("\n%d problem(s) in %d file(s)" % (len(errors), len({e.split(":")[0] for e in errors})))
         return 1
 
+    # The verdict the title card's PASS badge draws, printed here so the word on the card has a line in the
+    # log. It goes before the gate's own pass line on purpose: the last line stays the one the README and
+    # tools/readme_badges.py quote. `limits` is only None on a run that has already returned above.
+    if limits is not None:
+        print("check_data: nes limits %s" % check_nes_limits.verdict_line(limits))
     counted = len([name for name in os.listdir(os.path.join(args.root, "data")) if name.endswith(".json")])
     print("check_data: all files pass")
     return 0

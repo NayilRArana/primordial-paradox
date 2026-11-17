@@ -538,3 +538,16 @@ def test_a_consumable_that_lost_its_heal_is_still_refused(data_root, read_json, 
 
     errors = failures(data_root)
     assert any("heal" in e and "missing required field" in e for e in errors), errors
+
+
+def test_the_output_carries_the_nes_limits_verdict(monkeypatch, capsys):
+    """Judge panel 2026-11-17 fix 5 (card t_1b404055): the check log a judge reads carries the PASS the title
+    card's badge prints, and it sits above the gate's own pass line so the quoted last line does not move."""
+    import sys
+
+    monkeypatch.setattr(sys, "argv", ["check_data.py"])
+    assert check_data.main() == 0
+    lines = [line for line in capsys.readouterr().out.splitlines() if line.strip()]
+    assert lines, "check_data main printed nothing"
+    assert lines[-1] == "check_data: all files pass", "the gate's own last line moved: %r" % (lines[-1],)
+    assert any("nes limits PASS" in line and "256x240" in line and "limit 16" in line for line in lines), lines

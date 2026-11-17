@@ -14,6 +14,10 @@ What these tests hold down:
      refuses instead of clipping or shrinking the shared caption font.
   6. THE RENDERED FRAMES CARRY INK. The title card and each caption band, when rendered, hold white
      pixels, and the caption band never exceeds the band height.
+  7. THE PASS BADGE IS A MEASUREMENT. Beside the NES LIMITS line the card draws the verdict
+     tools/check_nes_limits.py measures on this tree, its box is to the right of that line and inside the
+     frame, its ink is on the rendered picture, and a failing check refuses the card instead of drawing
+     PASS over a build that breaks the limit (judge panel 2026-11-17 fix 5, card t_1b404055).
 
 Run: python -m pytest tests/test_video_builder.py -q
 """
@@ -22,6 +26,8 @@ from __future__ import annotations
 
 import importlib.util
 import os
+import shutil
+import subprocess
 
 import pytest
 
@@ -215,3 +221,71 @@ def test_title_card_accepts_an_attract_background(builder, tmp_path):
     assert top != (0, 0, 0), "the title card did not use the attract background"
     white = sum(1 for pixel in title.getdata() if pixel == (255, 255, 255))
     assert white > 0, "the title card over an attract frame drew no white text"
+
+
+def test_the_badge_is_the_measured_verdict_beside_the_nes_limits_line(builder):
+    """Fix 5 (card t_1b404055): the card states the limit and the badge states that the build was measured
+    against it. The numbers on the badge are tools/check_nes_limits.py's, read at draw time, never typed."""
+    import check_nes_limits
+
+    badge = builder.title_badge_box()
+    measured = check_nes_limits.measure(builder.ROOT)
+    assert badge["text"] == "PASS", badge
+    assert badge["colours"] == measured["colours"], "the badge prints a count the check did not measure"
+    assert badge["limit"] == check_nes_limits.COLOUR_LIMIT == 16
+    assert measured["pass"], measured["failures"]
+
+    line = next(item for item in builder._card_geometry()["lines"] if item["line"] == builder.NES_LIMITS_LINE)
+    x0, y0, x1, y1 = badge["box"]
+    assert x0 >= line["x"] + line["width"], "the badge does not sit to the right of the NES LIMITS line"
+    assert y0 < line["y"] + line["height"] and y1 > line["y"], "the badge is not on the NES LIMITS line's band"
+    assert x0 >= 0 and x1 <= builder.FRAME_W and y0 >= 0 and y1 <= builder.FRAME_H, badge["box"]
+
+
+def test_the_badge_ink_is_on_the_rendered_card(builder, tmp_path):
+    """A box in the layout is not a word on the picture: the badge's own rectangle is counted on the render."""
+    png = str(tmp_path / "overlay_badge.png")
+    builder.render_title_overlay(png)
+    picture = Image.open(png).convert("L")
+    ink = sum(1 for pixel in picture.crop(tuple(builder.title_badge_box()["box"])).getdata() if pixel >= 200)
+    assert ink >= 100, "the PASS badge drew %d white pixels in its box" % ink
+
+
+def test_a_failing_check_refuses_the_card(builder, monkeypatch, tmp_path):
+    """A card cannot print PASS over a build that breaks the limit: the builder refuses instead."""
+    import check_nes_limits
+
+    failing = {"pass": False, "failures": ["the title screen can show 17 colours, and the limit is 16"],
+               "frame": [256, 240], "colours": 17, "limit": 16, "colour_list": []}
+    monkeypatch.setattr(check_nes_limits, "measure", lambda root=None: failing)
+    builder._VERDICTS.clear()
+    try:
+        with pytest.raises(builder.BuilderError) as refused:
+            builder.render_title_overlay(str(tmp_path / "no_badge.png"))
+        assert "NES limits check fails" in str(refused.value)
+    finally:
+        builder._VERDICTS.clear()
+
+
+def test_the_badge_survives_the_encoder_on_a_delivered_frame(builder, tmp_path):
+    """A judge sees the badge on an mp4 frame, not on a render, so the card is encoded and the frame decoded.
+
+    Fix 5 (card t_1b404055) asks for the badge on the title card in S1, and S1 is a delivered h264 file. A
+    box in the layout proves nothing about that file, so the card is encoded at the cut's own size and the
+    ink is counted inside the badge's rectangle on the decoded frame at 1.0 s.
+    """
+    if not shutil.which("ffmpeg"):
+        pytest.skip("ffmpeg is not on PATH, so no frame can be encoded")
+    card = str(tmp_path / "card.png")
+    builder.render_title_card(card)
+    video = str(tmp_path / "card.mp4")
+    subprocess.run(["ffmpeg", "-y", "-v", "error", "-loop", "1", "-framerate", "60", "-t", "2",
+                    "-i", card, "-r", "60", "-c:v", "libx264", "-preset", "veryfast", "-crf", "18",
+                    "-pix_fmt", "yuv420p", video], check=True, stdin=subprocess.DEVNULL, timeout=180)
+    frame = str(tmp_path / "frame_1s.png")
+    subprocess.run(["ffmpeg", "-y", "-v", "error", "-ss", "1.0", "-i", video, "-frames:v", "1", frame],
+                   check=True, stdin=subprocess.DEVNULL, timeout=180)
+    picture = Image.open(frame).convert("L")
+    assert picture.size == (builder.FULL_W, builder.FULL_H), picture.size
+    ink = sum(1 for pixel in picture.crop(tuple(builder.title_badge_box()["box"])).getdata() if pixel >= 200)
+    assert ink >= 100, "the decoded frame carries %d white pixels in the badge's box" % ink

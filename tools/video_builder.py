@@ -14,6 +14,9 @@ What it draws, and where the words come from
     text box), the Meta model judge (muse-spark-1.3 for the TALK lines, muse-image-1.0 and sam-3.1 for the
     art and segmentation, read from tools/meta_client.py's DEFAULT_MODELS) and the NES hardware limits
     (one 256x240 screen, at most 16 colours on screen at once, no network call and no key in the build).
+    Beside the NES LIMITS line it draws the PASS badge: the verdict tools/check_nes_limits.py measures on
+    this tree at draw time, so the card carries a check and not an adjective (judge panel 2026-11-17 fix 5,
+    card t_1b404055).
     The model ids are read from tools/meta_client.py at draw time, never typed here, so a rename there
     cannot strand a wrong name here, and the S1 cold boot caption is read from knowledge/DEMO-SCRIPT.md.
     Captions: the six shot captions, verbatim, read out of knowledge/DEMO-SCRIPT.md by
@@ -60,6 +63,7 @@ sys.path.insert(0, TOOLS)
 from PIL import Image, ImageDraw, ImageFont  # noqa: E402
 
 import demo_overlay  # noqa: E402  (its shot_caption and palette reader)
+import check_nes_limits  # noqa: E402  (the measured 256x240 / 16 colour verdict the badge prints)
 
 FONT_PATH = os.path.join(ROOT, "assets", "fonts", "PressStart2P-Regular.ttf")
 META_CLIENT = os.path.join(TOOLS, "meta_client.py")
@@ -118,6 +122,18 @@ TITLE_MENU_INK = (255, 255, 255)
 TITLE_MENU_DIM_INK = (96, 96, 96)
 TITLE_CAPTION_SIZE = 11  # the band's own size is 12; inside the frame one point smaller keeps the caption inside its margin
 TITLE_SIDE = 24          # the margin the caption is wrapped into inside the frame
+# The PASS badge (judge panel 2026-11-17 fix 5, card t_1b404055). The NES LIMITS line states a limit; the badge
+# beside it states that the build was measured against it, by tools/check_nes_limits.py, at draw time. The badge is
+# drawn in the same ink as the words, in a box of the same weight as the boot menu's, so it reads as the card's own
+# label and not as a third party's sticker. It is 4 characters at 12 px (48 px) plus an 8 px pad, 56 px wide, and the
+# NES LIMITS line is 41 characters at 16 px (656 px), so the pair is 720 px and fits the 752 px the margins leave.
+NES_LIMITS_LINE = "NES LIMITS: 256x240, AT MOST 16 COLOURS"
+BADGE_TEXT = "PASS"
+BADGE_TEXT_SIZE = 12
+BADGE_PAD_X = 4
+BADGE_PAD_Y = 4
+BADGE_BORDER = 1
+BADGE_GAP = 8
 
 
 LONG_DASHES = ("\u2014", "\u2013", "\u2012", "\u2015")
@@ -166,7 +182,7 @@ def title_card_lines(models=None):
         "CONTROLS  ARROWS MOVE  Z CONFIRM",
         "X CANCEL  TAB START",
         "",
-        "NES LIMITS: 256x240, AT MOST 16 COLOURS",
+        NES_LIMITS_LINE,
         "NO NETWORK CALL, NO KEY IN THE BUILD",
     )
     for line in lines:
@@ -184,6 +200,32 @@ def title_menu_rows():
 def title_menu_dim_row():
     """The row the card marks off, because a cold boot has nothing saved: CONTINUE."""
     return TITLE_MENU_DIM_ROW
+
+
+_VERDICTS = {}
+
+
+def nes_limits_verdict(root=None):
+    """The measured 256x240 / 16 colour verdict the badge prints, read from tools/check_nes_limits.py.
+
+    The badge is a measurement, not a decoration (judge panel 2026-11-17 fix 5, card t_1b404055). The words
+    above it state the limit; this call proves the build holds it, on the tree the card is drawn from, at
+    draw time, and the same call fills the line tools/check_data.py prints. So a rename of a room size or an
+    extra colour in the title art changes the card and the check log together, and a card can never say PASS
+    over a build that breaks the limit: a failed or unmeasurable check refuses the card instead.
+    """
+    root = root or ROOT
+    if root not in _VERDICTS:
+        try:
+            _VERDICTS[root] = check_nes_limits.measure(root)
+        except check_nes_limits.LimitError as error:
+            raise BuilderError("the NES limits check cannot be measured, so the card cannot print its badge: %s"
+                               % error)
+    result = _VERDICTS[root]
+    if not result["pass"]:
+        raise BuilderError("the NES limits check fails (%s), so the card cannot print a PASS badge"
+                           % "; ".join(result["failures"]))
+    return result
 
 
 
@@ -268,6 +310,29 @@ def _card_geometry():
                      "width": width, "height": size})
         y += size + TITLE_LINE_AFTER
 
+    # The PASS badge sits at the end of the NES LIMITS line, and the line moves left with it so the pair is
+    # centred as one group. A badge dropped into the right margin would read as an aside, and at 56 px wide it
+    # would not fit beside a centred 656 px line: the measured verdict belongs to that sentence, so it is
+    # drawn as part of it.
+    verdict = nes_limits_verdict()
+    badge_font = _font(BADGE_TEXT_SIZE)
+    badge_w = int(badge_font.getlength(BADGE_TEXT)) + 2 * BADGE_PAD_X
+    badge_h = BADGE_TEXT_SIZE + 2 * BADGE_PAD_Y
+    badge = None
+    for item in text:
+        if item["line"] != NES_LIMITS_LINE:
+            continue
+        group = item["width"] + BADGE_GAP + badge_w
+        if group > usable_w:
+            raise BuilderError("the NES LIMITS line and its badge are %d px wide and the frame holds %d"
+                               % (group, usable_w))
+        item["x"] = (FRAME_W - group) / 2
+        badge = {"text": BADGE_TEXT, "x": item["x"] + item["width"] + BADGE_GAP,
+                 "y": item["y"] + (item["height"] - badge_h) / 2, "width": badge_w, "height": badge_h,
+                 "colours": verdict["colours"], "limit": verdict["limit"]}
+    if badge is None:
+        raise BuilderError("the card draws no %r line, so the badge has nothing to sit beside" % NES_LIMITS_LINE)
+
     y += TITLE_BLOCK_GAP
     menu_x = (FRAME_W - TITLE_MENU_BOX_W) / 2
     menu = {"box": [menu_x, y, menu_x + TITLE_MENU_BOX_W, y + menu_h], "rows": []}
@@ -285,7 +350,7 @@ def _card_geometry():
         caption.append({"line": line, "x": (FRAME_W - width) / 2, "y": y,
                         "width": width, "height": TITLE_CAPTION_SIZE})
         y += TITLE_CAPTION_SIZE + LINE_GAP
-    return {"lines": text, "menu": menu, "caption": caption, "height": total}
+    return {"lines": text, "menu": menu, "caption": caption, "badge": badge, "height": total}
 
 
 def _overlay_layout():
@@ -326,11 +391,28 @@ def title_menu_boxes():
             for row in _card_geometry()["menu"]["rows"]]
 
 
+def title_badge_box():
+    """The PASS badge's pixel rectangle and its words, so a frame test can count its ink on a delivered frame.
+
+    The badge is the one thing on the card that a judge is told to look for by word alone (fix 5: "the same
+    PASS in the repo check log"), so the cut's verify counts the white ink inside this rectangle rather than
+    trusting the render.
+    """
+    badge = _card_geometry()["badge"]
+    return {"text": badge["text"], "box": _box_of(badge),
+            "colours": badge["colours"], "limit": badge["limit"]}
+
+
 def _draw_card(draw, ink, dim_ink):
     """Draw the words, the boot menu box and the caption in the given inks. No background: the caller owns it."""
     geometry = _card_geometry()
     for item in geometry["lines"]:
         draw.text((item["x"], item["y"]), item["line"], font=_font(item["size"]), fill=ink)
+    badge = geometry["badge"]
+    badge_box = [badge["x"], badge["y"], badge["x"] + badge["width"] - 1, badge["y"] + badge["height"] - 1]
+    draw.rectangle(badge_box, outline=ink, width=BADGE_BORDER)
+    draw.text((badge["x"] + BADGE_PAD_X, badge["y"] + BADGE_PAD_Y), badge["text"],
+              font=_font(BADGE_TEXT_SIZE), fill=ink)
     box = geometry["menu"]["box"]
     draw.rectangle([box[0], box[1], box[2], box[3]], outline=ink, width=2)
     for row in geometry["menu"]["rows"]:
@@ -352,7 +434,8 @@ def render_title_overlay(path):
     2026-10-26 attract, which the 2026-11-16 panel saw at 15.0 s as blue bands with one caption and no
     readable word. At alpha 255 nothing of that picture reaches the frame, so the opening is the title, the
     controls, the boot menu with CONTINUE dim, and the cold boot caption, all drawn by title_card_lines() and
-    cold_boot_caption(): the judge's model id still comes from meta_client.py at draw time.
+    cold_boot_caption(): the judge's model id still comes from meta_client.py at draw time, and the PASS
+    badge beside the NES LIMITS line from tools/check_nes_limits.py.
     """
     image = Image.new("RGBA", (FRAME_W, FRAME_H), (0, 0, 0, TITLE_OVERLAY_ALPHA))
     draw = ImageDraw.Draw(image)
@@ -575,6 +658,7 @@ def main(argv=None):
             "title_card": list(title_card_lines(models)),
             "title_card_clock": card.get("clock"),
             "title_card_seconds": card.get("seconds"),
+            "nes_limits_badge": title_badge_box(),
             "font": FONT_PATH,
             "frame": [FULL_W, FULL_H],
             "band_height": BAND_H,
