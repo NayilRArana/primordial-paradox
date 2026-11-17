@@ -3003,6 +3003,24 @@
     },
     {
       "$GMIncludedFile": "",
+      "%Name": "pp_06_percy_possessed_v6.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "pp_06_percy_possessed_v6.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "pp_06_percy_possessed_v7.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "pp_06_percy_possessed_v7.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
       "%Name": "pp_15a_credits_kill.ogg",
       "CopyToMask": -1,
       "filePath": "datafiles/streams",
@@ -3061,6 +3079,15 @@
       "CopyToMask": -1,
       "filePath": "datafiles/streams",
       "name": "pp_15b_credits_spare_v4.ogg",
+      "resourceType": "GMIncludedFile",
+      "resourceVersion": "2.0"
+    },
+    {
+      "$GMIncludedFile": "",
+      "%Name": "pp_15b_credits_spare_v5.ogg",
+      "CopyToMask": -1,
+      "filePath": "datafiles/streams",
+      "name": "pp_15b_credits_spare_v5.ogg",
       "resourceType": "GMIncludedFile",
       "resourceVersion": "2.0"
     },

@@ -1,0 +1,56 @@
+{
+  "after": {
+    "heard_gate_exit": 0,
+    "heard_hook": 100,
+    "heard_notes": 194,
+    "heard_weakest": "motif coverage"
+  },
+  "before": {
+    "heard_hook": 96,
+    "heard_weakest": "steps over leaps",
+    "plain": 100,
+    "take": "pp_15b_credits_spare_v4"
+  },
+  "cue": "PP-15b Mercy",
+  "delivered": {
+    "integrated_lufs": "-14.56",
+    "master_bytes": 5120082,
+    "mp3_bytes": 748268,
+    "ogg_bytes": 735348,
+    "true_peak_dbtp": "-0.23"
+  },
+  "heard_midi": "pp_15b_credits_spare_v5_humanized.mid",
+  "heard_sha256": "e6cb387c4d92f51b2fe82fcb05281c4428293d8b07986388a36bfed72f13d07a",
+  "humanize_candidates": [
+    {
+      "label": "second",
+      "notes": 194,
+      "score": 100,
+      "weakest": "motif coverage"
+    },
+    {
+      "label": "none",
+      "notes": 191,
+      "score": 100,
+      "weakest": "motif coverage"
+    },
+    {
+      "label": "default",
+      "notes": 194,
+      "score": 96,
+      "weakest": "steps over leaps"
+    }
+  ],
+  "loop": {
+    "bpm": 143.9999,
+    "loop_bars": 32,
+    "seam_sample_difference_first_second": null
+  },
+  "repair": {
+    "accepted": null,
+    "applied": false,
+    "trials": 0
+  },
+  "score_midi": "pp_15b_credits_spare_v5.mid",
+  "score_sha256": "d679ebc8df3af541276734a08eff29def720c05e9afbc363f3cfefbde229b9c9"
+}

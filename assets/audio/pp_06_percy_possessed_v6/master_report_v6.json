@@ -1,0 +1,22 @@
+{
+  "final": {
+    "gain_db": 3.1,
+    "lufs": -14.11,
+    "tp": -1.52
+  },
+  "history": [
+    {
+      "gain_db": 2.5,
+      "lufs": -14.6,
+      "tp": -1.59
+    },
+    {
+      "gain_db": 3.1,
+      "lufs": -14.11,
+      "tp": -1.52
+    }
+  ],
+  "master_bytes": 3686478,
+  "mp3_bytes": 505052,
+  "ogg_bytes": 504694
+}

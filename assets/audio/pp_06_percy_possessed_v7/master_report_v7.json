@@ -1,0 +1,42 @@
+{
+ "slug": "pp_06_percy_possessed_v7",
+ "source": "<repo>\\assets\\audio\\pp_06_percy_possessed_v7\\pp_06_percy_possessed_v7.wav",
+ "master": "<repo>\\assets\\audio\\pp_06_percy_possessed_v7\\pp_06_percy_possessed_v7_master.wav",
+ "ogg": "<repo>\\assets\\audio\\pp_06_percy_possessed_v7\\pp_06_percy_possessed_v7.ogg",
+ "mp3": "<repo>\\assets\\audio\\pp_06_percy_possessed_v7\\pp_06_percy_possessed_v7.mp3",
+ "chosen": {
+  "gain_db": 2.64,
+  "limit_db": -2.2,
+  "lufs": -14.27,
+  "tp": -1.21,
+  "lra": 0.4
+ },
+ "passes": [
+  {
+   "gain_db": 2.64,
+   "limit_db": -1.0,
+   "lufs": -14.1,
+   "tp": 0.16,
+   "lra": 0.6
+  },
+  {
+   "gain_db": 2.64,
+   "limit_db": -1.6,
+   "lufs": -14.17,
+   "tp": -0.44,
+   "lra": 0.5
+  },
+  {
+   "gain_db": 2.64,
+   "limit_db": -2.2,
+   "lufs": -14.27,
+   "tp": -1.21,
+   "lra": 0.4
+  }
+ ],
+ "final": {
+  "lufs": -14.27,
+  "tp": -1.21,
+  "lra": 0.4
+ }
+}

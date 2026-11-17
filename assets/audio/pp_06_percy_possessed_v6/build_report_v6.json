@@ -1,0 +1,131 @@
+{
+ "hook_plain": [
+  "hook_score: <repo>\\assets\\audio\\pp_06_percy_possessed_v6\\pp_06_percy_possessed_v6.mid",
+  "melody track 'vrc6 pulse a', 32 bars, 156 notes, score 100 / 100",
+  "weakest: motif coverage (20.0 of 20): 74% of 156 notes inside the motif"
+ ],
+ "humanize_rc": 0,
+ "humanize": {
+  "bpm": 150.0,
+  "breaths": 16,
+  "bytes_in": 9862,
+  "bytes_out": 15819,
+  "changed_fraction": 0.4454,
+  "division": 480,
+  "envelope_points": 1224,
+  "fills": 8,
+  "floor_misses": 1,
+  "grace_notes": 1,
+  "loop_period_bars": 8,
+  "midi_in": "<repo>\\assets\\audio\\pp_06_percy_possessed_v6\\pp_06_percy_possessed_v6.mid",
+  "midi_out": "<repo>\\assets\\audio\\pp_06_percy_possessed_v6\\pp_06_percy_possessed_v6_humanized.mid",
+  "mordents": 1,
+  "motif": {
+   "bars": 2,
+   "returns": 12,
+   "start_bar": 1,
+   "third_return_bar": 5
+  },
+  "notes": 1080,
+  "notes_by_track": {
+   "conductor": {
+    "changed": 0,
+    "floor_misses": 0,
+    "notes": 0,
+    "role": "other"
+   },
+   "dpcm": {
+    "changed": 0,
+    "floor_misses": 0,
+    "notes": 132,
+    "role": "kick"
+   },
+   "noise": {
+    "changed": 0,
+    "floor_misses": 0,
+    "notes": 384,
+    "role": "drums"
+   },
+   "pulse 1": {
+    "changed": 187,
+    "floor_misses": 0,
+    "notes": 187,
+    "role": "arpeggio"
+   },
+   "pulse 2": {
+    "changed": 15,
+    "floor_misses": 0,
+    "notes": 15,
+    "role": "echo"
+   },
+   "triangle": {
+    "changed": 76,
+    "floor_misses": 0,
+    "notes": 94,
+    "role": "bass"
+   },
+   "vrc6 pulse a": {
+    "changed": 108,
+    "floor_misses": 1,
+    "notes": 159,
+    "role": "melody"
+   },
+   "vrc6 pulse b": {
+    "changed": 69,
+    "floor_misses": 0,
+    "notes": 80,
+    "role": "counter"
+   },
+   "vrc6 saw": {
+    "changed": 26,
+    "floor_misses": 0,
+    "notes": 32,
+    "role": "pad"
+   }
+  },
+  "notes_changed": 481,
+  "notes_in": 1080,
+  "notes_out": 1091,
+  "onset_frames": 1.0,
+  "onset_shifts": 429,
+  "ornament_notes": [
+   [
+    5760,
+    71
+   ],
+   [
+    6180,
+    69
+   ],
+   [
+    6240,
+    71
+   ],
+   [
+    6300,
+    72
+   ],
+   [
+    6360,
+    71
+   ]
+  ],
+  "section_bars": [
+   8,
+   16,
+   24,
+   32
+  ],
+  "seed": 20261021,
+  "sha256_in": "29d18bafe1be45d27a42637359eade31a1e96dbad36465bd5585e0a4175da4bd",
+  "sha256_out": "878ecdac259034701afc5880c7b9d99efc367e5e2bb96af684ad0a0db42a5ed3",
+  "tempo_us": 400000,
+  "ticks_per_frame": 20.0,
+  "vibrato_notes": 1
+ },
+ "hook_heard": [
+  "hook_score: <repo>\\assets\\audio\\pp_06_percy_possessed_v6\\pp_06_percy_possessed_v6_humanized.mid",
+  "melody track 'vrc6 pulse a', 32 bars, 159 notes, score 100 / 100",
+  "weakest: motif coverage (20.0 of 20): 70% of 159 notes inside the motif"
+ ]
+}

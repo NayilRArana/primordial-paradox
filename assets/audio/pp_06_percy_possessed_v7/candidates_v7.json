@@ -1,0 +1,42 @@
+{
+ "source": "<repo>\\assets\\audio\\pp_06_percy_possessed_v6\\pp_06_percy_possessed_v6.mid",
+ "chosen": "_cand_open",
+ "candidates": {
+  "_cand_open": {
+   "path": "<repo>\\assets\\audio\\pp_06_percy_possessed_v7\\_cand_open.mid",
+   "score": 97,
+   "bars": 48,
+   "weakest": {
+    "criterion": "loop length",
+    "key": "loop_length",
+    "fraction": 0.5,
+    "points": 3.0,
+    "of": 6
+   }
+  },
+  "_cand_second": {
+   "path": "<repo>\\assets\\audio\\pp_06_percy_possessed_v7\\_cand_second.mid",
+   "score": 97,
+   "bars": 64,
+   "weakest": {
+    "criterion": "loop length",
+    "key": "loop_length",
+    "fraction": 0.5,
+    "points": 3.0,
+    "of": 6
+   }
+  },
+  "_cand_varied": {
+   "path": "<repo>\\assets\\audio\\pp_06_percy_possessed_v7\\_cand_varied.mid",
+   "score": 93,
+   "bars": 48,
+   "weakest": {
+    "criterion": "motif coverage",
+    "key": "motif_coverage",
+    "fraction": 0.8192,
+    "points": 16.38,
+    "of": 20
+   }
+  }
+ }
+}
