@@ -332,6 +332,35 @@ def source_frames(path):
     return None
 
 
+# The shots whose sources each have to resolve their own event log (card t_b24aa225). Fix 3 of the judge panel
+# asks for the game's own text blips and battle stingers under the quay, Morgan and Percy scenes, which is S4 to
+# S6. S1 to S3 are not exempt by accident: S1's row is the drawn title card's clock and S3 is the shot
+# tools/demo_music_bed.py measures as its own quiet control (EVENT_ABSENT_CONTROL), so neither is scored with
+# blips. A source with no log is not a build error, it is a silent hole in the audio layers, so it is measured
+# here rather than left to whoever notices the mix is thin.
+LOGGED_SHOTS = ("S4", "S5", "S6")
+
+
+def event_log_beside(source):
+    """The recorder's log beside a capture, or None when that capture kept none.
+
+    The rule is the reader's own (tools/demo_music_bed.py, `event_log_for`): same folder, named for the capture,
+    with the recorder's `raw_` prefix stripped, so `raw_story_good.mkv` reads `story_good.events.json`. A clip
+    cut from a run follows the same rule and needs its own log beside it, which
+    tools/demo_clip_event_log.py writes out of that run's log in the clip's clock.
+    """
+    folder = os.path.dirname(os.path.join(ROOT, source))
+    stem = os.path.splitext(os.path.basename(source))[0]
+    names = [stem + ".events.json"]
+    if stem.startswith("raw_"):
+        names.append(stem[len("raw_"):] + ".events.json")
+    for name in names:
+        path = os.path.join(folder, name)
+        if os.path.exists(path):
+            return os.path.relpath(path, ROOT)
+    return None
+
+
 def check_sources(cold_boot=None):
     """Every source exists, is long enough for its segment, and carries what the row asks for.
 
@@ -1229,6 +1258,19 @@ def main(argv=None):
                            "black runs %s, one colour runs %s, unexplained %s"
                            % (profile["black_runs"], profile["one_colour_runs"], profile["unexplained"])))
             checks.extend((item["name"], item["ok"], item["detail"]) for item in content)
+            # Card t_b24aa225: a source this cut reads with no event log is a hole the audio layers cannot fill,
+            # and it is invisible from the delivered file (the mix is thinner, not wrong). Every S4 to S6 source
+            # has to resolve one, by the reader's own naming rule.
+            log_rows = [{"shot": row["shot"], "source": row["source"], "log": event_log_beside(row["source"])}
+                        for row in rows if row["shot"] in LOGGED_SHOTS]
+            blind = sorted({row["source"] for row in log_rows if row["log"] is None})
+            checks.append(("capture_logs", not blind,
+                           ("every S4 to S6 source resolves its own event log: %s"
+                            % ", ".join("%s -> %s" % (os.path.basename(row["source"]), os.path.basename(row["log"]))
+                                        for row in log_rows))
+                           if not blind else
+                           ("these S4 to S6 sources keep no event log, so the game's own text blips and battle"
+                            " stingers have no clock in them: %s" % ", ".join(blind))))
             card_rows = title_card_checks(args.video, args.workdir)
             checks.extend((item["name"], item["ok"], item["detail"]) for item in card_rows)
             measured = demo_voiceover.check() if demo_voiceover is not None else []
@@ -1253,7 +1295,7 @@ def main(argv=None):
                       "has_audio": bool(audio_stream(args.video).get("has_audio")),
                       "audio": audio_stream(args.video),
                       "ok": all(ok for _, ok, _ in checks),
-                      "volume_db": volume, "picture": profile, "content": content,
+                      "volume_db": volume, "picture": profile, "content": content, "capture_logs": log_rows,
                       "checks": [{"name": n, "ok": ok, "detail": d} for n, ok, d in checks],
                       "samples": samples,
                       "provenance": {shot: {"kind": kind, "why": why} for shot, (kind, why) in provenance().items()},
