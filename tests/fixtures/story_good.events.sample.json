@@ -1,0 +1,51 @@
+{
+ "name": "story_good",
+ "note": "An excerpt of output/demo_2026-11-04/story_good.events.json, lines copied byte for byte so the event reader can be tested in a tree that does not hold the capture. Six kinds of line are kept: a streaming line, a loaded line, a played cue the cut does not carry, a title line that is not audio, the loaded half of the stinger, and the played lines the mix reads.",
+ "events": [
+  [
+   -7.78,
+   "PP audio: title_theme streaming streams/title_theme_v3_126.ogg, instance 400001, gain 0.70"
+  ],
+  [
+   -7.78,
+   "PP audio: car_engine_loop loaded car_engine_loop.wav (0.80 s, 44100 Hz, buffer ref buffer 2)"
+  ],
+  [
+   -7.78,
+   "PP audio: car_engine_loop played, instance 400002"
+  ],
+  [
+   -7.78,
+   "PP title: room rm_pp_title live, screen owned by obj_pp_title"
+  ],
+  [
+   8.9,
+   "PP audio: text_blip_a played, instance 400035"
+  ],
+  [
+   8.97,
+   "PP audio: text_blip_a played, instance 400036"
+  ],
+  [
+   9.06,
+   "PP audio: text_blip_a played, instance 400037"
+  ],
+  [
+   22.7,
+   "PP audio: encounter_swoosh loaded encounter_swoosh.wav (0.70 s, 44100 Hz, buffer ref buffer 6)"
+  ],
+  [
+   22.7,
+   "PP audio: encounter_swoosh played, instance 400089"
+  ],
+  [
+   101.66,
+   "PP audio: text_blip_c played, instance 400235"
+  ]
+ ],
+ "audio_fmt": [
+  44100,
+  2
+ ],
+ "peak": 29968
+}
