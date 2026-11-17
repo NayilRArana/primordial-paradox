@@ -228,25 +228,6 @@ def same(disk, body):
     return disk.get("derived") == body.get("derived")
 
 
-def audit(module, folder, sources):
-    """Which of a cut's sources resolve an event log, for the cut's own verify row.
-
-    The rule is the reader's own (tools/demo_music_bed.py, `event_log_for`): the log sits beside the capture
-    and is named for it, with the recorder's `raw_` prefix stripped. A source with no log is not an error in
-    itself, so this returns the rows and lets the caller decide which shots must have one.
-    """
-    rows = []
-    for source in sources:
-        folder_of = os.path.dirname(os.path.join(ROOT, source))
-        stem = os.path.splitext(os.path.basename(source))[0]
-        names = [stem + ".events.json"]
-        if stem.startswith("raw_"):
-            names.append(stem[len("raw_"):] + ".events.json")
-        found = next((os.path.join(folder_of, n) for n in names if os.path.exists(os.path.join(folder_of, n))), None)
-        rows.append({"source": source, "log": None if found is None else os.path.relpath(found, ROOT)})
-    return rows
-
-
 def main(argv=None):
     parser = argparse.ArgumentParser(description="give a cut clip the event log of the run it was cut from")
     parser.add_argument("--clip", help="the clip's name in the recorder's table, e.g. morgan_talk")

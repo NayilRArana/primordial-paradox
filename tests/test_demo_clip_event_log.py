@@ -160,3 +160,25 @@ def test_the_delivered_s5_log_matches_the_clip_and_its_run():
     assert all(item[1].startswith("PP") for item in body["events"]), "the recorder's lines, moved, not rewritten"
     # The clip's clock, not the run's: no row is stamped past the clip's own length.
     assert stamps[-1] < body["derived"]["clip_seconds"]
+
+
+def test_the_cut_and_the_events_layer_resolve_a_source_s_log_by_the_same_rule(tmp_path):
+    """Two readers, one rule: the cut's verify row must fail wherever the events layer would find nothing.
+
+    The cut keeps its own copy of the naming rule (tools/demo_cut_180.py, `event_log_beside`) rather than
+    importing the musician lane's mixing tool into a picture gate, so the two are pinned against each other
+    here: same folder, named for the capture, `raw_` stripped, and nothing else.
+    """
+    import demo_cut_180 as cut
+
+    folder = tmp_path / "demo_2026-11-04"
+    folder.mkdir()
+    (folder / "story_good.events.json").write_text("{}", encoding="utf-8")
+    (folder / "morgan_talk.events.json").write_text("{}", encoding="utf-8")
+    for source in ("raw_story_good.mkv", "story_good.mkv", "morgan_talk.mp4", "quay.mp4", "doors.mp4"):
+        (folder / source).write_bytes(b"")
+        mine = clip_log.os.path.basename(cut.event_log_beside(str(folder / source)) or "")
+        theirs = clip_log.os.path.basename(bed.event_log_for(str(folder / source)) or "")
+        assert mine == theirs, source
+    assert cut.event_log_beside(str(folder / "quay.mp4")) is None, "a capture with no log resolves to nothing"
+    assert cut.LOGGED_SHOTS == ("S4", "S5", "S6")

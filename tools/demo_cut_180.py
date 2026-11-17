@@ -357,7 +357,11 @@ def event_log_beside(source):
     for name in names:
         path = os.path.join(folder, name)
         if os.path.exists(path):
-            return os.path.relpath(path, ROOT)
+            try:
+                return os.path.relpath(path, ROOT)
+            except ValueError:
+                # A capture on another drive has no path relative to the repo; the verify file names it whole.
+                return os.path.abspath(path)
     return None
 
 
