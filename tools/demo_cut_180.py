@@ -292,7 +292,10 @@ class CutError(Exception):
 
 
 def run(args, what):
-    result = subprocess.run(args, capture_output=True, text=True)
+    # Card t_33648c51: stdin is DEFINED, never inherited. On this host a parent whose own stdin handle is invalid
+    # (the commit gate's test runner is one, and a service or a cron worker can be another) makes the spawn itself
+    # raise OSError [WinError 6] before ffmpeg runs at all, which read as a test failure and not as a tool defect.
+    result = subprocess.run(args, capture_output=True, text=True, stdin=subprocess.DEVNULL)
     if result.returncode != 0:
         raise CutError("%s failed: %s" % (what, result.stderr.strip()[-800:]))
     return result
@@ -845,7 +848,8 @@ def measure(video):
 
 def loudness(video):
     result = subprocess.run(["ffmpeg", "-hide_banner", "-nostats", "-i", video, "-map", "0:a:0",
-                             "-af", "volumedetect", "-f", "null", "-"], capture_output=True, text=True)
+                             "-af", "volumedetect", "-f", "null", "-"], capture_output=True, text=True,
+                            stdin=subprocess.DEVNULL)
     mean = maximum = None
     for line in result.stderr.splitlines():
         if "mean_volume:" in line:
@@ -863,7 +867,7 @@ def audio_stream(video):
     """
     result = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "a:0",
                              "-show_entries", "stream=codec_name,sample_rate,channels",
-                             "-of", "json", video], capture_output=True, text=True)
+                             "-of", "json", video], capture_output=True, text=True, stdin=subprocess.DEVNULL)
     try:
         streams = json.loads(result.stdout or "{}").get("streams") or []
     except ValueError:
@@ -1033,7 +1037,7 @@ def mean_volume(path, start, seconds, gain=None):
     chain = "volumedetect" if gain is None else "volume=%.4f,volumedetect" % gain
     result = subprocess.run(["ffmpeg", "-hide_banner", "-nostats", "-ss", "%.3f" % start,
                              "-t", "%.3f" % seconds, "-i", path, "-vn", "-af", chain,
-                             "-f", "null", "-"], capture_output=True, text=True)
+                             "-f", "null", "-"], capture_output=True, text=True, stdin=subprocess.DEVNULL)
     for line in result.stderr.splitlines():
         if "mean_volume:" in line:
             return float(line.split("mean_volume:")[1].strip().split()[0])

@@ -273,3 +273,22 @@ def test_the_replay_stops_when_the_recorder_bound_is_spent_and_says_which_stop_i
     plain.run(120, should_stop=lambda: True)
     assert plain.trace[-1]["id"] == "pollution-stop"
 
+
+# ---------------------------------------------------------------------------------------------------------------------
+# 8: the cut's own verifier asks the same question of the delivered file
+
+@pytest.mark.windows_only
+def test_the_cut_verifier_reports_the_index_at_the_head(demo, ffmpeg, tmp_path):
+    """tools/demo_cut_180.py's measure() carries the row, and the file it reads is a real one.
+
+    The delivered cut is where a judge's player lands, so the question is asked of that tool too and not only of the
+    export: a file whose index sits at the end is a file the viewer waits on.
+    """
+    cut = load_tool("demo_cut_180")
+    faststart = str(tmp_path / "faststart.mp4")
+    record(demo, ffmpeg, faststart, seconds=1.0, movflags="+faststart")
+    checks = {name: passed for name, passed, _detail in cut.measure(faststart)[0]}
+    assert checks["faststart"] is True, "the cut's verifier did not report the index at the head"
+    assert cut.index_at_head(faststart) is True
+    assert cut.index_at_head(record(demo, ffmpeg, str(tmp_path / "plain.mp4"), seconds=1.0)) is False
+
