@@ -1,0 +1,161 @@
+{
+  "bars": 32,
+  "criteria": [
+    {
+      "criterion": "steps over leaps",
+      "fraction": 0.7692,
+      "ideal": "at least 65% steps",
+      "key": "step_ratio",
+      "measured": "50% steps (2 of 4 intervals), 1 leaps",
+      "pass": false,
+      "points": 9.23,
+      "suggestion": "the motif jumps too much (50% steps); turn leaps into steps and keep the one big jump for the phrase peak",
+      "weight": 12
+    },
+    {
+      "criterion": "motif coverage",
+      "fraction": 1.0,
+      "ideal": "at least 60%",
+      "key": "motif_coverage",
+      "measured": "66% of 53 notes inside the motif",
+      "pass": true,
+      "points": 20.0,
+      "suggestion": "",
+      "weight": 20
+    },
+    {
+      "criterion": "motif returns",
+      "fraction": 1.0,
+      "ideal": "at least 3",
+      "key": "motif_returns",
+      "measured": "7 returns",
+      "pass": true,
+      "points": 12.0,
+      "suggestion": "",
+      "weight": 12
+    },
+    {
+      "criterion": "hook cell",
+      "fraction": 1.0,
+      "ideal": "2 to 6 notes with a repeated rhythm cell",
+      "key": "hook_cell",
+      "measured": "6 notes, rhythm 2/2/2/4/4/2 repeated 3 times",
+      "pass": true,
+      "points": 10.0,
+      "suggestion": "",
+      "weight": 10
+    },
+    {
+      "criterion": "leaps per motif",
+      "fraction": 1.0,
+      "ideal": "exactly 1",
+      "key": "leaps_per_motif",
+      "measured": "1 leaps",
+      "pass": true,
+      "points": 8.0,
+      "suggestion": "",
+      "weight": 8
+    },
+    {
+      "criterion": "contour",
+      "fraction": 1.0,
+      "ideal": "every return arch or pedal",
+      "key": "contour",
+      "measured": "7 of 7 returns are arch or pedal (arch arch arch arch arch arch arch)",
+      "pass": true,
+      "points": 10.0,
+      "suggestion": "",
+      "weight": 10
+    },
+    {
+      "criterion": "variation on the third return",
+      "fraction": 1.0,
+      "ideal": "30 to 85% the same",
+      "key": "third_return",
+      "measured": "80% the same as the first return",
+      "pass": true,
+      "points": 8.0,
+      "suggestion": "",
+      "weight": 8
+    },
+    {
+      "criterion": "range",
+      "fraction": 1.0,
+      "ideal": "at most 18 semitones",
+      "key": "range",
+      "measured": "9 semitones (68 to 77)",
+      "pass": true,
+      "points": 8.0,
+      "suggestion": "",
+      "weight": 8
+    },
+    {
+      "criterion": "repeated pitch",
+      "fraction": 1.0,
+      "ideal": "at least 1",
+      "key": "repeat_pitch",
+      "measured": "2 repeated pitches in a row",
+      "pass": true,
+      "points": 6.0,
+      "suggestion": "",
+      "weight": 6
+    },
+    {
+      "criterion": "loop length",
+      "fraction": 1.0,
+      "ideal": "8 or 16 or 32 bars",
+      "key": "loop_length",
+      "measured": "32 bars",
+      "pass": true,
+      "points": 6.0,
+      "suggestion": "",
+      "weight": 6
+    }
+  ],
+  "grammar": "<repo>\\knowledge\\MUSIC-HOOK-GRAMMAR.md",
+  "grid": "sixteenth",
+  "melody_track": "vrc6 pulse a",
+  "midi_tracks": [
+    "meta",
+    "vrc6 pulse a",
+    "vrc6 pulse b",
+    "vrc6 saw",
+    "pulse 1",
+    "pulse 2",
+    "triangle",
+    "noise",
+    "dpcm"
+  ],
+  "motif": {
+    "bars": 1,
+    "coverage": 0.6604,
+    "notes": 5,
+    "occurrence_bars": [
+      1,
+      5,
+      9,
+      12,
+      17,
+      21,
+      25
+    ],
+    "returns": 7,
+    "start_bar": 0
+  },
+  "notes": 53,
+  "points": 97.23,
+  "score": 97,
+  "source": "<repo>\\assets\\audio\\hadrian_theme_v2\\hadrian_theme_v2.mid",
+  "suggestions": [
+    "the motif jumps too much (50% steps); turn leaps into steps and keep the one big jump for the phrase peak"
+  ],
+  "tempo_us": 652174,
+  "weakest": {
+    "criterion": "steps over leaps",
+    "fraction": 0.7692,
+    "key": "step_ratio",
+    "of": 12,
+    "points": 9.23
+  },
+  "weights_total": 100
+}
