@@ -32,6 +32,17 @@ stand-in (one title theme looped over the whole film) is gone: a take recorded a
 it. `--audio-devices` prints this host's ffmpeg device list and the one install a machine without a loopback
 needs.
 
+Stopped takes still have to be files (card t_33648c51, judge panel 2026-11-17 fix 1). ffmpeg writes an mp4's
+index when it finishes, so the nightly worker's own 1500 s bound killing this tool mid take on 2026-11-16 left
+210501680 bytes at output\demo\_run_002_raw.mp4 that ffprobe refused with "moov atom not found": no player, no
+cutter and no judge could open it, and the night had no video. Three things changed. The recorder writes a
+fragmented mp4, which carries its index at the head and a fragment at every keyframe, so a killed take is
+readable. The replay is stopped by the recorder's own bound, so the harness always reaches its finalise, its
+crop and its verify instead of being killed while it plays. And `--finalize` remuxes a take that is already on
+disk into a finalised mp4 (index at the head, +faststart) and then measures the three things a judge asks: the
+file opens, its duration reads the length it is delivered at, and an audio stream is present and not silent.
+The crop and the delivered file are written with +faststart for the same reason.
+
 Pollution (card t_5d1a6ec4): the rectangle is asked who owns it every second while the recording runs, not
 only before and after, and its pixels are read once a second as well. A foreign window found there stops the
 run and marks the take POLLUTED, named by the process that owned the pixels; it is never reported as the art
@@ -66,6 +77,12 @@ Usage:
     python tools\\play_demo.py --check --final --video P.mp4
                                                       the shipping question: a take with no verify file beside it
                                                       fails its audio check instead of measuring UNMEASURED
+    python tools\\play_demo.py --finalize --video SRC.mp4 --out output\\demo\\nightly-2026-11-16.mp4
+                                                      finalise a take that is already on disk, launch nothing: remux
+                                                      it with its index at the head of the file and fail unless the
+                                                      duration reads the 180.0 s the nightly file is judged at
+                                                      (--target-seconds), an audio stream is present, its mean
+                                                      volume is not silence, and every frame and sample decodes
     python tools\\play_demo.py --dry-run              validate the script and print the timeline in seconds
     python tools\\play_demo.py --audio-devices        print the capture devices, the loopback and the install, no run
 
@@ -988,7 +1005,7 @@ class Replay(object):
                 return fallback_step, False
             time.sleep(0.1)
 
-    def run(self, end_step, should_stop=None):
+    def run(self, end_step, should_stop=None, stop_reason=None):
         cap = capture_module()  # the key codes, imported here so this class can exist on any host
         self.started = time.monotonic()
         failures = []
@@ -998,8 +1015,13 @@ class Replay(object):
                 break
             if should_stop is not None and should_stop():
                 # Card t_5d1a6ec4: a window is over the rectangle, so the rest of this take is not the game.
-                # Stop rather than finish, and let the verdict say why.
-                self.record("pollution-stop", "stop", "a window covered the game, stopping", self.step_now())
+                # Stop rather than finish, and let the verdict say why. Card t_33648c51: the same stop also fires
+                # when the recorder's own bound is spent, so the harness reaches its cut and its verify instead of
+                # being killed mid take; the caller says which of the two stopped it.
+                kind, detail = ("pollution-stop", "a window covered the game, stopping")
+                if stop_reason is not None:
+                    kind, detail = stop_reason()
+                self.record(kind, "stop", detail, self.step_now())
                 stopped = True
                 break
             if event.get("marker") and event.get("marker_wait_s"):
@@ -1089,6 +1111,15 @@ def pre_roll_viewport(hwnd, path):
 
 RECORD_TAIL_S = 2.5
 
+# Card t_33648c51 (judge panel 2026-11-17, fix 1): an mp4's index is written when the encoder finishes, so a take
+# that is killed mid recording is not a file anybody can open (measured 2026-11-16: 210501680 bytes, ffprobe's
+# "moov atom not found"). Fragmented output writes the index at the head and a fragment at every keyframe, so the
+# worst a kill can do is cost the fragments that were never written, and the take stays readable and cuttable.
+# The delivered file is the other way round: +faststart puts one index at the front, which is what a player that
+# starts before it has read the whole file needs.
+FRAGMENTED_MOVFLAGS = "+frag_keyframe+empty_moov+default_base_moof"
+FASTSTART_MOVFLAGS = "+faststart"
+
 
 def record_bound_seconds(script, seconds, end_step=None):
     """The longest the recorder may run: the plan, the tail, and every second a marker_wait_s event may hold the tape.
@@ -1119,18 +1150,14 @@ def stop_recorder(recorder, grace_s):
     return ""
 
 
-def start_recorder(rect, out_path, duration_s, fps, loopback):
-    """Start ffmpeg on the window rectangle. Returns (process, log file handle, log path).
+def recorder_arguments(rect, out_path, duration_s, fps, loopback, fragmented=True):
+    """The ffmpeg arguments that record the window rectangle. Separated from start_recorder so a test can read them.
 
-    gdigrab reads the screen, so the rectangle has to be the window's own and nothing may cover it. The
-    output goes to a file and never to a pipe: a pipe nobody reads fills after about 64 KB and ffmpeg then
-    blocks, which is how an earlier run of this harness stopped recording at 9 s of a 13 s file.
+    The rectangle is recorded as it is and cropped afterwards, so the frame the file gets is the game's own pixels.
+    `fragmented` is the card t_33648c51 flag: with it the mp4 carries its index at the head and a fragment at every
+    keyframe, so a take the worker's own timeout kills is still a file a cutter and a player can open.
     """
-    FFMPEG = ffmpeg_path()
     left, top, width, height = rect
-    os.makedirs(BUILD_DIR, exist_ok=True)
-    log_path = os.path.join(BUILD_DIR, "demo-ffmpeg.log")
-    handle = open(log_path, "wb")
     arguments = [
         "-f", "gdigrab",
         "-framerate", str(fps),
@@ -1152,7 +1179,24 @@ def start_recorder(rect, out_path, duration_s, fps, loopback):
     if loopback:
         arguments += ["-f", "dshow", "-i", "audio=%s" % loopback,
                       "-map", "0:v", "-map", "1:a", "-c:a", "aac", "-b:a", "160k"]
+    if fragmented:
+        arguments += ["-movflags", FRAGMENTED_MOVFLAGS]
     arguments.append(out_path)
+    return arguments
+
+
+def start_recorder(rect, out_path, duration_s, fps, loopback):
+    """Start ffmpeg on the window rectangle. Returns (process, log file handle, log path).
+
+    gdigrab reads the screen, so the rectangle has to be the window's own and nothing may cover it. The
+    output goes to a file and never to a pipe: a pipe nobody reads fills after about 64 KB and ffmpeg then
+    blocks, which is how an earlier run of this harness stopped recording at 9 s of a 13 s file.
+    """
+    FFMPEG = ffmpeg_path()
+    os.makedirs(BUILD_DIR, exist_ok=True)
+    log_path = os.path.join(BUILD_DIR, "demo-ffmpeg.log")
+    handle = open(log_path, "wb")
+    arguments = recorder_arguments(rect, out_path, duration_s, fps, loopback)
     process = subprocess.Popen([FFMPEG, "-hide_banner", "-y"] + arguments,
                                stdout=handle, stderr=subprocess.STDOUT, stdin=subprocess.PIPE)
     return process, handle, log_path
@@ -1815,8 +1859,213 @@ def cut_and_scale(raw_path, viewport, script, out_path, audio_path, audio_commen
         # viewer who reads the metadata is never told a rebuilt track is a capture of the sound card.
         arguments += ["-map", "0:v", "-map", "1:a", "-c:a", "aac", "-b:a", "160k", "-shortest",
                       "-metadata", "comment=%s" % (audio_comment or "audio source is not recorded")]
+    # Card t_33648c51: the delivered file carries its index at the head, so a player opens it and starts before it
+    # has read the end of the file. The take itself is recorded fragmented; this is where it becomes one index.
+    arguments += ["-movflags", FASTSTART_MOVFLAGS]
     arguments.append(out_path)
     return cap.run_ffmpeg(FFMPEG, arguments, timeout=900)
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Finalising a take that already exists (card t_33648c51, judge panel 2026-11-17 fix 1)
+
+def top_level_boxes(path, limit=12):
+    """The mp4 boxes at the head of a file, as (kind, offset, size), read from the box headers alone.
+
+    No decoder is asked and nothing is loaded: an mp4 is a sequence of length prefixed boxes, and the only two this
+    tool cares about are `moov` (the index) and `mdat` (the picture and sound). A file an encoder was killed before
+    finishing has no moov at all, which is the failure this reads for.
+    """
+    boxes = []
+    total = os.path.getsize(path) if os.path.isfile(path) else 0
+    offset = 0
+    with open(path, "rb") as handle:
+        while offset + 8 <= total and len(boxes) < limit:
+            handle.seek(offset)
+            header = handle.read(16)
+            if len(header) < 8:
+                break
+            size = int.from_bytes(header[0:4], "big")
+            kind = header[4:8].decode("latin-1")
+            if size == 1:
+                if len(header) < 16:
+                    break
+                size = int.from_bytes(header[8:16], "big")
+            elif size == 0:
+                size = total - offset
+            if size < 8:
+                break
+            boxes.append((kind, offset, size))
+            offset += size
+    return boxes
+
+
+def index_at_head(path):
+    """True when the file's index (moov) comes before its first picture box (mdat), which is what +faststart writes."""
+    kinds = [box[0] for box in top_level_boxes(path)]
+    if "moov" not in kinds or "mdat" not in kinds:
+        return False
+    return kinds.index("moov") < kinds.index("mdat")
+
+
+def has_index(path):
+    """True when the file carries an index at all. A take killed before ffmpeg finished has none."""
+    return "moov" in [box[0] for box in top_level_boxes(path)]
+
+
+def finalize_recording(source_path, out_path, timeout=1800):
+    """Remux a take into a finalised mp4 whose index is at the head of the file.
+
+    A remux copies the encoded frames and samples and rewrites only the container, so the picture and the sound are
+    the take's own and nothing is re-encoded. It is also what repairs a fragmented recording: ffmpeg reads the
+    fragments and writes one index in front. Returns (ok, note).
+    """
+    FFMPEG = ffmpeg_path()
+    if not FFMPEG:
+        return False, "ffmpeg was not found in the winget package folder and is not on PATH"
+    if not os.path.isfile(source_path) or os.path.getsize(source_path) == 0:
+        return False, "there is no take at %s to finalise" % source_path
+    if not has_index(source_path):
+        return False, ("%s carries no index (no moov box), which is what a recording killed before ffmpeg finished "
+                       "looks like: %d bytes and no playable file, so it cannot be finalised and has to be "
+                       "re-recorded" % (source_path, os.path.getsize(source_path)))
+    os.makedirs(os.path.dirname(os.path.abspath(out_path)) or ".", exist_ok=True)
+    part = out_path + ".part.mp4"
+    ok, note = capture_module().run_ffmpeg(
+        FFMPEG, ["-i", source_path, "-map", "0", "-c", "copy", "-movflags", FASTSTART_MOVFLAGS, part],
+        timeout=timeout)
+    if not ok:
+        if os.path.exists(part):
+            try:
+                os.remove(part)
+            except OSError:  # gate: ok the partial file is scratch; a failed delete costs disk and nothing else.
+                pass
+        return False, "the remux failed: %s" % note
+    os.replace(part, out_path)
+    return True, "finalised %s from %s (%d bytes, index at the head)" % (out_path, source_path,
+                                                                         os.path.getsize(out_path))
+
+
+def playback_checks(ffprobe, path, target_seconds=None, tolerance=0.05, decode=False):
+    """What a player asks of a delivered file, measured: it opens, how long it is, whether it has sound, and decodes.
+
+    Returns rows of (name, ok, detail), the same shape the cut's own verifier prints. `target_seconds` is the length
+    the file is delivered at (180.0 s for the nightly cut, the sum of the six shots in knowledge/DEMO-SCRIPT.md); None
+    measures the length without asking for a number. `decode` reads every frame and sample, which is the difference
+    between a container that describes the file and a file that actually plays.
+    """
+    ffmpeg = ffmpeg_path()
+    rows = []
+    index = has_index(path)
+    duration = capture_module().probe_duration(ffprobe, path) if index else None
+    rows.append(("opens", duration is not None,
+                 ("%.3f s read from the file" % duration) if duration is not None
+                 else "the file cannot be read at all: it carries no index, which is what a take killed before "
+                      "its encoder finished looks like"))
+    if duration is not None and target_seconds:
+        rows.append(("duration", abs(duration - float(target_seconds)) <= float(tolerance),
+                     "%.3f s against the %.3f s it is delivered at, plus or minus %.3f s"
+                     % (duration, float(target_seconds), float(tolerance))))
+    audio = audio_stream(ffprobe, path) if duration is not None else False
+    rows.append(("audio", audio, "an audio stream is present" if audio else "no audio stream in the file"))
+    if audio and ffmpeg:
+        mean = mean_volume_db(path)
+        rows.append(("not_silent", mean is not None and mean > SILENT_TRACK_DB,
+                     "mean volume %s dB over the whole file, against the %.1f dB a silent track reads"
+                     % (None if mean is None else mean, SILENT_TRACK_DB)))
+    head = index_at_head(path)
+    rows.append(("faststart", head,
+                 "the index is at the head of the file, so it opens and plays before the end is read" if head
+                 else "the index is at the end of the file, so a player reads the whole file before it starts"))
+    if decode and ffmpeg and duration is not None:
+        ok, note = capture_module().run_ffmpeg(ffmpeg, ["-v", "error", "-i", path, "-f", "null", "-"], timeout=3600)
+        rows.append(("decodes", ok, "every frame and sample decoded with no error" if ok
+                     else (note or "ffmpeg refused the file")[-400:]))
+    return rows
+
+
+def finalize_take(source_path, out_path, target_seconds=None, tolerance=0.05, decode=True, source_note=None):
+    """Finalise a take on disk into a delivered mp4, measure it, and write its verify file. Returns an exit code.
+
+    This is the nightly export (card t_33648c51): one call that turns a take into a file with its index at the head,
+    then holds it to the three things a judge checks before the picture is ever watched: it opens, it reads the 180.0
+    s the submission is judged at, and it carries sound that is not silence. Nothing is launched and no window is
+    opened, so this runs on a night when the game cannot be recorded.
+    """
+    print("finalising %s -> %s" % (source_path, out_path))
+    if not os.path.isfile(source_path):
+        print("FAIL the take is not on disk: %s" % source_path)
+        return 1
+    source_bytes = os.path.getsize(source_path)
+    source_has_index = has_index(source_path)
+    ok, note = finalize_recording(source_path, out_path)
+    print("%s %s" % ("PASS" if ok else "FAIL", note))
+    if not ok:
+        return 1
+    ffmpeg = ffmpeg_path()
+    ffprobe = capture_module().ffprobe_path(ffmpeg) if ffmpeg else None
+    rows = playback_checks(ffprobe, out_path, target_seconds=target_seconds, tolerance=tolerance, decode=decode)
+    for name, passed, detail in rows:
+        print("%s %s  %s" % ("PASS" if passed else "FAIL", name, detail))
+    stream = video_stream(ffprobe, out_path) if ffprobe else None
+    duration = capture_module().probe_duration(ffprobe, out_path) if ffprobe else None
+    # Card t_33648c51: the fields tools/judge_panel.py reads (duration_s, has_audio, stream, run.planned_seconds,
+    # ok) are written here too, because on 2026-11-17 the panel wrote "From the capture's own verify file: audio is
+    # absent" about a file that has sound: the cut's own verify carried no has_audio field at all.
+    source_verify = os.path.join(os.path.dirname(source_path) or ".",
+                                 "%s_verify.json" % os.path.splitext(os.path.basename(source_path))[0])
+    passthrough = {}
+    if os.path.isfile(source_verify):
+        try:
+            with open(source_verify, "r", encoding="utf-8") as handle:
+                payload = json.load(handle)
+        except (OSError, ValueError):
+            payload = {}
+        for key in ("meta_numbers", "meta_numbers_why", "provenance", "captions", "segments"):
+            if payload.get(key):
+                passthrough[key] = payload[key]
+        # The cut's own checks travel beside the delivered name, so the six shot rows, the plate rows and the
+        # picture rows are still readable from the file a judge opens.
+        cut_copy = os.path.join(os.path.dirname(out_path) or ".",
+                                "%s_cut_verify.json" % os.path.splitext(os.path.basename(out_path))[0])
+        try:
+            with open(cut_copy, "w", encoding="utf-8", newline="\n") as handle:
+                json.dump(payload, handle, indent=1, sort_keys=True)
+                handle.write("\n")
+        except OSError:  # gate: ok the copy is evidence, not the delivered file; a failed copy costs a row.
+            cut_copy = None
+    else:
+        cut_copy = None
+    report = {
+        "video": repo_relative(out_path),
+        "finalised_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "card": "t_33648c51 (judge panel 2026-11-17, fix 1)",
+        "duration_s": duration,
+        "has_audio": any(name == "audio" and passed for name, passed, _detail in rows),
+        "stream": stream,
+        "ok": all(passed for _name, passed, _detail in rows),
+        "run": {"planned_seconds": target_seconds, "recorded_seconds": duration, "failures": []},
+        "source": {"path": repo_relative(source_path), "bytes": source_bytes,
+                   "mtime": time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime(os.path.getmtime(source_path))),
+                   "carried_an_index": source_has_index, "note": source_note,
+                   "cut_verify": repo_relative(source_verify) if os.path.isfile(source_verify) else None,
+                   "cut_verify_copy": repo_relative(cut_copy) if cut_copy else None},
+        "finalised": {"bytes": os.path.getsize(out_path), "movflags": FASTSTART_MOVFLAGS,
+                      "index_at_head": index_at_head(out_path)},
+        "target_seconds": target_seconds, "tolerance_seconds": tolerance,
+        "checks": [{"name": name, "ok": passed, "detail": detail} for name, passed, detail in rows],
+    }
+    report.update(passthrough)
+    verify_path = os.path.join(os.path.dirname(out_path) or ".", "%s_verify.json" % out_stem(out_path))
+    os.makedirs(os.path.dirname(os.path.abspath(verify_path)) or ".", exist_ok=True)
+    with open(verify_path, "w", encoding="utf-8", newline="\n") as handle:
+        handle.write(json.dumps(report, indent=2, sort_keys=True) + "\n")
+    print("wrote %s" % verify_path)
+    if all(passed for _name, passed, _detail in rows):
+        print("PASS %s opens, reads its own duration and carries sound" % out_path)
+        return 0
+    print("FAIL %s did not pass the delivery checks" % out_path)
+    return 1
 
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -2754,6 +3003,7 @@ def run_demo(script, keep_raw=False, shot_table=None):
     recorder_log = None
     watch = None
     log_audio = None
+    finalized_path = None
     try:
         match = cap.find_window(
             lambda hwnd, pid, title, visible, rect: visible and title.lower().startswith(
@@ -2834,8 +3084,35 @@ def run_demo(script, keep_raw=False, shot_table=None):
               % POLLUTION_POLL_S)
 
         replay = Replay(script, hwnd, log_path, send_key)
-        failures += replay.run(end_step, should_stop=lambda: watch.stop_requested)
+        # Card t_33648c51: the replay stops when the recorder's own bound is spent. On 2026-11-16 the game held the
+        # tape at 1298.8 s of its own clock against a 253.5 s plan, the recorder's -t had already ended the file, and
+        # the worker's own 1500 s bound killed the harness before the crop, so the night had no video at all. The
+        # harness now always reaches its cut and its verify; a take that ran short says so in words.
+        tape_end = max(1.0, record_bound - RECORD_TAIL_S)
+        tape_spent = []  # the second the recorder's own bound was reached, when it was
+
+        def tape_full():
+            elapsed = time.monotonic() - audio_started_at
+            if elapsed >= tape_end:
+                if not tape_spent:
+                    tape_spent.append(elapsed)
+                return True
+            return False
+
+        def stop_reason():
+            if watch.stop_requested:
+                return "pollution-stop", "a window covered the game, stopping"
+            return "tape-stop", "the recorder's own %.1f s bound was spent, stopping" % tape_end
+
+        failures += replay.run(end_step, should_stop=lambda: watch.stop_requested or tape_full(),
+                               stop_reason=stop_reason)
         stopped_by_cover = watch.stop_requested
+        if tape_spent and not stopped_by_cover:
+            failures.append("the replay was stopped at %.1f s because the recorder's own %.1f s bound was spent, so "
+                            "the rest of the plan was not played and the take is shorter than its plan"
+                            % (tape_spent[0], tape_end))
+            print("tape spent: the replay stopped at %.1f s of the recorder's %.1f s bound"
+                  % (tape_spent[0], tape_end))
         pollution = watch.stop()
         if stopped_by_cover:
             failures.append("the recording was stopped at t=%.1f s because %s covered the game, so this take is "
@@ -2930,7 +3207,17 @@ def run_demo(script, keep_raw=False, shot_table=None):
             else:
                 print("FAIL no game audio: %s" % rebuilt.get("why"))
 
-        made, note = cut_and_scale(raw_path, viewport, script, out_path, audio_path, audio_comment=audio_comment)
+        # Card t_33648c51: the take is remuxed into a finalised mp4 before it is cut, so a recording stopped early is
+        # still a playable file on disk and the cut reads one index instead of a chain of fragments. The remux copies
+        # the encoded frames, so the picture and the sound are the take's own and nothing is re-encoded.
+        finalized_path = os.path.join(OUTPUT_DIR, "_%s_final.mp4" % script["name"])
+        finalized_ok, finalized_note = finalize_recording(raw_path, finalized_path)
+        print("%s %s" % ("PASS" if finalized_ok else "note", finalized_note))
+        cut_source = finalized_path if finalized_ok else raw_path
+        if not finalized_ok:
+            failures.append("the take could not be finalised (%s), so the cut reads the raw recording" % finalized_note)
+
+        made, note = cut_and_scale(cut_source, viewport, script, out_path, audio_path, audio_comment=audio_comment)
         if not made:
             print("FAIL the cut and scale did not run: %s" % note)
             return 1
@@ -2993,6 +3280,13 @@ def run_demo(script, keep_raw=False, shot_table=None):
                 os.remove(raw_path)
             except OSError:  # gate: ok the raw file is scratch; a failed delete costs disk and nothing else.
                 pass
+        # Card t_33648c51: the finalised remux is scratch once the cut exists, and is kept beside the raw take when
+        # the cut did not happen, because it is then the only playable file the night has.
+        if not keep_raw and finalized_path and os.path.isfile(finalized_path) and os.path.isfile(out_path):
+            try:
+                os.remove(finalized_path)
+            except OSError:  # gate: ok the remux is scratch; a failed delete costs disk and nothing else.
+                pass
 
 
 script_path_used = None
@@ -3035,6 +3329,21 @@ def main():
                              "came from fails instead of measuring UNMEASURED")
     parser.add_argument("--dry-run", action="store_true",
                         help="validate the script and print its timeline in seconds, then stop")
+    parser.add_argument("--finalize", action="store_true",
+                        help="finalise a take that is already on disk instead of playing the game: remux --video to "
+                             "--out with its index at the head of the file, then fail unless it opens, reads the "
+                             "duration --target-seconds names, carries an audio stream that is not silence, and "
+                             "decodes every frame and sample (card t_33648c51, the nightly export)")
+    parser.add_argument("--target-seconds", type=float, default=180.0,
+                        help="with --finalize, the duration the delivered file has to read: 180.0 s is the nightly "
+                             "cut's own length (the six shots of knowledge\\DEMO-SCRIPT.md); pass 0 to measure the "
+                             "duration without asking for a number")
+    parser.add_argument("--source-note", default=None,
+                        help="with --finalize, one line naming where the take came from, written into the verify file")
+    parser.add_argument("--no-decode", action="store_true",
+                        help="with --finalize, skip decoding the whole file (the default reads every frame and "
+                             "sample, which is the difference between a container that describes a file and a file "
+                             "that plays)")
     parser.add_argument("--keep-raw", action="store_true", help="keep the uncropped window recording")
     parser.add_argument("--audio-devices", action="store_true",
                         help="print this host's ffmpeg capture devices, whether it has a loopback, and the install "
@@ -3043,6 +3352,17 @@ def main():
     LAUNCH = pp_launch.policy_from_args(args)
 
     try:
+        if args.finalize:
+            # Card t_33648c51: the nightly export, on a night when the game cannot be recorded. Nothing is launched
+            # and no window is opened, so this path is the same on a quiet desktop and a busy one.
+            source = os.path.abspath(args.video) if args.video else None
+            if not source or not args.out:
+                print("--finalize reads the take named by --video and writes the delivered file named by --out")
+                return 1
+            return finalize_take(source, os.path.abspath(args.out),
+                                 target_seconds=args.target_seconds or None,
+                                 decode=not args.no_decode, source_note=args.source_note)
+
         if args.audio_devices:
             # Card DEMO-AUDIO-CAPTURE: the device list is evidence, so it is printed from ffmpeg's own words and
             # never summarised from a document. Nothing here opens a window or records anything.
