@@ -1,0 +1,73 @@
+{
+  "backend": "meta",
+  "key": "963cb3cfb0554c913cc1a7e853e5c234620c9c151661ab74ccbc4a1339b429aa",
+  "kind": "vision",
+  "mode": "record",
+  "model": "muse-spark-1.3",
+  "network": true,
+  "recorded_at": "2026-11-17T05:05:15Z",
+  "request": {
+    "messages": [
+      {
+        "content": [
+          {
+            "text": "<sha256:0dc8efd99f6200ba:6503 chars>",
+            "type": "text"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:48dab199824de6a4:83814 chars>"
+            },
+            "type": "image_url"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:eca643679f7c655d:445502 chars>"
+            },
+            "type": "image_url"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:bb8cab8b9f4e35a3:252194 chars>"
+            },
+            "type": "image_url"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:b0ab41e23d33d136:309366 chars>"
+            },
+            "type": "image_url"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:14667126a9528717:300434 chars>"
+            },
+            "type": "image_url"
+          },
+          {
+            "image_url": {
+              "url": "<sha256:93bd9f975e921d71:87530 chars>"
+            },
+            "type": "image_url"
+          }
+        ],
+        "role": "user"
+      }
+    ],
+    "model": "muse-spark-1.3"
+  },
+  "response": {
+    "text": "### What the video shows\nFrom the six stills alone a judge sees a black title card for PRIMORDIAL PARADOX naming muse-spark-1.3, muse-image-1.0 and sam-3.1 with NES limits and controls, then top down quay exploration with a pub text box, then Captain Morgan and Percy mercy battles with FIGHT TALK ITEM menus and HP WILL bars, including one overlay that says RECORDED EFFECTS NOT LIVE and NETWORK DEAD with replies from data/meta_bake.json, ending on a credits card about bots, all with explanatory captions at the bottom, and I cannot see motion or the README or repo code beyond these stills and the measured audio is absent, so missing for a 3 minute demo are a human talking to the game, a live on screen verdict that changes the fight, audible music, and a playable file since the nightly log says no playable nightly video was written.\n\n### The four scores\nImpact, 4: Talk to SPARE with Mercy is visible in the Morgan and Percy boxes, but the S5 plate says NOT LIVE with replies from a bake file so live understanding a player would care about is not shown.\nUse of Meta AI tooling, 5: muse-spark-1.3, muse-image-1.0 and sam-3.1 are named on the title and one frame shows 21 calls with receipts, but the verify file labels no Meta number and says NETWORK DEAD so live work is not proven.\nTechnical depth, 6: a 256x240 claim scaled to 768x784 at 60 fps with HP MERCY WILL engine and no network call text looks like a real engine, but audio is absent and the log says the raw has no moov atom and play_demo did not complete.\nDemo, 4: duration is 180.000 s with picture at every sample and captions explain each shot, but there is no voice, no live verdict moment and no playable nightly file to share per the log.\n\n### Five fixes, ranked\n1. Repair nightly export so 180s demo plays with sound - Criterion: Demo - Lane: builder - Body: Fix the capture harness that wrote output/demo/_run_002_raw.mp4 without a moov atom so output/demo/nightly-2026-11-16.mp4 is finalized inside the 1500 s bound. Add ffmpeg faststart finalization and a verify check that duration reads 180 s with audio present. A judge will see a playable three minute file that opens, plays with sound, and matches the six shot plan in the video.\n2. Show live Muse Spark verdict inside Morgan talk box - Criterion: Impact - Lane: gamedev - Body: Edit the morgan battle scene and its talk handler to call the local bridge live and draw the returned SOFTEN or NUDGE or SETBACK verdict inside the NES text box during shot S5 from 1:18 to 1:50. Keep data/meta_bake.json only as fallback and keep the three receipts below the box. A judge will see the typed line then the verdict appear in the box and Mercy move in the same shot.\n3. Add audible music and talk blips provable in capture - Criterion: Demo - Lane: musician - Body: Add hurricane wind, text blips and battle stingers in the quay, morgan and percy scenes using the musician lane tracks and wire them to the capture mix. Update the verify step to fail when audio is absent. A judge will hear storm and UI sound through the 180 s video and see audio present in the verify file.\n4. Surface measured Meta receipts and counts on screen - Criterion: Use of Meta AI tooling - Lane: assistant - Body: Update data/meta_bake.json, the S5 on screen plate and README to show the same measured counts for Muse Spark 1.3 calls, live rows and share percent with full receipt IDs. Make the verify file label which numbers were measured. A judge will read matching numbers on screen, in README and in verify during the Morgan shot.\n5. Enforce and display 16 colour 256x240 check in build - Criterion: Technical depth - Lane: testing - Body: Add a build time palette and resolution check for 256x240 with at most 16 colours and draw its PASS badge on the title scene next to the NES LIMITS text. Log the check in check_data output. A judge will see the badge on the title card in S1 and find the same PASS in the repo check log.\n\n### Machine readable block\n```json\n{\"impact\": 4, \"impact_reason\": \"Talk to SPARE with Mercy is visible but S5 plate says NOT LIVE from bake file so live value is not shown.\", \"meta_tooling\": 5, \"meta_tooling_reason\": \"Models are named on title and 21 calls with receipts show on screen but verify labels no Meta number and network dead.\", \"technical_depth\": 6, \"technical_depth_reason\": \"256x240 scaled to 768x784 at 60 fps with HP MERCY WILL engine looks real but audio absent and play_demo did not complete.\", \"demo\": 4, \"demo_reason\": \"180 s with picture at every sample and captions explain shots but no voice and no playable nightly file per log.\", \"fixes\": [{\"title\": \"Repair nightly export so 180s demo plays with sound\", \"criterion\": \"Demo\", \"lane\": \"builder\", \"body\": \"Fix the capture harness that wrote output/demo/_run_002_raw.mp4 without a moov atom so output/demo/nightly-2026-11-16.mp4 is finalized inside the 1500 s bound. Add ffmpeg faststart finalization and a verify check that duration reads 180 s with audio present. A judge will see a playable three minute file that opens, plays with sound, and matches the six shot plan in the video.\"}, {\"title\": \"Show live Muse Spark verdict inside Morgan talk box\", \"criterion\": \"Impact\", \"lane\": \"gamedev\", \"body\": \"Edit the morgan battle scene and its talk handler to call the local bridge live and draw the returned SOFTEN or NUDGE or SETBACK verdict inside the NES text box during shot S5 from 1:18 to 1:50. Keep data/meta_bake.json only as fallback and keep the three receipts below the box. A judge will see the typed line then the verdict appear in the box and Mercy move in the same shot.\"}, {\"title\": \"Add audible music and talk blips provable in capture\", \"criterion\": \"Demo\", \"lane\": \"musician\", \"body\": \"Add hurricane wind, text blips and battle stingers in the quay, morgan and percy scenes using the musician lane tracks and wire them to the capture mix. Update the verify step to fail when audio is absent. A judge will hear storm and UI sound through the 180 s video and see audio present in the verify file.\"}, {\"title\": \"Surface measured Meta receipts and counts on screen\", \"criterion\": \"Use of Meta AI tooling\", \"lane\": \"assistant\", \"body\": \"Update data/meta_bake.json, the S5 on screen plate and README to show the same measured counts for Muse Spark 1.3 calls, live rows and share percent with full receipt IDs. Make the verify file label which numbers were measured. A judge will read matching numbers on screen, in README and in verify during the Morgan shot.\"}, {\"title\": \"Enforce and display 16 colour 256x240 check in build\", \"criterion\": \"Technical depth\", \"lane\": \"testing\", \"body\": \"Add a build time palette and resolution check for 256x240 with at most 16 colours and draw its PASS badge on the title scene next to the NES LIMITS text. Log the check in check_data output. A judge will see the badge on the title card in S1 and find the same PASS in the repo check log.\"}]}\n```",
+    "usage": {
+      "completion_tokens": 8646,
+      "completion_tokens_details": {
+        "reasoning_tokens": 6983
+      },
+      "prompt_tokens": 6304,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 14950
+    }
+  }
+}
