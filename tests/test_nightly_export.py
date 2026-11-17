@@ -250,3 +250,26 @@ def test_the_export_returns_red_for_a_take_the_gate_refuses(demo, ffmpeg, tmp_pa
     assert code == 1, "a 2 s take passed a 180.0 s delivery gate"
     assert os.path.isfile(out), "the finalised file is still a file; it is the gate that says it is not the delivery"
 
+
+# ---------------------------------------------------------------------------------------------------------------------
+# 7: the replay stops when the tape is spent, so the harness always reaches its finalise, its cut and its verify
+
+@pytest.mark.windows_only
+def test_the_replay_stops_when_the_recorder_bound_is_spent_and_says_which_stop_it_was(demo, tmp_path):
+    """On 2026-11-16 the replay outlived the recorder's -t and the worker's own 1500 s bound killed the harness mid
+    take, so the crop, the audio rebuild and the verify never ran. The stop is now the tape's own, and it is named."""
+    script = {"name": "tape", "clock": {"fps": 60},
+              "events": [{"id": "r001", "kind": "note", "step": 60},
+                         {"id": "r002", "kind": "note", "step": 120}]}
+    replay = demo.Replay(script, hwnd=0, log_path=str(tmp_path / "game.log"), send_key=lambda vk: None)
+    failures = replay.run(120, should_stop=lambda: True,
+                          stop_reason=lambda: ("tape-stop", "the recorder's own 256.0 s bound was spent"))
+    assert failures == []
+    assert len(replay.trace) == 1, "the replay played events after the tape was spent: %s" % replay.trace
+    assert replay.trace[0]["id"] == "tape-stop" and replay.trace[0]["kind"] == "stop"
+    assert "256.0 s bound" in replay.trace[0]["detail"]
+    # A caller that passes no reason keeps the pollution wording, which is the stop that existed before this card.
+    plain = demo.Replay(script, hwnd=0, log_path=str(tmp_path / "game.log"), send_key=lambda vk: None)
+    plain.run(120, should_stop=lambda: True)
+    assert plain.trace[-1]["id"] == "pollution-stop"
+
