@@ -64,8 +64,9 @@ Rules that keep it from touching the balance the demo already proved:
 - **Hero:** the command band's right column, first label row. `battle_b.command` is x 8, y 168, w 30, h 8, the labels
   sit at x 24 and x 128 with a 5 cell word each (ending x 167), and `pp_battle_draw_menu`
   (`pp_battle_director.gml:1967`) leaves x 176 to 247 empty on every label row. "DRUNK 3" is 7 cells, x 176 to 231,
-  inside the band's border at 247. The band frame is drawn in the message phase too, so the tag survives the whole
-  turn, and the menu's own labels never reach it.
+  inside the band's border at 247. The band frame is drawn in every phase (line 1795 for the phases that are not
+  menu or resolve, and the menu's own draw for those two), and the strip is drawn with the frame rather than from
+  `pp_battle_draw_menu`, so the tag survives the message phase; the menu's own labels never reach it.
 - **Popup:** the word and its clock also print for 30 steps where "+35 MERCY" prints now
   (`pp_battle_director.gml:1833`), so the moment of application is readable even if a player has not learned the tag.
 - Two actors, two tags, no new window, no new row. When the layout is absent the legacy rows do the same job: the
