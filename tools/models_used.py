@@ -292,9 +292,23 @@ def tracked_problems(rows_):
             continue
         try:
             result = subprocess.run(["git", "-C", ROOT, "ls-files", "--error-unmatch", path],
-                                    capture_output=True, text=True, timeout=30)
-        except (OSError, subprocess.SubprocessError):
+                                    capture_output=True, text=True, timeout=30,
+                                    stdin=subprocess.DEVNULL)
+        except FileNotFoundError:
+            # No git on this machine at all. There is nothing to compare against, and the docstring says a tree
+            # without git says nothing rather than failing.
             return found
+        except subprocess.TimeoutExpired:
+            # git exists and did not answer. That is not a clean tree, it is an unanswered question, and the
+            # difference matters: this branch used to return `found`, so a timeout read as a clean bill of health
+            # (card t_9a749515, measured 2026-11-19).
+            found.append("%s: git did not answer within 30 s, so whether the commit carries it is unknown" % path)
+            continue
+        except OSError as error:
+            # git is on PATH but could not be started, which is also an unanswered question rather than a pass.
+            found.append("%s: git could not be started (%s), so whether the commit carries it is unknown"
+                         % (path, error))
+            continue
         if result.returncode != 0:
             found.append("%s is on disk but not in the commit, so a fresh checkout cannot "
                          "replay it" % path)

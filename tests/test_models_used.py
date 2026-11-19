@@ -91,13 +91,50 @@ def test_every_row_pins_its_receipt_instead_of_taking_whatever_is_newest():
 
 
 def test_a_receipt_that_exists_but_is_not_committed_is_reported(tmp_path):
-    """The gate's own failure mode: present on disk, absent from the commit a checkout would see."""
-    stray = tmp_path / ("0" * 64 + ".json")
-    stray.write_text("{}", encoding="utf-8")
-    rows = [{"receipt_path": os.path.relpath(stray, models_used.ROOT).replace(os.sep, "/")}]
-    problems = models_used.tracked_problems(rows)
+    """The gate's own failure mode: present on disk, absent from the commit a checkout would see.
+
+    The stray lives inside the project tree rather than in tmp_path, because os.path.relpath refuses to cross
+    drives and this project sits on D: while pytest's tmp_path is on C: (measured 2026-11-19). The row is derived
+    by relpath against ROOT, so a probe on another mount made this test raise ValueError before the tool was ever
+    called, which is how it read as a tool failure on this machine and as an empty list on the nightly.
+    """
+    probe = os.path.join(models_used.ROOT, "build", "receipt-probe")
+    os.makedirs(probe, exist_ok=True)
+    stray = os.path.join(probe, "0" * 64 + ".json")
+    with open(stray, "w", encoding="utf-8") as handle:
+        handle.write("{}")
+    try:
+        rows = [{"receipt_path": os.path.relpath(stray, models_used.ROOT).replace(os.sep, "/")}]
+        problems = models_used.tracked_problems(rows)
+    finally:
+        os.remove(stray)
+        os.rmdir(probe)
     assert problems and "not in the commit" in problems[0], problems
     assert models_used.tracked_problems([{"receipt_path": None}]) == []
+
+
+def test_a_git_that_never_answers_is_reported_rather_than_passed(monkeypatch):
+    """A checker that cannot run must say so. This branch used to return the problems found so far, which for a
+    first row is an empty list: a clean bill of health it did not earn (card t_9a749515)."""
+    import subprocess as sp
+
+    def explode(*args, **kwargs):
+        raise sp.TimeoutExpired(cmd="git", timeout=30)
+
+    monkeypatch.setattr(models_used.subprocess, "run", explode)
+    problems = models_used.tracked_problems([{"receipt_path": "receipts/" + "0" * 64 + ".json"}])
+    assert problems, "a timed out git must not be reported as a clean tree"
+    assert "did not answer" in problems[0], problems
+
+
+def test_a_machine_without_git_still_says_nothing(monkeypatch):
+    """The documented exception, kept on purpose: no git at all is no question to answer, not a failure."""
+
+    def missing(*args, **kwargs):
+        raise FileNotFoundError("git")
+
+    monkeypatch.setattr(models_used.subprocess, "run", missing)
+    assert models_used.tracked_problems([{"receipt_path": "receipts/x.json"}]) == []
 
 
 def test_a_page_that_disagrees_with_the_receipts_fails_the_check(tmp_path, monkeypatch, capsys):
